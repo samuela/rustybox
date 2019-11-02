@@ -128,7 +128,12 @@ pub struct bb_applet {
   pub main: *const libc::c_char,
   pub install_loc: bb_install_loc_t,
   pub need_suid: bb_suid_t,
+  /* true if instead of fork(); exec("applet"); waitpid();
+   * one can do fork(); exit(applet_main(argc,argv)); waitpid(); */
   pub noexec: libc::c_uchar,
+  /* Even nicer */
+  /* true if instead of fork(); exec("applet"); waitpid();
+   * one can simply call applet_main(argc,argv); */
   pub nofork: libc::c_uchar,
 }
 
@@ -157,7 +162,7 @@ s     - suid type:
         NB: please update FEATURE_SUID help text whenever you add/remove
         BB_SUID_REQUIRE or BB_SUID_MAYBE applet.
 */
-static mut applets: [bb_applet; 396] = [
+pub static mut applets: [bb_applet; 396] = [
   {
     let mut init = bb_applet {
       name: b"gunzip\x00" as *const u8 as *const libc::c_char,
