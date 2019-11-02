@@ -111,7 +111,7 @@ pub type bb_suid_t = libc::c_uint;
 pub const BB_SUID_REQUIRE: bb_suid_t = 2;
 pub const BB_SUID_MAYBE: bb_suid_t = 1;
 pub const BB_SUID_DROP: bb_suid_t = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Applet table generator.
  * Runs on host and produces include/applet_tables.h
@@ -120,6 +120,7 @@ pub const BB_SUID_DROP: bb_suid_t = 0;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_applet {
@@ -130,10 +131,11 @@ pub struct bb_applet {
   pub noexec: libc::c_uchar,
   pub nofork: libc::c_uchar,
 }
+
 /* Define struct bb_applet applets[] */
 pub const NUM_APPLETS: libc::c_uint = 396;
 /* DO NOT EDIT. This file is generated from applets.src.h */
-/* vi: set sw=4 ts=4: */
+
 /*
  * applets.h - a listing of all busybox applets.
  *
@@ -4513,6 +4515,7 @@ static mut applets: [bb_applet; 396] = [
     init
   },
 ];
+
 unsafe extern "C" fn cmp_name(
   mut a: *const libc::c_void,
   mut b: *const libc::c_void,
