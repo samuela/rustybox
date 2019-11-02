@@ -1,5 +1,6 @@
-use std::ffi::CStr;
 use libc;
+use std::ffi::CStr;
+use std::ffi::CString;
 
 extern "C" {
   #[no_mangle]
@@ -3419,6 +3420,7 @@ pub unsafe extern "C" fn lbb_prepare(mut applet: *const libc::c_char) {
  */
 #[no_mangle]
 pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
+
 /* If not built as a single-applet executable... */
 static mut ruid: uid_t = 0;
 static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut suid_config_t;
@@ -3704,7 +3706,7 @@ unsafe extern "C" fn parse_config_file() {
   /* Release any allocated memory before returning. */
   llist_free(sct_head as *mut llist_t, None);
 }
-/* FEATURE_SUID_CONFIG */
+
 /* check if u is member of group g */
 unsafe extern "C" fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
   let mut grp: *mut group = bb_internal_getgrgid(g); /* real gid */
@@ -3834,12 +3836,14 @@ unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
 /* FEATURE_SUID */
 static mut usr_bin: [libc::c_char; 10] = [47, 117, 115, 114, 47, 98, 105, 110, 47, 0];
 static mut usr_sbin: [libc::c_char; 11] = [47, 117, 115, 114, 47, 115, 98, 105, 110, 47, 0];
+
 // Initialized in run_static_initializers
 static mut install_dir: [*const libc::c_char; 5] = [0 as *const libc::c_char; 5];
+
 /* create (sym)links for each applet */
 unsafe extern "C" fn install_links(
   mut busybox: *const libc::c_char,
-  mut use_symbolic_links: libc::c_int,
+  use_symbolic_links: bool,
   mut custom_install_dir: *mut libc::c_char,
 ) {
   /* directory table
@@ -3855,7 +3859,7 @@ unsafe extern "C" fn install_links(
   lf = Some(
     link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
   );
-  if use_symbolic_links != 0 {
+  if use_symbolic_links {
     lf = Some(
       symlink
         as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
@@ -3905,6 +3909,7 @@ unsafe extern "C" fn install_links(
     i = i.wrapping_add(1)
   }
 }
+
 unsafe extern "C" fn find_script_by_name(mut name: *const libc::c_char) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut applet: libc::c_int = find_applet_by_name(name);
@@ -3931,6 +3936,7 @@ pub unsafe extern "C" fn scripted_main(
   }
   return 0i32;
 }
+
 /* Helpers for daemonization.
  *
  * bb_daemonize(flags) = daemonize, does not compile on NOMMU
@@ -3989,6 +3995,7 @@ pub unsafe extern "C" fn scripted_main(
 /* We need to export XXX_main from libbusybox
  * only if we build "individual" binaries
  */
+
 /* Embedded script support */
 #[no_mangle]
 pub unsafe extern "C" fn get_script_content(mut n: libc::c_uint) -> *mut libc::c_char {
@@ -4011,42 +4018,68 @@ pub unsafe extern "C" fn get_script_content(mut n: libc::c_uint) -> *mut libc::c
   }
   return t;
 }
-/* NUM_SCRIPTS > 0 */
-unsafe extern "C" fn busybox_main(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+
+unsafe fn print_rustybox_help() {
   let mut a: *const libc::c_char = 0 as *const libc::c_char;
   let mut col: libc::c_int = 0;
   let mut output_width: libc::c_uint = 0;
-  let mut current_block: u64;
-  if (*argv.offset(1)).is_null() {
+
+  output_width = get_terminal_width(2i32) as libc::c_uint;
+  dup2(1i32, 2i32);
+  full_write2_str(bb_banner.as_ptr()); /* reuse const string */
+  full_write2_str(b" multi-call binary.\n\x00" as *const u8 as *const libc::c_char); /* reuse */
+  full_write2_str(b"BusyBox is copyrighted by many authors between 1998-2015.\nLicensed under GPLv2. See source distribution for detailed\ncopyright notices.\n\nUsage: busybox [function [arguments]...]\n   or: busybox --list[-full]\n   or: busybox --show SCRIPT\n   or: busybox --install [-s] [DIR]\n   or: function [arguments]...\n\n\tBusyBox is a multi-call binary that combines many common Unix\n\tutilities into a single executable.  Most people will create a\n\tlink to busybox for each function they wish to use and BusyBox\n\twill act like whatever it was invoked as.\n\nCurrently defined functions:\n\x00"
+                        as *const u8 as *const libc::c_char);
+  col = 0i32;
+  /* prevent last comma to be in the very last pos */
+  output_width = output_width.wrapping_sub(1);
+  a = applet_names.as_ptr();
+  while *a != 0 {
+    let mut len2: libc::c_int = strlen(a).wrapping_add(2i32 as libc::c_ulong) as libc::c_int;
+    if col >= output_width as libc::c_int - len2 {
+      full_write2_str(b",\n\x00" as *const u8 as *const libc::c_char);
+      col = 0i32
+    }
+    if col == 0i32 {
+      col = 6i32;
+      full_write2_str(b"\t\x00" as *const u8 as *const libc::c_char);
+    } else {
+      full_write2_str(b", \x00" as *const u8 as *const libc::c_char);
+    }
+    full_write2_str(a);
+    col += len2;
+    a = a.offset((len2 - 1i32) as isize)
+  }
+  full_write2_str(b"\n\x00" as *const u8 as *const libc::c_char);
+}
+
+unsafe fn rustybox_main(argv: &[String]) -> i32 {
+  if argv.len() == 1 {
     /* Called without arguments */
-    a = 0 as *const libc::c_char;
-    col = 0;
-    output_width = 0;
+    print_rustybox_help();
+    return 0;
   } else {
-    if strcmp(
-      *argv.offset(1),
-      b"--show\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
-    {
+    if argv[1] == "--show" {
       let mut n: libc::c_int = 0;
-      if (*argv.offset(2)).is_null() {
+      if argv.len() < 3 {
         bb_error_msg_and_die(
           bb_msg_requires_arg.as_ptr(),
           b"--show\x00" as *const u8 as *const libc::c_char,
         );
       }
-      n = find_script_by_name(*argv.offset(2));
+      n = find_script_by_name(str_to_ptr(&argv[2]));
       if n < 0i32 {
         bb_error_msg_and_die(
           b"script \'%s\' not found\x00" as *const u8 as *const libc::c_char,
-          *argv.offset(2),
+          str_to_ptr(&argv[2]),
         );
       }
       full_write1_str(get_script_content(n as libc::c_uint));
-      return 0i32;
+      return 0;
     }
+
     if !is_prefixed_with(
-      *argv.offset(1),
+      str_to_ptr(&argv[1]),
       b"--list\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
@@ -4055,7 +4088,7 @@ unsafe extern "C" fn busybox_main(mut argv: *mut *mut libc::c_char) -> libc::c_i
       let mut a_0: *const libc::c_char = applet_names.as_ptr();
       dup2(1i32, 2i32);
       while *a_0 != 0 {
-        if *(*argv.offset(1)).offset(6) != 0 {
+        if argv[1].len() > 6 {
           /* --list-full? */
           full_write2_str(
             install_dir[({
@@ -4085,15 +4118,11 @@ unsafe extern "C" fn busybox_main(mut argv: *mut *mut libc::c_char) -> libc::c_i
           }
         }
       }
-      return 0i32;
+      return 0;
     }
-    if 1i32 != 0
-      && strcmp(
-        *argv.offset(1),
-        b"--install\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
-    {
-      let mut use_symbolic_links: libc::c_int = 0;
+
+    if argv[1] == "--install" {
+      // let mut use_symbolic_links: libc::c_int = 0;
       let mut busybox: *const libc::c_char = 0 as *const libc::c_char;
       busybox = xmalloc_readlink(bb_busybox_exec_path.as_ptr());
       if busybox.is_null() {
@@ -4102,90 +4131,45 @@ unsafe extern "C" fn busybox_main(mut argv: *mut *mut libc::c_char) -> libc::c_i
          * In such case, better use argv[0] as symlink target
          * if it is a full path name.
          */
-        if *(*argv.offset(0)).offset(0) as libc::c_int != '/' as i32 {
+        if !argv[0].starts_with("/") {
           bb_error_msg_and_die(
             b"\'%s\' is not an absolute path\x00" as *const u8 as *const libc::c_char,
-            *argv.offset(0),
+            str_to_ptr(&argv[0]),
           );
         }
-        busybox = *argv.offset(0)
+        busybox = str_to_ptr(&argv[0])
       }
+
       /* busybox --install [-s] [DIR]:
        * -s: make symlinks
        * DIR: directory to install links to
        */
-      use_symbolic_links = (!(*argv.offset(2)).is_null()
-        && strcmp(
-          *argv.offset(2),
-          b"-s\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
-        && {
-          argv = argv.offset(1);
-          !argv.is_null()
-        }) as libc::c_int;
-      install_links(busybox, use_symbolic_links, *argv.offset(2));
-      return 0i32;
+      let use_symbolic_links = (argv.len() > 2) && (argv[2] == "-s");
+      install_links(busybox, use_symbolic_links, str_to_ptr(&argv[3]));
+      return 0;
     }
-    if strcmp(
-      *argv.offset(1),
-      b"--help\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
-    {
+
+    /* We support "busybox /a/path/to/applet args..." too. Allows for
+     * "#!/bin/busybox"-style wrappers */
+    applet_name = bb_get_last_path_component_nostrip(str_to_ptr(&argv[1]));
+
+    if argv[1] == "--help" {
       /* "busybox --help [<applet>]" */
-      if (*argv.offset(2)).is_null() {
-        current_block = 16659753047331320711;
+      if argv.len() < 3 {
+        // Missing the applet to ask for help with.
+        print_rustybox_help();
+        return 0;
       } else {
         /* convert to "<applet> --help" */
-        let ref mut fresh6 = *argv.offset(0);
-        *fresh6 = *argv.offset(2);
-        let ref mut fresh7 = *argv.offset(2);
-        *fresh7 = 0 as *mut libc::c_char;
-        current_block = 3392087639489470149;
-      }
-    } else {
-      /* "busybox <applet> arg1 arg2 ..." */
-      argv = argv.offset(1);
-      current_block = 3392087639489470149;
-    }
-    match current_block {
-      16659753047331320711 => {}
-      _ => {
-        /* We support "busybox /a/path/to/applet args..." too. Allows for
-         * "#!/bin/busybox"-style wrappers */
-        applet_name = bb_get_last_path_component_nostrip(*argv.offset(0)); /* reuse const string */
-        run_applet_and_exit(applet_name, argv); /* reuse */
+        run_applet_and_exit(applet_name, &[argv[2].clone(), "--help".into()]);
       }
     }
+
+    /* "busybox <applet> arg1 arg2 ..." */
+    run_applet_and_exit(applet_name, &argv[1..]);
   }
-  output_width = get_terminal_width(2i32) as libc::c_uint;
-  dup2(1i32, 2i32);
-  full_write2_str(bb_banner.as_ptr());
-  full_write2_str(b" multi-call binary.\n\x00" as *const u8 as *const libc::c_char);
-  full_write2_str(b"BusyBox is copyrighted by many authors between 1998-2015.\nLicensed under GPLv2. See source distribution for detailed\ncopyright notices.\n\nUsage: busybox [function [arguments]...]\n   or: busybox --list[-full]\n   or: busybox --show SCRIPT\n   or: busybox --install [-s] [DIR]\n   or: function [arguments]...\n\n\tBusyBox is a multi-call binary that combines many common Unix\n\tutilities into a single executable.  Most people will create a\n\tlink to busybox for each function they wish to use and BusyBox\n\twill act like whatever it was invoked as.\n\nCurrently defined functions:\n\x00"
-                        as *const u8 as *const libc::c_char);
-  col = 0i32;
-  /* prevent last comma to be in the very last pos */
-  output_width = output_width.wrapping_sub(1);
-  a = applet_names.as_ptr();
-  while *a != 0 {
-    let mut len2: libc::c_int = strlen(a).wrapping_add(2i32 as libc::c_ulong) as libc::c_int;
-    if col >= output_width as libc::c_int - len2 {
-      full_write2_str(b",\n\x00" as *const u8 as *const libc::c_char);
-      col = 0i32
-    }
-    if col == 0i32 {
-      col = 6i32;
-      full_write2_str(b"\t\x00" as *const u8 as *const libc::c_char);
-    } else {
-      full_write2_str(b", \x00" as *const u8 as *const libc::c_char);
-    }
-    full_write2_str(a);
-    col += len2;
-    a = a.offset((len2 - 1i32) as isize)
-  }
-  full_write2_str(b"\n\x00" as *const u8 as *const libc::c_char);
-  return 0i32;
 }
+
 /*
  * Busybox main internal header file
  *
@@ -4510,8 +4494,8 @@ unsafe extern "C" fn busybox_main(mut argv: *mut *mut libc::c_char) -> libc::c_i
 /* ***********************************************************************/
 /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
 /* Does NOT check that applet is NOFORK, just blindly runs it */
-#[no_mangle]
-pub unsafe extern "C" fn run_applet_no_and_exit(
+
+pub unsafe fn run_applet_no_and_exit(
   mut applet_no: libc::c_int,
   mut name: *const libc::c_char,
   mut argv: *mut *mut libc::c_char,
@@ -4522,11 +4506,13 @@ pub unsafe extern "C" fn run_applet_no_and_exit(
    * "-/sbin/halt" -> "halt", for example.
    */
   applet_name = name;
+
   /* Special case. POSIX says "test --help"
    * should be no different from e.g. "test --foo".
    * Thus for "test", we skip --help check.
    * "true" and "false" are also special.
    */
+  // TODO: get rid of these magic numbers.
   if true && applet_no != 332i32 && applet_no != 342i32 && applet_no != 82i32 {
     if argc == 2i32
       && strcmp(
@@ -4539,6 +4525,7 @@ pub unsafe extern "C" fn run_applet_no_and_exit(
       bb_show_usage();
     }
   }
+
   check_suid(applet_no);
   xfunc_error_retval =
     applet_main[applet_no as usize].expect("non-null function pointer")(argc, argv) as uint8_t;
@@ -4546,21 +4533,20 @@ pub unsafe extern "C" fn run_applet_no_and_exit(
   xfunc_die();
 }
 
-/* NUM_APPLETS > 0 */
-unsafe extern "C" fn run_applet_and_exit(
-  mut name: *const libc::c_char,
-  mut argv: *mut *mut libc::c_char,
-) -> ! {
-  println!("run_applet_and_exit applet name {:?}", CStr::from_ptr(name).to_string_lossy());
+unsafe fn run_applet_and_exit(mut name: *const libc::c_char, argv: &[String]) -> ! {
+  println!(
+    "run_applet_and_exit applet name {:?}",
+    CStr::from_ptr(name).to_string_lossy()
+  );
 
-  if !is_prefixed_with(name, b"busybox\x00" as *const u8 as *const libc::c_char).is_null() {
-    ::std::process::exit(busybox_main(argv));
+  if !is_prefixed_with(name, b"rustybox\x00" as *const u8 as *const libc::c_char).is_null() {
+    ::std::process::exit(rustybox_main(argv));
   }
 
   /* find_applet_by_name() search is more expensive, so goes second */
   let mut applet: libc::c_int = find_applet_by_name(name);
-  if applet >= 0i32 {
-    run_applet_no_and_exit(applet, name, argv);
+  if applet >= 0 {
+    run_applet_no_and_exit(applet, name, str_vec_to_ptrs(argv));
   }
 
   /*bb_error_msg_and_die("applet not found"); - links in printf */
@@ -4571,8 +4557,7 @@ unsafe extern "C" fn run_applet_and_exit(
   ::std::process::exit(127);
 }
 
-/* !defined(SINGLE_APPLET_MAIN) */
-unsafe fn main_0(mut argv: *mut *mut libc::c_char) -> i32 {
+pub unsafe fn main() {
   /* Tweak malloc for reduced memory consumption */
   /* M_TRIM_THRESHOLD is the maximum amount of freed top-most memory
    * to keep before releasing to the OS
@@ -4587,36 +4572,30 @@ unsafe fn main_0(mut argv: *mut *mut libc::c_char) -> i32 {
 
   lbb_prepare(b"busybox\x00" as *const u8 as *const libc::c_char);
 
-  applet_name = *argv.offset(0);
+  let argv: Vec<String> = ::std::env::args().collect();
+  applet_name = str_to_ptr(&argv[0]);
   if *applet_name.offset(0) as libc::c_int == '-' as i32 {
     applet_name = applet_name.offset(1)
   }
   applet_name = bb_basename(applet_name);
 
-  /* If we are a result of execv("/proc/self/exe"), fix ugly comm of "exe" */
-  if false || false || false {
-    if 396 > 1 {
-      set_task_comm(applet_name);
-    }
-  }
-
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
-  run_applet_and_exit(applet_name, argv);
+  run_applet_and_exit(applet_name, &argv)
 }
 
-pub fn main() {
-  let mut args: Vec<*mut libc::c_char> = Vec::new();
-  for arg in ::std::env::args() {
-    args.push(
-      ::std::ffi::CString::new(arg)
-        .expect("Failed to convert argument into CString.")
-        .into_raw(),
-    );
+fn str_to_ptr(string: &str) -> *mut libc::c_char {
+  CString::new(string.as_bytes())
+    .expect("CString::new failed.")
+    .into_raw()
+}
+
+fn str_vec_to_ptrs(strings: &[String]) -> *mut *mut libc::c_char {
+  let mut ret: Vec<*mut libc::c_char> = Vec::new();
+  for arg in strings {
+    ret.push(str_to_ptr(arg));
   }
-  args.push(::std::ptr::null_mut());
-  unsafe {
-    ::std::process::exit(main_0(args.as_mut_ptr() as *mut *mut libc::c_char))
-  }
+  ret.push(::std::ptr::null_mut());
+  ret.as_mut_ptr()
 }
 
 unsafe extern "C" fn run_static_initializers() {
