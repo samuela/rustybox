@@ -7,26 +7,37 @@ extern "C" {
     argp: *mut libc::c_void,
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
+
   #[no_mangle]
   fn settimeofday(__tv: *const timeval, __tz: *const timezone) -> libc::c_int;
+
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
+
   #[no_mangle]
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
+
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
+
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
+
   #[no_mangle]
   fn tzset();
+
   #[no_mangle]
   static mut timezone: libc::c_long;
+
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -34,8 +45,10 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   /*
@@ -43,15 +56,20 @@ extern "C" {
    *
    * Licensed under GPLv2 or later, see file LICENSE in this source tree.
    */
+
   #[no_mangle]
   fn rtc_adjtime_is_utc() -> libc::c_int;
+
   #[no_mangle]
   fn rtc_xopen(default_rtc: *mut *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn rtc_read_tm(ptm: *mut tm, fd: libc::c_int);
+
   #[no_mangle]
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
@@ -102,7 +120,7 @@ pub struct linux_rtc_time {
   pub tm_yday: libc::c_int,
   pub tm_isdst: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini hwclock implementation for busybox
  *
