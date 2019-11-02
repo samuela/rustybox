@@ -1,67 +1,93 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
+
   #[no_mangle]
   fn open3_or_warn(
     pathname: *const libc::c_char,
     flags: libc::c_int,
     mode: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_xopen_read_close(
     filename: *const libc::c_char,
     maxsz_p: *mut size_t,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_uint;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
 }
+
 pub type __mode_t = libc::c_uint;
 pub type __off64_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
@@ -73,6 +99,7 @@ pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
 pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
+
 #[inline(always)]
 unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
@@ -82,7 +109,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   b = ((a as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar;
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * micro lpd
  *
@@ -170,8 +197,8 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
 //usage:     "\nExample:"
 //usage:     "\n	tcpsvd -E 0 515 softlimit -m 999999 lpd /var/spool ./print"
 // strip argument of bad chars
-unsafe extern "C" fn sane(mut str: *mut libc::c_char) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = str;
+unsafe extern "C" fn sane(mut string: *mut libc::c_char) -> *mut libc::c_char {
+  let mut s: *mut libc::c_char = string;
   let mut p: *mut libc::c_char = s;
   while *s != 0 {
     if bb_ascii_isalnum(*s as libc::c_uchar) != 0
@@ -185,13 +212,15 @@ unsafe extern "C" fn sane(mut str: *mut libc::c_char) -> *mut libc::c_char {
     s = s.offset(1)
   }
   *p = '\u{0}' as i32 as libc::c_char;
-  return str;
+  return string;
 }
+
 unsafe extern "C" fn xmalloc_read_stdin() -> *mut libc::c_char {
   // SECURITY:
   let mut max: size_t = (4i32 * 1024i32) as size_t; // more than enough for commands!
   return xmalloc_reads(0i32, &mut max); // for compiler
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn lpd_main(
   mut argc: libc::c_int,
@@ -203,6 +232,7 @@ pub unsafe extern "C" fn lpd_main(
   let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut queue: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut filenames: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
+
   // goto spool directory
   argv = argv.offset(1);
   if !(*argv).is_null() {
@@ -210,14 +240,17 @@ pub unsafe extern "C" fn lpd_main(
     argv = argv.offset(1);
     xchdir(*fresh1);
   }
+
   // error messages of xfuncs will be sent over network
   xdup2(1i32, 2i32);
+
   // nullify ctrl/data filenames
   memset(
     filenames.as_mut_ptr() as *mut libc::c_void,
     0i32,
     ::std::mem::size_of::<[*mut libc::c_char; 2]>() as libc::c_ulong,
   );
+
   // read command
   queue = xmalloc_read_stdin();
   s = queue;
@@ -225,6 +258,7 @@ pub unsafe extern "C" fn lpd_main(
     // eof?
     return 1i32;
   }
+
   // we understand only "receive job" command
   if 2i32 != *queue as libc::c_int {
     current_block = 5976951161683668841;
@@ -236,9 +270,11 @@ pub unsafe extern "C" fn lpd_main(
     if *sane(queue) == 0 {
       return 1i32;
     }
+
     // queue is a directory -> chdir to it and enter spooling mode
     spooling = chdir(queue) + 1i32; // 0: cannot chdir, 1: done
                                     // we don't free(s), we might need "queue" var later
+
     loop {
       let mut fname: *mut libc::c_char = 0 as *mut libc::c_char;
       let mut fd: libc::c_int = 0; // while (1)
