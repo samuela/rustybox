@@ -1,0 +1,25 @@
+[workspace]
+members = []
+
+[package]
+name = "rustybox"
+authors = ["Samuel Ainsworth"]
+version = "0.0.0"
+publish = false
+edition = "2018"
+autobins = false
+
+# [lib]
+# name = "rustybox-lib"
+# path = "c2rust-lib.rs"
+# crate-type = ["staticlib", "rlib"]
+
+[[bin]]
+name = "rustybox"
+path = "c2rust-lib.rs"
+
+[dependencies]
+c2rust-bitfields = "0.3"
+c2rust-asm-casts = "0.1"
+f128 = "0.2.5"
+libc = "0.2"

@@ -1,0 +1,448 @@
+use libc;
+extern "C" {
+  #[no_mangle]
+  fn free(__ptr: *mut libc::c_void);
+  #[no_mangle]
+  static mut optind: libc::c_int;
+  #[no_mangle]
+  static mut stdout: *mut _IO_FILE;
+  #[no_mangle]
+  fn fflush(__stream: *mut FILE) -> libc::c_int;
+  #[no_mangle]
+  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
+  #[no_mangle]
+  fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
+  #[no_mangle]
+  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+  #[no_mangle]
+  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+  #[no_mangle]
+  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  #[no_mangle]
+  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
+  #[no_mangle]
+  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+   * But potentially slow, don't use in one-billion-times loops */
+  #[no_mangle]
+  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+  // NB: will return short read on error, not -1,
+  // if some data was read before error occurred
+  #[no_mangle]
+  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+  #[no_mangle]
+  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+  /* Same, with limited max size, and returns the length (excluding NUL): */
+  #[no_mangle]
+  fn xmalloc_fgets_str_len(
+    file: *mut FILE,
+    terminating_string: *const libc::c_char,
+    maxsz_p: *mut size_t,
+  ) -> *mut libc::c_char;
+  /* Chops off '\n' from the end, unlike fgets: */
+  #[no_mangle]
+  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+  #[no_mangle]
+  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
+  /* "Opens" stdin if filename is special, else just opens file: */
+  #[no_mangle]
+  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
+  #[no_mangle]
+  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
+  #[no_mangle]
+  fn bb_strtou(
+    arg: *const libc::c_char,
+    endp: *mut *mut libc::c_char,
+    base: libc::c_int,
+  ) -> libc::c_uint;
+  #[no_mangle]
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  #[no_mangle]
+  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+  #[no_mangle]
+  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+  #[no_mangle]
+  static bb_uuenc_tbl_base64: [libc::c_char; 0];
+  #[no_mangle]
+  fn bb_uuencode(
+    store: *mut libc::c_char,
+    s: *const libc::c_void,
+    length: libc::c_int,
+    tbl: *const libc::c_char,
+  );
+  #[no_mangle]
+  fn read_base64(src_stream: *mut FILE, dst_stream: *mut FILE, flags: libc::c_int);
+}
+pub type __uint32_t = libc::c_uint;
+pub type __mode_t = libc::c_uint;
+pub type __off_t = libc::c_long;
+pub type __off64_t = libc::c_long;
+pub type __ssize_t = libc::c_long;
+pub type uint32_t = __uint32_t;
+pub type ssize_t = __ssize_t;
+pub type size_t = libc::c_ulong;
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct _IO_FILE {
+  pub _flags: libc::c_int,
+  pub _IO_read_ptr: *mut libc::c_char,
+  pub _IO_read_end: *mut libc::c_char,
+  pub _IO_read_base: *mut libc::c_char,
+  pub _IO_write_base: *mut libc::c_char,
+  pub _IO_write_ptr: *mut libc::c_char,
+  pub _IO_write_end: *mut libc::c_char,
+  pub _IO_buf_base: *mut libc::c_char,
+  pub _IO_buf_end: *mut libc::c_char,
+  pub _IO_save_base: *mut libc::c_char,
+  pub _IO_backup_base: *mut libc::c_char,
+  pub _IO_save_end: *mut libc::c_char,
+  pub _markers: *mut _IO_marker,
+  pub _chain: *mut _IO_FILE,
+  pub _fileno: libc::c_int,
+  pub _flags2: libc::c_int,
+  pub _old_offset: __off_t,
+  pub _cur_column: libc::c_ushort,
+  pub _vtable_offset: libc::c_schar,
+  pub _shortbuf: [libc::c_char; 1],
+  pub _lock: *mut libc::c_void,
+  pub _offset: __off64_t,
+  pub __pad1: *mut libc::c_void,
+  pub __pad2: *mut libc::c_void,
+  pub __pad3: *mut libc::c_void,
+  pub __pad4: *mut libc::c_void,
+  pub __pad5: size_t,
+  pub _mode: libc::c_int,
+  pub _unused2: [libc::c_char; 20],
+}
+pub type _IO_lock_t = ();
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct _IO_marker {
+  pub _next: *mut _IO_marker,
+  pub _sbuf: *mut _IO_FILE,
+  pub _pos: libc::c_int,
+}
+pub type FILE = _IO_FILE;
+pub type C2RustUnnamed = libc::c_uint;
+pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;
+pub const BASE64_FLAG_UU_STOP: C2RustUnnamed = 256;
+pub const SRC_BUF_SIZE: C2RustUnnamed_0 = 57;
+pub type C2RustUnnamed_0 = libc::c_uint;
+/* This *MUST* be a multiple of 3 */
+pub const DST_BUF_SIZE: C2RustUnnamed_0 = 76;
+/* vi: set sw=4 ts=4: */
+/*
+ * Copyright 2003, Glenn McGrath
+ *
+ * Licensed under GPLv2 or later, see file LICENSE in this source tree.
+ *
+ * Based on specification from
+ * http://www.opengroup.org/onlinepubs/007904975/utilities/uuencode.html
+ *
+ * Bugs: the spec doesn't mention anything about "`\n`\n" prior to the
+ * "end" line
+ */
+//config:config UUDECODE
+//config:	bool "uudecode (5.8 kb)"
+//config:	default y
+//config:	help
+//config:	uudecode is used to decode a uuencoded file.
+//applet:IF_UUDECODE(APPLET(uudecode, BB_DIR_USR_BIN, BB_SUID_DROP))
+//kbuild:lib-$(CONFIG_UUDECODE) += uudecode.o
+//usage:#define uudecode_trivial_usage
+//usage:       "[-o OUTFILE] [INFILE]"
+//usage:#define uudecode_full_usage "\n\n"
+//usage:       "Uudecode a file\n"
+//usage:       "Finds OUTFILE in uuencoded source unless -o is given"
+//usage:
+//usage:#define uudecode_example_usage
+//usage:       "$ uudecode -o busybox busybox.uu\n"
+//usage:       "$ ls -l busybox\n"
+//usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
+unsafe extern "C" fn read_stduu(
+  mut src_stream: *mut FILE,
+  mut dst_stream: *mut FILE,
+  mut flags: libc::c_int,
+) {
+  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  loop {
+    let mut encoded_len: libc::c_int = 0;
+    let mut str_len: libc::c_int = 0;
+    let mut line_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line_len: size_t = 0;
+    line_len = (64i32 * 1024i32) as size_t;
+    line = xmalloc_fgets_str_len(
+      src_stream,
+      b"\n\x00" as *const u8 as *const libc::c_char,
+      &mut line_len,
+    );
+    if line.is_null() {
+      break;
+    }
+    /* Handle both Unix and MSDOS text.
+     * Note: space should not be trimmed, some encoders use it instead of "`"
+     * for padding of last incomplete 4-char block.
+     */
+    str_len = line_len as libc::c_int;
+    loop {
+      str_len -= 1;
+      if !(str_len >= 0i32
+        && (*line.offset(str_len as isize) as libc::c_int == '\n' as i32
+          || *line.offset(str_len as isize) as libc::c_int == '\r' as i32))
+      {
+        break;
+      }
+      *line.offset(str_len as isize) = '\u{0}' as i32 as libc::c_char
+    }
+    if strcmp(line, b"end\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      return;
+      /* the only non-error exit */
+    }
+    line_ptr = line;
+    while *line_ptr != 0 {
+      *line_ptr = (*line_ptr as libc::c_int - 0x20i32 & 0x3fi32) as libc::c_char;
+      line_ptr = line_ptr.offset(1)
+    }
+    str_len = line_ptr.wrapping_offset_from(line) as libc::c_long as libc::c_int;
+    encoded_len = *line.offset(0) as libc::c_int * 4i32 / 3i32;
+    /* Check that line is not too short. (we tolerate
+     * overly _long_ line to accommodate possible extra "`").
+     * Empty line case is also caught here. */
+    if str_len <= encoded_len {
+      break;
+    }
+    if encoded_len <= 0i32 {
+      /* Ignore the "`\n" line, why is it even in the encode file ? */
+      free(line as *mut libc::c_void);
+    } else {
+      if encoded_len > 60i32 {
+        bb_simple_error_msg_and_die(b"line too long\x00" as *const u8 as *const libc::c_char);
+      }
+      dst = line;
+      line_ptr = line.offset(1);
+      loop {
+        /* Merge four 6 bit chars to three 8 bit chars */
+        let fresh0 = dst;
+        dst = dst.offset(1);
+        *fresh0 = ((*line_ptr.offset(0) as libc::c_int) << 2i32
+          | *line_ptr.offset(1) as libc::c_int >> 4i32) as libc::c_char;
+        encoded_len -= 1;
+        if encoded_len == 0i32 {
+          break;
+        }
+        let fresh1 = dst;
+        dst = dst.offset(1);
+        *fresh1 = ((*line_ptr.offset(1) as libc::c_int) << 4i32
+          | *line_ptr.offset(2) as libc::c_int >> 2i32) as libc::c_char;
+        encoded_len -= 1;
+        if encoded_len == 0i32 {
+          break;
+        }
+        let fresh2 = dst;
+        dst = dst.offset(1);
+        *fresh2 = ((*line_ptr.offset(2) as libc::c_int) << 6i32
+          | *line_ptr.offset(3) as libc::c_int) as libc::c_char;
+        line_ptr = line_ptr.offset(4);
+        encoded_len -= 2i32;
+        if !(encoded_len > 0i32) {
+          break;
+        }
+      }
+      fwrite(
+        line as *const libc::c_void,
+        1i32 as size_t,
+        dst.wrapping_offset_from(line) as libc::c_long as size_t,
+        dst_stream,
+      );
+      free(line as *mut libc::c_void);
+    }
+  }
+  bb_simple_error_msg_and_die(b"short file\x00" as *const u8 as *const libc::c_char);
+}
+#[no_mangle]
+pub unsafe extern "C" fn uudecode_main(
+  mut argc: libc::c_int,
+  mut argv: *mut *mut libc::c_char,
+) -> libc::c_int {
+  let mut src_stream: *mut FILE = 0 as *mut FILE;
+  let mut outname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  getopt32(
+    argv,
+    b"^o:\x00?1\x00" as *const u8 as *const libc::c_char,
+    &mut outname as *mut *mut libc::c_char,
+  );
+  argv = argv.offset(optind as isize);
+  if (*argv.offset(0)).is_null() {
+    argv = argv.offset(-1);
+    *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+  }
+  src_stream = xfopen_stdin(*argv.offset(0));
+  loop
+  /* Search for the start of the encoding */
+  {
+    line = xmalloc_fgetline(src_stream);
+    if line.is_null() {
+      break;
+    }
+    let mut decode_fn_ptr: Option<
+      unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
+    > = None;
+    let mut line_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut dst_stream: *mut FILE = 0 as *mut FILE;
+    let mut mode: libc::c_int = 0;
+    if !is_prefixed_with(
+      line,
+      b"begin-base64 \x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
+      line_ptr = line.offset(13);
+      decode_fn_ptr =
+        Some(read_base64 as unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> ())
+    } else if !is_prefixed_with(line, b"begin \x00" as *const u8 as *const libc::c_char).is_null() {
+      line_ptr = line.offset(6);
+      decode_fn_ptr =
+        Some(read_stduu as unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> ())
+    } else {
+      free(line as *mut libc::c_void);
+      continue;
+    }
+    /* begin line found. decode and exit */
+    mode = bb_strtou(line_ptr, 0 as *mut *mut libc::c_char, 8i32) as libc::c_int; /* remove trailing space (and '\r' for DOS text) */
+    if outname.is_null() {
+      outname = strchr(line_ptr, ' ' as i32);
+      if outname.is_null() {
+        break;
+      }
+      outname = outname.offset(1);
+      trim(outname);
+      if *outname.offset(0) == 0 {
+        break;
+      }
+    }
+    dst_stream = stdout;
+    if *outname.offset(0) as libc::c_int != '-' as i32 || *outname.offset(1) as libc::c_int != 0 {
+      dst_stream = xfopen_for_write(outname);
+      fchmod(
+        fileno_unlocked(dst_stream),
+        (mode
+          & (0o400i32
+            | 0o200i32
+            | 0o100i32
+            | (0o400i32 | 0o200i32 | 0o100i32) >> 3i32
+            | (0o400i32 | 0o200i32 | 0o100i32) >> 3i32 >> 3i32)) as __mode_t,
+      );
+    }
+    free(line as *mut libc::c_void);
+    decode_fn_ptr.expect("non-null function pointer")(
+      src_stream,
+      dst_stream,
+      BASE64_FLAG_UU_STOP as libc::c_int + BASE64_FLAG_NO_STOP_CHAR as libc::c_int,
+    );
+    /* fclose_if_not_stdin(src_stream); - redundant */
+    return 0i32;
+  }
+  bb_simple_error_msg_and_die(b"no \'begin\' line\x00" as *const u8 as *const libc::c_char);
+}
+//applet:IF_BASE64(APPLET(base64, BB_DIR_BIN, BB_SUID_DROP))
+//kbuild:lib-$(CONFIG_BASE64) += uudecode.o
+//config:config BASE64
+//config:	bool "base64 (4.9 kb)"
+//config:	default y
+//config:	help
+//config:	Base64 encode and decode
+//usage:#define base64_trivial_usage
+//usage:	"[-d] [FILE]"
+//usage:#define base64_full_usage "\n\n"
+//usage:       "Base64 encode or decode FILE to standard output"
+//usage:     "\n	-d	Decode data"
+// //usage:     "\n	-w COL	Wrap lines at COL (default 76, 0 disables)"
+// //usage:     "\n	-i	When decoding, ignore non-alphabet characters"
+#[no_mangle]
+pub unsafe extern "C" fn base64_main(
+  mut argc: libc::c_int,
+  mut argv: *mut *mut libc::c_char,
+) -> libc::c_int {
+  let mut src_stream: *mut FILE = 0 as *mut FILE;
+  let mut opts: libc::c_uint = 0;
+  opts = getopt32(argv, b"^d\x00?1\x00" as *const u8 as *const libc::c_char);
+  argv = argv.offset(optind as isize);
+  if (*argv.offset(0)).is_null() {
+    argv = argv.offset(-1);
+    *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+  }
+  src_stream = xfopen_stdin(*argv.offset(0));
+  if opts != 0 {
+    read_base64(src_stream, stdout, -1i32 as libc::c_char as libc::c_int);
+  } else {
+    let mut src_buf: [libc::c_char; 57] = [0; 57];
+    let mut dst_buf: [libc::c_char; 77] = [0; 77];
+    let mut src_fd: libc::c_int = fileno_unlocked(src_stream);
+    loop {
+      let mut size: size_t = full_read(
+        src_fd,
+        src_buf.as_mut_ptr() as *mut libc::c_void,
+        SRC_BUF_SIZE as libc::c_int as size_t,
+      ) as size_t;
+      if size == 0 {
+        break;
+      }
+      if (size as ssize_t) < 0i32 as libc::c_long {
+        bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+      }
+      /* Encode the buffer we just read in */
+      bb_uuencode(
+        dst_buf.as_mut_ptr(),
+        src_buf.as_mut_ptr() as *const libc::c_void,
+        size as libc::c_int,
+        bb_uuenc_tbl_base64.as_ptr(),
+      );
+      xwrite(
+        1i32,
+        dst_buf.as_mut_ptr() as *const libc::c_void,
+        (4i32 as libc::c_ulong).wrapping_mul(
+          size
+            .wrapping_add(2i32 as libc::c_ulong)
+            .wrapping_div(3i32 as libc::c_ulong),
+        ),
+      );
+      bb_putchar('\n' as i32);
+      fflush(stdout);
+    }
+  }
+  fflush_stdout_and_exit(0i32);
+}
+/* Test script.
+Put this into an empty dir with busybox binary, an run.
+
+#!/bin/sh
+test -x busybox || { echo "No ./busybox?"; exit; }
+ln -sf busybox uudecode
+ln -sf busybox uuencode
+>A_null
+echo -n A >A
+echo -n AB >AB
+echo -n ABC >ABC
+echo -n ABCD >ABCD
+echo -n ABCDE >ABCDE
+echo -n ABCDEF >ABCDEF
+cat busybox >A_bbox
+for f in A*; do
+    echo uuencode $f
+    ./uuencode    $f <$f >u_$f
+    ./uuencode -m $f <$f >m_$f
+done
+mkdir unpk_u unpk_m 2>/dev/null
+for f in u_*; do
+    ./uudecode <$f -o unpk_u/${f:2}
+    diff -a ${f:2} unpk_u/${f:2} >/dev/null 2>&1
+    echo uudecode $f: $?
+done
+for f in m_*; do
+    ./uudecode <$f -o unpk_m/${f:2}
+    diff -a ${f:2} unpk_m/${f:2} >/dev/null 2>&1
+    echo uudecode $f: $?
+done
+*/

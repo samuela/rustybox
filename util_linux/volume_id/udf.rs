@@ -1,0 +1,419 @@
+use libc;
+extern "C" {
+  #[no_mangle]
+  fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+  #[no_mangle]
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  #[no_mangle]
+  fn volume_id_set_label_unicode16(
+    id: *mut volume_id,
+    buf: *const uint8_t,
+    endianess: endian,
+    count: size_t,
+  );
+  #[no_mangle]
+  fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
+}
+pub type __uint8_t = libc::c_uchar;
+pub type __uint16_t = libc::c_ushort;
+pub type __uint32_t = libc::c_uint;
+pub type __uint64_t = libc::c_ulong;
+pub type uint8_t = __uint8_t;
+pub type uint16_t = __uint16_t;
+pub type uint32_t = __uint32_t;
+pub type uint64_t = __uint64_t;
+pub type size_t = libc::c_ulong;
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct volume_id {
+  pub fd: libc::c_int,
+  pub error: libc::c_int,
+  pub sbbuf_len: size_t,
+  pub seekbuf_len: size_t,
+  pub sbbuf: *mut uint8_t,
+  pub seekbuf: *mut uint8_t,
+  pub seekbuf_off: uint64_t,
+  pub label: [libc::c_char; 65],
+  pub uuid: [libc::c_char; 37],
+  pub type_0: *const libc::c_char,
+}
+pub type endian = libc::c_uint;
+pub const BE: endian = 1;
+pub const LE: endian = 0;
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct dstring {
+  pub clen: uint8_t,
+  pub c: [uint8_t; 31],
+}
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct primary_descriptor {
+  pub seq_num: uint32_t,
+  pub desc_num: uint32_t,
+  pub ident: dstring,
+}
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub union C2RustUnnamed {
+  pub anchor: anchor_descriptor,
+  pub primary: primary_descriptor,
+}
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct anchor_descriptor {
+  pub length: uint32_t,
+  pub location: uint32_t,
+}
+/*
+ * volume_id - reads filesystem label and uuid
+ *
+ * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
+ *
+ *	This library is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU Lesser General Public
+ *	License as published by the Free Software Foundation; either
+ *	version 2.1 of the License, or (at your option) any later version.
+ *
+ *	This library is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	Lesser General Public License for more details.
+ *
+ *	You should have received a copy of the GNU Lesser General Public
+ *	License along with this library; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+//config:config FEATURE_VOLUMEID_UDF
+//config:	bool "udf filesystem"
+//config:	default y
+//config:	depends on VOLUMEID
+//kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_UDF) += udf.o
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct volume_descriptor {
+  pub tag: descriptor_tag,
+  pub type_0: C2RustUnnamed,
+}
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct descriptor_tag {
+  pub id: uint16_t,
+  pub version: uint16_t,
+  pub checksum: uint8_t,
+  pub reserved: uint8_t,
+  pub serial: uint16_t,
+  pub crc: uint16_t,
+  pub crc_len: uint16_t,
+  pub location: uint32_t,
+}
+#[derive(Copy, Clone)]
+#[repr(C, packed)]
+pub struct volume_structure_descriptor {
+  pub type_0: uint8_t,
+  pub id: [uint8_t; 5],
+  pub version: uint8_t,
+}
+/*
+ * volume_id - reads filesystem label and uuid
+ *
+ * Copyright (C) 2005 Kay Sievers <kay.sievers@vrfy.org>
+ *
+ *	This library is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU Lesser General Public
+ *	License as published by the Free Software Foundation; either
+ *	version 2.1 of the License, or (at your option) any later version.
+ *
+ *	This library is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *	Lesser General Public License for more details.
+ *
+ *	You should have received a copy of the GNU Lesser General Public
+ *	License along with this library; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+/* #define dbg(...) bb_error_msg(__VA_ARGS__) */
+/* volume_id.h */
+//	int		fd_close:1;
+//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	size_t		label_raw_len;
+//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	size_t		uuid_raw_len;
+/* uuid is stored in ASCII (not binary) form here: */
+//	char		type_version[VOLUME_ID_FORMAT_SIZE];
+//	smallint	usage_id;
+//	const char	*usage;
+/*uint64_t off,*/
+/* util.h */
+/* size of superblock buffer, reiserfs block is at 64k */
+/* size of seek buffer, FAT cluster is 32k max */
+/* volume_id_set_uuid(id,buf,fmt) assumes size of uuid buf
+ * by shifting: 4 << fmt, except for fmt == UUID_DCE_STRING.
+ * The constants below should match sizes.
+ */
+/* 4 bytes */
+/* 8 bytes */
+/* 16 bytes */
+/* 36 bytes (VOLUME_ID_UUID_SIZE) */
+//void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
+//void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
+//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+/* Probe routines */
+/* RAID */
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+/*,uint64_t off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+/* FS */
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,uint64_t off*/);
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,uint64_t off*/);
+/*, uint64_t off*/
+//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,uint64_t off*/);
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+/*,uint64_t off*/
+#[no_mangle]
+pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
+/*,uint64_t off*/ {
+  let mut current_block: u64;
+  let mut vd: *mut volume_descriptor = 0 as *mut volume_descriptor;
+  let mut vsd: *mut volume_structure_descriptor = 0 as *mut volume_structure_descriptor;
+  let mut bs: libc::c_uint = 0;
+  let mut b: libc::c_uint = 0;
+  let mut type_0: libc::c_uint = 0;
+  let mut count: libc::c_uint = 0;
+  let mut loc: libc::c_uint = 0;
+  let mut clen: libc::c_uint = 0;
+  vsd = volume_id_get_buffer(
+    id,
+    (0i32 as uint64_t).wrapping_add(0x8000i32 as libc::c_ulong),
+    0x200i32 as size_t,
+  ) as *mut volume_structure_descriptor;
+  if vsd.is_null() {
+    return -1i32;
+  }
+  if !(memcmp(
+    (*vsd).id.as_mut_ptr() as *const libc::c_void,
+    b"NSR02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+    5i32 as libc::c_ulong,
+  ) == 0i32)
+  {
+    if !(memcmp(
+      (*vsd).id.as_mut_ptr() as *const libc::c_void,
+      b"NSR03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+      5i32 as libc::c_ulong,
+    ) == 0i32)
+    {
+      if !(memcmp(
+        (*vsd).id.as_mut_ptr() as *const libc::c_void,
+        b"BEA01\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+        5i32 as libc::c_ulong,
+      ) == 0i32)
+      {
+        if !(memcmp(
+          (*vsd).id.as_mut_ptr() as *const libc::c_void,
+          b"BOOT2\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+          5i32 as libc::c_ulong,
+        ) == 0i32)
+        {
+          if !(memcmp(
+            (*vsd).id.as_mut_ptr() as *const libc::c_void,
+            b"CD001\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+            5i32 as libc::c_ulong,
+          ) == 0i32)
+          {
+            if !(memcmp(
+              (*vsd).id.as_mut_ptr() as *const libc::c_void,
+              b"CDW02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+              5i32 as libc::c_ulong,
+            ) == 0i32)
+            {
+              if !(memcmp(
+                (*vsd).id.as_mut_ptr() as *const libc::c_void,
+                b"TEA03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+                5i32 as libc::c_ulong,
+              ) == 0i32)
+              {
+                return -1i32;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  /* search the next VSD to get the logical block size of the volume */
+  bs = 0x800i32 as libc::c_uint;
+  loop {
+    if !(bs < 0x8000i32 as libc::c_uint) {
+      current_block = 13472856163611868459;
+      break;
+    }
+    vsd = volume_id_get_buffer(
+      id,
+      (0i32 as uint64_t)
+        .wrapping_add(0x8000i32 as libc::c_ulong)
+        .wrapping_add(bs as libc::c_ulong),
+      0x800i32 as size_t,
+    ) as *mut volume_structure_descriptor;
+    if vsd.is_null() {
+      return -1i32;
+    }
+    if (*vsd).id[0] as libc::c_int != '\u{0}' as i32 {
+      current_block = 16203760046146113240;
+      break;
+    }
+    bs = bs.wrapping_add(0x800i32 as libc::c_uint)
+  }
+  match current_block {
+    13472856163611868459 => return -1i32,
+    _ =>
+    /* search the list of VSDs for a NSR descriptor */
+    {
+      b = 0i32 as libc::c_uint;
+      loop {
+        if !(b < 64i32 as libc::c_uint) {
+          current_block = 7245201122033322888;
+          break;
+        }
+        vsd = volume_id_get_buffer(
+          id,
+          (0i32 as uint64_t)
+            .wrapping_add(0x8000i32 as libc::c_ulong)
+            .wrapping_add(b.wrapping_mul(bs) as libc::c_ulong),
+          0x800i32 as size_t,
+        ) as *mut volume_structure_descriptor;
+        if vsd.is_null() {
+          return -1i32;
+        }
+        if (*vsd).id[0] as libc::c_int == '\u{0}' as i32 {
+          return -1i32;
+        }
+        if memcmp(
+          (*vsd).id.as_mut_ptr() as *const libc::c_void,
+          b"NSR02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+          5i32 as libc::c_ulong,
+        ) == 0i32
+        {
+          current_block = 1900569641276003734;
+          break;
+        }
+        if memcmp(
+          (*vsd).id.as_mut_ptr() as *const libc::c_void,
+          b"NSR03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
+          5i32 as libc::c_ulong,
+        ) == 0i32
+        {
+          current_block = 1900569641276003734;
+          break;
+        }
+        b = b.wrapping_add(1)
+      }
+      match current_block {
+        7245201122033322888 => return -1i32,
+        _ => {
+          /* read anchor volume descriptor */
+          vd = volume_id_get_buffer(
+            id,
+            (0i32 as uint64_t)
+              .wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as libc::c_ulong),
+            0x200i32 as size_t,
+          ) as *mut volume_descriptor;
+          if vd.is_null() {
+            return -1i32;
+          }
+          type_0 = (*vd).tag.id as libc::c_uint;
+          if !(type_0 != 2i32 as libc::c_uint) {
+            /* get descriptor list address and block count */
+            count = (*vd).type_0.anchor.length.wrapping_div(bs);
+            loc = (*vd).type_0.anchor.location;
+            /* pick the primary descriptor from the list */
+            b = 0i32 as libc::c_uint;
+            loop {
+              if !(b < count) {
+                current_block = 1843993682127799951;
+                break;
+              }
+              vd = volume_id_get_buffer(
+                id,
+                (0i32 as uint64_t)
+                  .wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as libc::c_ulong),
+                0x200i32 as size_t,
+              ) as *mut volume_descriptor;
+              if vd.is_null() {
+                return -1i32;
+              }
+              type_0 = (*vd).tag.id as libc::c_uint;
+              /* check validity */
+              if type_0 == 0i32 as libc::c_uint {
+                current_block = 1843993682127799951;
+                break;
+              }
+              if (*vd).tag.location != loc.wrapping_add(b) {
+                current_block = 1843993682127799951;
+                break;
+              }
+              if type_0 == 1i32 as libc::c_uint {
+                current_block = 18232118978385979440;
+                break;
+              }
+              b = b.wrapping_add(1)
+            }
+            match current_block {
+              1843993682127799951 => {}
+              _ =>
+              /* TAG_ID_PVD */
+              //	volume_id_set_label_raw(id, &(vd->type.primary.ident.clen), 32);
+              {
+                clen = (*vd).type_0.primary.ident.clen as libc::c_uint;
+                if clen == 8i32 as libc::c_uint {
+                  volume_id_set_label_string(
+                    id,
+                    (*vd).type_0.primary.ident.c.as_mut_ptr(),
+                    31i32 as size_t,
+                  );
+                } else if clen == 16i32 as libc::c_uint {
+                  volume_id_set_label_unicode16(
+                    id,
+                    (*vd).type_0.primary.ident.c.as_mut_ptr(),
+                    BE,
+                    31i32 as size_t,
+                  );
+                }
+              }
+            }
+          }
+          /* TAG_ID_AVDP */
+          //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
+          (*id).type_0 = b"udf\x00" as *const u8 as *const libc::c_char;
+          return 0i32;
+        }
+      }
+    }
+  };
+}
