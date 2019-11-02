@@ -2,7 +2,7 @@ use libc;
 use std::ffi::CStr;
 use std::ffi::CString;
 
-use crate::applets::applet_tables::applets;
+use crate::applets::applet_tables::{applets, InstallLoc};
 
 extern "C" {
   #[no_mangle]
@@ -2777,208 +2777,6 @@ pub static mut applet_suid: [uint8_t; 99] = [
 ];
 
 #[no_mangle]
-pub static mut applet_install_loc: [uint8_t; 198] = [
-  0x33i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x14i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x21i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x14i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x10i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x14i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x21i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x14i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x42i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x21i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x41i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x14i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x12i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x21i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x22i32 as uint8_t,
-  0x21i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x34i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x44i32 as uint8_t,
-  0x24i32 as uint8_t,
-  0x43i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x11i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x23i32 as uint8_t,
-  0x31i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x13i32 as uint8_t,
-  0x32i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x33i32 as uint8_t,
-  0x21i32 as uint8_t,
-];
-
-#[no_mangle]
 pub static mut applet_numbers: [uint16_t; 1] = [218i32 as uint16_t];
 
 /*
@@ -3622,25 +3420,20 @@ unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
   llist_free(suid_config as *mut llist_t, None);
 }
 
-/* FEATURE_SUID */
-static mut usr_bin: [libc::c_char; 10] = [47, 117, 115, 114, 47, 98, 105, 110, 47, 0];
-static mut usr_sbin: [libc::c_char; 11] = [47, 117, 115, 114, 47, 115, 98, 105, 110, 47, 0];
-
-// Initialized in run_static_initializers
-static mut install_dir: [*const libc::c_char; 5] = [0 as *const libc::c_char; 5];
-
 unsafe fn applet_names_sorted() -> Vec<String> {
   let mut ret: Vec<String> = applets.iter().map(|a| ptr_to_str(a.name)).collect();
   ret.sort();
   ret
 }
 
-unsafe fn APPLET_INSTALL_LOC(i: usize) -> usize {
-  if i & 1 != 0 {
-    (applet_install_loc[i.wrapping_div(2)] >> 4) as usize
-  } else {
-    (applet_install_loc[i.wrapping_div(2)] & 0xf) as usize
-  }
+fn install_loc_to_string(install_loc: InstallLoc) -> String {
+  String::from(match install_loc {
+    DIR_USR_SBIN => "/usr/sbin/",
+    DIR_USR_BIN => "/usr/bin/",
+    DIR_SBIN => "/sbin/",
+    DIR_BIN => "/bin/",
+    DIR_ROOT => "/",
+  })
 }
 
 /* create (sym)links for each applet */
@@ -3668,7 +3461,7 @@ unsafe extern "C" fn install_links(
       if !custom_install_dir.is_null() {
         custom_install_dir
       } else {
-        install_dir[APPLET_INSTALL_LOC(i)]
+        str_to_ptr(&install_loc_to_string(applets[i].install_loc))
       },
       str_to_ptr(&appnames[i]),
     );
@@ -3853,18 +3646,19 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
       }
     }
 
-    if argv[1].starts_with("--list") {
-      dup2(1, 2);
-      let appnames = applet_names_sorted();
-      let mut i: usize = 0;
-      while i < applet_main.len() {
-        if argv[1].len() > 6 {
-          /* --list-full? */
-          full_write2_str(install_dir[APPLET_INSTALL_LOC(i)].offset(1));
-        }
-
-        eprintln!("{}", &appnames[i]);
-        i += 1
+    if argv[1] == "--list" {
+      for applet in applets.iter() {
+        println!("{}", ptr_to_str(applet.name));
+      }
+      return 0;
+    }
+    if argv[1] == "--list-full" {
+      for applet in applets.iter() {
+        println!(
+          "{}{}",
+          &install_loc_to_string(applet.install_loc)[1..],
+          ptr_to_str(applet.name)
+        );
       }
       return 0;
     }
@@ -4334,19 +4128,3 @@ fn str_vec_to_ptrs(strings: &[String]) -> *mut *mut libc::c_char {
   let mut nodrop = ::std::mem::ManuallyDrop::new(ret);
   nodrop.as_mut_ptr()
 }
-
-unsafe extern "C" fn run_static_initializers() {
-  install_dir = [
-    &*usr_bin.as_ptr().offset(8) as *const libc::c_char,
-    &*usr_bin.as_ptr().offset(4) as *const libc::c_char,
-    &*usr_sbin.as_ptr().offset(4) as *const libc::c_char,
-    usr_bin.as_ptr(),
-    usr_sbin.as_ptr(),
-  ]
-}
-
-#[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
