@@ -16,7 +16,7 @@ autobins = false
 
 [[bin]]
 name = "rustybox"
-path = "c2rust-lib.rs"
+path = "rustybox.rs"
 
 [dependencies]
 c2rust-bitfields = "0.3"
