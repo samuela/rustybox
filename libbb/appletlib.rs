@@ -3279,13 +3279,15 @@ static mut packed_scripts: [libc::c_char; 111] = [
  * then bunzip2 code will be linked in anyway, and disabling help compression
  * would be not optimal:
  */
+
 #[no_mangle]
-pub unsafe extern "C" fn string_array_len(mut argv: *mut *mut libc::c_char) -> libc::c_uint {
+pub unsafe extern "C" fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint {
   let mut start: *mut *mut libc::c_char = argv;
-  while !(*argv).is_null() {
-    argv = argv.offset(1)
+  let mut current: *mut *mut libc::c_char = argv;
+  while !(*current).is_null() {
+    current = current.offset(1)
   }
-  return argv.wrapping_offset_from(start) as libc::c_long as libc::c_uint;
+  return current.wrapping_offset_from(start) as libc::c_long as libc::c_uint;
 }
 
 #[no_mangle]
@@ -3331,8 +3333,8 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
   // xfunc_die();
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn find_applet_by_name(mut name: *const libc::c_char) -> libc::c_int {
+// TODO: use an option type here, fix name type
+unsafe fn find_applet_by_name(mut name: *const libc::c_char) -> i32 {
   let mut i: libc::c_uint = 0;
   let mut max: libc::c_uint = 0;
   let mut j: libc::c_int = 0;
@@ -3422,6 +3424,7 @@ pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
 static mut ruid: uid_t = 0;
 static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut suid_config_t;
 static mut suid_cfg_readable: bool = false;
+
 /* libbb candidate */
 unsafe extern "C" fn get_trimmed_slice(
   mut s: *mut libc::c_char,
@@ -3721,6 +3724,7 @@ unsafe extern "C" fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
   return 0i32;
 }
 
+// TODO: make this usize
 unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
   let mut current_block: u64;
   let mut rgid: gid_t = 0;
@@ -4114,7 +4118,6 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
     }
 
     if argv[1] == "--install" {
-      // let mut use_symbolic_links: libc::c_int = 0;
       let mut busybox: *const libc::c_char = 0 as *const libc::c_char;
       busybox = xmalloc_readlink(bb_busybox_exec_path.as_ptr());
       if busybox.is_null() {
@@ -4490,16 +4493,11 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
 /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
 /* Does NOT check that applet is NOFORK, just blindly runs it */
 
-pub unsafe fn run_applet_no_and_exit(
-  mut applet_no: libc::c_int,
-  name: &str,
-  mut argv: *mut *mut libc::c_char,
-) -> ! {
-  let mut argc: libc::c_int = string_array_len(argv) as libc::c_int;
-  /*
-   * We do not use argv[0]: do not want to repeat massaging of
-   * "-/sbin/halt" -> "halt", for example.
-   */
+pub unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) -> ! {
+  let argc = argv.len() as i32;
+
+  /* We do not use argv[0]: do not want to repeat massaging of
+   * "-/sbin/halt" -> "halt", for example. */
   applet_name = str_to_ptr(name);
 
   /* Special case. POSIX says "test --help"
@@ -4508,22 +4506,19 @@ pub unsafe fn run_applet_no_and_exit(
    * "true" and "false" are also special.
    */
   // TODO: get rid of these magic numbers.
-  if true && applet_no != 332i32 && applet_no != 342i32 && applet_no != 82i32 {
-    if argc == 2i32
-      && strcmp(
-        *argv.offset(1),
-        b"--help\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
-    {
+  if applet_no != 332 && applet_no != 342 && applet_no != 82 {
+    if argc == 2 && argv[1] == "--help" {
       /* Make "foo --help" exit with 0: */
-      xfunc_error_retval = 0i32 as uint8_t;
+      xfunc_error_retval = 0 as uint8_t;
       bb_show_usage();
     }
   }
 
-  check_suid(applet_no);
+  check_suid(applet_no as i32);
   xfunc_error_retval =
-    applet_main[applet_no as usize].expect("non-null function pointer")(argc, argv) as uint8_t;
+    applet_main[applet_no].expect("non-null function pointer")(argc, str_vec_to_ptrs(argv))
+      as uint8_t;
+
   /* Note: applet_main() may also not return (die on a xfunc or such) */
   xfunc_die();
 }
@@ -4534,9 +4529,9 @@ unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
   }
 
   /* find_applet_by_name() search is more expensive, so goes second */
-  let mut applet: libc::c_int = find_applet_by_name(str_to_ptr(name));
-  if applet >= 0 {
-    run_applet_no_and_exit(applet, name, str_vec_to_ptrs(argv));
+  let applet_no = find_applet_by_name(str_to_ptr(name));
+  if applet_no >= 0 {
+    run_applet_no_and_exit(applet_no as usize, name, argv);
   }
 
   /*bb_error_msg_and_die("applet not found"); - links in printf */
@@ -4584,7 +4579,12 @@ fn str_vec_to_ptrs(strings: &[String]) -> *mut *mut libc::c_char {
     ret.push(str_to_ptr(arg));
   }
   ret.push(::std::ptr::null_mut());
-  ret.as_mut_ptr()
+
+  // This is necessary because otherwise `ret` is dropped prematurely. We need
+  // the pointer to remain valid when calling into C code. Probably introduces a
+  // small memory leak, but we'll live with it for now.
+  let mut nodrop = ::std::mem::ManuallyDrop::new(ret);
+  nodrop.as_mut_ptr()
 }
 
 unsafe extern "C" fn run_static_initializers() {
