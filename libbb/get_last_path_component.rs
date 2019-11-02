@@ -1,12 +1,13 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
 }
-/* Simpler version: does not special case "/" string */
-/* vi: set sw=4 ts=4: */
+
 /*
  * bb_get_last_path_component implementation for busybox
  *
@@ -14,6 +15,8 @@ extern "C" {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
+
+/* Simpler version: does not special case "/" string */
 #[no_mangle]
 pub unsafe extern "C" fn bb_basename(mut name: *const libc::c_char) -> *const libc::c_char {
   let mut cp: *const libc::c_char = strrchr(name, '/' as i32);
@@ -22,6 +25,7 @@ pub unsafe extern "C" fn bb_basename(mut name: *const libc::c_char) -> *const li
   }
   return name;
 }
+
 /* "abc/def/" -> "" and it never modifies 'path' */
 /*
  * "/"        -> "/"
@@ -39,7 +43,34 @@ pub unsafe extern "C" fn bb_get_last_path_component_nostrip(
   }
   return slash.offset(1);
 }
-/* vi: set sw=4 ts=4: */
+
+/* xxxx_strip version can modify its parameter:
+ * "/"        -> "/"
+ * "abc"      -> "abc"
+ * "abc/def"  -> "def"
+ * "abc/def/" -> "def" !!
+ */
+/*
+ * "/"        -> "/"
+ * "abc"      -> "abc"
+ * "abc/def"  -> "def"
+ * "abc/def/" -> "def" !!
+ */
+#[no_mangle]
+pub unsafe extern "C" fn bb_get_last_path_component_strip(
+  mut path: *mut libc::c_char,
+) -> *mut libc::c_char {
+  let mut slash: *mut libc::c_char = last_char_is(path, '/' as i32);
+  if !slash.is_null() {
+    while *slash as libc::c_int == '/' as i32 && slash != path {
+      let fresh0 = slash;
+      slash = slash.offset(-1);
+      *fresh0 = '\u{0}' as i32 as libc::c_char
+    }
+  }
+  return bb_get_last_path_component_nostrip(path);
+}
+
 /*
  * Busybox main internal header file
  *
@@ -150,29 +181,3 @@ pub unsafe extern "C" fn bb_get_last_path_component_nostrip(
 /* bb_copyfd_XX print read/write errors and return -1 if they occur */
 /* "short" copy can be detected by return value < size */
 /* this helper yells "short read!" if param is not -1 */
-/* xxxx_strip version can modify its parameter:
- * "/"        -> "/"
- * "abc"      -> "abc"
- * "abc/def"  -> "def"
- * "abc/def/" -> "def" !!
- */
-/*
- * "/"        -> "/"
- * "abc"      -> "abc"
- * "abc/def"  -> "def"
- * "abc/def/" -> "def" !!
- */
-#[no_mangle]
-pub unsafe extern "C" fn bb_get_last_path_component_strip(
-  mut path: *mut libc::c_char,
-) -> *mut libc::c_char {
-  let mut slash: *mut libc::c_char = last_char_is(path, '/' as i32);
-  if !slash.is_null() {
-    while *slash as libc::c_int == '/' as i32 && slash != path {
-      let fresh0 = slash;
-      slash = slash.offset(-1);
-      *fresh0 = '\u{0}' as i32 as libc::c_char
-    }
-  }
-  return bb_get_last_path_component_nostrip(path);
-}
