@@ -39,8 +39,10 @@ extern "C" {
   /* We can just memorize it once - no multithreading in busybox :) */
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   /* NB: "unsigned request" is crucial! "int request" will break some arches! */
   /* At least glibc has horrendously large inline for this, so wrap it */
   /* "Keycodes" that report an escape sequence.
@@ -138,9 +140,11 @@ extern "C" {
   /* NB: (bb_hexdigits_upcase[i] | 0x20) -> lowercase hex digit */
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __pid_t = libc::c_int;
 pub type __ssize_t = libc::c_long;
@@ -148,6 +152,7 @@ pub type uint8_t = __uint8_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct winsize {
@@ -156,9 +161,11 @@ pub struct winsize {
   pub ws_xpixel: libc::c_ushort,
   pub ws_ypixel: libc::c_ushort,
 }
+
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {
@@ -171,9 +178,10 @@ pub struct termios {
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
+
 pub const IFNAMSIZ: C2RustUnnamed = 16;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -289,6 +297,7 @@ pub unsafe extern "C" fn itoa_to_buf(
 // It so happens that sizeof(int) * 3 is enough for 32+ bit ints.
 // (sizeof(int) * 3 + 2 is correct for any width, even 8-bit)
 static mut local_buf: [libc::c_char; 12] = [0; 12];
+
 /* Convert unsigned integer to ascii using a static buffer (returned). */
 #[no_mangle]
 pub unsafe extern "C" fn utoa(mut n: libc::c_uint) -> *mut libc::c_char {
@@ -300,6 +309,7 @@ pub unsafe extern "C" fn utoa(mut n: libc::c_uint) -> *mut libc::c_char {
   ) = '\u{0}' as i32 as libc::c_char;
   return local_buf.as_mut_ptr();
 }
+
 /* Convert signed integer to ascii using a static buffer (returned). */
 #[no_mangle]
 pub unsafe extern "C" fn itoa(mut n: libc::c_int) -> *mut libc::c_char {
@@ -311,6 +321,7 @@ pub unsafe extern "C" fn itoa(mut n: libc::c_int) -> *mut libc::c_char {
   ) = '\u{0}' as i32 as libc::c_char;
   return local_buf.as_mut_ptr();
 }
+
 /* Emit a string of hex representation of bytes */
 #[no_mangle]
 pub unsafe extern "C" fn bin2hex(
@@ -339,6 +350,7 @@ pub unsafe extern "C" fn bin2hex(
   }
   return p;
 }
+
 /* Convert "[x]x[:][x]x[:][x]x[:][x]x" hex string to binary, no more than COUNT bytes */
 #[no_mangle]
 pub unsafe extern "C" fn hex2bin(
@@ -388,6 +400,7 @@ pub unsafe extern "C" fn hex2bin(
   };
   return dst;
 }
+
 /* Return how long the file at fd is, if there's any way to determine it. */
 #[no_mangle]
 pub unsafe extern "C" fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int {
@@ -397,14 +410,17 @@ pub unsafe extern "C" fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int 
     1i32 as size_t,
   ) as libc::c_int;
 }
+
 #[no_mangle]
-pub unsafe extern "C" fn full_write1_str(mut str: *const libc::c_char) -> ssize_t {
-  return full_write(1i32, str as *const libc::c_void, strlen(str));
+pub unsafe extern "C" fn full_write1_str(mut string: *const libc::c_char) -> ssize_t {
+  return full_write(1i32, string as *const libc::c_void, strlen(string));
 }
+
 #[no_mangle]
-pub unsafe extern "C" fn full_write2_str(mut str: *const libc::c_char) -> ssize_t {
-  return full_write(2i32, str as *const libc::c_void, strlen(str));
+pub unsafe extern "C" fn full_write2_str(mut string: *const libc::c_char) -> ssize_t {
+  return full_write(2i32, string as *const libc::c_void, strlen(string));
 }
+
 unsafe extern "C" fn wh_helper(
   mut value: libc::c_int,
   mut def_val: libc::c_int,
