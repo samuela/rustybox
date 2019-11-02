@@ -2,6 +2,8 @@ use libc;
 use std::ffi::CStr;
 use std::ffi::CString;
 
+use crate::applets::applet_tables::applets;
+
 extern "C" {
   #[no_mangle]
   fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
@@ -1375,152 +1377,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
   return p as *mut libc::c_void;
 }
 
-#[no_mangle]
-pub static mut applet_nameofs: [uint16_t; 7] = [
-  304i32 as uint16_t,
-  664i32 as uint16_t,
-  996i32 as uint16_t,
-  1336i32 as uint16_t,
-  1675i32 as uint16_t,
-  2070i32 as uint16_t,
-  2389i32 as uint16_t,
-];
-
-#[no_mangle]
-pub static mut applet_names: [libc::c_char; 2729] = [
-  91, 0, 91, 91, 0, 97, 99, 112, 105, 100, 0, 97, 100, 100, 45, 115, 104, 101, 108, 108, 0, 97,
-  100, 100, 103, 114, 111, 117, 112, 0, 97, 100, 100, 117, 115, 101, 114, 0, 97, 100, 106, 116,
-  105, 109, 101, 120, 0, 97, 114, 99, 104, 0, 97, 114, 112, 0, 97, 114, 112, 105, 110, 103, 0, 97,
-  115, 104, 0, 97, 119, 107, 0, 98, 97, 115, 101, 54, 52, 0, 98, 97, 115, 101, 110, 97, 109, 101,
-  0, 98, 99, 0, 98, 101, 101, 112, 0, 98, 108, 107, 100, 105, 115, 99, 97, 114, 100, 0, 98, 108,
-  107, 105, 100, 0, 98, 108, 111, 99, 107, 100, 101, 118, 0, 98, 111, 111, 116, 99, 104, 97, 114,
-  116, 100, 0, 98, 114, 99, 116, 108, 0, 98, 117, 110, 122, 105, 112, 50, 0, 98, 122, 99, 97, 116,
-  0, 98, 122, 105, 112, 50, 0, 99, 97, 108, 0, 99, 97, 116, 0, 99, 104, 97, 116, 0, 99, 104, 97,
-  116, 116, 114, 0, 99, 104, 103, 114, 112, 0, 99, 104, 109, 111, 100, 0, 99, 104, 111, 119, 110,
-  0, 99, 104, 112, 97, 115, 115, 119, 100, 0, 99, 104, 112, 115, 116, 0, 99, 104, 114, 111, 111,
-  116, 0, 99, 104, 114, 116, 0, 99, 104, 118, 116, 0, 99, 107, 115, 117, 109, 0, 99, 108, 101, 97,
-  114, 0, 99, 109, 112, 0, 99, 111, 109, 109, 0, 99, 111, 110, 115, 112, 121, 0, 99, 112, 0, 99,
-  112, 105, 111, 0, 99, 114, 111, 110, 100, 0, 99, 114, 111, 110, 116, 97, 98, 0, 99, 114, 121,
-  112, 116, 112, 119, 0, 99, 116, 116, 121, 104, 97, 99, 107, 0, 99, 117, 116, 0, 100, 97, 116,
-  101, 0, 100, 99, 0, 100, 100, 0, 100, 101, 97, 108, 108, 111, 99, 118, 116, 0, 100, 101, 108,
-  103, 114, 111, 117, 112, 0, 100, 101, 108, 117, 115, 101, 114, 0, 100, 101, 112, 109, 111, 100,
-  0, 100, 101, 118, 109, 101, 109, 0, 100, 102, 0, 100, 104, 99, 112, 114, 101, 108, 97, 121, 0,
-  100, 105, 102, 102, 0, 100, 105, 114, 110, 97, 109, 101, 0, 100, 109, 101, 115, 103, 0, 100, 110,
-  115, 100, 0, 100, 110, 115, 100, 111, 109, 97, 105, 110, 110, 97, 109, 101, 0, 100, 111, 115, 50,
-  117, 110, 105, 120, 0, 100, 112, 107, 103, 0, 100, 112, 107, 103, 45, 100, 101, 98, 0, 100, 117,
-  0, 100, 117, 109, 112, 107, 109, 97, 112, 0, 100, 117, 109, 112, 108, 101, 97, 115, 101, 115, 0,
-  101, 99, 104, 111, 0, 101, 100, 0, 101, 103, 114, 101, 112, 0, 101, 106, 101, 99, 116, 0, 101,
-  110, 118, 0, 101, 110, 118, 100, 105, 114, 0, 101, 110, 118, 117, 105, 100, 103, 105, 100, 0,
-  101, 116, 104, 101, 114, 45, 119, 97, 107, 101, 0, 101, 120, 112, 97, 110, 100, 0, 101, 120, 112,
-  114, 0, 102, 97, 99, 116, 111, 114, 0, 102, 97, 107, 101, 105, 100, 101, 110, 116, 100, 0, 102,
-  97, 108, 108, 111, 99, 97, 116, 101, 0, 102, 97, 108, 115, 101, 0, 102, 97, 116, 97, 116, 116,
-  114, 0, 102, 98, 115, 101, 116, 0, 102, 98, 115, 112, 108, 97, 115, 104, 0, 102, 100, 102, 108,
-  117, 115, 104, 0, 102, 100, 102, 111, 114, 109, 97, 116, 0, 102, 100, 105, 115, 107, 0, 102, 103,
-  99, 111, 110, 115, 111, 108, 101, 0, 102, 103, 114, 101, 112, 0, 102, 105, 110, 100, 0, 102, 105,
-  110, 100, 102, 115, 0, 102, 108, 111, 99, 107, 0, 102, 111, 108, 100, 0, 102, 114, 101, 101, 0,
-  102, 114, 101, 101, 114, 97, 109, 100, 105, 115, 107, 0, 102, 115, 99, 107, 0, 102, 115, 99, 107,
-  46, 109, 105, 110, 105, 120, 0, 102, 115, 102, 114, 101, 101, 122, 101, 0, 102, 115, 116, 114,
-  105, 109, 0, 102, 115, 121, 110, 99, 0, 102, 116, 112, 100, 0, 102, 116, 112, 103, 101, 116, 0,
-  102, 116, 112, 112, 117, 116, 0, 102, 117, 115, 101, 114, 0, 103, 101, 116, 111, 112, 116, 0,
-  103, 101, 116, 116, 121, 0, 103, 114, 101, 112, 0, 103, 114, 111, 117, 112, 115, 0, 103, 117,
-  110, 122, 105, 112, 0, 103, 122, 105, 112, 0, 104, 97, 108, 116, 0, 104, 100, 0, 104, 100, 112,
-  97, 114, 109, 0, 104, 101, 97, 100, 0, 104, 101, 120, 100, 117, 109, 112, 0, 104, 101, 120, 101,
-  100, 105, 116, 0, 104, 111, 115, 116, 105, 100, 0, 104, 111, 115, 116, 110, 97, 109, 101, 0, 104,
-  116, 116, 112, 100, 0, 104, 117, 115, 104, 0, 104, 119, 99, 108, 111, 99, 107, 0, 105, 50, 99,
-  100, 101, 116, 101, 99, 116, 0, 105, 50, 99, 100, 117, 109, 112, 0, 105, 50, 99, 103, 101, 116,
-  0, 105, 50, 99, 115, 101, 116, 0, 105, 50, 99, 116, 114, 97, 110, 115, 102, 101, 114, 0, 105,
-  100, 0, 105, 102, 99, 111, 110, 102, 105, 103, 0, 105, 102, 100, 111, 119, 110, 0, 105, 102, 101,
-  110, 115, 108, 97, 118, 101, 0, 105, 102, 112, 108, 117, 103, 100, 0, 105, 102, 117, 112, 0, 105,
-  110, 101, 116, 100, 0, 105, 110, 105, 116, 0, 105, 110, 115, 109, 111, 100, 0, 105, 110, 115,
-  116, 97, 108, 108, 0, 105, 111, 110, 105, 99, 101, 0, 105, 111, 115, 116, 97, 116, 0, 105, 112,
-  0, 105, 112, 97, 100, 100, 114, 0, 105, 112, 99, 97, 108, 99, 0, 105, 112, 99, 114, 109, 0, 105,
-  112, 99, 115, 0, 105, 112, 108, 105, 110, 107, 0, 105, 112, 110, 101, 105, 103, 104, 0, 105, 112,
-  114, 111, 117, 116, 101, 0, 105, 112, 114, 117, 108, 101, 0, 105, 112, 116, 117, 110, 110, 101,
-  108, 0, 107, 98, 100, 95, 109, 111, 100, 101, 0, 107, 105, 108, 108, 0, 107, 105, 108, 108, 97,
-  108, 108, 0, 107, 105, 108, 108, 97, 108, 108, 53, 0, 107, 108, 111, 103, 100, 0, 108, 97, 115,
-  116, 0, 108, 101, 115, 115, 0, 108, 105, 110, 107, 0, 108, 105, 110, 117, 120, 51, 50, 0, 108,
-  105, 110, 117, 120, 54, 52, 0, 108, 105, 110, 117, 120, 114, 99, 0, 108, 110, 0, 108, 111, 97,
-  100, 102, 111, 110, 116, 0, 108, 111, 97, 100, 107, 109, 97, 112, 0, 108, 111, 103, 103, 101,
-  114, 0, 108, 111, 103, 105, 110, 0, 108, 111, 103, 110, 97, 109, 101, 0, 108, 111, 103, 114, 101,
-  97, 100, 0, 108, 111, 115, 101, 116, 117, 112, 0, 108, 112, 100, 0, 108, 112, 113, 0, 108, 112,
-  114, 0, 108, 115, 0, 108, 115, 97, 116, 116, 114, 0, 108, 115, 109, 111, 100, 0, 108, 115, 111,
-  102, 0, 108, 115, 112, 99, 105, 0, 108, 115, 115, 99, 115, 105, 0, 108, 115, 117, 115, 98, 0,
-  108, 122, 99, 97, 116, 0, 108, 122, 109, 97, 0, 108, 122, 111, 112, 0, 109, 97, 107, 101, 100,
-  101, 118, 115, 0, 109, 97, 107, 101, 109, 105, 109, 101, 0, 109, 97, 110, 0, 109, 100, 53, 115,
-  117, 109, 0, 109, 100, 101, 118, 0, 109, 101, 115, 103, 0, 109, 105, 99, 114, 111, 99, 111, 109,
-  0, 109, 107, 100, 105, 114, 0, 109, 107, 100, 111, 115, 102, 115, 0, 109, 107, 101, 50, 102, 115,
-  0, 109, 107, 102, 105, 102, 111, 0, 109, 107, 102, 115, 46, 101, 120, 116, 50, 0, 109, 107, 102,
-  115, 46, 109, 105, 110, 105, 120, 0, 109, 107, 102, 115, 46, 118, 102, 97, 116, 0, 109, 107, 110,
-  111, 100, 0, 109, 107, 112, 97, 115, 115, 119, 100, 0, 109, 107, 115, 119, 97, 112, 0, 109, 107,
-  116, 101, 109, 112, 0, 109, 111, 100, 105, 110, 102, 111, 0, 109, 111, 100, 112, 114, 111, 98,
-  101, 0, 109, 111, 114, 101, 0, 109, 111, 117, 110, 116, 0, 109, 111, 117, 110, 116, 112, 111,
-  105, 110, 116, 0, 109, 112, 115, 116, 97, 116, 0, 109, 116, 0, 109, 118, 0, 110, 97, 109, 101,
-  105, 102, 0, 110, 97, 110, 100, 100, 117, 109, 112, 0, 110, 97, 110, 100, 119, 114, 105, 116,
-  101, 0, 110, 98, 100, 45, 99, 108, 105, 101, 110, 116, 0, 110, 99, 0, 110, 101, 116, 115, 116,
-  97, 116, 0, 110, 105, 99, 101, 0, 110, 108, 0, 110, 109, 101, 116, 101, 114, 0, 110, 111, 104,
-  117, 112, 0, 110, 111, 108, 111, 103, 105, 110, 0, 110, 112, 114, 111, 99, 0, 110, 115, 101, 110,
-  116, 101, 114, 0, 110, 115, 108, 111, 111, 107, 117, 112, 0, 110, 116, 112, 100, 0, 110, 117,
-  107, 101, 0, 111, 100, 0, 111, 112, 101, 110, 118, 116, 0, 112, 97, 114, 116, 112, 114, 111, 98,
-  101, 0, 112, 97, 115, 115, 119, 100, 0, 112, 97, 115, 116, 101, 0, 112, 97, 116, 99, 104, 0, 112,
-  103, 114, 101, 112, 0, 112, 105, 100, 111, 102, 0, 112, 105, 110, 103, 0, 112, 105, 110, 103, 54,
-  0, 112, 105, 112, 101, 95, 112, 114, 111, 103, 114, 101, 115, 115, 0, 112, 105, 118, 111, 116,
-  95, 114, 111, 111, 116, 0, 112, 107, 105, 108, 108, 0, 112, 109, 97, 112, 0, 112, 111, 112, 109,
-  97, 105, 108, 100, 105, 114, 0, 112, 111, 119, 101, 114, 111, 102, 102, 0, 112, 111, 119, 101,
-  114, 116, 111, 112, 0, 112, 114, 105, 110, 116, 101, 110, 118, 0, 112, 114, 105, 110, 116, 102,
-  0, 112, 115, 0, 112, 115, 99, 97, 110, 0, 112, 115, 116, 114, 101, 101, 0, 112, 119, 100, 0, 112,
-  119, 100, 120, 0, 114, 97, 105, 100, 97, 117, 116, 111, 114, 117, 110, 0, 114, 100, 97, 116, 101,
-  0, 114, 100, 101, 118, 0, 114, 101, 97, 100, 97, 104, 101, 97, 100, 0, 114, 101, 97, 100, 108,
-  105, 110, 107, 0, 114, 101, 97, 100, 112, 114, 111, 102, 105, 108, 101, 0, 114, 101, 97, 108,
-  112, 97, 116, 104, 0, 114, 101, 98, 111, 111, 116, 0, 114, 101, 102, 111, 114, 109, 105, 109,
-  101, 0, 114, 101, 109, 111, 118, 101, 45, 115, 104, 101, 108, 108, 0, 114, 101, 110, 105, 99,
-  101, 0, 114, 101, 115, 101, 116, 0, 114, 101, 115, 105, 122, 101, 0, 114, 101, 115, 117, 109,
-  101, 0, 114, 101, 118, 0, 114, 109, 0, 114, 109, 100, 105, 114, 0, 114, 109, 109, 111, 100, 0,
-  114, 111, 117, 116, 101, 0, 114, 112, 109, 0, 114, 112, 109, 50, 99, 112, 105, 111, 0, 114, 116,
-  99, 119, 97, 107, 101, 0, 114, 117, 110, 45, 105, 110, 105, 116, 0, 114, 117, 110, 45, 112, 97,
-  114, 116, 115, 0, 114, 117, 110, 108, 101, 118, 101, 108, 0, 114, 117, 110, 115, 118, 0, 114,
-  117, 110, 115, 118, 100, 105, 114, 0, 114, 120, 0, 115, 99, 114, 105, 112, 116, 0, 115, 99, 114,
-  105, 112, 116, 114, 101, 112, 108, 97, 121, 0, 115, 101, 100, 0, 115, 101, 110, 100, 109, 97,
-  105, 108, 0, 115, 101, 113, 0, 115, 101, 116, 97, 114, 99, 104, 0, 115, 101, 116, 99, 111, 110,
-  115, 111, 108, 101, 0, 115, 101, 116, 102, 97, 116, 116, 114, 0, 115, 101, 116, 102, 111, 110,
-  116, 0, 115, 101, 116, 107, 101, 121, 99, 111, 100, 101, 115, 0, 115, 101, 116, 108, 111, 103,
-  99, 111, 110, 115, 0, 115, 101, 116, 112, 114, 105, 118, 0, 115, 101, 116, 115, 101, 114, 105,
-  97, 108, 0, 115, 101, 116, 115, 105, 100, 0, 115, 101, 116, 117, 105, 100, 103, 105, 100, 0, 115,
-  104, 0, 115, 104, 97, 49, 115, 117, 109, 0, 115, 104, 97, 50, 53, 54, 115, 117, 109, 0, 115, 104,
-  97, 51, 115, 117, 109, 0, 115, 104, 97, 53, 49, 50, 115, 117, 109, 0, 115, 104, 111, 119, 107,
-  101, 121, 0, 115, 104, 114, 101, 100, 0, 115, 104, 117, 102, 0, 115, 108, 97, 116, 116, 97, 99,
-  104, 0, 115, 108, 101, 101, 112, 0, 115, 109, 101, 109, 99, 97, 112, 0, 115, 111, 102, 116, 108,
-  105, 109, 105, 116, 0, 115, 111, 114, 116, 0, 115, 112, 108, 105, 116, 0, 115, 115, 108, 95, 99,
-  108, 105, 101, 110, 116, 0, 115, 116, 97, 114, 116, 45, 115, 116, 111, 112, 45, 100, 97, 101,
-  109, 111, 110, 0, 115, 116, 97, 116, 0, 115, 116, 114, 105, 110, 103, 115, 0, 115, 116, 116, 121,
-  0, 115, 117, 0, 115, 117, 108, 111, 103, 105, 110, 0, 115, 117, 109, 0, 115, 118, 0, 115, 118,
-  99, 0, 115, 118, 108, 111, 103, 100, 0, 115, 118, 111, 107, 0, 115, 119, 97, 112, 111, 102, 102,
-  0, 115, 119, 97, 112, 111, 110, 0, 115, 119, 105, 116, 99, 104, 95, 114, 111, 111, 116, 0, 115,
-  121, 110, 99, 0, 115, 121, 115, 99, 116, 108, 0, 115, 121, 115, 108, 111, 103, 100, 0, 116, 97,
-  99, 0, 116, 97, 105, 108, 0, 116, 97, 114, 0, 116, 97, 115, 107, 115, 101, 116, 0, 116, 99, 0,
-  116, 99, 112, 115, 118, 100, 0, 116, 101, 101, 0, 116, 101, 108, 110, 101, 116, 0, 116, 101, 108,
-  110, 101, 116, 100, 0, 116, 101, 115, 116, 0, 116, 102, 116, 112, 0, 116, 102, 116, 112, 100, 0,
-  116, 105, 109, 101, 0, 116, 105, 109, 101, 111, 117, 116, 0, 116, 111, 112, 0, 116, 111, 117, 99,
-  104, 0, 116, 114, 0, 116, 114, 97, 99, 101, 114, 111, 117, 116, 101, 0, 116, 114, 97, 99, 101,
-  114, 111, 117, 116, 101, 54, 0, 116, 114, 117, 101, 0, 116, 114, 117, 110, 99, 97, 116, 101, 0,
-  116, 115, 0, 116, 116, 121, 0, 116, 116, 121, 115, 105, 122, 101, 0, 116, 117, 110, 99, 116, 108,
-  0, 117, 98, 105, 97, 116, 116, 97, 99, 104, 0, 117, 98, 105, 100, 101, 116, 97, 99, 104, 0, 117,
-  98, 105, 109, 107, 118, 111, 108, 0, 117, 98, 105, 114, 101, 110, 97, 109, 101, 0, 117, 98, 105,
-  114, 109, 118, 111, 108, 0, 117, 98, 105, 114, 115, 118, 111, 108, 0, 117, 98, 105, 117, 112,
-  100, 97, 116, 101, 118, 111, 108, 0, 117, 100, 104, 99, 112, 99, 0, 117, 100, 104, 99, 112, 99,
-  54, 0, 117, 100, 104, 99, 112, 100, 0, 117, 100, 112, 115, 118, 100, 0, 117, 101, 118, 101, 110,
-  116, 0, 117, 109, 111, 117, 110, 116, 0, 117, 110, 97, 109, 101, 0, 117, 110, 101, 120, 112, 97,
-  110, 100, 0, 117, 110, 105, 113, 0, 117, 110, 105, 120, 50, 100, 111, 115, 0, 117, 110, 108, 105,
-  110, 107, 0, 117, 110, 108, 122, 109, 97, 0, 117, 110, 115, 104, 97, 114, 101, 0, 117, 110, 120,
-  122, 0, 117, 110, 122, 105, 112, 0, 117, 112, 116, 105, 109, 101, 0, 117, 115, 101, 114, 115, 0,
-  117, 115, 108, 101, 101, 112, 0, 117, 117, 100, 101, 99, 111, 100, 101, 0, 117, 117, 101, 110,
-  99, 111, 100, 101, 0, 118, 99, 111, 110, 102, 105, 103, 0, 118, 105, 0, 118, 108, 111, 99, 107,
-  0, 118, 111, 108, 110, 97, 109, 101, 0, 119, 0, 119, 97, 108, 108, 0, 119, 97, 116, 99, 104, 0,
-  119, 97, 116, 99, 104, 100, 111, 103, 0, 119, 99, 0, 119, 103, 101, 116, 0, 119, 104, 105, 99,
-  104, 0, 119, 104, 111, 0, 119, 104, 111, 97, 109, 105, 0, 119, 104, 111, 105, 115, 0, 120, 97,
-  114, 103, 115, 0, 120, 120, 100, 0, 120, 122, 0, 120, 122, 99, 97, 116, 0, 121, 101, 115, 0, 122,
-  99, 97, 116, 0, 122, 99, 105, 112, 0, 0,
-];
-
+// TODO: get rid of Options
 #[no_mangle]
 pub static mut applet_main: [Option<
   unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
@@ -3333,71 +3190,10 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
   // xfunc_die();
 }
 
-// TODO: use an option type here, fix name type
-unsafe fn find_applet_by_name(mut name: *const libc::c_char) -> i32 {
-  let mut i: libc::c_uint = 0;
-  let mut max: libc::c_uint = 0;
-  let mut j: libc::c_int = 0;
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  /* The commented-out word-at-a-time code is ~40% faster, but +160 bytes.
-   * "Faster" here saves ~0.5 microsecond of real time - not worth it.
-   */
-  /*BB_UNALIGNED_MEMACCESS_OK && BB_LITTLE_ENDIAN*/
-  p = applet_names.as_ptr();
-  i = 0i32 as libc::c_uint;
-  max = (396i32 * 8i32) as libc::c_uint;
-  j = ((::std::mem::size_of::<[uint16_t; 7]>() as libc::c_ulong)
-    .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint)
-    .wrapping_sub(1i32 as libc::c_uint) as libc::c_int;
-  while j >= 0i32 {
-    let mut pp: *const libc::c_char = applet_names
-      .as_ptr()
-      .offset(applet_nameofs[j as usize] as libc::c_int as isize);
-    if strcmp(name, pp) >= 0i32 {
-      //bb_error_msg("name:'%s' >= pp:'%s'", name, pp);
-      p = pp;
-      i = max.wrapping_sub(396i32 as libc::c_uint);
-      break;
-    } else {
-      max = max.wrapping_sub(396i32 as libc::c_uint);
-      j -= 1
-    }
-  }
-  max = max.wrapping_div(8i32 as libc::c_uint);
-  i = i.wrapping_div(8i32 as libc::c_uint);
-  //bb_error_msg("name:'%s' starting from:'%s' i:%u max:%u", name, p, i, max);
-  /* Open-coded linear search without strcmp/strlen calls for speed */
-  /*BB_UNALIGNED_MEMACCESS_OK && BB_LITTLE_ENDIAN*/
-  while i < max {
-    let mut ch: libc::c_char = 0;
-    j = 0i32;
-    loop
-    /* Do we see "name\0" in applet_names[p] position? */
-    {
-      ch = *p;
-      if !(ch as libc::c_int == *name.offset(j as isize) as libc::c_int) {
-        break;
-      }
-      if ch as libc::c_int == '\u{0}' as i32 {
-        //bb_error_msg("found:'%s' i:%u", name, i);
-        return i as libc::c_int;
-        /* yes */
-      }
-      p = p.offset(1);
-      j += 1
-    }
-    /* No.
-     * p => 1st non-matching char in applet_names[],
-     * skip to and including NUL.
-     */
-    while ch as libc::c_int != '\u{0}' as i32 {
-      p = p.offset(1);
-      ch = *p
-    }
-    p = p.offset(1);
-    i = i.wrapping_add(1)
-  }
-  return -1i32;
+unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
+  applet_names_sorted()
+    .binary_search(&String::from(name))
+    .ok()
 }
 
 /* The code below can well be in applets/applets.c, as it is used only
@@ -3590,10 +3386,11 @@ unsafe extern "C" fn parse_config_file() {
            * applet is currently built in and ignore it otherwise.
            * Note: this can hide config file bugs which only pop
            * up when the busybox configuration is changed. */
-          applet_no = find_applet_by_name(s);
-          if !(applet_no >= 0i32) {
-            continue;
-          }
+          match find_applet_by_name(&ptr_to_str(s)) {
+            None => continue,
+            Some(n) => applet_no = n as i32,
+          };
+
           let mut i: libc::c_uint = 0;
           let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
           /* Note: We currently don't check for duplicates!
@@ -3832,101 +3629,91 @@ static mut usr_sbin: [libc::c_char; 11] = [47, 117, 115, 114, 47, 115, 98, 105, 
 // Initialized in run_static_initializers
 static mut install_dir: [*const libc::c_char; 5] = [0 as *const libc::c_char; 5];
 
+unsafe fn applet_names_sorted() -> Vec<String> {
+  let mut ret: Vec<String> = applets.iter().map(|a| ptr_to_str(a.name)).collect();
+  ret.sort();
+  ret
+}
+
+unsafe fn APPLET_INSTALL_LOC(i: usize) -> usize {
+  if i & 1 != 0 {
+    (applet_install_loc[i.wrapping_div(2)] >> 4) as usize
+  } else {
+    (applet_install_loc[i.wrapping_div(2)] & 0xf) as usize
+  }
+}
+
 /* create (sym)links for each applet */
 unsafe extern "C" fn install_links(
-  mut busybox: *const libc::c_char,
+  mut rustybox_path: *const libc::c_char,
   use_symbolic_links: bool,
   mut custom_install_dir: *mut libc::c_char,
 ) {
   /* directory table
    * this should be consistent w/ the enum,
    * busybox.h::bb_install_loc_t, or else... */
-  let mut lf: Option<
-    unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-  > = None;
   let mut fpc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut appname: *const libc::c_char = applet_names.as_ptr();
-  let mut i: libc::c_uint = 0;
   let mut rc: libc::c_int = 0;
-  lf = Some(
-    link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-  );
-  if use_symbolic_links {
-    lf = Some(
-      symlink
-        as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-    )
-  }
-  i = 0i32 as libc::c_uint;
-  while i
-    < (::std::mem::size_of::<
-      [Option<unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int>; 396],
-    >() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<
-        Option<unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int>,
-      >() as libc::c_ulong) as libc::c_uint
-  {
+
+  let lf = if use_symbolic_links {
+    symlink as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int
+  } else {
+    link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int
+  };
+
+  let appnames = applet_names_sorted();
+  let mut i: usize = 0;
+  while i < applet_main.len() {
     fpc = concat_path_file(
       if !custom_install_dir.is_null() {
         custom_install_dir
       } else {
-        install_dir[({
-          let mut v: libc::c_uint = i;
-          if v & 1i32 as libc::c_uint != 0 {
-            v = (applet_install_loc[v.wrapping_div(2i32 as libc::c_uint) as usize] as libc::c_int
-              >> 4i32) as libc::c_uint
-          } else {
-            v = (applet_install_loc[v.wrapping_div(2i32 as libc::c_uint) as usize] as libc::c_int
-              & 0xfi32) as libc::c_uint
-          }
-          v
-        }) as usize]
+        install_dir[APPLET_INSTALL_LOC(i)]
       },
-      appname,
+      str_to_ptr(&appnames[i]),
     );
+
     // debug: bb_error_msg("%slinking %s to busybox",
     //		use_symbolic_links ? "sym" : "", fpc);
-    rc = lf.expect("non-null function pointer")(busybox, fpc);
+    rc = lf(rustybox_path, fpc);
     if rc != 0i32 && *bb_errno != 17i32 {
       bb_simple_perror_msg(fpc);
     }
     free(fpc as *mut libc::c_void);
-    loop {
-      let fresh3 = appname;
-      appname = appname.offset(1);
-      if !(*fresh3 as libc::c_int != '\u{0}' as i32) {
-        break;
-      }
-    }
-    i = i.wrapping_add(1)
+
+    i += 1
   }
 }
 
-unsafe extern "C" fn find_script_by_name(mut name: *const libc::c_char) -> libc::c_int {
-  let mut i: libc::c_int = 0;
-  let mut applet: libc::c_int = find_applet_by_name(name);
-  if applet >= 0i32 {
-    i = 0i32;
-    while i < 1i32 {
-      if applet_numbers[i as usize] as libc::c_int == applet {
-        return i;
-      }
-      i += 1
-    }
-  }
-  return -1i32;
+unsafe fn find_script_by_name(name: &str) -> Option<usize> {
+  find_applet_by_name(name)
+    .and_then(|applet_no| applet_numbers.iter().position(|&i| i as usize == applet_no))
 }
 
+// Originally:
+// int scripted_main(int argc UNUSED_PARAM, char **argv)
+// {
+//   int script = find_script_by_name(applet_name);
+//   if (script >= 0)
+// #if ENABLE_ASH || ENABLE_SH_IS_ASH || ENABLE_BASH_IS_ASH
+//     exit(ash_main(-script - 1, argv));
+// #elif ENABLE_HUSH || ENABLE_SH_IS_HUSH || ENABLE_BASH_IS_HUSH
+//     exit(hush_main(-script - 1, argv));
+// #else
+//     return 1;
+// #endif
+//   return 0;
+// }
 #[no_mangle]
 pub unsafe extern "C" fn scripted_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut script: libc::c_int = find_script_by_name(applet_name);
-  if script >= 0i32 {
-    ::std::process::exit(ash_main(-script - 1i32, argv));
-  }
-  return 0i32;
+  let exitcode = match find_script_by_name(&ptr_to_str(applet_name)) {
+    Some(script) => ash_main(-(script as i32) - 1, argv),
+    None => 0,
+  };
+  ::std::process::exit(exitcode)
 }
 
 /* Helpers for daemonization.
@@ -4012,37 +3799,32 @@ pub unsafe extern "C" fn get_script_content(mut n: libc::c_uint) -> *mut libc::c
 }
 
 unsafe fn print_rustybox_help() {
-  let mut a: *const libc::c_char = 0 as *const libc::c_char;
-  let mut col: libc::c_int = 0;
-  let mut output_width: libc::c_uint = 0;
+  /* -1 prevent last comma to be in the very last pos */
+  let output_width = get_terminal_width(2) - 1;
 
-  output_width = get_terminal_width(2i32) as libc::c_uint;
-  dup2(1i32, 2i32);
+  // See https://linux.die.net/man/2/dup2.
+  dup2(1, 2);
   full_write2_str(bb_banner.as_ptr()); /* reuse const string */
-  full_write2_str(b" multi-call binary.\n\x00" as *const u8 as *const libc::c_char); /* reuse */
-  full_write2_str(b"BusyBox is copyrighted by many authors between 1998-2015.\nLicensed under GPLv2. See source distribution for detailed\ncopyright notices.\n\nUsage: busybox [function [arguments]...]\n   or: busybox --list[-full]\n   or: busybox --show SCRIPT\n   or: busybox --install [-s] [DIR]\n   or: function [arguments]...\n\n\tBusyBox is a multi-call binary that combines many common Unix\n\tutilities into a single executable.  Most people will create a\n\tlink to busybox for each function they wish to use and BusyBox\n\twill act like whatever it was invoked as.\n\nCurrently defined functions:\n\x00"
-                        as *const u8 as *const libc::c_char);
-  col = 0i32;
-  /* prevent last comma to be in the very last pos */
-  output_width = output_width.wrapping_sub(1);
-  a = applet_names.as_ptr();
-  while *a != 0 {
-    let mut len2: libc::c_int = strlen(a).wrapping_add(2i32 as libc::c_ulong) as libc::c_int;
-    if col >= output_width as libc::c_int - len2 {
-      full_write2_str(b",\n\x00" as *const u8 as *const libc::c_char);
-      col = 0i32
+  eprintln!(" multi-call binary."); /* reuse */
+  eprintln!("BusyBox is copyrighted by many authors between 1998-2015.\nLicensed under GPLv2. See source distribution for detailed\ncopyright notices.\n\nUsage: busybox [function [arguments]...]\n   or: busybox --list[-full]\n   or: busybox --show SCRIPT\n   or: busybox --install [-s] [DIR]\n   or: function [arguments]...\n\n\tBusyBox is a multi-call binary that combines many common Unix\n\tutilities into a single executable.  Most people will create a\n\tlink to busybox for each function they wish to use and BusyBox\n\twill act like whatever it was invoked as.\n\nCurrently defined functions:");
+
+  let mut col: libc::c_int = 0;
+  for appname in applet_names_sorted().iter() {
+    let len2 = appname.len() + 2;
+    if col >= output_width - len2 as i32 {
+      eprintln!(",");
+      col = 0
     }
-    if col == 0i32 {
-      col = 6i32;
-      full_write2_str(b"\t\x00" as *const u8 as *const libc::c_char);
+    if col == 0 {
+      col = 6;
+      eprint!("\t")
     } else {
-      full_write2_str(b", \x00" as *const u8 as *const libc::c_char);
+      eprint!(", ")
     }
-    full_write2_str(a);
-    col += len2;
-    a = a.offset((len2 - 1i32) as isize)
+    eprint!("{}", appname);
+    col += len2 as i32;
   }
-  full_write2_str(b"\n\x00" as *const u8 as *const libc::c_char);
+  eprintln!();
 }
 
 unsafe fn rustybox_main(argv: &[String]) -> i32 {
@@ -4052,58 +3834,37 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
     return 0;
   } else {
     if argv[1] == "--show" {
-      let mut n: libc::c_int = 0;
       if argv.len() < 3 {
         bb_error_msg_and_die(
           bb_msg_requires_arg.as_ptr(),
           b"--show\x00" as *const u8 as *const libc::c_char,
         );
       }
-      n = find_script_by_name(str_to_ptr(&argv[2]));
-      if n < 0i32 {
-        bb_error_msg_and_die(
+      match find_script_by_name(&argv[2]) {
+        None => bb_error_msg_and_die(
           b"script \'%s\' not found\x00" as *const u8 as *const libc::c_char,
           str_to_ptr(&argv[2]),
-        );
+        ),
+
+        Some(n) => {
+          full_write1_str(get_script_content(n as libc::c_uint));
+          return 0;
+        }
       }
-      full_write1_str(get_script_content(n as libc::c_uint));
-      return 0;
     }
 
     if argv[1].starts_with("--list") {
-      let mut i: libc::c_uint = 0i32 as libc::c_uint;
-      let mut a_0: *const libc::c_char = applet_names.as_ptr();
-      dup2(1i32, 2i32);
-      while *a_0 != 0 {
+      dup2(1, 2);
+      let appnames = applet_names_sorted();
+      let mut i: usize = 0;
+      while i < applet_main.len() {
         if argv[1].len() > 6 {
           /* --list-full? */
-          full_write2_str(
-            install_dir[({
-              let mut v: libc::c_uint = i;
-              if v & 1i32 as libc::c_uint != 0 {
-                v = (applet_install_loc[v.wrapping_div(2i32 as libc::c_uint) as usize]
-                  as libc::c_int
-                  >> 4i32) as libc::c_uint
-              } else {
-                v = (applet_install_loc[v.wrapping_div(2i32 as libc::c_uint) as usize]
-                  as libc::c_int
-                  & 0xfi32) as libc::c_uint
-              }
-              v
-            }) as usize]
-              .offset(1),
-          );
+          full_write2_str(install_dir[APPLET_INSTALL_LOC(i)].offset(1));
         }
-        full_write2_str(a_0);
-        full_write2_str(b"\n\x00" as *const u8 as *const libc::c_char);
-        i = i.wrapping_add(1);
-        loop {
-          let fresh5 = a_0;
-          a_0 = a_0.offset(1);
-          if !(*fresh5 as libc::c_int != '\u{0}' as i32) {
-            break;
-          }
-        }
+
+        eprintln!("{}", &appnames[i]);
+        i += 1
       }
       return 0;
     }
@@ -4517,19 +4278,17 @@ pub unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[Strin
 unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
   if name.starts_with("rustybox") {
     ::std::process::exit(rustybox_main(argv));
-  }
-
-  /* find_applet_by_name() search is more expensive, so goes second */
-  let applet_no = find_applet_by_name(str_to_ptr(name));
-  if applet_no >= 0 {
-    run_applet_no_and_exit(applet_no as usize, name, argv);
   } else {
-    /*bb_error_msg_and_die("applet not found"); - links in printf */
-    full_write2_str(applet_name);
-    full_write2_str(b": applet not found\n\x00" as *const u8 as *const libc::c_char);
+    /* find_applet_by_name() search is more expensive, so goes second */
+    match find_applet_by_name(name) {
+      None => {
+        eprintln!("{}: applet not found", ptr_to_str(applet_name));
 
-    /* POSIX: "If a command is not found, the exit status shall be 127" */
-    ::std::process::exit(127);
+        /* POSIX: "If a command is not found, the exit status shall be 127" */
+        ::std::process::exit(127);
+      }
+      Some(applet_no) => run_applet_no_and_exit(applet_no, name, argv),
+    }
   }
 }
 
