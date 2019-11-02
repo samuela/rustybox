@@ -2,7 +2,7 @@ use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 
-use super::common::BUG_bb_strtou32_unimplemented;
+use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 
 extern "C" {
   //extern const int const_int_1;
