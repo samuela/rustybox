@@ -3400,15 +3400,6 @@ unsafe fn find_applet_by_name(mut name: *const libc::c_char) -> i32 {
   return -1i32;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn lbb_prepare(mut applet: *const libc::c_char) {
-  let ref mut fresh1 = *(not_const_pp(&bb_errno as *const *mut libc::c_int as *const libc::c_void)
-    as *mut *mut libc::c_int);
-  *fresh1 = __errno_location();
-  asm!("" : : : "memory" : "volatile");
-  applet_name = applet;
-}
-
 /* The code below can well be in applets/applets.c, as it is used only
  * for busybox binary, not "individual" binaries.
  * However, keeping it here and linking it into libbusybox.so
@@ -4532,14 +4523,14 @@ unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
   let applet_no = find_applet_by_name(str_to_ptr(name));
   if applet_no >= 0 {
     run_applet_no_and_exit(applet_no as usize, name, argv);
+  } else {
+    /*bb_error_msg_and_die("applet not found"); - links in printf */
+    full_write2_str(applet_name);
+    full_write2_str(b": applet not found\n\x00" as *const u8 as *const libc::c_char);
+
+    /* POSIX: "If a command is not found, the exit status shall be 127" */
+    ::std::process::exit(127);
   }
-
-  /*bb_error_msg_and_die("applet not found"); - links in printf */
-  full_write2_str(applet_name);
-  full_write2_str(b": applet not found\n\x00" as *const u8 as *const libc::c_char);
-
-  /* POSIX: "If a command is not found, the exit status shall be 127" */
-  ::std::process::exit(127);
 }
 
 pub unsafe fn main() {
@@ -4554,8 +4545,6 @@ pub unsafe fn main() {
    * Default is too big: 256k
    */
   mallopt(-3i32, 32i32 * 1024i32 - 256i32);
-
-  lbb_prepare(b"busybox\x00" as *const u8 as *const libc::c_char);
 
   let argv: Vec<String> = ::std::env::args().collect();
   applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
