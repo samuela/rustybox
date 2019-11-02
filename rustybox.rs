@@ -545,11 +545,5 @@ pub mod sysklogd {
 pub mod util_linux;
 
 fn main() {
-  // println!("hello world");
-  libbb::appletlib::main()
-
-  // unsafe {
-  //   applet_name = b"ls\x00" as *const u8 as *const libc::c_char;
-  // }
-  // coreutils::ls::main()
+  unsafe { libbb::appletlib::main() }
 }
