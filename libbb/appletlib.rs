@@ -2817,6 +2817,7 @@ pub static mut applet_main: [Option<
     ),
   ]
 };
+
 #[no_mangle]
 pub static mut applet_suid: [uint8_t; 99] = [
   0i32 as uint8_t,
@@ -2919,6 +2920,7 @@ pub static mut applet_suid: [uint8_t; 99] = [
   0i32 as uint8_t,
   0i32 as uint8_t,
 ];
+
 #[no_mangle]
 pub static mut applet_install_loc: [uint8_t; 198] = [
   0x33i32 as uint8_t,
@@ -3120,9 +3122,10 @@ pub static mut applet_install_loc: [uint8_t; 198] = [
   0x33i32 as uint8_t,
   0x21i32 as uint8_t,
 ];
+
 #[no_mangle]
 pub static mut applet_numbers: [uint16_t; 1] = [218i32 as uint16_t];
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -4553,11 +4556,13 @@ unsafe extern "C" fn run_applet_and_exit(
   if !is_prefixed_with(name, b"busybox\x00" as *const u8 as *const libc::c_char).is_null() {
     ::std::process::exit(busybox_main(argv));
   }
+
   /* find_applet_by_name() search is more expensive, so goes second */
   let mut applet: libc::c_int = find_applet_by_name(name);
   if applet >= 0i32 {
     run_applet_no_and_exit(applet, name, argv);
   }
+
   /*bb_error_msg_and_die("applet not found"); - links in printf */
   full_write2_str(applet_name);
   full_write2_str(b": applet not found\n\x00" as *const u8 as *const libc::c_char);
@@ -4581,8 +4586,6 @@ unsafe fn main_0(mut argv: *mut *mut libc::c_char) -> i32 {
   mallopt(-3i32, 32i32 * 1024i32 - 256i32);
 
   lbb_prepare(b"busybox\x00" as *const u8 as *const libc::c_char);
-
-  // ::std::env::args()
 
   applet_name = *argv.offset(0);
   if *applet_name.offset(0) as libc::c_int == '-' as i32 {
