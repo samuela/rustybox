@@ -94,9 +94,6 @@ extern "C" {
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
 
   #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
@@ -4078,12 +4075,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
       return 0;
     }
 
-    if !is_prefixed_with(
-      str_to_ptr(&argv[1]),
-      b"--list\x00" as *const u8 as *const libc::c_char,
-    )
-    .is_null()
-    {
+    if argv[1].starts_with("--list") {
       let mut i: libc::c_uint = 0i32 as libc::c_uint;
       let mut a_0: *const libc::c_char = applet_names.as_ptr();
       dup2(1i32, 2i32);
@@ -4161,12 +4153,15 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
         return 0;
       } else {
         /* convert to "<applet> --help" */
-        run_applet_and_exit(applet_name, &[argv[2].clone(), "--help".into()]);
+        run_applet_and_exit(
+          &ptr_to_str(applet_name),
+          &[argv[2].clone(), "--help".into()],
+        );
       }
     }
 
     /* "busybox <applet> arg1 arg2 ..." */
-    run_applet_and_exit(applet_name, &argv[1..]);
+    run_applet_and_exit(&ptr_to_str(applet_name), &argv[1..]);
   }
 }
 
@@ -4497,7 +4492,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
 
 pub unsafe fn run_applet_no_and_exit(
   mut applet_no: libc::c_int,
-  mut name: *const libc::c_char,
+  name: &str,
   mut argv: *mut *mut libc::c_char,
 ) -> ! {
   let mut argc: libc::c_int = string_array_len(argv) as libc::c_int;
@@ -4505,7 +4500,7 @@ pub unsafe fn run_applet_no_and_exit(
    * We do not use argv[0]: do not want to repeat massaging of
    * "-/sbin/halt" -> "halt", for example.
    */
-  applet_name = name;
+  applet_name = str_to_ptr(name);
 
   /* Special case. POSIX says "test --help"
    * should be no different from e.g. "test --foo".
@@ -4533,18 +4528,13 @@ pub unsafe fn run_applet_no_and_exit(
   xfunc_die();
 }
 
-unsafe fn run_applet_and_exit(mut name: *const libc::c_char, argv: &[String]) -> ! {
-  println!(
-    "run_applet_and_exit applet name {:?}",
-    CStr::from_ptr(name).to_string_lossy()
-  );
-
-  if !is_prefixed_with(name, b"rustybox\x00" as *const u8 as *const libc::c_char).is_null() {
+unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
+  if name.starts_with("rustybox") {
     ::std::process::exit(rustybox_main(argv));
   }
 
   /* find_applet_by_name() search is more expensive, so goes second */
-  let mut applet: libc::c_int = find_applet_by_name(name);
+  let mut applet: libc::c_int = find_applet_by_name(str_to_ptr(name));
   if applet >= 0 {
     run_applet_no_and_exit(applet, name, str_vec_to_ptrs(argv));
   }
@@ -4573,14 +4563,13 @@ pub unsafe fn main() {
   lbb_prepare(b"busybox\x00" as *const u8 as *const libc::c_char);
 
   let argv: Vec<String> = ::std::env::args().collect();
-  applet_name = str_to_ptr(&argv[0]);
-  if *applet_name.offset(0) as libc::c_int == '-' as i32 {
-    applet_name = applet_name.offset(1)
-  }
-  applet_name = bb_basename(applet_name);
-
+  applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
-  run_applet_and_exit(applet_name, &argv)
+  run_applet_and_exit(&ptr_to_str(applet_name), &argv)
+}
+
+unsafe fn ptr_to_str(strptr: *const libc::c_char) -> String {
+  CStr::from_ptr(strptr).to_string_lossy().into_owned()
 }
 
 fn str_to_ptr(string: &str) -> *mut libc::c_char {
