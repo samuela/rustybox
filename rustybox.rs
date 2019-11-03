@@ -10,7 +10,6 @@
 #![feature(const_raw_ptr_to_usize_cast)]
 #![feature(extern_types)]
 #![feature(label_break_value)]
-#![feature(main)]
 #![feature(ptr_wrapping_offset_from)]
 
 pub mod applets {
