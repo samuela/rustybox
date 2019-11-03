@@ -2597,11 +2597,11 @@ unsafe fn applet_names_sorted() -> Vec<String> {
 
 fn install_loc_to_string(install_loc: InstallLoc) -> String {
   String::from(match install_loc {
-    _DIR_USR_SBIN => "/usr/sbin/",
-    _DIR_USR_BIN => "/usr/bin/",
-    _DIR_SBIN => "/sbin/",
-    _DIR_BIN => "/bin/",
-    _DIR_ROOT => "/",
+    InstallLoc::DIR_USR_SBIN => "/usr/sbin/",
+    InstallLoc::DIR_USR_BIN => "/usr/bin/",
+    InstallLoc::DIR_SBIN => "/sbin/",
+    InstallLoc::DIR_BIN => "/bin/",
+    InstallLoc::DIR_ROOT => "/",
   })
 }
 
