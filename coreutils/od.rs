@@ -2,85 +2,119 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut _IO_FILE;
+
   #[no_mangle]
   static mut stdout: *mut _IO_FILE;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fseeko(__stream: *mut FILE, __off: __off64_t, __whence: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
     sizeof_and_shift: libc::c_uint,
     idx: libc::c_int,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
+
   #[no_mangle]
   fn xstrtoull_sfx(
     str: *const libc::c_char,
     b: libc::c_int,
     sfx: *const suffix_mult,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn xstrtou_sfx(str: *const libc::c_char, b: libc::c_int, sfx: *const suffix_mult)
     -> libc::c_uint;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_uint;
+
   #[no_mangle]
   static bb_argv_dash: [*const libc::c_char; 0];
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -88,18 +122,25 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -1710,6 +1751,7 @@ unsafe extern "C" fn parse_old_offset(
   }
   return (*offset >= 0i32 as libc::c_long) as libc::c_int;
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn od_main(
   mut argc: libc::c_int,
