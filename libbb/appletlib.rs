@@ -3240,6 +3240,8 @@ pub unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[Strin
 }
 
 unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
+  // This was originally `is_prefixed_with(name, "busybox")` in the C source.
+  // Not sure why it's not ==.
   if name.starts_with("rustybox") {
     ::std::process::exit(rustybox_main(argv));
   } else {
