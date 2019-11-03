@@ -212,9 +212,6 @@ extern "C" {
   fn hush_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn mallopt(__param: libc::c_int, __val: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
   fn unlzma_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
@@ -1977,7 +1974,7 @@ pub static mut applet_numbers: [uint16_t; 1] = [218i32 as uint16_t];
  *
  * FEATURE_INSTALLER or FEATURE_SUID will still link printf routines in. :(
  */
-/* for mallopt */
+
 /* Declare <applet>_main() */
 /* Include generated applet names, pointers to <applet>_main, etc */
 /* ...and if applet_tables generator says we have only one applet... */
@@ -3259,18 +3256,6 @@ unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
 }
 
 pub unsafe fn main() {
-  /* Tweak malloc for reduced memory consumption */
-  /* M_TRIM_THRESHOLD is the maximum amount of freed top-most memory
-   * to keep before releasing to the OS
-   * Default is way too big: 256k
-   */
-  mallopt(-1i32, 8i32 * 1024i32);
-
-  /* M_MMAP_THRESHOLD is the request size threshold for using mmap()
-   * Default is too big: 256k
-   */
-  mallopt(-3i32, 32i32 * 1024i32 - 256i32);
-
   let argv: Vec<String> = ::std::env::args().collect();
   applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
