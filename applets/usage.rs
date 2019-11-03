@@ -2,10 +2,13 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
+
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strlen(_: *const libc::c_char) -> libc::c_ulong;
 }
@@ -14,7 +17,7 @@ pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2008 Denys Vlasenko.
  *
