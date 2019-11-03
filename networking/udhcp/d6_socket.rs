@@ -448,7 +448,7 @@ pub unsafe extern "C" fn d6_listen_socket(
     ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
   );
   addr.sin6_family = 10i32 as sa_family_t;
-  addr.sin6_port = ({
+  addr.sin6_port = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = port as libc::c_ushort;
     if 0 != 0 {
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn d6_listen_socket(
       c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
     }
     __v
-  });
+  };
   /* addr.sin6_addr is all-zeros */
   xbind(
     fd,

@@ -32,7 +32,7 @@ pub type uint32_t = __uint32_t;
 /* This is a NOFORK applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn link_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(argv, b"^\x00=2\x00" as *const u8 as *const libc::c_char);

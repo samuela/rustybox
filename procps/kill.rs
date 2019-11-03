@@ -516,7 +516,7 @@ pub const PSSCAN_PPID: C2RustUnnamed = 2;
 /* If shell needs them, they exist even if not enabled as applets */
 #[no_mangle]
 pub unsafe extern "C" fn kill_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

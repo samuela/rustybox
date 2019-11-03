@@ -118,7 +118,7 @@ pub struct _IO_marker {
 pub type FILE = _IO_FILE;
 #[no_mangle]
 pub unsafe extern "C" fn add_remove_shell_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut orig_fp: *mut FILE = 0 as *mut FILE;

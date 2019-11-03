@@ -63,7 +63,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 /* This is a NOEXEC applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn cksum_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut crc32_table: *mut uint32_t = crc32_filltable(0 as *mut uint32_t, 1i32); /* coreutils 6.9 compat */

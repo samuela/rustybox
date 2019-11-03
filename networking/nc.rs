@@ -498,7 +498,7 @@ unsafe extern "C" fn unarm() {
   alarm(0i32 as libc::c_uint);
 }
 /* timeout and other signal handling cruft */
-unsafe extern "C" fn tmtravel(mut sig: libc::c_int) {
+unsafe extern "C" fn tmtravel(mut _sig: libc::c_int) {
   unarm();
   longjmp((*ptr_to_globals).jbuf.as_mut_ptr(), 1i32);
 }
@@ -1206,7 +1206,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
 /* main: now we pull it all together... */
 #[no_mangle]
 pub unsafe extern "C" fn nc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */

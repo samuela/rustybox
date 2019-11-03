@@ -376,7 +376,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
   }
   return if pid != 0 { 1i32 } else { 2i32 } as libc::c_uint;
 }
-unsafe extern "C" fn status(mut unused: *const libc::c_char) -> libc::c_int {
+unsafe extern "C" fn status(mut _unused: *const libc::c_char) -> libc::c_int {
   let mut r: libc::c_int = 0;
   if svstatus_get() <= 0i32 {
     return 0i32;
@@ -1037,7 +1037,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn sv_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return sv(argv);
@@ -1054,7 +1054,7 @@ pub unsafe extern "C" fn sv_main(
 //usage:   "\n""	-x	Exit: runsv will exit as soon as the service is down"
 #[no_mangle]
 pub unsafe extern "C" fn svc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut command: [libc::c_char; 2] = [0; 2];
@@ -1106,7 +1106,7 @@ pub unsafe extern "C" fn svc_main(
 //usage:       "111 (with error message) if SERVICE_DIR does not exist."
 #[no_mangle]
 pub unsafe extern "C" fn svok_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut dir: *const libc::c_char = *argv.offset(1);

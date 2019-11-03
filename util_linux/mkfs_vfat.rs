@@ -328,7 +328,7 @@ static mut boot_code: [libc::c_char; 59] = [
  */
 #[no_mangle]
 pub unsafe extern "C" fn mkfs_vfat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut st: stat = stat {

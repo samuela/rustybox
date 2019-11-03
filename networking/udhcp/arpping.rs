@@ -409,7 +409,7 @@ pub unsafe extern "C" fn arpping(
       from_mac as *const libc::c_void,
       6i32 as libc::c_ulong,
     ); /* protocol type (Ethernet) */
-    arp.h_proto = ({
+    arp.h_proto = {
       let mut __v: libc::c_ushort = 0; /* hardware type */
       let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort; /* protocol type (ARP message) */
       if 0 != 0 {
@@ -425,8 +425,8 @@ pub unsafe extern "C" fn arpping(
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4); /* source IP address */
       }
       __v
-    });
-    arp.htype = ({
+    };
+    arp.htype = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
       if 0 != 0 {
@@ -442,8 +442,8 @@ pub unsafe extern "C" fn arpping(
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
-    });
-    arp.ptype = ({
+    };
+    arp.ptype = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
       if 0 != 0 {
@@ -459,10 +459,10 @@ pub unsafe extern "C" fn arpping(
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
       __v
-    });
+    };
     arp.hlen = 6i32 as uint8_t;
     arp.plen = 4i32 as uint8_t;
-    arp.operation = ({
+    arp.operation = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
       if 0 != 0 {
@@ -478,7 +478,7 @@ pub unsafe extern "C" fn arpping(
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
       __v
-    });
+    };
     memcpy(
       arp.sHaddr.as_mut_ptr() as *mut libc::c_void,
       from_mac as *const libc::c_void,

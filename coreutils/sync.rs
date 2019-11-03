@@ -100,7 +100,7 @@ unsafe extern "C" fn sync_common(
 }
 #[no_mangle]
 pub unsafe extern "C" fn sync_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = getopt32(
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn sync_main(
 //usage:     "\n	-d	Avoid syncing metadata"
 #[no_mangle]
 pub unsafe extern "C" fn fsync_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int =

@@ -161,7 +161,7 @@ pub const DST_BUF_SIZE: C2RustUnnamed = 60;
 pub const SRC_BUF_SIZE: C2RustUnnamed = 45;
 #[no_mangle]
 pub unsafe extern "C" fn uuencode_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut stat_buf: stat = stat {

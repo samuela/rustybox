@@ -159,7 +159,7 @@ pub const OPT_m: C2RustUnnamed = 2;
 //usage:     "\n	-n		Disable byte order auto-detection"
 #[no_mangle]
 pub unsafe extern "C" fn readprofile_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut map: *mut FILE = 0 as *mut FILE; /* current and next address */

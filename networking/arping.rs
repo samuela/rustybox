@@ -376,7 +376,7 @@ unsafe extern "C" fn send_pack(
   let mut buf: [libc::c_uchar; 256] = [0; 256];
   let mut ah: *mut arphdr = buf.as_mut_ptr() as *mut arphdr;
   let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  (*ah).ar_hrd = ({
+  (*ah).ar_hrd = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
     if 0 != 0 {
@@ -392,8 +392,8 @@ unsafe extern "C" fn send_pack(
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
-  (*ah).ar_pro = ({
+  };
+  (*ah).ar_pro = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
     if 0 != 0 {
@@ -409,7 +409,7 @@ unsafe extern "C" fn send_pack(
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
-  });
+  };
   (*ah).ar_hln = (*ME).sll_halen;
   (*ah).ar_pln = 4i32 as libc::c_uchar;
   (*ah).ar_op = if option_mask32 & ADVERT as libc::c_int as libc::c_uint != 0 {
@@ -833,7 +833,7 @@ unsafe extern "C" fn recv_pack(
 }
 #[no_mangle]
 pub unsafe extern "C" fn arping_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut device: *const libc::c_char = b"eth0\x00" as *const u8 as *const libc::c_char;
@@ -940,7 +940,7 @@ pub unsafe extern "C" fn arping_main(
       );
     } else {
       /* Find IP address on this iface */
-      (*ptr_to_globals).probe_saddr.sin_port = ({
+      (*ptr_to_globals).probe_saddr.sin_port = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 1025i32 as libc::c_ushort;
         if 0 != 0 {
@@ -956,7 +956,7 @@ pub unsafe extern "C" fn arping_main(
           c2rust_asm_casts::AsmCast::cast_out(fresh34, fresh36, fresh35);
         }
         __v
-      });
+      };
       (*ptr_to_globals).probe_saddr.sin_addr = (*ptr_to_globals).dst;
       if setsockopt_SOL_SOCKET_1(probe_fd, 5i32) != 0i32 {
         bb_perror_msg(
@@ -986,7 +986,7 @@ pub unsafe extern "C" fn arping_main(
   }
   (*ptr_to_globals).me.sll_family = 17i32 as libc::c_ushort;
   //me.sll_ifindex = ifindex; - done before
-  (*ptr_to_globals).me.sll_protocol = ({
+  (*ptr_to_globals).me.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort;
     if 0 != 0 {
@@ -1002,7 +1002,7 @@ pub unsafe extern "C" fn arping_main(
       c2rust_asm_casts::AsmCast::cast_out(fresh37, fresh39, fresh38);
     }
     __v
-  });
+  };
   xbind(
     3i32,
     &mut (*ptr_to_globals).me as *mut sockaddr_ll as *mut sockaddr,

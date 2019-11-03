@@ -112,7 +112,7 @@ unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
 }
 #[no_mangle]
 pub unsafe extern "C" fn pidof_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut first: libc::c_uint = 1i32 as libc::c_uint;

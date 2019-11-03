@@ -97,14 +97,14 @@ pub struct termios {
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
-unsafe extern "C" fn onintr(mut sig: libc::c_int) {
+unsafe extern "C" fn onintr(mut _sig: libc::c_int) {
   tcsetattr(2i32, 0i32, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
   _exit(1i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn resize_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut new: termios = termios {
     c_iflag: 0,

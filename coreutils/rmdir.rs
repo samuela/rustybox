@@ -26,7 +26,7 @@ pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 #[no_mangle]
 pub unsafe extern "C" fn rmdir_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut status: libc::c_int = 0i32; /* Match gnu rmdir msg. */

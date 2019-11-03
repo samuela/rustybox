@@ -3282,7 +3282,7 @@ unsafe extern "C" fn cmdedit_setwidth() {
     0i32 != 0,
   );
 }
-unsafe extern "C" fn win_changed(mut nsig: libc::c_int) {
+unsafe extern "C" fn win_changed(mut _nsig: libc::c_int) {
   if (*lineedit_ptr_to_statics).ok_to_redraw != 0 {
     /* We are in read_key(), safe to redraw immediately */
     let mut sv_errno: libc::c_int = *bb_errno;

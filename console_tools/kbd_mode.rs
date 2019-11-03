@@ -55,7 +55,7 @@ pub const SCANCODE: C2RustUnnamed = 1;
 //usage:     "\n	-C TTY	Affect TTY"
 #[no_mangle]
 pub unsafe extern "C" fn kbd_mode_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0; /* clear -C bit, see (*) */

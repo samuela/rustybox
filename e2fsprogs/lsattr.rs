@@ -223,7 +223,7 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
 unsafe extern "C" fn lsattr_dir_proc(
   mut dir_name: *const libc::c_char,
   mut de: *mut dirent,
-  mut private: *mut libc::c_void,
+  mut _private: *mut libc::c_void,
 ) -> libc::c_int {
   let mut st: stat = stat {
     st_dev: 0,
@@ -334,7 +334,7 @@ unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn lsattr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(argv, b"Radlv\x00" as *const u8 as *const libc::c_char);

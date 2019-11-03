@@ -496,7 +496,7 @@ unsafe extern "C" fn hash_file(
 }
 #[no_mangle]
 pub unsafe extern "C" fn md5_sha1_sum_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut return_value: libc::c_int = 0i32;

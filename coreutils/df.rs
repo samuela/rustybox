@@ -235,7 +235,7 @@ unsafe extern "C" fn xatoul_range_sfx(
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
 #[no_mangle]
 pub unsafe extern "C" fn df_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut df_disp_hr: libc::c_ulong = 1024i32 as libc::c_ulong;

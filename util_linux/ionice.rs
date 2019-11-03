@@ -73,7 +73,7 @@ static mut to_prio: [libc::c_char; 31] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn ionice_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Defaults */

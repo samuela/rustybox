@@ -35,7 +35,7 @@ pub type uint32_t = __uint32_t;
 /* This is a NOFORK applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn hostid_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if !(*argv.offset(1)).is_null() {

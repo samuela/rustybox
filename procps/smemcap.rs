@@ -301,8 +301,8 @@ unsafe extern "C" fn archivejoin(mut sub: *const libc::c_char, mut name: *const 
 //usage:       "Collect memory usage data in /proc and write it to stdout"
 #[no_mangle]
 pub unsafe extern "C" fn smemcap_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut d: *mut DIR = 0 as *mut DIR;
   let mut de: *mut dirent = 0 as *mut dirent;

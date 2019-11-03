@@ -131,7 +131,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
       /* Store the 64-bit counter of bits in the buffer */
       let mut t: uint64_t = (*ctx).total64 << 3i32;
       if swap_needed != 0 {
-        t = ({
+        t = {
           let mut __v: __uint64_t = 0;
           let mut __x: __uint64_t = t;
           if 0 != 0 {
@@ -153,7 +153,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
             c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
           }
           __v
-        })
+        }
       }
       /* wbuffer is suitably aligned for this */
       *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((64i32 - 8i32) as isize) as *mut uint8_t
@@ -602,7 +602,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
    * which otherwise will be needed to hold ctx pointer */
   i = 0i32;
   while i < 16i32 {
-    W[(i + 16i32) as usize] = ({
+    W[(i + 16i32) as usize] = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint =
         *((*ctx).wbuffer.as_mut_ptr() as *mut uint32_t).offset(i as isize);
@@ -621,7 +621,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
         c2rust_asm_casts::AsmCast::cast_out(fresh32, fresh34, fresh33);
       }
       __v
-    });
+    };
     W[i as usize] = W[(i + 16i32) as usize];
     i += 1
   }
@@ -794,7 +794,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   /* Compute the message schedule according to FIPS 180-2:6.2.2 step 2.  */
   t = 0i32 as libc::c_uint;
   while t < 16i32 as libc::c_uint {
-    W[t as usize] = ({
+    W[t as usize] = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = *words.offset(t as isize);
       if 0 != 0 {
@@ -812,7 +812,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
         c2rust_asm_casts::AsmCast::cast_out(fresh35, fresh37, fresh36);
       }
       __v
-    });
+    };
     t = t.wrapping_add(1)
   }
   while t < 64i32 as libc::c_uint {
@@ -909,7 +909,7 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   /* Compute the message schedule according to FIPS 180-2:6.3.2 step 2.  */
   t = 0i32 as libc::c_uint;
   while t < 16i32 as libc::c_uint {
-    W[t as usize] = ({
+    W[t as usize] = {
       let mut __v: __uint64_t = 0;
       let mut __x: __uint64_t = *words.offset(t as isize);
       if 0 != 0 {
@@ -931,7 +931,7 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
         c2rust_asm_casts::AsmCast::cast_out(fresh38, fresh40, fresh39);
       }
       __v
-    });
+    };
     t = t.wrapping_add(1)
   }
   while t < 80i32 as libc::c_uint {
@@ -1122,7 +1122,7 @@ pub unsafe extern "C" fn sha1_end(
   let mut i: libc::c_uint = 0;
   i = 0i32 as libc::c_uint;
   while i < hash_size {
-    (*ctx).hash[i as usize] = ({
+    (*ctx).hash[i as usize] = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*ctx).hash[i as usize];
       if 0 != 0 {
@@ -1140,7 +1140,7 @@ pub unsafe extern "C" fn sha1_end(
         c2rust_asm_casts::AsmCast::cast_out(fresh41, fresh43, fresh42);
       }
       __v
-    });
+    };
     i = i.wrapping_add(1)
   }
   hash_size = (hash_size as libc::c_ulong)
@@ -1174,7 +1174,7 @@ pub unsafe extern "C" fn sha512_end(
       /* Store the 128-bit counter of bits in the buffer in BE format */
       let mut t: uint64_t = 0;
       t = (*ctx).total64[0] << 3i32;
-      t = ({
+      t = {
         let mut __v: __uint64_t = 0;
         let mut __x: __uint64_t = t;
         if 0 != 0 {
@@ -1196,11 +1196,11 @@ pub unsafe extern "C" fn sha512_end(
           c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
         }
         __v
-      });
+      };
       *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((128i32 - 8i32) as isize) as *mut uint8_t
         as *mut bb__aliased_uint64_t) = t;
       t = (*ctx).total64[1] << 3i32 | (*ctx).total64[0] >> 61i32;
-      t = ({
+      t = {
         let mut __v: __uint64_t = 0;
         let mut __x: __uint64_t = t;
         if 0 != 0 {
@@ -1222,7 +1222,7 @@ pub unsafe extern "C" fn sha512_end(
           c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
         }
         __v
-      });
+      };
       *(&mut *(*ctx)
         .wbuffer
         .as_mut_ptr()
@@ -1240,7 +1240,7 @@ pub unsafe extern "C" fn sha512_end(
     < (::std::mem::size_of::<[uint64_t; 8]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<uint64_t>() as libc::c_ulong) as libc::c_uint
   {
-    (*ctx).hash[i as usize] = ({
+    (*ctx).hash[i as usize] = {
       let mut __v: __uint64_t = 0;
       let mut __x: __uint64_t = (*ctx).hash[i as usize];
       if 0 != 0 {
@@ -1262,7 +1262,7 @@ pub unsafe extern "C" fn sha512_end(
         c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
       }
       __v
-    });
+    };
     i = i.wrapping_add(1)
   }
   memcpy(

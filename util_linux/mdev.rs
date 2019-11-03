@@ -1469,9 +1469,9 @@ unsafe extern "C" fn readlink2(mut buf: *mut libc::c_char, mut bufsize: size_t) 
  */
 unsafe extern "C" fn fileAction(
   mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
+  mut _statbuf: *mut stat,
   mut userData: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut len: size_t = strlen(fileName).wrapping_sub(4i32 as libc::c_ulong); /* can't underflow */
   let mut path: *mut libc::c_char = userData as *mut libc::c_char; /* char array[PATH_MAX + SCRATCH_SIZE] */
@@ -1537,9 +1537,9 @@ unsafe extern "C" fn fileAction(
 }
 /* Directory callback for /sys/ traversal */
 unsafe extern "C" fn dirAction(
-  mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
+  mut _fileName: *const libc::c_char,
+  mut _statbuf: *mut stat,
+  mut _userData: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
   return if depth >= 3i32 { 2i32 } else { 1i32 };
@@ -1970,7 +1970,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
 }
 #[no_mangle]
 pub unsafe extern "C" fn mdev_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_int = 0;

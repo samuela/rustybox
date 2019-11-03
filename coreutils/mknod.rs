@@ -90,7 +90,7 @@ static mut modes_cubp: [mode_t; 3] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn mknod_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: mode_t = 0;

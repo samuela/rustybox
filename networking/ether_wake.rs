@@ -388,7 +388,7 @@ unsafe extern "C" fn get_wol_pw(
 }
 #[no_mangle]
 pub unsafe extern "C" fn ether_wake_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ifname: *const libc::c_char = b"eth0\x00" as *const u8 as *const libc::c_char;

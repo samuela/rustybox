@@ -31,8 +31,8 @@ extern "C" {
 //usage:       "/dev/mtdblock9 /\n"
 #[no_mangle]
 pub unsafe extern "C" fn rdev_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut root_device: *const libc::c_char =
     find_block_device(b"/\x00" as *const u8 as *const libc::c_char);

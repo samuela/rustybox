@@ -97,10 +97,10 @@ pub const ACTION_RECURSE: C2RustUnnamed = 1;
  * is so stinking huge.
  */
 unsafe extern "C" fn true_action(
-  mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _fileName: *const libc::c_char,
+  mut _statbuf: *mut stat,
+  mut _userData: *mut libc::c_void,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   return 1i32;
 }

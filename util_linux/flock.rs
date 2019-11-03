@@ -62,7 +62,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-n	Fail rather than wait"
 #[no_mangle]
 pub unsafe extern "C" fn flock_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: libc::c_int = 0;

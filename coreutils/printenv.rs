@@ -33,7 +33,7 @@ extern "C" {
 /* This is a NOFORK applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn printenv_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut exit_code: libc::c_int = 0i32;

@@ -555,11 +555,11 @@ unsafe extern "C" fn do_stop() -> libc::c_int {
       }
       if kill(
         (*p).pid,
-        (if option_mask32 & OPT_TEST as libc::c_int as libc::c_uint != 0 {
+        if option_mask32 & OPT_TEST as libc::c_int as libc::c_uint != 0 {
           0i32
         } else {
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr as libc::c_int
-        }),
+        },
       ) == 0i32
       {
         killed += 1
@@ -616,7 +616,7 @@ static mut start_stop_daemon_longopts: [libc::c_char; 156] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn start_stop_daemon_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
@@ -756,13 +756,13 @@ pub unsafe extern "C" fn start_stop_daemon_main(
      * _before_ parent returns, and vfork() on Linux
      * ensures that (by blocking parent until exec in the child).
      */
-    let mut pid: pid_t = ({
+    let mut pid: pid_t = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
-    });
+    };
     if pid != 0i32 {
       /* Parent */
       /* why _exit? the child may have changed the stack,
@@ -781,13 +781,13 @@ pub unsafe extern "C" fn start_stop_daemon_main(
      * unknowingly, by opening a tty.
      * Prevent this: stop being a session leader.
      */
-    pid = ({
+    pid = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
-    });
+    };
     if pid != 0i32 {
       _exit(0i32);
     }

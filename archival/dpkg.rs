@@ -2672,7 +2672,7 @@ unsafe extern "C" fn configure_package(mut deb_file: *mut deb_file_t) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn dpkg_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut deb_file: *mut *mut deb_file_t = 0 as *mut *mut deb_file_t;

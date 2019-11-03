@@ -188,7 +188,7 @@ unsafe extern "C" fn tcsetattr_tty_TCSANOW(mut settings: *mut termios) {
     settings,
   );
 }
-unsafe extern "C" fn gotsig(mut sig: libc::c_int) {
+unsafe extern "C" fn gotsig(mut _sig: libc::c_int) {
   /* bb_putchar_stderr doesn't use stdio buffering,
    * therefore it is safe in signal handler */
   bb_putchar_stderr('\n' as i32 as libc::c_char); /* for compiler */
@@ -197,7 +197,7 @@ unsafe extern "C" fn gotsig(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn more_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

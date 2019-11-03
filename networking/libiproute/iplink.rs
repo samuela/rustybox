@@ -664,7 +664,7 @@ unsafe extern "C" fn get_address(
   );
   me.sll_family = 17i32 as libc::c_ushort;
   me.sll_ifindex = ifr.ifr_ifru.ifru_ivalue;
-  me.sll_protocol = ({
+  me.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x60i32 as libc::c_ushort;
     if 0 != 0 {
@@ -680,7 +680,7 @@ unsafe extern "C" fn get_address(
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   xbind(
     s,
     &mut me as *mut sockaddr_ll as *mut sockaddr,
@@ -961,7 +961,7 @@ unsafe extern "C" fn vlan_parse_opt(
     } else if arg == ARG_protocol as libc::c_int {
       arg = index_in_substrings(protocols.as_ptr(), str_tolower(*argv));
       if arg == PROTO_8021Q as libc::c_int {
-        proto = ({
+        proto = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8100i32 as libc::c_ushort;
           if 0 != 0 {
@@ -977,9 +977,9 @@ unsafe extern "C" fn vlan_parse_opt(
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
           __v
-        })
+        }
       } else if arg == PROTO_8021AD as libc::c_int {
-        proto = ({
+        proto = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x88a8i32 as libc::c_ushort;
           if 0 != 0 {
@@ -995,7 +995,7 @@ unsafe extern "C" fn vlan_parse_opt(
             c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
           }
           __v
-        })
+        }
       } else {
         bb_error_msg_and_die(
           b"unknown VLAN encapsulation protocol \'%s\'\x00" as *const u8 as *const libc::c_char,

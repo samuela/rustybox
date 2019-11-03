@@ -129,7 +129,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //usage:#define ts_full_usage ""
 #[no_mangle]
 pub unsafe extern "C" fn ts_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut base: timeval = timeval {

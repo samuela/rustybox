@@ -274,7 +274,7 @@ unsafe extern "C" fn init_was_not_there() -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn halt_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut magic: [libc::c_int; 3] = [0xcdef0123u32 as libc::c_int, 0x4321fedci32, 0x1234567i32];

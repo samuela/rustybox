@@ -301,7 +301,7 @@ unsafe extern "C" fn mount_namespaces(mut pid: pid_t, mut ns_ctx_list: *mut name
 }
 #[no_mangle]
 pub unsafe extern "C" fn unshare_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;

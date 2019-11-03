@@ -118,7 +118,7 @@ unsafe extern "C" fn leap_year(mut yr: libc::c_uint) -> libc::c_int {
 /* spaces between day headings */
 #[no_mangle]
 pub unsafe extern "C" fn cal_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut zero_tm: tm = tm {

@@ -886,7 +886,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn arp_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut hw_type: *const libc::c_char = 0 as *const libc::c_char;

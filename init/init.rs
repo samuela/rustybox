@@ -1188,7 +1188,7 @@ unsafe extern "C" fn exec_restart_action() {
  * NB: inside it, all signals except SIGCONT are masked
  * via appropriate setup in sigaction().
  */
-unsafe extern "C" fn stop_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
   let mut saved_bb_got_signal: smallint = 0;
   let mut saved_errno: libc::c_int = 0;
   saved_bb_got_signal = bb_got_signal;
@@ -1292,7 +1292,7 @@ unsafe extern "C" fn sleep_much() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn init_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if !(*argv.offset(1)).is_null()

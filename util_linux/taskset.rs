@@ -185,7 +185,7 @@ unsafe extern "C" fn get_aff(
 }
 #[no_mangle]
 pub unsafe extern "C" fn taskset_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mask: *mut ul = 0 as *mut ul;

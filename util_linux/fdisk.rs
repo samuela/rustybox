@@ -2304,7 +2304,7 @@ unsafe extern "C" fn chs_string11(
   );
   return buf;
 }
-unsafe extern "C" fn list_table(mut xtra: libc::c_int) {
+unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut w: libc::c_int = 0;
   list_disk_geometry();
@@ -3458,7 +3458,7 @@ unsafe extern "C" fn unknown_command(mut c: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn fdisk_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

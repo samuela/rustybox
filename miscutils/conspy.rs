@@ -519,13 +519,13 @@ unsafe extern "C" fn create_cdev_if_doesnt_exist(mut name: *const libc::c_char, 
 }
 #[inline(never)]
 unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
-  let mut pid: libc::c_int = ({
+  let mut pid: libc::c_int = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
-  });
+  };
   if pid == 0i32 {
     let mut termchild: termios = termios {
       c_iflag: 0,
@@ -568,7 +568,7 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn conspy_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut k: *mut libc::c_char = 0 as *mut libc::c_char;

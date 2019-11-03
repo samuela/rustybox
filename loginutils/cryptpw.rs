@@ -171,7 +171,7 @@ to cryptpw. -a option (alias for -m) came from cryptpw.
 */
 #[no_mangle]
 pub unsafe extern "C" fn cryptpw_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Supports: cryptpw -m sha256 PASS 'rounds=999999999$SALT' */

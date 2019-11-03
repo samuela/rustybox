@@ -4566,7 +4566,7 @@ unsafe extern "C" fn str_isalnum_(mut s: *const libc::c_char) -> libc::c_int {
   }
   return 1i32;
 }
-unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe fn main_0(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut tmp1: [libc::c_char; 4096] = [0; 4096];

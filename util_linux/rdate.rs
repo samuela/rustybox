@@ -74,7 +74,7 @@ pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 //usage:     "\n	-p	Only print time"
 pub type C2RustUnnamed = libc::c_uint;
 pub const RFC_868_BIAS: C2RustUnnamed = 2208988800;
-unsafe extern "C" fn socket_timeout(mut sig: libc::c_int) {
+unsafe extern "C" fn socket_timeout(mut _sig: libc::c_int) {
   bb_simple_error_msg_and_die(
     b"timeout connecting to time server\x00" as *const u8 as *const libc::c_char,
   );
@@ -143,7 +143,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rdate_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut remote_time: time_t = 0;

@@ -241,7 +241,7 @@ static mut adduser_longopts: [libc::c_char; 110] = [
  */
 #[no_mangle]
 pub unsafe extern "C" fn adduser_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pw: passwd = passwd {

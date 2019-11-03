@@ -50,7 +50,7 @@ pub type uint32_t = __uint32_t;
 //usage:       "/dev/tty2\n"
 #[no_mangle]
 pub unsafe extern "C" fn tty_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut s: *const libc::c_char = 0 as *const libc::c_char; /* Note: No longer relevant in SUSv3. */

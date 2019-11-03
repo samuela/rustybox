@@ -22,8 +22,8 @@ pub type time_t = __time_t;
  */
 #[no_mangle]
 pub unsafe extern "C" fn pipe_progress_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut buf: [libc::c_char; 4096] = [0; 4096];
   let mut t: time_t = time(0 as *mut time_t);

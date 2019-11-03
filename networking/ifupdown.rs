@@ -411,7 +411,7 @@ unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) ->
   if inet_aton(dotted_quad, &mut ip) == 0i32 {
     return -1i32;
   } /* no it is not */
-  d = ({
+  d = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ip.s_addr;
     if 0 != 0 {
@@ -428,7 +428,7 @@ unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) ->
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   d = !d;
   if d & d.wrapping_add(1i32 as libc::c_uint) != 0 {
     /* check that it is in 00001111 form */
@@ -627,8 +627,8 @@ unsafe extern "C" fn loopback_down6(
   );
 }
 unsafe extern "C" fn manual_up_down6(
-  mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _ifd: *mut interface_defn_t,
+  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
@@ -918,8 +918,8 @@ unsafe extern "C" fn dhcp_down(
   return if result == 3i32 { 3i32 } else { 0i32 };
 }
 unsafe extern "C" fn manual_up_down(
-  mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _ifd: *mut interface_defn_t,
+  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
@@ -1124,8 +1124,8 @@ static mut addr_inet: address_family_t = address_family_t {
 };
 /* FEATURE_IFUPDOWN_IPV4 */
 unsafe extern "C" fn link_up_down(
-  mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _ifd: *mut interface_defn_t,
+  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
@@ -1784,13 +1784,13 @@ unsafe extern "C" fn popen2(
   xpipe(&mut infd.rd);
   xpipe(&mut outfd.rd);
   fflush_all();
-  pid = ({
+  pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
-  });
+  };
   if pid == 0i32 {
     /* Child */
     /* NB: close _first_, then move fds! */
@@ -1934,7 +1934,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ifupdown_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

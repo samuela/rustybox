@@ -267,7 +267,7 @@ unsafe extern "C" fn cut_file(
 }
 #[no_mangle]
 pub unsafe extern "C" fn cut_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* growable array holding a series of lists */

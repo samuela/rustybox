@@ -35,7 +35,7 @@ extern "C" {
 //usage:       "Print UUIDs of all filesystems"
 #[no_mangle]
 pub unsafe extern "C" fn blkid_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut scan_devices: libc::c_int = 1i32;

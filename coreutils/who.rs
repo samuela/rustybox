@@ -203,7 +203,7 @@ unsafe extern "C" fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn who_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut do_users: libc::c_int = (1i32 != 0

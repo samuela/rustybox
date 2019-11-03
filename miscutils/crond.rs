@@ -1453,7 +1453,7 @@ unsafe extern "C" fn reopen_logfile_to_stderr() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn crond_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut t2: time_t = 0;

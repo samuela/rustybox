@@ -105,7 +105,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
   mut len: libc::c_int,
 ) -> *const libc::c_char {
   let mut i: libc::c_uint = 0;
-  id = ({
+  id = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = id;
     if 0 != 0 {
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   i = 0i32 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[uint16_t; 43]>() as libc::c_ulong)
@@ -176,7 +176,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
     }
     _ => {}
   }
-  *id = ({
+  *id = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = i as libc::c_ushort;
     if 0 != 0 {
@@ -192,6 +192,6 @@ pub unsafe extern "C" fn ll_proto_a2n(
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
-  });
+  };
   return 0i32;
 }

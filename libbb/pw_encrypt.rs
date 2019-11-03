@@ -1094,7 +1094,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   let mut rawkey1: uint32_t = 0;
   let mut shifts: libc::c_int = 0;
   let mut round: libc::c_int = 0;
-  rawkey0 = ({
+  rawkey0 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = *(key as *const uint32_t);
     if 0 != 0 {
@@ -1111,8 +1111,8 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
-  });
-  rawkey1 = ({
+  };
+  rawkey1 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = *(key.offset(4) as *const uint32_t);
     if 0 != 0 {
@@ -1130,7 +1130,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
-  });
+  };
   /*
    * Do key permutation and split into two 28-bit subkeys.
    */

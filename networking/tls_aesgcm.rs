@@ -35,7 +35,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
     0i32 as libc::c_ulong
   };
   // 64-bit code: need to process only 2 words
-  let mut tt: libc::c_ulong = ({
+  let mut tt: libc::c_ulong = {
     let mut __v: __uint64_t = 0; // zero, or 0x800..00
     let mut __x: __uint64_t = *(x as *mut libc::c_ulong).offset(0);
     if 0 != 0 {
@@ -56,10 +56,10 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   let mut carryOut: libc::c_ulong = tt << 64i32 - 1i32;
   tt = tt >> 1i32 ^ carryIn;
-  *(x as *mut libc::c_ulong).offset(0) = ({
+  *(x as *mut libc::c_ulong).offset(0) = {
     let mut __v: __uint64_t = 0;
     let mut __x: __uint64_t = tt;
     if 0 != 0 {
@@ -80,8 +80,8 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
-  });
-  tt = ({
+  };
+  tt = {
     let mut __v: __uint64_t = 0;
     let mut __x: __uint64_t = *(x as *mut libc::c_ulong).offset(1);
     if 0 != 0 {
@@ -102,9 +102,9 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
-  });
+  };
   tt = tt >> 1i32 ^ carryOut;
-  *(x as *mut libc::c_ulong).offset(1) = ({
+  *(x as *mut libc::c_ulong).offset(1) = {
     let mut __v: __uint64_t = 0;
     let mut __x: __uint64_t = tt;
     if 0 != 0 {
@@ -126,7 +126,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
-  });
+  };
   /* LITTLE_ENDIAN */
 }
 // Caller guarantees X is aligned
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
   // simpler:
   //P32(x)[0] ^= 0;
   let ref mut fresh16 = *(x.as_mut_ptr() as *mut uint32_t).offset(1);
-  *fresh16 ^= ({
+  *fresh16 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (13i32 * 8i32) as libc::c_uint;
     if 0 != 0 {
@@ -264,10 +264,10 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
     }
     __v
-  });
+  };
   //P32(x)[2] ^= 0;
   let ref mut fresh20 = *(x.as_mut_ptr() as *mut uint32_t).offset(3);
-  *fresh20 ^= ({
+  *fresh20 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = cSz.wrapping_mul(8i32 as libc::c_uint);
     if 0 != 0 {
@@ -285,7 +285,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
     }
     __v
-  });
+  };
   GMULT(x.as_mut_ptr(), h);
   /* Copy the result into s. */
   memcpy(

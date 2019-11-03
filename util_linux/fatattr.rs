@@ -84,7 +84,7 @@ unsafe extern "C" fn decode_arg(mut arg: *const libc::c_char) -> libc::c_uint {
 }
 #[no_mangle]
 pub unsafe extern "C" fn fatattr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut set_mask: libc::c_uint = 0i32 as libc::c_uint;

@@ -534,7 +534,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
 //usage:       "$ loadfont < /etc/i18n/fontname\n"
 #[no_mangle]
 pub unsafe extern "C" fn loadfont_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut len: size_t = 0;
@@ -618,7 +618,7 @@ unsafe extern "C" fn ctoi(mut s: *mut libc::c_char) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn setfont_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut len: size_t = 0;

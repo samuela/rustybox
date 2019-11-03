@@ -167,7 +167,7 @@ pub const WC_WORDS: C2RustUnnamed_0 = 1;
 pub const WC_LINES: C2RustUnnamed_0 = 0;
 #[no_mangle]
 pub unsafe extern "C" fn wc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fp: *mut FILE = 0 as *mut FILE;

@@ -42,7 +42,7 @@ pub type mode_t = __mode_t;
 /* This is a NOEXEC applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn mkfifo_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: mode_t = 0; /* Avoid multibyte problems. */

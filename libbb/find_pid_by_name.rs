@@ -197,11 +197,11 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
       || !(*p).argv0.is_null() && strcmp(bb_basename((*p).argv0), procName) == 0i32
       || !(*p).exe.is_null()
         && strcmp(
-          (if *procName.offset(0) as libc::c_int == '/' as i32 {
+          if *procName.offset(0) as libc::c_int == '/' as i32 {
             (*p).exe
           } else {
             bb_basename((*p).exe)
-          }),
+          },
           procName,
         ) == 0i32
     {

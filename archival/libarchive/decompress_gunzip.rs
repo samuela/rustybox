@@ -901,11 +901,11 @@ unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
           let mut delta: libc::c_uint = 0;
           (*state).inflate_codes_dd &= (GUNZIP_WSIZE as libc::c_int - 1i32) as libc::c_uint;
           e = (GUNZIP_WSIZE as libc::c_int as libc::c_uint).wrapping_sub(
-            (if (*state).inflate_codes_dd > (*state).inflate_codes_w {
+            if (*state).inflate_codes_dd > (*state).inflate_codes_w {
               (*state).inflate_codes_dd
             } else {
               (*state).inflate_codes_w
-            }),
+            },
           );
           delta = if (*state).inflate_codes_w > (*state).inflate_codes_dd {
             (*state)

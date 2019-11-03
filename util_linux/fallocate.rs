@@ -97,7 +97,7 @@ pub struct suffix_mult {
 //    Option --keep-size can be specified to prevent file length modification.
 #[no_mangle]
 pub unsafe extern "C" fn fallocate_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut str_l: *const libc::c_char = 0 as *const libc::c_char;

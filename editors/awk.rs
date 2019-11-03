@@ -2392,11 +2392,11 @@ unsafe extern "C" fn awk_split(
     loop {
       l = strcspn(s, c.as_mut_ptr().offset(2)) as libc::c_int; /* len till next NUL or \n */
       if regexec(
-        (if (*ptr_to_globals.offset(-1i32 as isize)).icase as libc::c_int != 0 {
+        if (*ptr_to_globals.offset(-1i32 as isize)).icase as libc::c_int != 0 {
           (*spl).r.ire
         } else {
           (*spl).l.re
-        }),
+        },
         s,
         1i32 as size_t,
         pmatch.as_mut_ptr(),
@@ -2748,11 +2748,11 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
         == OC_REGEXP as libc::c_int as libc::c_uint
       {
         if regexec(
-          (if (*ptr_to_globals.offset(-1i32 as isize)).icase as libc::c_int != 0 {
+          if (*ptr_to_globals.offset(-1i32 as isize)).icase as libc::c_int != 0 {
             (*(ptr_to_globals as *mut globals2)).rsplitter.n.r.ire
           } else {
             (*(ptr_to_globals as *mut globals2)).rsplitter.n.l.re
-          }),
+          },
           b,
           1i32 as size_t,
           pmatch.as_mut_ptr(),
@@ -21429,7 +21429,7 @@ unsafe extern "C" fn next_input_file() -> *mut rstream {
 }
 #[no_mangle]
 pub unsafe extern "C" fn awk_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

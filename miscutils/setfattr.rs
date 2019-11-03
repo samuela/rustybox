@@ -60,7 +60,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-v VALUE	(default: empty)"
 #[no_mangle]
 pub unsafe extern "C" fn setfattr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut name: *const libc::c_char = 0 as *const libc::c_char;

@@ -585,7 +585,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
 }
 #[no_mangle]
 pub unsafe extern "C" fn sysctl_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;

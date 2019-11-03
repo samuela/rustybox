@@ -239,7 +239,7 @@ unsafe extern "C" fn setup_alarm(
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtcwake_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

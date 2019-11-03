@@ -860,7 +860,7 @@ unsafe extern "C" fn d_to_tv(mut d: libc::c_double, mut tv: *mut timeval) {
 }
 unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
   let mut ret: libc::c_double = 0.;
-  lfp.int_partl = ({
+  lfp.int_partl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.int_partl;
     if 0 != 0 {
@@ -877,8 +877,8 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
-  lfp.fractionl = ({
+  };
+  lfp.fractionl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.fractionl;
     if 0 != 0 {
@@ -895,7 +895,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
-  });
+  };
   ret = lfp.int_partl as libc::c_double
     + lfp.fractionl as libc::c_double
       / (2147483647i32 as libc::c_uint)
@@ -905,7 +905,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
 }
 unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
   let mut ret: libc::c_double = 0.;
-  sfp.int_parts = ({
+  sfp.int_parts = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.int_parts;
     if 0 != 0 {
@@ -921,8 +921,8 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
-  });
-  sfp.fractions = ({
+  };
+  sfp.fractions = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.fractions;
     if 0 != 0 {
@@ -938,7 +938,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
-  });
+  };
   ret = sfp.int_parts as libc::c_double
     + sfp.fractions as libc::c_double / (32767i32 * 2i32 + 1i32) as libc::c_double;
   return ret;
@@ -953,7 +953,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
     * (2147483647i32 as libc::c_uint)
       .wrapping_mul(2u32)
       .wrapping_add(1u32) as libc::c_double) as uint32_t;
-  lfp.int_partl = ({
+  lfp.int_partl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.int_partl;
     if 0 != 0 {
@@ -971,8 +971,8 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
     __v
-  });
-  lfp.fractionl = ({
+  };
+  lfp.fractionl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.fractionl;
     if 0 != 0 {
@@ -990,7 +990,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
     }
     __v
-  });
+  };
   return lfp;
 }
 unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
@@ -1001,7 +1001,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
   sfp.int_parts = d as uint16_t;
   sfp.fractions = ((d - sfp.int_parts as libc::c_int as libc::c_double)
     * (32767i32 * 2i32 + 1i32) as libc::c_double) as uint16_t;
-  sfp.int_parts = ({
+  sfp.int_parts = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.int_parts;
     if 0 != 0 {
@@ -1017,8 +1017,8 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
     }
     __v
-  });
-  sfp.fractions = ({
+  };
+  sfp.fractions = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.fractions;
     if 0 != 0 {
@@ -1034,7 +1034,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }
     __v
-  });
+  };
   return sfp;
 }
 unsafe extern "C" fn dispersion(mut dp: *const datapoint_t) -> libc::c_double {
@@ -1298,7 +1298,7 @@ unsafe extern "C" fn hash(
   };
 }
 unsafe extern "C" fn hash_peer(mut p: *mut peer_t) {
-  (*p).p_xmt_msg.m_keyid = ({
+  (*p).p_xmt_msg.m_keyid = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*(*p).key_entry).id;
     if 0 != 0 {
@@ -1316,7 +1316,7 @@ unsafe extern "C" fn hash_peer(mut p: *mut peer_t) {
       c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
     }
     __v
-  });
+  };
   hash(
     (*p).key_entry,
     &mut (*p).p_xmt_msg,
@@ -3244,7 +3244,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ntpd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

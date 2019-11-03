@@ -283,7 +283,7 @@ unsafe extern "C" fn maybe_set_utc(mut opt: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn date_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ts: timespec = timespec {

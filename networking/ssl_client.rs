@@ -87,7 +87,7 @@ unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
 //usage:#define ssl_client_full_usage ""
 #[no_mangle]
 pub unsafe extern "C" fn ssl_client_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut tls: *mut tls_state_t = 0 as *mut tls_state_t;

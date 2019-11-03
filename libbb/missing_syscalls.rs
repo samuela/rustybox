@@ -1,4 +1,4 @@
-use libc;
+
 /*
  * Copyright 2012, Denys Vlasenko
  *

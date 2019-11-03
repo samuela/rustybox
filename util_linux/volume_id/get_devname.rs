@@ -222,8 +222,8 @@ unsafe extern "C" fn uuidcache_addentry(
 unsafe extern "C" fn uuidcache_check_device(
   mut device: *const libc::c_char,
   mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _userData: *mut libc::c_void,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   /* note: this check rejects links to devices, among other nodes */
   if !((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint)

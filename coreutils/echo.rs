@@ -479,7 +479,7 @@ pub type size_t = libc::c_ulong;
  */
 #[no_mangle]
 pub unsafe extern "C" fn echo_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* not an option arg, echo it */

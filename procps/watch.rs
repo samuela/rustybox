@@ -74,7 +74,7 @@ pub type duration_t = libc::c_double;
 // (procps 3.x and procps 2.x are forks, not newer/older versions of the same)
 #[no_mangle]
 pub unsafe extern "C" fn watch_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut period: duration_t = 0.;

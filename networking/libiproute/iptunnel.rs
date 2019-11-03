@@ -521,7 +521,7 @@ unsafe extern "C" fn parse_args(
   medium[0] = '\u{0}' as i32 as libc::c_char;
   (*p).iph.set_version(4i32 as libc::c_uint);
   (*p).iph.set_ihl(5i32 as libc::c_uint);
-  (*p).iph.frag_off = ({
+  (*p).iph.frag_off = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x4000i32 as libc::c_ushort;
     if 0 != 0 {
@@ -537,7 +537,7 @@ unsafe extern "C" fn parse_args(
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   while !(*argv).is_null() {
     key = index_in_strings(keywords.as_ptr(), *argv);
     if key == ARG_mode as libc::c_int {
@@ -623,7 +623,7 @@ unsafe extern "C" fn parse_args(
         (*p).i_key = (*p).o_key
       } else {
         uval = get_unsigned(*argv, b"key\x00" as *const u8 as *const libc::c_char);
-        (*p).o_key = ({
+        (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval;
           if 0 != 0 {
@@ -641,7 +641,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
           }
           __v
-        });
+        };
         (*p).i_key = (*p).o_key
       }
     } else if key == ARG_ikey as libc::c_int {
@@ -669,7 +669,7 @@ unsafe extern "C" fn parse_args(
         (*p).o_key = get_addr32(*argv)
       } else {
         uval_0 = get_unsigned(*argv, b"ikey\x00" as *const u8 as *const libc::c_char);
-        (*p).i_key = ({
+        (*p).i_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_0;
           if 0 != 0 {
@@ -687,7 +687,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
           }
           __v
-        })
+        }
       }
     } else if key == ARG_okey as libc::c_int {
       let mut uval_1: libc::c_uint = 0;
@@ -714,7 +714,7 @@ unsafe extern "C" fn parse_args(
         (*p).o_key = get_addr32(*argv)
       } else {
         uval_1 = get_unsigned(*argv, b"okey\x00" as *const u8 as *const libc::c_char);
-        (*p).o_key = ({
+        (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_1;
           if 0 != 0 {
@@ -732,7 +732,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
           __v
-        })
+        }
       }
     } else if key == ARG_seq as libc::c_int {
       (*p).i_flags = ((*p).i_flags as libc::c_int
@@ -887,7 +887,7 @@ unsafe extern "C" fn parse_args(
     } else if key == ARG_nopmtudisc as libc::c_int {
       (*p).iph.frag_off = 0i32 as uint16_t
     } else if key == ARG_pmtudisc as libc::c_int {
-      (*p).iph.frag_off = ({
+      (*p).iph.frag_off = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x4000i32 as libc::c_ushort;
         if 0 != 0 {
@@ -903,7 +903,7 @@ unsafe extern "C" fn parse_args(
           c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
         }
         __v
-      })
+      }
     } else if key == ARG_remote as libc::c_int {
       argv = next_arg(argv);
       key = index_in_strings(keywords.as_ptr(), *argv);

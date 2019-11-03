@@ -615,7 +615,7 @@ unsafe extern "C" fn print_long_double(
 unsafe extern "C" fn print_named_ascii(
   mut n_bytes: size_t,
   mut block: *const libc::c_char,
-  mut unused_fmt_string: *const libc::c_char,
+  mut _unused_fmt_string: *const libc::c_char,
 ) {
   /* Names for some non-printing characters.  */
   static mut charname: [[libc::c_char; 3]; 33] = [
@@ -688,7 +688,7 @@ unsafe extern "C" fn print_named_ascii(
 unsafe extern "C" fn print_ascii(
   mut n_bytes: size_t,
   mut block: *const libc::c_char,
-  mut unused_fmt_string: *const libc::c_char,
+  mut _unused_fmt_string: *const libc::c_char,
 ) {
   // buf[N] pos:  01234 56789
   let mut buf: [libc::c_char; 12] =
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
     );
   };
 }
-unsafe extern "C" fn format_address_none(mut address: off_t, mut c: libc::c_char) {}
+unsafe extern "C" fn format_address_none(mut _address: off_t, mut _c: libc::c_char) {}
 unsafe extern "C" fn decode_format_string(mut s: *const libc::c_char) {
   let mut s_orig: *const libc::c_char = s;
   while *s as libc::c_int != '\u{0}' as i32 {
@@ -1754,7 +1754,7 @@ unsafe extern "C" fn parse_old_offset(
 
 #[no_mangle]
 pub unsafe extern "C" fn od_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut od_longopts: [libc::c_char; 104] = [

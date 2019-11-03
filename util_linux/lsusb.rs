@@ -186,9 +186,9 @@ pub struct parser_t {
 //usage:#define lsusb_full_usage ""
 unsafe extern "C" fn fileAction(
   mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _statbuf: *mut stat,
+  mut _userData: *mut libc::c_void,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut parser: *mut parser_t = 0 as *mut parser_t;
   let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
@@ -250,8 +250,8 @@ unsafe extern "C" fn fileAction(
 }
 #[no_mangle]
 pub unsafe extern "C" fn lsusb_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* no options, no getopt */
   recursive_action(

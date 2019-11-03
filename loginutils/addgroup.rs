@@ -174,7 +174,7 @@ static mut addgroup_longopts: [libc::c_char; 16] = [
  */
 #[no_mangle]
 pub unsafe extern "C" fn addgroup_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;

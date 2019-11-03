@@ -266,7 +266,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 unsafe extern "C" fn reset_term() {
   tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).init_settings);
 }
-unsafe extern "C" fn sig_handler(mut signo: libc::c_int) {
+unsafe extern "C" fn sig_handler(mut _signo: libc::c_int) {
   reset_term();
   _exit(1i32);
 }
@@ -789,8 +789,8 @@ unsafe extern "C" fn show_timerstats() {
 //usage:       "Analyze power consumption on Intel-based laptops"
 #[no_mangle]
 pub unsafe extern "C" fn powertop_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut cur_usage: [ullong; 8] = [0; 8];
   let mut cur_duration: [ullong; 8] = [0; 8];

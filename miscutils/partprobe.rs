@@ -43,7 +43,7 @@ pub type uint32_t = __uint32_t;
 // -s, --summary	Show a summary of devices and their partitions
 #[no_mangle]
 pub unsafe extern "C" fn partprobe_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);

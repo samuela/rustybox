@@ -563,9 +563,9 @@ unsafe extern "C" fn flush_update() -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn print_route(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut r: *mut rtmsg = (n as *mut libc::c_char).offset(
     (0i32

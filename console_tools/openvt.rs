@@ -201,7 +201,7 @@ unsafe extern "C" fn vfork_child(mut argv: *mut *mut libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn openvt_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut vtname: [libc::c_char; 23] = [0; 23];

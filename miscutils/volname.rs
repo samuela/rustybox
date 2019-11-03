@@ -57,7 +57,7 @@ pub type off_t = __off64_t;
 //usage:       "Show CD volume name of the DEVICE (default /dev/cdrom)"
 #[no_mangle]
 pub unsafe extern "C" fn volname_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;

@@ -497,10 +497,10 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
   }
   /* for (;;) */
 }
-unsafe extern "C" fn sigalrm_handler(mut signum: libc::c_int) {}
+unsafe extern "C" fn sigalrm_handler(mut _signum: libc::c_int) {}
 #[no_mangle]
 pub unsafe extern "C" fn rx_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut tty: termios = termios {

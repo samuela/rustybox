@@ -46,8 +46,8 @@ pub const VT_GETSTATE: C2RustUnnamed = 22019;
 /* get global vt state info */
 #[no_mangle]
 pub unsafe extern "C" fn fgconsole_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut vtstat: vt_stat = vt_stat {
     v_active: 0,

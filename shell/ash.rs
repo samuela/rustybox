@@ -2746,7 +2746,7 @@ unsafe extern "C" fn docd(mut dest: *const libc::c_char, mut flags: libc::c_int)
   int_on();
   return err;
 }
-unsafe extern "C" fn cdcmd(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn cdcmd(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut dest: *const libc::c_char = 0 as *const libc::c_char;
   let mut path: *const libc::c_char = 0 as *const libc::c_char;
@@ -2864,8 +2864,8 @@ unsafe extern "C" fn cdcmd(mut argc: libc::c_int, mut argv: *mut *mut libc::c_ch
   };
 }
 unsafe extern "C" fn pwdcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut flags: libc::c_int = 0;
   let mut dir: *const libc::c_char = (*ash_ptr_to_globals_misc).curdir;
@@ -3069,7 +3069,7 @@ unsafe extern "C" fn printalias(mut ap: *const alias) {
   );
 }
 unsafe extern "C" fn aliascmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut n: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -3119,8 +3119,8 @@ unsafe extern "C" fn aliascmd(
   return ret;
 }
 unsafe extern "C" fn unaliascmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   if nextopt(b"a\x00" as *const u8 as *const libc::c_char) != '\u{0}' as i32 {
@@ -3707,7 +3707,7 @@ unsafe extern "C" fn restartjob(mut jp: *mut job, mut mode: libc::c_int) -> libc
   return status;
 }
 unsafe extern "C" fn fg_bgcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut jp: *mut job = 0 as *mut job;
@@ -4043,7 +4043,7 @@ unsafe extern "C" fn showjobs(mut mode: libc::c_int) {
   }
 }
 unsafe extern "C" fn jobscmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: libc::c_int = 0;
@@ -4102,7 +4102,7 @@ unsafe extern "C" fn getstatus(mut job: *mut job) -> libc::c_int {
   return retval;
 }
 unsafe extern "C" fn waitcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
@@ -6408,7 +6408,7 @@ unsafe extern "C" fn argstr(mut p: *mut libc::c_char, mut flags: libc::c_int) {
 unsafe extern "C" fn scanleft(
   mut startp: *mut libc::c_char,
   mut rmesc: *mut libc::c_char,
-  mut rmescend: *mut libc::c_char,
+  mut _rmescend: *mut libc::c_char,
   mut pattern: *mut libc::c_char,
   mut quotes: libc::c_int,
   mut zero: libc::c_int,
@@ -8117,8 +8117,8 @@ unsafe extern "C" fn addcmdentry(mut name: *mut libc::c_char, mut entry: *mut cm
   (*cmdp).rehash = 0i32 as libc::c_char;
 }
 unsafe extern "C" fn hashcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pp: *mut *mut tblentry = 0 as *mut *mut tblentry;
   let mut cmdp: *mut tblentry = 0 as *mut tblentry;
@@ -8411,7 +8411,7 @@ unsafe extern "C" fn describe_command(
   return 0i32;
 }
 unsafe extern "C" fn typecmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 1i32;
@@ -8488,8 +8488,8 @@ unsafe extern "C" fn parse_command_args(
   return argv;
 }
 unsafe extern "C" fn commandcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut c: libc::c_int = 0;
@@ -9542,7 +9542,7 @@ unsafe extern "C" fn mklocal(mut name: *mut libc::c_char) {
  * The "local" command.
  */
 unsafe extern "C" fn localcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -9562,19 +9562,19 @@ unsafe extern "C" fn localcmd(
   return 0i32;
 }
 unsafe extern "C" fn falsecmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return 1i32;
 }
 unsafe extern "C" fn truecmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn execcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   optionarg = 0 as *mut libc::c_char;
@@ -9618,7 +9618,7 @@ unsafe extern "C" fn execcmd(
  * The return command.
  */
 unsafe extern "C" fn returncmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /*
@@ -10106,8 +10106,8 @@ unsafe extern "C" fn isassignment(mut p: *const libc::c_char) -> libc::c_int {
   return (*q as libc::c_int == '=' as i32) as libc::c_int;
 }
 unsafe extern "C" fn bltincmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Preserve exitstatus of a previous possible redirection
    * as POSIX mandates */
@@ -10594,7 +10594,7 @@ unsafe extern "C" fn prehash(mut n: *mut node) {
  * in the standard shell so we don't make it one here.
  */
 unsafe extern "C" fn breakcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut n: libc::c_int = if !(*argv.offset(1)).is_null() {
@@ -11179,7 +11179,7 @@ unsafe extern "C" fn chkmail() {
   mail_var_path_changed = 0i32 as smallint;
   popstackmark(&mut smark);
 }
-unsafe extern "C" fn changemail(mut val: *const libc::c_char) {
+unsafe extern "C" fn changemail(mut _val: *const libc::c_char) {
   mail_var_path_changed = 1i32 as smallint;
 }
 /* ASH_MAIL */
@@ -11402,7 +11402,7 @@ unsafe extern "C" fn options(mut login_sh: *mut libc::c_int) -> libc::c_int {
  * The shift builtin command.
  */
 unsafe extern "C" fn shiftcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut n: libc::c_int = 0;
@@ -11512,7 +11512,7 @@ unsafe extern "C" fn showvars(
  * The set command builtin.
  */
 unsafe extern "C" fn setcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
@@ -11579,7 +11579,7 @@ unsafe extern "C" fn change_epoch(mut vepoch: *mut var, mut fmt: *const libc::c_
   setvar((*vepoch).var_text, buffer.as_mut_ptr(), 0x40i32);
   (*vepoch).flags &= !0x40i32;
 }
-unsafe extern "C" fn change_seconds(mut value: *const libc::c_char) {
+unsafe extern "C" fn change_seconds(mut _value: *const libc::c_char) {
   change_epoch(
     &mut *(*ash_ptr_to_globals_var)
       .varinit
@@ -11588,7 +11588,7 @@ unsafe extern "C" fn change_seconds(mut value: *const libc::c_char) {
     b"%lu\x00" as *const u8 as *const libc::c_char,
   );
 }
-unsafe extern "C" fn change_realtime(mut value: *const libc::c_char) {
+unsafe extern "C" fn change_realtime(mut _value: *const libc::c_char) {
   change_epoch(
     &mut *(*ash_ptr_to_globals_var)
       .varinit
@@ -13911,7 +13911,7 @@ unsafe extern "C" fn evalstring(mut s: *mut libc::c_char, mut flags: libc::c_int
  * The eval command.
  */
 unsafe extern "C" fn evalcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
   mut flags: libc::c_int,
 ) -> libc::c_int {
@@ -14066,8 +14066,8 @@ unsafe extern "C" fn find_dot_file(mut name: *mut libc::c_char) -> *mut libc::c_
   /* NOTREACHED */
 }
 unsafe extern "C" fn dotcmd(
-  mut argc_: libc::c_int,
-  mut argv_: *mut *mut libc::c_char,
+  mut _argc_: libc::c_int,
+  mut _argv_: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* "false; . empty_file; echo $?" should print 0, not 1: */
   let mut status: libc::c_int = 0i32;
@@ -14127,7 +14127,7 @@ unsafe extern "C" fn dotcmd(
   return status;
 }
 unsafe extern "C" fn exitcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if stoppedjobs() != 0 {
@@ -14422,8 +14422,8 @@ unsafe extern "C" fn find_command(
  * The trap builtin.
  */
 unsafe extern "C" fn trapcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut action: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
@@ -14512,8 +14512,8 @@ unsafe extern "C" fn trapcmd(
 }
 /* ============ Builtins */
 unsafe extern "C" fn helpcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut col: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
@@ -14543,8 +14543,8 @@ unsafe extern "C" fn helpcmd(
   return 0i32;
 }
 unsafe extern "C" fn historycmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if !line_input_state.is_null() {
     show_history(line_input_state);
@@ -14555,7 +14555,7 @@ unsafe extern "C" fn historycmd(
  * The export and readonly commands.
  */
 unsafe extern "C" fn exportcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut vp: *mut var = 0 as *mut var;
@@ -14640,8 +14640,8 @@ unsafe extern "C" fn unsetfunc(mut name: *const libc::c_char) {
  * with the same name.
  */
 unsafe extern "C" fn unsetcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut i: libc::c_int = 0;
@@ -14676,8 +14676,8 @@ static mut timescmd_str: [libc::c_uchar; 9] = [
   0i32 as libc::c_uchar,
 ];
 unsafe extern "C" fn timescmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut clk_tck: libc::c_uint = 0;
   let mut p: *const libc::c_uchar = 0 as *const libc::c_uchar;
@@ -14721,7 +14721,7 @@ unsafe extern "C" fn timescmd(
  * Copyright (C) 2003 Vladimir Oleynik <dzo@simtreas.ru>
  */
 unsafe extern "C" fn letcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: arith_t = 0;
@@ -14753,8 +14753,8 @@ unsafe extern "C" fn letcmd(
  *      -e              Use line editing (tty only)
  */
 unsafe extern "C" fn readcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut params: builtin_read_params = builtin_read_params {
     read_flags: 0,
@@ -14824,8 +14824,8 @@ unsafe extern "C" fn readcmd(
   return r as uintptr_t as libc::c_int;
 }
 unsafe extern "C" fn umaskcmd(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut permuser: [libc::c_char; 3] = [111, 103, 117];
   let mut mask: mode_t = 0;
@@ -14908,7 +14908,7 @@ unsafe extern "C" fn umaskcmd(
   return 0i32;
 }
 unsafe extern "C" fn ulimitcmd(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return shell_builtin_ulimit(argv);

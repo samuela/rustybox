@@ -171,7 +171,7 @@ unsafe extern "C" fn interrupted(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn logread_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut cur: libc::c_uint = 0; /* ipc shared memory id */

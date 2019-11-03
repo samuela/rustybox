@@ -574,7 +574,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
   /* Payload */
   if (*(*ptr_to_globals).dest_lsa).u.sa.sa_family as libc::c_int == 10i32 {
     let mut pkt: *mut outdata6_t = (*ptr_to_globals).outdata as *mut outdata6_t;
-    (*pkt).ident6 = ({
+    (*pkt).ident6 = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*ptr_to_globals).ident;
       if 0 != 0 {
@@ -592,8 +592,8 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
-    });
-    (*pkt).seq6 = ({
+    };
+    (*pkt).seq6 = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = seq as libc::c_uint;
       if 0 != 0 {
@@ -611,7 +611,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
-    })
+    }
   /*gettimeofday(&pkt->tv, &tz);*/
   } else {
     (*(*ptr_to_globals).outdata).seq = seq as libc::c_uchar;
@@ -622,7 +622,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
       (*((*ptr_to_globals).outip.offset(1) as *mut icmp))
         .icmp_hun
         .ih_idseq
-        .icd_seq = ({
+        .icd_seq = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = seq as libc::c_ushort;
         if 0 != 0 {
@@ -638,7 +638,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
-      });
+      };
       /* Always calculate checksum for icmp packets */
       (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = 0i32 as uint16_t;
       (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = inet_cksum(
@@ -1375,7 +1375,7 @@ unsafe extern "C" fn common_traceroute_main(
       (*((*ptr_to_globals).outip.offset(1) as *mut icmp))
         .icmp_hun
         .ih_idseq
-        .icd_id = ({
+        .icd_id = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (*ptr_to_globals).ident as libc::c_ushort;
         if 0 != 0 {
@@ -1391,7 +1391,7 @@ unsafe extern "C" fn common_traceroute_main(
           c2rust_asm_casts::AsmCast::cast_out(fresh38, fresh40, fresh39);
         }
         __v
-      });
+      };
       (*ptr_to_globals).outdata =
         ((*ptr_to_globals).outip.offset(1) as *mut icmp as *mut libc::c_char)
           .offset(SIZEOF_ICMP_HDR as libc::c_int as isize) as *mut outdata_t
@@ -1686,14 +1686,14 @@ unsafe extern "C" fn common_traceroute_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn traceroute_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return common_traceroute_main(0i32, argv);
 }
 #[no_mangle]
 pub unsafe extern "C" fn traceroute6_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return common_traceroute_main(OPT_IPV6 as libc::c_int, argv);

@@ -1084,7 +1084,7 @@ unsafe extern "C" fn writeFileToTarball(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
   mut userData: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut tbInfo: *mut TarBallInfo = userData as *mut TarBallInfo;
   let mut header_name: *const libc::c_char = 0 as *const libc::c_char;
@@ -1374,7 +1374,7 @@ static mut tar_longopts: [libc::c_char; 314] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn tar_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;

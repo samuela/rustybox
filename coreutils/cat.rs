@@ -155,7 +155,7 @@ unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_ch
 }
 #[no_mangle]
 pub unsafe extern "C" fn cat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;

@@ -408,7 +408,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         filename,
       );
     }
-    header.size = ({
+    header.size = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = header.size;
       if 0 != 0 {
@@ -426,8 +426,8 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
-    });
-    cnt = ({
+    };
+    cnt = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = header.entries;
       if 0 != 0 {
@@ -445,7 +445,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
-    });
+    };
     storepos = (storepos as libc::c_ulong).wrapping_add(
       (::std::mem::size_of::<rpm_header>() as libc::c_ulong)
         .wrapping_add(cnt.wrapping_mul(16i32 as libc::c_uint) as libc::c_ulong),
@@ -470,7 +470,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         break;
       }
       let mut tag: *mut rpm_index = &mut *tags.offset(idx as isize) as *mut rpm_index;
-      (*tag).tag = ({
+      (*tag).tag = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*tag).tag;
         if 0 != 0 {
@@ -488,8 +488,8 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
         }
         __v
-      });
-      (*tag).type_0 = ({
+      };
+      (*tag).type_0 = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*tag).type_0;
         if 0 != 0 {
@@ -507,8 +507,8 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
         }
         __v
-      });
-      (*tag).count = ({
+      };
+      (*tag).count = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*tag).count;
         if 0 != 0 {
@@ -526,9 +526,9 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
         }
         __v
-      });
+      };
       (*tag).offset =
-                storepos.wrapping_add(({
+                storepos.wrapping_add({
                                            let mut __v: libc::c_uint = 0;
                                            let mut __x: libc::c_uint =
                                                (*tag).offset;
@@ -561,7 +561,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
                                                                                    fresh21);
                                            }
                                            __v
-                                       }));
+                                       });
       if pass == 0i32 as libc::c_uint {
         (*tag).tag =
           ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as uint32_t as uint32_t
@@ -1167,7 +1167,7 @@ pub unsafe extern "C" fn rpm_main(
 /* No getopt required */
 #[no_mangle]
 pub unsafe extern "C" fn rpm2cpio_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut str: *const libc::c_char = 0 as *const libc::c_char;

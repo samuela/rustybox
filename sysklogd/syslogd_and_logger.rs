@@ -2021,7 +2021,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
 }
 #[no_mangle]
 pub unsafe extern "C" fn syslogd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int = 0;
@@ -2211,7 +2211,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn logger_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut str_p: *mut libc::c_char = 0 as *mut libc::c_char;

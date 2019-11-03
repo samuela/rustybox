@@ -676,7 +676,7 @@ unsafe extern "C" fn finalize(
 //usage:     "\nUnder PID 1: as init, then exec $bootchart_init, /init, /sbin/init"
 #[no_mangle]
 pub unsafe extern "C" fn bootchartd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut sample_period_us: libc::c_uint = 0;
@@ -827,13 +827,13 @@ pub unsafe extern "C" fn bootchartd_main(
   }
   if cmd as libc::c_int == CMD_START as libc::c_int && !(*argv.offset(2)).is_null() {
     /* "start PROG ARGS" */
-    let mut pid: pid_t = ({
+    let mut pid: pid_t = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
-    });
+    };
     if pid == 0i32 {
       /* child */
       argv = argv.offset(2);

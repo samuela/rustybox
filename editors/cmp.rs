@@ -133,7 +133,7 @@ static mut fmt_l_opt: [libc::c_char; 21] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn cmp_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fp1: *mut FILE = 0 as *mut FILE; /* Hopefully won't overflow... */

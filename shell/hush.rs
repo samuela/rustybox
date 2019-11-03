@@ -11643,7 +11643,7 @@ pub unsafe extern "C" fn hush_main(
 /*
  * Built-ins
  */
-unsafe extern "C" fn builtin_true(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_true(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn run_applet_main(
@@ -11679,7 +11679,7 @@ unsafe extern "C" fn builtin_printf(mut argv: *mut *mut libc::c_char) -> libc::c
     ),
   );
 }
-unsafe extern "C" fn builtin_help(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_help(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut x: *const built_in_command = 0 as *const built_in_command;
   printf(b"Built-in commands:\n------------------\n\x00" as *const u8 as *const libc::c_char);
   x = bltins1.as_ptr();
@@ -11701,7 +11701,7 @@ unsafe extern "C" fn builtin_help(mut argv: *mut *mut libc::c_char) -> libc::c_i
   }
   return 0i32;
 }
-unsafe extern "C" fn builtin_history(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_history(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   if !(*ptr_to_globals).line_input_state.is_null() {
     show_history((*ptr_to_globals).line_input_state);
   }
@@ -11752,7 +11752,7 @@ unsafe extern "C" fn builtin_cd(mut argv: *mut *mut libc::c_char) -> libc::c_int
   set_pwd_var(0i32 as libc::c_uint);
   return 0i32;
 }
-unsafe extern "C" fn builtin_pwd(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_pwd(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   puts(get_cwd(0i32));
   return 0i32;
 }
@@ -12812,7 +12812,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
   );
   return 0 as *mut pipe;
 }
-unsafe extern "C" fn builtin_jobs(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut job: *mut pipe = 0 as *mut pipe;
   let mut status_string: *const libc::c_char = 0 as *const libc::c_char;
   checkjobs(0 as *mut pipe, 0i32);
@@ -13256,7 +13256,7 @@ unsafe extern "C" fn builtin_return(mut argv: *mut *mut libc::c_char) -> libc::c
   ) as libc::c_int;
   return rc;
 }
-unsafe extern "C" fn builtin_times(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut times_tbl: [uint8_t; 9] = [
     ' ' as i32 as uint8_t,
     0u64 as uint8_t,

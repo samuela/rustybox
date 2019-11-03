@@ -341,9 +341,9 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
   return nuds[id as usize] as libc::c_uint;
 }
 unsafe extern "C" fn print_neigh(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut r: *mut ndmsg = (n as *mut libc::c_char).offset(
     (0i32

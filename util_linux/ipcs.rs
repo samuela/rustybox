@@ -1184,7 +1184,7 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
 //usage:     "\n	-u	Summary"
 #[no_mangle]
 pub unsafe extern "C" fn ipcs_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut format: libc::c_int = 0i32; // -t

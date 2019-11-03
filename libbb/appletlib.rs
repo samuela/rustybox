@@ -2597,11 +2597,11 @@ unsafe fn applet_names_sorted() -> Vec<String> {
 
 fn install_loc_to_string(install_loc: InstallLoc) -> String {
   String::from(match install_loc {
-    DIR_USR_SBIN => "/usr/sbin/",
-    DIR_USR_BIN => "/usr/bin/",
-    DIR_SBIN => "/sbin/",
-    DIR_BIN => "/bin/",
-    DIR_ROOT => "/",
+    _DIR_USR_SBIN => "/usr/sbin/",
+    _DIR_USR_BIN => "/usr/bin/",
+    _DIR_SBIN => "/sbin/",
+    _DIR_BIN => "/bin/",
+    _DIR_ROOT => "/",
   })
 }
 
@@ -2668,7 +2668,7 @@ unsafe fn find_script_by_name(name: &str) -> Option<usize> {
 // }
 #[no_mangle]
 pub unsafe extern "C" fn scripted_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let exitcode = match find_script_by_name(&ptr_to_str(applet_name)) {

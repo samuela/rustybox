@@ -414,7 +414,7 @@ unsafe extern "C" fn connection_status() {
     ); /* gcc */
   }; /* for compiler */
 }
-unsafe extern "C" fn sig_child_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn sig_child_handler(mut _sig: libc::c_int) {
   let mut wstat: libc::c_int = 0; /* for compiler */
   let mut pid: pid_t = 0;
   loop {
@@ -439,7 +439,7 @@ unsafe extern "C" fn sig_child_handler(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn tcpudpsvd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut str_C: *mut libc::c_char = 0 as *mut libc::c_char;

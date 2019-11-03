@@ -2130,7 +2130,7 @@ unsafe extern "C" fn zip() {
   flush_outbuf();
 }
 /* ======================================================================== */
-unsafe extern "C" fn pack_gzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe extern "C" fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   /* Reinit G1.xxx except pointers to allocated buffers, and entire G2 */
   memset(
     &mut (*ptr_to_globals.offset(-1)).crc as *mut uint32_t as *mut libc::c_void,

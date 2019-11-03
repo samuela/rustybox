@@ -538,13 +538,13 @@ unsafe extern "C" fn scale(mut ul: ullong) {
   .offset(0) = '\u{0}' as i32 as libc::c_char; //sanitize
   put(buf.as_mut_ptr());
 }
-unsafe extern "C" fn collect_literal(mut s: *mut s_stat) {}
+unsafe extern "C" fn collect_literal(mut _s: *mut s_stat) {}
 unsafe extern "C" fn init_literal() -> *mut s_stat {
   let mut s: *mut s_stat = xzalloc(::std::mem::size_of::<s_stat>() as libc::c_ulong) as *mut s_stat;
   (*s).collect = Some(collect_literal as unsafe extern "C" fn(_: *mut s_stat) -> ());
   return s;
 }
-unsafe extern "C" fn init_cr(mut param: *const libc::c_char) -> *mut s_stat {
+unsafe extern "C" fn init_cr(mut _param: *const libc::c_char) -> *mut s_stat {
   (*ptr_to_globals).final_char = '\r' as i32 as libc::c_char;
   return 0 as *mut s_stat;
 }
@@ -751,7 +751,7 @@ unsafe extern "C" fn collect_ctx(mut s: *mut ctx_stat) {
   (*s).old = data[0];
   scale(data[0].wrapping_sub(old));
 }
-unsafe extern "C" fn init_ctx(mut param: *const libc::c_char) -> *mut s_stat {
+unsafe extern "C" fn init_ctx(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut ctx_stat =
     xzalloc(::std::mem::size_of::<ctx_stat>() as libc::c_ulong) as *mut ctx_stat;
   (*s).collect = Some(collect_ctx as unsafe extern "C" fn(_: *mut ctx_stat) -> ());
@@ -797,14 +797,14 @@ unsafe extern "C" fn collect_blk(mut s: *mut blk_stat) {
   put_c(' ' as i32 as libc::c_char);
   scale(data[1].wrapping_mul(512i32 as libc::c_ulonglong));
 }
-unsafe extern "C" fn init_blk(mut param: *const libc::c_char) -> *mut s_stat {
+unsafe extern "C" fn init_blk(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut blk_stat =
     xzalloc(::std::mem::size_of::<blk_stat>() as libc::c_ulong) as *mut blk_stat;
   (*s).collect = Some(collect_blk as unsafe extern "C" fn(_: *mut blk_stat) -> ());
   (*s).lookfor = b"page\x00" as *const u8 as *const libc::c_char;
   return s as *mut s_stat;
 }
-unsafe extern "C" fn collect_thread_nr(mut s: *mut fork_stat) {
+unsafe extern "C" fn collect_thread_nr(mut _s: *mut fork_stat) {
   let mut data: [ullong; 1] = [0; 1];
   if rdval_loadavg(
     get_file(&mut (*ptr_to_globals).proc_loadavg),
@@ -989,7 +989,7 @@ unsafe extern "C" fn init_mem(mut param: *const libc::c_char) -> *mut s_stat {
   (*s).opt = *param.offset(0);
   return s as *mut s_stat;
 }
-unsafe extern "C" fn collect_swp(mut s: *mut swp_stat) {
+unsafe extern "C" fn collect_swp(mut _s: *mut swp_stat) {
   let mut s_total: [ullong; 1] = [0; 1];
   let mut s_free: [ullong; 1] = [0; 1];
   if rdval(
@@ -1010,13 +1010,13 @@ unsafe extern "C" fn collect_swp(mut s: *mut swp_stat) {
   }
   scale(s_total[0].wrapping_sub(s_free[0]) << 10i32);
 }
-unsafe extern "C" fn init_swp(mut param: *const libc::c_char) -> *mut s_stat {
+unsafe extern "C" fn init_swp(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut swp_stat =
     xzalloc(::std::mem::size_of::<swp_stat>() as libc::c_ulong) as *mut swp_stat;
   (*s).collect = Some(collect_swp as unsafe extern "C" fn(_: *mut swp_stat) -> ());
   return s as *mut s_stat;
 }
-unsafe extern "C" fn collect_fd(mut s: *mut fd_stat) {
+unsafe extern "C" fn collect_fd(mut _s: *mut fd_stat) {
   let mut data: [ullong; 2] = [0; 2];
   if rdval(
     get_file(&mut (*ptr_to_globals).proc_sys_fs_filenr),
@@ -1030,7 +1030,7 @@ unsafe extern "C" fn collect_fd(mut s: *mut fd_stat) {
   }
   scale(data[0].wrapping_sub(data[1]));
 }
-unsafe extern "C" fn init_fd(mut param: *const libc::c_char) -> *mut s_stat {
+unsafe extern "C" fn init_fd(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut fd_stat =
     xzalloc(::std::mem::size_of::<fd_stat>() as libc::c_ulong) as *mut fd_stat;
   (*s).collect = Some(collect_fd as unsafe extern "C" fn(_: *mut fd_stat) -> ());
@@ -1115,7 +1115,7 @@ static mut init_functions: [Option<unsafe extern "C" fn(_: *const libc::c_char) 
 };
 #[no_mangle]
 pub unsafe extern "C" fn nmeter_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut buf: [libc::c_char; 32] = [0; 32];

@@ -333,7 +333,7 @@ unsafe extern "C" fn get_prefix_1(
       } else {
         if netmask_pfx.family as libc::c_int == 2i32 {
           /* fill in prefix length of dotted quad */
-          let mut mask: uint32_t = ({
+          let mut mask: uint32_t = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = netmask_pfx.data[0];
             if 0 != 0 {
@@ -351,7 +351,7 @@ unsafe extern "C" fn get_prefix_1(
               c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
             }
             __v
-          });
+          };
           let mut host: uint32_t = !mask;
           /* a valid netmask must be 2^n - 1 */
           if host & host.wrapping_add(1i32 as libc::c_uint) != 0 {
@@ -514,7 +514,7 @@ pub unsafe extern "C" fn inet_addr_match(
     let mut mask: uint32_t = 0;
     w1 = *a1.offset(words as isize);
     w2 = *a2.offset(words as isize);
-    mask = ({
+    mask = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffffffffu32 << 0x20i32 - bits;
       if 0 != 0 {
@@ -532,7 +532,7 @@ pub unsafe extern "C" fn inet_addr_match(
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
-    });
+    };
     if (w1 ^ w2) & mask != 0 {
       return 1i32;
     }

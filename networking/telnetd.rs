@@ -762,7 +762,7 @@ unsafe extern "C" fn free_session(mut ts: *mut tsession) {
   }
 }
 /* !FEATURE_TELNETD_STANDALONE */
-unsafe extern "C" fn handle_sigchld(mut sig: libc::c_int) {
+unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
   let mut pid: pid_t = 0;
   let mut ts: *mut tsession = 0 as *mut tsession;
   let mut save_errno: libc::c_int = *bb_errno;
@@ -788,7 +788,7 @@ unsafe extern "C" fn handle_sigchld(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn telnetd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

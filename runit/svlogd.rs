@@ -1654,7 +1654,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
   }
   return i;
 }
-unsafe extern "C" fn sig_term_handler(mut sig_no: libc::c_int) {
+unsafe extern "C" fn sig_term_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
     bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
@@ -1663,7 +1663,7 @@ unsafe extern "C" fn sig_term_handler(mut sig_no: libc::c_int) {
   }
   (*ptr_to_globals).exitasap = 1i32 as smallint;
 }
-unsafe extern "C" fn sig_child_handler(mut sig_no: libc::c_int) {
+unsafe extern "C" fn sig_child_handler(mut _sig_no: libc::c_int) {
   let mut pid: pid_t = 0;
   let mut l: libc::c_int = 0;
   if (*ptr_to_globals).verbose != 0 {
@@ -1689,7 +1689,7 @@ unsafe extern "C" fn sig_child_handler(mut sig_no: libc::c_int) {
     }
   }
 }
-unsafe extern "C" fn sig_alarm_handler(mut sig_no: libc::c_int) {
+unsafe extern "C" fn sig_alarm_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
     bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
@@ -1698,7 +1698,7 @@ unsafe extern "C" fn sig_alarm_handler(mut sig_no: libc::c_int) {
   }
   (*ptr_to_globals).rotateasap = 1i32 as smallint;
 }
-unsafe extern "C" fn sig_hangup_handler(mut sig_no: libc::c_int) {
+unsafe extern "C" fn sig_hangup_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
     bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,

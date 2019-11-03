@@ -119,7 +119,7 @@ pub struct format_descr {
 /* format fill byte. */
 #[no_mangle]
 pub unsafe extern "C" fn fdformat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;

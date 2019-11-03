@@ -19,7 +19,7 @@ extern "C" {
 }
 #[no_mangle]
 pub unsafe extern "C" fn freeramdisk_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;

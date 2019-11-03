@@ -1420,7 +1420,7 @@ unsafe extern "C" fn same_serv_addr_proto(
   }
   return 1i32;
 }
-unsafe extern "C" fn reread_config_file(mut sig: libc::c_int) {
+unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
   let mut sun: *mut sockaddr_un = 0 as *mut sockaddr_un;
   let mut current_block: u64;
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
@@ -1513,7 +1513,7 @@ unsafe extern "C" fn reread_config_file(mut sig: libc::c_int) {
             /* case AF_INET, case AF_INET6 */
             n = bb_strtou((*sep).se_service, 0 as *mut *mut libc::c_char, 10i32);
             /* what port to listen on? */
-            port = ({
+            port = {
               let mut __v: libc::c_ushort = 0;
               let mut __x: libc::c_ushort = n as libc::c_ushort;
               if 0 != 0 {
@@ -1530,7 +1530,7 @@ unsafe extern "C" fn reread_config_file(mut sig: libc::c_int) {
                 c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
               }
               __v
-            });
+            };
             if *bb_errno != 0 || n > 0xffffi32 as libc::c_uint {
               /* se_service is not numeric */
               let mut protoname: [libc::c_char; 4] = [0; 4];
@@ -1666,7 +1666,7 @@ unsafe extern "C" fn reread_config_file(mut sig: libc::c_int) {
   }
   *bb_errno = save_errno;
 }
-unsafe extern "C" fn reap_child(mut sig: libc::c_int) {
+unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
   let mut pid: pid_t = 0;
   let mut status: libc::c_int = 0;
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
@@ -1703,7 +1703,7 @@ unsafe extern "C" fn reap_child(mut sig: libc::c_int) {
   }
   *bb_errno = save_errno;
 }
-unsafe extern "C" fn retry_network_setup(mut sig: libc::c_int) {
+unsafe extern "C" fn retry_network_setup(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).alarm_armed = 0i32 as smallint;
@@ -1716,7 +1716,7 @@ unsafe extern "C" fn retry_network_setup(mut sig: libc::c_int) {
   }
   *bb_errno = save_errno;
 }
-unsafe extern "C" fn clean_up_and_exit(mut sig: libc::c_int) {
+unsafe extern "C" fn clean_up_and_exit(mut _sig: libc::c_int) {
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
   /* XXX signal race walking sep list */
   sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list; /* for compiler */
@@ -1736,7 +1736,7 @@ unsafe extern "C" fn clean_up_and_exit(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn inetd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
@@ -2278,7 +2278,7 @@ pub unsafe extern "C" fn inetd_main(
  */
 /* Echo service -- echo data back. */
 /* ARGSUSED */
-unsafe extern "C" fn echo_stream(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn echo_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   loop {
     let mut sz: ssize_t = safe_read(
       s,
@@ -2337,7 +2337,7 @@ unsafe extern "C" fn echo_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
 /* FEATURE_INETD_SUPPORT_BUILTIN_ECHO */
 /* Discard service -- ignore data. */
 /* ARGSUSED */
-unsafe extern "C" fn discard_stream(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn discard_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   while safe_read(
     s,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -2348,7 +2348,7 @@ unsafe extern "C" fn discard_stream(mut s: libc::c_int, mut sep: *mut servtab_t)
   {}
 }
 /* ARGSUSED */
-unsafe extern "C" fn discard_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn discard_dg(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   /* dgram builtins are non-forking - DONT BLOCK! */
   recv(
     s,
@@ -2376,7 +2376,7 @@ unsafe extern "C" fn init_ring() {
 }
 /* Character generator. MMU arches only. */
 /* ARGSUSED */
-unsafe extern "C" fn chargen_stream(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn chargen_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   let mut rs: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut len: libc::c_int = 0;
   let mut text: [libc::c_char; 74] = [0; 74];
@@ -2526,7 +2526,7 @@ unsafe extern "C" fn machtime() -> uint32_t {
     tv_usec: 0,
   };
   gettimeofday(&mut tv, 0 as *mut timezone);
-  return ({
+  return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (tv.tv_sec + 2208988800u32 as libc::c_long) as uint32_t;
     if 0 != 0 {
@@ -2544,10 +2544,10 @@ unsafe extern "C" fn machtime() -> uint32_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh29, fresh31, fresh30);
     }
     __v
-  });
+  };
 }
 /* ARGSUSED */
-unsafe extern "C" fn machtime_stream(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn machtime_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   let mut result: uint32_t = 0;
   result = machtime();
   full_write(
@@ -2595,7 +2595,7 @@ unsafe extern "C" fn machtime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
 /* FEATURE_INETD_SUPPORT_BUILTIN_TIME */
 /* Return human-readable time of day */
 /* ARGSUSED */
-unsafe extern "C" fn daytime_stream(mut s: libc::c_int, mut sep: *mut servtab_t) {
+unsafe extern "C" fn daytime_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
   let mut t: time_t = 0;
   time(&mut t);
   dprintf(

@@ -243,9 +243,9 @@ unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
 /* vi: set sw=4 ts=4: */
 #[no_mangle]
 pub unsafe extern "C" fn ll_remember_index(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut h: libc::c_int = 0;

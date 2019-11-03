@@ -185,7 +185,7 @@ unsafe extern "C" fn bb_alphasort(
 unsafe extern "C" fn act(
   mut file: *const libc::c_char,
   mut statbuf: *mut stat,
-  mut args: *mut libc::c_void,
+  mut _args: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
   if depth == 1i32 {
@@ -222,7 +222,7 @@ static mut runparts_longopts: [libc::c_char; 55] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn run_parts_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut umask_p: *const libc::c_char = b"22\x00" as *const u8 as *const libc::c_char;

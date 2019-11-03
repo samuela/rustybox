@@ -167,7 +167,7 @@ unsafe extern "C" fn next_file(
 }
 #[no_mangle]
 pub unsafe extern "C" fn split_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut suffix_len: libc::c_uint = 2i32 as libc::c_uint;

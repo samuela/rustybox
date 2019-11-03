@@ -462,7 +462,7 @@ pub unsafe extern "C" fn nbdclient_main(
         b"IHAVEOPT\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         ::std::mem::size_of::<uint64_t>() as libc::c_ulong,
       );
-      nbd_opts.opt = ({
+      nbd_opts.opt = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 1i32 as libc::c_uint;
         if 0 != 0 {
@@ -480,9 +480,9 @@ pub unsafe extern "C" fn nbdclient_main(
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
-      });
+      };
       namelen = strlen(name) as libc::c_uint;
-      nbd_opts.len = ({
+      nbd_opts.len = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = namelen;
         if 0 != 0 {
@@ -500,7 +500,7 @@ pub unsafe extern "C" fn nbdclient_main(
           c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
         }
         __v
-      });
+      };
       xwrite(
         sock,
         &mut nbd_opts as *mut nbd_opt_t as *const libc::c_void,

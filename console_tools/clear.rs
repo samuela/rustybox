@@ -26,8 +26,8 @@ pub type ssize_t = __ssize_t;
 //usage:       "Clear screen"
 #[no_mangle]
 pub unsafe extern "C" fn clear_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* home; clear to the end of screen */
   return (full_write1_str(b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char)

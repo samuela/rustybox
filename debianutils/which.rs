@@ -53,7 +53,7 @@ pub type uint32_t = __uint32_t;
 //usage:       "/bin/login\n"
 #[no_mangle]
 pub unsafe extern "C" fn which_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut env_path: *mut libc::c_char = 0 as *mut libc::c_char;

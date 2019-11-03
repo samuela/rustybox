@@ -232,7 +232,7 @@ pub const OPT_f: C2RustUnnamed_0 = 4;
 //however, in my test, "script" from util-linux-2.28 seems to also add '\r' bytes.
 #[no_mangle]
 pub unsafe extern "C" fn script_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_int = 0; /* NB: 0: ok */

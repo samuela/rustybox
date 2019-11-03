@@ -354,7 +354,7 @@ unsafe extern "C" fn motd() {
     close(fd);
   };
 }
-unsafe extern "C" fn alarm_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   /* This is the escape hatch! Poor serial line users and the like
    * arrive here when their connection is broken.
    * We don't want to block here */
@@ -377,7 +377,7 @@ unsafe extern "C" fn alarm_handler(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn login_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

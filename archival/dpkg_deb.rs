@@ -108,7 +108,7 @@ pub struct archive_handle_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn dpkg_deb_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ar_archive: *mut archive_handle_t = 0 as *mut archive_handle_t;

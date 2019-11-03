@@ -233,7 +233,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> dev_t {
 //usage:   "\n""Restore system state from 'suspend-to-disk' data in BLOCKDEV"
 #[no_mangle]
 pub unsafe extern "C" fn resume_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ofs: libc::c_ulonglong = 0;

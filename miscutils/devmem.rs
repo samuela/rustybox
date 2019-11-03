@@ -84,7 +84,7 @@ static mut sizes: [uint8_t; 5] = [0; 5];
 //usage:     "\n	VALUE	Data to be written"
 #[no_mangle]
 pub unsafe extern "C" fn devmem_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut map_base: *mut libc::c_void = 0 as *mut libc::c_void; /* for compiler */

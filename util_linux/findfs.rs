@@ -42,7 +42,7 @@ extern "C" {
 //usage:       "$ findfs LABEL=MyDevice"
 #[no_mangle]
 pub unsafe extern "C" fn findfs_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   argv = argv.offset(1);

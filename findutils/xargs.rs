@@ -562,7 +562,7 @@ unsafe extern "C" fn process0_stdin(
 //FIXME: quoting is not implemented.
 unsafe extern "C" fn process_stdin_with_replace(
   mut n_max_chars: libc::c_int,
-  mut n_max_arg: libc::c_int,
+  mut _n_max_arg: libc::c_int,
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
@@ -658,7 +658,7 @@ unsafe extern "C" fn xargs_ask_confirmation() -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn xargs_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut initial_idx: libc::c_int = 0;

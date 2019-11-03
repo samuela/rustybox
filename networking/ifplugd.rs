@@ -1184,7 +1184,7 @@ unsafe extern "C" fn read_pid(mut filename: *const libc::c_char) -> pid_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ifplugd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

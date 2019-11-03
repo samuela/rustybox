@@ -621,7 +621,7 @@ unsafe extern "C" fn KeyExpansion(
   // The first round key is the key itself.
   i = 0i32;
   while i < words_key {
-    *RoundKey.offset(i as isize) = ({
+    *RoundKey.offset(i as isize) = {
       let mut v: uint32_t = 0;
       v = *((key as *mut uint32_t).offset(i as isize) as *mut bb__aliased_uint32_t);
       ({
@@ -643,7 +643,7 @@ unsafe extern "C" fn KeyExpansion(
         }
         __v
       })
-    });
+    };
     i += 1
   }
   // i == words_key now

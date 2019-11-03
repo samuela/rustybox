@@ -230,7 +230,7 @@ unsafe extern "C" fn get_response_or_say_and_die(
 }
 #[no_mangle]
 pub unsafe extern "C" fn lpqr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut tempfile: [libc::c_char; 15] = [0; 15];

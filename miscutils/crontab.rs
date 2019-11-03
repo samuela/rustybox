@@ -139,13 +139,13 @@ pub const OPT_r: C2RustUnnamed = 16;
 unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_char) {
   let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
   let mut pid: pid_t = 0;
-  pid = ({
+  pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
-  });
+  };
   if pid != 0 {
     /* parent */
     wait4pid(pid);
@@ -170,7 +170,7 @@ unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_
 }
 #[no_mangle]
 pub unsafe extern "C" fn crontab_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pas: *const passwd = 0 as *const passwd;

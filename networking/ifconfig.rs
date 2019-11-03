@@ -447,7 +447,7 @@ static mut OptArray: [options; 24] = [options {
 }; 24];
 #[no_mangle]
 pub unsafe extern "C" fn ifconfig_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ifr: ifreq = ifreq {

@@ -602,13 +602,13 @@ unsafe extern "C" fn run_command(mut cmd: *const *mut libc::c_char, mut resp: *m
   let mut interrupt_signal: Option<unsafe extern "C" fn(_: libc::c_int) -> ()> = None;
   let mut quit_signal: Option<unsafe extern "C" fn(_: libc::c_int) -> ()> = None;
   (*resp).elapsed_ms = monotonic_ms() as libc::c_uint;
-  pid = ({
+  pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
-  });
+  };
   if pid == 0i32 {
     /* Child */
     BB_EXECVP_or_die(cmd as *mut *mut libc::c_char);
@@ -630,7 +630,7 @@ unsafe extern "C" fn run_command(mut cmd: *const *mut libc::c_char, mut resp: *m
 }
 #[no_mangle]
 pub unsafe extern "C" fn time_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut res: resource_t = resource_t {

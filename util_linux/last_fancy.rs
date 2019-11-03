@@ -291,7 +291,7 @@ unsafe extern "C" fn is_runlevel_shutdown(mut ut: *mut utmpx) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn last_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ut: utmpx = utmpx {

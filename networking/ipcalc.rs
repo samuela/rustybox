@@ -242,7 +242,7 @@ static mut ipcalc_longopts: [libc::c_char; 62] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn ipcalc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
@@ -291,7 +291,7 @@ pub unsafe extern "C" fn ipcalc_main(
           msk >>= 1i32;
           netprefix = netprefix.wrapping_sub(1)
         }
-        s_netmask.s_addr = ({
+        s_netmask.s_addr = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = s_netmask.s_addr;
           if 0 != 0 {
@@ -309,7 +309,7 @@ pub unsafe extern "C" fn ipcalc_main(
             c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
           }
           __v
-        });
+        };
         /* Even if it was 0, we will signify that we have a netmask. This allows */
         /* for specification of default routes, etc which have a 0 netmask/prefix */
         have_netmask = 1i32 != 0

@@ -516,7 +516,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
 // also allow the --- after the +++ line.
 #[no_mangle]
 pub unsafe extern "C" fn patch_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int = 0; /* for compiler */

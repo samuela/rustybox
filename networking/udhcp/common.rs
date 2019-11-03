@@ -1106,7 +1106,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
          * in code below for safety */
         /* TODO: use bb_strtoX? */
         let mut tmp: uint32_t = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
-        *result_u16 = ({
+        *result_u16 = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = tmp as libc::c_ushort;
           if 0 != 0 {
@@ -1122,7 +1122,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
           }
           __v
-        });
+        };
         retval = (*bb_errno == 0i32) as libc::c_int;
         current_block_58 = 10778260831612459202;
       }
@@ -1134,7 +1134,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         //			break;
         //		}
         let mut tmp_0: uint32_t = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
-        *result_u32 = ({
+        *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_0;
           if 0 != 0 {
@@ -1152,13 +1152,13 @@ pub unsafe extern "C" fn udhcp_str2optset(
             c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
           }
           __v
-        });
+        };
         retval = (*bb_errno == 0i32) as libc::c_int;
         current_block_58 = 10778260831612459202;
       }
       8 => {
         let mut tmp_1: int32_t = bb_strtoi32(val, 0 as *mut *mut libc::c_char, 0i32);
-        *result_u32 = ({
+        *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_1 as libc::c_uint;
           if 0 != 0 {
@@ -1176,7 +1176,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
           }
           __v
-        });
+        };
         retval = (*bb_errno == 0i32) as libc::c_int;
         current_block_58 = 10778260831612459202;
       }

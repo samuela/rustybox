@@ -180,14 +180,14 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
     0i32 + (1i32 << 17i32) + (1i32 << 14i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   ); // for parent:0, for child:2
-  (*ptr_to_globals).helper_pid = ({
+  (*ptr_to_globals).helper_pid = {
     let mut bb__xvfork_pid: pid_t = vfork(); // 1 or 3 - closing one write end
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       // 2 or 0 - closing one read end
     } // 0 or 2 - using other read end
     bb__xvfork_pid
-  }); // 3 or 1 - using other write end
+  }; // 3 or 1 - using other write end
   i = ((*ptr_to_globals).helper_pid == 0) as libc::c_int * 2i32;
   close(pipes[(i + 1i32) as usize]);
   close(pipes[(2i32 - i) as usize]);

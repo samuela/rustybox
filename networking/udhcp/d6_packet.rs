@@ -309,7 +309,7 @@ pub unsafe extern "C" fn d6_dump_packet(mut packet: *mut d6_packet) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn d6_recv_kernel_packet(
-  mut peer_ipv6: *mut in6_addr,
+  mut _peer_ipv6: *mut in6_addr,
   mut packet: *mut d6_packet,
   mut fd: libc::c_int,
 ) -> libc::c_int {
@@ -442,7 +442,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
     );
     packet.data = *d6_pkt;
     dest_sll.sll_family = 17i32 as libc::c_ushort;
-    dest_sll.sll_protocol = ({
+    dest_sll.sll_protocol = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
       if 0 != 0 {
@@ -458,7 +458,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
-    });
+    };
     dest_sll.sll_ifindex = ifindex;
     /*dest_sll.sll_hatype = ARPHRD_???;*/
     /*dest_sll.sll_pkttype = PACKET_???;*/
@@ -483,7 +483,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         packet.ip6.ip6_src = *src_ipv6
       }
       packet.ip6.ip6_dst = *dst_ipv6;
-      packet.udp.c2rust_unnamed.c2rust_unnamed_0.source = ({
+      packet.udp.c2rust_unnamed.c2rust_unnamed_0.source = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = source_port as libc::c_ushort;
         if 0 != 0 {
@@ -499,8 +499,8 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
-      });
-      packet.udp.c2rust_unnamed.c2rust_unnamed_0.dest = ({
+      };
+      packet.udp.c2rust_unnamed.c2rust_unnamed_0.dest = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
         if 0 != 0 {
@@ -516,9 +516,9 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
         }
         __v
-      });
+      };
       /* size, excluding IP header: */
-      packet.udp.c2rust_unnamed.c2rust_unnamed_0.len = ({
+      packet.udp.c2rust_unnamed.c2rust_unnamed_0.len = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (::std::mem::size_of::<udphdr>() as libc::c_ulong)
           .wrapping_add(d6_pkt_size as libc::c_ulong)
@@ -536,7 +536,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
         }
         __v
-      });
+      };
       packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_plen = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len;
       /*
        * Someone was smoking weed (at least) while inventing UDP checksumming:
@@ -621,7 +621,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
       ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
     );
     sa.sin6_family = 10i32 as sa_family_t;
-    sa.sin6_port = ({
+    sa.sin6_port = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = source_port as libc::c_ushort;
       if 0 != 0 {
@@ -637,7 +637,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
         c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
       }
       __v
-    });
+    };
     sa.sin6_addr = *src_ipv6;
     if bind(
       fd,
@@ -655,7 +655,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
         ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
       );
       sa.sin6_family = 10i32 as sa_family_t;
-      sa.sin6_port = ({
+      sa.sin6_port = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
         if 0 != 0 {
@@ -671,7 +671,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
           c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
         }
         __v
-      });
+      };
       sa.sin6_addr = *dst_ipv6;
       sa.sin6_scope_id = ifindex as uint32_t;
       if connect(

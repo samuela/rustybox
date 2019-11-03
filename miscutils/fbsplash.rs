@@ -794,7 +794,7 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn fbsplash_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fb_device: *const libc::c_char = 0 as *const libc::c_char;

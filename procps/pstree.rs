@@ -519,7 +519,7 @@ unsafe extern "C" fn mread_proc() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn pstree_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pid: pid_t = 1i32;

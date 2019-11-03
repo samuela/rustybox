@@ -173,7 +173,7 @@ unsafe extern "C" fn fileAction(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
   mut vparam: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut u: uid_t = if (*(vparam as *mut param_t)).ugid.uid == -1i64 as uid_t {
     (*statbuf).st_uid
@@ -597,7 +597,7 @@ unsafe extern "C" fn fileAction(
 /* Similar, but used by chgrp, not shell */
 #[no_mangle]
 pub unsafe extern "C" fn chown_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0i32;

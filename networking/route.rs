@@ -375,7 +375,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     ) as libc::c_int;
     (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
       .sin_addr
-      .s_addr = ({
+      .s_addr = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = !(0xffffffffu64 >> prefix_len) as libc::c_uint;
       if 0 != 0 {
@@ -393,7 +393,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
       }
       __v
-    });
+    };
     *prefix = '\u{0}' as i32 as libc::c_char;
     (*rt).rt_genmask.sa_family = 2i32 as sa_family_t
   } else {
@@ -1089,7 +1089,7 @@ static mut tbl_verb: [libc::c_char; 21] = [
 /* Since it's last, we can save a byte. */
 #[no_mangle]
 pub unsafe extern "C" fn route_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

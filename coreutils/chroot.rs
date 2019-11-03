@@ -40,7 +40,7 @@ extern "C" {
 //usage:       "-rwxr-xr-x    1 root     root        40816 Feb  5 07:45 /bin/ls*\n"
 #[no_mangle]
 pub unsafe extern "C" fn chroot_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   argv = argv.offset(1);

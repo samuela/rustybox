@@ -364,9 +364,9 @@ static mut keywords: [libc::c_char; 134] = [
   112, 101, 0, 104, 101, 108, 112, 0, 0,
 ];
 unsafe extern "C" fn print_rule(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut r: *mut rtmsg = (n as *mut libc::c_char).offset(
     (0i32

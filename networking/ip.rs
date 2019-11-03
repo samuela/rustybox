@@ -353,7 +353,7 @@ unsafe extern "C" fn ip_do(
 }
 #[no_mangle]
 pub unsafe extern "C" fn ipaddr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn ipaddr_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn iplink_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -373,7 +373,7 @@ pub unsafe extern "C" fn iplink_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn iproute_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -383,7 +383,7 @@ pub unsafe extern "C" fn iproute_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn iprule_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -393,7 +393,7 @@ pub unsafe extern "C" fn iprule_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn iptunnel_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -403,7 +403,7 @@ pub unsafe extern "C" fn iptunnel_main(
 }
 #[no_mangle]
 pub unsafe extern "C" fn ipneigh_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
@@ -411,12 +411,12 @@ pub unsafe extern "C" fn ipneigh_main(
     argv,
   );
 }
-unsafe extern "C" fn ip_print_help(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn ip_print_help(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   bb_show_usage();
 }
 #[no_mangle]
 pub unsafe extern "C" fn ip_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut keywords: [libc::c_char; 45] = [

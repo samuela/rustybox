@@ -491,7 +491,7 @@ unsafe extern "C" fn pass_to_client(
 }
 #[no_mangle]
 pub unsafe extern "C" fn dhcprelay_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut server_addr: sockaddr_in = sockaddr_in {

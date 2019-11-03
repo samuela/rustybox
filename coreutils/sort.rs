@@ -695,7 +695,7 @@ unsafe extern "C" fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
 }
 #[no_mangle]
 pub unsafe extern "C" fn sort_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut lines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;

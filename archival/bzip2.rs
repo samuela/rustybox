@@ -2833,7 +2833,7 @@ unsafe extern "C" fn bz_write(
   }
   return (0i32 as libc::c_ulonglong).wrapping_add((*strm).total_out) as libc::c_longlong;
 }
-unsafe extern "C" fn compressStream(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut total: libc::c_longlong = 0;
   let mut opt: libc::c_uint = 0;
   let mut level: libc::c_uint = 0;

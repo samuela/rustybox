@@ -291,7 +291,7 @@ pub struct parser_t {
 /* Licensed under GPLv2 or later, see file LICENSE in this source tree. */
 #[no_mangle]
 pub unsafe extern "C" fn makedevs_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut parser: *mut parser_t = 0 as *mut parser_t; /* ensure root dir exists */

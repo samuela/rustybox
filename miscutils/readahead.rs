@@ -51,7 +51,7 @@ pub type off_t = __off64_t;
 //usage:       "Preload FILEs to RAM"
 #[no_mangle]
 pub unsafe extern "C" fn readahead_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0i32;

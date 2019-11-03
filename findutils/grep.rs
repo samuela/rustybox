@@ -782,7 +782,7 @@ unsafe extern "C" fn file_action_grep(
   mut filename: *const libc::c_char,
   mut statbuf: *mut stat,
   mut matched: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut file: *mut FILE = 0 as *mut FILE;
   /* If we are given a link to a directory, we should bail out now, rather
@@ -864,7 +864,7 @@ unsafe extern "C" fn grep_dir(mut dir: *const libc::c_char) -> libc::c_int {
 }
 #[no_mangle]
 pub unsafe extern "C" fn grep_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut file: *mut FILE = 0 as *mut FILE;

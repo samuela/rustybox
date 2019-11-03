@@ -389,7 +389,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
       strcpy((*m).name.as_mut_ptr().offset(1), token[0]);
       undot((*m).name.as_mut_ptr());
       (*m).ip = ip.s_addr;
-      v32 = ({
+      v32 = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*m).ip;
         if 0 != 0 {
@@ -407,7 +407,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
-      });
+      };
       /* inverted order */
       sprintf(
         (*m).rip.as_mut_ptr(),
@@ -698,7 +698,7 @@ unsafe extern "C" fn process_packet(
     /* don't reply */
   }
   /* QR = 1 "response", RCODE = 4 "Not Implemented" */
-  outr_flags = ({
+  outr_flags = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x8000i32 | 4i32) as libc::c_ushort;
     if 0 != 0 {
@@ -714,7 +714,7 @@ unsafe extern "C" fn process_packet(
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
-  });
+  };
   err_msg = 0 as *const libc::c_char;
   /* start of query string */
   query_string = head.offset(1) as *mut libc::c_void as *mut libc::c_char;
@@ -855,7 +855,7 @@ unsafe extern "C" fn process_packet(
            * AA = 1 "Authoritative Answer"
            * RCODE = 3 "Name Error" */
           err_msg = b"name is not found\x00" as *const u8 as *const libc::c_char;
-          outr_flags = ({
+          outr_flags = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 3i32) as libc::c_ushort;
             if 0 != 0 {
@@ -872,7 +872,7 @@ unsafe extern "C" fn process_packet(
               c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
             }
             __v
-          })
+          }
         } else {
           /* Append answer Resource Record */
           memcpy(
@@ -881,7 +881,7 @@ unsafe extern "C" fn process_packet(
             query_len as libc::c_ulong,
           ); /* name, type, class */
           answb = answb.offset(query_len as isize);
-          *(answb as *mut uint32_t as *mut bb__aliased_uint32_t) = ({
+          *(answb as *mut uint32_t as *mut bb__aliased_uint32_t) = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = conf_ttl;
             if 0 != 0 {
@@ -899,9 +899,9 @@ unsafe extern "C" fn process_packet(
               c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
             }
             __v
-          });
+          };
           answb = answb.offset(4);
-          *(answb as *mut uint16_t as *mut bb__aliased_uint16_t) = ({
+          *(answb as *mut uint16_t as *mut bb__aliased_uint16_t) = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = outr_rlen;
             if 0 != 0 {
@@ -918,7 +918,7 @@ unsafe extern "C" fn process_packet(
               c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
             }
             __v
-          });
+          };
           answb = answb.offset(2);
           memcpy(
             answb as *mut libc::c_void,
@@ -936,7 +936,7 @@ unsafe extern "C" fn process_packet(
           if option_mask32 & 1i32 as libc::c_uint != 0 {
             bb_simple_info_msg(b"returning positive reply\x00" as *const u8 as *const libc::c_char);
           }
-          outr_flags = ({
+          outr_flags = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0i32) as libc::c_ushort;
             if 0 != 0 {
@@ -953,9 +953,9 @@ unsafe extern "C" fn process_packet(
               c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
             }
             __v
-          });
+          };
           /* we have one answer */
-          (*head).nansw = ({
+          (*head).nansw = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
             if 0 != 0 {
@@ -972,7 +972,7 @@ unsafe extern "C" fn process_packet(
               c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
             }
             __v
-          })
+          }
         }
       }
     }
@@ -1016,7 +1016,7 @@ unsafe extern "C" fn process_packet(
   (*head).flags = ((*head).flags as libc::c_int | outr_flags as libc::c_int) as uint16_t;
   (*head).nadd = 0i32 as uint16_t;
   (*head).nauth = (*head).nadd;
-  (*head).nquer = ({
+  (*head).nquer = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
     if 0 != 0 {
@@ -1032,12 +1032,12 @@ unsafe extern "C" fn process_packet(
       c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
     }
     __v
-  });
+  };
   return answb.wrapping_offset_from(buf) as libc::c_long as libc::c_int;
 }
 #[no_mangle]
 pub unsafe extern "C" fn dnsd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut listen_interface: *const libc::c_char =

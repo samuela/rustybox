@@ -166,7 +166,7 @@ pub struct mtab_list {
 }
 #[no_mangle]
 pub unsafe extern "C" fn umount_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut doForce: libc::c_int = 0;

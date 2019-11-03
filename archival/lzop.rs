@@ -833,7 +833,7 @@ unsafe extern "C" fn read32() -> uint32_t {
     &mut v as *mut uint32_t as *mut libc::c_void,
     4i32 as size_t,
   );
-  return ({
+  return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
     if 0 != 0 {
@@ -851,7 +851,7 @@ unsafe extern "C" fn read32() -> uint32_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh61, fresh63, fresh62);
     }
     __v
-  });
+  };
 }
 unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
   xread(0i32, buf, cnt as size_t);
@@ -872,7 +872,7 @@ unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
 unsafe extern "C" fn f_read32() -> uint32_t {
   let mut v: uint32_t = 0;
   f_read(&mut v as *mut uint32_t as *mut libc::c_void, 4i32);
-  return ({
+  return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
     if 0 != 0 {
@@ -890,10 +890,10 @@ unsafe extern "C" fn f_read32() -> uint32_t {
       c2rust_asm_casts::AsmCast::cast_out(fresh64, fresh66, fresh65);
     }
     __v
-  });
+  };
 }
 unsafe extern "C" fn write32(mut v: uint32_t) {
-  v = ({
+  v = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
     if 0 != 0 {
@@ -911,7 +911,7 @@ unsafe extern "C" fn write32(mut v: uint32_t) {
       c2rust_asm_casts::AsmCast::cast_out(fresh67, fresh69, fresh68);
     }
     __v
-  });
+  };
   xwrite(
     1i32,
     &mut v as *mut uint32_t as *const libc::c_void,
@@ -976,7 +976,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
     } else {
       let fresh73 = wordptr;
       wordptr = wordptr.offset(1);
-      *fresh73 = ({
+      *fresh73 = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = src_len;
         if 0 != 0 {
@@ -994,7 +994,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           c2rust_asm_casts::AsmCast::cast_out(fresh70, fresh72, fresh71);
         }
         __v
-      });
+      };
       /* write uncompressed block size */
       /* exit if last block */
       /* compute checksum of uncompressed block */
@@ -1034,7 +1034,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         }
         let fresh77 = wordptr;
         wordptr = wordptr.offset(1);
-        *fresh77 = ({
+        *fresh77 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = dst_len;
           if 0 != 0 {
@@ -1052,12 +1052,12 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             c2rust_asm_casts::AsmCast::cast_out(fresh74, fresh76, fresh75);
           }
           __v
-        })
+        }
       } else {
         /* data actually expanded => store data uncompressed */
         let fresh81 = wordptr;
         wordptr = wordptr.offset(1);
-        *fresh81 = ({
+        *fresh81 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = src_len;
           if 0 != 0 {
@@ -1075,13 +1075,13 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             c2rust_asm_casts::AsmCast::cast_out(fresh78, fresh80, fresh79);
           }
           __v
-        })
+        }
       }
       /* write checksum of uncompressed block */
       if (*h).flags32 as libc::c_long & 0x1i64 != 0 {
         let fresh85 = wordptr;
         wordptr = wordptr.offset(1);
-        *fresh85 = ({
+        *fresh85 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = d_adler32;
           if 0 != 0 {
@@ -1099,12 +1099,12 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             c2rust_asm_casts::AsmCast::cast_out(fresh82, fresh84, fresh83);
           }
           __v
-        })
+        }
       }
       if (*h).flags32 as libc::c_long & 0x100i64 != 0 {
         let fresh89 = wordptr;
         wordptr = wordptr.offset(1);
-        *fresh89 = ({
+        *fresh89 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = d_crc32;
           if 0 != 0 {
@@ -1122,14 +1122,14 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             c2rust_asm_casts::AsmCast::cast_out(fresh86, fresh88, fresh87);
           }
           __v
-        })
+        }
       }
       if dst_len < src_len {
         /* write checksum of compressed block */
         if (*h).flags32 as libc::c_long & 0x2i64 != 0 {
           let fresh93 = wordptr;
           wordptr = wordptr.offset(1);
-          *fresh93 = ({
+          *fresh93 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = lzo_adler32(1i32 as uint32_t, b2, dst_len);
             if 0 != 0 {
@@ -1147,12 +1147,12 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               c2rust_asm_casts::AsmCast::cast_out(fresh90, fresh92, fresh91);
             }
             __v
-          })
+          }
         }
         if (*h).flags32 as libc::c_long & 0x200i64 != 0 {
           let fresh97 = wordptr;
           wordptr = wordptr.offset(1);
-          *fresh97 = ({
+          *fresh97 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = lzo_crc32(0i32 as uint32_t, b2, dst_len);
             if 0 != 0 {
@@ -1170,7 +1170,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               c2rust_asm_casts::AsmCast::cast_out(fresh94, fresh96, fresh95);
             }
             __v
-          })
+          }
         }
       }
       xwrite(
@@ -1450,7 +1450,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
     end.wrapping_offset_from(&mut (*h).version_be16 as *mut uint16_t as *mut libc::c_char)
       as libc::c_long as libc::c_int,
   ); /* native endianness for lzo_compress() */
-  (*h).flags32 = ({
+  (*h).flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*h).flags32;
     if 0 != 0 {
@@ -1468,7 +1468,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
       c2rust_asm_casts::AsmCast::cast_out(fresh98, fresh100, fresh99);
     }
     __v
-  });
+  };
   write32(chksum_getresult((*h).flags32));
 }
 unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
@@ -1558,7 +1558,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   if ((*h).level as libc::c_int) < 1i32 || (*h).level as libc::c_int > 9i32 {
     return 15i32;
   } /* filter not supported */
-  (*h).flags32 = ({
+  (*h).flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*h).flags32;
     if 0 != 0 {
@@ -1576,7 +1576,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh107, fresh109, fresh108);
     }
     __v
-  });
+  };
   if (*h).flags32 as libc::c_long & 0x800i64 != 0 {
     return 16i32;
   }
@@ -1658,7 +1658,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
     ::std::mem::size_of::<header_t>() as libc::c_ulong,
   );
   lzo_set_method(&mut header);
-  header.version_be16 = ({
+  header.version_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x1010i32 & 0xffffi32) as libc::c_ushort;
     if 0 != 0 {
@@ -1674,8 +1674,8 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh110, fresh112, fresh111);
     }
     __v
-  });
-  header.version_needed_to_extract_be16 = ({
+  };
+  header.version_needed_to_extract_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x940i32 as libc::c_ushort;
     if 0 != 0 {
@@ -1691,8 +1691,8 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh113, fresh115, fresh114);
     }
     __v
-  });
-  header.lib_version_be16 = ({
+  };
+  header.lib_version_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x2030i32 & 0xffffi32) as libc::c_ushort;
     if 0 != 0 {
@@ -1708,8 +1708,8 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh116, fresh118, fresh117);
     }
     __v
-  });
-  header.flags32 = ({
+  };
+  header.flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (0x3000000i64 & 0xff000000i64 | 0i64 & 0xf00000i64) as libc::c_uint;
     if 0 != 0 {
@@ -1727,11 +1727,11 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh119, fresh121, fresh120);
     }
     __v
-  });
+  };
   if option_mask32 & OPT_F as libc::c_int as libc::c_uint == 0
     || header.method as libc::c_int == M_LZO1X_999 as libc::c_int
   {
-    header.flags32 |= ({
+    header.flags32 |= {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0x1i64 as libc::c_uint;
       if 0 != 0 {
@@ -1749,9 +1749,9 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
         c2rust_asm_casts::AsmCast::cast_out(fresh122, fresh124, fresh123);
       }
       __v
-    });
+    };
     if option_mask32 & OPT_C as libc::c_int as libc::c_uint != 0 {
-      header.flags32 |= ({
+      header.flags32 |= {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 0x2i64 as libc::c_uint;
         if 0 != 0 {
@@ -1769,7 +1769,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
           c2rust_asm_casts::AsmCast::cast_out(fresh125, fresh127, fresh126);
         }
         __v
-      })
+      }
     }
   }
   /* write_header() also converts h->flags32 to native endianness */
@@ -1805,7 +1805,7 @@ unsafe extern "C" fn do_lzo_decompress() -> libc::c_int {
 }
 unsafe extern "C" fn make_new_name_lzop(
   mut filename: *mut libc::c_char,
-  mut expected_ext: *const libc::c_char,
+  mut _expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
   if option_mask32 & OPT_DECOMPRESS as libc::c_int as libc::c_uint != 0 {
     let mut extension: *mut libc::c_char = strrchr(filename, '.' as i32);
@@ -1822,7 +1822,7 @@ unsafe extern "C" fn make_new_name_lzop(
   }
   return xasprintf(b"%s.lzo\x00" as *const u8 as *const libc::c_char, filename);
 }
-unsafe extern "C" fn pack_lzop(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe extern "C" fn pack_lzop(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   if option_mask32 & OPT_DECOMPRESS as libc::c_int as libc::c_uint != 0 {
     return do_lzo_decompress() as libc::c_longlong;
   }
@@ -1830,7 +1830,7 @@ unsafe extern "C" fn pack_lzop(mut xstate: *mut transformer_state_t) -> libc::c_
 }
 #[no_mangle]
 pub unsafe extern "C" fn lzop_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(

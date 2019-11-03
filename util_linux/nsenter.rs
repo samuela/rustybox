@@ -220,7 +220,7 @@ unsafe extern "C" fn open_by_path_or_target(
 }
 #[no_mangle]
 pub unsafe extern "C" fn nsenter_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;

@@ -62,7 +62,7 @@ unsafe extern "C" fn shutdown_watchdog() {
   );
   close(3i32);
 }
-unsafe extern "C" fn shutdown_on_signal(mut sig: libc::c_int) {
+unsafe extern "C" fn shutdown_on_signal(mut _sig: libc::c_int) {
   remove_pidfile_std_path_and_ext(b"watchdog\x00" as *const u8 as *const libc::c_char);
   shutdown_watchdog();
   _exit(0i32);
@@ -81,7 +81,7 @@ unsafe extern "C" fn watchdog_open(mut device: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn watchdog_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut enable: libc::c_int = 0x2i32;

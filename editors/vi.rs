@@ -3269,11 +3269,11 @@ unsafe extern "C" fn st_test(
   }
   if type_0 == S_OVER_WS as libc::c_int {
     c = c0;
-    test = ({
+    test = {
       let mut bb__isspace: libc::c_uchar = (c as libc::c_int - 9i32) as libc::c_uchar;
       (bb__isspace as libc::c_int == ' ' as i32 - 9i32
         || bb__isspace as libc::c_int <= 13i32 - 9i32) as libc::c_int
-    })
+    }
   }
   if type_0 == S_END_PUNCT as libc::c_int {
     c = ci;
@@ -3317,7 +3317,7 @@ unsafe extern "C" fn skip_thing(
   }
   return p;
 }
-unsafe extern "C" fn winch_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn winch_handler(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
   // FIXME: do it in main loop!!!
   signal(
@@ -3332,7 +3332,7 @@ unsafe extern "C" fn winch_handler(mut sig: libc::c_int) {
   redraw(1i32);
   *bb_errno = save_errno;
 }
-unsafe extern "C" fn tstp_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn tstp_handler(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
   // ioctl inside cookmode() was seen to generate SIGTTOU,
   // stopping us too early. Prevent that:

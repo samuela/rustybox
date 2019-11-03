@@ -554,7 +554,7 @@ unsafe extern "C" fn exec_actions(
 }
 unsafe extern "C" fn func_name(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
+  mut _statbuf: *const stat,
   mut ap: *mut action_name,
 ) -> libc::c_int {
   let mut r: libc::c_int = 0;
@@ -616,22 +616,22 @@ unsafe extern "C" fn func_name(
 }
 unsafe extern "C" fn func_path(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
+  mut _statbuf: *const stat,
   mut ap: *mut action_path,
 ) -> libc::c_int {
   return (fnmatch(
     (*ap).pattern,
     fileName,
-    (if (*ap).ipath as libc::c_int != 0 {
+    if (*ap).ipath as libc::c_int != 0 {
       (1i32) << 4i32
     } else {
       0i32
-    }),
+    },
   ) == 0i32) as libc::c_int;
 }
 unsafe extern "C" fn func_regex(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
+  mut _statbuf: *const stat,
   mut ap: *mut action_regex,
 ) -> libc::c_int {
   let mut match_0: regmatch_t = regmatch_t { rm_so: 0, rm_eo: 0 };
@@ -654,7 +654,7 @@ unsafe extern "C" fn func_regex(
   return 1i32;
 }
 unsafe extern "C" fn func_type(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_type,
 ) -> libc::c_int {
@@ -663,13 +663,13 @@ unsafe extern "C" fn func_type(
 }
 unsafe extern "C" fn func_executable(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
-  mut ap: *mut action_executable,
+  mut _statbuf: *const stat,
+  mut _ap: *mut action_executable,
 ) -> libc::c_int {
   return (access(fileName, 1i32) == 0i32) as libc::c_int;
 }
 unsafe extern "C" fn func_perm(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_perm,
 ) -> libc::c_int {
@@ -685,7 +685,7 @@ unsafe extern "C" fn func_perm(
   return ((*statbuf).st_mode & 0o7777i32 as libc::c_uint == (*ap).perm_mask) as libc::c_int;
 }
 unsafe extern "C" fn func_mtime(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_mtime,
 ) -> libc::c_int {
@@ -706,7 +706,7 @@ unsafe extern "C" fn func_mtime(
     as libc::c_int;
 }
 unsafe extern "C" fn func_mmin(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_mmin,
 ) -> libc::c_int {
@@ -722,14 +722,14 @@ unsafe extern "C" fn func_mmin(
   return (file_age >= mmin_secs && file_age < mmin_secs + 60i32 as libc::c_long) as libc::c_int;
 }
 unsafe extern "C" fn func_newer(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_newer,
 ) -> libc::c_int {
   return ((*ap).newer_mtime < (*statbuf).st_mtim.tv_sec) as libc::c_int;
 }
 unsafe extern "C" fn func_inum(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_inum,
 ) -> libc::c_int {
@@ -809,7 +809,7 @@ unsafe extern "C" fn do_exec(
 }
 unsafe extern "C" fn func_exec(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
+  mut _statbuf: *const stat,
   mut ap: *mut action_exec,
 ) -> libc::c_int {
   if !(*ap).filelist.is_null() {
@@ -893,14 +893,14 @@ unsafe extern "C" fn flush_exec_plus() -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn func_user(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_user,
 ) -> libc::c_int {
   return ((*statbuf).st_uid == (*ap).uid) as libc::c_int;
 }
 unsafe extern "C" fn func_group(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_group,
 ) -> libc::c_int {
@@ -908,8 +908,8 @@ unsafe extern "C" fn func_group(
 }
 unsafe extern "C" fn func_print0(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
-  mut ap: *mut action_print0,
+  mut _statbuf: *const stat,
+  mut _ap: *mut action_print0,
 ) -> libc::c_int {
   printf(
     b"%s%c\x00" as *const u8 as *const libc::c_char,
@@ -920,8 +920,8 @@ unsafe extern "C" fn func_print0(
 }
 unsafe extern "C" fn func_print(
   mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
-  mut ap: *mut action_print,
+  mut _statbuf: *const stat,
+  mut _ap: *mut action_print,
 ) -> libc::c_int {
   puts(fileName);
   return 1i32;
@@ -934,7 +934,7 @@ unsafe extern "C" fn func_paren(
   return exec_actions((*ap).subexpr, fileName, statbuf);
 }
 unsafe extern "C" fn func_size(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_size,
 ) -> libc::c_int {
@@ -953,23 +953,23 @@ unsafe extern "C" fn func_size(
  * find dir -name 'asm-*' -prune -o -name '*.[chS]' -print
  */
 unsafe extern "C" fn func_prune(
-  mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
-  mut ap: *mut action_prune,
+  mut _fileName: *const libc::c_char,
+  mut _statbuf: *const stat,
+  mut _ap: *mut action_prune,
 ) -> libc::c_int {
   return 2i32 + 1i32;
 }
 unsafe extern "C" fn func_quit(
-  mut fileName: *const libc::c_char,
-  mut statbuf: *const stat,
-  mut ap: *mut action_quit,
+  mut _fileName: *const libc::c_char,
+  mut _statbuf: *const stat,
+  mut _ap: *mut action_quit,
 ) -> libc::c_int {
   exit((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitstatus as libc::c_int);
 }
 unsafe extern "C" fn func_delete(
   mut fileName: *const libc::c_char,
   mut statbuf: *const stat,
-  mut ap: *mut action_delete,
+  mut _ap: *mut action_delete,
 ) -> libc::c_int {
   let mut rc: libc::c_int = 0;
   if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
@@ -989,7 +989,7 @@ unsafe extern "C" fn func_delete(
 unsafe extern "C" fn func_empty(
   mut fileName: *const libc::c_char,
   mut statbuf: *const stat,
-  mut ap: *mut action_empty,
+  mut _ap: *mut action_empty,
 ) -> libc::c_int {
   if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
     let mut dir: *mut DIR = 0 as *mut DIR;
@@ -1016,7 +1016,7 @@ unsafe extern "C" fn func_empty(
     && (*statbuf).st_size == 0i32 as libc::c_long) as libc::c_int;
 }
 unsafe extern "C" fn func_links(
-  mut fileName: *const libc::c_char,
+  mut _fileName: *const libc::c_char,
   mut statbuf: *const stat,
   mut ap: *mut action_links,
 ) -> libc::c_int {
@@ -1029,7 +1029,7 @@ unsafe extern "C" fn func_links(
 unsafe extern "C" fn fileAction(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
+  mut _userData: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
   let mut r: libc::c_int = 0;
@@ -1975,7 +1975,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
 }
 #[no_mangle]
 pub unsafe extern "C" fn find_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;

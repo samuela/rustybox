@@ -1586,13 +1586,13 @@ pub unsafe extern "C" fn xfork() -> pid_t {
 pub unsafe extern "C" fn xvfork_parent_waits_and_exits() {
   let mut pid: pid_t = 0;
   fflush_all();
-  pid = ({
+  pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
-  });
+  };
   if pid > 0i32 {
     /* Parent */
     let mut exit_status: libc::c_int = wait_for_exitstatus(pid);

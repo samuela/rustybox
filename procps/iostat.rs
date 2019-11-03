@@ -596,7 +596,7 @@ unsafe extern "C" fn dev_report(mut itv: cputime_t) {
 //usage:     "\n	-m	Use Mb/s"
 #[no_mangle]
 pub unsafe extern "C" fn iostat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_int = 0;

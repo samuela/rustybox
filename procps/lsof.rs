@@ -154,8 +154,8 @@ pub const PSSCAN_PID: C2RustUnnamed = 1;
  */
 #[no_mangle]
 pub unsafe extern "C" fn lsof_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut proc_0: *mut procps_status_t = 0 as *mut procps_status_t;
   loop {

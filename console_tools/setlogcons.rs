@@ -55,7 +55,7 @@ pub struct C2RustUnnamed {
  */
 #[no_mangle]
 pub unsafe extern "C" fn setlogcons_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut devname: *mut libc::c_char = 0 as *mut libc::c_char;

@@ -452,7 +452,7 @@ unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
 //usage:	"Edit FILE in hexadecimal"
 #[no_mangle]
 pub unsafe extern "C" fn hexedit_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let ref mut fresh9 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

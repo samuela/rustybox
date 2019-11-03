@@ -161,7 +161,7 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
 }
 #[no_mangle]
 pub unsafe extern "C" fn free_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut G: globals = globals {

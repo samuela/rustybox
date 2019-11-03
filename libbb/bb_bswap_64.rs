@@ -1,4 +1,4 @@
-use libc;
+
 /*
  * Utility routines.
  *

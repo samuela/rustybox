@@ -220,7 +220,7 @@ pub struct termios {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* do nothing signal handler */
-unsafe extern "C" fn askpass_timeout(mut ignore: libc::c_int) {}
+unsafe extern "C" fn askpass_timeout(mut _ignore: libc::c_int) {}
 #[no_mangle]
 pub unsafe extern "C" fn bb_ask_noecho(
   mut fd: libc::c_int,

@@ -213,7 +213,7 @@ unsafe extern "C" fn do_rd(mut fd: libc::c_int, mut paramp: *mut *mut libc::c_vo
   return 1i32;
   /* "terminate" */
 }
-unsafe extern "C" fn do_timeout(mut paramp: *mut *mut libc::c_void) -> libc::c_int {
+unsafe extern "C" fn do_timeout(mut _paramp: *mut *mut libc::c_void) -> libc::c_int {
   return 1i32;
   /* terminate session */
 }
@@ -235,7 +235,7 @@ unsafe extern "C" fn inetd_mode() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn fakeidentd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut bind_address: *const libc::c_char = 0 as *const libc::c_char;

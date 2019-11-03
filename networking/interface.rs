@@ -528,7 +528,7 @@ unsafe extern "C" fn UNSPEC_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_c
 /* Display an UNSPEC socket address. */
 unsafe extern "C" fn UNSPEC_sprint(
   mut sap: *mut sockaddr,
-  mut numeric: libc::c_int,
+  mut _numeric: libc::c_int,
 ) -> *const libc::c_char {
   if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;

@@ -81,7 +81,7 @@ pub struct llist_t {
 //usage:     "\n	-u	Remove variable from the environment"
 #[no_mangle]
 pub unsafe extern "C" fn env_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;

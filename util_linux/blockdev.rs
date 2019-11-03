@@ -158,7 +158,7 @@ unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
 }
 #[no_mangle]
 pub unsafe extern "C" fn blockdev_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut bdcmd: libc::c_uint = 0;

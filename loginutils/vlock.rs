@@ -120,7 +120,7 @@ pub struct vt_mode {
 //usage:#define vlock_full_usage "\n\n"
 //usage:       "Lock a virtual terminal. A password is required to unlock.\n"
 //usage:     "\n	-a	Lock all VTs"
-unsafe extern "C" fn release_vt(mut signo: libc::c_int) {
+unsafe extern "C" fn release_vt(mut _signo: libc::c_int) {
   /* If -a, param is 0, which means:
    * "no, kernel, we don't allow console switch away from us!" */
   ioctl(
@@ -129,13 +129,13 @@ unsafe extern "C" fn release_vt(mut signo: libc::c_int) {
     (option_mask32 == 0) as libc::c_int as libc::c_ulong,
   );
 }
-unsafe extern "C" fn acquire_vt(mut signo: libc::c_int) {
+unsafe extern "C" fn acquire_vt(mut _signo: libc::c_int) {
   /* ACK to kernel that switch to console is successful */
   ioctl(0i32, 0x5605i32 as libc::c_ulong, 0x2i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn vlock_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut vtm: vt_mode = vt_mode {

@@ -566,7 +566,7 @@ unsafe extern "C" fn dict_limit(mut dict: *mut dictionary, mut out_max: size_t) 
     (*dict).limit = (*dict).pos.wrapping_add(out_max)
   };
 }
-unsafe extern "C" fn dict_reset(mut dict: *mut dictionary, mut b: *mut xz_buf) {
+unsafe extern "C" fn dict_reset(mut dict: *mut dictionary, mut _b: *mut xz_buf) {
   (*dict).start = 0i32 as size_t;
   (*dict).pos = 0i32 as size_t;
   (*dict).limit = 0i32 as size_t;

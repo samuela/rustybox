@@ -186,7 +186,7 @@ unsafe extern "C" fn get_num_from_file(
 }
 #[no_mangle]
 pub unsafe extern "C" fn ubi_tools_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut size_suffixes: [suffix_mult; 4] = [

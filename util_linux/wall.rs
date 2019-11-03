@@ -91,7 +91,7 @@ pub struct C2RustUnnamed {
 //usage:	"wall ./mymessage"
 #[no_mangle]
 pub unsafe extern "C" fn wall_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ut: *mut utmpx = 0 as *mut utmpx;

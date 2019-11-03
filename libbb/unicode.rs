@@ -111,7 +111,7 @@ unsafe extern "C" fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t)
 pub unsafe extern "C" fn bb_wcrtomb(
   mut s: *mut libc::c_char,
   mut wc: wchar_t,
-  mut ps: *mut bb_mbstate_t,
+  mut _ps: *mut bb_mbstate_t,
 ) -> size_t {
   if UNICODE_ON as libc::c_int != UNICODE_ON as libc::c_int {
     *s = wc as libc::c_char;

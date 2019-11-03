@@ -51,7 +51,7 @@ pub type uint32_t = __uint32_t;
 //usage:       "Show current directory for PIDs"
 #[no_mangle]
 pub unsafe extern "C" fn pwdx_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(argv, b"^\x00-1\x00" as *const u8 as *const libc::c_char);

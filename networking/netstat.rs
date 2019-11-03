@@ -540,9 +540,9 @@ unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> lib
 }
 unsafe extern "C" fn add_to_prg_cache_if_socket(
   mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
+  mut _statbuf: *mut stat,
   mut pid_slash_progname: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut linkname: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut inode: libc::c_long = 0;
@@ -558,8 +558,8 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
 }
 unsafe extern "C" fn dir_act(
   mut fileName: *const libc::c_char,
-  mut statbuf: *mut stat,
-  mut userData: *mut libc::c_void,
+  mut _statbuf: *mut stat,
+  mut _userData: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
   let mut pid: *const libc::c_char = 0 as *const libc::c_char;
@@ -1159,7 +1159,7 @@ unsafe extern "C" fn do_info(
 }
 #[no_mangle]
 pub unsafe extern "C" fn netstat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

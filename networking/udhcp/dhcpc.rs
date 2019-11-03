@@ -685,7 +685,7 @@ unsafe extern "C" fn sprint_nip(
 /* really simple implementation, just count the bits */
 unsafe extern "C" fn mton(mut mask: uint32_t) -> libc::c_int {
   let mut i: libc::c_int = 0i32; /* 111110000-like bit pattern */
-  mask = ({
+  mask = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = mask;
     if 0 != 0 {
@@ -702,7 +702,7 @@ unsafe extern "C" fn mton(mut mask: uint32_t) -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
-  });
+  };
   while mask != 0 {
     i += 1;
     mask <<= 1i32
@@ -2251,7 +2251,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
   ); /* let's be deterministic */
   sock.sll_family = 17i32 as libc::c_ushort;
-  sock.sll_protocol = ({
+  sock.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
     if 0 != 0 {
@@ -2267,7 +2267,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
     }
     __v
-  });
+  };
   sock.sll_ifindex = ifindex;
   /*sock.sll_hatype = ARPHRD_???;*/
   /*sock.sll_pkttype = PACKET_???;*/
@@ -2550,7 +2550,7 @@ unsafe extern "C" fn client_background() {
 //usage:     "\n	USR2	Release lease"
 #[no_mangle]
 pub unsafe extern "C" fn udhcpc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
@@ -3547,7 +3547,7 @@ pub unsafe extern "C" fn udhcpc_main(
                       /* back to main loop */
                       /* it IS unaligned sometimes, don't "optimize" */
                       lease_seconds = *(temp_0 as *mut bb__aliased_uint32_t);
-                      lease_seconds = ({
+                      lease_seconds = {
                         let mut __v: libc::c_uint = 0;
                         let mut __x: libc::c_uint = lease_seconds;
                         if 0 != 0 {
@@ -3567,7 +3567,7 @@ pub unsafe extern "C" fn udhcpc_main(
                           c2rust_asm_casts::AsmCast::cast_out(fresh62, fresh64, fresh63);
                         }
                         __v
-                      });
+                      };
                       //if (lease_seconds > 0x7fffffff)
                       //	lease_seconds = 0x7fffffff;
                       //^^^not necessary since "timeout = lease_seconds / 2"

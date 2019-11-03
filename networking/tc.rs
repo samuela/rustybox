@@ -646,9 +646,9 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn print_qdisc(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut hdr: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut msg: *mut tcmsg = (hdr as *mut libc::c_char).offset(
     (0i32
@@ -761,9 +761,9 @@ unsafe extern "C" fn print_qdisc(
   return 0i32;
 }
 unsafe extern "C" fn print_class(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut hdr: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut msg: *mut tcmsg = (hdr as *mut libc::c_char).offset(
     (0i32
@@ -898,15 +898,15 @@ unsafe extern "C" fn print_class(
   return 0i32;
 }
 unsafe extern "C" fn print_filter(
-  mut who: *const sockaddr_nl,
-  mut hdr: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _who: *const sockaddr_nl,
+  mut _hdr: *mut nlmsghdr,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   return 0i32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn tc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut objects: [libc::c_char; 20] = [
@@ -1089,7 +1089,7 @@ pub unsafe extern "C" fn tc_main(
     }
     if rtnl_dump_request(
       &mut rth,
-      (if obj == OBJ_qdisc as libc::c_int {
+      if obj == OBJ_qdisc as libc::c_int {
         RTM_GETQDISC as libc::c_int
       } else {
         (if obj == OBJ_class as libc::c_int {
@@ -1097,7 +1097,7 @@ pub unsafe extern "C" fn tc_main(
         } else {
           RTM_GETTFILTER as libc::c_int
         })
-      }),
+      },
       &mut msg as *mut tcmsg as *mut libc::c_void,
       ::std::mem::size_of::<tcmsg>() as libc::c_ulong as libc::c_int,
     ) < 0i32

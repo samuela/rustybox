@@ -1172,7 +1172,7 @@ unsafe extern "C" fn init_d6_packet(
    * and some servers do check for its presense. [which?]
    */
   ptr = (*packet).d6_options.as_mut_ptr(); /* NB: it is 32-bit aligned */
-  *(ptr as *mut uint32_t) = ({
+  *(ptr as *mut uint32_t) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ((8i32 << 16i32) + 2i32) as libc::c_uint;
     if 0 != 0 {
@@ -1190,7 +1190,7 @@ unsafe extern "C" fn init_d6_packet(
       c2rust_asm_casts::AsmCast::cast_out(fresh22, fresh24, fresh23);
     }
     __v
-  });
+  };
   ptr = ptr.offset(4);
   (*(&mut *bb_common_bufsiz1
     .as_mut_ptr()
@@ -2261,7 +2261,7 @@ unsafe extern "C" fn d6_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
   );
   sock.sll_family = 17i32 as libc::c_ushort;
-  sock.sll_protocol = ({
+  sock.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
     if 0 != 0 {
@@ -2277,7 +2277,7 @@ unsafe extern "C" fn d6_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
       c2rust_asm_casts::AsmCast::cast_out(fresh44, fresh46, fresh45);
     }
     __v
-  });
+  };
   sock.sll_ifindex = ifindex;
   /*sock.sll_hatype = ARPHRD_???;*/
   /*sock.sll_pkttype = PACKET_???;*/
@@ -2530,7 +2530,7 @@ unsafe extern "C" fn client_background() {
 //usage:     "\n	USR2	Release lease"
 #[no_mangle]
 pub unsafe extern "C" fn udhcpc6_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut lease_seconds: uint32_t = 0; /* must be signed */
@@ -3738,7 +3738,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                         requested_ipv6 = (*iaaddr).data.as_mut_ptr() as *mut in6_addr;
                         lease_seconds = *((*iaaddr).data.as_mut_ptr().offset(16).offset(4)
                           as *mut bb__aliased_uint32_t);
-                        lease_seconds = ({
+                        lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;
                           if 0 != 0 {
@@ -3759,7 +3759,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                             c2rust_asm_casts::AsmCast::cast_out(fresh60, fresh62, fresh61);
                           }
                           __v
-                        });
+                        };
                         // / TODO: check for 0 lease time?
                         bb_info_msg(
                           b"%s obtained, lease time %u\x00" as *const u8 as *const libc::c_char,
@@ -3880,7 +3880,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                       } else {
                         lease_seconds =
                           *((*iaprefix).data.as_mut_ptr().offset(4) as *mut bb__aliased_uint32_t);
-                        lease_seconds = ({
+                        lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;
                           if 0 != 0 {
@@ -3901,7 +3901,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                             c2rust_asm_casts::AsmCast::cast_out(fresh64, fresh66, fresh65);
                           }
                           __v
-                        });
+                        };
                         bb_info_msg(
                           b"%s obtained, lease time %u\x00" as *const u8 as *const libc::c_char,
                           b"prefix\x00" as *const u8 as *const libc::c_char,

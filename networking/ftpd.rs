@@ -672,7 +672,7 @@ unsafe extern "C" fn cmdio_write_raw(mut p_text: *const libc::c_char) {
     verbose_log(p_text);
   };
 }
-unsafe extern "C" fn timeout_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
   let mut pos: off_t = 0;
   let mut sv_errno: libc::c_int = *bb_errno;
   if !(monotonic_sec().wrapping_sub((*ptr_to_globals).end_time) as libc::c_int >= 0i32) {
@@ -1703,7 +1703,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> uint32_t {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ftpd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pw: *mut passwd = 0 as *mut passwd;

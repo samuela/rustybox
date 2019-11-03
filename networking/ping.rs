@@ -530,7 +530,7 @@ unsafe extern "C" fn create_icmp_socket(mut lsa: *mut len_and_sockaddr) {
   }
   xmove_fd(sock, pingsock as libc::c_int);
 }
-unsafe extern "C" fn print_stats_and_exit(mut junk: libc::c_int) -> ! {
+unsafe extern "C" fn print_stats_and_exit(mut _junk: libc::c_int) -> ! {
   let mut ul: libc::c_ulong = 0;
   let mut nrecv: libc::c_ulong = 0;
   signal(
@@ -692,7 +692,7 @@ unsafe extern "C" fn sendping_tail(
     alarm(expire);
   };
 }
-unsafe extern "C" fn sendping4(mut junk: libc::c_int) {
+unsafe extern "C" fn sendping4(mut _junk: libc::c_int) {
   let mut pkt: *mut icmp =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).snd_packet as *mut icmp;
   memset(
@@ -706,7 +706,7 @@ unsafe extern "C" fn sendping4(mut junk: libc::c_int) {
   (*pkt).icmp_type = 8i32 as uint8_t;
   /*pkt->icmp_code = 0;*/
   (*pkt).icmp_cksum = 0i32 as uint16_t; /* cksum is calculated with this field set to 0 */
-  (*pkt).icmp_hun.ih_idseq.icd_seq = ({
+  (*pkt).icmp_hun.ih_idseq.icd_seq = {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as libc::c_ushort;
@@ -723,7 +723,7 @@ unsafe extern "C" fn sendping4(mut junk: libc::c_int) {
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
     __v
-  });
+  };
   (*pkt).icmp_hun.ih_idseq.icd_id = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid;
   /* If datalen < 4, we store timestamp _past_ the packet,
    * but it's ok - we allocated 4 extra bytes in xzalloc() just in case.
@@ -744,7 +744,7 @@ unsafe extern "C" fn sendping4(mut junk: libc::c_int) {
     8i32,
   );
 }
-unsafe extern "C" fn sendping6(mut junk: libc::c_int) {
+unsafe extern "C" fn sendping6(mut _junk: libc::c_int) {
   let mut pkt: *mut icmp6_hdr =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).snd_packet as *mut icmp6_hdr;
   memset(
@@ -757,7 +757,7 @@ unsafe extern "C" fn sendping6(mut junk: libc::c_int) {
   (*pkt).icmp6_type = 128i32 as uint8_t;
   /*pkt->icmp6_code = 0;*/
   /*pkt->icmp6_cksum = 0;*/
-  (*pkt).icmp6_dataun.icmp6_un_data16[1] = ({
+  (*pkt).icmp6_dataun.icmp6_un_data16[1] = {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as libc::c_ushort;
@@ -774,7 +774,7 @@ unsafe extern "C" fn sendping6(mut junk: libc::c_int) {
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
-  });
+  };
   (*pkt).icmp6_dataun.icmp6_un_data16[0] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid;
   /*if (datalen >= 4)*/
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_us;
@@ -910,7 +910,7 @@ unsafe extern "C" fn unpack4(
     return 0i32;
   }
   if (*icmppkt).icmp_type as libc::c_int == 0i32 {
-    let mut recv_seq: uint16_t = ({
+    let mut recv_seq: uint16_t = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp_hun.ih_idseq.icd_seq;
       if 0 != 0 {
@@ -926,7 +926,7 @@ unsafe extern "C" fn unpack4(
         c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
       }
       __v
-    });
+    };
     let mut tp: *mut uint32_t = 0 as *mut uint32_t;
     if sz as libc::c_ulong
       >= (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
@@ -973,7 +973,7 @@ unsafe extern "C" fn unpack6(
     return 0i32;
   }
   if (*icmppkt).icmp6_type as libc::c_int == 129i32 {
-    let mut recv_seq: uint16_t = ({
+    let mut recv_seq: uint16_t = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp6_dataun.icmp6_un_data16[1];
       if 0 != 0 {
@@ -989,7 +989,7 @@ unsafe extern "C" fn unpack6(
         c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
       }
       __v
-    });
+    };
     let mut tp: *mut uint32_t = 0 as *mut uint32_t;
     if sz as libc::c_ulong
       >= (::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
@@ -1461,14 +1461,14 @@ unsafe extern "C" fn common_ping_main(
 /* FEATURE_FANCY_PING */
 #[no_mangle]
 pub unsafe extern "C" fn ping_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return common_ping_main(0i32, argv);
 }
 #[no_mangle]
 pub unsafe extern "C" fn ping6_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return common_ping_main(OPT_IPV6 as libc::c_int, argv);

@@ -947,9 +947,9 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
         while j < 2i32 {
           k = v[j as usize].a;
           while k <= v[j as usize].b {
-            nonempty = (nonempty
+            nonempty = nonempty
               | (*ix[j as usize].offset(k as isize) - *ix[j as usize].offset((k - 1i32) as isize)
-                != 1i32 as libc::c_long));
+                != 1i32 as libc::c_long);
             k += 1
           }
           j += 1
@@ -1209,9 +1209,9 @@ unsafe extern "C" fn print_status(mut status: libc::c_int, mut path: *mut *mut l
 /* This function adds a filename to dl, the directory listing. */
 unsafe extern "C" fn add_to_dirlist(
   mut filename: *const libc::c_char,
-  mut sb: *mut stat,
+  mut _sb: *mut stat,
   mut userdata: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let l: *mut dlist = userdata as *mut dlist;
   let mut file: *const libc::c_char = filename.offset((*l).len as isize);
@@ -1507,7 +1507,7 @@ static mut diff_longopts: [libc::c_char; 253] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn diff_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut gotstdin: libc::c_int = 0i32;

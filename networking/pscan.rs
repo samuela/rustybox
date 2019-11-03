@@ -209,7 +209,7 @@ unsafe extern "C" fn port_name(mut port: libc::c_uint) -> *const libc::c_char {
 /* We don't expect to see 1000+ seconds delay, unsigned is enough */
 #[no_mangle]
 pub unsafe extern "C" fn pscan_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt_max_port: *const libc::c_char = b"1024\x00" as *const u8 as *const libc::c_char; /* -P: default max port */

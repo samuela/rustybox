@@ -1403,11 +1403,11 @@ unsafe extern "C" fn BC_NUM_AREQ(mut a: *mut BcNum, mut b: *mut BcNum) -> size_t
     (*b).rdx
   })
   .wrapping_add(
-    (if (*a).len.wrapping_sub((*a).rdx) > (*b).len.wrapping_sub((*b).rdx) {
+    if (*a).len.wrapping_sub((*a).rdx) > (*b).len.wrapping_sub((*b).rdx) {
       (*a).len.wrapping_sub((*a).rdx)
     } else {
       (*b).len.wrapping_sub((*b).rdx)
-    }),
+    },
   )
   .wrapping_add(1i32 as libc::c_ulong);
 }
@@ -1422,11 +1422,11 @@ unsafe extern "C" fn BC_NUM_MREQ(
     .wrapping_sub((*a).rdx)
     .wrapping_add((*b).len.wrapping_sub((*b).rdx))
     .wrapping_add(
-      (if scale > (*a).rdx.wrapping_add((*b).rdx) {
+      if scale > (*a).rdx.wrapping_add((*b).rdx) {
         scale
       } else {
         (*a).rdx.wrapping_add((*b).rdx)
-      }),
+      },
     )
     .wrapping_add(1i32 as libc::c_ulong);
 }
@@ -1680,7 +1680,7 @@ unsafe extern "C" fn zbc_num_add(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
-  mut scale: size_t,
+  mut _scale: size_t,
 ) -> BcStatus {
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
     Some(
@@ -1699,7 +1699,7 @@ unsafe extern "C" fn zbc_num_sub(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
-  mut scale: size_t,
+  mut _scale: size_t,
 ) -> BcStatus {
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
     Some(
@@ -6421,7 +6421,7 @@ unsafe extern "C" fn bc_num_printNewline() {
     (*ptr_to_globals).prog.nchars = 0i32 as size_t
   };
 }
-unsafe extern "C" fn dc_num_printChar(mut num: size_t, mut width: size_t, mut radix: bool) {
+unsafe extern "C" fn dc_num_printChar(mut num: size_t, mut width: size_t, mut _radix: bool) {
   bb_putchar(num as libc::c_char as libc::c_int);
   (*ptr_to_globals).prog.nchars =
     ((*ptr_to_globals).prog.nchars as libc::c_ulong).wrapping_add(width) as size_t as size_t;
@@ -8775,7 +8775,7 @@ unsafe extern "C" fn xc_vm_run() -> BcStatus {
 }
 #[no_mangle]
 pub unsafe extern "C" fn bc_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut is_tty: libc::c_int = 0;

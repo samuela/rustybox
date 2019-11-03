@@ -239,7 +239,7 @@ unsafe extern "C" fn warn2_cannot(mut m1: *const libc::c_char, mut m2: *const li
 unsafe extern "C" fn warn_cannot(mut m: *const libc::c_char) {
   warn2_cannot(m, b"\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn s_child(mut sig_no: libc::c_int) {
+unsafe extern "C" fn s_child(mut _sig_no: libc::c_int) {
   write(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .selfpipe
@@ -248,7 +248,7 @@ unsafe extern "C" fn s_child(mut sig_no: libc::c_int) {
     1i32 as size_t,
   );
 }
-unsafe extern "C" fn s_term(mut sig_no: libc::c_int) {
+unsafe extern "C" fn s_term(mut _sig_no: libc::c_int) {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sigterm = 1i32 as smallint;
   write(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -819,7 +819,7 @@ unsafe extern "C" fn open_control(mut f: *const libc::c_char, mut s: *mut svdir)
 }
 #[no_mangle]
 pub unsafe extern "C" fn runsv_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut s: stat = stat {

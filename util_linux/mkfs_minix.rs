@@ -777,7 +777,7 @@ unsafe extern "C" fn do_check(
   }
   return try_0;
 }
-unsafe extern "C" fn alarm_intr(mut alnum: libc::c_int) {
+unsafe extern "C" fn alarm_intr(mut _alnum: libc::c_int) {
   if (*ptr_to_globals).currently_testing
     >= (if (*ptr_to_globals).version2 as libc::c_int != 0 {
       (*ptr_to_globals).u.SB.s_zones
@@ -1074,7 +1074,7 @@ unsafe extern "C" fn setup_tables() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn mkfs_minix_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;

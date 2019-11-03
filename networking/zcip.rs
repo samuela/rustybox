@@ -512,7 +512,7 @@ unsafe extern "C" fn random_delay_ms(mut secs: libc::c_uint) -> libc::c_uint {
  */
 #[no_mangle]
 pub unsafe extern "C" fn zcip_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

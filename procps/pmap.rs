@@ -173,7 +173,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
 }
 #[no_mangle]
 pub unsafe extern "C" fn pmap_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;

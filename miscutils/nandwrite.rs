@@ -157,7 +157,7 @@ unsafe extern "C" fn next_good_eraseblock(
 }
 #[no_mangle]
 pub unsafe extern "C" fn nandwrite_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Buffer for OOB data */

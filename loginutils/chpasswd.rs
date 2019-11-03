@@ -145,7 +145,7 @@ static mut chpasswd_longopts: [libc::c_char; 41] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn chpasswd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut name: *mut libc::c_char = 0 as *mut libc::c_char; /* dies if there is no such user */

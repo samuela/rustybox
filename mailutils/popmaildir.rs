@@ -296,7 +296,7 @@ unsafe extern "C" fn pop3_check(mut fmt: *const libc::c_char, mut param: *const 
 }
 #[no_mangle]
 pub unsafe extern "C" fn popmaildir_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;

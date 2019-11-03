@@ -2535,7 +2535,7 @@ unsafe extern "C" fn find_proxy_entry(mut url: *const libc::c_char) -> *mut Htac
 /*
  * Handle timeouts
  */
-unsafe extern "C" fn send_REQUEST_TIMEOUT_and_exit(mut sig: libc::c_int) -> ! {
+unsafe extern "C" fn send_REQUEST_TIMEOUT_and_exit(mut _sig: libc::c_int) -> ! {
   send_headers_and_exit(HTTP_REQUEST_TIMEOUT as libc::c_int);
 }
 /*
@@ -2586,7 +2586,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   (*ptr_to_globals).iobuf = xmalloc(8192i32 as size_t) as *mut libc::c_char;
   remote_ip = 0i32 as libc::c_uint;
   if (*fromAddr).u.sa.sa_family as libc::c_int == 2i32 {
-    remote_ip = ({
+    remote_ip = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*fromAddr).u.sin.sin_addr.s_addr;
       if 0 != 0 {
@@ -2604,7 +2604,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
         c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
       }
       __v
-    })
+    }
   }
   if (*fromAddr).u.sa.sa_family as libc::c_int == 10i32
     && (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[0] == 0i32 as libc::c_uint
@@ -2629,7 +2629,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
       __v
     }) == 0xffffi32 as libc::c_uint
   {
-    remote_ip = ({
+    remote_ip = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[3];
       if 0 != 0 {
@@ -2647,7 +2647,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
         c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
       }
       __v
-    })
+    }
   }
   if 1i32 != 0 || 0i32 != 0 || (*ptr_to_globals).verbose != 0 {
     /* NB: can be NULL (user runs httpd -i by hand?) */
@@ -3228,7 +3228,7 @@ unsafe extern "C" fn mini_httpd_inetd() -> ! {
   ); /* for gcc */
   handle_incoming_and_exit(&mut fromAddr);
 }
-unsafe extern "C" fn sighup_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn sighup_handler(mut _sig: libc::c_int) {
   let mut sv: libc::c_int = *bb_errno;
   parse_conf(
     DEFAULT_PATH_HTTPD_CONF.as_ptr(),
@@ -3238,7 +3238,7 @@ unsafe extern "C" fn sighup_handler(mut sig: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn httpd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut server_socket: libc::c_int = 0;

@@ -162,7 +162,7 @@ pub const DST_BUF_SIZE: C2RustUnnamed_0 = 76;
 unsafe extern "C" fn read_stduu(
   mut src_stream: *mut FILE,
   mut dst_stream: *mut FILE,
-  mut flags: libc::c_int,
+  mut _flags: libc::c_int,
 ) {
   let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
   loop {
@@ -262,7 +262,7 @@ unsafe extern "C" fn read_stduu(
 }
 #[no_mangle]
 pub unsafe extern "C" fn uudecode_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut src_stream: *mut FILE = 0 as *mut FILE;
@@ -362,7 +362,7 @@ pub unsafe extern "C" fn uudecode_main(
 // //usage:     "\n	-i	When decoding, ignore non-alphabet characters"
 #[no_mangle]
 pub unsafe extern "C" fn base64_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut src_stream: *mut FILE = 0 as *mut FILE;

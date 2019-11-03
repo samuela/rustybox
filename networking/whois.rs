@@ -308,7 +308,7 @@ unsafe extern "C" fn recursive_query(
 */
 #[no_mangle]
 pub unsafe extern "C" fn whois_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut port: libc::c_int = 43i32;

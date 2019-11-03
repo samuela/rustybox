@@ -988,7 +988,7 @@ unsafe extern "C" fn get_localtime(mut tm: *mut tm) {
   time(&mut timer);
   localtime_r(&mut timer, tm);
 }
-unsafe extern "C" fn alarm_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   signal(
     14i32,
     Some(alarm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn get_irqcpu_nr(
 //usage:     "\n	-u			Report CPU utilization"
 #[no_mangle]
 pub unsafe extern "C" fn mpstat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt_irq_fmt: *mut libc::c_char = 0 as *mut libc::c_char;

@@ -628,7 +628,7 @@ unsafe extern "C" fn make_new_name_generic(
 //applet:IF_ZCAT(APPLET_ODDNAME(zcat, gunzip, BB_DIR_BIN, BB_SUID_DROP, zcat))
 unsafe extern "C" fn make_new_name_gunzip(
   mut filename: *mut libc::c_char,
-  mut expected_ext: *const libc::c_char,
+  mut _expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut extension: *mut libc::c_char = strrchr(filename, '.' as i32);
   if extension.is_null() {
@@ -671,7 +671,7 @@ static mut gunzip_longopts: [libc::c_char; 47] = [
  */
 #[no_mangle]
 pub unsafe extern "C" fn gunzip_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32long(
@@ -1130,7 +1130,7 @@ pub unsafe extern "C" fn gunzip_main(
 //applet:IF_BZCAT(APPLET_ODDNAME(bzcat, bunzip2, BB_DIR_USR_BIN, BB_SUID_DROP, bzcat))
 #[no_mangle]
 pub unsafe extern "C" fn bunzip2_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   getopt32(argv, b"cfkvqdt\x00" as *const u8 as *const libc::c_char);
@@ -1210,7 +1210,7 @@ pub unsafe extern "C" fn bunzip2_main(
 //kbuild:lib-$(CONFIG_LZMA) += bbunzip.o
 #[no_mangle]
 pub unsafe extern "C" fn unlzma_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int =
@@ -1286,7 +1286,7 @@ pub unsafe extern "C" fn unlzma_main(
 //kbuild:lib-$(CONFIG_XZ) += bbunzip.o
 #[no_mangle]
 pub unsafe extern "C" fn unxz_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int =

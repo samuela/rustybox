@@ -120,7 +120,7 @@ pub const DIR_HANGUP: C2RustUnnamed_1 = 0;
 pub type C2RustUnnamed_1 = libc::c_uint;
 // exit code
 // trap for critical signals
-unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
+unsafe extern "C" fn signal_handler(mut _signo: libc::c_int) {
   // report I/O error condition
   bb_got_signal = ERR_IO as libc::c_int as smallint;
 }
@@ -183,7 +183,7 @@ unsafe extern "C" fn unescape(mut s: *mut libc::c_char, mut nocr: *mut libc::c_i
 }
 #[no_mangle]
 pub unsafe extern "C" fn chat_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

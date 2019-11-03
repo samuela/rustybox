@@ -241,7 +241,7 @@ unsafe extern "C" fn factorize_numstr(mut numstr: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn factor_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   // // coreutils has undocumented option ---debug (three dashes)

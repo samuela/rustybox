@@ -84,7 +84,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:	)
 #[no_mangle]
 pub unsafe extern "C" fn fstrim_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut range: fstrim_range = fstrim_range {

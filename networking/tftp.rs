@@ -768,7 +768,7 @@ unsafe extern "C" fn tftp_protocol(
                 /* returns 1 on failure */
                 /* Build ACK or DATA */
                 cp = xbuf.offset(2);
-                *(cp as *mut uint16_t) = ({
+                *(cp as *mut uint16_t) = {
                   let mut __v: libc::c_ushort = 0;
                   let mut __x: libc::c_ushort = block_nr;
                   if 0 != 0 {
@@ -786,7 +786,7 @@ unsafe extern "C" fn tftp_protocol(
                     c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
                   }
                   __v
-                });
+                };
                 cp = cp.offset(2);
                 block_nr = block_nr.wrapping_add(1);
                 opcode = 4i32 as uint16_t;
@@ -819,7 +819,7 @@ unsafe extern "C" fn tftp_protocol(
                  */
               }
               _ => {
-                *(xbuf as *mut uint16_t) = ({
+                *(xbuf as *mut uint16_t) = {
                   let mut __v: libc::c_ushort = 0; /* fill in opcode part */
                   let mut __x: libc::c_ushort = opcode;
                   if 0 != 0 {
@@ -837,7 +837,7 @@ unsafe extern "C" fn tftp_protocol(
                     c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
                   }
                   __v
-                });
+                };
                 send_len = cp.wrapping_offset_from(xbuf) as libc::c_long as libc::c_int;
                 /* Send packet */
                 /* NB: send_len value is preserved in code below
@@ -917,7 +917,7 @@ unsafe extern "C" fn tftp_protocol(
                         }
                         if !(len < 4i32) {
                           /* Process recv'ed packet */
-                          opcode = ({
+                          opcode = {
                             let mut __v: libc::c_ushort = 0;
                             let mut __x: libc::c_ushort = *(rbuf as *mut uint16_t).offset(0);
                             if 0 != 0 {
@@ -940,8 +940,8 @@ unsafe extern "C" fn tftp_protocol(
                               c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
                             }
                             __v
-                          });
-                          recv_blk = ({
+                          };
+                          recv_blk = {
                             let mut __v: libc::c_ushort = 0;
                             let mut __x: libc::c_ushort = *(rbuf as *mut uint16_t).offset(1);
                             if 0 != 0 {
@@ -964,7 +964,7 @@ unsafe extern "C" fn tftp_protocol(
                               c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
                             }
                             __v
-                          });
+                          };
                           if opcode as libc::c_int == 5i32 {
                             static mut errcode_str: [libc::c_char; 121] = [
                               0, 102, 105, 108, 101, 32, 110, 111, 116, 32, 102, 111, 117, 110,
@@ -1207,7 +1207,7 @@ unsafe extern "C" fn tftp_protocol(
 }
 #[no_mangle]
 pub unsafe extern "C" fn tftp_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut peer_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
@@ -1327,7 +1327,7 @@ pub unsafe extern "C" fn tftp_main(
 /* ENABLE_TFTP */
 #[no_mangle]
 pub unsafe extern "C" fn tftpd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

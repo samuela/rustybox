@@ -281,8 +281,8 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 }
 #[no_mangle]
 pub unsafe extern "C" fn lsmod_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   xprint_and_close_file(xfopen_for_read(
     b"/proc/modules\x00" as *const u8 as *const libc::c_char,
@@ -622,9 +622,9 @@ unsafe extern "C" fn parse_module(
 }
 unsafe extern "C" fn fileAction(
   mut pathname: *const libc::c_char,
-  mut sb: *mut stat,
+  mut _sb: *mut stat,
   mut modname_to_match: *mut libc::c_void,
-  mut depth: libc::c_int,
+  mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut cur: libc::c_int = 0;
   let mut fname: *const libc::c_char = 0 as *const libc::c_char;
@@ -1333,7 +1333,7 @@ The following options are useful for people managing distributions:
 //usage:#endif
 #[no_mangle]
 pub unsafe extern "C" fn modprobe_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut exitcode: libc::c_int = 0;
@@ -1481,11 +1481,11 @@ pub unsafe extern "C" fn modprobe_main(
       175i32 as libc::c_long,
       map,
       len,
-      (if !options.is_null() {
+      if !options.is_null() {
         options
       } else {
         b"\x00" as *const u8 as *const libc::c_char
-      }),
+      },
     ) != 0i32 as libc::c_long
     {
       bb_error_msg_and_die(

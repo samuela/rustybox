@@ -260,7 +260,7 @@ unsafe extern "C" fn new_password(
 }
 #[no_mangle]
 pub unsafe extern "C" fn passwd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

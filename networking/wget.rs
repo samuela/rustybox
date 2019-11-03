@@ -608,7 +608,7 @@ unsafe extern "C" fn base64enc(mut str: *const libc::c_char) -> *mut libc::c_cha
   );
   return (*ptr_to_globals).wget_buf.as_mut_ptr();
 }
-unsafe extern "C" fn alarm_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   /* This is theoretically unsafe (uses stdio and malloc in signal handler) */
   if (*ptr_to_globals).die_if_timed_out != 0 {
     bb_simple_error_msg_and_die(b"download timed out\x00" as *const u8 as *const libc::c_char);
@@ -1949,7 +1949,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn wget_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   static mut wget_longopts: [libc::c_char; 266] = [

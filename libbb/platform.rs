@@ -1,4 +1,4 @@
-use libc;
+
 /*
  * Replacements for common but usually nonstandard functions that aren't
  * supplied by all platforms.

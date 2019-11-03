@@ -1534,7 +1534,7 @@ unsafe extern "C" fn recover_mode(
   }
   return 1i32;
 }
-unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut dummy: libc::c_int) {
+unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut _dummy: libc::c_int) {
   let mut i: libc::c_int = 0;
   printf(
     b"%lx:%lx:%lx:%lx\x00" as *const u8 as *const libc::c_char,
@@ -1892,7 +1892,7 @@ unsafe extern "C" fn set_control_char_or_die(
 }
 #[no_mangle]
 pub unsafe extern "C" fn stty_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;

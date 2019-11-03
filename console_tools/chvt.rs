@@ -32,7 +32,7 @@ extern "C" {
 //usage:       "Change the foreground virtual terminal to /dev/ttyN"
 #[no_mangle]
 pub unsafe extern "C" fn chvt_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut num: libc::c_int = xatou_range(

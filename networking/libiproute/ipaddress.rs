@@ -869,9 +869,9 @@ unsafe extern "C" fn flush_update() -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn print_addrinfo(
-  mut who: *const sockaddr_nl,
+  mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
-  mut arg: *mut libc::c_void,
+  mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut ifa: *mut ifaddrmsg = (n as *mut libc::c_char).offset(
     (0i32
@@ -1984,7 +1984,7 @@ unsafe extern "C" fn ipaddr_modify(
       i = 31i32;
       while i >= brd.bitlen as libc::c_int {
         if brd_len == -1i32 {
-          brd.data[0] |= ({
+          brd.data[0] |= {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = (1i32 << 31i32 - i) as libc::c_uint;
             if 0 != 0 {
@@ -2002,7 +2002,7 @@ unsafe extern "C" fn ipaddr_modify(
               c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
             }
             __v
-          })
+          }
         } else {
           brd.data[0] &= !({
             let mut __v: libc::c_uint = 0;

@@ -84,7 +84,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 //usage:     "\n	-t N	Timeout"
 #[no_mangle]
 pub unsafe extern "C" fn sulogin_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut timeout: libc::c_int = 0i32;

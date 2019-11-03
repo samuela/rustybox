@@ -723,7 +723,7 @@ unsafe extern "C" fn format_process(mut ps: *const procps_status_t) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn ps_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut p: *mut procps_status_t = 0 as *mut procps_status_t;

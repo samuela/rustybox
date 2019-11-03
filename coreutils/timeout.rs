@@ -78,7 +78,7 @@ pub type duration_t = libc::c_double;
 //usage:       "Default SIG: TERM."
 #[no_mangle]
 pub unsafe extern "C" fn timeout_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut signo: libc::c_int = 0;
@@ -122,13 +122,13 @@ pub unsafe extern "C" fn timeout_main(
    * making child watch parent results in programs having
    * unexpected children.	*/
   if !(parent != 0) {
-    pid = ({
+    pid = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
-    });
+    };
     if pid == 0i32 {
       /* Child: spawn grandchild and exit */
       parent = getppid();

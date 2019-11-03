@@ -87,7 +87,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 /* This is a NOFORK applet. Be very careful! */
 #[no_mangle]
 pub unsafe extern "C" fn mkdir_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: libc::c_long = -1i32 as libc::c_long;

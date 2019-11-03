@@ -1405,7 +1405,7 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
 }
 #[no_mangle]
 pub unsafe extern "C" fn nslookup_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut types: libc::c_uint = 0;

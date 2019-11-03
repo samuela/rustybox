@@ -109,7 +109,7 @@ pub const OPT_n: C2RustUnnamed = 8;
 */
 #[no_mangle]
 pub unsafe extern "C" fn shred_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut rand_fd: libc::c_int = 0; /* for compiler */

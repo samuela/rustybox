@@ -42,7 +42,7 @@ pub struct winsize {
 //usage:       "Print dimensions of stdin tty, or 80x24"
 #[no_mangle]
 pub unsafe extern "C" fn ttysize_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut w: libc::c_uint = 0; /* "%u" */

@@ -162,12 +162,12 @@ unsafe extern "C" fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
   }
   exit(exitcode);
 }
-unsafe extern "C" fn sig_handler(mut signo: libc::c_int) {
+unsafe extern "C" fn sig_handler(mut _signo: libc::c_int) {
   restore_state_and_exit(0i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn slattach_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Line discipline code table */

@@ -136,7 +136,7 @@ unsafe extern "C" fn restricted_shell(mut shell: *const libc::c_char) -> libc::c
 }
 #[no_mangle]
 pub unsafe extern "C" fn su_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut flags: libc::c_uint = 0;

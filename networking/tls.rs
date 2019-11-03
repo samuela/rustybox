@@ -1233,11 +1233,11 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
     size,
     0 as *mut libc::c_void,
   );
-  (*tls).write_seq64_be = ({
+  (*tls).write_seq64_be = {
     let mut __v: __uint64_t = 0;
     let mut __x: __uint64_t =
                  (1i32 as
-                      libc::c_ulong).wrapping_add(({
+                      libc::c_ulong).wrapping_add({
                                                        let mut __v_0:
                                                                __uint64_t = 0;
                                                        let mut __x_0:
@@ -1313,7 +1313,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
                                                                                                fresh6);
                                                        }
                                                        __v_0
-                                                   }));
+                                                   });
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -1333,7 +1333,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
       c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
     }
     __v
-  });
+  };
   size = size.wrapping_add(SHA256_OUTSIZE as libc::c_int as libc::c_uint);
   // RFC 5246:
   // 6.2.3.1.  Null or Standard Stream Cipher
@@ -1503,11 +1503,11 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   *(aad.as_mut_ptr() as *mut bb__aliased_uint64_t) = t64;
   *(buf.offset(-8) as *mut bb__aliased_uint64_t) = t64;
   /* seq64 is not used later in this func, can increment here */
-  (*tls).write_seq64_be = ({
+  (*tls).write_seq64_be = {
     let mut __v: __uint64_t = 0; /* yes, first cnt here is 2 (!) */
     let mut __x: __uint64_t =
                  (1i32 as
-                      libc::c_ulong).wrapping_add(({
+                      libc::c_ulong).wrapping_add({
                                                        let mut __v_0:
                                                                __uint64_t = 0;
                                                        let mut __x_0:
@@ -1585,7 +1585,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
                                                                                                fresh13);
                                                        }
                                                        __v_0
-                                                   }));
+                                                   });
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -1605,13 +1605,13 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
       c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
     }
     __v
-  });
+  };
   cnt = 1i32 as libc::c_uint;
   remaining = size;
   while remaining != 0i32 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
-    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = ({
+    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
       if 0 != 0 {
@@ -1629,7 +1629,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
         c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
       }
       __v
-    });
+    };
     aes_encrypt_one_block(
       &mut (*tls).aes_encrypt,
       nonce.as_mut_ptr() as *const libc::c_void,
@@ -1655,7 +1655,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
     size,
     authtag.as_mut_ptr(),
   );
-  *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = ({
+  *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = 1i32 as libc::c_uint;
     if 0 != 0 {
@@ -1673,7 +1673,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }
     __v
-  });
+  };
   aes_encrypt_one_block(
     &mut (*tls).aes_encrypt,
     nonce.as_mut_ptr() as *const libc::c_void,
@@ -1805,7 +1805,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
   while remaining != 0i32 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
-    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = ({
+    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
       if 0 != 0 {
@@ -1823,7 +1823,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
       __v
-    });
+    };
     aes_encrypt_one_block(
       &mut (*tls).aes_decrypt,
       nonce.as_mut_ptr() as *const libc::c_void,

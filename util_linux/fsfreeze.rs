@@ -42,7 +42,7 @@ pub type uint32_t = __uint32_t;
 //usage:	"Flush and halt writes to MOUNTPOINT"
 #[no_mangle]
 pub unsafe extern "C" fn fsfreeze_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;

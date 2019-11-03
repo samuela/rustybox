@@ -162,7 +162,7 @@ unsafe extern "C" fn klogd_close() {
  */
 #[no_mangle]
 pub unsafe extern "C" fn klogd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0i32;

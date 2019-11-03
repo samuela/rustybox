@@ -683,7 +683,7 @@ unsafe extern "C" fn confirm_action(
 //usage:     "\n	-y	Disable interactive mode"
 #[no_mangle]
 pub unsafe extern "C" fn i2cget_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let opt_f_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
@@ -1237,7 +1237,7 @@ unsafe extern "C" fn dump_word_data(
 //usage:     "\n	-r	Limit the number of registers being accessed"
 #[no_mangle]
 pub unsafe extern "C" fn i2cdump_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let opt_f_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
@@ -1699,7 +1699,7 @@ unsafe extern "C" fn will_skip(mut cmd: *const libc::c_char) {
 //usage:     "\n	FIRST and LAST limit probing range"
 #[no_mangle]
 pub unsafe extern "C" fn i2cdetect_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let opt_y_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
@@ -1879,7 +1879,7 @@ unsafe extern "C" fn check_i2c_func(mut fd: libc::c_int) {
 //usage:     "\n	-y	Disable interactive mode"
 #[no_mangle]
 pub unsafe extern "C" fn i2ctransfer_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut bus_num: libc::c_int = 0;

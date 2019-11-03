@@ -98,7 +98,7 @@ unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_i
 }
 #[no_mangle]
 pub unsafe extern "C" fn comm_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut thisline: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];

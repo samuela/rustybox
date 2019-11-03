@@ -1844,11 +1844,11 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
       update_num_lines();
       num = (num as libc::c_uint)
         .wrapping_mul(
-          (if (*ptr_to_globals).num_lines > 0i32 {
+          if (*ptr_to_globals).num_lines > 0i32 {
             (*ptr_to_globals).num_lines as libc::c_uint
           } else {
             (*ptr_to_globals).max_lineno
-          }),
+          },
         )
         .wrapping_div(100i32 as libc::c_uint) as libc::c_int;
       buffer_lineno(num);
@@ -2176,7 +2176,7 @@ unsafe extern "C" fn keypress_process(mut keypress: libc::c_int) {
 unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
   less_exit(-sig);
 }
-unsafe extern "C" fn sigwinch_handler(mut sig: libc::c_int) {
+unsafe extern "C" fn sigwinch_handler(mut _sig: libc::c_int) {
   (*ptr_to_globals).winch_counter = (*ptr_to_globals).winch_counter.wrapping_add(1);
 }
 #[no_mangle]

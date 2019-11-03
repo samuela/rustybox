@@ -1496,7 +1496,7 @@ unsafe extern "C" fn handle_input(
  */
 #[no_mangle]
 pub unsafe extern "C" fn top_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut interval: duration_t = 0.; /* default update interval is 5 seconds */

@@ -1193,7 +1193,7 @@ unsafe extern "C" fn match_opt(
 // each directory to be mounted.
 #[no_mangle]
 pub unsafe extern "C" fn mount_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut cmdopts: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;

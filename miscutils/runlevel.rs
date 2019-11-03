@@ -79,7 +79,7 @@ pub struct C2RustUnnamed {
 //usage:       "N 2"
 #[no_mangle]
 pub unsafe extern "C" fn runlevel_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ut: *mut utmpx = 0 as *mut utmpx;

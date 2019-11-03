@@ -48,7 +48,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const RCVBUF: C2RustUnnamed_0 = 2097152;
 #[no_mangle]
 pub unsafe extern "C" fn uevent_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;

@@ -616,7 +616,7 @@ unsafe extern "C" fn eval() -> *mut VALUE {
 }
 #[no_mangle]
 pub unsafe extern "C" fn expr_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut v: *mut VALUE = 0 as *mut VALUE;

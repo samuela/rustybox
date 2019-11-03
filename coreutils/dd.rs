@@ -269,7 +269,7 @@ unsafe extern "C" fn xatoul_range_sfx(
   return xatoull_range_sfx(str, l as libc::c_ulonglong, u as libc::c_ulonglong, sfx)
     as libc::c_ulong; /* before fprintf */
 }
-unsafe extern "C" fn dd_output_status(mut cur_signal: libc::c_int) {
+unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
   let mut seconds: libc::c_double = 0.;
   let mut bytes_sec: libc::c_ulonglong = 0;
   let mut now_us: libc::c_ulonglong = monotonic_us();
@@ -387,7 +387,7 @@ unsafe extern "C" fn parse_comma_flags(
 }
 #[no_mangle]
 pub unsafe extern "C" fn dd_main(
-  mut argc: libc::c_int,
+  mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
@@ -781,7 +781,7 @@ pub unsafe extern "C" fn dd_main(
                     if !(n2 >= 0i32 as libc::c_long) {
                       break;
                     }
-                    *p16 = ({
+                    *p16 = {
                       let mut __v: libc::c_ushort = 0;
                       let mut __x: libc::c_ushort = *p16;
                       if 0 != 0 {
@@ -800,7 +800,7 @@ pub unsafe extern "C" fn dd_main(
                         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
                       }
                       __v
-                    });
+                    };
                     p16 = p16.offset(1)
                   }
                 }
