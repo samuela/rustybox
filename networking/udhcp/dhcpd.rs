@@ -1168,226 +1168,226 @@ unsafe extern "C" fn read_optset(
     0i32 != 0,
   );
 }
-static mut keywords: [config_keyword; 18] = unsafe {
-  [
-    {
-      let mut init = config_keyword {
-        keyword: b"start\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          udhcp_str2nip
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 32u64 as libc::c_uint,
-        def: b"192.168.0.20\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"end\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          udhcp_str2nip
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 36u64 as libc::c_uint,
-        def: b"192.168.0.254\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"interface\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 0u64 as libc::c_uint,
-        def: b"eth0\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"max_leases\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 48u64 as libc::c_uint,
-        def: b"235\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"auto_time\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 52u64 as libc::c_uint,
-        def: b"7200\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"decline_time\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 56u64 as libc::c_uint,
-        def: b"3600\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"conflict_time\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 60u64 as libc::c_uint,
-        def: b"3600\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"offer_time\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 64u64 as libc::c_uint,
-        def: b"60\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"min_lease\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_u32
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 44u64 as libc::c_uint,
-        def: b"60\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"lease_file\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 72u64 as libc::c_uint,
-        def: b"/var/lib/misc/udhcpd.leases\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"pidfile\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 80u64 as libc::c_uint,
-        def: b"/var/run/udhcpd.pid\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"siaddr\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          udhcp_str2nip
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 68u64 as libc::c_uint,
-        def: b"0.0.0.0\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"option\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_optset
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 24u64 as libc::c_uint,
-        def: b"\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"opt\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_optset
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 24u64 as libc::c_uint,
-        def: b"\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"notify_file\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 88u64 as libc::c_uint,
-        def: 0 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"sname\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 96u64 as libc::c_uint,
-        def: 0 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"boot_file\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_str
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 104u64 as libc::c_uint,
-        def: 0 as *const libc::c_char,
-      };
-      init
-    },
-    {
-      let mut init = config_keyword {
-        keyword: b"static_lease\x00" as *const u8 as *const libc::c_char,
-        handler: Some(
-          read_staticlease
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
-        ),
-        ofs: 112u64 as libc::c_uint,
-        def: b"\x00" as *const u8 as *const libc::c_char,
-      };
-      init
-    },
-  ]
-};
+
+static mut keywords: [config_keyword; 18] = [
+  {
+    let mut init = config_keyword {
+      keyword: b"start\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        udhcp_str2nip
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 32u64 as libc::c_uint,
+      def: b"192.168.0.20\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"end\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        udhcp_str2nip
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 36u64 as libc::c_uint,
+      def: b"192.168.0.254\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"interface\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 0u64 as libc::c_uint,
+      def: b"eth0\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"max_leases\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 48u64 as libc::c_uint,
+      def: b"235\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"auto_time\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 52u64 as libc::c_uint,
+      def: b"7200\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"decline_time\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 56u64 as libc::c_uint,
+      def: b"3600\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"conflict_time\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 60u64 as libc::c_uint,
+      def: b"3600\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"offer_time\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 64u64 as libc::c_uint,
+      def: b"60\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"min_lease\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_u32
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 44u64 as libc::c_uint,
+      def: b"60\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"lease_file\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 72u64 as libc::c_uint,
+      def: b"/var/lib/misc/udhcpd.leases\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"pidfile\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 80u64 as libc::c_uint,
+      def: b"/var/run/udhcpd.pid\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"siaddr\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        udhcp_str2nip
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 68u64 as libc::c_uint,
+      def: b"0.0.0.0\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"option\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_optset
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 24u64 as libc::c_uint,
+      def: b"\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"opt\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_optset
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 24u64 as libc::c_uint,
+      def: b"\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"notify_file\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 88u64 as libc::c_uint,
+      def: 0 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"sname\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 96u64 as libc::c_uint,
+      def: 0 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"boot_file\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_str
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 104u64 as libc::c_uint,
+      def: 0 as *const libc::c_char,
+    };
+    init
+  },
+  {
+    let mut init = config_keyword {
+      keyword: b"static_lease\x00" as *const u8 as *const libc::c_char,
+      handler: Some(
+        read_staticlease
+          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
+      ),
+      ofs: 112u64 as libc::c_uint,
+      def: b"\x00" as *const u8 as *const libc::c_char,
+    };
+    init
+  },
+];
+
 #[inline(never)]
 unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   let mut parser: *mut parser_t = 0 as *mut parser_t;

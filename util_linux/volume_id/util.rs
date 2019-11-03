@@ -41,14 +41,17 @@ pub struct volume_id {
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
+
 pub type uuid_format = libc::c_uint;
 pub const UUID_DCE_STRING: uuid_format = 3;
-pub const UUID_DCE: uuid_format = 2;
-pub const UUID_NTFS: uuid_format = 1;
-pub const UUID_DOS: uuid_format = 0;
+// pub const UUID_DCE: uuid_format = 2;
+// pub const UUID_NTFS: uuid_format = 1;
+// pub const UUID_DOS: uuid_format = 0;
+
 pub type endian = libc::c_uint;
-pub const BE: endian = 1;
+// pub const BE: endian = 1;
 pub const LE: endian = 0;
+
 /*
  * volume_id - reads filesystem label and uuid
  *

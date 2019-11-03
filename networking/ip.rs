@@ -424,19 +424,17 @@ pub unsafe extern "C" fn ip_main(
     116, 117, 110, 110, 101, 108, 0, 116, 117, 110, 108, 0, 114, 117, 108, 101, 0, 110, 101, 105,
     103, 104, 0, 0,
   ];
-  static mut ip_func_ptrs: [ip_func_ptr_t; 9] = unsafe {
-    [
-      Some(ip_print_help as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_ipaddr as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iplink as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_iprule as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-      Some(do_ipneigh as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    ]
-  };
+  static mut ip_func_ptrs: [ip_func_ptr_t; 9] = [
+    Some(ip_print_help as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_ipaddr as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iplink as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_iprule as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(do_ipneigh as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+  ];
   let mut ip_func: ip_func_ptr_t = None;
   let mut key: libc::c_int = 0;
   argv = ip_parse_common_args(argv.offset(1));

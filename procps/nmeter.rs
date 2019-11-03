@@ -1097,22 +1097,22 @@ unsafe extern "C" fn collect_info(mut s: *mut s_stat) {
   }
 }
 static mut options: [libc::c_char; 12] = [110, 99, 109, 115, 102, 105, 120, 112, 116, 98, 114, 0];
+
 static mut init_functions: [Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat>;
-  11] = unsafe {
-  [
-    Some(init_if as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_cpu as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_mem as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_swp as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_fd as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_int as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_ctx as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_fork as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_time as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_blk as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-    Some(init_cr as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
-  ]
-};
+  11] = [
+  Some(init_if as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_cpu as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_mem as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_swp as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_fd as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_int as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_ctx as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_fork as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_time as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_blk as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+  Some(init_cr as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
+];
+
 #[no_mangle]
 pub unsafe extern "C" fn nmeter_main(
   mut _argc: libc::c_int,

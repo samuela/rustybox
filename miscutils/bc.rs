@@ -1421,13 +1421,11 @@ unsafe extern "C" fn BC_NUM_MREQ(
     .len
     .wrapping_sub((*a).rdx)
     .wrapping_add((*b).len.wrapping_sub((*b).rdx))
-    .wrapping_add(
-      if scale > (*a).rdx.wrapping_add((*b).rdx) {
-        scale
-      } else {
-        (*a).rdx.wrapping_add((*b).rdx)
-      },
-    )
+    .wrapping_add(if scale > (*a).rdx.wrapping_add((*b).rdx) {
+      scale
+    } else {
+      (*a).rdx.wrapping_add((*b).rdx)
+    })
     .wrapping_add(1i32 as libc::c_ulong);
 }
 unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t {
@@ -1792,34 +1790,34 @@ unsafe extern "C" fn zbc_num_pow(
       .wrapping_add(1i32 as libc::c_ulong),
   );
 }
-static mut zxc_program_ops: [BcNumBinaryOp; 6] = unsafe {
-  [
-    Some(
-      zbc_num_pow
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-    Some(
-      zbc_num_mul
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-    Some(
-      zbc_num_div
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-    Some(
-      zbc_num_mod
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-    Some(
-      zbc_num_add
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-    Some(
-      zbc_num_sub
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    ),
-  ]
-};
+
+static mut zxc_program_ops: [BcNumBinaryOp; 6] = [
+  Some(
+    zbc_num_pow
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+  Some(
+    zbc_num_mul
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+  Some(
+    zbc_num_div
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+  Some(
+    zbc_num_mod
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+  Some(
+    zbc_num_add
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+  Some(
+    zbc_num_sub
+      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+  ),
+];
+
 unsafe extern "C" fn zbc_num_inv(
   mut a: *mut BcNum,
   mut b: *mut BcNum,

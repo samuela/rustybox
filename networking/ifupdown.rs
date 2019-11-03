@@ -1,160 +1,231 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+
 extern "C" {
   pub type __dirstream;
+
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
+
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
+
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   fn execle(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
     sizeof_and_shift: libc::c_uint,
     idx: libc::c_int,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xopendir(path: *const libc::c_char) -> *mut DIR;
+
   #[no_mangle]
   fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
+
   #[no_mangle]
   fn xpipe(filedes: *mut libc::c_int);
+
   #[no_mangle]
   fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
+
   #[no_mangle]
   fn safe_strncpy(
     dst: *mut libc::c_char,
     src: *const libc::c_char,
     size: size_t,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
+
   #[no_mangle]
   fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
+
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
+
   #[no_mangle]
   fn llist_free(
     elm: *mut llist_t,
     freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
   );
+
   #[no_mangle]
   fn llist_find_str(first: *mut llist_t, str: *const libc::c_char) -> *mut llist_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn get_shell_name() -> *const libc::c_char;
+
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   #[no_mangle]
   fn fnmatch(
     __pattern: *const libc::c_char,
@@ -710,90 +781,89 @@ unsafe extern "C" fn v4tunnel_down(
     exec,
   );
 }
-static mut methods6: [method_t; 4] = unsafe {
-  [
-    {
-      let mut init = method_t {
-        name: b"v4tunnel\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          v4tunnel_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          v4tunnel_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"static\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          static_up6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          static_down6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"manual\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          manual_up_down6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          manual_up_down6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"loopback\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          loopback_up6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          loopback_down6
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-  ]
-};
+static mut methods6: [method_t; 4] = [
+  {
+    let mut init = method_t {
+      name: b"v4tunnel\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        v4tunnel_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        v4tunnel_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"static\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        static_up6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        static_down6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"manual\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        manual_up_down6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        manual_up_down6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"loopback\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        loopback_up6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        loopback_down6
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+];
+
 // Initialized in run_static_initializers
 static mut addr_inet6: address_family_t = address_family_t {
   name: 0 as *const libc::c_char,
@@ -972,176 +1042,20 @@ unsafe extern "C" fn wvdial_down(
     exec,
   );
 }
-static mut methods: [method_t; 7] = unsafe {
-  [
-    {
-      let mut init = method_t {
-        name: b"manual\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          manual_up_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          manual_up_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"wvdial\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          wvdial_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          wvdial_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"ppp\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          ppp_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          ppp_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"static\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          static_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          static_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"bootp\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          bootp_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          static_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"dhcp\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          dhcp_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          dhcp_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = method_t {
-        name: b"loopback\x00" as *const u8 as *const libc::c_char,
-        up: Some(
-          loopback_up
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-        down: Some(
-          loopback_down
-            as unsafe extern "C" fn(
-              _: *mut interface_defn_t,
-              _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-            ) -> libc::c_int,
-        ),
-      };
-      init
-    },
-  ]
-};
-// Initialized in run_static_initializers
-static mut addr_inet: address_family_t = address_family_t {
-  name: 0 as *const libc::c_char,
-  n_methods: 0,
-  method: 0 as *const method_t,
-};
-/* FEATURE_IFUPDOWN_IPV4 */
-unsafe extern "C" fn link_up_down(
-  mut _ifd: *mut interface_defn_t,
-  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
-) -> libc::c_int {
-  return 1i32;
-}
-static mut link_methods: [method_t; 1] = unsafe {
-  [{
+
+static mut methods: [method_t; 7] = [
+  {
     let mut init = method_t {
-      name: b"none\x00" as *const u8 as *const libc::c_char,
+      name: b"manual\x00" as *const u8 as *const libc::c_char,
       up: Some(
-        link_up_down
+        manual_up_down
           as unsafe extern "C" fn(
             _: *mut interface_defn_t,
             _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
-        link_up_down
+        manual_up_down
           as unsafe extern "C" fn(
             _: *mut interface_defn_t,
             _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
@@ -1149,8 +1063,165 @@ static mut link_methods: [method_t; 1] = unsafe {
       ),
     };
     init
-  }]
+  },
+  {
+    let mut init = method_t {
+      name: b"wvdial\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        wvdial_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        wvdial_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"ppp\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        ppp_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        ppp_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"static\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        static_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        static_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"bootp\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        bootp_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        static_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"dhcp\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        dhcp_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        dhcp_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = method_t {
+      name: b"loopback\x00" as *const u8 as *const libc::c_char,
+      up: Some(
+        loopback_up
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+      down: Some(
+        loopback_down
+          as unsafe extern "C" fn(
+            _: *mut interface_defn_t,
+            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          ) -> libc::c_int,
+      ),
+    };
+    init
+  },
+];
+
+// Initialized in run_static_initializers
+static mut addr_inet: address_family_t = address_family_t {
+  name: 0 as *const libc::c_char,
+  n_methods: 0,
+  method: 0 as *const method_t,
 };
+
+/* FEATURE_IFUPDOWN_IPV4 */
+unsafe extern "C" fn link_up_down(
+  mut _ifd: *mut interface_defn_t,
+  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+) -> libc::c_int {
+  return 1i32;
+}
+
+static mut link_methods: [method_t; 1] = [{
+  let mut init = method_t {
+    name: b"none\x00" as *const u8 as *const libc::c_char,
+    up: Some(
+      link_up_down
+        as unsafe extern "C" fn(
+          _: *mut interface_defn_t,
+          _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+        ) -> libc::c_int,
+    ),
+    down: Some(
+      link_up_down
+        as unsafe extern "C" fn(
+          _: *mut interface_defn_t,
+          _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+        ) -> libc::c_int,
+    ),
+  };
+  init
+}];
+
 // Initialized in run_static_initializers
 static mut addr_link: address_family_t = address_family_t {
   name: 0 as *const libc::c_char,

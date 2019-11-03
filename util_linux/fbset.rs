@@ -222,8 +222,7 @@ pub const OPT_READMODE: C2RustUnnamed_3 = 4;
 pub type C2RustUnnamed_3 = libc::c_uint;
 
 fn BUG_xatou32_unimplemented() -> uint32_t {
-  panic!("BUG_xatou32_unimplemented");
-  0
+  panic!("BUG_xatou32_unimplemented")
 }
 
 #[inline(always)]

@@ -1,4 +1,3 @@
-#![feature(extern_types)]
 use libc;
 extern "C" {
   pub type __dirstream;

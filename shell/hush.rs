@@ -10445,31 +10445,31 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
           }
         }
         // else if false && 396i32 > 1i32 {
-          // Originally branched on
-          //    if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
+        // Originally branched on
+        //    if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
 
-          // let mut n: libc::c_int = find_applet_by_name(*argv_expanded.offset(0));
-          // if n < 0i32 || 0i32 == 0 {
-          //   current_block = 7411349665265910262;
-          // } else {
-          //   enter_var_nest_level();
-          //   /* Collect all variables "shadowed" by helper into old_vars list */
-          //   (*ptr_to_globals).shadowed_vars_pp = &mut old_vars;
-          //   rcode = redirect_and_varexp_helper(command, &mut squirrel, argv_expanded);
-          //   (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;
-          //   if rcode == 0i32 {
-          //     /*
-          //      * Note: signals (^C) can't interrupt here.
-          //      * We remember them and they will be acted upon
-          //      * after applet returns.
-          //      * This makes applets which can run for a long time
-          //      * and/or wait for user input ineligible for NOFORK:
-          //      * for example, "yes" or "rm" (rm -i waits for input).
-          //      */
-          //     rcode = run_nofork_applet(n, argv_expanded)
-          //   }
-          //   current_block = 4299703460566765016;
-          // }
+        // let mut n: libc::c_int = find_applet_by_name(*argv_expanded.offset(0));
+        // if n < 0i32 || 0i32 == 0 {
+        //   current_block = 7411349665265910262;
+        // } else {
+        //   enter_var_nest_level();
+        //   /* Collect all variables "shadowed" by helper into old_vars list */
+        //   (*ptr_to_globals).shadowed_vars_pp = &mut old_vars;
+        //   rcode = redirect_and_varexp_helper(command, &mut squirrel, argv_expanded);
+        //   (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;
+        //   if rcode == 0i32 {
+        //     /*
+        //      * Note: signals (^C) can't interrupt here.
+        //      * We remember them and they will be acted upon
+        //      * after applet returns.
+        //      * This makes applets which can run for a long time
+        //      * and/or wait for user input ineligible for NOFORK:
+        //      * for example, "yes" or "rm" (rm -i waits for input).
+        //      */
+        //     rcode = run_nofork_applet(n, argv_expanded)
+        //   }
+        //   current_block = 4299703460566765016;
+        // }
         // }
         else {
           current_block = 7411349665265910262;
@@ -10578,7 +10578,17 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     let mut pipefds: fd_pair = fd_pair { rd: 0, wr: 0 };
     command = &mut *(*pi).cmds.offset(cmd_no as isize) as *mut command;
     cmd_no += 1;
-    !(*command).argv.is_null();
+
+    // Originally this was in the C code:
+    // if (command->argv) {
+    // 	debug_printf_exec(": pipe member '%s' '%s'...\n",
+    // 			command->argv[0], command->argv[1]);
+    // } else {
+    // 	debug_printf_exec(": pipe member with no argv\n");
+    // }
+    // But it got replaced with this:
+    // !(*command).argv.is_null();
+
     /* pipes are inserted between pairs of commands */
     pipefds.rd = 0i32;
     pipefds.wr = 1i32;

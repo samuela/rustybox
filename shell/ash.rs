@@ -9652,8 +9652,7 @@ unsafe extern "C" fn testcmd(
   return test_main(argc, argv);
 }
 /* Keep these in proper order since it is searched via bsearch() */
-static mut builtintab: [builtincmd; 44] = unsafe {
-  [
+static mut builtintab: [builtincmd; 44] =[
     {
       let mut init = builtincmd {
         name: b"3.\x00" as *const u8 as *const libc::c_char,
@@ -10068,8 +10067,7 @@ static mut builtintab: [builtincmd; 44] = unsafe {
       };
       init
     },
-  ]
-};
+  ];
 /*
  * Search the table of builtin commands.
  */
@@ -10115,7 +10113,7 @@ unsafe extern "C" fn bltincmd(
 }
 unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> libc::c_int {
   let mut current_block: u64;
-  static mut null_bltin: builtincmd = unsafe {
+  static mut null_bltin: builtincmd =
     {
       let mut init = builtincmd {
         name: b"\x00\x00\x00" as *const u8 as *const libc::c_char,
@@ -10125,8 +10123,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
         ),
       };
       init
-    }
-  };
+    };
   let mut localvar_stop: *mut localvar_list = 0 as *mut localvar_list;
   let mut file_stop: *mut parsefile = 0 as *mut parsefile;
   let mut redir_stop: *mut redirtab = 0 as *mut redirtab;

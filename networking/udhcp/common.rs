@@ -234,8 +234,7 @@ pub const FILE_FIELD101: C2RustUnnamed_2 = 257;
 pub type C2RustUnnamed_2 = libc::c_uint;
 
 pub fn BUG_bb_strtou32_unimplemented() -> uint32_t {
-  panic!("BUG_bb_strtou32_unimplemented");
-  0
+  panic!("BUG_bb_strtou32_unimplemented")
 }
 
 #[inline(always)]

@@ -466,8 +466,7 @@ pub const OPT_c: C2RustUnnamed_7 = 1;
 // For some reason this function isn't actually defined in the C sources, at
 // least AFAICT. So we use this dummy implementation.
 pub fn BUG_wrong_field_size() -> libc::c_uint {
-  panic!("BUG_wrong_field_size");
-  0
+  panic!("BUG_wrong_field_size")
 }
 
 unsafe extern "C" fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {

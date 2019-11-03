@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn strtol(
@@ -6,27 +7,32 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_long;
+
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
+
   #[no_mangle]
   fn strtoll(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_longlong;
+
   #[no_mangle]
   fn strtoull(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
 }
+
 #[inline(always)]
 unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
@@ -36,7 +42,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   b = ((a as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar;
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

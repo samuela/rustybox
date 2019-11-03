@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -12,50 +13,73 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   fn fork() -> __pid_t;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn connect(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG, __len: socklen_t) -> libc::c_int;
+
   #[no_mangle]
   fn getpeername(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __len: *mut socklen_t) -> libc::c_int;
+
   #[no_mangle]
   fn accept(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __addr_len: *mut socklen_t) -> libc::c_int;
+
   #[no_mangle]
   fn shutdown(__fd: libc::c_int, __how: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
+
   #[no_mangle]
   static mut stdout: *mut _IO_FILE;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -63,58 +87,81 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn setenv(
     __name: *const libc::c_char,
     __value: *const libc::c_char,
     __replace: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn strftime(
     __s: *mut libc::c_char,
@@ -122,15 +169,19 @@ extern "C" {
     __format: *const libc::c_char,
     __tp: *const tm,
   ) -> size_t;
+
   #[no_mangle]
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
+
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
   /* Search for an entry with a matching username.  */
+
   #[no_mangle]
   fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
+
   #[no_mangle]
   fn bb_internal_getspnam_r(
     __name: *const libc::c_char,
@@ -139,61 +190,89 @@ extern "C" {
     __buflen: size_t,
     __result: *mut *mut spwd,
   ) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn is_directory(name: *const libc::c_char, followLinks: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   fn xsetgid(gid: gid_t);
+
   #[no_mangle]
   fn xsetuid(uid: uid_t);
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xpipe(filedes: *mut libc::c_int);
+
   #[no_mangle]
   fn xlisten(s: libc::c_int, backlog: libc::c_int);
+
   #[no_mangle]
   fn setsockopt_keepalive(fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn create_and_bind_stream_or_die(bindaddr: *const libc::c_char, port: libc::c_int)
     -> libc::c_int;
+
   #[no_mangle]
   fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   #[no_mangle]
   fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
@@ -207,59 +286,79 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
+
   #[no_mangle]
   fn bb_strtoull(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_uint;
+
   #[no_mangle]
   fn xget_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char);
+
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   static mut xfunc_error_retval: uint8_t;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_simplify_abs_path_inplace(path: *mut libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn pw_encrypt(
     clear: *const libc::c_char,
     salt: *const libc::c_char,
     cleanup: libc::c_int,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn crypt_make_salt(p: *mut libc::c_char, cnt: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn percent_decode_in_place(str: *mut libc::c_char, strict: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   #[no_mangle]
   fn sendfile(
     __out_fd: libc::c_int,
@@ -1491,7 +1590,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
       (*ptr_to_globals).iobuf as *const libc::c_void,
       len as size_t,
     );
-    return send_file_and_exit(error_page, SEND_BODY as libc::c_int);
+    send_file_and_exit(error_page, SEND_BODY as libc::c_int);
   }
   if (*ptr_to_globals).file_size != -1i32 as libc::c_long {
     /* file */

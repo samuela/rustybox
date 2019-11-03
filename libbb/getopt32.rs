@@ -412,7 +412,7 @@ unsafe extern "C" fn vgetopt32(
   let mut trigger: libc::c_uint = 0;
   let mut min_arg: libc::c_int = 0i32;
   let mut max_arg: libc::c_int = -1i32;
-  let mut spec_flgs: libc::c_int = 0i32;
+  let mut _spec_flgs: libc::c_int = 0i32; // assigned to but never used
   on_off = complementary.as_mut_ptr();
   memset(
     on_off as *mut libc::c_void,
@@ -562,7 +562,7 @@ unsafe extern "C" fn vgetopt32(
         c = *s.offset(1) as libc::c_int;
         if *s as libc::c_int == '?' as i32 {
           if c < '0' as i32 || c > '9' as i32 {
-            spec_flgs |= 1i32
+            _spec_flgs |= 1i32
           } else {
             max_arg = c - '0' as i32;
             s = s.offset(1)

@@ -423,29 +423,28 @@ unsafe extern "C" fn INET_input(
     }
   */
 }
-static mut inet_aftype: aftype = unsafe {
-  {
-    let mut init = aftype {
-      name: b"inet\x00" as *const u8 as *const libc::c_char,
-      title: b"DARPA Internet\x00" as *const u8 as *const libc::c_char,
-      af: 2i32,
-      alen: 4i32,
-      print: None,
-      sprint: Some(
-        INET_sprint
-          as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
-      ),
-      input: Some(
-        INET_input as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
-      ),
-      herror: None,
-      rprint: None,
-      rinput: None,
-      getmask: None,
-    };
-    init
-  }
+
+static mut inet_aftype: aftype = {
+  let mut init = aftype {
+    name: b"inet\x00" as *const u8 as *const libc::c_char,
+    title: b"DARPA Internet\x00" as *const u8 as *const libc::c_char,
+    af: 2i32,
+    alen: 4i32,
+    print: None,
+    sprint: Some(
+      INET_sprint as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
+    ),
+    input: Some(
+      INET_input as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
+    ),
+    herror: None,
+    rprint: None,
+    rinput: None,
+    getmask: None,
+  };
+  init
 };
+
 /* Display an Internet socket address. */
 /* dirty! struct sockaddr usually doesn't suffer for inet6 addresses, fst. */
 unsafe extern "C" fn INET6_sprint(
@@ -457,6 +456,7 @@ unsafe extern "C" fn INET6_sprint(
   }
   return auto_string(INET6_rresolve(sap as *mut sockaddr_in6, numeric));
 }
+
 unsafe extern "C" fn INET6_input(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
@@ -471,30 +471,28 @@ unsafe extern "C" fn INET6_input(
     }
   */
 }
-static mut inet6_aftype: aftype = unsafe {
-  {
-    let mut init = aftype {
-      name: b"inet6\x00" as *const u8 as *const libc::c_char,
-      title: b"IPv6\x00" as *const u8 as *const libc::c_char,
-      af: 10i32,
-      alen: ::std::mem::size_of::<in6_addr>() as libc::c_ulong as libc::c_int,
-      print: None,
-      sprint: Some(
-        INET6_sprint
-          as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
-      ),
-      input: Some(
-        INET6_input
-          as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
-      ),
-      herror: None,
-      rprint: None,
-      rinput: None,
-      getmask: None,
-    };
-    init
-  }
+
+static mut inet6_aftype: aftype = {
+  let mut init = aftype {
+    name: b"inet6\x00" as *const u8 as *const libc::c_char,
+    title: b"IPv6\x00" as *const u8 as *const libc::c_char,
+    af: 10i32,
+    alen: ::std::mem::size_of::<in6_addr>() as libc::c_ulong as libc::c_int,
+    print: None,
+    sprint: Some(
+      INET6_sprint as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
+    ),
+    input: Some(
+      INET6_input as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
+    ),
+    herror: None,
+    rprint: None,
+    rinput: None,
+    getmask: None,
+  };
+  init
 };
+
 /* HAVE_AFINET6 */
 /* Display an UNSPEC address. */
 unsafe extern "C" fn UNSPEC_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_char {
@@ -535,27 +533,27 @@ unsafe extern "C" fn UNSPEC_sprint(
   }
   return UNSPEC_print((*sap).sa_data.as_mut_ptr() as *mut libc::c_uchar);
 }
-static mut unspec_aftype: aftype = unsafe {
-  {
-    let mut init = aftype {
-      name: b"unspec\x00" as *const u8 as *const libc::c_char,
-      title: b"UNSPEC\x00" as *const u8 as *const libc::c_char,
-      af: 0i32,
-      alen: 0i32,
-      print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
-      sprint: Some(
-        UNSPEC_sprint
-          as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
-      ),
-      input: None,
-      herror: None,
-      rprint: None,
-      rinput: None,
-      getmask: None,
-    };
-    init
-  }
+
+static mut unspec_aftype: aftype = {
+  let mut init = aftype {
+    name: b"unspec\x00" as *const u8 as *const libc::c_char,
+    title: b"UNSPEC\x00" as *const u8 as *const libc::c_char,
+    af: 0i32,
+    alen: 0i32,
+    print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
+    sprint: Some(
+      UNSPEC_sprint
+        as unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char,
+    ),
+    input: None,
+    herror: None,
+    rprint: None,
+    rinput: None,
+    getmask: None,
+  };
+  init
 };
+
 static mut aftypes: [*const aftype; 4] = unsafe {
   [
     &inet_aftype as *const aftype,
@@ -924,21 +922,21 @@ unsafe extern "C" fn do_if_fetch(mut ife: *mut interface) -> libc::c_int {
   }
   return 0i32;
 }
-static mut unspec_hwtype: hwtype = unsafe {
-  {
-    let mut init = hwtype {
-      name: b"unspec\x00" as *const u8 as *const libc::c_char,
-      title: b"UNSPEC\x00" as *const u8 as *const libc::c_char,
-      type_0: -1i32,
-      alen: 0,
-      print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
-      input: None,
-      activate: None,
-      suppress_null_addr: 0,
-    };
-    init
-  }
+
+static mut unspec_hwtype: hwtype = {
+  let mut init = hwtype {
+    name: b"unspec\x00" as *const u8 as *const libc::c_char,
+    title: b"UNSPEC\x00" as *const u8 as *const libc::c_char,
+    type_0: -1i32,
+    alen: 0,
+    print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
+    input: None,
+    activate: None,
+    suppress_null_addr: 0,
+  };
+  init
 };
+
 static mut loop_hwtype: hwtype = {
   let mut init = hwtype {
     name: b"loop\x00" as *const u8 as *const libc::c_char,
@@ -966,23 +964,23 @@ unsafe extern "C" fn ether_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_ch
   );
   return auto_string(buff);
 }
-static mut ether_hwtype: hwtype = unsafe {
-  {
-    let mut init = hwtype {
-      name: b"ether\x00" as *const u8 as *const libc::c_char,
-      title: b"Ethernet\x00" as *const u8 as *const libc::c_char,
-      type_0: 1i32,
-      alen: 6i32,
-      print: Some(ether_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
-      input: Some(
-        in_ether as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
-      ),
-      activate: None,
-      suppress_null_addr: 0,
-    };
-    init
-  }
+
+static mut ether_hwtype: hwtype = {
+  let mut init = hwtype {
+    name: b"ether\x00" as *const u8 as *const libc::c_char,
+    title: b"Ethernet\x00" as *const u8 as *const libc::c_char,
+    type_0: 1i32,
+    alen: 6i32,
+    print: Some(ether_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
+    input: Some(
+      in_ether as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
+    ),
+    activate: None,
+    suppress_null_addr: 0,
+  };
+  init
 };
+
 static mut ppp_hwtype: hwtype = {
   let mut init = hwtype {
     name: b"ppp\x00" as *const u8 as *const libc::c_char,
@@ -996,38 +994,37 @@ static mut ppp_hwtype: hwtype = {
   };
   init
 };
-static mut sit_hwtype: hwtype = unsafe {
-  {
-    let mut init = hwtype {
-      name: b"sit\x00" as *const u8 as *const libc::c_char,
-      title: b"IPv6-in-IPv4\x00" as *const u8 as *const libc::c_char,
-      type_0: 776i32,
-      alen: 0,
-      print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
-      input: None,
-      activate: None,
-      suppress_null_addr: 1i32,
-    };
-    init
-  }
+
+static mut sit_hwtype: hwtype = {
+  let mut init = hwtype {
+    name: b"sit\x00" as *const u8 as *const libc::c_char,
+    title: b"IPv6-in-IPv4\x00" as *const u8 as *const libc::c_char,
+    type_0: 776i32,
+    alen: 0,
+    print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
+    input: None,
+    activate: None,
+    suppress_null_addr: 1i32,
+  };
+  init
 };
-static mut ib_hwtype: hwtype = unsafe {
-  {
-    let mut init = hwtype {
-      name: b"infiniband\x00" as *const u8 as *const libc::c_char,
-      title: b"InfiniBand\x00" as *const u8 as *const libc::c_char,
-      type_0: 32i32,
-      alen: 20i32,
-      print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
-      input: Some(
-        in_ib as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
-      ),
-      activate: None,
-      suppress_null_addr: 0,
-    };
-    init
-  }
+
+static mut ib_hwtype: hwtype = {
+  let mut init = hwtype {
+    name: b"infiniband\x00" as *const u8 as *const libc::c_char,
+    title: b"InfiniBand\x00" as *const u8 as *const libc::c_char,
+    type_0: 32i32,
+    alen: 20i32,
+    print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
+    input: Some(
+      in_ib as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
+    ),
+    activate: None,
+    suppress_null_addr: 0,
+  };
+  init
 };
+
 static mut hwtypes: [*const hwtype; 7] = unsafe {
   [
     &loop_hwtype as *const hwtype,

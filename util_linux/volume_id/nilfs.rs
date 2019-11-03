@@ -1,12 +1,16 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -16,6 +20,7 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -30,11 +35,13 @@ pub struct volume_id {
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
+
 pub type uuid_format = libc::c_uint;
-pub const UUID_DCE_STRING: uuid_format = 3;
+// pub const UUID_DCE_STRING: uuid_format = 3;
 pub const UUID_DCE: uuid_format = 2;
-pub const UUID_NTFS: uuid_format = 1;
-pub const UUID_DOS: uuid_format = 0;
+// pub const UUID_NTFS: uuid_format = 1;
+// pub const UUID_DOS: uuid_format = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct nilfs2_super_block {

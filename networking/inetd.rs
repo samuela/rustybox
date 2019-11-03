@@ -775,73 +775,73 @@ pub type C2RustUnnamed_17 = libc::c_uint;
 pub type C2RustUnnamed_18 = libc::c_uint;
 pub const FD_CHUNK: C2RustUnnamed_19 = 32;
 pub type C2RustUnnamed_19 = libc::c_uint;
-static mut builtins: [builtin; 5] = unsafe {
-  [
-    {
-      let mut init = builtin {
-        bi_service7: [101, 99, 104, 111, 0, 0, 0],
-        bi_fork: 1i32 as uint8_t,
-        bi_stream_fn: Some(
-          echo_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-        bi_dgram_fn: Some(echo_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> ()),
-      };
-      init
-    },
-    {
-      let mut init = builtin {
-        bi_service7: [100, 105, 115, 99, 97, 114, 100],
-        bi_fork: 1i32 as uint8_t,
-        bi_stream_fn: Some(
-          discard_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-        bi_dgram_fn: Some(
-          discard_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtin {
-        bi_service7: [99, 104, 97, 114, 103, 101, 110],
-        bi_fork: 1i32 as uint8_t,
-        bi_stream_fn: Some(
-          chargen_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-        bi_dgram_fn: Some(
-          chargen_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtin {
-        bi_service7: [116, 105, 109, 101, 0, 0, 0],
-        bi_fork: 0i32 as uint8_t,
-        bi_stream_fn: Some(
-          machtime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-        bi_dgram_fn: Some(
-          machtime_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtin {
-        bi_service7: [100, 97, 121, 116, 105, 109, 101],
-        bi_fork: 0i32 as uint8_t,
-        bi_stream_fn: Some(
-          daytime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-        bi_dgram_fn: Some(
-          daytime_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
-        ),
-      };
-      init
-    },
-  ]
-};
+
+static mut builtins: [builtin; 5] = [
+  {
+    let mut init = builtin {
+      bi_service7: [101, 99, 104, 111, 0, 0, 0],
+      bi_fork: 1i32 as uint8_t,
+      bi_stream_fn: Some(
+        echo_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+      bi_dgram_fn: Some(echo_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> ()),
+    };
+    init
+  },
+  {
+    let mut init = builtin {
+      bi_service7: [100, 105, 115, 99, 97, 114, 100],
+      bi_fork: 1i32 as uint8_t,
+      bi_stream_fn: Some(
+        discard_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+      bi_dgram_fn: Some(
+        discard_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtin {
+      bi_service7: [99, 104, 97, 114, 103, 101, 110],
+      bi_fork: 1i32 as uint8_t,
+      bi_stream_fn: Some(
+        chargen_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+      bi_dgram_fn: Some(
+        chargen_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtin {
+      bi_service7: [116, 105, 109, 101, 0, 0, 0],
+      bi_fork: 0i32 as uint8_t,
+      bi_stream_fn: Some(
+        machtime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+      bi_dgram_fn: Some(
+        machtime_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtin {
+      bi_service7: [100, 97, 121, 116, 105, 109, 101],
+      bi_fork: 0i32 as uint8_t,
+      bi_stream_fn: Some(
+        daytime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+      bi_dgram_fn: Some(
+        daytime_dg as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
+      ),
+    };
+    init
+  },
+];
+
 unsafe extern "C" fn maybe_close(mut fd: libc::c_int) {
   if fd >= 0i32 {
     close(fd);

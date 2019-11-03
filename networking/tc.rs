@@ -460,8 +460,8 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut r: *mut tc_ratespec = 0 as *mut tc_ratespec;
   let mut lss: *mut tc_cbq_lssopt = 0 as *mut tc_cbq_lssopt;
   let mut wrr: *mut tc_cbq_wrropt = 0 as *mut tc_cbq_wrropt;
-  let mut fopt: *mut tc_cbq_fopt = 0 as *mut tc_cbq_fopt;
-  let mut ovl: *mut tc_cbq_ovl = 0 as *mut tc_cbq_ovl;
+  let mut _fopt: *mut tc_cbq_fopt = 0 as *mut tc_cbq_fopt; // assigned to but never used
+  let mut _ovl: *mut tc_cbq_ovl = 0 as *mut tc_cbq_ovl;
   let error: *const libc::c_char = b"CBQ: too short %s opt\x00" as *const u8 as *const libc::c_char;
   let mut buf: [libc::c_char; 64] = [0; 64];
   if !opt.is_null() {
@@ -562,7 +562,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
       {
         bb_error_msg(error, b"fopt\x00" as *const u8 as *const libc::c_char);
       } else {
-        fopt = (tb[TCA_CBQ_FOPT as libc::c_int as usize] as *mut libc::c_char).offset(
+        _fopt = (tb[TCA_CBQ_FOPT as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
             .wrapping_sub(1i32 as libc::c_ulong)
@@ -597,7 +597,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
           ::std::mem::size_of::<tc_cbq_ovl>() as libc::c_ulong as libc::c_uint,
         );
       } else {
-        ovl = (tb[TCA_CBQ_OVL_STRATEGY as libc::c_int as usize] as *mut libc::c_char).offset(
+        _ovl = (tb[TCA_CBQ_OVL_STRATEGY as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
             .wrapping_sub(1i32 as libc::c_ulong)
