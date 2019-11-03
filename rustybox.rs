@@ -7,7 +7,6 @@
 #![allow(unused_mut)]
 #![feature(asm)]
 #![feature(c_variadic)]
-#![feature(const_raw_ptr_to_usize_cast)]
 #![feature(extern_types)]
 #![feature(label_break_value)]
 #![feature(ptr_wrapping_offset_from)]
