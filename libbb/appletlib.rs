@@ -2482,8 +2482,7 @@ unsafe extern "C" fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
   return 0i32;
 }
 
-// TODO: make this usize
-unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
+unsafe fn check_suid(applet_no: usize) {
   let mut current_block: u64;
   let mut rgid: gid_t = 0;
   if ruid == 0i32 as libc::c_uint {
@@ -2501,7 +2500,7 @@ unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
         current_block = 7187160828046810477;
         break;
       }
-      if (*sct).m_applet == applet_no {
+      if (*sct).m_applet == applet_no as i32 {
         current_block = 14059243314339256598;
         break;
       }
@@ -2556,7 +2555,7 @@ unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
   }
   match current_block {
     7187160828046810477 => {
-      if applet_suid[(applet_no / 4i32) as usize] as libc::c_int >> 2i32 * (applet_no % 4i32) & 3i32
+      if applet_suid[(applet_no / 4) as usize] as libc::c_int >> 2i32 * (applet_no as i32 % 4) & 3
         == BB_SUID_REQUIRE as libc::c_int
       {
         /* Real uid is not 0. If euid isn't 0 too, suid bit
@@ -2566,8 +2565,9 @@ unsafe extern "C" fn check_suid(mut applet_no: libc::c_int) {
             b"must be suid to work properly\x00" as *const u8 as *const libc::c_char,
           );
         }
-      } else if applet_suid[(applet_no / 4i32) as usize] as libc::c_int >> 2i32 * (applet_no % 4i32)
-        & 3i32
+      } else if applet_suid[(applet_no / 4) as usize] as libc::c_int
+        >> 2i32 * (applet_no as i32 % 4)
+        & 3
         == BB_SUID_DROP as libc::c_int
       {
         /*
@@ -3232,7 +3232,7 @@ pub unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[Strin
     }
   }
 
-  check_suid(applet_no as i32);
+  check_suid(applet_no);
   xfunc_error_retval = applet_main[applet_no](argc, str_vec_to_ptrs(argv)) as uint8_t;
 
   /* Note: applet_main() may also not return (die on a xfunc or such) */
