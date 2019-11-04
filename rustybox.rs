@@ -12,7 +12,6 @@
 
 pub mod applets {
   pub mod applet_tables;
-  pub mod applets;
   pub mod usage;
 } // mod applets
 pub mod archival {
@@ -208,7 +207,6 @@ pub mod libbb {
   pub mod ask_confirmation;
   pub mod auto_string;
   pub mod bb_askpass;
-  pub mod bb_bswap_64;
   pub mod bb_cat;
   pub mod bb_do_delay;
   pub mod bb_getgroups;
