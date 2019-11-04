@@ -4934,7 +4934,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_206: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -4992,7 +4992,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_206;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5009,6 +5009,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -5117,7 +5118,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_207: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -5175,7 +5176,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_207;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5192,6 +5193,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -5300,7 +5302,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_208: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -5358,7 +5360,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_208;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5483,7 +5485,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_209: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -5541,7 +5543,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_209;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5558,6 +5560,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -5666,7 +5669,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_210: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -5724,7 +5727,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_210;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5741,6 +5744,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -5852,7 +5856,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_211: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -5910,7 +5914,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_211;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -5927,6 +5931,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -6035,7 +6040,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_212: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -6093,7 +6098,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_212;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -6110,6 +6115,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
@@ -6221,7 +6227,7 @@ unsafe extern "C" fn parse_dollar(
               } else {
                 len_single_ch = ch as libc::c_char;
                 ch |= quote_mask as libc::c_int;
-                's_205: loop {
+                's_213: loop {
                   let mut pos: libc::c_uint = 0;
                   o_addchr(dest, ch);
                   ch = i_getch(input);
@@ -6279,7 +6285,7 @@ unsafe extern "C" fn parse_dollar(
                       }
                       if !((1i32 != 0 || 1i32 != 0) && end_ch & 0xff00i32 as libc::c_uint != 0) {
                         current_block_96 = 15587532755333643506;
-                        break 's_205;
+                        break 's_213;
                       }
                       o_addchr(dest, 3i32);
                       if !(end_ch & 0xffi32 as libc::c_uint == last_ch as libc::c_uint) {
@@ -6296,6 +6302,7 @@ unsafe extern "C" fn parse_dollar(
                     len_single_ch = 0i32 as libc::c_char
                   }
                 }
+
                 match current_block_96 {
                   3145260671063309080 => {}
                   _ => {
