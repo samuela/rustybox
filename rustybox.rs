@@ -268,7 +268,6 @@ pub mod libbb {
   pub mod makedev;
   pub mod match_fstype;
   pub mod messages;
-  pub mod missing_syscalls;
   pub mod mode_string;
   pub mod nuke_str;
   pub mod obscure;
@@ -279,7 +278,6 @@ pub mod libbb {
   pub mod perror_nomsg;
   pub mod perror_nomsg_and_die;
   pub mod pidfile;
-  pub mod platform;
   pub mod print_flags;
   pub mod print_numbered_lines;
   pub mod printable;

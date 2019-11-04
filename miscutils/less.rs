@@ -1843,13 +1843,11 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
     112 | 37 => {
       update_num_lines();
       num = (num as libc::c_uint)
-        .wrapping_mul(
-          if (*ptr_to_globals).num_lines > 0i32 {
-            (*ptr_to_globals).num_lines as libc::c_uint
-          } else {
-            (*ptr_to_globals).max_lineno
-          },
-        )
+        .wrapping_mul(if (*ptr_to_globals).num_lines > 0i32 {
+          (*ptr_to_globals).num_lines as libc::c_uint
+        } else {
+          (*ptr_to_globals).max_lineno
+        })
         .wrapping_div(100i32 as libc::c_uint) as libc::c_int;
       buffer_lineno(num);
     }
