@@ -118,6 +118,8 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
+// TODO: this is defined in bb_archive.h. We should pull it out into a common
+// module.
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {
