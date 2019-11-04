@@ -14,7 +14,6 @@ pub mod applets {
   pub mod applet_tables;
   pub mod applets;
   pub mod usage;
-  pub mod usage_pod;
 } // mod applets
 pub mod archival {
   pub mod bbunzip;
