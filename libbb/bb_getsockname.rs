@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -10,9 +11,11 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
+
   #[no_mangle]
   fn getsockname(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __len: *mut socklen_t) -> libc::c_int;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -22,12 +25,14 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __SOCKADDR_ARG {
@@ -45,6 +50,7 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {
@@ -54,11 +60,13 @@ pub struct sockaddr_in6 {
   pub sin6_addr: in6_addr,
   pub sin6_scope_id: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
   pub __in6_u: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -66,7 +74,9 @@ pub union C2RustUnnamed {
   pub __u6_addr16: [uint16_t; 8],
   pub __u6_addr32: [uint32_t; 4],
 }
+
 pub type in_port_t = uint16_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -75,19 +85,15 @@ pub struct sockaddr_in {
   pub sin_addr: in_addr,
   pub sin_zero: [libc::c_uchar; 8],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
+
 pub type in_addr_t = uint32_t;
-/* vi: set sw=4 ts=4: */
-/*
- * Utility routines.
- *
- * Licensed under GPLv2, see file LICENSE in this source tree.
- */
-//kbuild:lib-y += bb_getsockname.o
+
 #[no_mangle]
 pub unsafe extern "C" fn bb_getsockname(
   mut sockfd: libc::c_int,
