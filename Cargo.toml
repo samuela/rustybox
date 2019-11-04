@@ -23,3 +23,9 @@ c2rust-bitfields = "0.3"
 c2rust-asm-casts = "0.1"
 f128 = "0.2.5"
 libc = "0.2"
+
+# See https://github.com/johnthagen/min-sized-rust
+[profile.release]
+opt-level = 'z'  # Optimize for size.
+lto = true
+codegen-units = 1
