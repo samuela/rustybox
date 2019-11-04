@@ -2428,12 +2428,17 @@ unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
 
 unsafe fn check_suid(applet_no: usize) {
   let mut current_block: u64;
-  let mut rgid: gid_t = 0;
+
+  let mut rgid: gid_t = 0; /* real gid */
+
+  /* ruid set by parse_config_file() */
   if ruid == 0i32 as libc::c_uint {
-    /* set by parse_config_file() */
+    /* run by root - no need to check more */
     return;
   }
+
   rgid = getgid();
+
   if suid_cfg_readable {
     let mut uid: uid_t = 0;
     let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
