@@ -1,28 +1,38 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn capget(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 pub type __u32 = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
   pub version: __u32,
   pub pid: libc::c_int,
 }
+
 pub type cap_user_header_t = *mut __user_cap_header_struct;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
@@ -30,9 +40,11 @@ pub struct __user_cap_data_struct {
   pub permitted: __u32,
   pub inheritable: __u32,
 }
+
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 pub type __uint8_t = libc::c_uchar;
 pub type uint8_t = __uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct caps {
@@ -40,6 +52,7 @@ pub struct caps {
   pub u32s: libc::c_uint,
   pub data: [__user_cap_data_struct; 2],
 }
+
 // so for bbox, let's just repeat the declarations.
 // This way, libcap needs not be installed in build environment.
 static mut capabilities: [*const libc::c_char; 38] = [
@@ -82,6 +95,7 @@ static mut capabilities: [*const libc::c_char; 38] = [
   b"block_suspend\x00" as *const u8 as *const libc::c_char,
   b"audit_read\x00" as *const u8 as *const libc::c_char,
 ];
+
 #[no_mangle]
 pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> libc::c_uint {
   let mut current_block: u64;
@@ -129,6 +143,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
   }
   return i;
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: libc::c_uint) {
   if cap_no
@@ -149,7 +164,7 @@ pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: li
     cap_no,
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -585,6 +600,7 @@ pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: li
  * if there is a possibility of intervening getpwxxx() calls.
  */
 /* Structures inside "struct caps" are Linux-specific and libcap-specific: */
+
 #[no_mangle]
 pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
   let mut current_block: u64;
