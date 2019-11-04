@@ -12463,7 +12463,7 @@ unsafe extern "C" fn parse_command() -> *mut node {
     _ => {}
   }
   /* Now check for redirection which may follow command */
-  checkkwd = (0x2i32 | 0x1i32) as smallint; /* unrecognized "\z": print both chars unless ' or " */
+  checkkwd = (0x2i32 | 0x1i32) as smallint; // unrecognized "\z": print both chars unless ' or "
 
   rpp = rpp2;
   while readtoken() == TREDIR as libc::c_int {
@@ -13753,10 +13753,8 @@ unsafe extern "C" fn expandstr(
   setinputstring(ps as *mut libc::c_char);
   saveprompt = doprompt as libc::c_int;
   doprompt = 0i32 as smallint;
-  /* readtoken1() might die horribly.
-   * Try a prompt with syntactically wrong command:
-   * PS1='$(date "+%H:%M:%S) > ' */
 
+  // readtoken1() might die horribly. Try a prompt with syntactically wrong command: PS1='$(date "+%H:%M:%S) > '
   ::std::ptr::write_volatile(
     &mut saveint as *mut libc::c_int,
     (*ash_ptr_to_globals_misc).suppress_int,
