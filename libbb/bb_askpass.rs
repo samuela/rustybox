@@ -1,61 +1,73 @@
 use libc;
+
+use crate::librb::{__clock_t, __pid_t, __uid_t, __uint32_t, size_t, ssize_t, FILE, _IO_FILE};
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
+
   #[no_mangle]
   static mut stdout: *mut _IO_FILE;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
+
   #[no_mangle]
   fn tcsetattr(
     __fd: libc::c_int,
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn sigaction_set(sig: libc::c_int, act: *const sigaction) -> libc::c_int;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn nuke_str(str: *mut libc::c_char);
 }
-pub type __uint32_t = libc::c_uint;
-pub type __uid_t = libc::c_uint;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
-pub type __clock_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
-pub type ssize_t = __ssize_t;
-pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {
   pub __val: [libc::c_ulong; 16],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union sigval {
   pub sival_int: libc::c_int,
   pub sival_ptr: *mut libc::c_void,
 }
+
 pub type __sigval_t = sigval;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct siginfo_t {
@@ -65,6 +77,7 @@ pub struct siginfo_t {
   pub __pad0: libc::c_int,
   pub _sifields: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -77,6 +90,7 @@ pub union C2RustUnnamed {
   pub _sigpoll: C2RustUnnamed_1,
   pub _sigsys: C2RustUnnamed_0,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_0 {
@@ -84,12 +98,14 @@ pub struct C2RustUnnamed_0 {
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
@@ -97,18 +113,21 @@ pub struct C2RustUnnamed_2 {
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: __uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
@@ -118,6 +137,7 @@ pub struct C2RustUnnamed_5 {
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
@@ -125,6 +145,7 @@ pub struct C2RustUnnamed_6 {
   pub si_uid: __uid_t,
   pub si_sigval: __sigval_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_7 {
@@ -132,6 +153,7 @@ pub struct C2RustUnnamed_7 {
   pub si_overrun: libc::c_int,
   pub si_sigval: __sigval_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
@@ -139,6 +161,7 @@ pub struct C2RustUnnamed_8 {
   pub si_uid: __uid_t,
 }
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sigaction {
@@ -147,6 +170,7 @@ pub struct sigaction {
   pub sa_flags: libc::c_int,
   pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_9 {
@@ -154,51 +178,11 @@ pub union C2RustUnnamed_9 {
   pub sa_sigaction:
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-  pub _flags: libc::c_int,
-  pub _IO_read_ptr: *mut libc::c_char,
-  pub _IO_read_end: *mut libc::c_char,
-  pub _IO_read_base: *mut libc::c_char,
-  pub _IO_write_base: *mut libc::c_char,
-  pub _IO_write_ptr: *mut libc::c_char,
-  pub _IO_write_end: *mut libc::c_char,
-  pub _IO_buf_base: *mut libc::c_char,
-  pub _IO_buf_end: *mut libc::c_char,
-  pub _IO_save_base: *mut libc::c_char,
-  pub _IO_backup_base: *mut libc::c_char,
-  pub _IO_save_end: *mut libc::c_char,
-  pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
-  pub _fileno: libc::c_int,
-  pub _flags2: libc::c_int,
-  pub _old_offset: __off_t,
-  pub _cur_column: libc::c_ushort,
-  pub _vtable_offset: libc::c_schar,
-  pub _shortbuf: [libc::c_char; 1],
-  pub _lock: *mut libc::c_void,
-  pub _offset: __off64_t,
-  pub __pad1: *mut libc::c_void,
-  pub __pad2: *mut libc::c_void,
-  pub __pad3: *mut libc::c_void,
-  pub __pad4: *mut libc::c_void,
-  pub __pad5: size_t,
-  pub _mode: libc::c_int,
-  pub _unused2: [libc::c_char; 20],
-}
-pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-pub type FILE = _IO_FILE;
+
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {
@@ -211,7 +195,7 @@ pub struct termios {
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Ask for a password
  *
@@ -219,8 +203,10 @@ pub struct termios {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
+
 /* do nothing signal handler */
 unsafe extern "C" fn askpass_timeout(mut _ignore: libc::c_int) {}
+
 #[no_mangle]
 pub unsafe extern "C" fn bb_ask_noecho(
   mut fd: libc::c_int,
