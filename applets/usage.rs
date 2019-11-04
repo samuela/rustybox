@@ -1,28 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn strlen(_: *const libc::c_char) -> libc::c_ulong;
-}
-pub type __ssize_t = libc::c_long;
-pub type ssize_t = __ssize_t;
-pub type size_t = libc::c_ulong;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
-
-/*
- * Copyright (C) 2008 Denys Vlasenko.
- *
- * Licensed under GPLv2, see file LICENSE in this source tree.
- */
 /* Since we can't use platform.h, have to do this again by hand: */
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -30,6 +7,7 @@ pub struct usage_data {
   pub aname: *const libc::c_char,
   pub usage: *const libc::c_char,
 }
+
 static mut usage_array: [usage_data; 396] = [
   {
     let mut init =
@@ -3508,39 +3486,3 @@ static mut usage_array: [usage_data; 396] = [
     init
   },
 ];
-// unsafe extern "C" fn compare_func(
-//   mut a: *const libc::c_void,
-//   mut b: *const libc::c_void,
-// ) -> libc::c_int {
-//   let mut ua: *const usage_data = a as *const usage_data;
-//   let mut ub: *const usage_data = b as *const usage_data;
-//   return strcmp((*ua).aname, (*ub).aname);
-// }
-// unsafe fn main_0() -> libc::c_int {
-//   let mut i: libc::c_int = 0;
-//   let mut num_messages: libc::c_int = (::std::mem::size_of::<[usage_data; 396]>() as libc::c_ulong)
-//     .wrapping_div(::std::mem::size_of::<usage_data>() as libc::c_ulong)
-//     as libc::c_int;
-//   if num_messages == 0i32 {
-//     return 0i32;
-//   }
-//   qsort(
-//     usage_array.as_mut_ptr() as *mut libc::c_void,
-//     num_messages as size_t,
-//     ::std::mem::size_of::<usage_data>() as libc::c_ulong,
-//     Some(
-//       compare_func
-//         as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-//     ),
-//   );
-//   i = 0i32;
-//   while i < num_messages {
-//     write(
-//       1i32,
-//       usage_array[i as usize].usage as *const libc::c_void,
-//       strlen(usage_array[i as usize].usage).wrapping_add(1i32 as libc::c_ulong),
-//     );
-//     i += 1
-//   }
-//   return 0i32;
-// }
