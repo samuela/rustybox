@@ -36,9 +36,6 @@ extern "C" {
   fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn __errno_location() -> *mut libc::c_int;
-
-  #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
@@ -72,16 +69,16 @@ extern "C" {
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
-  /* Search for an entry with a matching username.  */
+  /* Search for an entry with a matching username. */
   #[no_mangle]
   fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
 
-  /* Search for an entry with a matching group ID.  */
+  /* Search for an entry with a matching group ID. */
   #[no_mangle]
   fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
 
   #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+  static mut bb_errno: *mut libc::c_int;
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
@@ -3211,6 +3208,12 @@ unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
 }
 
 pub unsafe fn main() {
+  // This is absolutely essential to fix bb_errno which is really the same as
+  // errno. In the future we should come up with a more elegant approach to
+  // interfacing with errno.
+  bb_errno = libc::__errno_location();
+  *bb_errno = 0;
+
   let argv: Vec<String> = ::std::env::args().collect();
   applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
