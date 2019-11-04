@@ -2132,15 +2132,14 @@ static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut s
 static mut suid_cfg_readable: bool = false;
 
 /* libbb candidate */
-unsafe extern "C" fn get_trimmed_slice(
+unsafe fn get_trimmed_slice(
   mut s: *mut libc::c_char,
   mut e: *mut libc::c_char,
 ) -> *mut libc::c_char {
-  loop
   /* First, consider the value at e to be nul and back up until we
    * reach a non-space char.  Set the char after that (possibly at
    * the original e) to nul. */
-  {
+  loop {
     let fresh2 = e;
     e = e.offset(-1);
     if !(fresh2 > s) {
@@ -2156,12 +2155,13 @@ unsafe extern "C" fn get_trimmed_slice(
     }
   }
   *e.offset(1) = '\u{0}' as i32 as libc::c_char;
+
   /* Next, advance past all leading space and return a ptr to the
    * first non-space char; possibly the terminating nul. */
   return skip_whitespace(s);
 }
 
-unsafe extern "C" fn parse_config_file() {
+unsafe fn parse_config_file() {
   /* Don't depend on the tools to combine strings. */
   static mut config_file: [libc::c_char; 18] = [
     47, 101, 116, 99, 47, 98, 117, 115, 121, 98, 111, 120, 46, 99, 111, 110, 102, 0,
@@ -2415,7 +2415,7 @@ unsafe extern "C" fn parse_config_file() {
 }
 
 /* check if u is member of group g */
-unsafe extern "C" fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
+unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
   let mut grp: *mut group = bb_internal_getgrgid(g); /* real gid */
   if !grp.is_null() {
     let mut mem: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* run by root - no need to check more */
@@ -2558,7 +2558,7 @@ fn install_loc_to_string(install_loc: InstallLoc) -> String {
 }
 
 /* create (sym)links for each applet */
-unsafe extern "C" fn install_links(
+unsafe fn install_links(
   mut rustybox_path: *const libc::c_char,
   use_symbolic_links: bool,
   mut custom_install_dir: *mut libc::c_char,
@@ -3160,7 +3160,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
 /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
 /* Does NOT check that applet is NOFORK, just blindly runs it */
 
-pub unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) -> ! {
+unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) -> ! {
   let argc = argv.len() as i32;
 
   /* We do not use argv[0]: do not want to repeat massaging of
