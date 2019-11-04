@@ -3,6 +3,7 @@
 // See https://pubs.opengroup.org/onlinepubs/7908799/xsh/systypes.h.html.
 pub type __blkcnt_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
+pub type __clock_t = libc::c_long;
 pub type __dev_t = libc::c_ulong;
 pub type __gid_t = libc::c_uint;
 pub type __ino_t = libc::c_ulong;
@@ -11,6 +12,7 @@ pub type __nlink_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
+pub type __ssize_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type __time_t = libc::c_long;
@@ -18,9 +20,11 @@ pub type __uid_t = libc::c_uint;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
+pub type gid_t = __gid_t;
 pub type off_t = __off64_t;
 pub type size_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
+pub type ssize_t = __ssize_t;
 pub type time_t = __time_t;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
