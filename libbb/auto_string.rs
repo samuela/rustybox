@@ -1,19 +1,12 @@
 use libc;
+
+use crate::librb::uint8_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
 }
-pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
-/* vi: set sw=4 ts=4: */
-/*
- * Utility routines.
- *
- * Copyright (C) 2015 Denys Vlasenko
- *
- * Licensed under GPLv2, see file LICENSE in this source tree.
- */
-//kbuild:lib-y += auto_string.o
+
 #[no_mangle]
 pub unsafe extern "C" fn auto_string(mut str: *mut libc::c_char) -> *mut libc::c_char {
   static mut saved: [*mut libc::c_char; 4] = [0 as *const libc::c_char as *mut libc::c_char; 4]; /* = 0 */
