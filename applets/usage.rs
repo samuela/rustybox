@@ -1,6 +1,5 @@
 use libc;
 
-/* Since we can't use platform.h, have to do this again by hand: */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct usage_data {
