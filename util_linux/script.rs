@@ -1,41 +1,58 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn setsid() -> __pid_t;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
+
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
+
   #[no_mangle]
   fn tcsetattr(
     __fd: libc::c_int,
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn cfmakeraw(__termios_p: *mut termios);
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
+
   /* Some useful definitions */
   /* Macros for min/max.  */
   /* buffer allocation schemes */
@@ -43,30 +60,41 @@ extern "C" {
   /* We can just memorize it once - no multithreading in busybox :) */
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   /* more than enough for "/dev/ttyXXX" */
   #[no_mangle]
   fn xgetpty(line: *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn ndelay_on(fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
+
   /* Standard handler which just records signo */
   #[no_mangle]
   static mut bb_got_signal: smallint;
+
   #[no_mangle]
   fn record_signo(signo: libc::c_int);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf_0: *mut libc::c_void, count: size_t) -> ssize_t;
+
   // NB: will return short write on error, not -1,
   // if some data was written before error occurred
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn bb_sanitize_stdio();
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -74,17 +102,21 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   /* Returns $SHELL, getpwuid(getuid())->pw_shell, or DEFAULT_SHELL.
    * Note that getpwuid result might need xstrdup'ing
    * if there is a possibility of intervening getpwxxx() calls.
    */
   #[no_mangle]
   fn get_shell_name() -> *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
@@ -98,6 +130,7 @@ pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {
@@ -105,6 +138,7 @@ pub struct timeval {
   pub tv_usec: __suseconds_t,
 }
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -139,6 +173,7 @@ pub struct _IO_FILE {
   pub _unused2: [libc::c_char; 20],
 }
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -146,8 +181,10 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
 pub type nfds_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pollfd {
@@ -155,6 +192,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct winsize {
@@ -163,16 +201,19 @@ pub struct winsize {
   pub ws_xpixel: libc::c_ushort,
   pub ws_ypixel: libc::c_ushort,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
+
 pub type __timezone_ptr_t = *mut timezone;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {
@@ -185,15 +226,17 @@ pub struct termios {
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 pub const OPT_q: C2RustUnnamed_0 = 8;
 pub const OPT_t: C2RustUnnamed_0 = 16;
 pub const OPT_c: C2RustUnnamed_0 = 2;
 pub const OPT_a: C2RustUnnamed_0 = 1;
+
 pub type C2RustUnnamed_0 = libc::c_uint;
-pub const OPT_f: C2RustUnnamed_0 = 4;
-/* vi: set sw=4 ts=4: */
+// pub const OPT_f: C2RustUnnamed_0 = 4;
+
 /*
  * script implementation for busybox
  *

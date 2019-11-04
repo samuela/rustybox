@@ -1,6 +1,6 @@
 use libc;
+
 extern "C" {
-  /* vi: set sw=4 ts=4: */
   /*
    * setpriv implementation for busybox based on linux-utils-ng 2.29
    *
@@ -79,28 +79,40 @@ extern "C" {
   // This header is in libcap, but the functions are in libc.
   // Comment in the header says this above capset/capget:
   /* system calls - look to libc for function to system call mapping */
+
   #[no_mangle]
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
+
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getresuid(__ruid: *mut __uid_t, __euid: *mut __uid_t, __suid: *mut __uid_t) -> libc::c_int;
+
   #[no_mangle]
   fn getresgid(__rgid: *mut __gid_t, __egid: *mut __gid_t, __sgid: *mut __gid_t) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn bb_getgroups(ngroups: *mut libc::c_int, group_array: *mut gid_t) -> *mut gid_t;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -108,33 +120,46 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn cap_name_to_number(cap: *const libc::c_char) -> libc::c_uint;
+
   #[no_mangle]
   fn printf_cap(pfx: *const libc::c_char, cap_no: libc::c_uint);
+
   #[no_mangle]
   fn getcaps(caps: *mut libc::c_void);
 }
+
 pub type __u32 = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
   pub version: __u32,
   pub pid: libc::c_int,
 }
+
 pub type cap_user_header_t = *mut __user_cap_header_struct;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
@@ -142,6 +167,7 @@ pub struct __user_cap_data_struct {
   pub permitted: __u32,
   pub inheritable: __u32,
 }
+
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
@@ -149,17 +175,20 @@ pub type __gid_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
+
 // so for bbox, let's just repeat the declarations.
 // This way, libcap needs not be installed in build environment.
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_NNP: C2RustUnnamed = 8;
 pub const OPT_AMB: C2RustUnnamed = 4;
 pub const OPT_INH: C2RustUnnamed = 2;
 pub const OPT_DUMP: C2RustUnnamed = 1;
-pub const OPTBIT_NNP: C2RustUnnamed = 3;
-pub const OPTBIT_AMB: C2RustUnnamed = 2;
-pub const OPTBIT_INH: C2RustUnnamed = 1;
-pub const OPTBIT_DUMP: C2RustUnnamed = 0;
+// pub const OPTBIT_NNP: C2RustUnnamed = 3;
+// pub const OPTBIT_AMB: C2RustUnnamed = 2;
+// pub const OPTBIT_INH: C2RustUnnamed = 1;
+// pub const OPTBIT_DUMP: C2RustUnnamed = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct caps {

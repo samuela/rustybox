@@ -1,7 +1,9 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn getmntent_r(
     __stream: *mut FILE,
@@ -9,10 +11,13 @@ extern "C" {
     __buffer: *mut libc::c_char,
     __bufsize: libc::c_int,
   ) -> *mut mntent;
+
   #[no_mangle]
   fn addmntent(__stream: *mut FILE, __mnt: *const mntent) -> libc::c_int;
+
   #[no_mangle]
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn mount(
     __special_file: *const libc::c_char,
@@ -21,100 +26,148 @@ extern "C" {
     __rwflag: libc::c_ulong,
     __data: *const libc::c_void,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   #[no_mangle]
   fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   #[no_mangle]
   fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn sanitize_env_if_suid() -> libc::c_int;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn fstype_matches(fstype: *const libc::c_char, comma_list: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
+
   #[no_mangle]
   fn del_loop(device: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn set_loop(
     devname: *mut *mut libc::c_char,
@@ -122,14 +175,19 @@ extern "C" {
     offset: libc::c_ulonglong,
     flags: libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_simplify_path(path: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
+
   #[no_mangle]
   static bb_msg_you_must_be_root: [libc::c_char; 0];
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   /* Returns:
    * 0: no UUID= or LABEL= prefix found
    * 1: UUID= or LABEL= prefix found. In this case,
@@ -138,6 +196,7 @@ extern "C" {
   #[no_mangle]
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -171,10 +230,12 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type size_t = libc::c_ulong;
 pub type __off64_t = libc::c_long;
 pub type _IO_lock_t = ();
 pub type __off_t = libc::c_long;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -183,6 +244,7 @@ pub struct _IO_marker {
   pub _pos: libc::c_int,
 }
 pub type FILE = _IO_FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -193,21 +255,22 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
+
 pub type C2RustUnnamed = libc::c_int;
-pub const MS_NOUSER: C2RustUnnamed = -2147483648;
-pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
-pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
+// pub const MS_NOUSER: C2RustUnnamed = -2147483648;
+// pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
+// pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
 pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
-pub const MS_I_VERSION: C2RustUnnamed = 8388608;
-pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
+// pub const MS_I_VERSION: C2RustUnnamed = 8388608;
+// pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
 pub const MS_RELATIME: C2RustUnnamed = 2097152;
 pub const MS_SHARED: C2RustUnnamed = 1048576;
 pub const MS_SLAVE: C2RustUnnamed = 524288;
 pub const MS_PRIVATE: C2RustUnnamed = 262144;
 pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
-pub const MS_POSIXACL: C2RustUnnamed = 65536;
+// pub const MS_POSIXACL: C2RustUnnamed = 65536;
 pub const MS_SILENT: C2RustUnnamed = 32768;
-pub const MS_REC: C2RustUnnamed = 16384;
+// pub const MS_REC: C2RustUnnamed = 16384;
 pub const MS_MOVE: C2RustUnnamed = 8192;
 pub const MS_BIND: C2RustUnnamed = 4096;
 pub const MS_NODIRATIME: C2RustUnnamed = 2048;
@@ -240,12 +303,14 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type socklen_t = __socklen_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -265,13 +330,16 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {
@@ -281,11 +349,13 @@ pub struct sockaddr_in6 {
   pub sin6_addr: in6_addr,
   pub sin6_scope_id: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
   pub __in6_u: C2RustUnnamed_0,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
@@ -294,6 +364,7 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr32: [uint32_t; 4],
 }
 pub type in_port_t = uint16_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -302,18 +373,22 @@ pub struct sockaddr_in {
   pub sin_addr: in_addr,
   pub sin_zero: [libc::c_uchar; 8],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
+
 pub type in_addr_t = uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
   pub len: socklen_t,
   pub u: C2RustUnnamed_1,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_1 {
@@ -321,12 +396,14 @@ pub union C2RustUnnamed_1 {
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct llist_t {
   pub link: *mut llist_t,
   pub data: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -334,27 +411,31 @@ pub struct globals {
   pub fslist: *mut llist_t,
   pub getmntent_buf: [libc::c_char; 1],
 }
+
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const MOUNT_FAKEFLAGS: C2RustUnnamed_2 = 2013265920;
 pub const MOUNT_SWAP: C2RustUnnamed_2 = 1073741824;
 pub const MOUNT_NOAUTO: C2RustUnnamed_2 = 536870912;
 pub const MOUNT_NOFAIL: C2RustUnnamed_2 = 268435456;
 pub const MOUNT_USERS: C2RustUnnamed_2 = 134217728;
+
 pub type C2RustUnnamed_3 = libc::c_uint;
-pub const OPT_T: C2RustUnnamed_3 = 2048;
-pub const OPT_O: C2RustUnnamed_3 = 1024;
-pub const OPT_i: C2RustUnnamed_3 = 512;
-pub const OPT_s: C2RustUnnamed_3 = 256;
-pub const OPT_v: C2RustUnnamed_3 = 128;
+// pub const OPT_T: C2RustUnnamed_3 = 2048;
+// pub const OPT_O: C2RustUnnamed_3 = 1024;
+// pub const OPT_i: C2RustUnnamed_3 = 512;
+// pub const OPT_s: C2RustUnnamed_3 = 256;
+// pub const OPT_v: C2RustUnnamed_3 = 128;
 pub const OPT_f: C2RustUnnamed_3 = 64;
-pub const OPT_n: C2RustUnnamed_3 = 32;
+// pub const OPT_n: C2RustUnnamed_3 = 32;
 pub const OPT_a: C2RustUnnamed_3 = 16;
 pub const OPT_w: C2RustUnnamed_3 = 8;
 pub const OPT_r: C2RustUnnamed_3 = 4;
-pub const OPT_t: C2RustUnnamed_3 = 2;
-pub const OPT_o: C2RustUnnamed_3 = 1;
+// pub const OPT_t: C2RustUnnamed_3 = 2;
+// pub const OPT_o: C2RustUnnamed_3 = 1;
+
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const GETMNTENT_BUFSIZE: C2RustUnnamed_4 = 1008;
+
 static mut mount_options: [int32_t; 44] = [
   0i32,
   0i32,

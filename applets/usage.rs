@@ -3508,39 +3508,39 @@ static mut usage_array: [usage_data; 396] = [
     init
   },
 ];
-unsafe extern "C" fn compare_func(
-  mut a: *const libc::c_void,
-  mut b: *const libc::c_void,
-) -> libc::c_int {
-  let mut ua: *const usage_data = a as *const usage_data;
-  let mut ub: *const usage_data = b as *const usage_data;
-  return strcmp((*ua).aname, (*ub).aname);
-}
-unsafe fn main_0() -> libc::c_int {
-  let mut i: libc::c_int = 0;
-  let mut num_messages: libc::c_int = (::std::mem::size_of::<[usage_data; 396]>() as libc::c_ulong)
-    .wrapping_div(::std::mem::size_of::<usage_data>() as libc::c_ulong)
-    as libc::c_int;
-  if num_messages == 0i32 {
-    return 0i32;
-  }
-  qsort(
-    usage_array.as_mut_ptr() as *mut libc::c_void,
-    num_messages as size_t,
-    ::std::mem::size_of::<usage_data>() as libc::c_ulong,
-    Some(
-      compare_func
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
-  );
-  i = 0i32;
-  while i < num_messages {
-    write(
-      1i32,
-      usage_array[i as usize].usage as *const libc::c_void,
-      strlen(usage_array[i as usize].usage).wrapping_add(1i32 as libc::c_ulong),
-    );
-    i += 1
-  }
-  return 0i32;
-}
+// unsafe extern "C" fn compare_func(
+//   mut a: *const libc::c_void,
+//   mut b: *const libc::c_void,
+// ) -> libc::c_int {
+//   let mut ua: *const usage_data = a as *const usage_data;
+//   let mut ub: *const usage_data = b as *const usage_data;
+//   return strcmp((*ua).aname, (*ub).aname);
+// }
+// unsafe fn main_0() -> libc::c_int {
+//   let mut i: libc::c_int = 0;
+//   let mut num_messages: libc::c_int = (::std::mem::size_of::<[usage_data; 396]>() as libc::c_ulong)
+//     .wrapping_div(::std::mem::size_of::<usage_data>() as libc::c_ulong)
+//     as libc::c_int;
+//   if num_messages == 0i32 {
+//     return 0i32;
+//   }
+//   qsort(
+//     usage_array.as_mut_ptr() as *mut libc::c_void,
+//     num_messages as size_t,
+//     ::std::mem::size_of::<usage_data>() as libc::c_ulong,
+//     Some(
+//       compare_func
+//         as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
+//     ),
+//   );
+//   i = 0i32;
+//   while i < num_messages {
+//     write(
+//       1i32,
+//       usage_array[i as usize].usage as *const libc::c_void,
+//       strlen(usage_array[i as usize].usage).wrapping_add(1i32 as libc::c_ulong),
+//     );
+//     i += 1
+//   }
+//   return 0i32;
+// }

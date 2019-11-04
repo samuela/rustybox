@@ -192,13 +192,14 @@ pub type C2RustUnnamed = libc::c_uint;
 /* LONG_OPT is the code that is returned when a long option is found. */
 pub const LONG_OPT: C2RustUnnamed = 2;
 pub const NON_OPT: C2RustUnnamed = 1;
+
 /* For finding activated option flags. Must match getopt32 call! */
 pub type C2RustUnnamed_0 = libc::c_uint;
 /* hijack this bit for other purposes */
 // -l
 pub const SHELL_IS_TCSH: C2RustUnnamed_0 = 32768;
 // -a
-pub const OPT_l: C2RustUnnamed_0 = 256;
+// pub const OPT_l: C2RustUnnamed_0 = 256;
 // -u
 pub const OPT_a: C2RustUnnamed_0 = 128;
 // -T
@@ -212,8 +213,9 @@ pub const OPT_Q: C2RustUnnamed_0 = 8;
 // -n
 pub const OPT_q: C2RustUnnamed_0 = 4;
 // -o
-pub const OPT_n: C2RustUnnamed_0 = 2;
-pub const OPT_o: C2RustUnnamed_0 = 1;
+// pub const OPT_n: C2RustUnnamed_0 = 2;
+// pub const OPT_o: C2RustUnnamed_0 = 1;
+
 /* 0 is getopt_long, 1 is getopt_long_only */
 /*
  * This function 'normalizes' a single argument: it puts single quotes around

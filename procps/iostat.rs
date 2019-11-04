@@ -511,12 +511,7 @@ unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) ->
   );
   return *curr;
 }
-unsafe extern "C" fn stats_dev_free(mut stats_dev: *mut stats_dev_t) {
-  if !stats_dev.is_null() {
-    stats_dev_free((*stats_dev).next);
-    free(stats_dev as *mut libc::c_void);
-  };
-}
+
 unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut dev_name: [libc::c_char; 13] = [0; 13];

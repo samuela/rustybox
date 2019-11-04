@@ -1,34 +1,46 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn xatou(str: *const libc::c_char) -> libc::c_uint;
+
   /* Specialized */
-  // #[no_mangle]
-  // fn BUG_xatou32_unimplemented() -> uint32_t;
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn config_open(filename: *const libc::c_char) -> *mut parser_t;
+
   #[no_mangle]
   fn config_read(
     parser: *mut parser_t,
@@ -36,8 +48,10 @@ extern "C" {
     flags: libc::c_uint,
     delims: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn bb_xioctl(
     fd: libc::c_int,
@@ -46,6 +60,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
+
 pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __off_t = libc::c_long;
@@ -53,6 +68,7 @@ pub type __off64_t = libc::c_long;
 pub type int32_t = __int32_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -86,7 +102,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -94,17 +112,20 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
-pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
-pub const PARSE_ALT_COMMENTS: C2RustUnnamed = 8388608;
-pub const PARSE_EOL_COMMENTS: C2RustUnnamed = 4194304;
-pub const PARSE_KEEP_COPY: C2RustUnnamed = 2097152;
-pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
-pub const PARSE_GREEDY: C2RustUnnamed = 262144;
-pub const PARSE_TRIM: C2RustUnnamed = 131072;
-pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
+// pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
+// pub const PARSE_ALT_COMMENTS: C2RustUnnamed = 8388608;
+// pub const PARSE_EOL_COMMENTS: C2RustUnnamed = 4194304;
+// pub const PARSE_KEEP_COPY: C2RustUnnamed = 2097152;
+// pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
+// pub const PARSE_GREEDY: C2RustUnnamed = 262144;
+// pub const PARSE_TRIM: C2RustUnnamed = 131072;
+// pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -116,9 +137,11 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const FBIOPUT_VSCREENINFO: C2RustUnnamed_0 = 17921;
 pub const FBIOGET_VSCREENINFO: C2RustUnnamed_0 = 17920;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_bitfield {
@@ -127,6 +150,7 @@ pub struct fb_bitfield {
   pub msb_right: uint32_t,
   /* !=0: Most significant bit is right */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_var_screeninfo {
@@ -159,6 +183,7 @@ pub struct fb_var_screeninfo {
   pub reserved: [uint32_t; 6],
   /* Reserved for future compatibility */
 }
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const CMD_MOVE: C2RustUnnamed_1 = 119;
 pub const CMD_STEP: C2RustUnnamed_1 = 118;
@@ -180,7 +205,7 @@ pub const CMD_VYRES: C2RustUnnamed_1 = 103;
 pub const CMD_VXRES: C2RustUnnamed_1 = 102;
 pub const CMD_YRES: C2RustUnnamed_1 = 101;
 pub const CMD_XRES: C2RustUnnamed_1 = 100;
-pub const CMD_CHANGE: C2RustUnnamed_1 = 14;
+// pub const CMD_CHANGE: C2RustUnnamed_1 = 14;
 pub const CMD_SHOW: C2RustUnnamed_1 = 13;
 pub const CMD_INFO: C2RustUnnamed_1 = 12;
 /*	CMD_XCOMPAT =     10, */
@@ -194,6 +219,7 @@ pub const CMD_TIMING: C2RustUnnamed_1 = 4;
 pub const CMD_GEOMETRY: C2RustUnnamed_1 = 3;
 pub const CMD_DB: C2RustUnnamed_1 = 2;
 pub const CMD_FB: C2RustUnnamed_1 = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cmdoptions_t {
@@ -201,6 +227,7 @@ pub struct cmdoptions_t {
   pub param_count: libc::c_uchar,
   pub code: libc::c_uchar,
 }
+
 /* taken from linux/fb.h */
 pub type C2RustUnnamed_2 = libc::c_uint;
 /* composite sync high active */
@@ -229,6 +256,7 @@ fn BUG_xatou32_unimplemented() -> uint32_t {
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return xatoull(str) as libc::c_ulong;
 }
+
 #[inline(always)]
 unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> uint32_t {
   if (2147483647i32 as libc::c_uint)
@@ -247,6 +275,7 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> uint32_t {
   }
   return BUG_xatou32_unimplemented();
 }
+
 unsafe extern "C" fn copy_if_gt0(
   mut src: *mut uint32_t,
   mut dst: *mut uint32_t,
@@ -264,6 +293,7 @@ unsafe extern "C" fn copy_if_gt0(
     }
   }
 }
+
 #[inline(never)]
 unsafe extern "C" fn copy_changed_values(
   mut base: *mut fb_var_screeninfo,
@@ -583,6 +613,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
     init
   },
 ];
+
 unsafe extern "C" fn ss(
   mut x: *mut uint32_t,
   mut flag: uint32_t,
@@ -595,6 +626,7 @@ unsafe extern "C" fn ss(
     *x |= flag
   };
 }
+
 /* Mode db file contains mode definitions like this:
  * mode "800x600-48-lace"
  *     # D: 36.00 MHz, H: 33.835 kHz, V: 96.39 Hz
@@ -820,6 +852,7 @@ unsafe extern "C" fn read_mode_db(
   }
   return 0i32;
 }
+
 #[inline(never)]
 unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
   let mut drate: libc::c_double = 0i32 as libc::c_double;
@@ -854,6 +887,7 @@ unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
            (*v).green.offset, (*v).blue.length, (*v).blue.offset,
            (*v).transp.length, (*v).transp.offset);
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn fbset_main(
   mut argc: libc::c_int,

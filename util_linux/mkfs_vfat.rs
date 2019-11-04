@@ -5,32 +5,46 @@ use super::mkfs_ext2::BUG_wrong_field_size;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn get_volume_size_in_bytes(
     fd: libc::c_int,
@@ -38,14 +52,19 @@ extern "C" {
     override_units: libc::c_uint,
     extend: libc::c_int,
   ) -> uoff_t;
+
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_xioctl(
     fd: libc::c_int,
@@ -53,9 +72,8 @@ extern "C" {
     argp: *mut libc::c_void,
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
-// #[no_mangle]
-// fn BUG_wrong_field_size() -> libc::c_char;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -76,12 +94,14 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -101,7 +121,9 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -135,7 +157,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -143,8 +167,10 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
 pub type uoff_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hd_geometry {
@@ -153,6 +179,7 @@ pub struct hd_geometry {
   pub cylinders: libc::c_ushort,
   pub start: libc::c_ulong,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct floppy_struct {
@@ -167,6 +194,7 @@ pub struct floppy_struct {
   pub fmt_gap: libc::c_uchar,
   pub name: *const libc::c_char,
 }
+
 /* FAT32 filesystem looks like this:
  * sector -nn...-1: "hidden" sectors, all sectors before this partition
  * (-h hidden-sectors sets it. Useful only for boot loaders,
@@ -189,6 +217,7 @@ pub struct floppy_struct {
  * sector R+fat_size*2+clust_size: cluster #3
  * ...(the rest is filled by clusters till the end)...
  */
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const reserved_sect: C2RustUnnamed = 6;
 // TODO: make these cmdline options
@@ -197,6 +226,7 @@ pub const backup_boot_sector: C2RustUnnamed = 3;
 // Perhaps this should remain constant
 pub const info_sector_number: C2RustUnnamed = 1;
 // how many blocks we try to read while testing
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct msdos_dir_entry {
@@ -233,6 +263,7 @@ pub struct msdos_volume_info {
   pub fs_type: [libc::c_char; 8],
   /* 052 typically "FATnn" */
 }
+
 /* 05a end. Total size 26 (0x1a) bytes */
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -262,6 +293,7 @@ pub struct msdos_boot_sector {
   pub boot_sign: uint16_t,
   /* 1fe */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct fat32_fsinfo {
@@ -275,41 +307,43 @@ pub struct fat32_fsinfo {
   pub boot_sign: uint16_t,
   /* 1fe */
 }
+
+pub type C2RustUnnamed_0 = libc::c_uint;
 // [IGNORED] sector size
 pub const OPT_v: C2RustUnnamed_0 = 65536;
 // [IGNORED] location of backup boot sector
 pub const OPT_c: C2RustUnnamed_0 = 4;
-pub type C2RustUnnamed_0 = libc::c_uint;
 // verbose
 // [IGNORED] sectors per cluster
-pub const OPT_S: C2RustUnnamed_0 = 32768;
+// pub const OPT_S: C2RustUnnamed_0 = 32768;
 // [IGNORED] number of reserved sectors
-pub const OPT_s: C2RustUnnamed_0 = 16384;
+// pub const OPT_s: C2RustUnnamed_0 = 16384;
 // [IGNORED] root directory entries
-pub const OPT_R: C2RustUnnamed_0 = 8192;
+// pub const OPT_R: C2RustUnnamed_0 = 8192;
 // volume label
-pub const OPT_r: C2RustUnnamed_0 = 4096;
+// pub const OPT_r: C2RustUnnamed_0 = 4096;
 // [IGNORED] message file
-pub const OPT_n: C2RustUnnamed_0 = 2048;
+// pub const OPT_n: C2RustUnnamed_0 = 2048;
 // [IGNORED] bad block filename
-pub const OPT_m: C2RustUnnamed_0 = 1024;
+// pub const OPT_m: C2RustUnnamed_0 = 1024;
 // [IGNORED] volume ID
-pub const OPT_l: C2RustUnnamed_0 = 512;
+// pub const OPT_l: C2RustUnnamed_0 = 512;
 // [IGNORED] don't bark at entire disk devices
-pub const OPT_i: C2RustUnnamed_0 = 256;
+// pub const OPT_i: C2RustUnnamed_0 = 256;
 // [IGNORED] number of hidden sectors
-pub const OPT_I: C2RustUnnamed_0 = 128;
+// pub const OPT_I: C2RustUnnamed_0 = 128;
 // [IGNORED, implied 32] choose FAT size
-pub const OPT_h: C2RustUnnamed_0 = 64;
+// pub const OPT_h: C2RustUnnamed_0 = 64;
 // [IGNORED] number of FATs
-pub const OPT_F: C2RustUnnamed_0 = 32;
+// pub const OPT_F: C2RustUnnamed_0 = 32;
 // [IGNORED] create a new file
-pub const OPT_f: C2RustUnnamed_0 = 16;
+// pub const OPT_f: C2RustUnnamed_0 = 16;
 // [IGNORED] check filesystem
-pub const OPT_C: C2RustUnnamed_0 = 8;
+// pub const OPT_C: C2RustUnnamed_0 = 8;
 // [IGNORED] atari format
-pub const OPT_b: C2RustUnnamed_0 = 2;
-pub const OPT_A: C2RustUnnamed_0 = 1;
+// pub const OPT_b: C2RustUnnamed_0 = 2;
+// pub const OPT_A: C2RustUnnamed_0 = 1;
+
 static mut boot_code: [libc::c_char; 59] = [
   14, 31, -66, 119, 124, -84, 34, -64, 116, 11, 86, -76, 14, -69, 7, 0, -51, 16, 94, -21, -16, 50,
   -28, -51, 22, -51, 25, -21, -2, 84, 104, 105, 115, 32, 105, 115, 32, 110, 111, 116, 32, 97, 32,

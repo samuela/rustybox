@@ -1,21 +1,30 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
    * at least v[idx] and v[idx+1], for all idx values.
    * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)
@@ -29,41 +38,55 @@ extern "C" {
     sizeof_and_shift: libc::c_uint,
     idx: libc::c_int,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   // NB: will return short read on error, not -1,
   // if some data was read before error occurred
   #[no_mangle]
   fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   // Reads one line a-la fgets (but doesn't save terminating '\n').
   // Reads byte-by-byte. Useful when it is important to not read ahead.
   // Bytes are appended to pfx (which must be malloced, or NULL).
   #[no_mangle]
   fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   /* Wrapper which restarts poll on EINTR or ENOMEM.
    * On other errors complains [perror("poll")] and returns.
    * Warning! May take (much) longer than timeout_ms to return!
    * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
   #[no_mangle]
   fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
+
   /* Specialized: */
   /* Using xatoi() instead of naive atoi() is not always convenient -
    * in many places people want *non-negative* values, but store them
@@ -74,19 +97,25 @@ extern "C" {
    */
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
+
   /* Useful for reading port numbers */
   #[no_mangle]
   fn xatou16(numstr: *const libc::c_char) -> uint16_t;
+
   /* NOMMU friendy fork+exec: */
   #[no_mangle]
   fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
+
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   /* BTW, surprisingly, changing API to
    *   llist_t *llist_add_to(llist_t *old_head, void *data)
    * etc does not result in smaller code... */
@@ -95,21 +124,28 @@ extern "C" {
   /* True only if we created pidfile which is *file*, not /dev/null etc */
   #[no_mangle]
   static mut wrote_pidfile: smallint;
+
   #[no_mangle]
   fn write_pidfile(path: *const libc::c_char);
+
   #[no_mangle]
   static mut logmode: smallint;
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn config_open2(
     filename: *const libc::c_char,
     fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
   ) -> *mut parser_t;
+
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
   #[no_mangle]
   fn config_read(
@@ -118,18 +154,23 @@ extern "C" {
     flags: libc::c_uint,
     delims: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
+
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
@@ -153,12 +194,14 @@ pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -178,13 +221,16 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
+
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -218,7 +264,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -226,8 +274,10 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
 pub type nfds_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pollfd {
@@ -258,22 +308,23 @@ pub struct pollfd {
  * bb_sanitize_stdio() = make sure that fd 0,1,2 are opened by opening them
  * to /dev/null if they are not.
  */
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
+// pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
-pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
-pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
+// pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
+// pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
-pub const LOGMODE_BOTH: C2RustUnnamed_0 = 3;
+// pub const LOGMODE_BOTH: C2RustUnnamed_0 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_0 = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed_0 = 1;
-pub const LOGMODE_NONE: C2RustUnnamed_0 = 0;
+// pub const LOGMODE_NONE: C2RustUnnamed_0 = 0;
+
 /* internal use */
 //DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
 /*
  * Config file parser
  */
-pub type C2RustUnnamed_1 = libc::c_uint;
 // comments are recognized even if there is whitespace before
 // ("line start><space><tab><space>#comment" is also comment, not only "line start>#comment")
 // NORMAL is:
@@ -282,25 +333,28 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 // * warn and continue if less than mintokens delimiters found
 // * grab everything into last token
 // * comments are recognized even if they aren't the first char
+
+pub type C2RustUnnamed_1 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_1 = 4653056;
 // delim[0] and delim[1] are two different allowed comment chars
 // (so far, delim[0] will only work as comment char for full-line comment)
 // (IOW: it works as if PARSE_EOL_COMMENTS is not set. sysctl applet is okay with this)
-pub const PARSE_WS_COMMENTS: C2RustUnnamed_1 = 16777216;
+// pub const PARSE_WS_COMMENTS: C2RustUnnamed_1 = 16777216;
 // comments are recognized even if they aren't the first char
-pub const PARSE_ALT_COMMENTS: C2RustUnnamed_1 = 8388608;
-pub const PARSE_EOL_COMMENTS: C2RustUnnamed_1 = 4194304;
+// pub const PARSE_ALT_COMMENTS: C2RustUnnamed_1 = 8388608;
+// pub const PARSE_EOL_COMMENTS: C2RustUnnamed_1 = 4194304;
 // die if < min tokens found
 // keep a copy of current line
-pub const PARSE_KEEP_COPY: C2RustUnnamed_1 = 2097152;
+// pub const PARSE_KEEP_COPY: C2RustUnnamed_1 = 2097152;
 // last token takes entire remainder of the line
-pub const PARSE_MIN_DIE: C2RustUnnamed_1 = 1048576;
+// pub const PARSE_MIN_DIE: C2RustUnnamed_1 = 1048576;
 // trim leading and trailing delimiters
 // TODO: COLLAPSE and TRIM seem to always go in pair
-pub const PARSE_GREEDY: C2RustUnnamed_1 = 262144;
+// pub const PARSE_GREEDY: C2RustUnnamed_1 = 262144;
 // treat consecutive delimiters as one
-pub const PARSE_TRIM: C2RustUnnamed_1 = 131072;
-pub const PARSE_COLLAPSE: C2RustUnnamed_1 = 65536;
+// pub const PARSE_TRIM: C2RustUnnamed_1 = 131072;
+// pub const PARSE_COLLAPSE: C2RustUnnamed_1 = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -313,8 +367,10 @@ pub struct parser_t {
   pub lineno: libc::c_int,
 }
 //extern const int const_int_1;
+
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -323,6 +379,7 @@ pub struct globals {
   pub evt_tab: *mut acpi_event,
   pub n_evt: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct acpi_event {
@@ -333,14 +390,17 @@ pub struct acpi_event {
   pub value: uint32_t,
   pub desc: *const libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct acpi_action {
   pub key: *const libc::c_char,
   pub action: *const libc::c_char,
 }
+
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct input_event {
@@ -349,15 +409,17 @@ pub struct input_event {
   pub code: __u16,
   pub value: __s32,
 }
+
 pub type C2RustUnnamed_2 = libc::c_uint;
-pub const OPT_p: C2RustUnnamed_2 = 128;
-pub const OPT_M: C2RustUnnamed_2 = 64;
-pub const OPT_a: C2RustUnnamed_2 = 32;
-pub const OPT_l: C2RustUnnamed_2 = 16;
+// pub const OPT_p: C2RustUnnamed_2 = 128;
+// pub const OPT_M: C2RustUnnamed_2 = 64;
+// pub const OPT_a: C2RustUnnamed_2 = 32;
+// pub const OPT_l: C2RustUnnamed_2 = 16;
 pub const OPT_f: C2RustUnnamed_2 = 8;
 pub const OPT_e: C2RustUnnamed_2 = 4;
 pub const OPT_d: C2RustUnnamed_2 = 2;
-pub const OPT_c: C2RustUnnamed_2 = 1;
+// pub const OPT_c: C2RustUnnamed_2 = 1;
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;

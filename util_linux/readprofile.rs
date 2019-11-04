@@ -1,47 +1,64 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xmalloc_xopen_read_close(
     filename: *const libc::c_char,
     maxsz_p: *mut size_t,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __uint64_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
@@ -51,6 +68,7 @@ pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -84,7 +102,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -92,7 +112,10 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
+pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_v: C2RustUnnamed = 512;
 pub const OPT_s: C2RustUnnamed = 64;
 pub const OPT_a: C2RustUnnamed = 16;
@@ -101,10 +124,9 @@ pub const OPT_i: C2RustUnnamed = 128;
 pub const OPT_n: C2RustUnnamed = 8;
 pub const OPT_M: C2RustUnnamed = 1;
 pub const OPT_r: C2RustUnnamed = 256;
-pub type C2RustUnnamed = libc::c_uint;
-pub const OPT_p: C2RustUnnamed = 4;
-pub const OPT_m: C2RustUnnamed = 2;
-/* vi: set sw=4 ts=4: */
+// pub const OPT_p: C2RustUnnamed = 4;
+// pub const OPT_m: C2RustUnnamed = 2;
+
 /*
  * readprofile.c - used to read /proc/profile
  *

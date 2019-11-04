@@ -1,37 +1,52 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn getopt(
     ___argc: libc::c_int,
     ___argv: *const *mut libc::c_char,
     __shortopts: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut _IO_FILE;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
   /* vi: set sw=4 ts=4: */
@@ -52,22 +67,29 @@ extern "C" {
     u: libc::c_ulonglong,
     sfx: *const suffix_mult,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn alloc_dumper() -> *mut dumper_t;
+
   #[no_mangle]
   fn bb_dump_add(dumper: *mut dumper_t, fmt: *const libc::c_char);
+
   #[no_mangle]
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
+
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -101,7 +123,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -109,14 +133,16 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
   pub suffix: [libc::c_char; 4],
   pub mult: libc::c_uint,
 }
-/* vi: set sw=4 ts=4: */
+
 /* %_A */
 /* rep count set, not default */
 /* print offset */
@@ -130,11 +156,13 @@ pub struct suffix_mult {
 /* %_u */
 /* %[ouXx] */
 /* no conversions */
+
 pub type dump_vflag_t = libc::c_uint;
-pub const WAIT: dump_vflag_t = 3;
-pub const FIRST: dump_vflag_t = 2;
-pub const DUP: dump_vflag_t = 1;
+// pub const WAIT: dump_vflag_t = 3;
+// pub const FIRST: dump_vflag_t = 2;
+// pub const DUP: dump_vflag_t = 1;
 pub const ALL: dump_vflag_t = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PR {
@@ -145,6 +173,7 @@ pub struct PR {
   pub fmt: *mut libc::c_char,
   pub nospace: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FU {
@@ -155,6 +184,7 @@ pub struct FU {
   pub bcnt: libc::c_int,
   pub fmt: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FS {
@@ -162,6 +192,7 @@ pub struct FS {
   pub nextfu: *mut FU,
   pub bcnt: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dumper_t {
@@ -170,6 +201,7 @@ pub struct dumper_t {
   pub dump_vflag: smallint,
   pub fshead: *mut FS,
 }
+
 #[inline(always)]
 unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
@@ -179,7 +211,7 @@ unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
   b = ((a as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar;
   return (b as libc::c_int <= 'f' as i32 - 'a' as i32) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * hexdump implementation for busybox
  * Based on code from util-linux v 2.11l

@@ -634,19 +634,7 @@ unsafe extern "C" fn addHardLinkInfo(
   //	hlInfo->linkCount = statbuf->st_nlink;
   strcpy((*hlInfo).name.as_mut_ptr(), fileName);
 }
-unsafe extern "C" fn freeHardLinkInfo(mut hlInfoHeadPtr: *mut *mut HardLinkInfo) {
-  let mut hlInfo: *mut HardLinkInfo = 0 as *mut HardLinkInfo;
-  let mut hlInfoNext: *mut HardLinkInfo = 0 as *mut HardLinkInfo;
-  if !hlInfoHeadPtr.is_null() {
-    hlInfo = *hlInfoHeadPtr;
-    while !hlInfo.is_null() {
-      hlInfoNext = (*hlInfo).next;
-      free(hlInfo as *mut libc::c_void);
-      hlInfo = hlInfoNext
-    }
-    *hlInfoHeadPtr = 0 as *mut HardLinkInfo
-  };
-}
+
 /* Might be faster (and bigger) if the dev/ino were stored in numeric order ;) */
 unsafe extern "C" fn findHardLinkInfo(
   mut hlInfo: *mut HardLinkInfo,

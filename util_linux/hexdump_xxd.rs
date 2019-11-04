@@ -1,15 +1,21 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrtoull_range(
     str: *const libc::c_char,
@@ -17,6 +23,7 @@ extern "C" {
     l: libc::c_ulonglong,
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn xstrtou_range(
     str: *const libc::c_char,
@@ -24,22 +31,27 @@ extern "C" {
     l: libc::c_uint,
     u: libc::c_uint,
   ) -> libc::c_uint;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn alloc_dumper() -> *mut dumper_t;
+
   #[no_mangle]
   fn bb_dump_add(dumper: *mut dumper_t, fmt: *const libc::c_char);
+
   #[no_mangle]
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __off64_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
-/* vi: set sw=4 ts=4: */
+
 /* %_A */
 /* rep count set, not default */
 /* print offset */
@@ -53,11 +65,13 @@ pub type off_t = __off64_t;
 /* %_u */
 /* %[ouXx] */
 /* no conversions */
+
 pub type dump_vflag_t = libc::c_uint;
-pub const WAIT: dump_vflag_t = 3;
-pub const FIRST: dump_vflag_t = 2;
-pub const DUP: dump_vflag_t = 1;
+// pub const WAIT: dump_vflag_t = 3;
+// pub const FIRST: dump_vflag_t = 2;
+// pub const DUP: dump_vflag_t = 1;
 pub const ALL: dump_vflag_t = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PR {
@@ -68,6 +82,7 @@ pub struct PR {
   pub fmt: *mut libc::c_char,
   pub nospace: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FU {
@@ -78,6 +93,7 @@ pub struct FU {
   pub bcnt: libc::c_int,
   pub fmt: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FS {
@@ -85,6 +101,7 @@ pub struct FS {
   pub nextfu: *mut FU,
   pub bcnt: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dumper_t {
@@ -93,7 +110,7 @@ pub struct dumper_t {
   pub dump_vflag: smallint,
   pub fshead: *mut FS,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * xxd implementation for busybox
  *

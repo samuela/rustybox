@@ -1,17 +1,23 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn md5_begin(ctx: *mut md5_ctx_t);
+
   #[no_mangle]
   fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
+
   #[no_mangle]
   fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
@@ -19,11 +25,14 @@ extern "C" {
     endianess: endian,
     count: size_t,
   );
+
   #[no_mangle]
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -42,6 +51,7 @@ pub struct md5_ctx_t {
   pub hash: [uint32_t; 8],
   /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -56,14 +66,17 @@ pub struct volume_id {
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
+
 pub type uuid_format = libc::c_uint;
-pub const UUID_DCE_STRING: uuid_format = 3;
+// pub const UUID_DCE_STRING: uuid_format = 3;
 pub const UUID_DCE: uuid_format = 2;
-pub const UUID_NTFS: uuid_format = 1;
-pub const UUID_DOS: uuid_format = 0;
+// pub const UUID_NTFS: uuid_format = 1;
+// pub const UUID_DOS: uuid_format = 0;
+
 pub type endian = libc::c_uint;
 pub const BE: endian = 1;
-pub const LE: endian = 0;
+// pub const LE: endian = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_catalog_key {
@@ -72,6 +85,7 @@ pub struct hfsplus_catalog_key {
   pub unicode_len: uint16_t,
   pub unicode: [uint8_t; 510],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_bnode_descriptor {
@@ -82,12 +96,14 @@ pub struct hfsplus_bnode_descriptor {
   pub num_recs: uint16_t,
   pub reserved: uint16_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_extent {
   pub start_block: uint32_t,
   pub block_count: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_bheader_record {
@@ -98,6 +114,7 @@ pub struct hfsplus_bheader_record {
   pub leaf_tail: uint32_t,
   pub node_size: uint16_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_fork {
@@ -106,6 +123,7 @@ pub struct hfsplus_fork {
   pub total_blocks: uint32_t,
   pub extents: [hfsplus_extent; 8],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_vol_header {

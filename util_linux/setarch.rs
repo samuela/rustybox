@@ -1,48 +1,59 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn personality(__persona: libc::c_ulong) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const PER_MASK: C2RustUnnamed = 255;
-pub const PER_HPUX: C2RustUnnamed = 16;
-pub const PER_OSF4: C2RustUnnamed = 15;
-pub const PER_UW7: C2RustUnnamed = 68157454;
-pub const PER_SOLARIS: C2RustUnnamed = 67108877;
-pub const PER_RISCOS: C2RustUnnamed = 12;
-pub const PER_IRIX64: C2RustUnnamed = 67108875;
-pub const PER_IRIXN32: C2RustUnnamed = 67108874;
-pub const PER_IRIX32: C2RustUnnamed = 67108873;
-pub const PER_LINUX32_3GB: C2RustUnnamed = 134217736;
+// pub const PER_MASK: C2RustUnnamed = 255;
+// pub const PER_HPUX: C2RustUnnamed = 16;
+// pub const PER_OSF4: C2RustUnnamed = 15;
+// pub const PER_UW7: C2RustUnnamed = 68157454;
+// pub const PER_SOLARIS: C2RustUnnamed = 67108877;
+// pub const PER_RISCOS: C2RustUnnamed = 12;
+// pub const PER_IRIX64: C2RustUnnamed = 67108875;
+// pub const PER_IRIXN32: C2RustUnnamed = 67108874;
+// pub const PER_IRIX32: C2RustUnnamed = 67108873;
+// pub const PER_LINUX32_3GB: C2RustUnnamed = 134217736;
 pub const PER_LINUX32: C2RustUnnamed = 8;
-pub const PER_XENIX: C2RustUnnamed = 83886087;
-pub const PER_SUNOS: C2RustUnnamed = 67108870;
-pub const PER_BSD: C2RustUnnamed = 6;
-pub const PER_ISCR4: C2RustUnnamed = 67108869;
-pub const PER_WYSEV386: C2RustUnnamed = 83886084;
-pub const PER_OSR5: C2RustUnnamed = 100663299;
-pub const PER_SCOSVR3: C2RustUnnamed = 117440515;
-pub const PER_SVR3: C2RustUnnamed = 83886082;
-pub const PER_SVR4: C2RustUnnamed = 68157441;
-pub const PER_LINUX_FDPIC: C2RustUnnamed = 524288;
-pub const PER_LINUX_32BIT: C2RustUnnamed = 8388608;
+// pub const PER_XENIX: C2RustUnnamed = 83886087;
+// pub const PER_SUNOS: C2RustUnnamed = 67108870;
+// pub const PER_BSD: C2RustUnnamed = 6;
+// pub const PER_ISCR4: C2RustUnnamed = 67108869;
+// pub const PER_WYSEV386: C2RustUnnamed = 83886084;
+// pub const PER_OSR5: C2RustUnnamed = 100663299;
+// pub const PER_SCOSVR3: C2RustUnnamed = 117440515;
+// pub const PER_SVR3: C2RustUnnamed = 83886082;
+// pub const PER_SVR4: C2RustUnnamed = 68157441;
+// pub const PER_LINUX_FDPIC: C2RustUnnamed = 524288;
+// pub const PER_LINUX_32BIT: C2RustUnnamed = 8388608;
 pub const PER_LINUX: C2RustUnnamed = 0;
+
 #[no_mangle]
 pub unsafe extern "C" fn setarch_main(
   mut _argc: libc::c_int,

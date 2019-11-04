@@ -1,40 +1,53 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn syscall(__sysno: libc::c_long, _: ...) -> libc::c_long;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const IOPRIO_WHO_USER: C2RustUnnamed = 3;
-pub const IOPRIO_WHO_PGRP: C2RustUnnamed = 2;
+// pub const IOPRIO_WHO_USER: C2RustUnnamed = 3;
+// pub const IOPRIO_WHO_PGRP: C2RustUnnamed = 2;
 pub const IOPRIO_WHO_PROCESS: C2RustUnnamed = 1;
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IOPRIO_CLASS_IDLE: C2RustUnnamed_0 = 3;
-pub const IOPRIO_CLASS_BE: C2RustUnnamed_0 = 2;
-pub const IOPRIO_CLASS_RT: C2RustUnnamed_0 = 1;
-pub const IOPRIO_CLASS_NONE: C2RustUnnamed_0 = 0;
+// pub const IOPRIO_CLASS_BE: C2RustUnnamed_0 = 2;
+// pub const IOPRIO_CLASS_RT: C2RustUnnamed_0 = 1;
+// pub const IOPRIO_CLASS_NONE: C2RustUnnamed_0 = 0;
+
+pub type C2RustUnnamed_1 = libc::c_uint;
 pub const OPT_p: C2RustUnnamed_1 = 4;
 pub const OPT_c: C2RustUnnamed_1 = 2;
 pub const OPT_n: C2RustUnnamed_1 = 1;
-pub type C2RustUnnamed_1 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * ionice implementation for busybox based on linux-utils-ng 2.14
  *
@@ -71,6 +84,7 @@ static mut to_prio: [libc::c_char; 31] = [
   110, 111, 110, 101, 0, 114, 101, 97, 108, 116, 105, 109, 101, 0, 98, 101, 115, 116, 45, 101, 102,
   102, 111, 114, 116, 0, 105, 100, 108, 101, 0,
 ];
+
 #[no_mangle]
 pub unsafe extern "C" fn ionice_main(
   mut _argc: libc::c_int,

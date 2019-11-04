@@ -2,12 +2,16 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -15,52 +19,72 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
+
   #[no_mangle]
   fn safe_strncpy(
     dst: *mut libc::c_char,
     src: *const libc::c_char,
     size: size_t,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
+
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
+
   #[no_mangle]
   fn llist_free(
     elm: *mut llist_t,
     freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
   );
 }
+
 pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
@@ -80,12 +104,14 @@ pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -105,13 +131,16 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct utmpx {
@@ -127,18 +156,21 @@ pub struct utmpx {
   pub ut_addr_v6: [__int32_t; 4],
   pub __glibc_reserved: [libc::c_char; 20],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
   pub tv_sec: __int32_t,
   pub tv_usec: __int32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct llist_t {
   pub link: *mut llist_t,
   pub data: *mut libc::c_char,
 }
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const GONE: C2RustUnnamed_0 = 5;
 pub const CRASH: C2RustUnnamed_0 = 4;
@@ -146,13 +178,15 @@ pub const REBOOT: C2RustUnnamed_0 = 3;
 pub const DOWN: C2RustUnnamed_0 = 2;
 pub const LOGGED: C2RustUnnamed_0 = 1;
 pub const NORMAL: C2RustUnnamed_0 = 0;
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 /* -H header          */
 /* -f input file      */
-pub const LAST_OPT_H: C2RustUnnamed_1 = 4;
+// pub const LAST_OPT_H: C2RustUnnamed_1 = 4;
 /* -W wide            */
-pub const LAST_OPT_f: C2RustUnnamed_1 = 2;
+// pub const LAST_OPT_f: C2RustUnnamed_1 = 2;
 pub const LAST_OPT_W: C2RustUnnamed_1 = 1;
+
 unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut dur_secs: time_t) {
   let mut days: libc::c_uint = 0;
   let mut hours: libc::c_uint = 0;

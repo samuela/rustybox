@@ -1,11 +1,15 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+
   #[no_mangle]
   fn volume_id_set_unicode16(
     str: *mut libc::c_char,
@@ -15,11 +19,13 @@ extern "C" {
     count: size_t,
   );
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint64_t = libc::c_ulong;
 pub type uint8_t = __uint8_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -34,9 +40,11 @@ pub struct volume_id {
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
+
 pub type endian = libc::c_uint;
 pub const BE: endian = 1;
-pub const LE: endian = 0;
+// pub const LE: endian = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct high_sierra_volume_descriptor {
@@ -45,6 +53,7 @@ pub struct high_sierra_volume_descriptor {
   pub id: [uint8_t; 4],
   pub version: uint8_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct iso_volume_descriptor {

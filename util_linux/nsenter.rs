@@ -1,29 +1,42 @@
 use libc;
 extern "C" {
+
   #[no_mangle]
   fn setns(__fd: libc::c_int, __nstype: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+
   #[no_mangle]
   fn xsetgid(gid: gid_t);
+
   #[no_mangle]
   fn xsetuid(uid: uid_t);
+
   #[no_mangle]
   fn xfchdir(fd: libc::c_int);
+
   #[no_mangle]
   fn xchroot(path: *const libc::c_char);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn exec_prog_or_SHELL(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn xvfork_parent_waits_and_exits();
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -31,12 +44,16 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -45,6 +62,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -54,7 +72,7 @@ pub type pid_t = __pid_t;
 pub type uint32_t = __uint32_t;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini nsenter implementation for busybox.
  *
@@ -95,6 +113,7 @@ pub struct namespace_descr {
   pub ns_nsfile8: [libc::c_char; 8],
   /* "ns/" + namespace file in process' procfs entry */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct namespace_ctx {
@@ -102,6 +121,7 @@ pub struct namespace_ctx {
   pub fd: libc::c_int,
   /* opened namespace file descriptor */
 }
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_prescred: C2RustUnnamed = 4096;
 pub const OPT_nofork: C2RustUnnamed = 2048;
@@ -109,12 +129,12 @@ pub const OPT_wd: C2RustUnnamed = 1024;
 pub const OPT_root: C2RustUnnamed = 512;
 pub const OPT_setgid: C2RustUnnamed = 256;
 pub const OPT_setuid: C2RustUnnamed = 128;
-pub const OPT_target: C2RustUnnamed = 64;
-pub const OPT_mount: C2RustUnnamed = 32;
+// pub const OPT_target: C2RustUnnamed = 64;
+// pub const OPT_mount: C2RustUnnamed = 32;
 pub const OPT_pid: C2RustUnnamed = 16;
-pub const OPT_network: C2RustUnnamed = 8;
-pub const OPT_uts: C2RustUnnamed = 4;
-pub const OPT_ipc: C2RustUnnamed = 2;
+// pub const OPT_network: C2RustUnnamed = 8;
+// pub const OPT_uts: C2RustUnnamed = 4;
+// pub const OPT_ipc: C2RustUnnamed = 2;
 pub const OPT_user: C2RustUnnamed = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const NS_COUNT: C2RustUnnamed_0 = 6;
@@ -124,6 +144,7 @@ pub const NS_NET_POS: C2RustUnnamed_0 = 3;
 pub const NS_UTS_POS: C2RustUnnamed_0 = 2;
 pub const NS_IPC_POS: C2RustUnnamed_0 = 1;
 pub const NS_USR_POS: C2RustUnnamed_0 = 0;
+
 /*
  * The order is significant in nsenter.
  * The user namespace comes first, so that it is entered first.
@@ -218,6 +239,7 @@ unsafe extern "C" fn open_by_path_or_target(
   }
   return xopen(path, 0i32);
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn nsenter_main(
   mut _argc: libc::c_int,

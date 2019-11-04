@@ -3511,83 +3511,83 @@ static mut usage_array: [usage_data; 396] = [
     init
   },
 ];
-unsafe extern "C" fn compare_func(
-  mut a: *const libc::c_void,
-  mut b: *const libc::c_void,
-) -> libc::c_int {
-  let mut ua: *const usage_data = a as *const usage_data;
-  let mut ub: *const usage_data = b as *const usage_data;
-  return strcmp((*ua).aname, (*ub).aname);
-}
-unsafe fn main_0() -> libc::c_int {
-  let mut col: libc::c_int = 0;
-  let mut len2: libc::c_int = 0;
-  let mut i: libc::c_int = 0;
-  let mut num_messages: libc::c_int = (::std::mem::size_of::<[usage_data; 396]>() as libc::c_ulong)
-    .wrapping_div(::std::mem::size_of::<usage_data>() as libc::c_ulong)
-    as libc::c_int;
-  if num_messages == 0i32 {
-    return 0i32;
-  }
-  qsort(
-    usage_array.as_mut_ptr() as *mut libc::c_void,
-    num_messages as size_t,
-    ::std::mem::size_of::<usage_data>() as libc::c_ulong,
-    Some(
-      compare_func
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
-  );
-  col = 0i32;
-  i = 0i32;
-  while i < num_messages {
-    len2 = strlen(usage_array[i as usize].aname).wrapping_add(2i32 as libc::c_ulong) as libc::c_int;
-    if col >= 76i32 - len2 {
-      printf(b",\n\x00" as *const u8 as *const libc::c_char);
-      col = 0i32
-    }
-    if col == 0i32 {
-      col = 6i32;
-      printf(b"\t\x00" as *const u8 as *const libc::c_char);
-    } else {
-      printf(b", \x00" as *const u8 as *const libc::c_char);
-    }
-    printf(usage_array[i as usize].aname);
-    col += len2;
-    i += 1
-  }
-  printf(b"\n\n\x00" as *const u8 as *const libc::c_char);
-  printf(b"=head1 COMMAND DESCRIPTIONS\n\n\x00" as *const u8 as *const libc::c_char);
-  printf(b"=over 4\n\n\x00" as *const u8 as *const libc::c_char);
-  i = 0i32;
-  while i < num_messages {
-    if *usage_array[i as usize].aname.offset(0) as libc::c_int >= 'a' as i32
-      && *usage_array[i as usize].aname.offset(0) as libc::c_int <= 'z' as i32
-      && *usage_array[i as usize].usage.offset(0) as libc::c_int
-        != (*::std::mem::transmute::<&[u8; 2], &[libc::c_char; 2]>(b"\x08\x00"))[0] as libc::c_int
-    {
-      printf(
-        b"=item B<%s>\n\n\x00" as *const u8 as *const libc::c_char,
-        usage_array[i as usize].aname,
-      );
-      if *usage_array[i as usize].usage.offset(0) != 0 {
-        printf(
-          b"%s %s\n\n\x00" as *const u8 as *const libc::c_char,
-          usage_array[i as usize].aname,
-          usage_array[i as usize].usage,
-        );
-      } else {
-        printf(
-          b"%s\n\n\x00" as *const u8 as *const libc::c_char,
-          usage_array[i as usize].aname,
-        );
-      }
-    }
-    i += 1
-  }
-  printf(b"=back\n\n\x00" as *const u8 as *const libc::c_char);
-  return 0i32;
-}
+// unsafe extern "C" fn compare_func(
+//   mut a: *const libc::c_void,
+//   mut b: *const libc::c_void,
+// ) -> libc::c_int {
+//   let mut ua: *const usage_data = a as *const usage_data;
+//   let mut ub: *const usage_data = b as *const usage_data;
+//   return strcmp((*ua).aname, (*ub).aname);
+// }
+// unsafe fn main_0() -> libc::c_int {
+//   let mut col: libc::c_int = 0;
+//   let mut len2: libc::c_int = 0;
+//   let mut i: libc::c_int = 0;
+//   let mut num_messages: libc::c_int = (::std::mem::size_of::<[usage_data; 396]>() as libc::c_ulong)
+//     .wrapping_div(::std::mem::size_of::<usage_data>() as libc::c_ulong)
+//     as libc::c_int;
+//   if num_messages == 0i32 {
+//     return 0i32;
+//   }
+//   qsort(
+//     usage_array.as_mut_ptr() as *mut libc::c_void,
+//     num_messages as size_t,
+//     ::std::mem::size_of::<usage_data>() as libc::c_ulong,
+//     Some(
+//       compare_func
+//         as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
+//     ),
+//   );
+//   col = 0i32;
+//   i = 0i32;
+//   while i < num_messages {
+//     len2 = strlen(usage_array[i as usize].aname).wrapping_add(2i32 as libc::c_ulong) as libc::c_int;
+//     if col >= 76i32 - len2 {
+//       printf(b",\n\x00" as *const u8 as *const libc::c_char);
+//       col = 0i32
+//     }
+//     if col == 0i32 {
+//       col = 6i32;
+//       printf(b"\t\x00" as *const u8 as *const libc::c_char);
+//     } else {
+//       printf(b", \x00" as *const u8 as *const libc::c_char);
+//     }
+//     printf(usage_array[i as usize].aname);
+//     col += len2;
+//     i += 1
+//   }
+//   printf(b"\n\n\x00" as *const u8 as *const libc::c_char);
+//   printf(b"=head1 COMMAND DESCRIPTIONS\n\n\x00" as *const u8 as *const libc::c_char);
+//   printf(b"=over 4\n\n\x00" as *const u8 as *const libc::c_char);
+//   i = 0i32;
+//   while i < num_messages {
+//     if *usage_array[i as usize].aname.offset(0) as libc::c_int >= 'a' as i32
+//       && *usage_array[i as usize].aname.offset(0) as libc::c_int <= 'z' as i32
+//       && *usage_array[i as usize].usage.offset(0) as libc::c_int
+//         != (*::std::mem::transmute::<&[u8; 2], &[libc::c_char; 2]>(b"\x08\x00"))[0] as libc::c_int
+//     {
+//       printf(
+//         b"=item B<%s>\n\n\x00" as *const u8 as *const libc::c_char,
+//         usage_array[i as usize].aname,
+//       );
+//       if *usage_array[i as usize].usage.offset(0) != 0 {
+//         printf(
+//           b"%s %s\n\n\x00" as *const u8 as *const libc::c_char,
+//           usage_array[i as usize].aname,
+//           usage_array[i as usize].usage,
+//         );
+//       } else {
+//         printf(
+//           b"%s\n\n\x00" as *const u8 as *const libc::c_char,
+//           usage_array[i as usize].aname,
+//         );
+//       }
+//     }
+//     i += 1
+//   }
+//   printf(b"=back\n\n\x00" as *const u8 as *const libc::c_char);
+//   return 0i32;
+// }
 /* TODO: we used to make options bold with B<> and output an example too:
 
 =item B<cat>

@@ -1,13 +1,18 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn recursive_action(
     fileName: *const libc::c_char,
@@ -31,21 +36,28 @@ extern "C" {
     userData: *mut libc::c_void,
     depth: libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn config_open2(
     filename: *const libc::c_char,
     fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
   ) -> *mut parser_t;
+
   #[no_mangle]
   fn config_read(
     parser: *mut parser_t,
@@ -53,14 +65,17 @@ extern "C" {
     flags: libc::c_uint,
     delims: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
+
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
@@ -76,12 +91,14 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -101,6 +118,7 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -134,7 +152,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -142,24 +162,27 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
-pub const ACTION_QUIET: C2RustUnnamed = 32;
-pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
-pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
-pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
+// pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
+// pub const ACTION_QUIET: C2RustUnnamed = 32;
+// pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
+// pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
+// pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_0 = 4653056;
-pub const PARSE_WS_COMMENTS: C2RustUnnamed_0 = 16777216;
-pub const PARSE_ALT_COMMENTS: C2RustUnnamed_0 = 8388608;
-pub const PARSE_EOL_COMMENTS: C2RustUnnamed_0 = 4194304;
-pub const PARSE_KEEP_COPY: C2RustUnnamed_0 = 2097152;
-pub const PARSE_MIN_DIE: C2RustUnnamed_0 = 1048576;
-pub const PARSE_GREEDY: C2RustUnnamed_0 = 262144;
-pub const PARSE_TRIM: C2RustUnnamed_0 = 131072;
-pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
+// pub const PARSE_WS_COMMENTS: C2RustUnnamed_0 = 16777216;
+// pub const PARSE_ALT_COMMENTS: C2RustUnnamed_0 = 8388608;
+// pub const PARSE_EOL_COMMENTS: C2RustUnnamed_0 = 4194304;
+// pub const PARSE_KEEP_COPY: C2RustUnnamed_0 = 2097152;
+// pub const PARSE_MIN_DIE: C2RustUnnamed_0 = 1048576;
+// pub const PARSE_GREEDY: C2RustUnnamed_0 = 262144;
+// pub const PARSE_TRIM: C2RustUnnamed_0 = 131072;
+// pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {

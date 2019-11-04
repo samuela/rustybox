@@ -84,6 +84,7 @@ extern "C" {
   #[no_mangle]
   fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __int16_t = libc::c_short;
 pub type __uint16_t = libc::c_ushort;
@@ -110,12 +111,14 @@ pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -135,7 +138,9 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -146,7 +151,9 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
+
 pub type uoff_t = libc::c_ulong;
+
 /*
  * Structure of a blocks group descriptor
  */
@@ -162,6 +169,7 @@ pub struct ext2_group_desc {
   pub bg_pad: uint16_t,
   pub bg_reserved: [uint32_t; 3],
 }
+
 /*
  * Macro-instructions used to manage group descriptors
  */
@@ -198,6 +206,7 @@ pub struct ext2_group_desc {
 /*
  * ioctl commands
  */
+
 /*
  * Structure of an inode on the disk
  */
@@ -224,6 +233,7 @@ pub struct ext2_inode {
   pub osd2: C2RustUnnamed,
   /* OS dependent 2 */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -231,6 +241,7 @@ pub union C2RustUnnamed {
   pub hurd2: C2RustUnnamed_1,
   pub masix2: C2RustUnnamed_0,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_0 {
@@ -239,6 +250,7 @@ pub struct C2RustUnnamed_0 {
   pub m_pad1: uint16_t,
   pub m_i_reserved2: [uint32_t; 2],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
@@ -249,6 +261,7 @@ pub struct C2RustUnnamed_1 {
   pub h_i_gid_high: uint16_t,
   pub h_i_author: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
@@ -259,6 +272,7 @@ pub struct C2RustUnnamed_2 {
   pub l_i_gid_high: uint16_t,
   pub l_i_reserved2: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_3 {
@@ -266,16 +280,19 @@ pub union C2RustUnnamed_3 {
   pub hurd1: C2RustUnnamed_5,
   pub masix1: C2RustUnnamed_4,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
   pub m_i_reserved1: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
   pub h_i_translator: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
@@ -308,6 +325,7 @@ pub struct C2RustUnnamed_6 {
 /* Continue execution */
 /* Remount fs read-only */
 /* Panic */
+
 /*
  * Structure of the super block
  */
@@ -380,6 +398,7 @@ pub struct ext2_super_block {
   pub s_reserved: [uint32_t; 162],
   /* Padding to the end of the block */
 }
+
 // All fields are little-endian
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -400,6 +419,7 @@ pub struct ext2_dir {
   pub file_type3: uint8_t,
   pub name3: [libc::c_char; 12],
 }
+
 // 128 and 256-byte inodes:
 // 128-byte inode is described by struct ext2_inode.
 // 256-byte one just has these fields appended:
@@ -429,39 +449,40 @@ pub struct ext2_dir {
 //	[-T fs-type] [-U UUID] [-jnqvFSV] device [blocks-count]
 //
 // Options not commented below are taken but silently ignored:
+
 pub type C2RustUnnamed_7 = libc::c_uint;
-pub const OPT_S: C2RustUnnamed_7 = 16777216;
+// pub const OPT_S: C2RustUnnamed_7 = 16777216;
 pub const OPT_F: C2RustUnnamed_7 = 8388608;
-pub const OPT_v: C2RustUnnamed_7 = 4194304;
+// pub const OPT_v: C2RustUnnamed_7 = 4194304;
 //OPT_V = 1 << 25,	// -V version. bbox applets don't support that
 // dry run: do not write anything
-pub const OPT_q: C2RustUnnamed_7 = 2097152;
+// pub const OPT_q: C2RustUnnamed_7 = 2097152;
 pub const OPT_n: C2RustUnnamed_7 = 1048576;
-pub const OPT_j: C2RustUnnamed_7 = 524288;
-pub const OPT_U: C2RustUnnamed_7 = 262144;
-pub const OPT_T: C2RustUnnamed_7 = 131072;
-pub const OPT_E: C2RustUnnamed_7 = 65536;
-pub const OPT_r: C2RustUnnamed_7 = 32768;
-pub const OPT_O: C2RustUnnamed_7 = 16384;
+// pub const OPT_j: C2RustUnnamed_7 = 524288;
+// pub const OPT_U: C2RustUnnamed_7 = 262144;
+// pub const OPT_T: C2RustUnnamed_7 = 131072;
+// pub const OPT_E: C2RustUnnamed_7 = 65536;
+// pub const OPT_r: C2RustUnnamed_7 = 32768;
+// pub const OPT_O: C2RustUnnamed_7 = 16384;
 // label
-pub const OPT_M: C2RustUnnamed_7 = 8192;
-pub const OPT_L: C2RustUnnamed_7 = 4096;
-pub const OPT_g: C2RustUnnamed_7 = 2048;
+// pub const OPT_M: C2RustUnnamed_7 = 8192;
+// pub const OPT_L: C2RustUnnamed_7 = 4096;
+// pub const OPT_g: C2RustUnnamed_7 = 2048;
 // percentage of blocks reserved for superuser
-pub const OPT_o: C2RustUnnamed_7 = 1024;
-pub const OPT_m: C2RustUnnamed_7 = 512;
-pub const OPT_N: C2RustUnnamed_7 = 256;
-pub const OPT_G: C2RustUnnamed_7 = 128;
+// pub const OPT_o: C2RustUnnamed_7 = 1024;
+// pub const OPT_m: C2RustUnnamed_7 = 512;
+// pub const OPT_N: C2RustUnnamed_7 = 256;
+// pub const OPT_G: C2RustUnnamed_7 = 128;
 // custom inode size, in bytes
-pub const OPT_J: C2RustUnnamed_7 = 64;
+// pub const OPT_J: C2RustUnnamed_7 = 64;
 // bytes per inode
 pub const OPT_I: C2RustUnnamed_7 = 32;
 pub const OPT_i: C2RustUnnamed_7 = 16;
 // block size, in bytes
-pub const OPT_f: C2RustUnnamed_7 = 8;
+// pub const OPT_f: C2RustUnnamed_7 = 8;
 pub const OPT_b: C2RustUnnamed_7 = 4;
-pub const OPT_l: C2RustUnnamed_7 = 2;
-pub const OPT_c: C2RustUnnamed_7 = 1;
+// pub const OPT_l: C2RustUnnamed_7 = 2;
+// pub const OPT_c: C2RustUnnamed_7 = 1;
 
 // For some reason this function isn't actually defined in the C sources, at
 // least AFAICT. So we use this dummy implementation.

@@ -13,7 +13,6 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
   /*
    * Copyright 2005 Rob Landley <rob@landley.net>
    *
@@ -131,6 +130,7 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
@@ -142,11 +142,13 @@ pub type __nlink_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __fsid_t {
   pub __val: [libc::c_int; 2],
 }
+
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
@@ -155,6 +157,7 @@ pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct statfs {
@@ -171,41 +174,46 @@ pub struct statfs {
   pub f_flags: __fsword_t,
   pub f_spare: [__fsword_t; 4],
 }
+
 pub type C2RustUnnamed = libc::c_int;
-pub const MS_NOUSER: C2RustUnnamed = -2147483648;
-pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
-pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
-pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
-pub const MS_I_VERSION: C2RustUnnamed = 8388608;
-pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
-pub const MS_RELATIME: C2RustUnnamed = 2097152;
-pub const MS_SHARED: C2RustUnnamed = 1048576;
-pub const MS_SLAVE: C2RustUnnamed = 524288;
-pub const MS_PRIVATE: C2RustUnnamed = 262144;
-pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
-pub const MS_POSIXACL: C2RustUnnamed = 65536;
-pub const MS_SILENT: C2RustUnnamed = 32768;
-pub const MS_REC: C2RustUnnamed = 16384;
+// pub const MS_NOUSER: C2RustUnnamed = -2147483648;
+// pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
+// pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
+// pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
+// pub const MS_I_VERSION: C2RustUnnamed = 8388608;
+// pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
+// pub const MS_RELATIME: C2RustUnnamed = 2097152;
+// pub const MS_SHARED: C2RustUnnamed = 1048576;
+// pub const MS_SLAVE: C2RustUnnamed = 524288;
+// pub const MS_PRIVATE: C2RustUnnamed = 262144;
+// pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
+// pub const MS_POSIXACL: C2RustUnnamed = 65536;
+// pub const MS_SILENT: C2RustUnnamed = 32768;
+// pub const MS_REC: C2RustUnnamed = 16384;
 pub const MS_MOVE: C2RustUnnamed = 8192;
-pub const MS_BIND: C2RustUnnamed = 4096;
-pub const MS_NODIRATIME: C2RustUnnamed = 2048;
-pub const MS_NOATIME: C2RustUnnamed = 1024;
-pub const MS_DIRSYNC: C2RustUnnamed = 128;
-pub const MS_MANDLOCK: C2RustUnnamed = 64;
-pub const MS_REMOUNT: C2RustUnnamed = 32;
-pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
-pub const MS_NOEXEC: C2RustUnnamed = 8;
-pub const MS_NODEV: C2RustUnnamed = 4;
-pub const MS_NOSUID: C2RustUnnamed = 2;
-pub const MS_RDONLY: C2RustUnnamed = 1;
+// pub const MS_BIND: C2RustUnnamed = 4096;
+// pub const MS_NODIRATIME: C2RustUnnamed = 2048;
+// pub const MS_NOATIME: C2RustUnnamed = 1024;
+// pub const MS_DIRSYNC: C2RustUnnamed = 128;
+// pub const MS_MANDLOCK: C2RustUnnamed = 64;
+// pub const MS_REMOUNT: C2RustUnnamed = 32;
+// pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
+// pub const MS_NOEXEC: C2RustUnnamed = 8;
+// pub const MS_NODEV: C2RustUnnamed = 4;
+// pub const MS_NOSUID: C2RustUnnamed = 2;
+// pub const MS_RDONLY: C2RustUnnamed = 1;
+
 pub type __u32 = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
   pub version: __u32,
   pub pid: libc::c_int,
 }
+
 pub type cap_user_header_t = *mut __user_cap_header_struct;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
@@ -213,10 +221,12 @@ pub struct __user_cap_data_struct {
   pub permitted: __u32,
   pub inheritable: __u32,
 }
+
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 pub type uint32_t = __uint32_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -226,13 +236,16 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
+
 pub type DIR = __dirstream;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -252,7 +265,9 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type dev_t = __dev_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct caps {
@@ -260,6 +275,7 @@ pub struct caps {
   pub u32s: libc::c_uint,
   pub data: [__user_cap_data_struct; 2],
 }
+
 // Recursively delete contents of rootfs
 unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut rootdev: dev_t) {
   let mut dir: *mut DIR = 0 as *mut DIR;

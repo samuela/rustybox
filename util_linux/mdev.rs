@@ -1,44 +1,62 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+
 extern "C" {
   pub type __dirstream;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
+
   #[no_mangle]
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sigemptyset(__set: *mut sigset_t) -> libc::c_int;
+
   #[no_mangle]
   fn sigaddset(__set: *mut sigset_t, __signo: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
+
   #[no_mangle]
   fn sigtimedwait(
     __set: *const sigset_t,
     __info: *mut siginfo_t,
     __timeout: *const timespec,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -46,58 +64,83 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn atoll(__nptr: *const libc::c_char) -> libc::c_longlong;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn system(__command: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+
   #[no_mangle]
   fn umask(__mask: __mode_t) -> __mode_t;
+
   #[no_mangle]
   fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
     sizeof_and_shift: libc::c_uint,
     idx: libc::c_int,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
+
   #[no_mangle]
   fn recursive_action(
     fileName: *const libc::c_char,
@@ -121,83 +164,115 @@ extern "C" {
     userData: *mut libc::c_void,
     depth: libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
+
   #[no_mangle]
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
+
   #[no_mangle]
   fn endofname(name: *const libc::c_char) -> *const libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn close_on_exec_on(fd: libc::c_int);
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn bb_unsetenv(key: *const libc::c_char);
+
   #[no_mangle]
   fn bb_unsetenv_and_free(key: *mut libc::c_char);
+
   #[no_mangle]
   fn xstat(pathname: *const libc::c_char, buf: *mut stat);
+
   #[no_mangle]
   fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
+
   #[no_mangle]
   fn strftime_HHMMSS(
     buf: *mut libc::c_char,
     len: libc::c_uint,
     tp: *mut time_t,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn create_and_bind_to_netlink(
     proto: libc::c_int,
     grp: libc::c_int,
     rcvbuf: libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn open_read_close(
     filename: *const libc::c_char,
     buf: *mut libc::c_void,
     maxsz: size_t,
   ) -> ssize_t;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+
   #[no_mangle]
   fn get_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   #[no_mangle]
   fn bb_sanitize_stdio();
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
+
   #[no_mangle]
   fn config_open2(
     filename: *const libc::c_char,
     fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
   ) -> *mut parser_t;
+
   #[no_mangle]
   fn config_read(
     parser: *mut parser_t,
@@ -205,25 +280,32 @@ extern "C" {
     flags: libc::c_uint,
     delims: *const libc::c_char,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
+
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_make_directory(
     path: *mut libc::c_char,
     mode: libc::c_long,
     flags: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn pread(
     __fd: libc::c_int,
@@ -231,20 +313,28 @@ extern "C" {
     __nbytes: size_t,
     __offset: __off64_t,
   ) -> ssize_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;
+
   #[no_mangle]
   fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn getpid() -> __pid_t;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,
@@ -253,11 +343,14 @@ extern "C" {
     __pmatch: *mut regmatch_t,
     __eflags: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn regfree(__preg: *mut regex_t);
+
   #[no_mangle]
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -299,12 +392,14 @@ pub type uid_t = __uid_t;
 pub type off_t = __off64_t;
 pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -325,18 +420,21 @@ pub struct stat {
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {
   pub __val: [libc::c_ulong; 16],
 }
 pub type sigset_t = __sigset_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union sigval {
@@ -344,6 +442,7 @@ pub union sigval {
   pub sival_ptr: *mut libc::c_void,
 }
 pub type __sigval_t = sigval;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct siginfo_t {
@@ -353,6 +452,7 @@ pub struct siginfo_t {
   pub __pad0: libc::c_int,
   pub _sifields: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -365,6 +465,7 @@ pub union C2RustUnnamed {
   pub _sigpoll: C2RustUnnamed_1,
   pub _sigsys: C2RustUnnamed_0,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_0 {
@@ -372,12 +473,14 @@ pub struct C2RustUnnamed_0 {
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
@@ -385,18 +488,21 @@ pub struct C2RustUnnamed_2 {
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: __uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
@@ -406,6 +512,7 @@ pub struct C2RustUnnamed_5 {
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
@@ -413,6 +520,7 @@ pub struct C2RustUnnamed_6 {
   pub si_uid: __uid_t,
   pub si_sigval: __sigval_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_7 {
@@ -420,12 +528,14 @@ pub struct C2RustUnnamed_7 {
   pub si_overrun: libc::c_int,
   pub si_sigval: __sigval_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
   pub si_uid: __uid_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -459,7 +569,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -467,54 +579,62 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
+
 pub type __timezone_ptr_t = *mut timezone;
+
 pub type C2RustUnnamed_9 = libc::c_int;
-pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed_9 = -2147483648;
-pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed_9 = 262144;
-pub const FILEUTILS_REFLINK: C2RustUnnamed_9 = 131072;
-pub const FILEUTILS_RMDEST: C2RustUnnamed_9 = 32768;
-pub const FILEUTILS_NO_TARGET_DIR: C2RustUnnamed_9 = 16384;
-pub const FILEUTILS_UPDATE: C2RustUnnamed_9 = 8192;
-pub const FILEUTILS_VERBOSE: C2RustUnnamed_9 = 4096;
-pub const FILEUTILS_DEREFERENCE_L0: C2RustUnnamed_9 = 256;
-pub const FILEUTILS_DEREF_SOFTLINK: C2RustUnnamed_9 = 128;
-pub const FILEUTILS_MAKE_SOFTLINK: C2RustUnnamed_9 = 64;
-pub const FILEUTILS_MAKE_HARDLINK: C2RustUnnamed_9 = 32;
-pub const FILEUTILS_INTERACTIVE: C2RustUnnamed_9 = 16;
-pub const FILEUTILS_FORCE: C2RustUnnamed_9 = 8;
+// pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed_9 = -2147483648;
+// pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed_9 = 262144;
+// pub const FILEUTILS_REFLINK: C2RustUnnamed_9 = 131072;
+// pub const FILEUTILS_RMDEST: C2RustUnnamed_9 = 32768;
+// pub const FILEUTILS_NO_TARGET_DIR: C2RustUnnamed_9 = 16384;
+// pub const FILEUTILS_UPDATE: C2RustUnnamed_9 = 8192;
+// pub const FILEUTILS_VERBOSE: C2RustUnnamed_9 = 4096;
+// pub const FILEUTILS_DEREFERENCE_L0: C2RustUnnamed_9 = 256;
+// pub const FILEUTILS_DEREF_SOFTLINK: C2RustUnnamed_9 = 128;
+// pub const FILEUTILS_MAKE_SOFTLINK: C2RustUnnamed_9 = 64;
+// pub const FILEUTILS_MAKE_HARDLINK: C2RustUnnamed_9 = 32;
+// pub const FILEUTILS_INTERACTIVE: C2RustUnnamed_9 = 16;
+// pub const FILEUTILS_FORCE: C2RustUnnamed_9 = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed_9 = 4;
-pub const FILEUTILS_DEREFERENCE: C2RustUnnamed_9 = 2;
-pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed_9 = 1;
+// pub const FILEUTILS_DEREFERENCE: C2RustUnnamed_9 = 2;
+// pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed_9 = 1;
+
 pub type C2RustUnnamed_10 = libc::c_uint;
-pub const ACTION_DANGLING_OK: C2RustUnnamed_10 = 64;
-pub const ACTION_QUIET: C2RustUnnamed_10 = 32;
-pub const ACTION_DEPTHFIRST: C2RustUnnamed_10 = 8;
-pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed_10 = 4;
+// pub const ACTION_DANGLING_OK: C2RustUnnamed_10 = 64;
+// pub const ACTION_QUIET: C2RustUnnamed_10 = 32;
+// pub const ACTION_DEPTHFIRST: C2RustUnnamed_10 = 8;
+// pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed_10 = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed_10 = 2;
 pub const ACTION_RECURSE: C2RustUnnamed_10 = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_uidgid_t {
   pub uid: uid_t,
   pub gid: gid_t,
 }
+
 pub type C2RustUnnamed_11 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_11 = 4653056;
-pub const PARSE_WS_COMMENTS: C2RustUnnamed_11 = 16777216;
-pub const PARSE_ALT_COMMENTS: C2RustUnnamed_11 = 8388608;
+// pub const PARSE_WS_COMMENTS: C2RustUnnamed_11 = 16777216;
+// pub const PARSE_ALT_COMMENTS: C2RustUnnamed_11 = 8388608;
 pub const PARSE_EOL_COMMENTS: C2RustUnnamed_11 = 4194304;
-pub const PARSE_KEEP_COPY: C2RustUnnamed_11 = 2097152;
-pub const PARSE_MIN_DIE: C2RustUnnamed_11 = 1048576;
-pub const PARSE_GREEDY: C2RustUnnamed_11 = 262144;
-pub const PARSE_TRIM: C2RustUnnamed_11 = 131072;
-pub const PARSE_COLLAPSE: C2RustUnnamed_11 = 65536;
+// pub const PARSE_KEEP_COPY: C2RustUnnamed_11 = 2097152;
+// pub const PARSE_MIN_DIE: C2RustUnnamed_11 = 1048576;
+// pub const PARSE_GREEDY: C2RustUnnamed_11 = 262144;
+// pub const PARSE_TRIM: C2RustUnnamed_11 = 131072;
+// pub const PARSE_COLLAPSE: C2RustUnnamed_11 = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -526,6 +646,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {
@@ -543,6 +664,7 @@ pub struct smaprec {
   pub smap_mode: [libc::c_char; 5],
   pub smap_name: *mut libc::c_char,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct procps_status_t {
@@ -575,29 +697,31 @@ pub struct procps_status_t {
   pub comm: [libc::c_char; 16],
   pub last_seen_on_cpu: libc::c_int,
 }
+
 pub type C2RustUnnamed_12 = libc::c_uint;
-pub const PSSCAN_TASKS: C2RustUnnamed_12 = 4194304;
-pub const PSSCAN_RUIDGID: C2RustUnnamed_12 = 2097152;
-pub const PSSCAN_NICE: C2RustUnnamed_12 = 1048576;
-pub const PSSCAN_CPU: C2RustUnnamed_12 = 524288;
-pub const PSSCAN_START_TIME: C2RustUnnamed_12 = 262144;
-pub const PSSCAN_CONTEXT: C2RustUnnamed_12 = 0;
-pub const PSSCAN_ARGVN: C2RustUnnamed_12 = 65536;
-pub const PSSCAN_SMAPS: C2RustUnnamed_12 = 32768;
-pub const PSSCAN_TTY: C2RustUnnamed_12 = 16384;
-pub const PSSCAN_UTIME: C2RustUnnamed_12 = 8192;
-pub const PSSCAN_STIME: C2RustUnnamed_12 = 4096;
-pub const PSSCAN_RSS: C2RustUnnamed_12 = 2048;
-pub const PSSCAN_VSZ: C2RustUnnamed_12 = 1024;
-pub const PSSCAN_STATE: C2RustUnnamed_12 = 512;
-pub const PSSCAN_EXE: C2RustUnnamed_12 = 256;
+// pub const PSSCAN_TASKS: C2RustUnnamed_12 = 4194304;
+// pub const PSSCAN_RUIDGID: C2RustUnnamed_12 = 2097152;
+// pub const PSSCAN_NICE: C2RustUnnamed_12 = 1048576;
+// pub const PSSCAN_CPU: C2RustUnnamed_12 = 524288;
+// pub const PSSCAN_START_TIME: C2RustUnnamed_12 = 262144;
+// pub const PSSCAN_CONTEXT: C2RustUnnamed_12 = 0;
+// pub const PSSCAN_ARGVN: C2RustUnnamed_12 = 65536;
+// pub const PSSCAN_SMAPS: C2RustUnnamed_12 = 32768;
+// pub const PSSCAN_TTY: C2RustUnnamed_12 = 16384;
+// pub const PSSCAN_UTIME: C2RustUnnamed_12 = 8192;
+// pub const PSSCAN_STIME: C2RustUnnamed_12 = 4096;
+// pub const PSSCAN_RSS: C2RustUnnamed_12 = 2048;
+// pub const PSSCAN_VSZ: C2RustUnnamed_12 = 1024;
+// pub const PSSCAN_STATE: C2RustUnnamed_12 = 512;
+// pub const PSSCAN_EXE: C2RustUnnamed_12 = 256;
 pub const PSSCAN_ARGV0: C2RustUnnamed_12 = 128;
-pub const PSSCAN_COMM: C2RustUnnamed_12 = 32;
-pub const PSSCAN_UIDGID: C2RustUnnamed_12 = 16;
-pub const PSSCAN_SID: C2RustUnnamed_12 = 8;
-pub const PSSCAN_PGID: C2RustUnnamed_12 = 4;
-pub const PSSCAN_PPID: C2RustUnnamed_12 = 2;
-pub const PSSCAN_PID: C2RustUnnamed_12 = 1;
+// pub const PSSCAN_COMM: C2RustUnnamed_12 = 32;
+// pub const PSSCAN_UIDGID: C2RustUnnamed_12 = 16;
+// pub const PSSCAN_SID: C2RustUnnamed_12 = 8;
+// pub const PSSCAN_PGID: C2RustUnnamed_12 = 4;
+// pub const PSSCAN_PPID: C2RustUnnamed_12 = 2;
+// pub const PSSCAN_PID: C2RustUnnamed_12 = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

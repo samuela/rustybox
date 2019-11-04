@@ -1,70 +1,103 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn sync();
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getchar_unlocked() -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   static mut xfunc_error_retval: uint8_t;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
+
   #[no_mangle]
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
+
   #[no_mangle]
   fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_banner: [libc::c_char; 0];
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
+
 pub type size_t = libc::c_ulong;
 pub type __off64_t = libc::c_long;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -75,6 +108,7 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -88,6 +122,7 @@ pub type off_t = __off64_t;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {
@@ -100,6 +135,7 @@ pub struct termios {
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -132,12 +168,14 @@ pub struct globals {
   pub check_file_blk: [libc::c_char; 1024],
   pub current_name: [libc::c_char; 8160],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
   pub superblock_buffer: [libc::c_char; 1024],
   pub Super: minix_superblock,
 }
+
 /*
  * minix superblock data on disk
  */
@@ -155,6 +193,7 @@ pub struct minix_superblock {
   pub s_state: uint16_t,
   pub s_zones: uint32_t,
 }
+
 /*
  * This is the original minix inode layout on disk.
  * Note the 8-bit gid and atime and ctime.
@@ -170,6 +209,7 @@ pub struct minix1_inode {
   pub i_nlinks: uint8_t,
   pub i_zone: [uint16_t; 9],
 }
+
 /*
  * The new minix inode has all the time entries, as well as
  * long block numbers and a third indirect block (7+1+1+1
@@ -189,13 +229,14 @@ pub struct minix2_inode {
   pub i_ctime: uint32_t,
   pub i_zone: [uint32_t; 10],
 }
+
 /* Believe it or not, but mount.h has this one #defined */
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const MINIX2_INODES_PER_BLOCK: C2RustUnnamed_0 = 16;
 pub const MINIX1_INODES_PER_BLOCK: C2RustUnnamed_0 = 32;
-pub const INODE_SIZE2: C2RustUnnamed_0 = 64;
+// pub const INODE_SIZE2: C2RustUnnamed_0 = 64;
 /* fs has errors */
-pub const INODE_SIZE1: C2RustUnnamed_0 = 32;
+// pub const INODE_SIZE1: C2RustUnnamed_0 = 32;
 /* clean fs */
 pub const MINIX_ERROR_FS: C2RustUnnamed_0 = 2;
 /* minix V2 fs, 30 char names */
@@ -208,15 +249,18 @@ pub const MINIX2_SUPER_MAGIC: C2RustUnnamed_0 = 9320;
 /* original minix fs */
 pub const MINIX1_SUPER_MAGIC2: C2RustUnnamed_0 = 5007;
 pub const MINIX1_SUPER_MAGIC: C2RustUnnamed_0 = 4991;
-pub const MINIX_BAD_INO: C2RustUnnamed_0 = 2;
+// pub const MINIX_BAD_INO: C2RustUnnamed_0 = 2;
 pub const MINIX_ROOT_INO: C2RustUnnamed_0 = 1;
-pub const BITS_PER_BLOCK: C2RustUnnamed_0 = 8192;
+// pub const BITS_PER_BLOCK: C2RustUnnamed_0 = 8192;
 pub const BLOCK_SIZE: C2RustUnnamed_0 = 1024;
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const MAX_DEPTH: C2RustUnnamed_1 = 32;
+
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const dev_fd: C2RustUnnamed_2 = 3;
 /*current_name[1] = '\0';*/
+
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const OPT_f: C2RustUnnamed_3 = 64;
 pub const OPT_w: C2RustUnnamed_3 = 32;
@@ -225,10 +269,12 @@ pub const OPT_v: C2RustUnnamed_3 = 8;
 pub const OPT_r: C2RustUnnamed_3 = 4;
 pub const OPT_a: C2RustUnnamed_3 = 2;
 pub const OPT_l: C2RustUnnamed_3 = 1;
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
+
 /* non-automatic repairs requested? */
 /* gcc likes this more (code is smaller) than macro variant */
 #[inline(always)]
@@ -238,28 +284,33 @@ unsafe extern "C" fn div_roundup(mut size: libc::c_uint, mut n: libc::c_uint) ->
     .wrapping_sub(1i32 as libc::c_uint)
     .wrapping_div(n);
 }
+
 /* Before you ask "where they come from?": */
 /* setbit/clrbit are supplied by sys/param.h */
 unsafe extern "C" fn minix_bit(mut a: *const libc::c_char, mut i: libc::c_uint) -> libc::c_int {
   return *a.offset((i >> 3i32) as isize) as libc::c_int & 1i32 << (i & 7i32 as libc::c_uint);
 }
+
 unsafe extern "C" fn minix_setbit(mut a: *mut libc::c_char, mut i: libc::c_uint) {
   let ref mut fresh0 = *a.offset(i.wrapping_div(8i32 as libc::c_uint) as isize);
   *fresh0 = (*fresh0 as libc::c_int | 1i32 << i.wrapping_rem(8i32 as libc::c_uint)) as libc::c_char;
   (*ptr_to_globals).changed = 1i32 as smallint;
 }
+
 unsafe extern "C" fn minix_clrbit(mut a: *mut libc::c_char, mut i: libc::c_uint) {
   let ref mut fresh1 = *a.offset(i.wrapping_div(8i32 as libc::c_uint) as isize);
   *fresh1 =
     (*fresh1 as libc::c_int & !(1i32 << i.wrapping_rem(8i32 as libc::c_uint))) as libc::c_char;
   (*ptr_to_globals).changed = 1i32 as smallint;
 }
+
 unsafe extern "C" fn die(mut str: *const libc::c_char) -> ! {
   if (*ptr_to_globals).termios_set != 0 {
     tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).sv_termios);
   }
   bb_simple_error_msg_and_die(str);
 }
+
 unsafe extern "C" fn push_filename(mut name: *const libc::c_char) {
   //  /dir/dir/dir/file
   //  ^   ^   ^
@@ -282,6 +333,7 @@ unsafe extern "C" fn push_filename(mut name: *const libc::c_char) {
   }
   (*ptr_to_globals).name_depth += 1;
 }
+
 unsafe extern "C" fn pop_filename() {
   (*ptr_to_globals).name_depth -= 1;
   if (*ptr_to_globals).name_depth < MAX_DEPTH as libc::c_int {
@@ -293,6 +345,7 @@ unsafe extern "C" fn pop_filename() {
     }
   };
 }
+
 unsafe extern "C" fn ask(mut string: *const libc::c_char, mut def: libc::c_int) -> libc::c_int {
   let mut c: libc::c_int = 0;
   if option_mask32 & OPT_r as libc::c_int as libc::c_uint == 0 {
@@ -347,6 +400,7 @@ unsafe extern "C" fn ask(mut string: *const libc::c_char, mut def: libc::c_int) 
   }
   return def;
 }
+
 /*
  * Make certain that we aren't checking a filesystem that is on a
  * mounted partition.  Code adapted from e2fsck, Copyright (C) 1993,
@@ -372,6 +426,7 @@ unsafe extern "C" fn check_mount() {
     }
   };
 }
+
 /*
  * check_zone_nr checks to see that *nr is a valid zone nr. If it
  * isn't, it will possibly be repaired. Check_zone_nr sets *corrected
@@ -414,6 +469,7 @@ unsafe extern "C" fn check_zone_nr2(
   }
   return 0i32;
 }
+
 unsafe extern "C" fn check_zone_nr(
   mut nr: *mut uint16_t,
   mut corrected: *mut smallint,
@@ -453,6 +509,7 @@ unsafe extern "C" fn read_block(mut nr: libc::c_uint, mut addr: *mut libc::c_voi
     memset(addr, 0i32, BLOCK_SIZE as libc::c_int as libc::c_ulong);
   };
 }
+
 /*
  * write_block writes block nr to disk.
  */
@@ -496,6 +553,7 @@ unsafe extern "C" fn write_block(mut nr: libc::c_uint, mut addr: *mut libc::c_vo
     (*ptr_to_globals).errors_uncorrected = 1i32 as smallint
   };
 }
+
 /*
  * map_block calculates the absolute block nr of a block in a file.
  * It sets 'changed' if the inode has needed changing, and re-writes
@@ -553,6 +611,7 @@ unsafe extern "C" fn map_block(
   }
   return result;
 }
+
 unsafe extern "C" fn map_block2(
   mut inode: *mut minix2_inode,
   mut blknr: libc::c_uint,
@@ -627,6 +686,7 @@ unsafe extern "C" fn map_block2(
   }
   return result;
 }
+
 unsafe extern "C" fn write_superblock() {
   /*
    * Set the state of the filesystem based on whether or not there
@@ -655,6 +715,7 @@ unsafe extern "C" fn write_superblock() {
     die(b"can\'t write superblock\x00" as *const u8 as *const libc::c_char);
   };
 }
+
 unsafe extern "C" fn write_tables() {
   write_superblock();
   if ((*ptr_to_globals).u.Super.s_imap_blocks as libc::c_uint)
@@ -705,6 +766,7 @@ unsafe extern "C" fn write_tables() {
     die(b"can\'t write inodes\x00" as *const u8 as *const libc::c_char);
   };
 }
+
 unsafe extern "C" fn get_dirsize() {
   let mut block: libc::c_int = 0;
   let mut blk: [libc::c_char; 1024] = [0; 1024];
@@ -736,6 +798,7 @@ unsafe extern "C" fn get_dirsize() {
   }
   /* use defaults */
 }
+
 unsafe extern "C" fn read_superblock() {
   xlseek(
     dev_fd as libc::c_int,
@@ -798,6 +861,7 @@ unsafe extern "C" fn read_superblock() {
     die(b"bad s_zmap_blocks field in superblock\x00" as *const u8 as *const libc::c_char);
   };
 }
+
 unsafe extern "C" fn read_tables() {
   (*ptr_to_globals).inode_map = xzalloc(
     ((*ptr_to_globals).u.Super.s_imap_blocks as libc::c_uint)
@@ -930,6 +994,7 @@ unsafe extern "C" fn read_tables() {
                (*ptr_to_globals).namelen as libc::c_int);
   };
 }
+
 unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: uint16_t) {
   (*ptr_to_globals).total += 1;
   if *(*ptr_to_globals).inode_count.offset(nr as isize) == 0 {
@@ -983,6 +1048,7 @@ unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: uint16_t
     (*ptr_to_globals).errors_uncorrected = 1i32 as smallint
   };
 }
+
 unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
   let mut inode: *mut minix1_inode = 0 as *mut minix1_inode;
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
@@ -994,6 +1060,7 @@ unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
   get_inode_common(nr, (*inode).i_mode);
   return inode;
 }
+
 unsafe extern "C" fn get_inode2(mut nr: libc::c_uint) -> *mut minix2_inode {
   let mut inode: *mut minix2_inode = 0 as *mut minix2_inode;
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
@@ -1005,6 +1072,7 @@ unsafe extern "C" fn get_inode2(mut nr: libc::c_uint) -> *mut minix2_inode {
   get_inode_common(nr, (*inode).i_mode);
   return inode;
 }
+
 unsafe extern "C" fn check_root() {
   let mut inode: *mut minix1_inode = ((*ptr_to_globals).inode_buffer as *mut minix1_inode)
     .offset(-1)
@@ -1013,6 +1081,7 @@ unsafe extern "C" fn check_root() {
     die(b"root inode isn\'t a directory\x00" as *const u8 as *const libc::c_char);
   };
 }
+
 unsafe extern "C" fn check_root2() {
   let mut inode: *mut minix2_inode = ((*ptr_to_globals).inode_buffer as *mut minix2_inode)
     .offset(-1)

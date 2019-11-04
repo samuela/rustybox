@@ -1,7 +1,9 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn unshare(__flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn mount(
     __special_file: *const libc::c_char,
@@ -10,38 +12,54 @@ extern "C" {
     __rwflag: libc::c_ulong,
     __data: *const libc::c_void,
   ) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getegid() -> __gid_t;
+
   #[no_mangle]
   fn geteuid() -> __uid_t;
+
   #[no_mangle]
   fn getpid() -> __pid_t;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xpipe(filedes: *mut libc::c_int);
+
   #[no_mangle]
   fn xopen_xwrite_close(file: *const libc::c_char, str: *const libc::c_char);
+
   #[no_mangle]
   fn exec_prog_or_SHELL(argv: *mut *mut libc::c_char) -> !;
+
   /* xvfork() can't be a _function_, return after vfork in child mangles stack
    * in the parent. It must be a macro. */
   #[no_mangle]
   fn xfork() -> pid_t;
+
   #[no_mangle]
   fn xvfork_parent_waits_and_exits();
+
   #[no_mangle]
   fn wait_for_exitstatus(pid: pid_t) -> libc::c_int;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -49,15 +67,20 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -65,68 +88,75 @@ pub type __pid_t = libc::c_int;
 pub type __ssize_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
+
 pub type C2RustUnnamed = libc::c_int;
-pub const MS_NOUSER: C2RustUnnamed = -2147483648;
-pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
-pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
-pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
-pub const MS_I_VERSION: C2RustUnnamed = 8388608;
-pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
-pub const MS_RELATIME: C2RustUnnamed = 2097152;
+// pub const MS_NOUSER: C2RustUnnamed = -2147483648;
+// pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
+// pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
+// pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
+// pub const MS_I_VERSION: C2RustUnnamed = 8388608;
+// pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
+// pub const MS_RELATIME: C2RustUnnamed = 2097152;
 pub const MS_SHARED: C2RustUnnamed = 1048576;
 pub const MS_SLAVE: C2RustUnnamed = 524288;
 pub const MS_PRIVATE: C2RustUnnamed = 262144;
-pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
-pub const MS_POSIXACL: C2RustUnnamed = 65536;
-pub const MS_SILENT: C2RustUnnamed = 32768;
+// pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
+// pub const MS_POSIXACL: C2RustUnnamed = 65536;
+// pub const MS_SILENT: C2RustUnnamed = 32768;
 pub const MS_REC: C2RustUnnamed = 16384;
-pub const MS_MOVE: C2RustUnnamed = 8192;
+// pub const MS_MOVE: C2RustUnnamed = 8192;
 pub const MS_BIND: C2RustUnnamed = 4096;
-pub const MS_NODIRATIME: C2RustUnnamed = 2048;
-pub const MS_NOATIME: C2RustUnnamed = 1024;
-pub const MS_DIRSYNC: C2RustUnnamed = 128;
-pub const MS_MANDLOCK: C2RustUnnamed = 64;
-pub const MS_REMOUNT: C2RustUnnamed = 32;
-pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
+// pub const MS_NODIRATIME: C2RustUnnamed = 2048;
+// pub const MS_NOATIME: C2RustUnnamed = 1024;
+// pub const MS_DIRSYNC: C2RustUnnamed = 128;
+// pub const MS_MANDLOCK: C2RustUnnamed = 64;
+// pub const MS_REMOUNT: C2RustUnnamed = 32;
+// pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
 pub const MS_NOEXEC: C2RustUnnamed = 8;
 pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
-pub const MS_RDONLY: C2RustUnnamed = 1;
+// pub const MS_RDONLY: C2RustUnnamed = 1;
+
 pub type uint32_t = __uint32_t;
 pub type uintptr_t = libc::c_ulong;
 pub type ssize_t = __ssize_t;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fd_pair {
   pub rd: libc::c_int,
   pub wr: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct namespace_descr {
   pub flag: libc::c_int,
   pub nsfile4: [libc::c_char; 4],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct namespace_ctx {
   pub path: *mut libc::c_char,
 }
+
 pub type C2RustUnnamed_0 = libc::c_uint;
-pub const OPT_setgroups: C2RustUnnamed_0 = 1024;
-pub const OPT_propagation: C2RustUnnamed_0 = 512;
+// pub const OPT_setgroups: C2RustUnnamed_0 = 1024;
+// pub const OPT_propagation: C2RustUnnamed_0 = 512;
 pub const OPT_mount_proc: C2RustUnnamed_0 = 256;
 pub const OPT_map_root: C2RustUnnamed_0 = 128;
 /* OPT_user, NS_USR_POS, and ns_list[] index must match! */
 pub const OPT_fork: C2RustUnnamed_0 = 64;
-pub const OPT_user: C2RustUnnamed_0 = 32;
-pub const OPT_pid: C2RustUnnamed_0 = 16;
-pub const OPT_net: C2RustUnnamed_0 = 8;
-pub const OPT_ipc: C2RustUnnamed_0 = 4;
-pub const OPT_uts: C2RustUnnamed_0 = 2;
+// pub const OPT_user: C2RustUnnamed_0 = 32;
+// pub const OPT_pid: C2RustUnnamed_0 = 16;
+// pub const OPT_net: C2RustUnnamed_0 = 8;
+// pub const OPT_ipc: C2RustUnnamed_0 = 4;
+// pub const OPT_uts: C2RustUnnamed_0 = 2;
 pub const OPT_mount: C2RustUnnamed_0 = 1;
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 /* OPT_user, NS_USR_POS, and ns_list[] index must match! */
 pub const NS_COUNT: C2RustUnnamed_1 = 6;
@@ -136,7 +166,7 @@ pub const NS_NET_POS: C2RustUnnamed_1 = 3;
 pub const NS_IPC_POS: C2RustUnnamed_1 = 2;
 pub const NS_UTS_POS: C2RustUnnamed_1 = 1;
 pub const NS_MNT_POS: C2RustUnnamed_1 = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini unshare implementation for busybox.
  *

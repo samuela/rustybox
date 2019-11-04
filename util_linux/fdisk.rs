@@ -1,35 +1,51 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn sync();
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
+
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -37,30 +53,37 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
+
   #[no_mangle]
   fn strtoull(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   fn read_line_input(
     st: *mut line_input_t,
@@ -68,38 +91,53 @@ extern "C" {
     command: *mut libc::c_char,
     maxsize: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   #[no_mangle]
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn smart_ulltoa5(
     ul: libc::c_ulonglong,
     buf: *mut libc::c_char,
     scale: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -117,18 +155,25 @@ extern "C" {
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn ioctl_or_perror(
     fd: libc::c_int,
@@ -137,73 +182,106 @@ extern "C" {
     fmt: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   fn bsd_select();
+
   #[no_mangle]
   fn xbsd_print_disklabel(_: libc::c_int);
+
   #[no_mangle]
   fn gpt_list_table(xtra: libc::c_int);
+
   #[no_mangle]
   static sgi_sys_types: [*const libc::c_char; 0];
+
   // #[no_mangle]
   // fn sgi_get_num_sectors(i: libc::c_int) -> libc::c_uint;
   // #[no_mangle]
   // fn sgi_get_sysid(i: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sgi_delete_partition(i: libc::c_int);
+
   #[no_mangle]
   fn sgi_change_sysid(i: libc::c_int, sys: libc::c_int);
+
   #[no_mangle]
   fn sgi_list_table(xtra: libc::c_int);
+
   #[no_mangle]
   fn sgi_set_xcyl();
+
   #[no_mangle]
   fn verify_sgi(verbose: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sgi_add_partition(n: libc::c_int, sys: libc::c_int);
+
   #[no_mangle]
   fn sgi_set_swappartition(i: libc::c_int);
+
   #[no_mangle]
   fn sgi_get_bootfile() -> *const libc::c_char;
+
   #[no_mangle]
   fn sgi_set_bootfile(aFile: *const libc::c_char);
+
   #[no_mangle]
   fn create_sgiinfo();
+
   #[no_mangle]
   fn sgi_write_table();
+
   #[no_mangle]
   fn sgi_set_bootpartition(i: libc::c_int);
+
   // #[no_mangle]
   // static sun_sys_types: [*const libc::c_char; 0];
+
   #[no_mangle]
   fn sun_delete_partition(i: libc::c_int);
+
   #[no_mangle]
   fn sun_change_sysid(i: libc::c_int, sys: libc::c_int);
+
   #[no_mangle]
   fn sun_list_table(xtra: libc::c_int);
+
   #[no_mangle]
   fn add_sun_partition(n: libc::c_int, sys: libc::c_int);
+
   #[no_mangle]
   fn sun_set_alt_cyl();
+
   #[no_mangle]
   fn sun_set_ncyl(cyl: libc::c_int);
+
   #[no_mangle]
   fn sun_set_xcyl();
+
   #[no_mangle]
   fn sun_set_ilfact();
+
   #[no_mangle]
   fn sun_set_rspeed();
+
   #[no_mangle]
   fn sun_set_pcylcount();
+
   #[no_mangle]
   fn toggle_sunflags(i: libc::c_int, mask: libc::c_uchar);
+
   #[no_mangle]
   fn verify_sun();
+
   #[no_mangle]
   fn sun_write_table();
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint32_t = libc::c_uint;
 pub type __uint64_t = libc::c_ulong;
@@ -224,6 +302,7 @@ pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type bb__aliased_uint32_t = uint32_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -238,12 +317,14 @@ pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -263,12 +344,15 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {
   pub __val: [libc::c_ulong; 16],
 }
+
 pub type __jmp_buf = [libc::c_long; 8];
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __jmp_buf_tag {
@@ -276,7 +360,9 @@ pub struct __jmp_buf_tag {
   pub __mask_was_saved: libc::c_int,
   pub __saved_mask: __sigset_t,
 }
+
 pub type jmp_buf = [__jmp_buf_tag; 1];
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -310,7 +396,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -318,8 +406,10 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
 pub type uoff_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct line_input_t {
@@ -333,6 +423,7 @@ pub struct line_input_t {
   pub hist_file: *const libc::c_char,
   pub history: [*mut libc::c_char; 256],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -366,6 +457,7 @@ pub struct globals {
   pub MBRbuffer: [libc::c_char; 2048],
   pub ptes: [pte; 60],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pte {
@@ -375,7 +467,9 @@ pub struct pte {
   pub sectorbuffer: *mut libc::c_char,
   pub changed: libc::c_char,
 }
+
 pub type sector_t = uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct partition {
@@ -390,15 +484,18 @@ pub struct partition {
   pub start4: [libc::c_uchar; 4],
   pub size4: [libc::c_uchar; 4],
 }
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const OPT_s: C2RustUnnamed = 0;
+// pub const OPT_s: C2RustUnnamed = 0;
 pub const OPT_u: C2RustUnnamed = 32;
-pub const OPT_S: C2RustUnnamed = 16;
+// pub const OPT_S: C2RustUnnamed = 16;
 pub const OPT_l: C2RustUnnamed = 8;
-pub const OPT_H: C2RustUnnamed = 4;
-pub const OPT_C: C2RustUnnamed = 2;
+// pub const OPT_H: C2RustUnnamed = 4;
+// pub const OPT_C: C2RustUnnamed = 2;
 pub const OPT_b: C2RustUnnamed = 1;
+
 pub type ullong = libc::c_ulonglong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hd_geometry {
@@ -407,19 +504,22 @@ pub struct hd_geometry {
   pub cylinders: libc::c_ushort,
   pub start: libc::c_ulong,
 }
+
 pub type label_type = libc::c_uint;
-pub const LABEL_GPT: label_type = 5;
-pub const LABEL_OSF: label_type = 4;
-pub const LABEL_AIX: label_type = 3;
-pub const LABEL_SGI: label_type = 2;
-pub const LABEL_SUN: label_type = 1;
+// pub const LABEL_GPT: label_type = 5;
+// pub const LABEL_OSF: label_type = 4;
+// pub const LABEL_AIX: label_type = 3;
+// pub const LABEL_SGI: label_type = 2;
+// pub const LABEL_SUN: label_type = 1;
 pub const LABEL_DOS: label_type = 0;
+
 pub type action = libc::c_uint;
-pub const CREATE_EMPTY_SUN: action = 3;
+// pub const CREATE_EMPTY_SUN: action = 3;
 pub const CREATE_EMPTY_DOS: action = 2;
 pub const TRY_ONLY: action = 1;
 pub const OPEN_MAIN: action = 0;
 pub const dev_fd: C2RustUnnamed_1 = 3;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sun_info {
@@ -428,6 +528,7 @@ pub struct sun_info {
   pub spare2: libc::c_uchar,
   pub flags: libc::c_uchar,
 }
+
 /* FEATURE_FDISK_WRITABLE */
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -451,19 +552,23 @@ pub struct sun_partition {
   pub csum: libc::c_ushort,
   /* Label xor'd checksum */
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sun_partinfo {
   pub start_cylinder: uint32_t,
   pub num_sectors: uint32_t,
 }
+
 pub const COLS: C2RustUnnamed_0 = 3;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub type C2RustUnnamed_1 = libc::c_uint;
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
+
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,
@@ -472,6 +577,7 @@ unsafe extern "C" fn bb_strtoul(
 ) -> libc::c_ulong {
   return bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
+
 static mut msg_building_new_label: [libc::c_char; 143] = [
   66, 117, 105, 108, 100, 105, 110, 103, 32, 97, 32, 110, 101, 119, 32, 37, 115, 46, 32, 67, 104,
   97, 110, 103, 101, 115, 32, 119, 105, 108, 108, 32, 114, 101, 109, 97, 105, 110, 32, 105, 110,
@@ -537,6 +643,7 @@ static mut i386_sys_types: [*const libc::c_char; 49] = [
   b"\xfdLinux raid autodetect\x00" as *const u8 as *const libc::c_char,
   0 as *const libc::c_char,
 ];
+
 /* TODO: move to libbb? */
 /* TODO: return unsigned long long, FEATURE_FDISK_BLKSIZE _can_ handle
  * disks > 2^32 sectors

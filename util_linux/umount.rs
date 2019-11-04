@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
@@ -71,6 +72,7 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -104,10 +106,12 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type size_t = libc::c_ulong;
 pub type __off64_t = libc::c_long;
 pub type _IO_lock_t = ();
 pub type __off_t = libc::c_long;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -115,7 +119,9 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -126,37 +132,41 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
+
 pub type C2RustUnnamed = libc::c_int;
-pub const MS_NOUSER: C2RustUnnamed = -2147483648;
-pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
-pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
-pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
-pub const MS_I_VERSION: C2RustUnnamed = 8388608;
-pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
-pub const MS_RELATIME: C2RustUnnamed = 2097152;
-pub const MS_SHARED: C2RustUnnamed = 1048576;
-pub const MS_SLAVE: C2RustUnnamed = 524288;
-pub const MS_PRIVATE: C2RustUnnamed = 262144;
-pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
-pub const MS_POSIXACL: C2RustUnnamed = 65536;
-pub const MS_SILENT: C2RustUnnamed = 32768;
-pub const MS_REC: C2RustUnnamed = 16384;
-pub const MS_MOVE: C2RustUnnamed = 8192;
-pub const MS_BIND: C2RustUnnamed = 4096;
-pub const MS_NODIRATIME: C2RustUnnamed = 2048;
-pub const MS_NOATIME: C2RustUnnamed = 1024;
-pub const MS_DIRSYNC: C2RustUnnamed = 128;
-pub const MS_MANDLOCK: C2RustUnnamed = 64;
+// pub const MS_NOUSER: C2RustUnnamed = -2147483648;
+// pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
+// pub const MS_LAZYTIME: C2RustUnnamed = 33554432;
+// pub const MS_STRICTATIME: C2RustUnnamed = 16777216;
+// pub const MS_I_VERSION: C2RustUnnamed = 8388608;
+// pub const MS_KERNMOUNT: C2RustUnnamed = 4194304;
+// pub const MS_RELATIME: C2RustUnnamed = 2097152;
+// pub const MS_SHARED: C2RustUnnamed = 1048576;
+// pub const MS_SLAVE: C2RustUnnamed = 524288;
+// pub const MS_PRIVATE: C2RustUnnamed = 262144;
+// pub const MS_UNBINDABLE: C2RustUnnamed = 131072;
+// pub const MS_POSIXACL: C2RustUnnamed = 65536;
+// pub const MS_SILENT: C2RustUnnamed = 32768;
+// pub const MS_REC: C2RustUnnamed = 16384;
+// pub const MS_MOVE: C2RustUnnamed = 8192;
+// pub const MS_BIND: C2RustUnnamed = 4096;
+// pub const MS_NODIRATIME: C2RustUnnamed = 2048;
+// pub const MS_NOATIME: C2RustUnnamed = 1024;
+// pub const MS_DIRSYNC: C2RustUnnamed = 128;
+// pub const MS_MANDLOCK: C2RustUnnamed = 64;
 pub const MS_REMOUNT: C2RustUnnamed = 32;
-pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
-pub const MS_NOEXEC: C2RustUnnamed = 8;
-pub const MS_NODEV: C2RustUnnamed = 4;
-pub const MS_NOSUID: C2RustUnnamed = 2;
+// pub const MS_SYNCHRONOUS: C2RustUnnamed = 16;
+// pub const MS_NOEXEC: C2RustUnnamed = 8;
+// pub const MS_NODEV: C2RustUnnamed = 4;
+// pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
+
 pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mtab_list {
@@ -164,6 +174,7 @@ pub struct mtab_list {
   pub device: *mut libc::c_char,
   pub next: *mut mtab_list,
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn umount_main(
   mut _argc: libc::c_int,

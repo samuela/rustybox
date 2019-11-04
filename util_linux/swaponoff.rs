@@ -58,6 +58,7 @@ extern "C" {
   #[no_mangle]
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
@@ -74,12 +75,14 @@ pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -99,6 +102,7 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -132,7 +136,9 @@ pub struct _IO_FILE {
   pub _mode: libc::c_int,
   pub _unused2: [libc::c_char; 20],
 }
+
 pub type _IO_lock_t = ();
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_marker {
@@ -140,7 +146,9 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
+
 pub type FILE = _IO_FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -151,11 +159,13 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
   pub flags: libc::c_int,
 }
+
 /* Command line options */
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_p: C2RustUnnamed = 8;
@@ -164,12 +174,13 @@ pub const OPT_e: C2RustUnnamed = 2;
 /* -p priority */
 pub const OPT_a: C2RustUnnamed = 1;
 /* -d discard  */
-pub const OPTBIT_p: C2RustUnnamed = 3;
+// pub const OPTBIT_p: C2RustUnnamed = 3;
 /* -e ifexists */
-pub const OPTBIT_d: C2RustUnnamed = 2;
+// pub const OPTBIT_d: C2RustUnnamed = 2;
 /* -a all      */
-pub const OPTBIT_e: C2RustUnnamed = 1;
-pub const OPTBIT_a: C2RustUnnamed = 0;
+// pub const OPTBIT_e: C2RustUnnamed = 1;
+// pub const OPTBIT_a: C2RustUnnamed = 0;
+
 unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc::c_int {
   let mut err: libc::c_int = 0i32;
   let mut quiet: libc::c_int = 0i32;

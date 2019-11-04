@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+
 extern "C" {
   /* Macros for min/max.  */
   /* buffer allocation schemes */
@@ -815,10 +816,6 @@ static mut EMSG_UNDEF_FUNC: [libc::c_char; 27] = [
   67, 97, 108, 108, 32, 116, 111, 32, 117, 110, 100, 101, 102, 105, 110, 101, 100, 32, 102, 117,
   110, 99, 116, 105, 111, 110, 0,
 ];
-static mut EMSG_NO_MATH: [libc::c_char; 32] = [
-  77, 97, 116, 104, 32, 115, 117, 112, 112, 111, 114, 116, 32, 105, 115, 32, 110, 111, 116, 32, 99,
-  111, 109, 112, 105, 108, 101, 100, 32, 105, 110, 0,
-];
 static mut EMSG_NEGATIVE_FIELD: [libc::c_char; 25] = [
   65, 99, 99, 101, 115, 115, 32, 116, 111, 32, 110, 101, 103, 97, 116, 105, 118, 101, 32, 102, 105,
   101, 108, 100, 0,
@@ -1005,7 +1002,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;

@@ -1361,15 +1361,10 @@ pub struct llist_t {
   pub data: *mut libc::c_char,
 }
 
+pub type bb_suid_t = libc::c_uint;
 pub const BB_SUID_DROP: bb_suid_t = 0;
 pub const BB_SUID_REQUIRE: bb_suid_t = 2;
-pub type bb_suid_t = libc::c_uint;
 pub const BB_SUID_MAYBE: bb_suid_t = 1;
-
-#[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
-  return p as *mut libc::c_void;
-}
 
 static mut applet_main: [unsafe extern "C" fn(
   _: libc::c_int,

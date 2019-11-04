@@ -1,31 +1,45 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn volume_id_open_node(fd: libc::c_int) -> *mut volume_id;
+
   #[no_mangle]
   fn volume_id_probe_all(id: *mut volume_id, size: uint64_t) -> libc::c_int;
+
   #[no_mangle]
   fn free_volume_id(id: *mut volume_id);
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn recursive_action(
     fileName: *const libc::c_char,
@@ -49,13 +63,17 @@ extern "C" {
     userData: *mut libc::c_void,
     depth: libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint64_t = libc::c_ulong;
 pub type __dev_t = libc::c_ulong;
@@ -72,12 +90,14 @@ pub type __syscall_slong_t = libc::c_long;
 pub type uint8_t = __uint8_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -97,14 +117,15 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
 pub type C2RustUnnamed = libc::c_uint;
-pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
-pub const ACTION_QUIET: C2RustUnnamed = 32;
-pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
-pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
-pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
+// pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
+// pub const ACTION_QUIET: C2RustUnnamed = 32;
+// pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
+// pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
+// pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Support functions for mounting devices by label/uuid
  *
