@@ -2746,7 +2746,10 @@ unsafe extern "C" fn docd(mut dest: *const libc::c_char, mut flags: libc::c_int)
   int_on();
   return err;
 }
-unsafe extern "C" fn cdcmd(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
+unsafe extern "C" fn cdcmd(
+  mut _argc: libc::c_int,
+  mut _argv: *mut *mut libc::c_char,
+) -> libc::c_int {
   let mut current_block: u64;
   let mut dest: *const libc::c_char = 0 as *const libc::c_char;
   let mut path: *const libc::c_char = 0 as *const libc::c_char;
@@ -9652,422 +9655,406 @@ unsafe extern "C" fn testcmd(
   return test_main(argc, argv);
 }
 /* Keep these in proper order since it is searched via bsearch() */
-static mut builtintab: [builtincmd; 44] =[
-    {
-      let mut init = builtincmd {
-        name: b"3.\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          dotcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3:\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          truecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2[\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2[[\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"6alias\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          aliascmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2bg\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          fg_bgcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3break\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          breakcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2cd\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          cdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0chdir\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          cdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2command\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          commandcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3continue\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          breakcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2echo\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          echocmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3eval\x00" as *const u8 as *const libc::c_char,
-        builtin: None,
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3exec\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          execcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3exit\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          exitcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"7export\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          exportcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2false\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          falsecmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2fg\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          fg_bgcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2getopts\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          getoptscmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0hash\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          hashcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0help\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          helpcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0history\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          historycmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2jobs\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          jobscmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2kill\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          killcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0let\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          letcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"7local\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          localcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2printf\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          printfcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0pwd\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          pwdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2read\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          readcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"7readonly\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          exportcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3return\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          returncmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3set\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          setcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3shift\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          shiftcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3source\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          dotcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2test\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3times\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          timescmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3trap\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          trapcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2true\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          truecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0type\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          typecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"0ulimit\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          ulimitcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2umask\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          umaskcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2unalias\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          unaliascmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"3unset\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          unsetcmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-    {
-      let mut init = builtincmd {
-        name: b"2wait\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          waitcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
-    },
-  ];
+static mut builtintab: [builtincmd; 44] = [
+  {
+    let mut init = builtincmd {
+      name: b"3.\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        dotcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3:\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        truecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2[\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2[[\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"6alias\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        aliascmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2bg\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        fg_bgcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3break\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        breakcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2cd\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        cdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0chdir\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        cdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2command\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        commandcmd
+          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3continue\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        breakcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2echo\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        echocmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3eval\x00" as *const u8 as *const libc::c_char,
+      builtin: None,
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3exec\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        execcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3exit\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        exitcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"7export\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        exportcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2false\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        falsecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2fg\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        fg_bgcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2getopts\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        getoptscmd
+          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0hash\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        hashcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0help\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        helpcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0history\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        historycmd
+          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2jobs\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        jobscmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2kill\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        killcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0let\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        letcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"7local\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        localcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2printf\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        printfcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0pwd\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        pwdcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2read\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        readcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"7readonly\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        exportcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3return\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        returncmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3set\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        setcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3shift\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        shiftcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3source\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        dotcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2test\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        testcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3times\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        timescmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3trap\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        trapcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2true\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        truecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0type\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        typecmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"0ulimit\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        ulimitcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2umask\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        umaskcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2unalias\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        unaliascmd
+          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"3unset\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        unsetcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+  {
+    let mut init = builtincmd {
+      name: b"2wait\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        waitcmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
+    };
+    init
+  },
+];
 /*
  * Search the table of builtin commands.
  */
@@ -10113,17 +10100,15 @@ unsafe extern "C" fn bltincmd(
 }
 unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> libc::c_int {
   let mut current_block: u64;
-  static mut null_bltin: builtincmd =
-    {
-      let mut init = builtincmd {
-        name: b"\x00\x00\x00" as *const u8 as *const libc::c_char,
-        builtin: Some(
-          bltincmd
-            as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-        ),
-      };
-      init
+  static mut null_bltin: builtincmd = {
+    let mut init = builtincmd {
+      name: b"\x00\x00\x00" as *const u8 as *const libc::c_char,
+      builtin: Some(
+        bltincmd as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      ),
     };
+    init
+  };
   let mut localvar_stop: *mut localvar_list = 0 as *mut localvar_list;
   let mut file_stop: *mut parsefile = 0 as *mut parsefile;
   let mut redir_stop: *mut redirtab = 0 as *mut redirtab;
