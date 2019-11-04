@@ -2158,9 +2158,8 @@ unsafe fn get_trimmed_slice(
 
 unsafe fn parse_config_file() {
   /* Don't depend on the tools to combine strings. */
-  static mut config_file: [libc::c_char; 18] = [
-    47, 101, 116, 99, 47, 98, 117, 115, 121, 98, 111, 120, 46, 99, 111, 110, 102, 0,
-  ];
+  let config_file = "/etc/busybox.conf";
+
   let mut sct_head: *mut suid_config_t = 0 as *mut suid_config_t;
   let mut applet_no: libc::c_int = 0;
   let mut f: *mut FILE = 0 as *mut FILE;
@@ -2198,12 +2197,12 @@ unsafe fn parse_config_file() {
     /* run by root - don't need to even read config file */
     return;
   }
-  if stat(config_file.as_ptr(), &mut st) != 0i32
+  if stat(str_to_ptr(config_file), &mut st) != 0i32
     || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
     || st.st_uid != 0i32 as libc::c_uint
     || st.st_mode & (0o200i32 >> 3i32 | 0o200i32 >> 3i32 >> 3i32) as libc::c_uint != 0
     || {
-      f = fopen_for_read(config_file.as_ptr());
+      f = fopen_for_read(str_to_ptr(config_file));
       f.is_null()
     }
   {
@@ -2405,6 +2404,7 @@ unsafe fn parse_config_file() {
     lc,
     errmsg,
   );
+
   /* Release any allocated memory before returning. */
   llist_free(sct_head as *mut llist_t, None);
 }
