@@ -539,6 +539,7 @@ pub mod sysklogd {
   pub mod logread;
   pub mod syslogd_and_logger;
 } // mod sysklogd
+pub mod librb;
 pub mod util_linux;
 
 fn main() {

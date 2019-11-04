@@ -1,53 +1,82 @@
 use libc;
+
+use crate::librb::{
+  __blkcnt_t, __blksize_t, __dev_t, __gid_t, __ino_t, __mode_t, __nlink_t, __off_t, __pid_t,
+  __suseconds_t, __syscall_slong_t, __time_t, __uid_t, off_t, size_t, smallint, uint16_t, uint32_t,
+  uint8_t, uoff_t, FILE, _IO_FILE,
+};
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xunlink(pathname: *const libc::c_char);
+
   #[no_mangle]
   fn open3_or_warn(
     pathname: *const libc::c_char,
     flags: libc::c_int,
     mode: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn setup_unzip_on_fd(fd: libc::c_int, fail_if_not_compressed: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn open_zipped(fname: *const libc::c_char, fail_if_not_compressed: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xclose(fd: libc::c_int);
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -55,57 +84,48 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn xfunc_die() -> !;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn init_transformer_state(xstate: *mut transformer_state_t);
+
   #[no_mangle]
   fn unpack_gz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
+
   #[no_mangle]
   fn unpack_bz2_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
+
   #[no_mangle]
   fn unpack_lzma_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
+
   #[no_mangle]
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
-pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
-pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
   pub tv_sec: __time_t,
   pub tv_nsec: __syscall_slong_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
@@ -126,55 +146,14 @@ pub struct stat {
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-  pub _flags: libc::c_int,
-  pub _IO_read_ptr: *mut libc::c_char,
-  pub _IO_read_end: *mut libc::c_char,
-  pub _IO_read_base: *mut libc::c_char,
-  pub _IO_write_base: *mut libc::c_char,
-  pub _IO_write_ptr: *mut libc::c_char,
-  pub _IO_write_end: *mut libc::c_char,
-  pub _IO_buf_base: *mut libc::c_char,
-  pub _IO_buf_end: *mut libc::c_char,
-  pub _IO_save_base: *mut libc::c_char,
-  pub _IO_backup_base: *mut libc::c_char,
-  pub _IO_save_end: *mut libc::c_char,
-  pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
-  pub _fileno: libc::c_int,
-  pub _flags2: libc::c_int,
-  pub _old_offset: __off_t,
-  pub _cur_column: libc::c_ushort,
-  pub _vtable_offset: libc::c_schar,
-  pub _shortbuf: [libc::c_char; 1],
-  pub _lock: *mut libc::c_void,
-  pub _offset: __off64_t,
-  pub __pad1: *mut libc::c_void,
-  pub __pad2: *mut libc::c_void,
-  pub __pad3: *mut libc::c_void,
-  pub __pad4: *mut libc::c_void,
-  pub __pad5: size_t,
-  pub _mode: libc::c_int,
-  pub _unused2: [libc::c_char; 20],
-}
-pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-pub type FILE = _IO_FILE;
-pub type uoff_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {
@@ -191,6 +170,7 @@ pub struct transformer_state_t {
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -198,6 +178,8 @@ pub union C2RustUnnamed {
   pub b16: [uint16_t; 4],
   pub b32: [uint32_t; 2],
 }
+
+pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_OPT_STDOUT: C2RustUnnamed_0 = 1;
 /* only some decompressors: */
 pub const BBUNPK_OPT_KEEP: C2RustUnnamed_0 = 4;
@@ -205,11 +187,10 @@ pub const BBUNPK_OPT_VERBOSE: C2RustUnnamed_0 = 8;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
 pub const BBUNPK_OPT_FORCE: C2RustUnnamed_0 = 2;
 pub const BBUNPK_OPT_TEST: C2RustUnnamed_0 = 64;
-pub type C2RustUnnamed_0 = libc::c_int;
 /* not included in BBUNPK_OPTSTR: */
 pub const BBUNPK_OPT_DECOMPRESS: C2RustUnnamed_0 = 32;
 pub const BBUNPK_OPT_QUIET: C2RustUnnamed_0 = 16;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Common code for gunzip-like applets
  *
