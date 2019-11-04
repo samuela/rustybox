@@ -1,79 +1,5 @@
 use libc;
 
-use crate::librb::{__compar_fn_t, __pid_t, size_t, FILE, _IO_FILE};
-
-extern "C" {
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn strlen(_: *const libc::c_char) -> libc::c_ulong;
-
-  #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
-
-  #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
-
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn snprintf(
-    _: *mut libc::c_char,
-    _: libc::c_ulong,
-    _: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn fputs(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn getpid() -> __pid_t;
-
-  #[no_mangle]
-  fn __ctype_b_loc() -> *mut *const libc::c_ushort;
-}
-
-pub type C2RustUnnamed = libc::c_uint;
-pub const _ISalnum: C2RustUnnamed = 8;
-pub const _ISpunct: C2RustUnnamed = 4;
-pub const _IScntrl: C2RustUnnamed = 2;
-pub const _ISblank: C2RustUnnamed = 1;
-pub const _ISgraph: C2RustUnnamed = 32768;
-pub const _ISprint: C2RustUnnamed = 16384;
-pub const _ISspace: C2RustUnnamed = 8192;
-pub const _ISxdigit: C2RustUnnamed = 4096;
-pub const _ISdigit: C2RustUnnamed = 2048;
-pub const _ISalpha: C2RustUnnamed = 1024;
-pub const _ISlower: C2RustUnnamed = 512;
-pub const _ISupper: C2RustUnnamed = 256;
-
 #[derive(Copy, Clone)]
 pub enum InstallLoc {
   DIR_USR_SBIN,
@@ -97,16 +23,18 @@ pub const BB_SUID_DROP: bb_suid_t = 0;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct bb_applet {
-  pub name: *const libc::c_char,
-  pub main: *const libc::c_char,
+  pub name: &'static str,
+  pub main: &'static str,
   pub install_loc: InstallLoc,
   pub need_suid: bb_suid_t,
+
   /* true if instead of fork(); exec("applet"); waitpid();
    * one can do fork(); exit(applet_main(argc,argv)); waitpid(); */
   pub noexec: libc::c_uchar,
+
   /* Even nicer */
   /* true if instead of fork(); exec("applet"); waitpid();
    * one can simply call applet_main(argc,argv); */
@@ -115,7 +43,6 @@ pub struct bb_applet {
 
 /* Define struct bb_applet applets[] */
 pub const NUM_APPLETS: libc::c_uint = 396;
-/* DO NOT EDIT. This file is generated from applets.src.h */
 
 /*
  * applets.h - a listing of all busybox applets.
@@ -139,4658 +66,3172 @@ s     - suid type:
         BB_SUID_REQUIRE or BB_SUID_MAYBE applet.
 */
 pub static mut applets: [bb_applet; 396] = [
-  {
-    let mut init = bb_applet {
-      name: b"gunzip\x00" as *const u8 as *const libc::c_char,
-      main: b"gunzip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"zcat\x00" as *const u8 as *const libc::c_char,
-      main: b"gunzip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"bunzip2\x00" as *const u8 as *const libc::c_char,
-      main: b"bunzip2\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"bzcat\x00" as *const u8 as *const libc::c_char,
-      main: b"bunzip2\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unlzma\x00" as *const u8 as *const libc::c_char,
-      main: b"unlzma\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lzcat\x00" as *const u8 as *const libc::c_char,
-      main: b"unlzma\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lzma\x00" as *const u8 as *const libc::c_char,
-      main: b"unlzma\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unxz\x00" as *const u8 as *const libc::c_char,
-      main: b"unxz\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"xzcat\x00" as *const u8 as *const libc::c_char,
-      main: b"unxz\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"xz\x00" as *const u8 as *const libc::c_char,
-      main: b"unxz\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"bzip2\x00" as *const u8 as *const libc::c_char,
-      main: b"bzip2\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cpio\x00" as *const u8 as *const libc::c_char,
-      main: b"cpio\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dpkg\x00" as *const u8 as *const libc::c_char,
-      main: b"dpkg\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dpkg-deb\x00" as *const u8 as *const libc::c_char,
-      main: b"dpkg_deb\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"gzip\x00" as *const u8 as *const libc::c_char,
-      main: b"gzip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lzop\x00" as *const u8 as *const libc::c_char,
-      main: b"lzop\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rpm\x00" as *const u8 as *const libc::c_char,
-      main: b"rpm\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rpm2cpio\x00" as *const u8 as *const libc::c_char,
-      main: b"rpm2cpio\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tar\x00" as *const u8 as *const libc::c_char,
-      main: b"tar\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unzip\x00" as *const u8 as *const libc::c_char,
-      main: b"unzip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chvt\x00" as *const u8 as *const libc::c_char,
-      main: b"chvt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"clear\x00" as *const u8 as *const libc::c_char,
-      main: b"clear\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"deallocvt\x00" as *const u8 as *const libc::c_char,
-      main: b"deallocvt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dumpkmap\x00" as *const u8 as *const libc::c_char,
-      main: b"dumpkmap\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fgconsole\x00" as *const u8 as *const libc::c_char,
-      main: b"fgconsole\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"kbd_mode\x00" as *const u8 as *const libc::c_char,
-      main: b"kbd_mode\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"loadfont\x00" as *const u8 as *const libc::c_char,
-      main: b"loadfont\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setfont\x00" as *const u8 as *const libc::c_char,
-      main: b"setfont\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"loadkmap\x00" as *const u8 as *const libc::c_char,
-      main: b"loadkmap\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"openvt\x00" as *const u8 as *const libc::c_char,
-      main: b"openvt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"reset\x00" as *const u8 as *const libc::c_char,
-      main: b"reset\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"resize\x00" as *const u8 as *const libc::c_char,
-      main: b"resize\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setconsole\x00" as *const u8 as *const libc::c_char,
-      main: b"setconsole\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setkeycodes\x00" as *const u8 as *const libc::c_char,
-      main: b"setkeycodes\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setlogcons\x00" as *const u8 as *const libc::c_char,
-      main: b"setlogcons\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"showkey\x00" as *const u8 as *const libc::c_char,
-      main: b"showkey\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"basename\x00" as *const u8 as *const libc::c_char,
-      main: b"basename\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cat\x00" as *const u8 as *const libc::c_char,
-      main: b"cat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chgrp\x00" as *const u8 as *const libc::c_char,
-      main: b"chgrp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chmod\x00" as *const u8 as *const libc::c_char,
-      main: b"chmod\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chown\x00" as *const u8 as *const libc::c_char,
-      main: b"chown\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chroot\x00" as *const u8 as *const libc::c_char,
-      main: b"chroot\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cksum\x00" as *const u8 as *const libc::c_char,
-      main: b"cksum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"comm\x00" as *const u8 as *const libc::c_char,
-      main: b"comm\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cp\x00" as *const u8 as *const libc::c_char,
-      main: b"cp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cut\x00" as *const u8 as *const libc::c_char,
-      main: b"cut\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"date\x00" as *const u8 as *const libc::c_char,
-      main: b"date\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dd\x00" as *const u8 as *const libc::c_char,
-      main: b"dd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"df\x00" as *const u8 as *const libc::c_char,
-      main: b"df\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dirname\x00" as *const u8 as *const libc::c_char,
-      main: b"dirname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dos2unix\x00" as *const u8 as *const libc::c_char,
-      main: b"dos2unix\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unix2dos\x00" as *const u8 as *const libc::c_char,
-      main: b"dos2unix\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"du\x00" as *const u8 as *const libc::c_char,
-      main: b"du\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"echo\x00" as *const u8 as *const libc::c_char,
-      main: b"echo\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"env\x00" as *const u8 as *const libc::c_char,
-      main: b"env\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"expand\x00" as *const u8 as *const libc::c_char,
-      main: b"expand\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unexpand\x00" as *const u8 as *const libc::c_char,
-      main: b"expand\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"expr\x00" as *const u8 as *const libc::c_char,
-      main: b"expr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"factor\x00" as *const u8 as *const libc::c_char,
-      main: b"factor\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"false\x00" as *const u8 as *const libc::c_char,
-      main: b"false\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fold\x00" as *const u8 as *const libc::c_char,
-      main: b"fold\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"head\x00" as *const u8 as *const libc::c_char,
-      main: b"head\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hostid\x00" as *const u8 as *const libc::c_char,
-      main: b"hostid\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"groups\x00" as *const u8 as *const libc::c_char,
-      main: b"id\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"id\x00" as *const u8 as *const libc::c_char,
-      main: b"id\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"install\x00" as *const u8 as *const libc::c_char,
-      main: b"install\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"link\x00" as *const u8 as *const libc::c_char,
-      main: b"link\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ln\x00" as *const u8 as *const libc::c_char,
-      main: b"ln\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"logname\x00" as *const u8 as *const libc::c_char,
-      main: b"logname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ls\x00" as *const u8 as *const libc::c_char,
-      main: b"ls\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"md5sum\x00" as *const u8 as *const libc::c_char,
-      main: b"md5_sha1_sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sha1sum\x00" as *const u8 as *const libc::c_char,
-      main: b"md5_sha1_sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sha3sum\x00" as *const u8 as *const libc::c_char,
-      main: b"md5_sha1_sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sha256sum\x00" as *const u8 as *const libc::c_char,
-      main: b"md5_sha1_sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sha512sum\x00" as *const u8 as *const libc::c_char,
-      main: b"md5_sha1_sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkdir\x00" as *const u8 as *const libc::c_char,
-      main: b"mkdir\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkfifo\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfifo\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mknod\x00" as *const u8 as *const libc::c_char,
-      main: b"mknod\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mktemp\x00" as *const u8 as *const libc::c_char,
-      main: b"mktemp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mv\x00" as *const u8 as *const libc::c_char,
-      main: b"mv\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nice\x00" as *const u8 as *const libc::c_char,
-      main: b"nice\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nl\x00" as *const u8 as *const libc::c_char,
-      main: b"nl\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nohup\x00" as *const u8 as *const libc::c_char,
-      main: b"nohup\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nproc\x00" as *const u8 as *const libc::c_char,
-      main: b"nproc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"od\x00" as *const u8 as *const libc::c_char,
-      main: b"od\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"paste\x00" as *const u8 as *const libc::c_char,
-      main: b"paste\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"printenv\x00" as *const u8 as *const libc::c_char,
-      main: b"printenv\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"printf\x00" as *const u8 as *const libc::c_char,
-      main: b"printf\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pwd\x00" as *const u8 as *const libc::c_char,
-      main: b"pwd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"readlink\x00" as *const u8 as *const libc::c_char,
-      main: b"readlink\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"realpath\x00" as *const u8 as *const libc::c_char,
-      main: b"realpath\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rm\x00" as *const u8 as *const libc::c_char,
-      main: b"rm\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rmdir\x00" as *const u8 as *const libc::c_char,
-      main: b"rmdir\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"seq\x00" as *const u8 as *const libc::c_char,
-      main: b"seq\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"shred\x00" as *const u8 as *const libc::c_char,
-      main: b"shred\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"shuf\x00" as *const u8 as *const libc::c_char,
-      main: b"shuf\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sleep\x00" as *const u8 as *const libc::c_char,
-      main: b"sleep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sort\x00" as *const u8 as *const libc::c_char,
-      main: b"sort\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"split\x00" as *const u8 as *const libc::c_char,
-      main: b"split\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"stat\x00" as *const u8 as *const libc::c_char,
-      main: b"stat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"stty\x00" as *const u8 as *const libc::c_char,
-      main: b"stty\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sum\x00" as *const u8 as *const libc::c_char,
-      main: b"sum\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sync\x00" as *const u8 as *const libc::c_char,
-      main: b"sync\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fsync\x00" as *const u8 as *const libc::c_char,
-      main: b"fsync\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tac\x00" as *const u8 as *const libc::c_char,
-      main: b"tac\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tail\x00" as *const u8 as *const libc::c_char,
-      main: b"tail\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tee\x00" as *const u8 as *const libc::c_char,
-      main: b"tee\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"test\x00" as *const u8 as *const libc::c_char,
-      main: b"test\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"[\x00" as *const u8 as *const libc::c_char,
-      main: b"test\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"[[\x00" as *const u8 as *const libc::c_char,
-      main: b"test\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"timeout\x00" as *const u8 as *const libc::c_char,
-      main: b"timeout\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"touch\x00" as *const u8 as *const libc::c_char,
-      main: b"touch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tr\x00" as *const u8 as *const libc::c_char,
-      main: b"tr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"true\x00" as *const u8 as *const libc::c_char,
-      main: b"true\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"truncate\x00" as *const u8 as *const libc::c_char,
-      main: b"truncate\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tty\x00" as *const u8 as *const libc::c_char,
-      main: b"tty\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uname\x00" as *const u8 as *const libc::c_char,
-      main: b"uname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"arch\x00" as *const u8 as *const libc::c_char,
-      main: b"uname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uniq\x00" as *const u8 as *const libc::c_char,
-      main: b"uniq\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unlink\x00" as *const u8 as *const libc::c_char,
-      main: b"unlink\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"usleep\x00" as *const u8 as *const libc::c_char,
-      main: b"usleep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uudecode\x00" as *const u8 as *const libc::c_char,
-      main: b"uudecode\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"base64\x00" as *const u8 as *const libc::c_char,
-      main: b"base64\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uuencode\x00" as *const u8 as *const libc::c_char,
-      main: b"uuencode\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"wc\x00" as *const u8 as *const libc::c_char,
-      main: b"wc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"users\x00" as *const u8 as *const libc::c_char,
-      main: b"who\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"w\x00" as *const u8 as *const libc::c_char,
-      main: b"who\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"who\x00" as *const u8 as *const libc::c_char,
-      main: b"who\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"whoami\x00" as *const u8 as *const libc::c_char,
-      main: b"whoami\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"yes\x00" as *const u8 as *const libc::c_char,
-      main: b"yes\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pipe_progress\x00" as *const u8 as *const libc::c_char,
-      main: b"pipe_progress\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"run-parts\x00" as *const u8 as *const libc::c_char,
-      main: b"run_parts\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"start-stop-daemon\x00" as *const u8 as *const libc::c_char,
-      main: b"start_stop_daemon\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"which\x00" as *const u8 as *const libc::c_char,
-      main: b"which\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chattr\x00" as *const u8 as *const libc::c_char,
-      main: b"chattr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fsck\x00" as *const u8 as *const libc::c_char,
-      main: b"fsck\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lsattr\x00" as *const u8 as *const libc::c_char,
-      main: b"lsattr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"awk\x00" as *const u8 as *const libc::c_char,
-      main: b"awk\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cmp\x00" as *const u8 as *const libc::c_char,
-      main: b"cmp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"diff\x00" as *const u8 as *const libc::c_char,
-      main: b"diff\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ed\x00" as *const u8 as *const libc::c_char,
-      main: b"ed\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"patch\x00" as *const u8 as *const libc::c_char,
-      main: b"patch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sed\x00" as *const u8 as *const libc::c_char,
-      main: b"sed\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"vi\x00" as *const u8 as *const libc::c_char,
-      main: b"vi\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"find\x00" as *const u8 as *const libc::c_char,
-      main: b"find\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"grep\x00" as *const u8 as *const libc::c_char,
-      main: b"grep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"egrep\x00" as *const u8 as *const libc::c_char,
-      main: b"grep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fgrep\x00" as *const u8 as *const libc::c_char,
-      main: b"grep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"xargs\x00" as *const u8 as *const libc::c_char,
-      main: b"xargs\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"bootchartd\x00" as *const u8 as *const libc::c_char,
-      main: b"bootchartd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"halt\x00" as *const u8 as *const libc::c_char,
-      main: b"halt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"poweroff\x00" as *const u8 as *const libc::c_char,
-      main: b"halt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"reboot\x00" as *const u8 as *const libc::c_char,
-      main: b"halt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"init\x00" as *const u8 as *const libc::c_char,
-      main: b"init\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"linuxrc\x00" as *const u8 as *const libc::c_char,
-      main: b"init\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_ROOT,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nuke\x00" as *const u8 as *const libc::c_char,
-      main: b"nuke\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"resume\x00" as *const u8 as *const libc::c_char,
-      main: b"resume\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"add-shell\x00" as *const u8 as *const libc::c_char,
-      main: b"add_remove_shell\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"remove-shell\x00" as *const u8 as *const libc::c_char,
-      main: b"add_remove_shell\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"addgroup\x00" as *const u8 as *const libc::c_char,
-      main: b"addgroup\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"adduser\x00" as *const u8 as *const libc::c_char,
-      main: b"adduser\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chpasswd\x00" as *const u8 as *const libc::c_char,
-      main: b"chpasswd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cryptpw\x00" as *const u8 as *const libc::c_char,
-      main: b"cryptpw\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkpasswd\x00" as *const u8 as *const libc::c_char,
-      main: b"cryptpw\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"deluser\x00" as *const u8 as *const libc::c_char,
-      main: b"deluser\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"delgroup\x00" as *const u8 as *const libc::c_char,
-      main: b"deluser\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"getty\x00" as *const u8 as *const libc::c_char,
-      main: b"getty\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"login\x00" as *const u8 as *const libc::c_char,
-      main: b"login\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"passwd\x00" as *const u8 as *const libc::c_char,
-      main: b"passwd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"su\x00" as *const u8 as *const libc::c_char,
-      main: b"su\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sulogin\x00" as *const u8 as *const libc::c_char,
-      main: b"sulogin\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"vlock\x00" as *const u8 as *const libc::c_char,
-      main: b"vlock\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"makemime\x00" as *const u8 as *const libc::c_char,
-      main: b"makemime\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"popmaildir\x00" as *const u8 as *const libc::c_char,
-      main: b"popmaildir\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"reformime\x00" as *const u8 as *const libc::c_char,
-      main: b"reformime\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sendmail\x00" as *const u8 as *const libc::c_char,
-      main: b"sendmail\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"adjtimex\x00" as *const u8 as *const libc::c_char,
-      main: b"adjtimex\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"bc\x00" as *const u8 as *const libc::c_char,
-      main: b"bc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dc\x00" as *const u8 as *const libc::c_char,
-      main: b"dc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"beep\x00" as *const u8 as *const libc::c_char,
-      main: b"beep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chat\x00" as *const u8 as *const libc::c_char,
-      main: b"chat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"conspy\x00" as *const u8 as *const libc::c_char,
-      main: b"conspy\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"crond\x00" as *const u8 as *const libc::c_char,
-      main: b"crond\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"crontab\x00" as *const u8 as *const libc::c_char,
-      main: b"crontab\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"devmem\x00" as *const u8 as *const libc::c_char,
-      main: b"devmem\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fbsplash\x00" as *const u8 as *const libc::c_char,
-      main: b"fbsplash\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hdparm\x00" as *const u8 as *const libc::c_char,
-      main: b"hdparm\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hexedit\x00" as *const u8 as *const libc::c_char,
-      main: b"hexedit\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"i2cget\x00" as *const u8 as *const libc::c_char,
-      main: b"i2cget\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"i2cset\x00" as *const u8 as *const libc::c_char,
-      main: b"i2cset\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"i2cdump\x00" as *const u8 as *const libc::c_char,
-      main: b"i2cdump\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"i2cdetect\x00" as *const u8 as *const libc::c_char,
-      main: b"i2cdetect\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"i2ctransfer\x00" as *const u8 as *const libc::c_char,
-      main: b"i2ctransfer\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"less\x00" as *const u8 as *const libc::c_char,
-      main: b"less\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lsscsi\x00" as *const u8 as *const libc::c_char,
-      main: b"lsscsi\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"makedevs\x00" as *const u8 as *const libc::c_char,
-      main: b"makedevs\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"man\x00" as *const u8 as *const libc::c_char,
-      main: b"man\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"microcom\x00" as *const u8 as *const libc::c_char,
-      main: b"microcom\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mt\x00" as *const u8 as *const libc::c_char,
-      main: b"mt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nandwrite\x00" as *const u8 as *const libc::c_char,
-      main: b"nandwrite\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nanddump\x00" as *const u8 as *const libc::c_char,
-      main: b"nandwrite\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"partprobe\x00" as *const u8 as *const libc::c_char,
-      main: b"partprobe\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"raidautorun\x00" as *const u8 as *const libc::c_char,
-      main: b"raidautorun\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"readahead\x00" as *const u8 as *const libc::c_char,
-      main: b"readahead\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"runlevel\x00" as *const u8 as *const libc::c_char,
-      main: b"runlevel\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rx\x00" as *const u8 as *const libc::c_char,
-      main: b"rx\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setfattr\x00" as *const u8 as *const libc::c_char,
-      main: b"setfattr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setserial\x00" as *const u8 as *const libc::c_char,
-      main: b"setserial\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"strings\x00" as *const u8 as *const libc::c_char,
-      main: b"strings\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"time\x00" as *const u8 as *const libc::c_char,
-      main: b"time\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ts\x00" as *const u8 as *const libc::c_char,
-      main: b"ts\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ttysize\x00" as *const u8 as *const libc::c_char,
-      main: b"ttysize\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubiattach\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubidetach\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubimkvol\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubirmvol\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubirsvol\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubiupdatevol\x00" as *const u8 as *const libc::c_char,
-      main: b"ubi_tools\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ubirename\x00" as *const u8 as *const libc::c_char,
-      main: b"ubirename\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"volname\x00" as *const u8 as *const libc::c_char,
-      main: b"volname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"watchdog\x00" as *const u8 as *const libc::c_char,
-      main: b"watchdog\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"modinfo\x00" as *const u8 as *const libc::c_char,
-      main: b"modinfo\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lsmod\x00" as *const u8 as *const libc::c_char,
-      main: b"lsmod\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"modprobe\x00" as *const u8 as *const libc::c_char,
-      main: b"modprobe\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"depmod\x00" as *const u8 as *const libc::c_char,
-      main: b"modprobe\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"insmod\x00" as *const u8 as *const libc::c_char,
-      main: b"modprobe\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rmmod\x00" as *const u8 as *const libc::c_char,
-      main: b"modprobe\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"arp\x00" as *const u8 as *const libc::c_char,
-      main: b"arp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"arping\x00" as *const u8 as *const libc::c_char,
-      main: b"arping\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"brctl\x00" as *const u8 as *const libc::c_char,
-      main: b"brctl\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dnsd\x00" as *const u8 as *const libc::c_char,
-      main: b"dnsd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ether-wake\x00" as *const u8 as *const libc::c_char,
-      main: b"ether_wake\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ftpd\x00" as *const u8 as *const libc::c_char,
-      main: b"ftpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ftpget\x00" as *const u8 as *const libc::c_char,
-      main: b"ftpgetput\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ftpput\x00" as *const u8 as *const libc::c_char,
-      main: b"ftpgetput\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dnsdomainname\x00" as *const u8 as *const libc::c_char,
-      main: b"hostname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hostname\x00" as *const u8 as *const libc::c_char,
-      main: b"hostname\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"httpd\x00" as *const u8 as *const libc::c_char,
-      main: b"httpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ifconfig\x00" as *const u8 as *const libc::c_char,
-      main: b"ifconfig\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ifenslave\x00" as *const u8 as *const libc::c_char,
-      main: b"ifenslave\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ifplugd\x00" as *const u8 as *const libc::c_char,
-      main: b"ifplugd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ifup\x00" as *const u8 as *const libc::c_char,
-      main: b"ifupdown\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ifdown\x00" as *const u8 as *const libc::c_char,
-      main: b"ifupdown\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"inetd\x00" as *const u8 as *const libc::c_char,
-      main: b"inetd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ip\x00" as *const u8 as *const libc::c_char,
-      main: b"ip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ipaddr\x00" as *const u8 as *const libc::c_char,
-      main: b"ipaddr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"iplink\x00" as *const u8 as *const libc::c_char,
-      main: b"iplink\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"iproute\x00" as *const u8 as *const libc::c_char,
-      main: b"iproute\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"iprule\x00" as *const u8 as *const libc::c_char,
-      main: b"iprule\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"iptunnel\x00" as *const u8 as *const libc::c_char,
-      main: b"iptunnel\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ipneigh\x00" as *const u8 as *const libc::c_char,
-      main: b"ipneigh\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ipcalc\x00" as *const u8 as *const libc::c_char,
-      main: b"ipcalc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fakeidentd\x00" as *const u8 as *const libc::c_char,
-      main: b"fakeidentd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nameif\x00" as *const u8 as *const libc::c_char,
-      main: b"nameif\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nbd-client\x00" as *const u8 as *const libc::c_char,
-      main: b"nbdclient\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nc\x00" as *const u8 as *const libc::c_char,
-      main: b"nc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"netstat\x00" as *const u8 as *const libc::c_char,
-      main: b"netstat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nslookup\x00" as *const u8 as *const libc::c_char,
-      main: b"nslookup\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ntpd\x00" as *const u8 as *const libc::c_char,
-      main: b"ntpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ping\x00" as *const u8 as *const libc::c_char,
-      main: b"ping\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ping6\x00" as *const u8 as *const libc::c_char,
-      main: b"ping6\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pscan\x00" as *const u8 as *const libc::c_char,
-      main: b"pscan\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"route\x00" as *const u8 as *const libc::c_char,
-      main: b"route\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"slattach\x00" as *const u8 as *const libc::c_char,
-      main: b"slattach\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ssl_client\x00" as *const u8 as *const libc::c_char,
-      main: b"ssl_client\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tc\x00" as *const u8 as *const libc::c_char,
-      main: b"tc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tcpsvd\x00" as *const u8 as *const libc::c_char,
-      main: b"tcpudpsvd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"udpsvd\x00" as *const u8 as *const libc::c_char,
-      main: b"tcpudpsvd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"telnet\x00" as *const u8 as *const libc::c_char,
-      main: b"telnet\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"telnetd\x00" as *const u8 as *const libc::c_char,
-      main: b"telnetd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tftp\x00" as *const u8 as *const libc::c_char,
-      main: b"tftp\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tftpd\x00" as *const u8 as *const libc::c_char,
-      main: b"tftpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"traceroute\x00" as *const u8 as *const libc::c_char,
-      main: b"traceroute\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"traceroute6\x00" as *const u8 as *const libc::c_char,
-      main: b"traceroute6\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"tunctl\x00" as *const u8 as *const libc::c_char,
-      main: b"tunctl\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"vconfig\x00" as *const u8 as *const libc::c_char,
-      main: b"vconfig\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"wget\x00" as *const u8 as *const libc::c_char,
-      main: b"wget\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"whois\x00" as *const u8 as *const libc::c_char,
-      main: b"whois\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"zcip\x00" as *const u8 as *const libc::c_char,
-      main: b"zcip\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lpd\x00" as *const u8 as *const libc::c_char,
-      main: b"lpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lpq\x00" as *const u8 as *const libc::c_char,
-      main: b"lpqr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lpr\x00" as *const u8 as *const libc::c_char,
-      main: b"lpqr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"free\x00" as *const u8 as *const libc::c_char,
-      main: b"free\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fuser\x00" as *const u8 as *const libc::c_char,
-      main: b"fuser\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"iostat\x00" as *const u8 as *const libc::c_char,
-      main: b"iostat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"kill\x00" as *const u8 as *const libc::c_char,
-      main: b"kill\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"killall\x00" as *const u8 as *const libc::c_char,
-      main: b"kill\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"killall5\x00" as *const u8 as *const libc::c_char,
-      main: b"kill\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lsof\x00" as *const u8 as *const libc::c_char,
-      main: b"lsof\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mpstat\x00" as *const u8 as *const libc::c_char,
-      main: b"mpstat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nmeter\x00" as *const u8 as *const libc::c_char,
-      main: b"nmeter\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pgrep\x00" as *const u8 as *const libc::c_char,
-      main: b"pgrep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pkill\x00" as *const u8 as *const libc::c_char,
-      main: b"pgrep\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pidof\x00" as *const u8 as *const libc::c_char,
-      main: b"pidof\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pmap\x00" as *const u8 as *const libc::c_char,
-      main: b"pmap\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"powertop\x00" as *const u8 as *const libc::c_char,
-      main: b"powertop\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ps\x00" as *const u8 as *const libc::c_char,
-      main: b"ps\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pstree\x00" as *const u8 as *const libc::c_char,
-      main: b"pstree\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pwdx\x00" as *const u8 as *const libc::c_char,
-      main: b"pwdx\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"smemcap\x00" as *const u8 as *const libc::c_char,
-      main: b"smemcap\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sysctl\x00" as *const u8 as *const libc::c_char,
-      main: b"sysctl\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"top\x00" as *const u8 as *const libc::c_char,
-      main: b"top\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uptime\x00" as *const u8 as *const libc::c_char,
-      main: b"uptime\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"watch\x00" as *const u8 as *const libc::c_char,
-      main: b"watch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chpst\x00" as *const u8 as *const libc::c_char,
-      main: b"chpst\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"envdir\x00" as *const u8 as *const libc::c_char,
-      main: b"chpst\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"envuidgid\x00" as *const u8 as *const libc::c_char,
-      main: b"chpst\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setuidgid\x00" as *const u8 as *const libc::c_char,
-      main: b"chpst\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"softlimit\x00" as *const u8 as *const libc::c_char,
-      main: b"chpst\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"runsv\x00" as *const u8 as *const libc::c_char,
-      main: b"runsv\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"runsvdir\x00" as *const u8 as *const libc::c_char,
-      main: b"runsvdir\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sv\x00" as *const u8 as *const libc::c_char,
-      main: b"sv\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"svc\x00" as *const u8 as *const libc::c_char,
-      main: b"svc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"svok\x00" as *const u8 as *const libc::c_char,
-      main: b"svok\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"svlogd\x00" as *const u8 as *const libc::c_char,
-      main: b"svlogd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ash\x00" as *const u8 as *const libc::c_char,
-      main: b"ash\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"sh\x00" as *const u8 as *const libc::c_char,
-      main: b"ash\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cttyhack\x00" as *const u8 as *const libc::c_char,
-      main: b"cttyhack\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hush\x00" as *const u8 as *const libc::c_char,
-      main: b"hush\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"klogd\x00" as *const u8 as *const libc::c_char,
-      main: b"klogd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"logger\x00" as *const u8 as *const libc::c_char,
-      main: b"logger\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"logread\x00" as *const u8 as *const libc::c_char,
-      main: b"logread\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"syslogd\x00" as *const u8 as *const libc::c_char,
-      main: b"syslogd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"acpid\x00" as *const u8 as *const libc::c_char,
-      main: b"acpid\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"blkdiscard\x00" as *const u8 as *const libc::c_char,
-      main: b"blkdiscard\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"blkid\x00" as *const u8 as *const libc::c_char,
-      main: b"blkid\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"blockdev\x00" as *const u8 as *const libc::c_char,
-      main: b"blockdev\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"cal\x00" as *const u8 as *const libc::c_char,
-      main: b"cal\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"chrt\x00" as *const u8 as *const libc::c_char,
-      main: b"chrt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dmesg\x00" as *const u8 as *const libc::c_char,
-      main: b"dmesg\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"eject\x00" as *const u8 as *const libc::c_char,
-      main: b"eject\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fallocate\x00" as *const u8 as *const libc::c_char,
-      main: b"fallocate\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fatattr\x00" as *const u8 as *const libc::c_char,
-      main: b"fatattr\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fbset\x00" as *const u8 as *const libc::c_char,
-      main: b"fbset\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fdformat\x00" as *const u8 as *const libc::c_char,
-      main: b"fdformat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fdisk\x00" as *const u8 as *const libc::c_char,
-      main: b"fdisk\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"findfs\x00" as *const u8 as *const libc::c_char,
-      main: b"findfs\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"flock\x00" as *const u8 as *const libc::c_char,
-      main: b"flock\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fdflush\x00" as *const u8 as *const libc::c_char,
-      main: b"freeramdisk\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"freeramdisk\x00" as *const u8 as *const libc::c_char,
-      main: b"freeramdisk\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fsck.minix\x00" as *const u8 as *const libc::c_char,
-      main: b"fsck_minix\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fsfreeze\x00" as *const u8 as *const libc::c_char,
-      main: b"fsfreeze\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"fstrim\x00" as *const u8 as *const libc::c_char,
-      main: b"fstrim\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"getopt\x00" as *const u8 as *const libc::c_char,
-      main: b"getopt\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hexdump\x00" as *const u8 as *const libc::c_char,
-      main: b"hexdump\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hd\x00" as *const u8 as *const libc::c_char,
-      main: b"hexdump\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"xxd\x00" as *const u8 as *const libc::c_char,
-      main: b"xxd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"hwclock\x00" as *const u8 as *const libc::c_char,
-      main: b"hwclock\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ionice\x00" as *const u8 as *const libc::c_char,
-      main: b"ionice\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ipcrm\x00" as *const u8 as *const libc::c_char,
-      main: b"ipcrm\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"ipcs\x00" as *const u8 as *const libc::c_char,
-      main: b"ipcs\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"last\x00" as *const u8 as *const libc::c_char,
-      main: b"last\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"losetup\x00" as *const u8 as *const libc::c_char,
-      main: b"losetup\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lspci\x00" as *const u8 as *const libc::c_char,
-      main: b"lspci\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"lsusb\x00" as *const u8 as *const libc::c_char,
-      main: b"lsusb\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mdev\x00" as *const u8 as *const libc::c_char,
-      main: b"mdev\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mesg\x00" as *const u8 as *const libc::c_char,
-      main: b"mesg\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mke2fs\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfs_ext2\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkfs.ext2\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfs_ext2\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkfs.minix\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfs_minix\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkdosfs\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfs_vfat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkfs.vfat\x00" as *const u8 as *const libc::c_char,
-      main: b"mkfs_vfat\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mkswap\x00" as *const u8 as *const libc::c_char,
-      main: b"mkswap\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"more\x00" as *const u8 as *const libc::c_char,
-      main: b"more\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mount\x00" as *const u8 as *const libc::c_char,
-      main: b"mount\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_MAYBE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"mountpoint\x00" as *const u8 as *const libc::c_char,
-      main: b"mountpoint\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nologin\x00" as *const u8 as *const libc::c_char,
-      main: b"scripted\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"nsenter\x00" as *const u8 as *const libc::c_char,
-      main: b"nsenter\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"pivot_root\x00" as *const u8 as *const libc::c_char,
-      main: b"pivot_root\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 1i32 as libc::c_uchar,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rdate\x00" as *const u8 as *const libc::c_char,
-      main: b"rdate\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rdev\x00" as *const u8 as *const libc::c_char,
-      main: b"rdev\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"readprofile\x00" as *const u8 as *const libc::c_char,
-      main: b"readprofile\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"renice\x00" as *const u8 as *const libc::c_char,
-      main: b"renice\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rev\x00" as *const u8 as *const libc::c_char,
-      main: b"rev\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"rtcwake\x00" as *const u8 as *const libc::c_char,
-      main: b"rtcwake\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"script\x00" as *const u8 as *const libc::c_char,
-      main: b"script\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"scriptreplay\x00" as *const u8 as *const libc::c_char,
-      main: b"scriptreplay\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setarch\x00" as *const u8 as *const libc::c_char,
-      main: b"setarch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"linux32\x00" as *const u8 as *const libc::c_char,
-      main: b"setarch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"linux64\x00" as *const u8 as *const libc::c_char,
-      main: b"setarch\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setpriv\x00" as *const u8 as *const libc::c_char,
-      main: b"setpriv\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"setsid\x00" as *const u8 as *const libc::c_char,
-      main: b"setsid\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"swapon\x00" as *const u8 as *const libc::c_char,
-      main: b"swap_on_off\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"swapoff\x00" as *const u8 as *const libc::c_char,
-      main: b"swap_on_off\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"switch_root\x00" as *const u8 as *const libc::c_char,
-      main: b"switch_root\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"run-init\x00" as *const u8 as *const libc::c_char,
-      main: b"switch_root\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"taskset\x00" as *const u8 as *const libc::c_char,
-      main: b"taskset\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"uevent\x00" as *const u8 as *const libc::c_char,
-      main: b"uevent\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"umount\x00" as *const u8 as *const libc::c_char,
-      main: b"umount\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"unshare\x00" as *const u8 as *const libc::c_char,
-      main: b"unshare\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"wall\x00" as *const u8 as *const libc::c_char,
-      main: b"wall\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_REQUIRE,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"udhcpc6\x00" as *const u8 as *const libc::c_char,
-      main: b"udhcpc6\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"udhcpc\x00" as *const u8 as *const libc::c_char,
-      main: b"udhcpc\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"udhcpd\x00" as *const u8 as *const libc::c_char,
-      main: b"udhcpd\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dhcprelay\x00" as *const u8 as *const libc::c_char,
-      main: b"dhcprelay\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 0,
-      nofork: 0,
-    };
-    init
-  },
-  {
-    let mut init = bb_applet {
-      name: b"dumpleases\x00" as *const u8 as *const libc::c_char,
-      main: b"dumpleases\x00" as *const u8 as *const libc::c_char,
-      install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: BB_SUID_DROP,
-      noexec: 1i32 as libc::c_uchar,
-      nofork: 0,
-    };
-    init
+  bb_applet {
+    name: "gunzip",
+    main: "gunzip",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "zcat",
+    main: "gunzip",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "bunzip2",
+    main: "bunzip2",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "bzcat",
+    main: "bunzip2",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unlzma",
+    main: "unlzma",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lzcat",
+    main: "unlzma",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lzma",
+    main: "unlzma",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unxz",
+    main: "unxz",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "xzcat",
+    main: "unxz",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "xz",
+    main: "unxz",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "bzip2",
+    main: "bzip2",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cpio",
+    main: "cpio",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dpkg",
+    main: "dpkg",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dpkg-deb",
+    main: "dpkg_deb",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "gzip",
+    main: "gzip",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lzop",
+    main: "lzop",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rpm",
+    main: "rpm",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rpm2cpio",
+    main: "rpm2cpio",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tar",
+    main: "tar",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unzip",
+    main: "unzip",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chvt",
+    main: "chvt",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "clear",
+    main: "clear",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "deallocvt",
+    main: "deallocvt",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dumpkmap",
+    main: "dumpkmap",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fgconsole",
+    main: "fgconsole",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "kbd_mode",
+    main: "kbd_mode",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "loadfont",
+    main: "loadfont",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setfont",
+    main: "setfont",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "loadkmap",
+    main: "loadkmap",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "openvt",
+    main: "openvt",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "reset",
+    main: "reset",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "resize",
+    main: "resize",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setconsole",
+    main: "setconsole",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setkeycodes",
+    main: "setkeycodes",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setlogcons",
+    main: "setlogcons",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "showkey",
+    main: "showkey",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "basename",
+    main: "basename",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "cat",
+    main: "cat",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chgrp",
+    main: "chgrp",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chmod",
+    main: "chmod",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chown",
+    main: "chown",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chroot",
+    main: "chroot",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cksum",
+    main: "cksum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "comm",
+    main: "comm",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cp",
+    main: "cp",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cut",
+    main: "cut",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "date",
+    main: "date",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dd",
+    main: "dd",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "df",
+    main: "df",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dirname",
+    main: "dirname",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "dos2unix",
+    main: "dos2unix",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unix2dos",
+    main: "dos2unix",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "du",
+    main: "du",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "echo",
+    main: "echo",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "env",
+    main: "env",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "expand",
+    main: "expand",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unexpand",
+    main: "expand",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "expr",
+    main: "expr",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "factor",
+    main: "factor",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "false",
+    main: "false",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "fold",
+    main: "fold",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "head",
+    main: "head",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hostid",
+    main: "hostid",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "groups",
+    main: "id",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "id",
+    main: "id",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "install",
+    main: "install",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "link",
+    main: "link",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "ln",
+    main: "ln",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "logname",
+    main: "logname",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "ls",
+    main: "ls",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "md5sum",
+    main: "md5_sha1_sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sha1sum",
+    main: "md5_sha1_sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sha3sum",
+    main: "md5_sha1_sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sha256sum",
+    main: "md5_sha1_sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sha512sum",
+    main: "md5_sha1_sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkdir",
+    main: "mkdir",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "mkfifo",
+    main: "mkfifo",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mknod",
+    main: "mknod",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mktemp",
+    main: "mktemp",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mv",
+    main: "mv",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nice",
+    main: "nice",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nl",
+    main: "nl",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nohup",
+    main: "nohup",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nproc",
+    main: "nproc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "od",
+    main: "od",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "paste",
+    main: "paste",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "printenv",
+    main: "printenv",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "printf",
+    main: "printf",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "pwd",
+    main: "pwd",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "readlink",
+    main: "readlink",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "realpath",
+    main: "realpath",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "rm",
+    main: "rm",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rmdir",
+    main: "rmdir",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "seq",
+    main: "seq",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "shred",
+    main: "shred",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "shuf",
+    main: "shuf",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sleep",
+    main: "sleep",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sort",
+    main: "sort",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "split",
+    main: "split",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "stat",
+    main: "stat",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "stty",
+    main: "stty",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sum",
+    main: "sum",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sync",
+    main: "sync",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "fsync",
+    main: "fsync",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "tac",
+    main: "tac",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tail",
+    main: "tail",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tee",
+    main: "tee",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "test",
+    main: "test",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "[",
+    main: "test",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "[[",
+    main: "test",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "timeout",
+    main: "timeout",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "touch",
+    main: "touch",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "tr",
+    main: "tr",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "true",
+    main: "true",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "truncate",
+    main: "truncate",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "tty",
+    main: "tty",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "uname",
+    main: "uname",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "arch",
+    main: "uname",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "uniq",
+    main: "uniq",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unlink",
+    main: "unlink",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "usleep",
+    main: "usleep",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "uudecode",
+    main: "uudecode",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "base64",
+    main: "base64",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "uuencode",
+    main: "uuencode",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "wc",
+    main: "wc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "users",
+    main: "who",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "w",
+    main: "who",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "who",
+    main: "who",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "whoami",
+    main: "whoami",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "yes",
+    main: "yes",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pipe_progress",
+    main: "pipe_progress",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "run-parts",
+    main: "run_parts",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "start-stop-daemon",
+    main: "start_stop_daemon",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "which",
+    main: "which",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "chattr",
+    main: "chattr",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fsck",
+    main: "fsck",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lsattr",
+    main: "lsattr",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "awk",
+    main: "awk",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cmp",
+    main: "cmp",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "diff",
+    main: "diff",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ed",
+    main: "ed",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "patch",
+    main: "patch",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sed",
+    main: "sed",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "vi",
+    main: "vi",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "find",
+    main: "find",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "grep",
+    main: "grep",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "egrep",
+    main: "grep",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fgrep",
+    main: "grep",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "xargs",
+    main: "xargs",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "bootchartd",
+    main: "bootchartd",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "halt",
+    main: "halt",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "poweroff",
+    main: "halt",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "reboot",
+    main: "halt",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "init",
+    main: "init",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "linuxrc",
+    main: "init",
+    install_loc: InstallLoc::DIR_ROOT,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nuke",
+    main: "nuke",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "resume",
+    main: "resume",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "add-shell",
+    main: "add_remove_shell",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "remove-shell",
+    main: "add_remove_shell",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "addgroup",
+    main: "addgroup",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "adduser",
+    main: "adduser",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chpasswd",
+    main: "chpasswd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cryptpw",
+    main: "cryptpw",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkpasswd",
+    main: "cryptpw",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "deluser",
+    main: "deluser",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "delgroup",
+    main: "deluser",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "getty",
+    main: "getty",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "login",
+    main: "login",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "passwd",
+    main: "passwd",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "su",
+    main: "su",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sulogin",
+    main: "sulogin",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "vlock",
+    main: "vlock",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "makemime",
+    main: "makemime",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "popmaildir",
+    main: "popmaildir",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "reformime",
+    main: "reformime",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sendmail",
+    main: "sendmail",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "adjtimex",
+    main: "adjtimex",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "bc",
+    main: "bc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dc",
+    main: "dc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "beep",
+    main: "beep",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chat",
+    main: "chat",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "conspy",
+    main: "conspy",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "crond",
+    main: "crond",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "crontab",
+    main: "crontab",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "devmem",
+    main: "devmem",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fbsplash",
+    main: "fbsplash",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hdparm",
+    main: "hdparm",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hexedit",
+    main: "hexedit",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "i2cget",
+    main: "i2cget",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "i2cset",
+    main: "i2cset",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "i2cdump",
+    main: "i2cdump",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "i2cdetect",
+    main: "i2cdetect",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "i2ctransfer",
+    main: "i2ctransfer",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "less",
+    main: "less",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lsscsi",
+    main: "lsscsi",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "makedevs",
+    main: "makedevs",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "man",
+    main: "man",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "microcom",
+    main: "microcom",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mt",
+    main: "mt",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nandwrite",
+    main: "nandwrite",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nanddump",
+    main: "nandwrite",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "partprobe",
+    main: "partprobe",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "raidautorun",
+    main: "raidautorun",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "readahead",
+    main: "readahead",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "runlevel",
+    main: "runlevel",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rx",
+    main: "rx",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setfattr",
+    main: "setfattr",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setserial",
+    main: "setserial",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "strings",
+    main: "strings",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "time",
+    main: "time",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ts",
+    main: "ts",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ttysize",
+    main: "ttysize",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "ubiattach",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubidetach",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubimkvol",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubirmvol",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubirsvol",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubiupdatevol",
+    main: "ubi_tools",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ubirename",
+    main: "ubirename",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "volname",
+    main: "volname",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "watchdog",
+    main: "watchdog",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "modinfo",
+    main: "modinfo",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lsmod",
+    main: "lsmod",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "modprobe",
+    main: "modprobe",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "depmod",
+    main: "modprobe",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "insmod",
+    main: "modprobe",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rmmod",
+    main: "modprobe",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "arp",
+    main: "arp",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "arping",
+    main: "arping",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "brctl",
+    main: "brctl",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dnsd",
+    main: "dnsd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ether-wake",
+    main: "ether_wake",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ftpd",
+    main: "ftpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ftpget",
+    main: "ftpgetput",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ftpput",
+    main: "ftpgetput",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dnsdomainname",
+    main: "hostname",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hostname",
+    main: "hostname",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "httpd",
+    main: "httpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ifconfig",
+    main: "ifconfig",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ifenslave",
+    main: "ifenslave",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ifplugd",
+    main: "ifplugd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ifup",
+    main: "ifupdown",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ifdown",
+    main: "ifupdown",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "inetd",
+    main: "inetd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ip",
+    main: "ip",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ipaddr",
+    main: "ipaddr",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "iplink",
+    main: "iplink",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "iproute",
+    main: "iproute",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "iprule",
+    main: "iprule",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "iptunnel",
+    main: "iptunnel",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ipneigh",
+    main: "ipneigh",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ipcalc",
+    main: "ipcalc",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fakeidentd",
+    main: "fakeidentd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nameif",
+    main: "nameif",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nbd-client",
+    main: "nbdclient",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nc",
+    main: "nc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "netstat",
+    main: "netstat",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nslookup",
+    main: "nslookup",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ntpd",
+    main: "ntpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ping",
+    main: "ping",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ping6",
+    main: "ping6",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pscan",
+    main: "pscan",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "route",
+    main: "route",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "slattach",
+    main: "slattach",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ssl_client",
+    main: "ssl_client",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tc",
+    main: "tc",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tcpsvd",
+    main: "tcpudpsvd",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "udpsvd",
+    main: "tcpudpsvd",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "telnet",
+    main: "telnet",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "telnetd",
+    main: "telnetd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tftp",
+    main: "tftp",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tftpd",
+    main: "tftpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "traceroute",
+    main: "traceroute",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "traceroute6",
+    main: "traceroute6",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "tunctl",
+    main: "tunctl",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "vconfig",
+    main: "vconfig",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "wget",
+    main: "wget",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "whois",
+    main: "whois",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "zcip",
+    main: "zcip",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lpd",
+    main: "lpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lpq",
+    main: "lpqr",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lpr",
+    main: "lpqr",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "free",
+    main: "free",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "fuser",
+    main: "fuser",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "iostat",
+    main: "iostat",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "kill",
+    main: "kill",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "killall",
+    main: "kill",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "killall5",
+    main: "kill",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "lsof",
+    main: "lsof",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mpstat",
+    main: "mpstat",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nmeter",
+    main: "nmeter",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pgrep",
+    main: "pgrep",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pkill",
+    main: "pgrep",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pidof",
+    main: "pidof",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pmap",
+    main: "pmap",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "powertop",
+    main: "powertop",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ps",
+    main: "ps",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pstree",
+    main: "pstree",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pwdx",
+    main: "pwdx",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "smemcap",
+    main: "smemcap",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sysctl",
+    main: "sysctl",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "top",
+    main: "top",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "uptime",
+    main: "uptime",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "watch",
+    main: "watch",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chpst",
+    main: "chpst",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "envdir",
+    main: "chpst",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "envuidgid",
+    main: "chpst",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setuidgid",
+    main: "chpst",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "softlimit",
+    main: "chpst",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "runsv",
+    main: "runsv",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "runsvdir",
+    main: "runsvdir",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sv",
+    main: "sv",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "svc",
+    main: "svc",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "svok",
+    main: "svok",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "svlogd",
+    main: "svlogd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ash",
+    main: "ash",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "sh",
+    main: "ash",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cttyhack",
+    main: "cttyhack",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hush",
+    main: "hush",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "klogd",
+    main: "klogd",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "logger",
+    main: "logger",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "logread",
+    main: "logread",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "syslogd",
+    main: "syslogd",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "acpid",
+    main: "acpid",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "blkdiscard",
+    main: "blkdiscard",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "blkid",
+    main: "blkid",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "blockdev",
+    main: "blockdev",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "cal",
+    main: "cal",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "chrt",
+    main: "chrt",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dmesg",
+    main: "dmesg",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "eject",
+    main: "eject",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fallocate",
+    main: "fallocate",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fatattr",
+    main: "fatattr",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fbset",
+    main: "fbset",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fdformat",
+    main: "fdformat",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fdisk",
+    main: "fdisk",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "findfs",
+    main: "findfs",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "flock",
+    main: "flock",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fdflush",
+    main: "freeramdisk",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "freeramdisk",
+    main: "freeramdisk",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fsck.minix",
+    main: "fsck_minix",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fsfreeze",
+    main: "fsfreeze",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "fstrim",
+    main: "fstrim",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "getopt",
+    main: "getopt",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hexdump",
+    main: "hexdump",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hd",
+    main: "hexdump",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "xxd",
+    main: "xxd",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "hwclock",
+    main: "hwclock",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ionice",
+    main: "ionice",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ipcrm",
+    main: "ipcrm",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "ipcs",
+    main: "ipcs",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "last",
+    main: "last",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "losetup",
+    main: "losetup",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lspci",
+    main: "lspci",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "lsusb",
+    main: "lsusb",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mdev",
+    main: "mdev",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mesg",
+    main: "mesg",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "mke2fs",
+    main: "mkfs_ext2",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkfs.ext2",
+    main: "mkfs_ext2",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkfs.minix",
+    main: "mkfs_minix",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkdosfs",
+    main: "mkfs_vfat",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkfs.vfat",
+    main: "mkfs_vfat",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mkswap",
+    main: "mkswap",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "more",
+    main: "more",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mount",
+    main: "mount",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_MAYBE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "mountpoint",
+    main: "mountpoint",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nologin",
+    main: "scripted",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "nsenter",
+    main: "nsenter",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "pivot_root",
+    main: "pivot_root",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 1i32 as libc::c_uchar,
+  },
+  bb_applet {
+    name: "rdate",
+    main: "rdate",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rdev",
+    main: "rdev",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "readprofile",
+    main: "readprofile",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "renice",
+    main: "renice",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rev",
+    main: "rev",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "rtcwake",
+    main: "rtcwake",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "script",
+    main: "script",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "scriptreplay",
+    main: "scriptreplay",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setarch",
+    main: "setarch",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "linux32",
+    main: "setarch",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "linux64",
+    main: "setarch",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setpriv",
+    main: "setpriv",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "setsid",
+    main: "setsid",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "swapon",
+    main: "swap_on_off",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "swapoff",
+    main: "swap_on_off",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "switch_root",
+    main: "switch_root",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "run-init",
+    main: "switch_root",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "taskset",
+    main: "taskset",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "uevent",
+    main: "uevent",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "umount",
+    main: "umount",
+    install_loc: InstallLoc::DIR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "unshare",
+    main: "unshare",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "wall",
+    main: "wall",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_REQUIRE,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "udhcpc6",
+    main: "udhcpc6",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "udhcpc",
+    main: "udhcpc",
+    install_loc: InstallLoc::DIR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "udhcpd",
+    main: "udhcpd",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dhcprelay",
+    main: "dhcprelay",
+    install_loc: InstallLoc::DIR_USR_SBIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 0,
+    nofork: 0,
+  },
+  bb_applet {
+    name: "dumpleases",
+    main: "dumpleases",
+    install_loc: InstallLoc::DIR_USR_BIN,
+    need_suid: BB_SUID_DROP,
+    noexec: 1i32 as libc::c_uchar,
+    nofork: 0,
   },
 ];
-
-unsafe extern "C" fn cmp_name(
-  mut a: *const libc::c_void,
-  mut b: *const libc::c_void,
-) -> libc::c_int {
-  let mut aa: *const bb_applet = a as *const bb_applet;
-  let mut bb: *const bb_applet = b as *const bb_applet;
-  return strcmp((*aa).name, (*bb).name);
-}
-unsafe extern "C" fn str_isalnum_(mut s: *const libc::c_char) -> libc::c_int {
-  while *s != 0 {
-    if *(*__ctype_b_loc()).offset(*s as libc::c_int as isize) as libc::c_int
-      & _ISalnum as libc::c_int as libc::c_ushort as libc::c_int
-      == 0
-      && *s as libc::c_int != '_' as i32
-    {
-      return 0i32;
-    }
-    s = s.offset(1)
-  }
-  return 1i32;
-}
-unsafe fn main_0(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut i: libc::c_int = 0;
-  let mut j: libc::c_int = 0;
-  let mut tmp1: [libc::c_char; 4096] = [0; 4096];
-  let mut tmp2: [libc::c_char; 4096] = [0; 4096];
-  // In find_applet_by_name(), before linear search, narrow it down
-  // by looking at N "equidistant" names. With ~350 applets:
-  // KNOWN_APPNAME_OFFSETS  cycles
-  //                     0    9057
-  //                     2    4604 + ~100 bytes of code
-  //                     4    2407 + 4 bytes
-  //                     8    1342 + 8 bytes
-  //                    16     908 + 16 bytes
-  //                    32     884 + 32 bytes
-  // With 8, int16_t applet_nameofs[] table has 7 elements.
-  let mut KNOWN_APPNAME_OFFSETS: libc::c_int = 8i32;
-  // With 128 applets we do two linear searches, with 1..7 strcmp's in the first one
-  // and 1..16 strcmp's in the second. With 256 apps, second search does 1..32 strcmp's.
-  if (NUM_APPLETS as libc::c_int) < 128i32 {
-    KNOWN_APPNAME_OFFSETS = 4i32
-  }
-  if (NUM_APPLETS as libc::c_int) < 32i32 {
-    KNOWN_APPNAME_OFFSETS = 0i32
-  }
-  qsort(
-    applets.as_mut_ptr() as *mut libc::c_void,
-    NUM_APPLETS as libc::c_int as size_t,
-    ::std::mem::size_of::<bb_applet>() as libc::c_ulong,
-    Some(
-      cmp_name
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
-  );
-  j = 0i32;
-  i = j;
-  while i < NUM_APPLETS as libc::c_int - 1i32 {
-    if cmp_name(
-      applets.as_mut_ptr().offset(i as isize) as *const libc::c_void,
-      applets.as_mut_ptr().offset(i as isize).offset(1) as *const libc::c_void,
-    ) == 0i32
-    {
-      fprintf(
-        stderr,
-        b"%s: duplicate applet name \'%s\'\n\x00" as *const u8 as *const libc::c_char,
-        *argv.offset(0),
-        applets[i as usize].name,
-      );
-      j = 1i32
-    }
-    i += 1
-  }
-  if j != 0i32 || (*argv.offset(1)).is_null() {
-    return 1i32;
-  }
-  snprintf(
-    tmp1.as_mut_ptr(),
-    4096i32 as libc::c_ulong,
-    b"%s.%u.new\x00" as *const u8 as *const libc::c_char,
-    *argv.offset(1),
-    getpid(),
-  );
-  i = open(tmp1.as_mut_ptr(), 0o1i32 | 0o1000i32 | 0o100i32, 0o666i32);
-  if i < 0i32 {
-    return 1i32;
-  }
-  dup2(i, 1i32);
-  /* Keep in sync with include/busybox.h! */
-  printf(
-    b"/* This is a generated file, don\'t edit */\n\n\x00" as *const u8 as *const libc::c_char,
-  );
-  printf(
-    b"#define NUM_APPLETS %u\n\x00" as *const u8 as *const libc::c_char,
-    NUM_APPLETS as libc::c_int,
-  );
-  if NUM_APPLETS as libc::c_int == 1i32 {
-    printf(
-      b"#define SINGLE_APPLET_STR \"%s\"\n\x00" as *const u8 as *const libc::c_char,
-      applets[0].name,
-    );
-    printf(
-      b"#define SINGLE_APPLET_MAIN %s_main\n\x00" as *const u8 as *const libc::c_char,
-      applets[0].main,
-    );
-  }
-  printf(
-    b"#define KNOWN_APPNAME_OFFSETS %u\n\n\x00" as *const u8 as *const libc::c_char,
-    KNOWN_APPNAME_OFFSETS,
-  );
-  if KNOWN_APPNAME_OFFSETS > 0i32 {
-    let mut ofs: libc::c_int = 0;
-    let vla = KNOWN_APPNAME_OFFSETS as usize;
-    let mut offset: Vec<libc::c_int> = ::std::vec::from_elem(0, vla);
-    let vla_0 = KNOWN_APPNAME_OFFSETS as usize;
-    let mut index: Vec<libc::c_int> = ::std::vec::from_elem(0, vla_0);
-    i = 0i32;
-    while i < KNOWN_APPNAME_OFFSETS {
-      *index.as_mut_ptr().offset(i as isize) =
-        i * NUM_APPLETS as libc::c_int / KNOWN_APPNAME_OFFSETS;
-      i += 1
-    }
-    ofs = 0i32;
-    i = 0i32;
-    while i < NUM_APPLETS as libc::c_int {
-      j = 0i32;
-      while j < KNOWN_APPNAME_OFFSETS {
-        if i == *index.as_mut_ptr().offset(j as isize) {
-          *offset.as_mut_ptr().offset(j as isize) = ofs
-        }
-        j += 1
-      }
-      ofs = (ofs as libc::c_ulong)
-        .wrapping_add(strlen(applets[i as usize].name).wrapping_add(1i32 as libc::c_ulong))
-        as libc::c_int as libc::c_int;
-      i += 1
-    }
-    /* If the list of names is too long refuse to proceed */
-    if ofs > 0xffffi32 {
-      return 1i32;
-    }
-    printf(b"const uint16_t applet_nameofs[] ALIGN2 = {\n\x00" as *const u8 as *const libc::c_char);
-    i = 1i32;
-    while i < KNOWN_APPNAME_OFFSETS {
-      printf(
-        b"%d,\n\x00" as *const u8 as *const libc::c_char,
-        *offset.as_mut_ptr().offset(i as isize),
-      );
-      i += 1
-    }
-    printf(b"};\n\n\x00" as *const u8 as *const libc::c_char);
-  }
-  //printf("#ifndef SKIP_definitions\n");
-  printf(b"const char applet_names[] ALIGN1 = \"\"\n\x00" as *const u8 as *const libc::c_char);
-  i = 0i32;
-  while i < NUM_APPLETS as libc::c_int {
-    printf(
-      b"\"%s\" \"\\0\"\n\x00" as *const u8 as *const libc::c_char,
-      applets[i as usize].name,
-    );
-    i += 1
-    //		if (MAX_APPLET_NAME_LEN < strlen(applets[i].name))
-    //			MAX_APPLET_NAME_LEN = strlen(applets[i].name);
-  } /* 2 bits */
-  printf(b";\n\n\x00" as *const u8 as *const libc::c_char); /* 3 bits */
-  i = 0i32; /* 3 bits */
-  while i < NUM_APPLETS as libc::c_int {
-    if str_isalnum_(applets[i as usize].name) != 0 {
-      printf(
-        b"#define APPLET_NO_%s %d\n\x00" as *const u8 as *const libc::c_char,
-        applets[i as usize].name,
-        i,
-      );
-    }
-    i += 1
-  }
-  printf(b"\n\x00" as *const u8 as *const libc::c_char);
-  printf(b"#ifndef SKIP_applet_main\n\x00" as *const u8 as *const libc::c_char);
-  printf(
-    b"int (*const applet_main[])(int argc, char **argv) = {\n\x00" as *const u8
-      as *const libc::c_char,
-  );
-  i = 0i32;
-  while i < NUM_APPLETS as libc::c_int {
-    printf(
-      b"%s_main,\n\x00" as *const u8 as *const libc::c_char,
-      applets[i as usize].main,
-    );
-    i += 1
-  }
-  printf(b"};\n\x00" as *const u8 as *const libc::c_char);
-  printf(b"#endif\n\n\x00" as *const u8 as *const libc::c_char);
-  printf(b"const uint8_t applet_suid[] ALIGN1 = {\n\x00" as *const u8 as *const libc::c_char);
-  i = 0i32;
-  while i < NUM_APPLETS as libc::c_int {
-    let mut v: libc::c_int = applets[i as usize].need_suid as libc::c_int;
-    i += 1;
-    if i < NUM_APPLETS as libc::c_int {
-      v =
-        (v as libc::c_uint | (applets[i as usize].need_suid as libc::c_uint) << 2i32) as libc::c_int
-    }
-    i += 1;
-    if i < NUM_APPLETS as libc::c_int {
-      v =
-        (v as libc::c_uint | (applets[i as usize].need_suid as libc::c_uint) << 4i32) as libc::c_int
-    }
-    i += 1;
-    if i < NUM_APPLETS as libc::c_int {
-      v =
-        (v as libc::c_uint | (applets[i as usize].need_suid as libc::c_uint) << 6i32) as libc::c_int
-    }
-    printf(b"0x%02x,\n\x00" as *const u8 as *const libc::c_char, v);
-    i += 1
-  }
-  printf(b"};\n\n\x00" as *const u8 as *const libc::c_char);
-  printf(
-    b"const uint8_t applet_install_loc[] ALIGN1 = {\n\x00" as *const u8 as *const libc::c_char,
-  );
-  i = 0i32;
-  while i < NUM_APPLETS as libc::c_int {
-    let mut v_0: libc::c_int = applets[i as usize].install_loc as libc::c_int;
-    i += 1;
-    if i < NUM_APPLETS as libc::c_int {
-      v_0 = (v_0 as libc::c_uint | (applets[i as usize].install_loc as libc::c_uint) << 4i32)
-        as libc::c_int
-    }
-    printf(b"0x%02x,\n\x00" as *const u8 as *const libc::c_char, v_0);
-    i += 1
-  }
-  printf(b"};\n\x00" as *const u8 as *const libc::c_char);
-  //printf("#endif /* SKIP_definitions */\n");
-  //	printf("\n");
-  //	printf("#define MAX_APPLET_NAME_LEN %u\n", MAX_APPLET_NAME_LEN);
-  if !(*argv.offset(2)).is_null() {
-    let mut fp: *mut FILE = 0 as *mut FILE;
-    let mut line_new: [libc::c_char; 80] = [0; 80];
-    //		}
-    sprintf(
-      line_new.as_mut_ptr(),
-      b"#define NUM_APPLETS %u\n\x00" as *const u8 as *const libc::c_char,
-      NUM_APPLETS as libc::c_int,
-    );
-    snprintf(
-      tmp2.as_mut_ptr(),
-      4096i32 as libc::c_ulong,
-      b"%s.%u.new\x00" as *const u8 as *const libc::c_char,
-      *argv.offset(2),
-      getpid(),
-    );
-    fp = fopen(
-      tmp2.as_mut_ptr(),
-      b"w\x00" as *const u8 as *const libc::c_char,
-    );
-    if fp.is_null() {
-      return 1i32;
-    }
-    fputs(line_new.as_mut_ptr(), fp);
-    if fclose(fp) != 0 {
-      return 1i32;
-    }
-  }
-  if fclose(stdout) != 0 {
-    return 1i32;
-  }
-  if rename(tmp1.as_mut_ptr(), *argv.offset(1)) != 0 {
-    return 1i32;
-  }
-  if rename(tmp2.as_mut_ptr(), *argv.offset(2)) != 0 {
-    return 1i32;
-  }
-  return 0i32;
-}
-
-pub fn main() {
-  let mut args: Vec<*mut libc::c_char> = Vec::new();
-  for arg in ::std::env::args() {
-    args.push(
-      ::std::ffi::CString::new(arg)
-        .expect("Failed to convert argument into CString.")
-        .into_raw(),
-    );
-  }
-  args.push(::std::ptr::null_mut());
-  unsafe {
-    ::std::process::exit(main_0(
-      (args.len() - 1) as libc::c_int,
-      args.as_mut_ptr() as *mut *mut libc::c_char,
-    ) as i32)
-  }
-}
-//		char line_old[80];
-//		line_old[0] = 0;
-//		fp = fopen(argv[2], "r");
-//		if (fp) {
-//			fgets(line_old, sizeof(line_old), fp);
-//			fclose(fp);
-//		}
-//		if (strcmp(line_old, line_new) != 0) {

@@ -2105,9 +2105,7 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
 }
 
 unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
-  applet_names_sorted()
-    .binary_search(&String::from(name))
-    .ok()
+  applet_names_sorted().binary_search(&name).ok()
 }
 
 /* The code below can well be in applets/applets.c, as it is used only
@@ -2541,8 +2539,8 @@ unsafe fn check_suid(applet_no: usize) {
   llist_free(suid_config as *mut llist_t, None);
 }
 
-unsafe fn applet_names_sorted() -> Vec<String> {
-  let mut ret: Vec<String> = applets.iter().map(|a| ptr_to_str(a.name)).collect();
+unsafe fn applet_names_sorted() -> Vec<&'static str> {
+  let mut ret: Vec<&str> = applets.iter().map(|a| a.name).collect();
   ret.sort();
   ret
 }
@@ -2769,7 +2767,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
 
     if argv[1] == "--list" {
       for applet in applets.iter() {
-        println!("{}", ptr_to_str(applet.name));
+        println!("{}", applet.name);
       }
       return 0;
     }
@@ -2778,7 +2776,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
         println!(
           "{}{}",
           &install_loc_to_string(applet.install_loc)[1..],
-          ptr_to_str(applet.name)
+          applet.name
         );
       }
       return 0;
