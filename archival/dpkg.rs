@@ -1,111 +1,157 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+
 extern "C" {
   pub type hardlinks_t;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn rmdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn system(__command: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strtok_r(
     __s: *mut libc::c_char,
     __delim: *const libc::c_char,
     __save_ptr: *mut *mut libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
     sizeof_and_shift: libc::c_uint,
     idx: libc::c_int,
   ) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
+
   #[no_mangle]
   fn xmalloc_fgetline_str(
     file: *mut FILE,
     terminating_string: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn bin2hex(
     dst: *mut libc::c_char,
     src: *const libc::c_char,
     count: libc::c_int,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -113,51 +159,72 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn llist_rev(list: *mut llist_t) -> *mut llist_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn md5_begin(ctx: *mut md5_ctx_t);
+
   #[no_mangle]
   fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
+
   #[no_mangle]
   fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   fn fnmatch(
     __pattern: *const libc::c_char,
     __name: *const libc::c_char,
     __flags: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn init_handle() -> *mut archive_handle_t;
+
   #[no_mangle]
   fn filter_accept_list(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn filter_accept_list_reassign(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn unpack_ar_archive(ar_archive: *mut archive_handle_t);
+
   #[no_mangle]
   fn data_extract_all(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
 }
+
 pub type __uint8_t = libc::c_uchar;
 pub type __uint32_t = libc::c_uint;
 pub type __uint64_t = libc::c_ulong;
@@ -203,14 +270,10 @@ use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
-}
+
+use crate::librb::md5_ctx_t;
+
+// Defined in archival/dpkg.c
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

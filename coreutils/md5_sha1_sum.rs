@@ -83,17 +83,8 @@ pub type uint64_t = __uint64_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 
-
-
+use crate::librb::md5_ctx_t;
 use crate::librb::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
-}
 pub type sha1_ctx_t = md5_ctx_t;
 pub type sha256_ctx_t = md5_ctx_t;
 #[derive(Copy, Clone)]

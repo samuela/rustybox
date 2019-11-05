@@ -114,14 +114,7 @@ pub struct sha512_ctx_t {
   pub wbuffer: [uint8_t; 128],
 }
 pub type sha256_ctx_t = md5_ctx_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
-}
+use crate::librb::md5_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_1 {

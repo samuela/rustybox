@@ -97,14 +97,7 @@ pub type pid_t = __pid_t;
 
 use crate::librb::FILE;
 pub type ptrdiff_t = libc::c_long;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
-}
+use crate::librb::md5_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
