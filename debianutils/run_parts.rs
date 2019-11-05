@@ -88,7 +88,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;

@@ -159,8 +159,8 @@ pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type time_t = __time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

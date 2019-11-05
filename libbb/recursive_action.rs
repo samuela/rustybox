@@ -46,8 +46,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

@@ -101,8 +101,8 @@ pub struct flock {
   pub l_len: __off64_t,
   pub l_pid: __pid_t,
 }
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type time_t = __time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

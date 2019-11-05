@@ -105,8 +105,8 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {

@@ -38,8 +38,8 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type ino_t = __ino64_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type dev_t = __dev_t;
 /* vi: set sw=4 ts=4: */
 /*

@@ -179,8 +179,8 @@ pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

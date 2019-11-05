@@ -93,8 +93,8 @@ pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct passwd {

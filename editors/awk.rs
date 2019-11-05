@@ -997,7 +997,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-
+  
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;

@@ -18,7 +18,7 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 /* vi: set sw=4 ts=4: */
 /*

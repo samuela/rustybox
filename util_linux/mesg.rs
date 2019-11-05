@@ -27,8 +27,8 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[no_mangle]
 pub unsafe extern "C" fn mesg_main(
   mut _argc: libc::c_int,

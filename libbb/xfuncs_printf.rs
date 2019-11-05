@@ -223,7 +223,7 @@ pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 pub type socklen_t = __socklen_t;
 pub type DIR = __dirstream;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]

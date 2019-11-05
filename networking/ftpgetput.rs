@@ -98,8 +98,8 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]

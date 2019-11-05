@@ -73,8 +73,8 @@ pub type uint8_t = __uint8_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {

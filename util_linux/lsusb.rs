@@ -81,8 +81,6 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 
-use crate::librb::timespec;
-
 use crate::librb::stat;
 
 #[derive(Copy, Clone)]

@@ -91,8 +91,6 @@ pub type uint8_t = __uint8_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
 
-use crate::librb::timespec;
-
 use crate::librb::stat;
 
 pub type C2RustUnnamed = libc::c_uint;

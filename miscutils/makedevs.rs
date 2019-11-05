@@ -82,8 +82,8 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type dev_t = __dev_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

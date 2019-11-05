@@ -93,8 +93,8 @@ pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 pub type off_t = __off64_t;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type dev_t = __dev_t;
 pub type time_t = __time_t;
 #[derive(Copy, Clone)]

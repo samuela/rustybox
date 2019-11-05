@@ -163,7 +163,7 @@ pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]

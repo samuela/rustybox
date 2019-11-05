@@ -240,7 +240,7 @@ pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 pub type ino_t = __ino64_t;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 pub type dev_t = __dev_t;
 pub type time_t = __time_t;
@@ -301,8 +301,8 @@ pub struct fd_pair {
   pub rd: libc::c_int,
   pub wr: libc::c_int,
 }
-use crate::librb::bb_uidgid_t;
 use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {

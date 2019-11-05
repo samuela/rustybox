@@ -207,8 +207,8 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type dev_t = __dev_t;
 pub type time_t = __time_t;
 pub type C2RustUnnamed = libc::c_uint;

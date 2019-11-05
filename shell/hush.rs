@@ -452,7 +452,7 @@ pub type va_list = __builtin_va_list;
 pub type ssize_t = __ssize_t;
 pub type __size_t = libc::c_ulong;
 use crate::librb::stat;
-use crate::librb::timespec;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct glob_t {

@@ -162,8 +162,8 @@ pub type uint32_t = __uint32_t;
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {

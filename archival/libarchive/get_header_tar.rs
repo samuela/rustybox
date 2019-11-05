@@ -115,8 +115,8 @@ pub type time_t = __time_t;
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
 pub type uoff_t = libc::c_ulong;
-use crate::librb::bb_uidgid_t;
 use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {

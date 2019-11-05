@@ -236,7 +236,7 @@ pub type smalluint = libc::c_uchar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type socklen_t = __socklen_t;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

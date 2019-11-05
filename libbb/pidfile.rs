@@ -42,8 +42,8 @@ pub type __syscall_slong_t = libc::c_long;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 /* vi: set sw=4 ts=4: */
 /*
  * pid file routines

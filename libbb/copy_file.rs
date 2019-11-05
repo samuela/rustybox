@@ -258,8 +258,8 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {

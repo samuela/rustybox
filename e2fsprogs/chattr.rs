@@ -86,8 +86,8 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

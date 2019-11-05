@@ -242,8 +242,8 @@ pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::timespec;
 use crate::librb::stat;
+use crate::librb::timespec;
 pub type time_t = __time_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -676,7 +676,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-
+  
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

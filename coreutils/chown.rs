@@ -60,7 +60,7 @@ pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
-use crate::librb::timespec;
+
 use crate::librb::stat;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
