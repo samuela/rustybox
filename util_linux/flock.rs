@@ -33,7 +33,7 @@ extern "C" {
   fn get_shell_name() -> *const libc::c_char;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub const OPT_c: C2RustUnnamed = 16;
 pub const OPT_n: C2RustUnnamed = 4;
 pub const OPT_s: C2RustUnnamed = 1;

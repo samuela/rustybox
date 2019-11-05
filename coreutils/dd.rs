@@ -99,9 +99,9 @@ pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint16_t = __uint16_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 

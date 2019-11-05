@@ -28,8 +28,8 @@ extern "C" {
 }
 pub type __dev_t = libc::c_ulong;
 pub type __mode_t = libc::c_uint;
-pub type mode_t = __mode_t;
-pub type dev_t = __dev_t;
+use crate::librb::mode_t;
+use crate::librb::dev_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

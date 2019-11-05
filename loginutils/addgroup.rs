@@ -54,8 +54,8 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
-pub type gid_t = __gid_t;
+use crate::librb::uint32_t;
+use crate::librb::gid_t;
 use crate::librb::group;
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;

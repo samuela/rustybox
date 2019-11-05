@@ -50,9 +50,9 @@ pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]

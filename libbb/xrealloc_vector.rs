@@ -6,7 +6,7 @@ extern "C" {
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
 }
 pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type size_t = libc::c_ulong;
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
  * at least v[idx] and v[idx+1], for all idx values.

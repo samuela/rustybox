@@ -210,8 +210,8 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-pub type uint32_t = __uint32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;

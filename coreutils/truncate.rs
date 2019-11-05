@@ -32,8 +32,8 @@ extern "C" {
 
 pub type __uint32_t = libc::c_uint;
 pub type __off64_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
+use crate::librb::uint32_t;
 
 /* Last element is marked by mult == 0 */
 #[derive(Copy, Clone)]

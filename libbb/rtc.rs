@@ -47,7 +47,7 @@ pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type size_t = libc::c_ulong;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 
 
 

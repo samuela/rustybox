@@ -186,13 +186,13 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
 use crate::librb::timespec;
@@ -276,7 +276,7 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 use crate::librb::passwd;
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

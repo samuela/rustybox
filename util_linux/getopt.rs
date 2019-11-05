@@ -75,7 +75,7 @@ pub struct option {
   pub val: libc::c_int,
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;
 /* vi: set sw=4 ts=4: */

@@ -126,13 +126,13 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type pid_t = __pid_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
+use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

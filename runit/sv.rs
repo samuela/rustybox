@@ -88,15 +88,15 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint8_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
-pub type time_t = __time_t;
+use crate::librb::ssize_t;
+use crate::librb::time_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

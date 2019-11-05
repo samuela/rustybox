@@ -16,7 +16,7 @@ extern "C" {
   fn rtnl_rtrealm_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type smalluint = libc::c_uchar;
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTN_MAX: C2RustUnnamed = 12;

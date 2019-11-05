@@ -295,11 +295,11 @@ pub struct rlimit {
 use crate::librb::timeval;
 pub type __rlimit_resource_t = __rlimit_resource;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type pid_t = __pid_t;
-pub type ssize_t = __ssize_t;
-pub type time_t = __time_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
+use crate::librb::pid_t;
+use crate::librb::ssize_t;
+use crate::librb::time_t;
 pub type int8_t = __int8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -386,7 +386,7 @@ pub struct sockaddr_in6 {
   pub sin6_addr: in6_addr,
   pub sin6_scope_id: uint32_t,
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -400,7 +400,7 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr32: [uint32_t; 4],
 }
 pub type uint16_t = __uint16_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -575,8 +575,6 @@ pub union C2RustUnnamed_12 {
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
 
-
-
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -585,8 +583,8 @@ pub struct timezone {
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-use crate::librb::passwd;
 use crate::librb::group;
+use crate::librb::passwd;
 /* Useful for having small structure members/global variables */
 pub type socktype_t = int8_t;
 pub type family_t = int8_t;

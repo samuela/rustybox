@@ -166,9 +166,9 @@ pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint8_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -182,7 +182,7 @@ pub type uintptr_t = libc::c_ulong;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 use crate::librb::stat;
 use crate::librb::timespec;

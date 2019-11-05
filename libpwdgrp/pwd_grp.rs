@@ -66,12 +66,12 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
 
 
 

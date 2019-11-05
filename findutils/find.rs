@@ -177,8 +177,8 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint8_t;
+use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -192,9 +192,9 @@ pub type uint32_t = __uint32_t;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
+use crate::librb::off_t;
 pub type ino_t = __ino64_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -206,11 +206,11 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
+use crate::librb::dev_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type dev_t = __dev_t;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

@@ -1,6 +1,6 @@
 use libc;
 pub type __mode_t = libc::c_uint;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 /* vi: set sw=4 ts=4: */
 /*
  * mode_string implementation for busybox

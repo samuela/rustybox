@@ -30,7 +30,7 @@ extern "C" {
 }
 
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const IOPRIO_WHO_USER: C2RustUnnamed = 3;

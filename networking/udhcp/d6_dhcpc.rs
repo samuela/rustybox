@@ -244,9 +244,9 @@ pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -259,7 +259,7 @@ pub type bb__aliased_uint32_t = uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

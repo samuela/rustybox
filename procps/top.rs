@@ -149,14 +149,14 @@ pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type uid_t = __uid_t;
-pub type pid_t = __pid_t;
+use crate::librb::uid_t;
+use crate::librb::pid_t;
 pub type DIR = __dirstream;
 
 

@@ -178,10 +178,10 @@ pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
-pub type pid_t = __pid_t;
+use crate::librb::off_t;
+use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -192,7 +192,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

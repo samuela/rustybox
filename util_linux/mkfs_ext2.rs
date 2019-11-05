@@ -105,18 +105,18 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 
 use crate::librb::timespec;
 
 use crate::librb::stat;
 
-pub type time_t = __time_t;
+use crate::librb::time_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -129,7 +129,7 @@ pub struct mntent {
   pub mnt_passno: libc::c_int,
 }
 
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 
 /*
  * Structure of a blocks group descriptor

@@ -86,13 +86,13 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uid_t;
 // -U username
 pub const LPR_V: C2RustUnnamed = 4;
 // -J title: the job title for the banner page

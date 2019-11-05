@@ -43,10 +43,10 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
-use crate::librb::smallint;
-pub type uid_t = __uid_t;
+use crate::librb::uint32_t;
 use crate::librb::passwd;
+use crate::librb::smallint;
+use crate::librb::uid_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

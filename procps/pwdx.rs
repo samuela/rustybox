@@ -28,7 +28,7 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* vi: set sw=4 ts=4: */
 /*
  * pwdx implementation for busybox

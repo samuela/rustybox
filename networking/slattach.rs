@@ -79,7 +79,7 @@ extern "C" {
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;

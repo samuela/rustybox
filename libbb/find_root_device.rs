@@ -48,9 +48,9 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
+use crate::librb::dev_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type dev_t = __dev_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct arena {

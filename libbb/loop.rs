@@ -42,7 +42,7 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type __u8 = libc::c_uchar;

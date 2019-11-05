@@ -88,18 +88,18 @@ pub type __suseconds_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
+use crate::librb::gid_t;
 use crate::librb::smallint;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
-pub type mode_t = __mode_t;
+use crate::librb::uid_t;
+use crate::librb::off_t;
+use crate::librb::mode_t;
+use crate::librb::dev_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type dev_t = __dev_t;
-pub type time_t = __time_t;
-use crate::librb::timeval;
-use crate::librb::passwd;
+use crate::librb::time_t;
 use crate::librb::group;
+use crate::librb::passwd;
+use crate::librb::timeval;
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */
@@ -118,7 +118,7 @@ use crate::librb::group;
  * instead of int/ssize_t. No lseek64(), O_LARGEFILE etc necessary */
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 pub type C2RustUnnamed = libc::c_int;
 /* cp --reflink[=always] */
 /*

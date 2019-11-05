@@ -56,7 +56,7 @@ pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type __caddr_t = *mut libc::c_char;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

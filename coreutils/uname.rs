@@ -27,7 +27,7 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct utsname {

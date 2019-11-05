@@ -12,7 +12,7 @@ extern "C" {
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
 pub type __mode_t = libc::c_uint;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 /* vi: set sw=4 ts=4: */
 /*
  * mkfifo implementation for busybox

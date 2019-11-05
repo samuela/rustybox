@@ -19,7 +19,7 @@ extern "C" {
   fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 #[derive(Copy, Clone)]

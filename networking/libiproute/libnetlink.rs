@@ -59,8 +59,8 @@ pub type __uint32_t = libc::c_uint;
 pub type __time_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
-pub type ssize_t = __ssize_t;
-pub type time_t = __time_t;
+use crate::librb::ssize_t;
+use crate::librb::time_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -113,7 +113,7 @@ pub struct msghdr {
   pub msg_controllen: size_t,
   pub msg_flags: libc::c_int,
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;

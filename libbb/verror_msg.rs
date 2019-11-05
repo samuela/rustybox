@@ -45,7 +45,7 @@ pub struct __va_list_tag {
 }
 pub type __ssize_t = libc::c_long;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;
 pub type C2RustUnnamed = libc::c_uint;

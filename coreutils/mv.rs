@@ -68,12 +68,10 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

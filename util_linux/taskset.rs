@@ -50,14 +50,14 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* vi: set sw=4 ts=4: */
 /*
  * taskset - retrieve or set a processes' CPU affinity

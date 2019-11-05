@@ -31,8 +31,8 @@ pub type __uint32_t = libc::c_uint;
 pub type __socklen_t = libc::c_uint;
 pub type int16_t = __int16_t;
 pub type socklen_t = __socklen_t;
-pub type uint32_t = __uint32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {

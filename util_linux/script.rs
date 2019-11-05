@@ -124,12 +124,12 @@ pub type __pid_t = libc::c_int;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
-pub type time_t = __time_t;
+use crate::librb::pid_t;
+use crate::librb::time_t;
 
 use crate::librb::timeval;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;

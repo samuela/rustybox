@@ -69,10 +69,10 @@ pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type int32_t = __int32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 pub type bb__aliased_uint32_t = uint32_t;
 pub type bb__aliased_uint64_t = uint64_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -86,10 +86,10 @@ pub type bb__aliased_uint64_t = uint64_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
-pub type time_t = __time_t;
+use crate::librb::off_t;
+use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {

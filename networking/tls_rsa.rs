@@ -44,7 +44,7 @@ extern "C" {
 pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type int32_t = __int32_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type uint32 = uint32_t;
 pub type int32 = int32_t;
 pub type pstm_digit = uint32;

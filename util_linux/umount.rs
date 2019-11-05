@@ -124,7 +124,7 @@ pub const MS_REMOUNT: C2RustUnnamed = 32;
 pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;

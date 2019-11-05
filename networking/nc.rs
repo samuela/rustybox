@@ -203,12 +203,12 @@ pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::uint32_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

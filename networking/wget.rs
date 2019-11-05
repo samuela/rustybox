@@ -236,15 +236,15 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 pub type __socklen_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
 use crate::librb::smallint;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 pub type smalluint = libc::c_uchar;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
-pub type pid_t = __pid_t;
+use crate::librb::off_t;
+use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -305,8 +305,6 @@ pub struct in_addr {
 pub type in_addr_t = uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-
-
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -316,7 +314,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

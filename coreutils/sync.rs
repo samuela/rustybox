@@ -20,7 +20,7 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub const OPT_DATASYNC: C2RustUnnamed = 1;
 pub const OPT_SYNCFS: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;

@@ -60,7 +60,7 @@ extern "C" {
 pub type __uint8_t = libc::c_uchar;
 pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 //extern const int const_int_1;

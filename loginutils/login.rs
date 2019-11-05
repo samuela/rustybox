@@ -145,13 +145,11 @@ pub type __mode_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
-pub type pid_t = __pid_t;
+use crate::librb::off_t;
+use crate::librb::pid_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-
-
 
 use crate::librb::FILE;
 pub type cc_t = libc::c_uchar;

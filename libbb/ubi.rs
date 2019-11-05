@@ -18,7 +18,7 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 pub type __ssize_t = libc::c_long;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 #[no_mangle]
 pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {

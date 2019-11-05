@@ -9,8 +9,8 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
-pub type mode_t = __mode_t;
+use crate::librb::uint32_t;
+use crate::librb::mode_t;
 /* vi: set sw=4 ts=4: */
 /*
  * coreutils utility routine

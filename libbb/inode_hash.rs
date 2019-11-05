@@ -24,8 +24,8 @@ pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 pub type ino_t = __ino64_t;
 
+use crate::librb::dev_t;
 use crate::librb::stat;
-pub type dev_t = __dev_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Utility routines.

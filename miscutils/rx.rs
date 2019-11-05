@@ -43,7 +43,7 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 pub type __ssize_t = libc::c_long;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;

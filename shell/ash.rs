@@ -375,9 +375,9 @@ pub struct utsname {
   pub domainname: [libc::c_char; 65],
 }
 pub type int32_t = __int32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -391,9 +391,9 @@ pub type uintptr_t = libc::c_ulong;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -404,7 +404,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 #[derive(Copy, Clone)]

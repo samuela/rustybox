@@ -263,8 +263,8 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::uint32_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]
@@ -283,7 +283,7 @@ use crate::librb::timespec;
 
 use crate::librb::stat;
 
-pub type dev_t = __dev_t;
+use crate::librb::dev_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

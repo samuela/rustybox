@@ -48,13 +48,13 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sched_param {
   pub sched_priority: libc::c_int,
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

@@ -17,8 +17,8 @@ pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type __time_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type time_t = __time_t;
+use crate::librb::uint32_t;
+use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

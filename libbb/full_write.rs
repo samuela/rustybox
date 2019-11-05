@@ -4,7 +4,7 @@ extern "C" {
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 }
 pub type __ssize_t = libc::c_long;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred

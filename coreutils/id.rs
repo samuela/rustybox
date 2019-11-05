@@ -57,11 +57,11 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
+use crate::librb::gid_t;
 use crate::librb::passwd;
+use crate::librb::uid_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Mini id implementation for busybox

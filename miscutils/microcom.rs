@@ -73,9 +73,9 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type __ssize_t = libc::c_long;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

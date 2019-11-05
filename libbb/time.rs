@@ -50,7 +50,7 @@ pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 use crate::librb::timespec;
 pub type clockid_t = __clockid_t;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

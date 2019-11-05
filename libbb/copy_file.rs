@@ -246,7 +246,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -257,7 +257,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::timeval;

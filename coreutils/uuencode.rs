@@ -56,14 +56,12 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
 
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */

@@ -35,7 +35,7 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
@@ -87,7 +87,7 @@ pub type uint32_t = __uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 /* vi: set sw=4 ts=4: */
 /*

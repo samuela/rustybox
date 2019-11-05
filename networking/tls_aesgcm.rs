@@ -16,8 +16,8 @@ pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __uint64_t = libc::c_ulong;
 pub type int32_t = __int32_t;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint8_t;
+use crate::librb::uint32_t;
 /*
  * Copyright (C) 2018 Denys Vlasenko
  *

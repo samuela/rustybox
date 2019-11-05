@@ -31,7 +31,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 /* vi: set sw=4 ts=4: */
 /*

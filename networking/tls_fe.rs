@@ -7,8 +7,8 @@ extern "C" {
 }
 pub type __uint8_t = libc::c_uchar;
 pub type __uint32_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint8_t;
+use crate::librb::uint32_t;
 /*
  * Copyright (C) 2018 Denys Vlasenko
  *

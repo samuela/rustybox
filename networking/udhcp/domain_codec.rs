@@ -18,7 +18,7 @@ extern "C" {
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type size_t = libc::c_ulong;
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";

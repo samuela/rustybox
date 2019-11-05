@@ -10,7 +10,7 @@ extern "C" {
   fn seek_by_read(fd: libc::c_int, amount: off_t);
 }
 pub type __off64_t = libc::c_long;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

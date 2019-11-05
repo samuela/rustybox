@@ -36,7 +36,7 @@ pub type size_t = libc::c_ulong;
 
 
 use crate::librb::FILE;
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_progress_t {

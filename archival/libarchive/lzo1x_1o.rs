@@ -1,6 +1,6 @@
 use libc;
 pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
 /* implementation of the LZO1[XY]-1 compression algorithm
 

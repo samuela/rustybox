@@ -51,7 +51,7 @@ pub struct option {
 pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type int32_t = __int32_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;

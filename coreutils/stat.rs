@@ -93,16 +93,14 @@ pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type mode_t = __mode_t;
+use crate::librb::gid_t;
+use crate::librb::mode_t;
 use crate::librb::stat;
+use crate::librb::time_t;
 use crate::librb::timespec;
-pub type time_t = __time_t;
-
-
+use crate::librb::uid_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

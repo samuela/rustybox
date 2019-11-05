@@ -38,7 +38,7 @@ extern "C" {
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
 }
 pub type __pid_t = libc::c_int;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

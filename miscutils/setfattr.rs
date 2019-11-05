@@ -31,7 +31,7 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 pub type size_t = libc::c_ulong;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub const OPT_h: C2RustUnnamed = 1;
 pub const OPT_x: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;

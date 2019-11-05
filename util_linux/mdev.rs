@@ -370,9 +370,9 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -385,16 +385,16 @@ pub type uint32_t = __uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 pub type DIR = __dirstream;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 
 use crate::librb::timespec;
 
 use crate::librb::stat;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -505,12 +505,6 @@ pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
   pub si_uid: __uid_t,
 }
-
-
-
-
-
-
 
 use crate::librb::FILE;
 

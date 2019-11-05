@@ -179,13 +179,13 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 use crate::librb::timespec;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 use crate::librb::stat;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 

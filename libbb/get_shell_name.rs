@@ -12,7 +12,7 @@ extern "C" {
 }
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type uid_t = __uid_t;
+use crate::librb::uid_t;
 use crate::librb::passwd;
 /* vi: set sw=4 ts=4: */
 /*

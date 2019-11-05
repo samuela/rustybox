@@ -87,7 +87,7 @@ pub type __gid_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type __ssize_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 
 pub type C2RustUnnamed = libc::c_int;
 // pub const MS_NOUSER: C2RustUnnamed = -2147483648;
@@ -117,11 +117,11 @@ pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 // pub const MS_RDONLY: C2RustUnnamed = 1;
 
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type uintptr_t = libc::c_ulong;
-pub type ssize_t = __ssize_t;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
+use crate::librb::ssize_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

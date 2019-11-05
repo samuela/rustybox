@@ -255,9 +255,9 @@ pub type __syscall_slong_t = libc::c_long;
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
 pub type int32_t = __int32_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -269,14 +269,14 @@ pub type uint32_t = __uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type uid_t = __uid_t;
+use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type key_t = __key_t;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

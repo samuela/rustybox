@@ -36,8 +36,8 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
+use crate::librb::gid_t;
+use crate::librb::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

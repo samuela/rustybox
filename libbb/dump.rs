@@ -69,10 +69,10 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 

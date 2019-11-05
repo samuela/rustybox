@@ -106,10 +106,10 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __caddr_t = *mut libc::c_char;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::uint32_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

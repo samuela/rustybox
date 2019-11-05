@@ -240,7 +240,7 @@ pub type __syscall_slong_t = libc::c_long;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -252,10 +252,10 @@ pub type uint8_t = __uint8_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
+use crate::librb::uid_t;
+use crate::librb::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -268,7 +268,7 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {

@@ -38,7 +38,7 @@ pub type __cpu_mask = libc::c_ulong;
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

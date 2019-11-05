@@ -193,7 +193,7 @@ pub type __pid_t = libc::c_int;
 pub type __clock_t = libc::c_long;
 pub type __rlim64_t = libc::c_ulong;
 pub type __ssize_t = libc::c_long;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -205,9 +205,9 @@ pub type uint8_t = __uint8_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {

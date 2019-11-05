@@ -15,7 +15,7 @@ extern "C" {
 }
 pub type __off64_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-pub type off_t = __off64_t;
+use crate::librb::off_t;
 /*
  * Reads and displays CD-ROM volume name
  *

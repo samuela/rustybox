@@ -380,7 +380,7 @@ pub struct sockaddr_in6 {
   pub sin6_addr: in6_addr,
   pub sin6_scope_id: uint32_t,
 }
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -394,7 +394,7 @@ pub union C2RustUnnamed {
   pub __u6_addr32: [uint32_t; 4],
 }
 pub type uint16_t = __uint16_t;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -82,10 +82,10 @@ pub type __useconds_t = libc::c_uint;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type pid_t = __pid_t;
+use crate::librb::pid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 use crate::librb::smallint;
 pub type ino_t = __ino64_t;
 #[derive(Copy, Clone)]
@@ -98,8 +98,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type dev_t = __dev_t;
-pub type time_t = __time_t;
+use crate::librb::dev_t;
+use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

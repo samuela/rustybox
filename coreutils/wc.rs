@@ -26,11 +26,9 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type uint32_t = __uint32_t;
 use crate::librb::smallint;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-
-
 
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */

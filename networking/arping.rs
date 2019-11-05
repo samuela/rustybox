@@ -145,11 +145,11 @@ pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {

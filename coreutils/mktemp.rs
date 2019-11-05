@@ -25,7 +25,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 pub type __uint32_t = libc::c_uint;
-pub type uint32_t = __uint32_t;
+use crate::librb::uint32_t;
 pub const OPT_q: C2RustUnnamed = 2;
 pub const OPT_d: C2RustUnnamed = 1;
 pub const OPT_u: C2RustUnnamed = 16;

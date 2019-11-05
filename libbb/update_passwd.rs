@@ -103,7 +103,7 @@ pub struct flock {
 }
 use crate::librb::stat;
 use crate::librb::timespec;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 
 
 

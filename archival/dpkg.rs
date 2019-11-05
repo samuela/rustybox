@@ -241,9 +241,9 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -255,21 +255,21 @@ pub type uint64_t = __uint64_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type ssize_t = __ssize_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
-pub type mode_t = __mode_t;
+use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
 use crate::librb::stat;
+use crate::librb::time_t;
 use crate::librb::timespec;
-pub type dev_t = __dev_t;
-pub type time_t = __time_t;
+use crate::librb::uid_t;
 
-use crate::librb::FILE;
-pub type uoff_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
+use crate::librb::uoff_t;
+use crate::librb::FILE;
 
 use crate::librb::md5_ctx_t;
 

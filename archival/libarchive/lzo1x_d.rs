@@ -1,6 +1,6 @@
 use libc;
 pub type __uint8_t = libc::c_uchar;
-pub type uint8_t = __uint8_t;
+use crate::librb::uint8_t;
 /* implementation of the LZO1X decompression algorithm
 
   This file is part of the LZO real-time data compression library.

@@ -15,8 +15,8 @@ pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __uint64_t = libc::c_ulong;
 pub type int32_t = __int32_t;
-pub type uint32_t = __uint32_t;
-pub type uint64_t = __uint64_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
 pub type size_t = libc::c_ulong;
 /* Failure to allocate requested memory */
 /* Failure on sanity/limit tests */

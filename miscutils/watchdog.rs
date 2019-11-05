@@ -37,8 +37,8 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type ssize_t = __ssize_t;
+use crate::librb::uint32_t;
+use crate::librb::ssize_t;
 pub type size_t = libc::c_ulong;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

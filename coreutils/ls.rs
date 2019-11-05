@@ -163,12 +163,12 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __blkcnt64_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
 use crate::librb::smallint;
+use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
+use crate::librb::gid_t;
+use crate::librb::off_t;
+use crate::librb::uid_t;
 pub type ino_t = __ino64_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -180,14 +180,12 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type mode_t = __mode_t;
+use crate::librb::mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type nlink_t = __nlink_t;
-pub type time_t = __time_t;
+use crate::librb::time_t;
 pub type blkcnt_t = __blkcnt64_t;
-
-
 
 use crate::librb::FILE;
 pub type __compar_fn_t =
@@ -207,7 +205,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-pub type uoff_t = libc::c_ulong;
+use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct uni_stat_t {
