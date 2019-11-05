@@ -658,7 +658,7 @@ unsafe fn parse_config_file() {
 }
 
 /* check if u is member of group g */
-unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
+unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> bool {
   let mut grp: *mut group = bb_internal_getgrgid(g); /* real gid */
   if !grp.is_null() {
     let mut mem: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* run by root - no need to check more */
@@ -666,12 +666,12 @@ unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> libc::c_int {
     while !(*mem).is_null() {
       let mut pwd: *mut passwd = bb_internal_getpwnam(*mem);
       if !pwd.is_null() && (*pwd).pw_uid == u {
-        return 1i32;
+        return true;
       }
       mem = mem.offset(1)
     }
   }
-  return 0i32;
+  return false;
 }
 
 unsafe fn check_suid(applet_no: usize) {
@@ -710,7 +710,7 @@ unsafe fn check_suid(applet_no: usize) {
         if (*sct).m_ugid.uid == ruid {
           /* same uid */
           m >>= 6i32
-        } else if (*sct).m_ugid.gid == rgid || ingroup(ruid, (*sct).m_ugid.gid) != 0 {
+        } else if (*sct).m_ugid.gid == rgid || ingroup(ruid, (*sct).m_ugid.gid) {
           /* same group / in group */
           m >>= 3i32
         }
