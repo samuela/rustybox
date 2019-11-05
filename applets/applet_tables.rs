@@ -14,15 +14,6 @@ pub const BB_SUID_REQUIRE: bb_suid_t = 2;
 pub const BB_SUID_MAYBE: bb_suid_t = 1;
 pub const BB_SUID_DROP: bb_suid_t = 0;
 
-/*
- * Applet table generator.
- * Runs on host and produces include/applet_tables.h
- *
- * Copyright (C) 2007 Denys Vlasenko <vda.linux@googlemail.com>
- *
- * Licensed under GPLv2, see file LICENSE in this source tree.
- */
-
 #[derive(Clone)]
 #[repr(C)]
 pub struct bb_applet {
