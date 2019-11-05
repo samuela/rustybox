@@ -639,14 +639,7 @@ pub struct passwd {
   pub pw_dir: *mut libc::c_char,
   pub pw_shell: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
+use crate::librb::group;
 /* Useful for having small structure members/global variables */
 pub type socktype_t = int8_t;
 pub type family_t = int8_t;

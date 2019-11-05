@@ -13,14 +13,6 @@ extern "C" {
   fn fflush_all() -> libc::c_int;
 }
 
-/*
- * bb_ask_y_confirmation implementation for busybox
- *
- * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
- *
- * Licensed under GPLv2 or later, see file LICENSE in this source tree.
- */
-
 /* Read a line from fp.  If the first non-whitespace char is 'y' or 'Y',
  * return 1.  Otherwise return 0.
  */

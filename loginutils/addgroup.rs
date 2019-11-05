@@ -56,14 +56,7 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 pub type gid_t = __gid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
+use crate::librb::group;
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;
   /* Make sure gr_name is unused */

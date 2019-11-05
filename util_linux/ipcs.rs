@@ -165,14 +165,7 @@ pub struct passwd {
   pub pw_dir: *mut libc::c_char,
   pub pw_shell: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
+use crate::librb::group;
 /* vi: set sw=4 ts=4: */
 /*
  * ipcs.c -- provides information on allocated ipc resources.

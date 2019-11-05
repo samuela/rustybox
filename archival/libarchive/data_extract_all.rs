@@ -114,14 +114,7 @@ pub struct passwd {
   pub pw_dir: *mut libc::c_char,
   pub pw_shell: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
+use crate::librb::group;
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */

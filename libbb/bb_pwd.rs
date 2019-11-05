@@ -1,21 +1,28 @@
 use libc;
+
 extern "C" {
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   /* Search for an entry with a matching username.  */
   #[no_mangle]
   fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   /* Search for an entry with a matching group ID.  */
   #[no_mangle]
   fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
+
   /* Search for an entry with a matching group name.  */
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -33,9 +40,11 @@ extern "C" {
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
+
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type gid_t = __gid_t;
@@ -51,14 +60,7 @@ pub struct passwd {
   pub pw_dir: *mut libc::c_char,
   pub pw_shell: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
+use crate::librb::group;
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,
