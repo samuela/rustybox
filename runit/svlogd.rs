@@ -190,7 +190,7 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::signal::__sigset_t;
 use crate::librb::time_t;
-pub type sigset_t = __sigset_t;
+use crate::librb::signal::sigset_t;
 use crate::librb::timeval;
 
 use crate::librb::FILE;

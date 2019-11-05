@@ -361,7 +361,7 @@ use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::__uint32_t;
-pub type __clock_t = libc::c_long;
+use crate::librb::__clock_t;
 
 use crate::librb::__time_t;
 
@@ -393,27 +393,14 @@ use crate::librb::stat;
 use crate::librb::time_t;
 
 use crate::librb::signal::__sigset_t;
-pub type sigset_t = __sigset_t;
+use crate::librb::signal::sigset_t;
 
 use crate::librb::timeval;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union sigval {
-  pub sival_int: libc::c_int,
-  pub sival_ptr: *mut libc::c_void,
-}
-pub type __sigval_t = sigval;
+use crate::librb::signal::sigval;
+use crate::librb::signal::__sigval_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct siginfo_t {
-  pub si_signo: libc::c_int,
-  pub si_errno: libc::c_int,
-  pub si_code: libc::c_int,
-  pub __pad0: libc::c_int,
-  pub _sifields: C2RustUnnamed,
-}
+use crate::librb::signal::siginfo_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -58,13 +58,14 @@ extern "C" {
   #[no_mangle]
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
-use crate::librb::__dev_t;
 
+use crate::librb::__dev_t;
 use crate::librb::dev_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,

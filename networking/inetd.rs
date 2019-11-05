@@ -256,8 +256,8 @@ use crate::librb::__gid_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 
+use crate::librb::__clock_t;
 use crate::librb::__uint32_t;
-pub type __clock_t = libc::c_long;
 pub type __rlim64_t = libc::c_ulong;
 
 pub type __socklen_t = libc::c_uint;
@@ -294,11 +294,11 @@ use crate::librb::gid_t;
 use crate::librb::int8_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
+use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::time_t;
 use crate::librb::uid_t;
-pub type sigset_t = __sigset_t;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -453,13 +453,8 @@ pub const IPPROTO_IPIP: C2RustUnnamed_1 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union sigval {
-  pub sival_int: libc::c_int,
-  pub sival_ptr: *mut libc::c_void,
-}
-pub type __sigval_t = sigval;
+use crate::librb::signal::sigval;
+use crate::librb::signal::__sigval_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct servent {

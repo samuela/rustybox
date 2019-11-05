@@ -226,7 +226,7 @@ use crate::librb::__off64_t;
 
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-pub type __clock_t = libc::c_long;
+use crate::librb::__clock_t;
 
 use crate::librb::int16_t;
 use crate::librb::int32_t;
@@ -261,22 +261,9 @@ use crate::librb::signal::__sigset_t;
 use crate::librb::stat;
 use crate::librb::time_t;
 use crate::librb::timespec;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union sigval {
-  pub sival_int: libc::c_int,
-  pub sival_ptr: *mut libc::c_void,
-}
-pub type __sigval_t = sigval;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct siginfo_t {
-  pub si_signo: libc::c_int,
-  pub si_errno: libc::c_int,
-  pub si_code: libc::c_int,
-  pub __pad0: libc::c_int,
-  pub _sifields: C2RustUnnamed,
-}
+use crate::librb::signal::sigval;
+use crate::librb::signal::__sigval_t;
+use crate::librb::signal::siginfo_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -351,21 +338,8 @@ pub struct C2RustUnnamed_8 {
   pub si_uid: __uid_t,
 }
 use crate::librb::signal::__sighandler_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sigaction {
-  pub __sigaction_handler: C2RustUnnamed_9,
-  pub sa_mask: __sigset_t,
-  pub sa_flags: libc::c_int,
-  pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_9 {
-  pub sa_handler: __sighandler_t,
-  pub sa_sigaction:
-    Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
-}
+use crate::librb::signal::sigaction;
+use crate::librb::signal::C2RustUnnamed_9;
 
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;

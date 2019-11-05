@@ -384,21 +384,39 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-use crate::librb::size_t;
 
-use crate::librb::__uint32_t;
-
-use crate::librb::__uid_t;
-
+use crate::librb::__clock_t;
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
-
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-pub type __clock_t = libc::c_long;
-
+use crate::librb::__uid_t;
+use crate::librb::__uint32_t;
+use crate::librb::size_t;
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
+use crate::librb::int32_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
+pub type uintptr_t = libc::c_ulong;
+use crate::librb::smallint;
+pub type smalluint = libc::c_uchar;
+use crate::librb::mode_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::signal::__sigval_t;
+use crate::librb::signal::siginfo_t;
+use crate::librb::signal::sigset_t;
+use crate::librb::signal::sigval;
+use crate::librb::timeval;
+pub type __timezone_ptr_t = *mut timezone;
+use crate::librb::fd_pair;
+pub type sighandler_t = __sighandler_t;
+use crate::librb::signal::sigaction;
+use crate::librb::signal::C2RustUnnamed_9;
+pub type arith_t = libc::c_longlong;
 use crate::librb::ssize_t;
 pub type __size_t = libc::c_ulong;
 use crate::librb::stat;
@@ -444,11 +462,7 @@ pub struct utsname {
   pub machine: [libc::c_char; 65],
   pub domainname: [libc::c_char; 65],
 }
-use crate::librb::int32_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
-pub type uintptr_t = libc::c_ulong;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -459,127 +473,13 @@ pub type uintptr_t = libc::c_ulong;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
-pub type smalluint = libc::c_uchar;
-use crate::librb::mode_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sigset_t;
-pub type sigset_t = __sigset_t;
-use crate::librb::timeval;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union sigval {
-  pub sival_int: libc::c_int,
-  pub sival_ptr: *mut libc::c_void,
-}
-pub type __sigval_t = sigval;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct siginfo_t {
-  pub si_signo: libc::c_int,
-  pub si_errno: libc::c_int,
-  pub si_code: libc::c_int,
-  pub __pad0: libc::c_int,
-  pub _sifields: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub _pad: [libc::c_int; 28],
-  pub _kill: C2RustUnnamed_8,
-  pub _timer: C2RustUnnamed_7,
-  pub _rt: C2RustUnnamed_6,
-  pub _sigchld: C2RustUnnamed_5,
-  pub _sigfault: C2RustUnnamed_2,
-  pub _sigpoll: C2RustUnnamed_1,
-  pub _sigsys: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_0 {
-  pub _call_addr: *mut libc::c_void,
-  pub _syscall: libc::c_int,
-  pub _arch: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_1 {
-  pub si_band: libc::c_long,
-  pub si_fd: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_2 {
-  pub si_addr: *mut libc::c_void,
-  pub si_addr_lsb: libc::c_short,
-  pub _bounds: C2RustUnnamed_3,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_3 {
-  pub _addr_bnd: C2RustUnnamed_4,
-  pub _pkey: __uint32_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_4 {
-  pub _lower: *mut libc::c_void,
-  pub _upper: *mut libc::c_void,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_5 {
-  pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
-  pub si_status: libc::c_int,
-  pub si_utime: __clock_t,
-  pub si_stime: __clock_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_6 {
-  pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
-  pub si_sigval: __sigval_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_7 {
-  pub si_tid: libc::c_int,
-  pub si_overrun: libc::c_int,
-  pub si_sigval: __sigval_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed_8 {
-  pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
-}
-use crate::librb::signal::__sighandler_t;
-pub type sighandler_t = __sighandler_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sigaction {
-  pub __sigaction_handler: C2RustUnnamed_9,
-  pub sa_mask: __sigset_t,
-  pub sa_flags: libc::c_int,
-  pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_9 {
-  pub sa_handler: __sighandler_t,
-  pub sa_sigaction:
-    Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
-pub type __timezone_ptr_t = *mut timezone;
-use crate::librb::fd_pair;
 /* math.h - interface to shell math "library" -- this allows shells to share
  *          the implementation of arithmetic $((...)) expansions.
  *
@@ -637,7 +537,6 @@ use crate::librb::fd_pair;
  *	implementation will return the offset of first char that does not match
  *	the regex (in C locale): ^[a-zA-Z_][a-zA-Z_0-9]*
  */
-pub type arith_t = libc::c_longlong;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -1,8 +1,10 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
 }
+
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -20,6 +22,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
+
 /*
  * Copyright (c) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

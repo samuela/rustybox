@@ -11,6 +11,8 @@ pub struct __sigset_t {
   pub __val: [libc::c_ulong; 16],
 }
 
+pub type sigset_t = __sigset_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union sigval {
