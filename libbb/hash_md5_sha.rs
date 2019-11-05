@@ -18,22 +18,10 @@ pub type uint64_t = __uint64_t;
 pub type bb__aliased_uint64_t = uint64_t;
 pub type size_t = libc::c_ulong;
 use crate::librb::md5_ctx_t;
-pub type sha1_ctx_t = md5_ctx_t;
-pub type sha256_ctx_t = md5_ctx_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sha512_ctx_t {
-  pub total64: [uint64_t; 2],
-  pub hash: [uint64_t; 8],
-  pub wbuffer: [uint8_t; 128],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sha3_ctx_t {
-  pub state: [uint64_t; 25],
-  pub bytes_queued: libc::c_uint,
-  pub input_block_bytes: libc::c_uint,
-}
+use crate::librb::sha1_ctx_t;
+use crate::librb::sha256_ctx_t;
+use crate::librb::sha512_ctx_t;
+use crate::librb::sha3_ctx_t;
 /* Constants for SHA512 from FIPS 180-2:4.2.3.
  * SHA256 constants from FIPS 180-2:4.2.2
  * are the most significant half of first 64 elements

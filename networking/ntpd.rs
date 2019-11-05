@@ -329,12 +329,14 @@ pub type pid_t = __pid_t;
 pub type socklen_t = __socklen_t;
 pub type id_t = __id_t;
 pub type time_t = __time_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
+
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -346,12 +348,14 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;
@@ -375,6 +379,7 @@ pub const MSG_TRYHARD: C2RustUnnamed = 4;
 pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {
@@ -428,6 +433,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_1 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_1 = 255;
@@ -455,14 +461,14 @@ pub const IPPROTO_IPIP: C2RustUnnamed_1 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
+
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-
-
 
 use crate::librb::FILE;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 pub type nfds_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pollfd {
@@ -519,12 +525,14 @@ pub struct timex {
   pub c2rust_unnamed_c2rust_unnamed_0_c2rust_unnamed_1_c2rust_unnamed_2_c2rust_unnamed_3_c2rust_unnamed_4_c2rust_unnamed_5_c2rust_unnamed_6_c2rust_unnamed_7_c2rust_unnamed_8_c2rust_unnamed_9:
     [u8; 44],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
   pub len: socklen_t,
   pub u: C2RustUnnamed_2,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_2 {
@@ -532,17 +540,20 @@ pub union C2RustUnnamed_2 {
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
+
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_3 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_3 = 4;
 pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed_3 = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_3 = 1;
 use crate::libbb::llist::llist_t;
+
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed_4 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_4 = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed_4 = 1;
 pub const LOGMODE_NONE: C2RustUnnamed_4 = 0;
+
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_5 = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed_5 = 16777216;
@@ -553,6 +564,7 @@ pub const PARSE_MIN_DIE: C2RustUnnamed_5 = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed_5 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_5 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_5 = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -564,16 +576,8 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
-  /* 4 elements for md5, 5 for sha1, 8 for sha256 */
-}
-pub type sha1_ctx_t = md5_ctx_t;
+use crate::librb::md5_ctx_t;
+use crate::librb::sha1_ctx_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
@@ -716,18 +720,21 @@ pub const OPT_x: C2RustUnnamed_8 = 8;
 pub const OPT_N: C2RustUnnamed_8 = 4;
 pub const OPT_q: C2RustUnnamed_8 = 2;
 pub const OPT_n: C2RustUnnamed_8 = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_9 {
   pub f: libc::c_float,
   pub i: int32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_10 {
   pub m: md5_ctx_t,
   pub s: sha1_ctx_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct point_t {
@@ -736,16 +743,19 @@ pub struct point_t {
   pub edge: libc::c_double,
   pub opt_rd: libc::c_double,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct survivor_t {
   pub p: *mut peer_t,
   pub metric: libc::c_double,
 }
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
+
 //double   cluster_offset;        // s.offset
 //double   cluster_jitter;        // s.jitter
 unsafe extern "C" fn LOG2D(mut a: libc::c_int) -> libc::c_double {
@@ -754,10 +764,12 @@ unsafe extern "C" fn LOG2D(mut a: libc::c_int) -> libc::c_double {
   }
   return (1u64 << a) as libc::c_double;
 }
+
 #[inline(always)]
 unsafe extern "C" fn SQUARE(mut x: libc::c_double) -> libc::c_double {
   return x * x;
 }
+
 #[inline(always)]
 unsafe extern "C" fn MAXD(mut a: libc::c_double, mut b: libc::c_double) -> libc::c_double {
   if a > b {
@@ -790,6 +802,7 @@ unsafe extern "C" fn my_SQRT(mut X: libc::c_double) -> libc::c_double {
   return X * invsqrt;
   /* X * 1/sqrt(X) ~= sqrt(X) */
 }
+
 #[inline(always)]
 unsafe extern "C" fn SQRT(mut X: libc::c_double) -> libc::c_double {
   /* If this arch doesn't use IEEE 754 floats, fall back to using libm */
@@ -799,6 +812,7 @@ unsafe extern "C" fn SQRT(mut X: libc::c_double) -> libc::c_double {
   /* This avoids needing libm, saves about 0.5k on x86-32 */
   return my_SQRT(X); /* never fails */
 }
+
 unsafe extern "C" fn gettime1900d() -> libc::c_double {
   let mut tv: timeval = timeval {
     tv_sec: 0,
@@ -810,11 +824,13 @@ unsafe extern "C" fn gettime1900d() -> libc::c_double {
     + 2208988800u64 as libc::c_double;
   return (*ptr_to_globals).cur_time;
 }
+
 unsafe extern "C" fn d_to_tv(mut d: libc::c_double, mut tv: *mut timeval) {
   (*tv).tv_sec = d as libc::c_long;
   (*tv).tv_usec =
     ((d - (*tv).tv_sec as libc::c_double) * 1000000i32 as libc::c_double) as __suseconds_t;
 }
+
 unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
   let mut ret: libc::c_double = 0.;
   lfp.int_partl = {
@@ -860,6 +876,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
         .wrapping_add(1u32) as libc::c_double;
   return ret;
 }
+
 unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
   let mut ret: libc::c_double = 0.;
   sfp.int_parts = {
@@ -900,6 +917,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
     + sfp.fractions as libc::c_double / (32767i32 * 2i32 + 1i32) as libc::c_double;
   return ret;
 }
+
 unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
   let mut lfp: l_fixedpt_t = l_fixedpt_t {
     int_partl: 0,

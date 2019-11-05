@@ -106,22 +106,16 @@ pub union C2RustUnnamed_0 {
   pub x: sha256_ctx_t,
   pub y: sha512_ctx_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sha512_ctx_t {
-  pub total64: [uint64_t; 2],
-  pub hash: [uint64_t; 8],
-  pub wbuffer: [uint8_t; 128],
-}
-pub type sha256_ctx_t = md5_ctx_t;
 use crate::librb::md5_ctx_t;
+use crate::librb::sha256_ctx_t;
+use crate::librb::sha512_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_1 {
   pub x: sha256_ctx_t,
   pub y: sha512_ctx_t,
 }
-pub type sha1_ctx_t = md5_ctx_t;
+use crate::librb::sha1_ctx_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Utility routines.

@@ -154,8 +154,6 @@ pub type bb__aliased_uint64_t = uint64_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 
-
-
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
@@ -620,9 +618,9 @@ pub struct hmac_precomputed {
   pub hashed_key_xor_ipad: md5sha_ctx_t,
   pub hashed_key_xor_opad: md5sha_ctx_t,
 }
-pub type sha1_ctx_t = md5_ctx_t;
+use crate::librb::sha1_ctx_t;
 pub const SHA_INSIZE: C2RustUnnamed = 64;
-pub type sha256_ctx_t = md5_ctx_t;
+use crate::librb::sha256_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct handshake_hdr {

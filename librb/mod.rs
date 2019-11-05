@@ -200,9 +200,27 @@ pub struct fd_pair {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
+  pub wbuffer: [uint8_t; 64], /* always correctly aligned for uint64_t */
   pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
+  pub total64: uint64_t,   /* must be directly before hash[] */
+  pub hash: [uint32_t; 8], /* 4 elements for md5, 5 for sha1, 8 for sha256 */
+}
+pub type sha1_ctx_t = md5_ctx_t;
+pub type sha256_ctx_t = md5_ctx_t;
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct sha512_ctx_t {
+  pub total64: [uint64_t; 2], /* must be directly before hash[] */
+  pub hash: [uint64_t; 8],
+  pub wbuffer: [uint8_t; 128], /* always correctly aligned for uint64_t */
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct sha3_ctx_t {
+  pub state: [uint64_t; 25],
+  pub bytes_queued: libc::c_uint,
+  pub input_block_bytes: libc::c_uint,
 }
 // ... end libbb.h stuff

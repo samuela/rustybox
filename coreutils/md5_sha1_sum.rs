@@ -1,73 +1,106 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn bin2hex(
     dst: *mut libc::c_char,
     src: *const libc::c_char,
     count: libc::c_int,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn xfunc_die() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn md5_begin(ctx: *mut md5_ctx_t);
+
   #[no_mangle]
   fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
+
   #[no_mangle]
   fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   fn sha1_begin(ctx: *mut sha1_ctx_t);
+
   #[no_mangle]
   fn sha1_end(ctx: *mut sha1_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   fn sha256_begin(ctx: *mut sha256_ctx_t);
+
   #[no_mangle]
   fn sha512_begin(ctx: *mut sha512_ctx_t);
+
   #[no_mangle]
   fn sha512_hash(ctx: *mut sha512_ctx_t, buffer: *const libc::c_void, len: size_t);
+
   #[no_mangle]
   fn sha512_end(ctx: *mut sha512_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   fn sha3_begin(ctx: *mut sha3_ctx_t);
+
   #[no_mangle]
   fn sha3_hash(ctx: *mut sha3_ctx_t, buffer: *const libc::c_void, len: size_t);
+
   #[no_mangle]
   fn sha3_end(ctx: *mut sha3_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
@@ -84,145 +117,12 @@ pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 
 use crate::librb::md5_ctx_t;
+use crate::librb::sha1_ctx_t;
+use crate::librb::sha256_ctx_t;
+use crate::librb::sha3_ctx_t;
+use crate::librb::sha512_ctx_t;
 use crate::librb::FILE;
-pub type sha1_ctx_t = md5_ctx_t;
-pub type sha256_ctx_t = md5_ctx_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sha512_ctx_t {
-  pub total64: [uint64_t; 2],
-  pub hash: [uint64_t; 8],
-  pub wbuffer: [uint8_t; 128],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sha3_ctx_t {
-  pub state: [uint64_t; 25],
-  pub bytes_queued: libc::c_uint,
-  pub input_block_bytes: libc::c_uint,
-}
-/* vi: set sw=4 ts=4: */
-/*
- * Copyright (C) 2003 Glenn L. McGrath
- * Copyright (C) 2003-2004 Erik Andersen
- *
- * Licensed under GPLv2 or later, see file LICENSE in this source tree.
- */
-//config:config MD5SUM
-//config:	bool "md5sum (6.5 kb)"
-//config:	default y
-//config:	help
-//config:	Compute and check MD5 message digest
-//config:
-//config:config SHA1SUM
-//config:	bool "sha1sum (5.9 kb)"
-//config:	default y
-//config:	help
-//config:	Compute and check SHA1 message digest
-//config:
-//config:config SHA256SUM
-//config:	bool "sha256sum (7 kb)"
-//config:	default y
-//config:	help
-//config:	Compute and check SHA256 message digest
-//config:
-//config:config SHA512SUM
-//config:	bool "sha512sum (7.4 kb)"
-//config:	default y
-//config:	help
-//config:	Compute and check SHA512 message digest
-//config:
-//config:config SHA3SUM
-//config:	bool "sha3sum (6.1 kb)"
-//config:	default y
-//config:	help
-//config:	Compute and check SHA3 message digest
-//config:
-//config:comment "Common options for md5sum, sha1sum, sha256sum, sha512sum, sha3sum"
-//config:	depends on MD5SUM || SHA1SUM || SHA256SUM || SHA512SUM || SHA3SUM
-//config:
-//config:config FEATURE_MD5_SHA1_SUM_CHECK
-//config:	bool "Enable -c, -s and -w options"
-//config:	default y
-//config:	depends on MD5SUM || SHA1SUM || SHA256SUM || SHA512SUM || SHA3SUM
-//config:	help
-//config:	Enabling the -c options allows files to be checked
-//config:	against pre-calculated hash values.
-//config:	-s and -w are useful options when verifying checksums.
-//applet:IF_MD5SUM(APPLET_NOEXEC(md5sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, md5sum))
-//applet:IF_SHA1SUM(APPLET_NOEXEC(sha1sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, sha1sum))
-//applet:IF_SHA3SUM(APPLET_NOEXEC(sha3sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, sha3sum))
-//applet:IF_SHA256SUM(APPLET_NOEXEC(sha256sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, sha256sum))
-//applet:IF_SHA512SUM(APPLET_NOEXEC(sha512sum, md5_sha1_sum, BB_DIR_USR_BIN, BB_SUID_DROP, sha512sum))
-//kbuild:lib-$(CONFIG_MD5SUM)    += md5_sha1_sum.o
-//kbuild:lib-$(CONFIG_SHA1SUM)   += md5_sha1_sum.o
-//kbuild:lib-$(CONFIG_SHA256SUM) += md5_sha1_sum.o
-//kbuild:lib-$(CONFIG_SHA512SUM) += md5_sha1_sum.o
-//kbuild:lib-$(CONFIG_SHA3SUM)   += md5_sha1_sum.o
-//usage:#define md5sum_trivial_usage
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[FILE]..."
-//usage:#define md5sum_full_usage "\n\n"
-//usage:       "Print" IF_FEATURE_MD5_SHA1_SUM_CHECK(" or check") " MD5 checksums"
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n"
-//usage:     "\n	-c	Check sums against list in FILEs"
-//usage:     "\n	-s	Don't output anything, status code shows success"
-//usage:     "\n	-w	Warn about improperly formatted checksum lines"
-//usage:	)
-//usage:
-//usage:#define md5sum_example_usage
-//usage:       "$ md5sum < busybox\n"
-//usage:       "6fd11e98b98a58f64ff3398d7b324003\n"
-//usage:       "$ md5sum busybox\n"
-//usage:       "6fd11e98b98a58f64ff3398d7b324003  busybox\n"
-//usage:       "$ md5sum -c -\n"
-//usage:       "6fd11e98b98a58f64ff3398d7b324003  busybox\n"
-//usage:       "busybox: OK\n"
-//usage:       "^D\n"
-//usage:
-//usage:#define sha1sum_trivial_usage
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[FILE]..."
-//usage:#define sha1sum_full_usage "\n\n"
-//usage:       "Print" IF_FEATURE_MD5_SHA1_SUM_CHECK(" or check") " SHA1 checksums"
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n"
-//usage:     "\n	-c	Check sums against list in FILEs"
-//usage:     "\n	-s	Don't output anything, status code shows success"
-//usage:     "\n	-w	Warn about improperly formatted checksum lines"
-//usage:	)
-//usage:
-//usage:#define sha256sum_trivial_usage
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[FILE]..."
-//usage:#define sha256sum_full_usage "\n\n"
-//usage:       "Print" IF_FEATURE_MD5_SHA1_SUM_CHECK(" or check") " SHA256 checksums"
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n"
-//usage:     "\n	-c	Check sums against list in FILEs"
-//usage:     "\n	-s	Don't output anything, status code shows success"
-//usage:     "\n	-w	Warn about improperly formatted checksum lines"
-//usage:	)
-//usage:
-//usage:#define sha512sum_trivial_usage
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[FILE]..."
-//usage:#define sha512sum_full_usage "\n\n"
-//usage:       "Print" IF_FEATURE_MD5_SHA1_SUM_CHECK(" or check") " SHA512 checksums"
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n"
-//usage:     "\n	-c	Check sums against list in FILEs"
-//usage:     "\n	-s	Don't output anything, status code shows success"
-//usage:     "\n	-w	Warn about improperly formatted checksum lines"
-//usage:	)
-//usage:
-//usage:#define sha3sum_trivial_usage
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[-a BITS] [FILE]..."
-//usage:#define sha3sum_full_usage "\n\n"
-//usage:       "Print" IF_FEATURE_MD5_SHA1_SUM_CHECK(" or check") " SHA3 checksums"
-//usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n"
-//usage:     "\n	-c	Check sums against list in FILEs"
-//usage:     "\n	-s	Don't output anything, status code shows success"
-//usage:     "\n	-w	Warn about improperly formatted checksum lines"
-//usage:     "\n	-a BITS	224 (default), 256, 384, 512"
-//usage:	)
-//FIXME: GNU coreutils 8.25 has no -s option, it has only these two long opts:
-// --quiet   don't print OK for each successfully verified file
-// --status  don't output anything, status code shows success
-/* This is a NOEXEC applet. Be very careful! */
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const HASH_SHA512: C2RustUnnamed = 53;
 pub const HASH_SHA3: C2RustUnnamed = 51;
@@ -231,6 +131,7 @@ pub const HASH_SHA256: C2RustUnnamed = 50;
 pub const HASH_SHA1: C2RustUnnamed = 49;
 /* 4th letter of applet_name is... */
 pub const HASH_MD5: C2RustUnnamed = 115;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union _ctx_ {
@@ -240,6 +141,7 @@ pub union _ctx_ {
   pub sha1: sha1_ctx_t,
   pub md5: md5_ctx_t,
 }
+
 /* This might be useful elsewhere */
 unsafe extern "C" fn hash_bin_to_hex(
   mut hash_value: *mut libc::c_uchar,
@@ -258,6 +160,7 @@ unsafe extern "C" fn hash_bin_to_hex(
   );
   return hex_value as *mut libc::c_uchar;
 }
+
 unsafe extern "C" fn hash_file(
   mut filename: *const libc::c_char,
   mut sha3_width: libc::c_uint,
@@ -447,6 +350,7 @@ unsafe extern "C" fn hash_file(
   }
   return hash_value;
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn md5_sha1_sum_main(
   mut _argc: libc::c_int,
