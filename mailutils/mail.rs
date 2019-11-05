@@ -1,67 +1,97 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
+
   #[no_mangle]
   static mut stdout: *mut FILE;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
+
   #[no_mangle]
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   fn xpipe(filedes: *mut libc::c_int);
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_ask_noecho(
     fd: libc::c_int,
     timeout: libc::c_int,
     prompt: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_uuenc_tbl_base64: [libc::c_char; 0];
+
   #[no_mangle]
   fn bb_uuencode(
     store: *mut libc::c_char,
@@ -70,15 +100,12 @@ extern "C" {
     tbl: *const libc::c_char,
   );
 }
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
-pub type __ssize_t = libc::c_long;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::pid_t;
 
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
