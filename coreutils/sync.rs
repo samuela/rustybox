@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 pub const OPT_DATASYNC: C2RustUnnamed = 1;
 pub const OPT_SYNCFS: C2RustUnnamed = 2;

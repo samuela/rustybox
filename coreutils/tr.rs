@@ -33,8 +33,8 @@ extern "C" {
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
-use crate::librb::__ssize_t;
+
+
 use crate::librb::uint32_t;
 
 /*

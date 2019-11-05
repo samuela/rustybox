@@ -1,5 +1,5 @@
 use libc;
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

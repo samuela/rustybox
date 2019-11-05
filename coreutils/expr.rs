@@ -57,7 +57,7 @@ extern "C" {
   #[no_mangle]
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
-use crate::librb::__uint8_t;
+
 pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
 use crate::librb::uint8_t;

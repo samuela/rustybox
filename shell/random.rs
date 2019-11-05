@@ -7,7 +7,7 @@ extern "C" {
 }
 pub type __int32_t = libc::c_int;
 use crate::librb::__pid_t;
-use crate::librb::__uint32_t;
+
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]

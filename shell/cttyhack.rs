@@ -29,7 +29,7 @@ extern "C" {
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
 }
-use crate::librb::__ssize_t;
+
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 

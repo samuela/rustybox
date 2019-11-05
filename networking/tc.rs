@@ -83,7 +83,7 @@ extern "C" {
   fn ll_proto_a2n(id: *mut libc::c_ushort, buf: *mut libc::c_char) -> libc::c_int;
 }
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]

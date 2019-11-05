@@ -35,12 +35,12 @@ extern "C" {
   #[no_mangle]
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;

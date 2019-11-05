@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
 }
-use crate::librb::__ssize_t;
+
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 

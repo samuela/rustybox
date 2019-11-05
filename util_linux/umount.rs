@@ -123,7 +123,7 @@ pub const MS_REMOUNT: C2RustUnnamed = 32;
 // pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
 
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 
 pub type C2RustUnnamed_0 = libc::c_uint;

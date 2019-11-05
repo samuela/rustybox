@@ -62,7 +62,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __uint64_t = libc::c_ulong;
 use crate::librb::__pid_t;
 pub type uint16_t = __uint16_t;

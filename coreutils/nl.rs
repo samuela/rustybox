@@ -18,7 +18,7 @@ extern "C" {
   #[no_mangle]
   fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::size_t;

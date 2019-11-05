@@ -52,7 +52,7 @@ extern "C" {
   fn header_verbose_list(file_header: *const file_header_t);
 }
 
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

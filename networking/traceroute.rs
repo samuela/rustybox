@@ -162,16 +162,16 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type __suseconds_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __socklen_t = libc::c_uint;
 use crate::librb::gid_t;
 use crate::librb::uid_t;

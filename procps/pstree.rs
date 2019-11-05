@@ -36,11 +36,11 @@ extern "C" {
   #[no_mangle]
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __uid_t = libc::c_uint;
-use crate::librb::__pid_t;
+
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;

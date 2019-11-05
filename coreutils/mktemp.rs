@@ -24,7 +24,7 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 pub const OPT_q: C2RustUnnamed = 2;
 pub const OPT_d: C2RustUnnamed = 1;

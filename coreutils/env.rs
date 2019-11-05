@@ -29,7 +29,7 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 use crate::libbb::llist::llist_t;
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 
 /*

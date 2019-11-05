@@ -55,7 +55,7 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -67,7 +67,7 @@ pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::off_t;
 use crate::librb::size_t;

@@ -245,10 +245,10 @@ pub const MS_NOEXEC: C2RustUnnamed = 8;
 pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

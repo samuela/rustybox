@@ -48,7 +48,7 @@ extern "C" {
     width: libc::c_uint,
   ) -> *mut libc::c_char;
 }
-use crate::librb::__uint32_t;
+
 pub type __time_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::size_t;

@@ -30,7 +30,7 @@ extern "C" {
     args: *mut *const libc::c_char,
   ) -> !;
 }
-use crate::librb::__uint8_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

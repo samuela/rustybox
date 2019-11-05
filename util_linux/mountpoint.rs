@@ -23,7 +23,7 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

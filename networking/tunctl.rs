@@ -29,7 +29,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __uid_t = libc::c_uint;
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint32_t;

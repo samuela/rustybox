@@ -77,10 +77,10 @@ extern "C" {
   #[no_mangle]
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
-use crate::librb::__uint32_t;
+
 pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
-use crate::librb::__ssize_t;
+
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;

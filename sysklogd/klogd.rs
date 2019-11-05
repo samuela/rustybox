@@ -50,7 +50,7 @@ extern "C" {
   #[no_mangle]
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;

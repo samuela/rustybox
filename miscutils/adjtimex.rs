@@ -20,7 +20,7 @@ extern "C" {
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;

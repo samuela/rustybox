@@ -185,14 +185,14 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 use crate::librb::__uint32_t;
-use crate::librb::__uint8_t;
+
 pub type __uid_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 use crate::librb::__pid_t;
 pub type __clock_t = libc::c_long;
 pub type __rlim64_t = libc::c_ulong;
-use crate::librb::__ssize_t;
+
 use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake

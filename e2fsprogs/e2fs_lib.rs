@@ -24,7 +24,7 @@ extern "C" {
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

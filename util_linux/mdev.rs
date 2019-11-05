@@ -351,7 +351,7 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
 use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
@@ -368,7 +368,7 @@ pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

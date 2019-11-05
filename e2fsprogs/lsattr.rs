@@ -61,7 +61,7 @@ extern "C" {
   #[no_mangle]
   fn print_e2flags(f: *mut FILE, flags: libc::c_ulong, options: libc::c_uint);
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

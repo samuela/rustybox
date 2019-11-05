@@ -32,7 +32,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -43,7 +43,7 @@ pub type __off_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;

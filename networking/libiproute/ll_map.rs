@@ -49,7 +49,7 @@ extern "C" {
   #[no_mangle]
   fn xrtnl_wilddump_request(rth: *mut rtnl_handle, fam: libc::c_int, type_0: libc::c_int);
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 pub type __u16 = libc::c_ushort;

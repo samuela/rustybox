@@ -74,7 +74,7 @@ extern "C" {
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__uint8_t;
+
 pub type __uint64_t = libc::c_ulong;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;

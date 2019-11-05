@@ -88,11 +88,11 @@ extern "C" {
   #[no_mangle]
   fn printstr_base64(buf: *const libc::c_char);
 }
-use crate::librb::__uint32_t;
+
 pub type __uid_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-use crate::librb::__pid_t;
+
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::uid_t;

@@ -22,7 +22,7 @@ extern "C" {
     flags: libc::c_int,
   ) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __mode_t = libc::c_uint;
 use crate::librb::uint32_t;
 use crate::librb::mode_t;

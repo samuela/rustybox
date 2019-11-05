@@ -51,13 +51,13 @@ extern "C" {
     expected_ext: *const libc::c_char,
   ) -> libc::c_int;
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-use crate::librb::__uint32_t;
+
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type int32_t = __int32_t;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

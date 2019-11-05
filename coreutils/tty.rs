@@ -15,8 +15,8 @@ extern "C" {
   #[no_mangle]
   fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
 }
-use crate::librb::__uint32_t;
-use crate::librb::__uint8_t;
+
+
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 

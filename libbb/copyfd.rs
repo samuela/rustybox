@@ -19,7 +19,7 @@ extern "C" {
   ) -> ssize_t;
 }
 pub type __off64_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::off_t;

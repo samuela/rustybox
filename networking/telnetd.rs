@@ -122,14 +122,14 @@ extern "C" {
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type __suseconds_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

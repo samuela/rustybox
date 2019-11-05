@@ -47,7 +47,7 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 use crate::librb::size_t;
 use crate::librb::pid_t;

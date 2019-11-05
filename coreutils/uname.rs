@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -153,14 +153,14 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::size_t;

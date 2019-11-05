@@ -28,7 +28,7 @@ extern "C" {
   #[no_mangle]
   fn getppid() -> __pid_t;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 use crate::librb::uint32_t;
 use crate::librb::pid_t;

@@ -49,9 +49,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __uint64_t = libc::c_ulong;
 pub type __off64_t = libc::c_long;
 use crate::librb::uint8_t;

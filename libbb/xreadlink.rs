@@ -32,7 +32,7 @@ extern "C" {
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 }
-use crate::librb::__ssize_t;
+
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 pub const GROWBY: C2RustUnnamed = 80;

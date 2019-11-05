@@ -54,7 +54,7 @@ extern "C" {
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut __gid_t) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::gid_t;

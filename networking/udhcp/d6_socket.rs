@@ -86,9 +86,9 @@ extern "C" {
   #[no_mangle]
   fn freeifaddrs(__ifa: *mut ifaddrs);
 }
-use crate::librb::__uint8_t;
+
 pub type __uint16_t = libc::c_ushort;
-use crate::librb::__uint32_t;
+
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;

@@ -17,9 +17,9 @@ extern "C" {
   #[no_mangle]
   fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
 }
-use crate::librb::__uint32_t;
+
 pub type __int64_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type int64_t = __int64_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;

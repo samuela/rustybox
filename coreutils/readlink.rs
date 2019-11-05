@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   static mut logmode: smallint;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::smallint;
 use crate::librb::uint32_t;
 pub type C2RustUnnamed = libc::c_uint;

@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::uint32_t;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

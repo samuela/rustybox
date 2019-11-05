@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 }
-use crate::librb::__ssize_t;
+
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 // NB: will return short write on error, not -1,

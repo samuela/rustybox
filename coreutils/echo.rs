@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-use crate::librb::__ssize_t;
+
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 

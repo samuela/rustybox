@@ -85,11 +85,11 @@ extern "C" {
   fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
 }
 
-use crate::librb::__uint8_t;
+
 pub type __int16_t = libc::c_short;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-use crate::librb::__uint32_t;
+
 pub type __uint64_t = libc::c_ulong;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;

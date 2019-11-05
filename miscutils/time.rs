@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;

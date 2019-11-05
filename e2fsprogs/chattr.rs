@@ -61,7 +61,7 @@ extern "C" {
   #[no_mangle]
   static e2attr_flags_sname: [libc::c_char; 0];
 }
-use crate::librb::__uint32_t;
+
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

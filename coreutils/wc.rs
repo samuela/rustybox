@@ -23,7 +23,7 @@ extern "C" {
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }
-use crate::librb::__uint32_t;
+
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 use crate::librb::smallint;

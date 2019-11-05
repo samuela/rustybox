@@ -53,7 +53,7 @@ pub struct vt_stat {
   pub v_signal: libc::c_ushort,
   pub v_state: libc::c_ushort,
 }
-use crate::librb::__uint32_t;
+
 use crate::librb::__pid_t;
 use crate::librb::uint32_t;
 use crate::librb::pid_t;

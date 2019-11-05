@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
-use crate::librb::__uint8_t;
+
 use crate::librb::uint8_t;
 use crate::librb::size_t;
 /* name compression pointer flag */

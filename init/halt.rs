@@ -45,7 +45,7 @@ extern "C" {
 }
 pub type __int32_t = libc::c_int;
 use crate::librb::__pid_t;
-use crate::librb::__uint32_t;
+
 pub type __time_t = libc::c_long;
 use crate::librb::pid_t;
 use crate::librb::size_t;

@@ -216,7 +216,7 @@ extern "C" {
   #[no_mangle]
   static lineedit_ptr_to_statics: *mut lineedit_statics;
 }
-use crate::librb::__uint8_t;
+
 pub type __int16_t = libc::c_short;
 pub type __int32_t = libc::c_int;
 use crate::librb::__uint32_t;
@@ -235,7 +235,7 @@ pub type __clock_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __syscall_slong_t = libc::c_long;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;

@@ -146,9 +146,9 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-use crate::librb::__uint8_t;
+
 pub type __int32_t = libc::c_int;
-use crate::librb::__uint32_t;
+
 pub type __int64_t = libc::c_long;
 pub type __uint64_t = libc::c_ulong;
 pub type __dev_t = libc::c_ulong;
@@ -162,7 +162,7 @@ pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-use crate::librb::__ssize_t;
+
 pub type __syscall_slong_t = libc::c_long;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;

@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
 }
-use crate::librb::__uint8_t;
+
 use crate::librb::uint8_t;
 use crate::librb::size_t;
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use

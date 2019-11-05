@@ -5,8 +5,8 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
-use crate::librb::__uint8_t;
-use crate::librb::__uint32_t;
+
+
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 /*
