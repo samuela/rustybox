@@ -20,7 +20,7 @@ extern "C" {
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
 use crate::librb::uint32_t;
 use crate::librb::off_t;
 #[derive(Copy, Clone)]

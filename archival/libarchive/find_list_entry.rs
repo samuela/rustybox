@@ -28,6 +28,7 @@ pub unsafe extern "C" fn find_list_entry(
   }
   return 0 as *const llist_t;
 }
+
 /* Same, but compares only path components present in pattern
  * (extra trailing path components in filename are assumed to match)
  */

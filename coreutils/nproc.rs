@@ -28,8 +28,8 @@ extern "C" {
   ) -> uint32_t;
 }
 
-pub type __ino64_t = libc::c_ulong;
-pub type __off64_t = libc::c_long;
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::size_t;
 pub type __cpu_mask = libc::c_ulong;

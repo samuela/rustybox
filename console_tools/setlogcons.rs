@@ -14,6 +14,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {

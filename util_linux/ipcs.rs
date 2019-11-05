@@ -35,10 +35,10 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
+use crate::librb::__time_t;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 use crate::librb::gid_t;

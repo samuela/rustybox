@@ -14,7 +14,8 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type ptrdiff_t = libc::c_long;
+
+use crate::librb::ptrdiff_t;
 
 /*
  * Disallocate virtual terminal(s)
@@ -40,6 +41,7 @@ pub type ptrdiff_t = libc::c_long;
 pub type C2RustUnnamed = libc::c_uint;
 pub const VT_DISALLOCATE: C2RustUnnamed = 22024;
 /* free memory associated to vt */
+
 #[no_mangle]
 pub unsafe extern "C" fn deallocvt_main(
   mut _argc: libc::c_int,

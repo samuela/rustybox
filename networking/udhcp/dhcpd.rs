@@ -291,23 +291,23 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-pub type __uint16_t = libc::c_ushort;
-pub type __int32_t = libc::c_int;
+use crate::librb::__uint16_t;
+use crate::librb::__int32_t;
 
 pub type __int64_t = libc::c_long;
-pub type __uint64_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
+use crate::librb::__uint64_t;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::time_t;
 use crate::librb::size_t;
-pub type int32_t = __int32_t;
+use crate::librb::int32_t;
 pub type int64_t = __int64_t;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 #[derive(Copy, Clone)]

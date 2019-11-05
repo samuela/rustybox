@@ -34,8 +34,8 @@ extern "C" {
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
-pub type __ino64_t = libc::c_ulong;
-pub type __off64_t = libc::c_long;
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
 
 use crate::librb::ssize_t;
 use crate::librb::size_t;

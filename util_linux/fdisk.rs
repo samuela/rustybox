@@ -282,22 +282,20 @@ extern "C" {
   fn sun_write_table();
 }
 
+use crate::librb::__uint64_t;
+use crate::librb::__blksize_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__ino_t;
+use crate::librb::__mode_t;
+use crate::librb::__nlink_t;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
+use crate::librb::__blkcnt_t;
 
-
-pub type __uint64_t = libc::c_ulong;
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-
-pub type __syscall_slong_t = libc::c_long;
+use crate::librb::__syscall_slong_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 use crate::librb::uint8_t;
@@ -313,20 +311,16 @@ pub type bb__aliased_uint32_t = uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::off_t;
 
 use crate::librb::timespec;
 
 use crate::librb::stat;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __sigset_t {
-  pub __val: [libc::c_ulong; 16],
-}
+use crate::librb::signal::__sigset_t;
 
 pub type __jmp_buf = [libc::c_long; 8];
 

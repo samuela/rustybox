@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-pub type __uid_t = libc::c_uint;
+use crate::librb::__uid_t;
 use crate::librb::uid_t;
 
 /*

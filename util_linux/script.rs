@@ -118,11 +118,11 @@ extern "C" {
 }
 
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__suseconds_t;
 
 use crate::librb::pid_t;
 use crate::librb::size_t;
@@ -132,7 +132,7 @@ use crate::librb::time_t;
 use crate::librb::uint32_t;
 
 use crate::librb::timeval;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

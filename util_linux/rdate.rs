@@ -37,16 +37,16 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 
-pub type __time_t = libc::c_long;
+use crate::librb::__time_t;
 
-pub type int32_t = __int32_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
+use crate::librb::int32_t;
+use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::time_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::uint32_t;
 
 /*
  * The Rdate command will ask a time server for the RFC 868 time

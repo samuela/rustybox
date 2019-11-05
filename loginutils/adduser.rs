@@ -84,10 +84,10 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __time_t = libc::c_long;
+use crate::librb::__gid_t;
+use crate::librb::__mode_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;

@@ -6,11 +6,11 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __uint64_t = libc::c_ulong;
+use crate::librb::__uint64_t;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 use crate::librb::size_t;

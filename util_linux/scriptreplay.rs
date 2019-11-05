@@ -19,9 +19,9 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
+use crate::librb::__useconds_t;
 use crate::librb::off_t;
 
 use crate::librb::FILE;

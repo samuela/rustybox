@@ -41,13 +41,13 @@ extern "C" {
 }
 
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__suseconds_t;
+use crate::librb::__syscall_slong_t;
 use crate::librb::uint32_t;
 use crate::librb::pid_t;
 use crate::librb::timeval;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rusage {

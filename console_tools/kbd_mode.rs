@@ -19,8 +19,9 @@ extern "C" {
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
 }
 
+use crate::librb::ptrdiff_t;
 use crate::librb::uint32_t;
-pub type ptrdiff_t = libc::c_long;
+
 pub const UNICODE: C2RustUnnamed = 8;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MEDIUMRAW: C2RustUnnamed = 4;

@@ -140,21 +140,17 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __sigset_t {
-  pub __val: [libc::c_ulong; 16],
-}
+use crate::librb::signal::__sigset_t;
 pub type sigset_t = __sigset_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

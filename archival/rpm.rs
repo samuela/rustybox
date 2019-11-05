@@ -118,26 +118,42 @@ extern "C" {
   #[no_mangle]
   fn check_errors_in_children(signo: libc::c_int);
 }
-pub type __int8_t = libc::c_schar;
-pub type __int16_t = libc::c_short;
-pub type __int32_t = libc::c_int;
 
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-pub type int8_t = __int8_t;
-pub type int16_t = __int16_t;
-pub type int32_t = __int32_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::__blkcnt_t;
+use crate::librb::__blksize_t;
+use crate::librb::__compar_fn_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__ino_t;
+use crate::librb::__int16_t;
+use crate::librb::__int32_t;
+use crate::librb::__int8_t;
+use crate::librb::__mode_t;
+use crate::librb::__nlink_t;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
+use crate::librb::__syscall_slong_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
+use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::group;
+use crate::librb::int16_t;
+use crate::librb::int32_t;
+use crate::librb::int8_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::stat;
+use crate::librb::time_t;
+use crate::librb::timespec;
+use crate::librb::uid_t;
 use crate::librb::uint32_t;
+use crate::librb::uoff_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -148,17 +164,6 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
-use crate::librb::size_t;
-use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::off_t;
-use crate::librb::mode_t;
-use crate::librb::dev_t;
-use crate::librb::stat;
-use crate::librb::timespec;
-use crate::librb::time_t;
-use crate::librb::__compar_fn_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -174,9 +179,6 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-use crate::librb::group;
-use crate::librb::passwd;
-use crate::librb::uoff_t;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -216,7 +218,6 @@ use crate::librb::bb_uidgid_t;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::libbb::llist::llist_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

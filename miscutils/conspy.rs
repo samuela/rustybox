@@ -101,23 +101,23 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __dev_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__dev_t;
+use crate::librb::__mode_t;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::pid_t;
 use crate::librb::dev_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 
 
 

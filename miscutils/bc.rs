@@ -145,15 +145,14 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-pub type __int8_t = libc::c_schar;
+use crate::librb::__int8_t;
 
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-
-pub type int8_t = __int8_t;
-use crate::librb::uint8_t;
+use crate::librb::int8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -164,11 +163,9 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-
-
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

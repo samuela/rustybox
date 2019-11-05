@@ -57,8 +57,8 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::uid_t;

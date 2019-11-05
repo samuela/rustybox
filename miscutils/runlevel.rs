@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn utmpxname(__file: *const libc::c_char) -> libc::c_int;
 }
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 use crate::librb::__pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

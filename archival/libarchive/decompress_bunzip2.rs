@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -36,25 +37,21 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-pub type __uint16_t = libc::c_ushort;
-
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-
-use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uint16_t;
+use crate::librb::off_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::off_t;
 use crate::librb::time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __sigset_t {
-  pub __val: [libc::c_ulong; 16],
-}
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
+
 pub type __jmp_buf = [libc::c_long; 8];
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __jmp_buf_tag {
@@ -72,6 +69,7 @@ pub const XZ_MAGIC1: C2RustUnnamed = 14333;
 pub const BZIP2_MAGIC: C2RustUnnamed = 23106;
 pub const GZIP_MAGIC: C2RustUnnamed = 35615;
 pub const COMPRESS_MAGIC: C2RustUnnamed = 40223;
+
 /* Structure holding all the housekeeping data, including IO buffers and
  * memory that persists between calls to bunzip
  * Found the most used member:

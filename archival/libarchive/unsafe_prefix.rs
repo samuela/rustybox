@@ -1,12 +1,16 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
+
 use crate::librb::smallint;
 
 /*

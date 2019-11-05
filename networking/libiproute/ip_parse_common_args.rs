@@ -9,8 +9,8 @@ extern "C" {
   #[no_mangle]
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
 }
-pub type __int8_t = libc::c_schar;
-pub type int8_t = __int8_t;
+use crate::librb::__int8_t;
+use crate::librb::int8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

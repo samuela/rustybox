@@ -95,8 +95,8 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
+use crate::librb::__off64_t;
 use crate::librb::size_t;
-pub type __off64_t = libc::c_long;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -109,12 +109,10 @@ pub struct mntent {
   pub mnt_passno: libc::c_int,
 }
 
-
-pub type __uint16_t = libc::c_ushort;
-
+use crate::librb::__uint16_t;
 
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 
 use crate::librb::off_t;
 use crate::librb::smallint;

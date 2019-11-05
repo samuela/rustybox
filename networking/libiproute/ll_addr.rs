@@ -26,10 +26,10 @@ extern "C" {
   fn get_addr_1(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int) -> libc::c_int;
 }
 
-pub type __int16_t = libc::c_short;
+use crate::librb::__int16_t;
 
 pub type __socklen_t = libc::c_uint;
-pub type int16_t = __int16_t;
+use crate::librb::int16_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;

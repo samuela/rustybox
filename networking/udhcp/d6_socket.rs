@@ -87,12 +87,12 @@ extern "C" {
   fn freeifaddrs(__ifa: *mut ifaddrs);
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

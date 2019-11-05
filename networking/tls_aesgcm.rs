@@ -12,10 +12,10 @@ extern "C" {
   fn xorbuf_aligned_AES_BLOCK_SIZE(buf: *mut libc::c_void, mask: *const libc::c_void);
 }
 
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 
-pub type __uint64_t = libc::c_ulong;
-pub type int32_t = __int32_t;
+use crate::librb::__uint64_t;
+use crate::librb::int32_t;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 /*

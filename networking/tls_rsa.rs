@@ -41,9 +41,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 
-pub type int32_t = __int32_t;
+use crate::librb::int32_t;
 use crate::librb::uint32_t;
 pub type uint32 = uint32_t;
 pub type int32 = int32_t;

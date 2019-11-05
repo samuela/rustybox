@@ -88,12 +88,12 @@ extern "C" {
   fn bb_daemonize_or_rexec(flags: libc::c_int);
 }
 
-pub type __mode_t = libc::c_uint;
-pub type __off64_t = libc::c_long;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
 
-use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

@@ -84,9 +84,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-pub type __time_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__useconds_t;
+use crate::librb::__suseconds_t;
 
 use crate::librb::uint32_t;
 use crate::librb::smallint;

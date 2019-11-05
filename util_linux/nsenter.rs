@@ -64,8 +64,8 @@ extern "C" {
 }
 
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 
 use crate::librb::gid_t;
 use crate::librb::pid_t;

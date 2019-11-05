@@ -41,8 +41,8 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::uid_t;

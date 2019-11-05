@@ -19,9 +19,11 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __uint16_t = libc::c_ushort;
-pub type uint16_t = __uint16_t;
+
+use crate::librb::__uint16_t;
 use crate::librb::size_t;
+use crate::librb::uint16_t;
+
 /* From <linux/kd.h> */
 #[derive(Copy, Clone)]
 #[repr(C)]

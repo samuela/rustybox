@@ -1,6 +1,7 @@
 use libc;
 
 use crate::librb::uint8_t;
+
 /* implementation of the LZO1X decompression algorithm
 
   This file is part of the LZO real-time data compression library.

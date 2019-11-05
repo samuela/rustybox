@@ -46,6 +46,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct vt_stat {
@@ -55,9 +56,10 @@ pub struct vt_stat {
 }
 
 use crate::librb::__pid_t;
-use crate::librb::uint32_t;
 use crate::librb::pid_t;
-pub type ptrdiff_t = libc::c_long;
+use crate::librb::ptrdiff_t;
+use crate::librb::uint32_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
@@ -66,6 +68,7 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 pub const OPT_s: C2RustUnnamed_0 = 4;
 pub const OPT_w: C2RustUnnamed_0 = 2;
 pub const OPT_c: C2RustUnnamed_0 = 1;
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_v: C2RustUnnamed_0 = 32;
 pub const OPT_f: C2RustUnnamed_0 = 16;

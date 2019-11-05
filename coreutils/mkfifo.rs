@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
-pub type __mode_t = libc::c_uint;
+use crate::librb::__mode_t;
 use crate::librb::mode_t;
 
 /*

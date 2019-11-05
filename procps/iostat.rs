@@ -80,9 +80,9 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::size_t;

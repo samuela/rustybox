@@ -76,9 +76,9 @@ extern "C" {
 
 
 use crate::librb::size_t;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
 
-pub type __off_t = libc::c_long;
+use crate::librb::__off_t;
 
 
 

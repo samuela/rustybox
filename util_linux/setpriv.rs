@@ -170,11 +170,11 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-use crate::librb::uint32_t;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
+use crate::librb::uint32_t;
 
 // so for bbox, let's just repeat the declarations.
 // This way, libcap needs not be installed in build environment.

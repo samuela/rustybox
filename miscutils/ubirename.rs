@@ -26,12 +26,12 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type __int8_t = libc::c_schar;
-pub type __int16_t = libc::c_short;
-pub type __int32_t = libc::c_int;
-pub type int8_t = __int8_t;
-pub type int16_t = __int16_t;
-pub type int32_t = __int32_t;
+use crate::librb::__int16_t;
+use crate::librb::__int32_t;
+use crate::librb::__int8_t;
+use crate::librb::int16_t;
+use crate::librb::int32_t;
+use crate::librb::int8_t;
 use crate::librb::size_t;
 /* ubirename - port of the ubirename from the mtd-utils package
  *

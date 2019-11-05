@@ -123,21 +123,21 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__useconds_t;
+use crate::librb::__suseconds_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
-use crate::librb::size_t;
-use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::timeval;
 pub type __fd_mask = libc::c_long;
@@ -206,12 +206,10 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 
-
-
-use crate::librb::winsize;
 use crate::librb::termios;
+use crate::librb::winsize;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

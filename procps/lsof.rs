@@ -27,12 +27,12 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-pub type __uint16_t = libc::c_ushort;
-pub type __ino64_t = libc::c_ulong;
-pub type __off64_t = libc::c_long;
+use crate::librb::__uint16_t;
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

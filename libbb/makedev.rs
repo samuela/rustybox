@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn gnu_dev_makedev(__major: libc::c_uint, __minor: libc::c_uint) -> __dev_t;
 }
-pub type __dev_t = libc::c_ulong;
+use crate::librb::__dev_t;
 /*
  * Utility routines.
  *

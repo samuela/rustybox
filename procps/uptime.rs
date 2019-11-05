@@ -13,10 +13,10 @@ extern "C" {
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
+use crate::librb::__time_t;
 use crate::librb::uint32_t;
 use crate::librb::time_t;
 #[derive(Copy, Clone)]

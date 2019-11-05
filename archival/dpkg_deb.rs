@@ -52,25 +52,23 @@ extern "C" {
   fn header_verbose_list(file_header: *const file_header_t);
 }
 
-
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-use crate::librb::uint32_t;
-use crate::librb::gid_t;
-use crate::librb::smallint;
-use crate::librb::uid_t;
-use crate::librb::off_t;
-use crate::librb::mode_t;
-use crate::librb::dev_t;
-use crate::librb::time_t;
-use crate::librb::uoff_t;
-
 use crate::libbb::llist::llist_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
+use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::smallint;
+use crate::librb::time_t;
+use crate::librb::uid_t;
+use crate::librb::uint32_t;
+use crate::librb::uoff_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

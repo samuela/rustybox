@@ -35,9 +35,9 @@ extern "C" {
   #[no_mangle]
   static bb_path_wtmp_file: [libc::c_char; 0];
 }
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
+use crate::librb::__time_t;
 use crate::librb::size_t;
 use crate::librb::pid_t;
 use crate::librb::time_t;

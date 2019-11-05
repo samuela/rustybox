@@ -15,7 +15,7 @@ extern "C" {
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
 }
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
 use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::uoff_t;

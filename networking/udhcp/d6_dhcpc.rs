@@ -240,12 +240,12 @@ extern "C" {
   fn d6_dump_packet(packet: *mut d6_packet);
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -

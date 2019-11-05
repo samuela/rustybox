@@ -163,21 +163,21 @@ extern "C" {
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__useconds_t;
+use crate::librb::__suseconds_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::timeval;
+use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -241,7 +241,7 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr16: [uint16_t; 8],
   pub __u6_addr32: [uint32_t; 4],
 }
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]

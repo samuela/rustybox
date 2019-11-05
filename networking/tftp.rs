@@ -170,24 +170,24 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
+use crate::librb::__dev_t;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
+use crate::librb::__ino_t;
+use crate::librb::__mode_t;
+use crate::librb::__nlink_t;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__blksize_t;
+use crate::librb::__blkcnt_t;
 
-pub type __syscall_slong_t = libc::c_long;
+use crate::librb::__syscall_slong_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -266,7 +266,7 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-pub type ptrdiff_t = libc::c_long;
+use crate::librb::ptrdiff_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
-pub type __useconds_t = libc::c_uint;
+use crate::librb::__useconds_t;
 
 /*
  * usleep implementation for busybox

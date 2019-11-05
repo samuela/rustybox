@@ -1,5 +1,5 @@
 use libc;
-pub type __mode_t = libc::c_uint;
+use crate::librb::__mode_t;
 use crate::librb::mode_t;
 
 /*

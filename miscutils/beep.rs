@@ -28,7 +28,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type __useconds_t = libc::c_uint;
+use crate::librb::__useconds_t;
 pub type uintptr_t = libc::c_ulong;
 #[no_mangle]
 pub unsafe extern "C" fn beep_main(

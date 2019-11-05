@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   pub type hardlinks_t;
   #[no_mangle]
@@ -74,32 +75,36 @@ extern "C" {
     hard_link: libc::c_int,
   );
 }
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+
+use crate::libbb::llist::llist_t;
+use crate::librb::__blkcnt_t;
+use crate::librb::__blksize_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__ino_t;
+use crate::librb::__mode_t;
+use crate::librb::__nlink_t;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-use crate::librb::gid_t;
-use crate::librb::smallint;
-use crate::librb::uid_t;
-use crate::librb::off_t;
-use crate::librb::mode_t;
+use crate::librb::__suseconds_t;
+use crate::librb::__syscall_slong_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
 use crate::librb::dev_t;
-use crate::librb::stat;
-use crate::librb::timespec;
-use crate::librb::time_t;
+use crate::librb::gid_t;
 use crate::librb::group;
+use crate::librb::mode_t;
+use crate::librb::off_t;
 use crate::librb::passwd;
+use crate::librb::smallint;
+use crate::librb::stat;
+use crate::librb::time_t;
+use crate::librb::timespec;
 use crate::librb::timeval;
+use crate::librb::uid_t;
+use crate::librb::uoff_t;
+
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */
@@ -118,7 +123,6 @@ use crate::librb::timeval;
  * instead of int/ssize_t. No lseek64(), O_LARGEFILE etc necessary */
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
-use crate::librb::uoff_t;
 pub type C2RustUnnamed = libc::c_int;
 /* cp --reflink[=always] */
 /*
@@ -182,7 +186,6 @@ use crate::librb::bb_uidgid_t;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {

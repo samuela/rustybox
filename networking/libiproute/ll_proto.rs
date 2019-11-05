@@ -24,8 +24,8 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_uint;
 }
-pub type __uint16_t = libc::c_ushort;
-pub type uint16_t = __uint16_t;
+use crate::librb::__uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::size_t;
 
 /*

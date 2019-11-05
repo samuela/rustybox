@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   pub type hardlinks_t;
   #[no_mangle]
@@ -36,25 +37,26 @@ extern "C" {
   #[no_mangle]
   fn bb_die_memory_exhausted() -> !;
 }
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __off64_t = libc::c_long;
 
-pub type __time_t = libc::c_long;
+use crate::libbb::llist::llist_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::dev_t;
 use crate::librb::gid_t;
-use crate::librb::smallint;
-use crate::librb::uid_t;
+use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
-use crate::librb::mode_t;
-use crate::librb::dev_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::smallint;
 use crate::librb::time_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::uid_t;
 use crate::librb::uoff_t;
-use crate::libbb::llist::llist_t;
-use crate::librb::bb_uidgid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {
@@ -99,6 +101,8 @@ pub struct archive_handle_t {
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
+
+pub type C2RustUnnamed = libc::c_uint;
 pub const TAR_MAX: C2RustUnnamed = 8;
 pub const TAR_GID: C2RustUnnamed = 7;
 pub const TAR_UID: C2RustUnnamed = 6;
@@ -113,7 +117,6 @@ pub const TAR_MODE: C2RustUnnamed = 0;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-pub type C2RustUnnamed = libc::c_uint;
 static mut tar_var: [*const libc::c_char; 8] = [
   b"MODE\x00" as *const u8 as *const libc::c_char,
   b"FILENAME\x00" as *const u8 as *const libc::c_char,

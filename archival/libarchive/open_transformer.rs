@@ -71,23 +71,22 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
-pub type __uint16_t = libc::c_ushort;
-
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-
-use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::__time_t;
+use crate::librb::__uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
+use crate::librb::fd_pair;
 use crate::librb::off_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use crate::librb::time_t;
-use crate::librb::fd_pair;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {
@@ -104,6 +103,7 @@ pub struct transformer_state_t {
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {

@@ -157,15 +157,15 @@ extern "C" {
   fn ipsvd_perhost_remove(cc: *mut hcc, pid: libc::c_int);
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
@@ -266,7 +266,7 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed_1 = 117503054;
 #[derive(Copy, Clone)]

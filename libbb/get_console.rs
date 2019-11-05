@@ -18,7 +18,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type ptrdiff_t = libc::c_long;
+use crate::librb::ptrdiff_t;
 pub const KDGKBTYPE: C2RustUnnamed = 19251;
 /* make vt active */
 pub const VT_WAITACTIVE: C2RustUnnamed_0 = 22023;

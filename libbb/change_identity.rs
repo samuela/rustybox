@@ -47,8 +47,8 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::passwd;

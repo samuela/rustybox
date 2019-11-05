@@ -48,11 +48,11 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__gid_t;
+use crate::librb::__uid_t;
+use crate::librb::signal::__sighandler_t;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
 use crate::librb::passwd;
 use crate::librb::termios;

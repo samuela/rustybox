@@ -49,7 +49,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-pub type __time_t = libc::c_long;
+use crate::librb::__time_t;
 use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::time_t;

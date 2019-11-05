@@ -22,15 +22,11 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
 use crate::librb::__uint32_t;
-pub type __uid_t = libc::c_uint;
+use crate::librb::__uid_t;
 use crate::librb::__pid_t;
 pub type __clock_t = libc::c_long;
 use crate::librb::smallint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __sigset_t {
-  pub __val: [libc::c_ulong; 16],
-}
+use crate::librb::signal::__sigset_t;
 pub type sigset_t = __sigset_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -121,7 +117,7 @@ pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
   pub si_uid: __uid_t,
 }
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sigaction {

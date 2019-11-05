@@ -78,13 +78,13 @@ extern "C" {
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
 
-pub type __time_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
+use crate::librb::__time_t;
+use crate::librb::__useconds_t;
 
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::time_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

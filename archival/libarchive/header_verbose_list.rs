@@ -16,18 +16,20 @@ extern "C" {
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 }
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::off_t;
-use crate::librb::mode_t;
+
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
 use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
 use crate::librb::time_t;
+use crate::librb::uid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

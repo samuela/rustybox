@@ -52,17 +52,15 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type __uint16_t = libc::c_ushort;
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type uint16_t = __uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
+use crate::librb::__uint16_t;
 use crate::librb::size_t;
-
-
-
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
 use crate::librb::FILE;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;

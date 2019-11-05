@@ -69,10 +69,10 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino64_t = libc::c_ulong;
-pub type __off64_t = libc::c_long;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 pub type __rlim64_t = libc::c_ulong;
 

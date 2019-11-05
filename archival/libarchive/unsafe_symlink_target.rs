@@ -1,24 +1,33 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-use crate::librb::size_t;
+
 use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
 
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

@@ -117,13 +117,13 @@ extern "C" {
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 pub type intptr_t = libc::c_long;
 /* NB: unaligned parameter should be a pointer, aligned one -

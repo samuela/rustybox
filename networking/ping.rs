@@ -154,17 +154,17 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-pub type __uint16_t = libc::c_ushort;
-pub type __int32_t = libc::c_int;
+use crate::librb::__uint16_t;
+use crate::librb::__int32_t;
 
 use crate::librb::__pid_t;
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__suseconds_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-pub type int32_t = __int32_t;
+use crate::librb::int32_t;
 use crate::librb::timeval;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -248,7 +248,7 @@ pub union C2RustUnnamed {
   pub __u6_addr16: [uint16_t; 8],
   pub __u6_addr32: [uint32_t; 4],
 }
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]
@@ -399,7 +399,7 @@ pub struct ih_idseq {
 }
 pub type bb__aliased_int = libc::c_int;
 pub type bb__aliased_uint32_t = uint32_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 pub type __itimer_which = libc::c_uint;
 pub const ITIMER_PROF: __itimer_which = 2;
 pub const ITIMER_VIRTUAL: __itimer_which = 1;

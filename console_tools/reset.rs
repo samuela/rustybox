@@ -29,6 +29,7 @@ extern "C" {
   #[no_mangle]
   fn stty_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn reset_main(
   mut _argc: libc::c_int,

@@ -18,19 +18,22 @@ extern "C" {
   #[no_mangle]
   fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
 }
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-use crate::librb::smallint;
-use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::off_t;
-use crate::librb::mode_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::__dev_t;
+use crate::librb::__gid_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
+use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::smallint;
 use crate::librb::time_t;
+use crate::librb::uid_t;
+use crate::librb::uoff_t;
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */
@@ -49,8 +52,6 @@ use crate::librb::time_t;
  * instead of int/ssize_t. No lseek64(), O_LARGEFILE etc necessary */
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
-use crate::librb::uoff_t;
-use crate::librb::bb_uidgid_t;
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()
@@ -72,7 +73,6 @@ use crate::librb::bb_uidgid_t;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {

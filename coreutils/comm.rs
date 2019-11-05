@@ -22,11 +22,11 @@ extern "C" {
   static mut option_mask32: uint32_t;
 }
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
 use crate::librb::uint32_t;
-
 use crate::librb::FILE;
+
 /* writeline outputs the input given, appropriately aligned according to class */
 unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
   let mut flags: libc::c_int = option_mask32 as libc::c_int;

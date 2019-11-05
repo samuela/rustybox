@@ -29,8 +29,8 @@ extern "C" {
     width: libc::c_uint,
   ) -> *mut libc::c_char;
 }
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off_t;
+use crate::librb::__off64_t;
 
 
 

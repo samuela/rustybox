@@ -139,17 +139,17 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __mode_t = libc::c_uint;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__gid_t;
+use crate::librb::__uid_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
 use crate::librb::__pid_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 
 use crate::librb::passwd;
 

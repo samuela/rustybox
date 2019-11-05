@@ -49,10 +49,10 @@ extern "C" {
   fn print_signames();
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 use crate::librb::__pid_t;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::size_t;
 use crate::librb::pid_t;
 pub type DIR = __dirstream;

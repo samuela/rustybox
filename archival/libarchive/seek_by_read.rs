@@ -1,14 +1,13 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
 }
-pub type __off64_t = libc::c_long;
+
+use crate::librb::__off64_t;
 use crate::librb::off_t;
 
-/*
- * Licensed under GPLv2 or later, see file LICENSE in this source tree.
- */
 /*  If we are reading through a pipe, or from stdin then we can't lseek,
  *  we must read and discard the data to skip over it.
  */

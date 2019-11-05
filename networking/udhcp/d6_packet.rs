@@ -96,12 +96,12 @@ extern "C" {
   static mut dhcp_verbose: libc::c_uint;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;

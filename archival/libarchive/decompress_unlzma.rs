@@ -22,23 +22,22 @@ extern "C" {
   ) -> ssize_t;
 }
 
-pub type __uint16_t = libc::c_ushort;
-pub type __int32_t = libc::c_int;
-
-pub type __uint64_t = libc::c_ulong;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-
-pub type int32_t = __int32_t;
-use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint64_t;
+use crate::librb::__int32_t;
+use crate::librb::__off64_t;
+use crate::librb::__time_t;
+use crate::librb::__uint16_t;
+use crate::librb::__uint64_t;
+use crate::librb::int32_t;
+use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::off_t;
 use crate::librb::time_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
+use crate::librb::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {
@@ -55,6 +54,7 @@ pub struct transformer_state_t {
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -62,6 +62,7 @@ pub union C2RustUnnamed {
   pub b16: [uint16_t; 4],
   pub b32: [uint32_t; 2],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rc_t {
@@ -72,6 +73,7 @@ pub struct rc_t {
   pub range: uint32_t,
   pub bound: uint32_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct lzma_header_t {

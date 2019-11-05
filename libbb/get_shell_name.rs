@@ -10,8 +10,8 @@ extern "C" {
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__uid_t;
+use crate::librb::__gid_t;
 use crate::librb::uid_t;
 use crate::librb::passwd;
 

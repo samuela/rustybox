@@ -40,13 +40,13 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
-pub type __time_t = libc::c_long;
-pub type __suseconds_t = libc::c_long;
+use crate::librb::__time_t;
+use crate::librb::__suseconds_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
@@ -118,7 +118,7 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-pub type ptrdiff_t = libc::c_long;
+use crate::librb::ptrdiff_t;
 
 /*
  * Generic non-forking server infrastructure.

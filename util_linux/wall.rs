@@ -31,10 +31,10 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-pub type __int32_t = libc::c_int;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
+use crate::librb::__gid_t;
+use crate::librb::__int32_t;
 use crate::librb::__pid_t;
+use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::size_t;
 use crate::librb::uid_t;

@@ -53,7 +53,7 @@ extern "C" {
 
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_uint;

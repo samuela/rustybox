@@ -70,14 +70,14 @@ extern "C" {
 }
 
 
-pub type __useconds_t = libc::c_uint;
+use crate::librb::__useconds_t;
 
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

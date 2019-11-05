@@ -46,18 +46,16 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
+use crate::librb::ptrdiff_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uint32_t;
-use crate::librb::size_t;
-pub type ptrdiff_t = libc::c_long;
-
-
-
 use crate::librb::termios;
+use crate::librb::uint32_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -71,6 +69,7 @@ pub const OPT_s: C2RustUnnamed_0 = 4;
 pub const OPT_k: C2RustUnnamed_0 = 2;
 pub const OPT_a: C2RustUnnamed_0 = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;

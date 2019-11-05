@@ -32,7 +32,7 @@ extern "C" {
 }
 
 use crate::librb::uint8_t;
-pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::signal::__sighandler_t;
 
 /*
  * nohup - invoke a utility immune to hangups.

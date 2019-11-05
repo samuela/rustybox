@@ -76,16 +76,16 @@ extern "C" {
   fn delete_eth_table(ch: *mut ethtable_t);
 }
 
-pub type __uint16_t = libc::c_ushort;
-pub type __int32_t = libc::c_int;
+use crate::librb::__int32_t;
+use crate::librb::__uint16_t;
 
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+use crate::librb::__off64_t;
+use crate::librb::__off_t;
 pub type __caddr_t = *mut libc::c_char;
-pub type int32_t = __int32_t;
-use crate::librb::uint8_t;
-pub type uint16_t = __uint16_t;
+use crate::librb::int32_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -96,8 +96,8 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
 use crate::librb::size_t;
+use crate::librb::smallint;
 pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -116,8 +116,6 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

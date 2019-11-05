@@ -324,7 +324,7 @@ extern "C" {
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
 
-pub type __uint16_t = libc::c_ushort;
+use crate::librb::__uint16_t;
 
 use crate::librb::__pid_t;
 pub type __caddr_t = *mut libc::c_char;
@@ -393,7 +393,7 @@ pub union C2RustUnnamed {
   pub __u6_addr16: [uint16_t; 8],
   pub __u6_addr32: [uint32_t; 4],
 }
-pub type uint16_t = __uint16_t;
+use crate::librb::uint16_t;
 use crate::librb::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]

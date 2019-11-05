@@ -2,6 +2,7 @@ use libc;
 
 use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
+
 /* implementation of the LZO1[XY]-1 compression algorithm
 
   This file is part of the LZO real-time data compression library.
