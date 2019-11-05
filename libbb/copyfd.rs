@@ -21,7 +21,7 @@ extern "C" {
 pub type __off64_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 pub const buffer_size: C2RustUnnamed = 4096;
 pub type C2RustUnnamed = libc::c_uint;

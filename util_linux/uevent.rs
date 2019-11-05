@@ -41,7 +41,7 @@ extern "C" {
 pub type __off64_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MAX_ENV: C2RustUnnamed = 127;
 pub type C2RustUnnamed_0 = libc::c_uint;

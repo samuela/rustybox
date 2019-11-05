@@ -97,7 +97,7 @@ use crate::librb::uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

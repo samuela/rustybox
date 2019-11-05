@@ -26,7 +26,7 @@ pub type __ssize_t = libc::c_long;
 use crate::librb::uint8_t;
 use crate::librb::uint64_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

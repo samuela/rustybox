@@ -89,7 +89,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint8_t;
 use crate::librb::uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 
 use crate::librb::stat;
 

@@ -85,7 +85,7 @@ pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::time_t;
 
 

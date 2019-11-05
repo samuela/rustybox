@@ -21,7 +21,7 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type ino_t = __ino64_t;
 
 use crate::librb::dev_t;

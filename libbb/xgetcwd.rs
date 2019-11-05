@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Busybox main internal header file

@@ -21,7 +21,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub const OPT_r: C2RustUnnamed = 8;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_s: C2RustUnnamed = 2;

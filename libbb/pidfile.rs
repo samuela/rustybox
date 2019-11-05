@@ -41,7 +41,7 @@ pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 /* vi: set sw=4 ts=4: */

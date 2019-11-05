@@ -156,7 +156,7 @@ pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::mode_t;
 use crate::librb::stat;

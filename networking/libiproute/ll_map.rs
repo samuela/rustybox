@@ -50,7 +50,7 @@ extern "C" {
   fn xrtnl_wilddump_request(rth: *mut rtnl_handle, fam: libc::c_int, type_0: libc::c_int);
 }
 pub type __uint32_t = libc::c_uint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::uint32_t;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;

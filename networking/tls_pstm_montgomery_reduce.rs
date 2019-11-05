@@ -19,7 +19,7 @@ pub type __uint64_t = libc::c_ulong;
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *

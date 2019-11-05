@@ -242,7 +242,7 @@ use crate::librb::smallint;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 pub type smalluint = libc::c_uchar;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;

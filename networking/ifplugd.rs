@@ -145,7 +145,7 @@ use crate::librb::uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::pid_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

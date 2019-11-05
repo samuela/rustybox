@@ -124,10 +124,10 @@ pub type __pid_t = libc::c_int;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
-use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::uint32_t;
+use crate::librb::size_t;
 use crate::librb::pid_t;
 use crate::librb::time_t;
 
@@ -155,22 +155,11 @@ pub struct timezone {
 }
 
 pub type __timezone_ptr_t = *mut timezone;
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
+use crate::librb::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::termios;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;

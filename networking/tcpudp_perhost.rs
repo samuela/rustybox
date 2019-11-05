@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* Based on ipsvd utilities written by Gerrit Pape <pape@smarden.org>
  * which are released into public domain by the author.
  * Homepage: http://smarden.sunsite.dk/ipsvd/

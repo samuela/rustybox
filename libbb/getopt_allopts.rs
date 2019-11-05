@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -
  * in many places people want *non-negative* values, but store them

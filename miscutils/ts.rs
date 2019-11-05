@@ -40,7 +40,7 @@ pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::time_t;
 use crate::librb::timeval;
 

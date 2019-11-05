@@ -26,7 +26,7 @@ pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::timeval;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]

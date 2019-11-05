@@ -16,7 +16,7 @@ pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 pub type bb__aliased_uint64_t = uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
 use crate::librb::sha256_ctx_t;

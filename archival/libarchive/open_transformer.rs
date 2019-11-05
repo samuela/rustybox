@@ -83,16 +83,11 @@ use crate::librb::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {

@@ -32,7 +32,7 @@ pub type __int32_t = libc::c_int;
 pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* ubirename - port of the ubirename from the mtd-utils package
  *
  * A utility to rename one UBI volume.

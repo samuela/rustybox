@@ -240,7 +240,7 @@ pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 pub type __useconds_t = libc::c_uint;
 use crate::librb::pid_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -263,12 +263,7 @@ pub type DIR = __dirstream;
 
 
 use crate::librb::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

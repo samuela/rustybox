@@ -51,7 +51,7 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __time_t = libc::c_long;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

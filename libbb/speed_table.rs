@@ -1,5 +1,5 @@
 use libc;
-pub type speed_t = libc::c_uint;
+use crate::librb::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;
 /* vi: set sw=4 ts=4: */
 /*

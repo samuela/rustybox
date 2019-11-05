@@ -19,7 +19,7 @@ extern "C" {
 }
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[no_mangle]
 pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {
   let mut ubi_devnum: libc::c_uint = 0;

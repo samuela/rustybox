@@ -163,7 +163,7 @@ pub type __suseconds_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type int32_t = __int32_t;
 use crate::librb::timeval;
 #[derive(Copy, Clone)]

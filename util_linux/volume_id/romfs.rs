@@ -15,7 +15,7 @@ pub type __uint64_t = libc::c_ulong;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

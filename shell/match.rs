@@ -9,7 +9,7 @@ extern "C" {
     __flags: libc::c_int,
   ) -> libc::c_int;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* match.h - interface to shell ##/%% matching code */
 //TODO! Why ash.c still uses internal version?!
 pub type C2RustUnnamed = libc::c_uint;

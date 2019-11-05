@@ -216,7 +216,7 @@ use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::off_t;

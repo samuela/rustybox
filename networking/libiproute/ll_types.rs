@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __uint16_t = libc::c_ushort;
 pub type uint16_t = __uint16_t;
 /* vi: set sw=4 ts=4: */

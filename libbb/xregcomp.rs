@@ -20,7 +20,7 @@ extern "C" {
     __errbuf_size: size_t,
   ) -> size_t;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type reg_syntax_t = libc::c_ulong;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]

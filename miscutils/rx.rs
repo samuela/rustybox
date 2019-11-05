@@ -44,22 +44,11 @@ extern "C" {
 }
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::size_t;
+use crate::librb::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
   let mut buf: libc::c_uchar = 0;
   let mut n: libc::c_int = 0;

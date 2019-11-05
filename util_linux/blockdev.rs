@@ -23,7 +23,7 @@ pub type __uint64_t = libc::c_ulong;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 use crate::librb::uint8_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const FL_SCALE512: C2RustUnnamed = 16;
 /* argument is provided by user */

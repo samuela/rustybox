@@ -294,7 +294,7 @@ pub struct rlimit {
 }
 use crate::librb::timeval;
 pub type __rlimit_resource_t = __rlimit_resource;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::pid_t;

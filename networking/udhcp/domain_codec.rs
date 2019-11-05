@@ -19,7 +19,7 @@ extern "C" {
 }
 pub type __uint8_t = libc::c_uchar;
 use crate::librb::uint8_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";
  * returns a newly allocated string containing the space-separated domains,

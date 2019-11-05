@@ -59,7 +59,7 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

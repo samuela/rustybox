@@ -39,7 +39,7 @@ extern "C" {
 }
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::passwd;

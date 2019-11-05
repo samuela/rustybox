@@ -102,7 +102,7 @@ pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type int8_t = __int8_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

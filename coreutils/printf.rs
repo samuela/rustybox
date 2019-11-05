@@ -68,7 +68,7 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type ptrdiff_t = libc::c_long;
 /* vi: set sw=4 ts=4: */
 /*

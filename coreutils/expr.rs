@@ -62,7 +62,7 @@ pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
 use crate::librb::uint8_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

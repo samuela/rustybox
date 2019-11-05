@@ -256,7 +256,7 @@ use crate::librb::uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;

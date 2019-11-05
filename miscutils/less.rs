@@ -178,7 +178,7 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::time_t;
 use crate::librb::timespec;
 pub type int32_t = __int32_t;
@@ -200,21 +200,10 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_int;

@@ -50,7 +50,7 @@ use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]

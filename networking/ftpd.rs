@@ -238,13 +238,13 @@ pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
-use crate::librb::timespec;
 use crate::librb::time_t;
+use crate::librb::timespec;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -344,8 +344,6 @@ pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-
-
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -364,12 +362,7 @@ pub struct tm {
 }
 use crate::librb::passwd;
 /* In this form code with pipes is much more readable */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

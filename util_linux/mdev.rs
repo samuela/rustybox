@@ -386,7 +386,7 @@ use crate::librb::uint32_t;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 pub type DIR = __dirstream;
 use crate::librb::mode_t;

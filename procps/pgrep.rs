@@ -53,7 +53,7 @@ pub type __pid_t = libc::c_int;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
 #[repr(C)]

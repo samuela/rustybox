@@ -131,7 +131,7 @@ use crate::librb::uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::pid_t;
 
 

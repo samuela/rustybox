@@ -60,7 +60,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::passwd;
 use crate::librb::uid_t;
 /* vi: set sw=4 ts=4: */

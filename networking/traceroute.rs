@@ -176,7 +176,7 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::timeval;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

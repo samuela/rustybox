@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Busybox main internal header file

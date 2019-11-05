@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
 /* vi: set sw=4 ts=4: */

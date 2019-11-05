@@ -400,14 +400,14 @@ use crate::librb::uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
 use crate::librb::off_t;
+use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
-use crate::librb::timespec;
 use crate::librb::time_t;
+use crate::librb::timespec;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -501,8 +501,6 @@ pub union __CONST_SOCKADDR_ARG {
 }
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-
-
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -541,12 +539,7 @@ pub struct spwd {
   pub sp_expire: libc::c_long,
   pub sp_flag: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

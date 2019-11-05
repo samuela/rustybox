@@ -233,7 +233,7 @@ use crate::librb::uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::off_t;
@@ -255,12 +255,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]

@@ -25,7 +25,7 @@ extern "C" {
     size: size_t,
   ) -> *mut libc::c_char;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* math.h - interface to shell math "library" -- this allows shells to share
  *          the implementation of arithmetic $((...)) expansions.
  *

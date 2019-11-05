@@ -7,7 +7,7 @@ extern "C" {
 }
 pub type __uint8_t = libc::c_uchar;
 use crate::librb::uint8_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
  * at least v[idx] and v[idx+1], for all idx values.
  * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)

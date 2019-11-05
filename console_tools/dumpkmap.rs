@@ -23,7 +23,7 @@ extern "C" {
 }
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Mini dumpkmap implementation for busybox

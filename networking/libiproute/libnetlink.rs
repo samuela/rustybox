@@ -48,7 +48,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct iovec {

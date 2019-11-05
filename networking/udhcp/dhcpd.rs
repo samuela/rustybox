@@ -303,7 +303,7 @@ pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::time_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
 use crate::librb::uint8_t;

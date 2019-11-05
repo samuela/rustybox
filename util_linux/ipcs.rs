@@ -44,7 +44,7 @@ pub type __syscall_ulong_t = libc::c_ulong;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::time_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ipc_perm {

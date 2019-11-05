@@ -152,7 +152,7 @@ use crate::librb::uint64_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

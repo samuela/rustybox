@@ -253,7 +253,7 @@ use crate::librb::uint8_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::uid_t;
 use crate::librb::off_t;
 #[derive(Copy, Clone)]
@@ -384,21 +384,10 @@ pub union C2RustUnnamed_9 {
 
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 use crate::librb::passwd;
 pub type C2RustUnnamed_10 = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed_10 = 16;

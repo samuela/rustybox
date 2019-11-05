@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn getlogin_r(__name: *mut libc::c_char, __name_len: size_t) -> libc::c_int;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Mini logname implementation for busybox

@@ -265,7 +265,7 @@ pub struct __user_cap_data_struct {
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

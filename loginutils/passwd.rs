@@ -93,7 +93,7 @@ pub type __mode_t = libc::c_uint;
 pub type __rlim64_t = libc::c_ulong;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::uid_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 pub type __rlimit_resource = libc::c_uint;

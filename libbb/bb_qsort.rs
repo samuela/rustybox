@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::__compar_fn_t;
 /* vi: set sw=4 ts=4: */
 /*

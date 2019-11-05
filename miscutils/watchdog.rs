@@ -39,7 +39,7 @@ pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

@@ -36,7 +36,7 @@ use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::time_t;
 #[derive(Copy, Clone)]

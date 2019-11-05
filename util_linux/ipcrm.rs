@@ -63,7 +63,7 @@ pub type __pid_t = libc::c_int;
 pub type __time_t = libc::c_long;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type key_t = __key_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

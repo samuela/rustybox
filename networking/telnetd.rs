@@ -133,10 +133,10 @@ pub type __ssize_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::uint32_t;
+use crate::librb::size_t;
 use crate::librb::pid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::timeval;
@@ -207,22 +207,11 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
+use crate::librb::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
 use crate::librb::winsize;
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::termios;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

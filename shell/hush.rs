@@ -384,7 +384,7 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
@@ -595,12 +595,7 @@ pub struct timezone {
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
+use crate::librb::fd_pair;
 /* math.h - interface to shell math "library" -- this allows shells to share
  *          the implementation of arithmetic $((...)) expansions.
  *

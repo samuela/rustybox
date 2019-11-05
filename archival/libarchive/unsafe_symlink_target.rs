@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::libbb::llist::llist_t;
 /* vi: set sw=4 ts=4: */
 /*

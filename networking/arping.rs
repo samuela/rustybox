@@ -148,7 +148,7 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

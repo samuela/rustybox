@@ -24,7 +24,7 @@ pub type __uint8_t = libc::c_uchar;
 pub type __uint64_t = libc::c_ulong;
 use crate::librb::uint8_t;
 use crate::librb::uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

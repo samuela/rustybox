@@ -329,7 +329,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

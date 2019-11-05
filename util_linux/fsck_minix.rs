@@ -95,7 +95,7 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __off64_t = libc::c_long;
 
 #[derive(Copy, Clone)]
@@ -115,26 +115,15 @@ pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
+use crate::librb::cc_t;
 use crate::librb::off_t;
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
+use crate::librb::smallint;
+use crate::librb::speed_t;
+use crate::librb::ssize_t;
+use crate::librb::tcflag_t;
+use crate::librb::uint32_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+use crate::librb::termios;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

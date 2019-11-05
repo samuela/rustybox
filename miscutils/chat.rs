@@ -76,7 +76,7 @@ use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

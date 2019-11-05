@@ -40,7 +40,7 @@ extern "C" {
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -69,7 +69,7 @@ pub type __off64_t = libc::c_long;
 use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 

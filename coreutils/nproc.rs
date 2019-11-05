@@ -31,7 +31,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __ino64_t = libc::c_ulong;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

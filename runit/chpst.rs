@@ -78,7 +78,7 @@ pub type __rlim64_t = libc::c_ulong;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 #[derive(Copy, Clone)]

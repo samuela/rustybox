@@ -58,7 +58,7 @@ use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::off_t;
 // Initialized in run_static_initializers
 static mut sizes: [uint8_t; 5] = [0; 5];

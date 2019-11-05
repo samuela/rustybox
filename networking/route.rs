@@ -107,7 +107,7 @@ extern "C" {
   #[no_mangle]
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;

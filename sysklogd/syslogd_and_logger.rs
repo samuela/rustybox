@@ -270,7 +270,7 @@ use crate::librb::uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;

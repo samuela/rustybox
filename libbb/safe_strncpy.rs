@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 }
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Utility routines.

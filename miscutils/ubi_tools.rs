@@ -79,7 +79,7 @@ pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
 use crate::librb::uint32_t;
 use crate::librb::ssize_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 #[derive(Copy, Clone)]

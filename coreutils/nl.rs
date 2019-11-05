@@ -21,7 +21,7 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct number_state {

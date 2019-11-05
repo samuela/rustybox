@@ -53,7 +53,7 @@ pub type __uint32_t = libc::c_uint;
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]

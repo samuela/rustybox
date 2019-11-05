@@ -35,7 +35,7 @@ pub type __off64_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
-pub type size_t = libc::c_ulong;
+use crate::librb::size_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
 use crate::librb::FILE;
