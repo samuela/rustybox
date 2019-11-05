@@ -341,8 +341,8 @@ use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use crate::librb::__uint32_t;
+
+
 use crate::librb::int32_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
@@ -350,9 +350,9 @@ use crate::librb::uint8_t;
 pub type DIR = __dirstream;
 use crate::librb::mode_t;
 use crate::librb::signal::__sigset_t;
-use crate::librb::signal::__sigval_t;
+
 use crate::librb::signal::sigset_t;
-use crate::librb::signal::sigval;
+
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::timeval;
@@ -360,7 +360,7 @@ pub type uintptr_t = libc::c_ulong;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 use crate::librb::pid_t;
-use crate::librb::signal::siginfo_t;
+
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 pub type clock_t = __clock_t;

@@ -224,9 +224,9 @@ use crate::librb::__ino64_t;
 
 use crate::librb::__off64_t;
 
+use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-use crate::librb::__clock_t;
 
 use crate::librb::int16_t;
 use crate::librb::int32_t;
@@ -256,14 +256,13 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
+
 pub type DIR = __dirstream;
-use crate::librb::signal::__sigset_t;
+use crate::librb::signal::__sigval_t;
 use crate::librb::stat;
 use crate::librb::time_t;
 use crate::librb::timespec;
-use crate::librb::signal::sigval;
-use crate::librb::signal::__sigval_t;
-use crate::librb::signal::siginfo_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -337,9 +336,8 @@ pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
   pub si_uid: __uid_t,
 }
-use crate::librb::signal::__sighandler_t;
+
 use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
 
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;

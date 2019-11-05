@@ -390,8 +390,8 @@ use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use crate::librb::__uint32_t;
+
+
 use crate::librb::size_t;
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
@@ -406,10 +406,10 @@ use crate::librb::mode_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::__sigset_t;
-use crate::librb::signal::__sigval_t;
-use crate::librb::signal::siginfo_t;
+
+
 use crate::librb::signal::sigset_t;
-use crate::librb::signal::sigval;
+
 use crate::librb::timeval;
 pub type __timezone_ptr_t = *mut timezone;
 use crate::librb::fd_pair;

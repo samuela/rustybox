@@ -188,7 +188,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::signal::__sigset_t;
+
 use crate::librb::time_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::timeval;

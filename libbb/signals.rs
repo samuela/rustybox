@@ -21,16 +21,15 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
+
+use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::__uint32_t;
-use crate::librb::__clock_t;
-use crate::librb::signal::__sigset_t;
-use crate::librb::smallint;
-use crate::librb::signal::sigset_t;
-use crate::librb::signal::sigval;
 use crate::librb::signal::__sigval_t;
-use crate::librb::signal::siginfo_t;
+use crate::librb::signal::sigset_t;
+use crate::librb::smallint;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {

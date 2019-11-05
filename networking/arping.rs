@@ -142,13 +142,13 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::signal::__sigset_t;
+
+use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
-use crate::librb::signal::sigset_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -161,6 +161,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

@@ -392,12 +392,12 @@ use crate::librb::timespec;
 use crate::librb::stat;
 use crate::librb::time_t;
 
-use crate::librb::signal::__sigset_t;
+
 use crate::librb::signal::sigset_t;
 
 use crate::librb::timeval;
 
-use crate::librb::signal::sigval;
+
 use crate::librb::signal::__sigval_t;
 
 use crate::librb::signal::siginfo_t;
