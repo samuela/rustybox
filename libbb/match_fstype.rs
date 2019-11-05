@@ -121,7 +121,7 @@ extern "C" {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Match fstypes for use in mount unmount
  * We accept notmpfs,nfs but not notmpfs,nonfs

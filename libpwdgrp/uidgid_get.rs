@@ -131,7 +131,7 @@ pub unsafe extern "C" fn xget_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const lib
     );
   };
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

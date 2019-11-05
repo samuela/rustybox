@@ -36,7 +36,7 @@ pub const PRIO_PGRP: __priority_which = 1;
 pub const PRIO_PROCESS: __priority_which = 0;
 pub type __priority_which_t = __priority_which;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /*
  * renice implementation for busybox
  *

@@ -11,7 +11,7 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 use crate::librb::uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini hostid implementation for busybox
  *

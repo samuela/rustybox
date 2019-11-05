@@ -6,7 +6,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -74,7 +74,7 @@ use crate::librb::size_t;
 /* buffer allocation schemes */
 /* glibc uses __errno_location() to get a ptr to errno */
 /* We can just memorize it once - no multithreading in busybox :) */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

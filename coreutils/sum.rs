@@ -24,7 +24,7 @@ use crate::librb::uint32_t;
 use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * sum -- checksum and count the blocks in a file
  *     Like BSD sum or SysV sum -r, except like SysV sum if -s option is given.

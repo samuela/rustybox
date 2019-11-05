@@ -19,7 +19,7 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Signal name/number conversion routines.
  *
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn get_signame(mut number: libc::c_int) -> *const libc::c_
   }
   return itoa(number);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

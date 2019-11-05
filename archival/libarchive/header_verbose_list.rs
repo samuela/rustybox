@@ -57,7 +57,7 @@ pub struct file_header_t {
   pub mtime: time_t,
   pub device: dev_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

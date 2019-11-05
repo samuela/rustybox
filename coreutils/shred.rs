@@ -51,7 +51,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_x: C2RustUnnamed = 32;
 pub const OPT_v: C2RustUnnamed = 16;
 pub const OPT_n: C2RustUnnamed = 8;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

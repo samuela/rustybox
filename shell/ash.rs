@@ -283,7 +283,7 @@ extern "C" {
   /* Number of unicode chars. Falls back to strlen() on invalid unicode */
   #[no_mangle]
   fn unicode_strlen(string: *const libc::c_char) -> size_t;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Adapted from ash applet code
    *
@@ -1185,7 +1185,7 @@ pub const DO_HISTORY: C2RustUnnamed_12 = 1;
 /* 27 */
 /* 28 */
 /* 29 */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */

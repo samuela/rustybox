@@ -11,7 +11,7 @@ extern "C" {
 }
 pub type __mode_t = libc::c_uint;
 use crate::librb::mode_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

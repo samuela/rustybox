@@ -56,7 +56,7 @@ use crate::librb::timespec;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * See README for additional information
  *
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn fgetsetversion(
   /* ! HAVE_EXT2_IOCTLS */
   /* ! HAVE_EXT2_IOCTLS */
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * See README for additional information
  *

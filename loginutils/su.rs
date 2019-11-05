@@ -63,7 +63,7 @@ use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::passwd;
 use crate::librb::uid_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini su implementation for busybox
  *

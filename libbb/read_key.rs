@@ -53,7 +53,7 @@ pub const KEYCODE_LEFT: C2RustUnnamed = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed = -3;
 pub const KEYCODE_UP: C2RustUnnamed = -2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -389,7 +389,7 @@ pub unsafe extern "C" fn read_key(
     *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char
   }
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

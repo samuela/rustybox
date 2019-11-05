@@ -24,7 +24,7 @@ use crate::librb::uint32_t;
 pub const OPT_DATASYNC: C2RustUnnamed = 1;
 pub const OPT_SYNCFS: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini sync implementation for busybox
  *

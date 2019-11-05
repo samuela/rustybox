@@ -209,7 +209,7 @@ pub const ARG_setmaxage: C2RustUnnamed_2 = 9;
 pub const ARG_sethello: C2RustUnnamed_2 = 8;
 pub const ARG_setfd: C2RustUnnamed_2 = 7;
 pub const ARG_delif: C2RustUnnamed_2 = 3;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Small implementation of brctl for busybox.
  *

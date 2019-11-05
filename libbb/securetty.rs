@@ -47,7 +47,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -501,7 +501,7 @@ pub struct parser_t {
  * NB: CHANGEENV and CLEARENV use setenv() - this leaks memory!
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * /etc/securetty checking.
  *

@@ -18,7 +18,7 @@ extern "C" {
   fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  /* vi: set sw=4 ts=4: */
+
   /* We need linux/types.h because older kernels use __u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
@@ -204,7 +204,7 @@ pub struct rtnl_handle {
   pub seq: uint32_t,
   pub dump: uint32_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -240,7 +240,7 @@ unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
   }
   return 0 as *mut idxmap;
 }
-/* vi: set sw=4 ts=4: */
+
 #[no_mangle]
 pub unsafe extern "C" fn ll_remember_index(
   mut _who: *const sockaddr_nl,

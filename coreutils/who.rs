@@ -81,7 +81,7 @@ pub struct C2RustUnnamed {
   pub tv_sec: __int32_t,
   pub tv_usec: __int32_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini who is used to display user name, login time,
  * idle time and host name.

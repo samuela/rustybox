@@ -168,7 +168,7 @@ pub unsafe extern "C" fn bb_strtou(
   }
   return handle_errors(v as libc::c_ulonglong, endp) as libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ascii-to-numbers implementations for busybox
  *

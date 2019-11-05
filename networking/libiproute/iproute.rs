@@ -62,7 +62,7 @@ extern "C" {
   fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
   #[no_mangle]
   fn xll_name_to_index(name: *const libc::c_char) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   /* UNUSED */
   /* UNUSED */
   /* UNUSED */
@@ -76,7 +76,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   static mut _SL_: libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   /* We need linux/types.h because older kernels use __u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
@@ -118,7 +118,7 @@ extern "C" {
   fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
   #[no_mangle]
   fn rt_addr_n2a(af: libc::c_int, addr: *mut libc::c_void) -> *const libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   #[no_mangle]
   fn rtnl_rtntype_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
@@ -435,7 +435,7 @@ pub const ARG_via: C2RustUnnamed_4 = 1;
 pub const ARG_src: C2RustUnnamed_4 = 0;
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub type C2RustUnnamed_4 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  *
@@ -2121,7 +2121,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
   print_route(0 as *const sockaddr_nl, &mut req.n, 0 as *mut libc::c_void);
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);

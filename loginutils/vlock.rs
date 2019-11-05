@@ -67,7 +67,7 @@ pub struct vt_mode {
   pub acqsig: libc::c_short,
   pub frsig: libc::c_short,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * vlock implementation for busybox
  *

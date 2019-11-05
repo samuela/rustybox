@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * rdev - print device node associated with a filesystem
  *

@@ -290,7 +290,7 @@ pub union __CONST_SOCKADDR_ARG {
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -1212,7 +1212,7 @@ pub unsafe extern "C" fn xfork() -> pid_t {
   }
   return pid;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

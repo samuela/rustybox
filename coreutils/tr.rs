@@ -36,7 +36,7 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -89,7 +89,7 @@ use crate::librb::uint32_t;
 pub type smalluint = libc::c_uchar;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini tr implementation for busybox
  *

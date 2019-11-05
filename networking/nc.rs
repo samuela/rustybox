@@ -1450,7 +1450,7 @@ pub unsafe extern "C" fn nc_main(
 //applet:IF_NC(APPLET(nc, BB_DIR_USR_BIN, BB_SUID_DROP))
 //                 APPLET_ODDNAME:name    main location        suid_type     help
 //applet:IF_NETCAT(APPLET_ODDNAME(netcat, nc,  BB_DIR_USR_BIN, BB_SUID_DROP, nc))
-/* vi: set sw=4 ts=4: */
+
 /*
  * nc: mini-netcat - built from the ground up for LRP
  *

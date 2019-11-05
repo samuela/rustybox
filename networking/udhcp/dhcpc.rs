@@ -539,7 +539,7 @@ pub struct option_set {
   pub data: *mut uint8_t,
   pub next: *mut option_set,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -617,7 +617,7 @@ pub const OPT_h: C2RustUnnamed_7 = 8;
 pub const OPT_H: C2RustUnnamed_7 = 4;
 pub const OPT_V: C2RustUnnamed_7 = 2;
 pub const OPT_C: C2RustUnnamed_7 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * udhcp client
  * Russ Dill <Russ.Dill@asu.edu> July 2001

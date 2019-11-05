@@ -12,7 +12,7 @@ extern "C" {
   fn getlogin_r(__name: *mut libc::c_char, __name_len: size_t) -> libc::c_int;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini logname implementation for busybox
  *

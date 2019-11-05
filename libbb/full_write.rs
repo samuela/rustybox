@@ -8,7 +8,7 @@ use crate::librb::ssize_t;
 use crate::librb::size_t;
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

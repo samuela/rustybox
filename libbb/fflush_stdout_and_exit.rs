@@ -325,7 +325,7 @@ use crate::librb::uint8_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * fflush_stdout_and_exit implementation for busybox
  *

@@ -72,7 +72,7 @@ use crate::libbb::llist::llist_t;
 pub const PARAM_LIST: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARAM_STRING: C2RustUnnamed = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * universal getopt32 implementation for busybox
  *
@@ -762,7 +762,7 @@ pub unsafe extern "C" fn getopt32(
   opt = vgetopt32(argv, applet_opts, 0 as *const libc::c_char, p.as_va_list());
   return opt;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

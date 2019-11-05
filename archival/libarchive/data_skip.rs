@@ -62,7 +62,7 @@ pub struct archive_handle_t {
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

@@ -7,7 +7,7 @@ extern "C" {
 }
 pub type __uint8_t = libc::c_uchar;
 use crate::librb::uint8_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

@@ -19,7 +19,7 @@ pub type __off64_t = libc::c_long;
 use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::uoff_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * ascii-to-numbers implementations for busybox
  *
@@ -40,7 +40,7 @@ unsafe extern "C" fn xatoul_range(
 ) -> libc::c_ulong {
   return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -193,7 +193,7 @@ unsafe extern "C" fn xatoul_range(
 /* Return old set in the same set: */
 /* Standard handler which just records signo */
 /* not FAST_FUNC! */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

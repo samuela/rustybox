@@ -15,7 +15,7 @@ use crate::librb::size_t;
  * xrealloc_vector(v, SHIFT, idx) *MUST* be called with consecutive IDXs -
  * skipping an index is a bad bug - it may miss a realloc!
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

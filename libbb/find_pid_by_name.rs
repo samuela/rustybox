@@ -100,7 +100,7 @@ pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -219,7 +219,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
   *pidList.offset(i as isize) = 0i32;
   return pidList;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

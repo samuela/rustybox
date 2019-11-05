@@ -10,7 +10,7 @@ extern "C" {
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -114,7 +114,7 @@ pub unsafe extern "C" fn index_in_substrings(
   }
   return matched_idx;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -8,7 +8,7 @@ extern "C" {
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
 pub type __useconds_t = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * usleep implementation for busybox
  *

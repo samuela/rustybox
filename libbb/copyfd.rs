@@ -183,7 +183,7 @@ pub unsafe extern "C" fn bb_copyfd_exact_size(
   /* if sz == -1, bb_copyfd_XX already complained */
   xfunc_die();
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

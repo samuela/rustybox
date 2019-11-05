@@ -14,7 +14,7 @@ pub type __off64_t = libc::c_long;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * yes implementation for busybox
  *

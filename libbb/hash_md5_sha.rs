@@ -1479,7 +1479,7 @@ pub unsafe extern "C" fn sha3_hash(
   (*ctx).bytes_queued = bufpos.wrapping_add((*ctx).input_block_bytes);
 }
 /* Buffer is filled up, process it */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

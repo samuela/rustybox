@@ -1125,7 +1125,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
     dn = dn.offset(1)
   }
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

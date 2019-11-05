@@ -64,7 +64,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2000 by Glenn McGrath
  *

@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * skip_whitespace implementation for busybox
  *
@@ -36,7 +36,7 @@ pub unsafe extern "C" fn skip_non_whitespace(mut s: *const libc::c_char) -> *mut
   }
   return s as *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

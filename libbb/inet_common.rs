@@ -124,7 +124,7 @@ pub struct addr {
   pub is_host: smallint,
   pub name: [libc::c_char; 1],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * stolen from net-tools-1.59 and stripped down for busybox by
  *                      Erik Andersen <andersen@codepoet.org>
@@ -135,7 +135,7 @@ pub struct addr {
 /* hostfirst!=0 If we expect this to be a hostname,
   try hostname database first
 */
-/* vi: set sw=4 ts=4: */
+
 /*
  * stolen from net-tools-1.59 and stripped down for busybox by
  *                      Erik Andersen <andersen@codepoet.org>

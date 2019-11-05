@@ -697,7 +697,7 @@ pub unsafe extern "C" fn xatoll(mut numstr: *const libc::c_char) -> libc::c_long
     0 as *const suffix_mult,
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ascii-to-numbers implementations for busybox
  *
@@ -745,7 +745,7 @@ unsafe extern "C" fn bb_strtoui(
 pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc::c_int {
   return xatou_range(numstr, 0i32 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

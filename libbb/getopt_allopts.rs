@@ -82,7 +82,7 @@ use crate::librb::size_t;
 //DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
 /* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
 /* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *

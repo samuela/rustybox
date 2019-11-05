@@ -14,7 +14,7 @@ extern "C" {
   #[no_mangle]
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Support functions for mounting devices by label/uuid
  *

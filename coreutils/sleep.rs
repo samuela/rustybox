@@ -12,7 +12,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 pub type duration_t = libc::c_double;
-/* vi: set sw=4 ts=4: */
+
 /*
  * sleep implementation for busybox
  *

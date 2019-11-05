@@ -4,7 +4,7 @@ extern "C" {
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -26,7 +26,7 @@ pub unsafe extern "C" fn safe_strncpy(
   *dst.offset(size as isize) = '\u{0}' as i32 as libc::c_char;
   return strncpy(dst, src, size);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

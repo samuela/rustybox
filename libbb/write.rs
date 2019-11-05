@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -251,7 +251,7 @@ extern "C" {
 /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

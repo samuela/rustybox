@@ -219,7 +219,7 @@ pub const _SC_NGROUPS_MAX: C2RustUnnamed = 3;
 pub const _SC_CLK_TCK: C2RustUnnamed = 2;
 pub const _SC_CHILD_MAX: C2RustUnnamed = 1;
 pub const _SC_ARG_MAX: C2RustUnnamed = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Various system configuration helpers.
  *
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn bb_arg_max() -> libc::c_uint {
   }
   return r as libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -255,7 +255,7 @@ pub struct sockaddr_ll {
   pub sll_halen: libc::c_uchar,
   pub sll_addr: [libc::c_uchar; 8],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Packet ops
  *
@@ -664,7 +664,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
   }
   return result;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Russ Dill <Russ.Dill@asu.edu> September 2001
  * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003

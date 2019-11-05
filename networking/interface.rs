@@ -83,7 +83,7 @@ extern "C" {
   fn in_ether(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
-  /* vi: set sw=4 ts=4: */
+
   /*
    * stolen from net-tools-1.59 and stripped down for busybox by
    *                      Erik Andersen <andersen@codepoet.org>
@@ -1451,7 +1451,7 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
   return (res < 0i32) as libc::c_int;
   /* status < 0 == 1 -- error */
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -33,7 +33,7 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
@@ -171,7 +171,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
   nuke_str(plaintext);
   return r;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

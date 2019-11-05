@@ -65,7 +65,7 @@ pub struct C2RustUnnamed {
   pub tv_sec: __int32_t,
   pub tv_usec: __int32_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * wall - write a message to all logged-in users
  * Copyright (c) 2009 Bernhard Reutner-Fischer

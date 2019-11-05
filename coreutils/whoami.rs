@@ -13,7 +13,7 @@ extern "C" {
 }
 pub type __uid_t = libc::c_uint;
 use crate::librb::uid_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini whoami implementation for busybox
  *

@@ -32,7 +32,7 @@ pub type __time_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::time_t;
 pub type duration_t = libc::c_double;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini watch implementation for busybox
  *

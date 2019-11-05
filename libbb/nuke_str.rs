@@ -175,7 +175,7 @@ use libc;
  * NB: CHANGEENV and CLEARENV use setenv() - this leaks memory!
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

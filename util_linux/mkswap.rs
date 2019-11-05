@@ -50,7 +50,7 @@ use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::uoff_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * mkswap.c - format swap device (Linux v1 only)
  *

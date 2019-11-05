@@ -278,7 +278,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * ascii-to-numbers implementations for busybox
    *
@@ -510,7 +510,7 @@ pub union C2RustUnnamed_2 {
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const LSA_SIZEOF_SA: C2RustUnnamed_3 = 28;
 pub const LSA_LEN_SIZE: C2RustUnnamed_3 = 4;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -1301,7 +1301,7 @@ pub unsafe extern "C" fn xmalloc_sockaddr2hostonly_noport(
 pub unsafe extern "C" fn xmalloc_sockaddr2dotted(mut sa: *const sockaddr) -> *mut libc::c_char {
   return sockaddr2str(sa, 1i32 | 0i32);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

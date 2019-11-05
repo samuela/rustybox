@@ -113,7 +113,7 @@ pub unsafe extern "C" fn bb_process_escape_sequence(
   *ptr = q;
   return n as libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

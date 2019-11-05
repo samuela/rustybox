@@ -71,7 +71,7 @@ unsafe extern "C" fn xatoul_sfx(
 ) -> libc::c_ulong {
   return xatoull_sfx(str, sfx) as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * head implementation for busybox
  *

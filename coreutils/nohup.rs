@@ -33,7 +33,7 @@ extern "C" {
 pub type __uint8_t = libc::c_uchar;
 use crate::librb::uint8_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-/* vi: set sw=4 ts=4: */
+
 /*
  * nohup - invoke a utility immune to hangups.
  *

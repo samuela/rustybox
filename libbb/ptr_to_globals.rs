@@ -1,6 +1,6 @@
 use libc;
 extern "C" {
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Copyright (C) 2008 by Denys Vlasenko <vda.linux@googlemail.com>
    *

@@ -23,7 +23,7 @@ pub const KDGKBTYPE: C2RustUnnamed = 19251;
 /* make vt active */
 pub const VT_WAITACTIVE: C2RustUnnamed_0 = 22023;
 pub const VT_ACTIVATE: C2RustUnnamed_0 = 22022;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -92,7 +92,7 @@ pub unsafe extern "C" fn get_console_fd_or_die() -> libc::c_int {
   }
   bb_simple_error_msg_and_die(b"can\'t open console\x00" as *const u8 as *const libc::c_char);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

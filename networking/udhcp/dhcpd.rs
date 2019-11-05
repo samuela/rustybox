@@ -162,7 +162,7 @@ extern "C" {
   static ptr_to_globals: *mut globals;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Russ Dill <Russ.Dill@asu.edu> September 2001
    * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003
@@ -360,7 +360,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *

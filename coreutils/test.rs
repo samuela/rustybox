@@ -94,7 +94,7 @@ pub struct operator_t {
   pub op_type: libc::c_uchar,
 }
 pub type number_t = int64_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * test implementation for busybox
  *
@@ -1051,7 +1051,7 @@ unsafe extern "C" fn primary(mut n: token) -> number_t {
   return (*(*(*test_ptr_to_statics).args.offset(0)).offset(0) as libc::c_int != '\u{0}' as i32)
     as libc::c_int as number_t;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

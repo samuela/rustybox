@@ -8,7 +8,7 @@ extern "C" {
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
 use crate::librb::winsize;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Replacement for "stty size", which is awkward for shell script use.
  * - Allows to request width, height, or both, in any order.

@@ -137,7 +137,7 @@ pub union C2RustUnnamed_9 {
   pub sa_sigaction:
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -278,7 +278,7 @@ pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
   sa.__sigaction_handler.sa_handler = handler;
   sigaction_set(sig, &mut sa);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

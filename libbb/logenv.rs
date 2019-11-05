@@ -115,7 +115,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 /* start_stop_daemon and udhcpc are special - they want
  * to create pidfiles regardless of FEATURE_PIDFILE */
 /* True only if we created pidfile which is *file*, not /dev/null etc */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

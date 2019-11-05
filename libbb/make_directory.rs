@@ -46,7 +46,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -476,7 +476,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
  * If path is NULL, it is assumed to be "/".
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * parse_mode implementation for busybox
  *

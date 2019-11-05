@@ -118,7 +118,7 @@ extern "C" {
   #[no_mangle]
   fn xfunc_die() -> !;
   /* DO NOT EDIT. This file is generated from applets.src.h */
-  /* vi: set sw=4 ts=4: */
+
   /*
    * applets.h - a listing of all busybox applets.
    *

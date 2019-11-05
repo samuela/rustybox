@@ -27,7 +27,7 @@ extern "C" {
 pub type __uint16_t = libc::c_ushort;
 pub type uint16_t = __uint16_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

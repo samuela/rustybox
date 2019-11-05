@@ -44,7 +44,7 @@ pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
 pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Rexec program for system have fork() as vfork() with foreground option
  *
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
     /* else close everything after fd#2 */
   }
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -16,7 +16,7 @@ extern "C" {
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -46,7 +46,7 @@ pub unsafe extern "C" fn count_strstr(
   }
   return count;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

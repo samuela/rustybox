@@ -31,7 +31,7 @@ extern "C" {
 pub type __uint32_t = libc::c_uint;
 use crate::libbb::llist::llist_t;
 use crate::librb::uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * env implementation for busybox
  *

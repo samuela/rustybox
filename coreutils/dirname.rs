@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn single_argv(argv: *mut *mut libc::c_char) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini dirname implementation for busybox
  *

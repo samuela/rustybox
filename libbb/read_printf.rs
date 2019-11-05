@@ -189,7 +189,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -445,7 +445,7 @@ pub unsafe extern "C" fn xread_char(mut fd: libc::c_int) -> libc::c_uchar {
   );
   return tmp as libc::c_uchar;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

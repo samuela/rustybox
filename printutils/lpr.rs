@@ -114,7 +114,7 @@ pub const LPR_C: C2RustUnnamed = 16;
 // -P queue[@host[:port]]. If no -P is given use $PRINTER, then "lp@localhost:515"
 pub const OPT_U: C2RustUnnamed = 2;
 pub const OPT_P: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * bare bones version of lpr & lpq: BSD printing utilities
  *

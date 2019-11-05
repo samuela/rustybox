@@ -49,7 +49,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-/* vi: set sw=4 ts=4: */
+
 /*
  * lsscsi implementation for busybox
  *

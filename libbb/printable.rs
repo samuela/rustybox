@@ -17,7 +17,7 @@ pub const PRINTABLE_META: C2RustUnnamed = 256;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const VISIBLE_SHOW_TABS: C2RustUnnamed_0 = 2;
 pub const VISIBLE_ENDLINE: C2RustUnnamed_0 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn fputc_printable(mut ch: libc::c_int, mut file: *mut FIL
   }
   putc_unlocked(ch, file);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

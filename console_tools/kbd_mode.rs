@@ -26,7 +26,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const MEDIUMRAW: C2RustUnnamed = 4;
 pub const ASCII: C2RustUnnamed = 2;
 pub const SCANCODE: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini kbd_mode implementation for busybox
  *

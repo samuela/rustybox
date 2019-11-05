@@ -16,7 +16,7 @@ pub type __off64_t = libc::c_long;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -274,7 +274,7 @@ use crate::librb::FILE;
 /* Chops off '\n' from the end, unlike fgets: */
 /* Same, but doesn't try to conserve space (may have some slack after the end) */
 /* extern char *xmalloc_fgetline_fast(FILE *file) FAST_FUNC RETURNS_MALLOC; */
-/* vi: set sw=4 ts=4: */
+
 /*
  * fclose_nonstdin implementation for busybox
  *

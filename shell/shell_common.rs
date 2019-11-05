@@ -186,7 +186,7 @@ unsafe extern "C" fn bb_strtoul(
 ) -> libc::c_ulong {
   return bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Adapted from ash applet code
  *

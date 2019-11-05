@@ -16,7 +16,7 @@ extern "C" {
 use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -124,7 +124,7 @@ pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
  * work coreutils-compatibly. */
 /*ACTION_REVERSE      = (1 << 4), - unused */
 /* more than enough for "/dev/ttyXXX" */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini getpty implementation for busybox
  * Bjorn Wesen, Axis Communications AB (bjornw@axis.com)

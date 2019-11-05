@@ -31,7 +31,7 @@ use crate::librb::uint32_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -39,7 +39,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const UNICODE_ON: C2RustUnnamed = 2;
 pub const UNICODE_OFF: C2RustUnnamed = 1;
 pub const UNICODE_UNKNOWN: C2RustUnnamed = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * wc implementation for busybox
  *

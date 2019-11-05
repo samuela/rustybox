@@ -83,7 +83,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -94,7 +94,7 @@ pub const OPT_parents: C2RustUnnamed_0 = 65536;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_reflink: C2RustUnnamed_0 = 131072;
 pub const FILEUTILS_CP_OPTNUM: C2RustUnnamed_0 = 15;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini cp implementation for busybox
  *

@@ -47,7 +47,7 @@ use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-/* vi: set sw=4 ts=4: */
+
 /*
  * The Rdate command will ask a time server for the RFC 868 time
  * and optionally set the system time.

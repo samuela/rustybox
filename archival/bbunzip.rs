@@ -645,7 +645,7 @@ pub unsafe extern "C" fn gunzip_main(
     0 as *const libc::c_char,
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

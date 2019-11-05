@@ -86,7 +86,7 @@ pub unsafe extern "C" fn udhcp_sp_fd_set(mut pfds: *mut pollfd, mut extra_fd: li
   /* this simplifies "is extra_fd ready?" tests elsewhere: */
   (*pfds.offset(1)).revents = 0i32 as libc::c_short;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Russ Dill <Russ.Dill@asu.edu> September 2001
  * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003

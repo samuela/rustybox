@@ -2,7 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn getuid() -> __uid_t;
-  /* vi: set sw=4 ts=4: */
+
   /* Copyright (C) 1991,92,95,96,97,98,99,2000,01 Free Software Foundation, Inc.
     This file is part of the GNU C Library.
 
@@ -52,7 +52,7 @@ pub type __gid_t = libc::c_uint;
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -483,7 +483,7 @@ use crate::librb::passwd;
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
 /* Returns ptr to NUL */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 1989 - 1991, Julianne Frances Haugh <jockgrrl@austin.rr.com>
  * All rights reserved.

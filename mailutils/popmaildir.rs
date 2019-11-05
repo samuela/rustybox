@@ -153,7 +153,7 @@ pub const OPT_b: C2RustUnnamed_0 = 1;
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * popmaildir: a simple yet powerful POP3 client
  * Delivers contents of remote mailboxes to local Maildir

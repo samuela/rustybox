@@ -111,7 +111,7 @@ pub const OPT_v: C2RustUnnamed_0 = 2;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_b: C2RustUnnamed_0 = 4;
 pub const OPT_c: C2RustUnnamed_0 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2003 by Glenn McGrath
  * SELinux support: by Yuichi Nakamura <ynakam@hitachisoft.jp>

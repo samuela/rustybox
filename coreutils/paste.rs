@@ -39,7 +39,7 @@ use crate::librb::uint32_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * paste.c - implementation of the posix paste command
  *

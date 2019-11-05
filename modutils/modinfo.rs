@@ -115,7 +115,7 @@ pub const OPT_n: C2RustUnnamed_0 = 4;
 /* \0 as separator */
 pub const OPT_F: C2RustUnnamed_0 = 2;
 pub const OPT_0: C2RustUnnamed_0 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * modinfo - retrieve module info
  * Copyright (c) 2008 Pascal Bellard

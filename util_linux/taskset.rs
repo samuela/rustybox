@@ -58,7 +58,7 @@ pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
 use crate::librb::uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * taskset - retrieve or set a processes' CPU affinity
  * Copyright (c) 2006 Bernhard Reutner-Fischer

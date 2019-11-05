@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mar 16, 2003      Manuel Novoa III   (mjn3@codepoet.org)
  *

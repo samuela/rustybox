@@ -1,5 +1,5 @@
 use libc;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini true implementation for busybox
  *

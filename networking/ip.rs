@@ -4,7 +4,7 @@ extern "C" {
   fn bb_show_usage() -> !;
   #[no_mangle]
   fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   #[no_mangle]
   fn ip_parse_common_args(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
   //int FAST_FUNC iproute_monitor(char **argv);
@@ -22,7 +22,7 @@ extern "C" {
   #[no_mangle]
   fn do_iplink(argv: *mut *mut libc::c_char) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  *

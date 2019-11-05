@@ -122,7 +122,7 @@ unsafe extern "C" fn xatoul_range_sfx(
   return xatoull_range_sfx(str, l as libc::c_ulonglong, u as libc::c_ulonglong, sfx)
     as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini df implementation for busybox
  *

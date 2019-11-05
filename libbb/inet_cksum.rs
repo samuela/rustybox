@@ -3,7 +3,7 @@ pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

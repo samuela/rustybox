@@ -31,7 +31,7 @@ use crate::librb::size_t;
 
 use crate::libbb::llist::llist_t;
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * tac implementation for busybox
  * tac - concatenate and print files in reverse

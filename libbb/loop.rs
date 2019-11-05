@@ -46,7 +46,7 @@ use crate::librb::off_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type __u8 = libc::c_uchar;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn get_free_loop() -> libc::c_int {
   return loopdevno;
   /* can be -1 if error */
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

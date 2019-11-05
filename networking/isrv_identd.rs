@@ -1,6 +1,6 @@
 use libc;
 extern "C" {
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Generic non-forking server infrastructure.
    * Intended to make writing telnetd-type servers easier.
@@ -109,7 +109,7 @@ pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Fake identd server.
  *

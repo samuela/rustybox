@@ -29,7 +29,7 @@ pub const ARG_oneline: C2RustUnnamed = 0;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ARG_packet: C2RustUnnamed = 4;
 pub const ARG_IPv6: C2RustUnnamed = 3;
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,7 +48,7 @@ pub static mut preferred_family: family_t = 0i32 as family_t;
 pub static mut oneline: smallint = 0;
 #[no_mangle]
 pub static mut _SL_: libc::c_char = 0;
-/* vi: set sw=4 ts=4: */
+
 #[no_mangle]
 pub unsafe extern "C" fn ip_parse_common_args(
   mut argv: *mut *mut libc::c_char,

@@ -119,7 +119,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 pub type ptrdiff_t = libc::c_long;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Generic non-forking server infrastructure.
  * Intended to make writing telnetd-type servers easier.

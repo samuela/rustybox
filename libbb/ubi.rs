@@ -36,7 +36,7 @@ pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -
   }
   return ubi_devnum;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

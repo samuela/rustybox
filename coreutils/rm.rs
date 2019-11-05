@@ -32,7 +32,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini rm implementation for busybox
  *

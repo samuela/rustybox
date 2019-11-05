@@ -138,7 +138,7 @@ pub struct seminfo {
   pub semvmx: libc::c_int,
   pub semaem: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ipcrm.c - utility to allow removal of IPC objects and data structures.
  *

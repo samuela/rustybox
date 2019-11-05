@@ -49,7 +49,7 @@ extern "C" {
 
   #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
-  /* vi: set sw=4 ts=4: */
+
   /*
    * ascii-to-numbers implementations for busybox
    *

@@ -66,7 +66,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * config file parser helper
  *
@@ -177,7 +177,7 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
   *line.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
   return len as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

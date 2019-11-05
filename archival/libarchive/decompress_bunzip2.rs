@@ -63,7 +63,7 @@ pub struct __jmp_buf_tag {
   pub __saved_mask: __sigset_t,
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
-/* vi: set sw=4 ts=4: */
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const XZ_MAGIC2a: C2RustUnnamed = 90;
 pub const XZ_MAGIC1a: C2RustUnnamed = 1484404733;

@@ -186,7 +186,7 @@ pub union C2RustUnnamed_2 {
 pub union C2RustUnnamed_3 {
   pub ifrn_name: [libc::c_char; 16],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ifconfig
  *

@@ -14,7 +14,7 @@ use crate::librb::size_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn xmalloc_fgets(mut file: *mut FILE) -> *mut libc::c_char
   let mut i: size_t = 0;
   return bb_get_chunk_from_file(file, &mut i);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -128,7 +128,7 @@ pub const PSSCAN_COMM: C2RustUnnamed = 32;
 pub const PSSCAN_UIDGID: C2RustUnnamed = 16;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

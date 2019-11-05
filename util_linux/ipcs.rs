@@ -156,7 +156,7 @@ pub struct shm_info {
 use crate::librb::uint32_t;
 use crate::librb::group;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /*
  * ipcs.c -- provides information on allocated ipc resources.
  *

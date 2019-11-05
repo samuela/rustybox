@@ -251,7 +251,7 @@ pub struct ip6_hdrctl {
   pub ip6_un1_nxt: uint8_t,
   pub ip6_un1_hlim: uint8_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2011 Denys Vlasenko.
  *
@@ -289,7 +289,7 @@ pub struct sockaddr_ll {
   pub sll_halen: libc::c_uchar,
   pub sll_addr: [libc::c_uchar; 8],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2011 Denys Vlasenko.
  *

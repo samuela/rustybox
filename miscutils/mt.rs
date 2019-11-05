@@ -42,7 +42,7 @@ pub struct mtop {
 pub struct mtpos {
   pub mt_blkno: libc::c_long,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

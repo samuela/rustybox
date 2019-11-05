@@ -40,10 +40,10 @@ extern "C" {
     buf: *mut libc::c_char,
     blen: libc::c_int,
   ) -> *const libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   #[no_mangle]
   static mut preferred_family: family_t;
-  /* vi: set sw=4 ts=4: */
+
   /* We need linux/types.h because older kernels use __u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
@@ -61,7 +61,7 @@ extern "C" {
   fn parse_rtattr(tb: *mut *mut rtattr, max: libc::c_int, rta: *mut rtattr, len: libc::c_int);
   #[no_mangle]
   fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   #[no_mangle]
   fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
   #[no_mangle]
@@ -278,7 +278,7 @@ pub const KW_to: C2RustUnnamed_1 = 0;
 pub const KW_nud: C2RustUnnamed_1 = 2;
 pub const KW_dev: C2RustUnnamed_1 = 1;
 pub type C2RustUnnamed_1 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  *
@@ -877,7 +877,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   }
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);

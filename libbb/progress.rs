@@ -48,7 +48,7 @@ pub struct bb_progress_t {
 }
 /* Seconds when xfer considered "stalled" */
 pub const STALLTIME: C2RustUnnamed = 5;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Progress bar code.
  */
@@ -99,7 +99,7 @@ pub unsafe extern "C" fn bb_progress_init(
   (*p).last_change_sec = (*p).start_sec;
   (*p).last_size = 0i32 as libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

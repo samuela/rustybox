@@ -28,7 +28,7 @@ extern "C" {
 }
 pub type __uint32_t = libc::c_uint;
 use crate::librb::uint32_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 1999-2004 by Erik Andersen <andersen@codepoet.org>
  * Copyright (C) 2006 Gabriel Somlo <somlo at cmu.edu>

@@ -289,7 +289,7 @@ unsafe extern "C" fn bb_strtoi32(
   }
   return BUG_bb_strtou32_unimplemented() as int32_t;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Rewrite by Russ Dill <Russ.Dill@asu.edu> July 2001
  *
@@ -1258,7 +1258,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
   }
   return retval;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Russ Dill <Russ.Dill@asu.edu> September 2001
  * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003

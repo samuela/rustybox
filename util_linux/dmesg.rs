@@ -27,7 +27,7 @@ pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_s: C2RustUnnamed = 2;
 pub const OPT_n: C2RustUnnamed = 4;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  *
  * dmesg - display/control kernel ring buffer.

@@ -24,7 +24,7 @@ pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;
 pub const PRIO_PROCESS: __priority_which = 0;
 pub type __priority_which_t = __priority_which;
-/* vi: set sw=4 ts=4: */
+
 /*
  * nice implementation for busybox
  *

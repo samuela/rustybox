@@ -27,7 +27,7 @@ use crate::librb::size_t;
 pub const OPT_w: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_s: C2RustUnnamed = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * seq implementation for busybox
  *

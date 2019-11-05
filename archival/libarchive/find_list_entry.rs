@@ -8,7 +8,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 use crate::libbb::llist::llist_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2002 by Glenn McGrath
  *

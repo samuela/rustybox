@@ -97,7 +97,7 @@ pub struct statics {
   pub tokenize_end: *mut libc::c_char,
   pub string_size: libc::c_uint,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2014 Tito Ragusa <farmatito@tiscali.it>
  *
@@ -150,7 +150,7 @@ pub struct spwd {
   pub sp_expire: libc::c_long,
   pub sp_flag: libc::c_ulong,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ascii-to-numbers implementations for busybox
  *
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn bb_internal_getpwnam_r(
     result as *mut libc::c_void,
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
@@ -644,7 +644,7 @@ pub unsafe extern "C" fn bb_internal_endpwent() {
     (*ptr_to_statics).db[0].fp = 0 as *mut FILE
   };
 }
-/* vi: set sw=4 ts=4: */
+
 /* Copyright (C) 1991,92,95,96,97,98,99,2001 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 
@@ -761,7 +761,7 @@ pub unsafe extern "C" fn bb_internal_initgroups(
   free(group_list as *mut libc::c_void);
   return ngroups;
 }
-/* vi: set sw=4 ts=4: */
+
 /* Copyright (C) 1991,92,95,96,97,98,99,2000,01 Free Software Foundation, Inc.
   This file is part of the GNU C Library.
 

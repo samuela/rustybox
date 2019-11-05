@@ -20,13 +20,13 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 
 use crate::librb::stat;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 pub type stat_func =
   Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>;
-/* vi: set sw=4 ts=4: */
+
 /*
  * coreutils utility routine
  *

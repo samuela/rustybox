@@ -20,7 +20,7 @@ pub struct C2RustUnnamed {
   pub fn_0: libc::c_char,
   pub subarg: libc::c_char,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * setlogcons: Send kernel messages to the current console or to console N
  *

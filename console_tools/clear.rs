@@ -5,7 +5,7 @@ extern "C" {
 }
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini clear implementation for busybox
  *

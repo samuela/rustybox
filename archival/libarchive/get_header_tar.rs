@@ -181,7 +181,7 @@ pub struct tar_header_t {
   pub prefix: [libc::c_char; 155],
   pub padding: [libc::c_char; 12],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  *

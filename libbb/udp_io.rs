@@ -180,7 +180,7 @@ pub union C2RustUnnamed_2 {
   pub cmsg: [libc::c_char; 32],
   pub cmsg6: [libc::c_char; 40],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -298,7 +298,7 @@ pub unsafe extern "C" fn send_to_from(
   msg.msg_controllen = (*cmsgptr).cmsg_len;
   return sendmsg(fd, &mut msg, flags);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

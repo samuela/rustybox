@@ -4,7 +4,7 @@ extern "C" {
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Mini reset implementation for busybox
    *

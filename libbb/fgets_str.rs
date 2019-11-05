@@ -105,7 +105,7 @@ pub unsafe extern "C" fn xmalloc_fgets_str_len(
   }
   return xmalloc_fgets_internal(file, terminating_string, 0i32, maxsz_p);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

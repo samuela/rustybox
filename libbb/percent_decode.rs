@@ -1,5 +1,5 @@
 use libc;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -23,7 +23,7 @@ unsafe extern "C" fn hex_to_bin(mut c: libc::c_uchar) -> libc::c_uint {
   t('0'-1); t('9'+1); t('A'-1); t('F'+1); t('a'-1); t('f'+1); return 0; }
   */
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

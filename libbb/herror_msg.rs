@@ -19,7 +19,7 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 pub type va_list = __builtin_va_list;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -44,7 +44,7 @@ pub unsafe extern "C" fn bb_herror_msg_and_die(mut s: *const libc::c_char, mut a
 pub unsafe extern "C" fn bb_simple_herror_msg(mut s: *const libc::c_char) {
   bb_herror_msg(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

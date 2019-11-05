@@ -226,7 +226,7 @@ pub struct sockaddr_ll {
   pub sll_halen: libc::c_uchar,
   pub sll_addr: [libc::c_uchar; 8],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2011 Denys Vlasenko.
  *

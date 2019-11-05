@@ -66,7 +66,7 @@ extern "C" {
   fn xll_name_to_index(name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   static mut preferred_family: family_t;
-  /* vi: set sw=4 ts=4: */
+
   /* We need linux/types.h because older kernels use __u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   #[no_mangle]
@@ -1313,7 +1313,7 @@ unsafe extern "C" fn do_add_or_delete(
   }
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);

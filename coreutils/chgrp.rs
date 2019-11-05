@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn chown_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini chgrp implementation for busybox
  *

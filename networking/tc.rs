@@ -203,7 +203,7 @@ pub const TCA_STATS: C2RustUnnamed_0 = 3;
 pub const TCA_OPTIONS: C2RustUnnamed_0 = 2;
 pub const TCA_KIND: C2RustUnnamed_0 = 1;
 pub const TCA_UNSPEC: C2RustUnnamed_0 = 0;
-/* vi: set sw=4 ts=4: */
+
 /* We need linux/types.h because older kernels use __u32 etc
  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
 #[derive(Copy, Clone)]

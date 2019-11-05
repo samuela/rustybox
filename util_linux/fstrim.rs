@@ -50,7 +50,7 @@ pub const OPT_m: C2RustUnnamed = 4;
 pub const OPT_l: C2RustUnnamed = 2;
 pub const OPT_o: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * fstrim.c - discard the part (or whole) of mounted filesystem.
  *

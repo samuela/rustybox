@@ -91,7 +91,7 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 // control device name (/dev/net/tun)
 pub const OPT_t: C2RustUnnamed_1 = 2;
 pub const OPT_f: C2RustUnnamed_1 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * tun devices controller
  *

@@ -104,7 +104,7 @@ pub union C2RustUnnamed {
   pub b16: [uint16_t; 4],
   pub b32: [uint32_t; 2],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Small lzma deflate implementation.
  * Copyright (C) 2006  Aurelien Jacobs <aurel@gnuage.org>

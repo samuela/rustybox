@@ -32,7 +32,7 @@ extern "C" {
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>
  *

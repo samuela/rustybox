@@ -35,7 +35,7 @@ pub struct number_state {
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_p: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

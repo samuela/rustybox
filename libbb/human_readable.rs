@@ -11,7 +11,7 @@ extern "C" {
  * else divide by display_unit and do not use suffix. */
 /* "1024.0G" */
 //TODO: provide pointer to buf (avoid statics)?
-/* vi: set sw=4 ts=4: */
+
 /*
  * June 30, 2001                 Manuel Novoa III
  *
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn smart_ulltoa5(
   }
   return buf.offset(5);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

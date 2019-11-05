@@ -26,7 +26,7 @@ pub type ino_t = __ino64_t;
 
 use crate::librb::dev_t;
 use crate::librb::stat;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -83,7 +83,7 @@ pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *m
   }
   return 0 as *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

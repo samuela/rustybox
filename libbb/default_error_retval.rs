@@ -1,7 +1,7 @@
 use libc;
 pub type __uint8_t = libc::c_uchar;
 use crate::librb::uint8_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
  *

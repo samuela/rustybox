@@ -30,7 +30,7 @@ pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini pwd implementation for busybox
  *

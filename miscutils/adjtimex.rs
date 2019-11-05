@@ -71,7 +71,7 @@ pub type C2RustUnnamed = libc::c_uint;
 unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
   return xatoll(str) as libc::c_long;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * adjtimex.c - read, and possibly modify, the Linux kernel 'timex' variables.
  *

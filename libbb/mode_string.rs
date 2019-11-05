@@ -1,7 +1,7 @@
 use libc;
 pub type __mode_t = libc::c_uint;
 use crate::librb::mode_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * mode_string implementation for busybox
  *
@@ -16,7 +16,7 @@ static mut type_chars: [libc::c_char; 16] = [
 ];
 /* ********************************* 0123456789abcdef */
 static mut mode_chars: [libc::c_char; 7] = [114, 119, 120, 83, 84, 115, 116];
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -2,7 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * ascii-to-numbers implementations for busybox
    *
@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

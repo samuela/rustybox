@@ -135,7 +135,7 @@ extern "C" {
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  /* vi: set sw=4 ts=4: */
+
   /*
    * Busybox xregcomp utility routine.  This isn't in libbb.h because the
    * C library we're linking against may not support regex.h.

@@ -50,7 +50,7 @@ use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger
  * 5 July 2003 -- modified for Busybox by Erik Andersen

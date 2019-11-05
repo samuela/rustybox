@@ -153,7 +153,7 @@ pub const OPT_lock: C2RustUnnamed_0 = 2;
 pub const OPT_lud: C2RustUnnamed_0 = 14;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_algo: C2RustUnnamed_0 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

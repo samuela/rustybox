@@ -88,7 +88,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -190,7 +190,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
  * Hole. cp may have some bits set here,
  * they should not affect remove_file()/copy_file()
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini remove_file implementation for busybox
  *

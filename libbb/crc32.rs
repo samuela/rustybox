@@ -8,7 +8,7 @@ pub type __uint32_t = libc::c_uint;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * CRC32 table fill function
  * Copyright (C) 2006 by Rob Sullivan <cogito.ergo.cogito@gmail.com>
@@ -98,7 +98,7 @@ pub unsafe extern "C" fn crc32_block_endian1(
   }
   return val;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

@@ -15,7 +15,7 @@ pub struct utsname {
   pub machine: [libc::c_char; 65],
   pub domainname: [libc::c_char; 65],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -280,7 +280,7 @@ pub struct utsname {
  * On other errors complains [perror("poll")] and returns.
  * Warning! May take (much) longer than timeout_ms to return!
  * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Safe gethostname implementation for busybox
  *

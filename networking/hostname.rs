@@ -123,7 +123,7 @@ pub const OPT_f: C2RustUnnamed_0 = 2;
 pub const OPT_dfi: C2RustUnnamed_0 = 7;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_i: C2RustUnnamed_0 = 4;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini hostname implementation for busybox
  *

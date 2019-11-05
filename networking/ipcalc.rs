@@ -74,7 +74,7 @@ unsafe extern "C" fn xatoul_range(
 ) -> libc::c_ulong {
   return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini ipcalc implementation for busybox
  *

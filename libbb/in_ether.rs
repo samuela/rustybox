@@ -6,7 +6,7 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -400,7 +400,7 @@ pub struct sockaddr {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  */

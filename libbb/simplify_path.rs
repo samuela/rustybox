@@ -13,7 +13,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 /* Returns ptr to NUL */
-/* vi: set sw=4 ts=4: */
+
 /*
  * bb_simplify_path implementation for busybox
  *
@@ -83,7 +83,7 @@ pub unsafe extern "C" fn bb_simplify_abs_path_inplace(
   *p = '\u{0}' as i32 as libc::c_char;
   return p;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

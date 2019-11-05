@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -112,7 +112,7 @@ extern "C" {
  * This makes "cp /dev/null file" and "install /dev/null file" (!!!)
  * work coreutils-compatibly. */
 /*ACTION_REVERSE      = (1 << 4), - unused */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

@@ -319,7 +319,7 @@ pub type __off64_t = libc::c_long;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * wfopen_input implementation for busybox
  *
@@ -467,7 +467,7 @@ pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -
   }
   return fd;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

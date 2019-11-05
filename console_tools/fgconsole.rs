@@ -12,7 +12,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini fgconsole implementation for busybox
  *

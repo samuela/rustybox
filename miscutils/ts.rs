@@ -71,7 +71,7 @@ pub struct tm {
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2019 Denys Vlasenko <vda.linux@googlemail.com>
  * Licensed under GPLv2, see file LICENSE in this source tree.

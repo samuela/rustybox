@@ -45,7 +45,7 @@ pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint8_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> !
     *argv.offset(0),
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

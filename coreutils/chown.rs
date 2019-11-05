@@ -78,7 +78,7 @@ pub struct param_t {
 }
 pub type chown_fptr =
   Option<unsafe extern "C" fn(_: *const libc::c_char, _: uid_t, _: gid_t) -> libc::c_int>;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini chown implementation for busybox
  *
@@ -180,7 +180,7 @@ unsafe extern "C" fn fileAction(
   }
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

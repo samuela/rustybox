@@ -20,7 +20,7 @@ pub type __off64_t = libc::c_long;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Factored out of mpstat/iostat.
  *
@@ -36,7 +36,7 @@ pub unsafe extern "C" fn starts_with_cpu(mut str: *const libc::c_char) -> libc::
     | *str.offset(2) as libc::c_int - 'u' as i32
     == 0i32) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

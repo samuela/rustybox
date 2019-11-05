@@ -116,11 +116,11 @@ pub const XZ_MAGIC1: C2RustUnnamed_0 = 14333;
 pub const BZIP2_MAGIC: C2RustUnnamed_0 = 23106;
 pub const COMPRESS_MAGIC: C2RustUnnamed_0 = 40223;
 pub const GZIP_MAGIC: C2RustUnnamed_0 = 35615;
-/* vi: set sw=4 ts=4: */
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const XZ_MAGIC2a: C2RustUnnamed_0 = 90;
 pub const XZ_MAGIC1a: C2RustUnnamed_0 = 1484404733;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn open_zipped(
   free(xstate as *mut libc::c_void);
   return fd;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

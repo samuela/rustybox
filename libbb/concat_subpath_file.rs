@@ -6,7 +6,7 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -436,7 +436,7 @@ extern "C" {
  * If path is NULL, it is assumed to be "/".
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

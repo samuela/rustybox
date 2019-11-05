@@ -37,7 +37,7 @@ use crate::librb::ssize_t;
 use crate::librb::size_t;
 pub const GROWBY: C2RustUnnamed = 80;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * xreadlink.c - safe implementation of readlink.
  * Returns a NULL on failure.
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut
   /* new: POSIX.1-2008 specifies this behavior as well */
   return realpath(path, 0 as *mut libc::c_char);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

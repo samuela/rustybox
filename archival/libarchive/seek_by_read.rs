@@ -5,7 +5,7 @@ extern "C" {
 }
 pub type __off64_t = libc::c_long;
 use crate::librb::off_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

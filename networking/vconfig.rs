@@ -33,7 +33,7 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * vconfig implementation for busybox
  *

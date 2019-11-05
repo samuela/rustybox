@@ -20,7 +20,7 @@ extern "C" {
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -406,7 +406,7 @@ use crate::librb::size_t;
 /* Embedded script support */
 /* Applets which are useful from another applets */
 /* If shell needs them, they exist even if not enabled as applets */
-/* vi: set sw=4 ts=4: */
+
 /*
  * echo implementation for busybox
  *

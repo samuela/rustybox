@@ -32,7 +32,7 @@ pub struct uni_stat_t {
   pub unicode_count: libc::c_uint,
   pub unicode_width: libc::c_uint,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -57,7 +57,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   b = ((a as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar;
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Unicode support routines.
  *

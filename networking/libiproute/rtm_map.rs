@@ -45,7 +45,7 @@ pub const ARG_broadcast: C2RustUnnamed_0 = 3;
 pub const ARG_nat: C2RustUnnamed_0 = 2;
 pub const ARG_local: C2RustUnnamed_0 = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,7 +120,7 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
   *id = res as libc::c_int;
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 #[no_mangle]
 pub unsafe extern "C" fn get_rt_realms(
   mut realms: *mut uint32_t,

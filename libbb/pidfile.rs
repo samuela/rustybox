@@ -44,7 +44,7 @@ use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * pid file routines
  *
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn write_pidfile_std_path_and_ext(mut name: *const libc::c
   );
   write_pidfile(buf.as_mut_ptr());
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

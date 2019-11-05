@@ -44,7 +44,7 @@ pub struct re_pattern_buffer {
   pub c2rust_padding: [u8; 7],
 }
 pub type regex_t = re_pattern_buffer;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox xregcomp utility routine.  This isn't in libbb.h because the
  * C library we're linking against may not support regex.h.
@@ -54,7 +54,7 @@ pub type regex_t = re_pattern_buffer;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

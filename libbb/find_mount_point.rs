@@ -39,7 +39,7 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -433,7 +433,7 @@ pub struct mntent {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

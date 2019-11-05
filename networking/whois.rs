@@ -52,7 +52,7 @@ use crate::librb::size_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * whois - tiny client for the whois directory service
  *

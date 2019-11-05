@@ -147,7 +147,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mostly stolen from: dhcpcd - DHCP client daemon
  * by Yoichi Hariguchi <yoichi@fore.com>
@@ -175,7 +175,7 @@ pub struct arpMsg {
 pub type aliased_uint32_t = uint32_t;
 pub const ARP_MSG_SIZE: C2RustUnnamed_0 = 42;
 pub type C2RustUnnamed_0 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Russ Dill <Russ.Dill@asu.edu> September 2001
  * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003

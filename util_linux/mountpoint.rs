@@ -41,7 +41,7 @@ pub type ino_t = __ino64_t;
 use crate::librb::dev_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * mountpoint implementation for busybox
  *

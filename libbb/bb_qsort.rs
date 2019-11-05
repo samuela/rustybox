@@ -7,7 +7,7 @@ extern "C" {
 }
 use crate::librb::size_t;
 use crate::librb::__compar_fn_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Wrapper for common string vector sorting operation
  *
@@ -25,7 +25,7 @@ pub unsafe extern "C" fn bb_pstrcmp(
     *(b as *mut *mut libc::c_char),
   );
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

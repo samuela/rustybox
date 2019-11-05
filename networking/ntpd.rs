@@ -272,7 +272,7 @@ pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 
 use crate::librb::smallint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *

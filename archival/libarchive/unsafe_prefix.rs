@@ -8,7 +8,7 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 use crate::librb::smallint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

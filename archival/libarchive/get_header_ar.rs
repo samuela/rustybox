@@ -110,7 +110,7 @@ pub union C2RustUnnamed {
   pub raw: [libc::c_char; 60],
   pub formatted: ar_header,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2001 Glenn McGrath.
  *

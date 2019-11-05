@@ -85,7 +85,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_f: C2RustUnnamed = 4;
 // -a
 pub const OPT_r: C2RustUnnamed = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

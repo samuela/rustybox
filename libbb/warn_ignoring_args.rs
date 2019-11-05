@@ -119,7 +119,7 @@ extern "C" {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * warn_ignoring_args implementation for busybox
  *

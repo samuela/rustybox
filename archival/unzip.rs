@@ -252,7 +252,7 @@ pub union C2RustUnnamed_0 {
   pub b16: [uint16_t; 4],
   pub b32: [uint32_t; 2],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini unzip implementation for busybox
  *

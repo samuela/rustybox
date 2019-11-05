@@ -125,7 +125,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * public domain -- Dave 'Kill a Cop' Cinege <dcinege@psychosis.com>
  *

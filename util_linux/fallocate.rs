@@ -29,7 +29,7 @@ pub struct suffix_mult {
   pub suffix: [libc::c_char; 4],
   pub mult: libc::c_uint,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

@@ -113,7 +113,7 @@ pub struct console_font_op {
   pub charcount: libc::c_uint,
   pub data: *mut libc::c_uchar,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * loadfont.c - Eugene Crosser & Andries Brouwer
  *

@@ -2013,7 +2013,7 @@ pub unsafe extern "C" fn od_main(
 //usage:#endif
 //kbuild:lib-$(CONFIG_OD) += od.o
 //applet:IF_OD(APPLET(od, BB_DIR_USR_BIN, BB_SUID_DROP))
-/* vi: set sw=4 ts=4: */
+
 /*
  * od implementation for busybox
  * Based on code from util-linux v 2.11l

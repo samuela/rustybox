@@ -104,7 +104,7 @@ pub union C2RustUnnamed {
   pub b16: [uint16_t; 4],
   pub b32: [uint32_t; 2],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

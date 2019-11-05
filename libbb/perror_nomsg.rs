@@ -1,6 +1,6 @@
 use libc;
 extern "C" {
-  /* vi: set sw=4 ts=4: */
+
   /*
    * bb_perror_nomsg implementation for busybox
    *

@@ -62,7 +62,7 @@ use crate::librb::uint32_t;
 use crate::librb::mode_t;
 
 use crate::librb::stat;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini chmod implementation for busybox
  *

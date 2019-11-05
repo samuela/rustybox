@@ -116,7 +116,7 @@ pub union C2RustUnnamed_1 {
   pub y: sha512_ctx_t,
 }
 use crate::librb::sha1_ctx_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -1995,7 +1995,7 @@ unsafe extern "C" fn my_crypt_cleanup() {
   des_cctx = 0 as *mut const_des_ctx;
   des_ctx = 0 as *mut des_ctx;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

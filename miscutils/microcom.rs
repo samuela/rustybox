@@ -100,7 +100,7 @@ pub const OPT_t: C2RustUnnamed_0 = 8;
 pub const OPT_d: C2RustUnnamed_0 = 4;
 // do not respect Ctrl-X, Ctrl-@
 pub const OPT_s: C2RustUnnamed_0 = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * bare bones 'talk to modem' program - similar to 'cu -l $device'
  * inspired by mgetty's microcom

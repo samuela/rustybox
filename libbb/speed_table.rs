@@ -1,7 +1,7 @@
 use libc;
 use crate::librb::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;
-/* vi: set sw=4 ts=4: */
+
 /*
  * compact speed_t <-> speed functions for busybox
  *
@@ -50,7 +50,7 @@ pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
   }
   return 0i32 as libc::c_uint;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

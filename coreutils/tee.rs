@@ -41,7 +41,7 @@ pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * tee implementation for busybox
  *

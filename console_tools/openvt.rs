@@ -70,7 +70,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_v: C2RustUnnamed_0 = 32;
 pub const OPT_f: C2RustUnnamed_0 = 16;
 pub const OPT_l: C2RustUnnamed_0 = 8;
-/* vi: set sw=4 ts=4: */
+
 /*
  *  openvt.c - open a vt to run a command.
  *

@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -434,7 +434,7 @@ extern "C" {
  * Add "/" only as needed (no duplicate "//" are produced).
  * If path is NULL, it is assumed to be "/".
  * filename should not be NULL. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

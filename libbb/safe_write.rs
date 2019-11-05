@@ -8,7 +8,7 @@ extern "C" {
 pub type __ssize_t = libc::c_long;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -250,7 +250,7 @@ use crate::librb::size_t;
 /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
 /* Autodetects .gz etc */
 /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

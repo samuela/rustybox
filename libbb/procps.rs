@@ -891,7 +891,7 @@ pub unsafe extern "C" fn procps_scan(
   }
   return sp;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

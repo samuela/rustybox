@@ -85,7 +85,7 @@ pub struct utsname {
   pub machine: [libc::c_char; 65],
   pub domainname: [libc::c_char; 65],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * issue.c: issue printing code
  *
@@ -374,7 +374,7 @@ static mut forbid: [libc::c_char; 150] = [
   76, 79, 65, 68, 0, 76, 68, 95, 78, 79, 87, 65, 82, 78, 0, 76, 68, 95, 75, 69, 69, 80, 68, 73, 82,
   0, 0,
 ];
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

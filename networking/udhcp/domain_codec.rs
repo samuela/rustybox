@@ -237,7 +237,7 @@ unsafe extern "C" fn find_offset(
   }
   return -1i32;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Russ Dill <Russ.Dill@asu.edu> September 2001
  * Rewritten by Vladimir Oleynik <dzo@simtreas.ru> (C) 2003

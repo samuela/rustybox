@@ -171,7 +171,7 @@ pub unsafe extern "C" fn xgroup2gid(mut name: *const libc::c_char) -> libc::c_lo
   mygroup = xgetgrnam(name);
   return (*mygroup).gr_gid as libc::c_long;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

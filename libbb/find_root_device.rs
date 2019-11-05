@@ -59,7 +59,7 @@ pub struct arena {
   pub devpath: [libc::c_char; 256],
 }
 pub const DEVNAME_MAX: C2RustUnnamed = 256;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -128,7 +128,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
   closedir(dir);
   return retpath;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

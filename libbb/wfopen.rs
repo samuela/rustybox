@@ -138,7 +138,7 @@ pub type __off64_t = libc::c_long;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -192,7 +192,7 @@ unsafe extern "C" fn xfdopen_helper(mut fd_and_rw_bit: libc::c_uint) -> *mut FIL
 pub unsafe extern "C" fn xfdopen_for_read(mut fd: libc::c_int) -> *mut FILE {
   return xfdopen_helper((fd << 1i32) as libc::c_uint);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

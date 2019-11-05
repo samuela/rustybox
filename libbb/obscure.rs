@@ -24,7 +24,7 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini weak password checker implementation for busybox
  *
@@ -202,7 +202,7 @@ unsafe extern "C" fn obscure_msg(
   }
   return 0 as *const libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

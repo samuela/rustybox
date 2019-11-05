@@ -91,7 +91,7 @@ pub struct utsname {
 }
 pub const initial: C2RustUnnamed_0 = 5;
 pub type C2RustUnnamed_0 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Poweroff reboot and halt, oh my.
  *

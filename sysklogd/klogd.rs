@@ -70,7 +70,7 @@ pub type C2RustUnnamed_2 = libc::c_uint;
 pub const OPT_FOREGROUND: C2RustUnnamed_2 = 2;
 pub const OPT_LEVEL: C2RustUnnamed_2 = 1;
 pub const KLOGD_LOGBUF_SIZE: C2RustUnnamed_2 = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini klogd implementation for busybox
  *

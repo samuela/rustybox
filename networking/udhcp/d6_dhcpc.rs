@@ -390,7 +390,7 @@ pub struct option_set {
   pub data: *mut uint8_t,
   pub next: *mut option_set,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -512,7 +512,7 @@ pub const OPT_q: C2RustUnnamed_9 = 8;
 pub const OPT_p: C2RustUnnamed_9 = 4;
 pub const OPT_n: C2RustUnnamed_9 = 2;
 pub const OPT_i: C2RustUnnamed_9 = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * DHCPv6 client.
  *

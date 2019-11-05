@@ -54,7 +54,7 @@ pub const OPT_s: C2RustUnnamed = 16;
 pub const OPT_f: C2RustUnnamed = 8;
 /* print only dups */
 pub const OPT_u: C2RustUnnamed = 4;
-/* vi: set sw=4 ts=4: */
+
 /*
  * uniq implementation for busybox
  *

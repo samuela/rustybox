@@ -182,7 +182,7 @@ unsafe extern "C" fn rtnl_send(
 ) {
   xwrite((*rth).fd, buf, len as size_t);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -945,7 +945,7 @@ pub unsafe extern "C" fn rta_addattr_l(
     & !4u32.wrapping_sub(1i32 as libc::c_uint)) as libc::c_ushort;
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 /* We need linux/types.h because older kernels use __u32 etc
  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
 /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */

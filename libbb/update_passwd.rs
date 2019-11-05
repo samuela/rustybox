@@ -108,7 +108,7 @@ use crate::librb::time_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -574,7 +574,7 @@ use crate::librb::FILE;
 /*, int rnd*/
 /* "$N$" + sha_salt_16_bytes + NUL */
 /* Returns number of lines changed, or -1 on error */
-/* vi: set sw=4 ts=4: */
+
 /*
  * update_passwd
  *

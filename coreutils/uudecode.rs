@@ -90,7 +90,7 @@ pub const SRC_BUF_SIZE: C2RustUnnamed_0 = 57;
 pub type C2RustUnnamed_0 = libc::c_uint;
 /* This *MUST* be a multiple of 3 */
 pub const DST_BUF_SIZE: C2RustUnnamed_0 = 76;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2003, Glenn McGrath
  *

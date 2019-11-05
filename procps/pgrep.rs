@@ -157,7 +157,7 @@ pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini pgrep/pkill implementation for busybox
  *

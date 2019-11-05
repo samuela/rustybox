@@ -55,7 +55,7 @@ extern "C" {
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

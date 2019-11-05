@@ -136,7 +136,7 @@ pub struct priv_dumper_t {
   pub get__curp: *mut libc::c_uchar,
   pub get__savp: *mut libc::c_uchar,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Support code for the hexdump and od applets,
  * based on code from util-linux v 2.11l

@@ -8,7 +8,7 @@ extern "C" {
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

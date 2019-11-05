@@ -199,7 +199,7 @@ pub union C2RustUnnamed_0 {
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ether-wake.c - Send a magic packet to wake up sleeping machines.
  *

@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn get_shell_name() -> *const libc::c_char;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini chroot implementation for busybox
  *

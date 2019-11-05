@@ -25,7 +25,7 @@ pub type __useconds_t = libc::c_uint;
 use crate::librb::off_t;
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * scriptreplay - play back typescripts, using timing information
  *

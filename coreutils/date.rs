@@ -95,7 +95,7 @@ pub struct tm {
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini date implementation for busybox
  *

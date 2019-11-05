@@ -73,7 +73,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_t: C2RustUnnamed = 8;
 pub const OPT_d: C2RustUnnamed = 4;
 pub const OPT_r: C2RustUnnamed = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini touch implementation for busybox
  *

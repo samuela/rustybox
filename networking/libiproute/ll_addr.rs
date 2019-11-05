@@ -41,7 +41,7 @@ pub struct inet_prefix {
   pub bitlen: int16_t,
   pub data: [uint32_t; 4],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

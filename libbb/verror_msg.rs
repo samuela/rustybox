@@ -53,7 +53,7 @@ pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn bb_simple_info_msg(mut s: *const libc::c_char) {
 pub unsafe extern "C" fn bb_simple_error_msg(mut s: *const libc::c_char) {
   bb_error_msg(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

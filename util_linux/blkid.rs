@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn add_to_uuid_cache(device: *const libc::c_char) -> libc::c_int;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Print UUIDs on all filesystems
  *

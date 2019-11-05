@@ -1704,7 +1704,7 @@ unsafe extern "C" fn do_show(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   bb_putchar('\n' as i32);
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);

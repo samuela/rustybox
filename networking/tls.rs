@@ -3161,7 +3161,7 @@ pub unsafe extern "C" fn tls_handshake(mut tls: *mut tls_state_t, mut sni: *cons
 unsafe extern "C" fn tls_xwrite(mut tls: *mut tls_state_t, mut len: libc::c_int) {
   xwrite_encrypted(tls, len as libc::c_uint, 23i32 as libc::c_uint);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

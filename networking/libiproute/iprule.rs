@@ -32,12 +32,12 @@ extern "C" {
   fn rtnl_dsfield_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn rtnl_rttable_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   #[no_mangle]
   fn rtnl_rtntype_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
   fn rtnl_rtntype_a2n(id: *mut libc::c_int, arg: *mut libc::c_char) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   /* We need linux/types.h because older kernels use __u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
@@ -962,7 +962,7 @@ unsafe extern "C" fn iprule_modify(
   }
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);

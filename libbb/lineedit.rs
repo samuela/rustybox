@@ -79,7 +79,7 @@ extern "C" {
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
-  /* vi: set sw=4 ts=4: */
+
   /* Copyright (C) 1991,92,95,96,97,98,99,2001 Free Software Foundation, Inc.
   This file is part of the GNU C Library.
 
@@ -465,7 +465,7 @@ pub const VI_CMDMODE_BIT: C2RustUnnamed_15 = 1073741824;
 pub const FIND_DIR_ONLY: C2RustUnnamed_14 = 1;
 pub const FIND_EXE_ONLY: C2RustUnnamed_14 = 0;
 pub const FIND_FILE_ONLY: C2RustUnnamed_14 = 2;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -3437,7 +3437,7 @@ unsafe extern "C" fn sigaction2(mut sig: libc::c_int, mut act: *mut sigaction) {
   oact = act;
   sigaction(sig, act, oact);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

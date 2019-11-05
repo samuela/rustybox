@@ -196,7 +196,7 @@ pub struct hostent {
 }
 // "old" (ipv4 only) API
 // users: traceroute.c hostname.c - use _list_ of all IPs
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini xgethostbyname implementation.
  *

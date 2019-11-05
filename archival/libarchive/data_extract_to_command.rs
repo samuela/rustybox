@@ -109,7 +109,7 @@ pub const TAR_REALNAME: C2RustUnnamed = 2;
 pub const TAR_FILENAME: C2RustUnnamed = 1;
 //TAR_FILETYPE,
 pub const TAR_MODE: C2RustUnnamed = 0;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

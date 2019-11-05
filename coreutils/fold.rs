@@ -39,7 +39,7 @@ use crate::librb::uint32_t;
 use crate::librb::size_t;
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */

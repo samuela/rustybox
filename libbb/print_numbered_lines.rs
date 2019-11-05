@@ -34,7 +34,7 @@ pub struct number_state {
   pub all: smallint,
   pub nonempty: smallint,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -423,7 +423,7 @@ pub struct number_state {
 /* Similar, but used by chgrp, not shell */
 /* Used by ftpd */
 /* Don't need IF_xxx() guard for these */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

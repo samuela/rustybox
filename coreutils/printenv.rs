@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * printenv implementation for busybox
  *

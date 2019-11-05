@@ -27,7 +27,7 @@ pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;
 pub const BASE64_FLAG_UU_STOP: C2RustUnnamed = 256;
 pub const BUFFER_SIZE: C2RustUnnamed_0 = 64;
 pub type C2RustUnnamed_0 = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 2003, Glenn McGrath
  * Copyright 2006, Rob Landley <rob@landley.net>
@@ -322,7 +322,7 @@ pub unsafe extern "C" fn decode_base64(
   *pp_dst = dst;
   return src_tail;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

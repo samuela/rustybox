@@ -4,7 +4,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -124,7 +124,7 @@ use crate::librb::size_t;
 /* "abc/def/" -> "" and it never modifies 'path' */
 /* Simpler version: does not special case "/" string */
 /* NB: can violate const-ness (similarly to strchr) */
-/* vi: set sw=4 ts=4: */
+
 /*
  * busybox library eXtended function
  *

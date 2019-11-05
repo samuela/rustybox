@@ -33,7 +33,7 @@ pub type __pid_t = libc::c_int;
 use crate::librb::uint32_t;
 use crate::librb::pid_t;
 use crate::libbb::llist::llist_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * pidof implementation for busybox
  *

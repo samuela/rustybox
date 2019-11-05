@@ -47,7 +47,7 @@ use crate::librb::size_t;
 
 
 use crate::librb::FILE;
-/* vi: set sw=4 ts=4: */
+
 /*
  * cryptpw.c - output a crypt(3)ed password to stdout.
  *

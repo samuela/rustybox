@@ -21,7 +21,7 @@ extern "C" {
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * See README for additional information
    *

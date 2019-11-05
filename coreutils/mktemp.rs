@@ -32,7 +32,7 @@ pub const OPT_u: C2RustUnnamed = 16;
 pub const OPT_p: C2RustUnnamed = 8;
 pub const OPT_t: C2RustUnnamed = 4;
 pub type C2RustUnnamed = libc::c_uint;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini mktemp implementation for busybox
  *

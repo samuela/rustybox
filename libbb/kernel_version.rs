@@ -17,7 +17,7 @@ pub struct utsname {
   pub machine: [libc::c_char; 65],
   pub domainname: [libc::c_char; 65],
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -411,7 +411,7 @@ pub struct utsname {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

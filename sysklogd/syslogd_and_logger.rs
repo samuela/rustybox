@@ -928,7 +928,7 @@ pub static mut facilitynames: [CODE; 23] = [
     init
   },
 ];
-/* vi: set sw=4 ts=4: */
+
 /*
  * prioritynames[] and facilitynames[]
  *
@@ -2045,7 +2045,7 @@ pub unsafe extern "C" fn syslogd_main(
   do_syslogd();
   /* return EXIT_SUCCESS; */
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Mini logger implementation for busybox
  *

@@ -66,7 +66,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * ascii-to-numbers implementations for busybox
  *
@@ -100,7 +100,7 @@ unsafe extern "C" fn bb_strtol(
 ) -> libc::c_long {
   return bb_strtoll(arg, endp, base) as libc::c_long;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -573,7 +573,7 @@ pub unsafe extern "C" fn monotonic_ms() -> libc::c_ulonglong {
     .wrapping_mul(1000u64)
     .wrapping_add((ts.tv_nsec / 1000000i32 as libc::c_long) as libc::c_ulonglong);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

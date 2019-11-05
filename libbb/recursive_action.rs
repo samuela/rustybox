@@ -55,7 +55,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *
@@ -81,7 +81,7 @@ unsafe extern "C" fn true_action(
 ) -> libc::c_int {
   return 1i32;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

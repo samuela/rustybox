@@ -18,7 +18,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::stat;
 use crate::librb::timespec;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -96,7 +96,7 @@ use crate::librb::timespec;
  * skipping an index is a bad bug - it may miss a realloc!
  */
 //TODO: supply a pointer to char[11] buffer (avoid statics)?
-/* vi: set sw=4 ts=4: */
+
 /*
  * Utility routines.
  *

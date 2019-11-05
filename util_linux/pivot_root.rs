@@ -4,7 +4,7 @@ extern "C" {
   fn bb_show_usage() -> !;
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
-  /* vi: set sw=4 ts=4: */
+
   /*
    * pivot_root.c - Change root file system.  Based on util-linux 2.10s
    *

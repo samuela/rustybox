@@ -15,7 +15,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 pub type ptrdiff_t = libc::c_long;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Disallocate virtual terminal(s)
  *

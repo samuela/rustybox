@@ -14,7 +14,7 @@ extern "C" {
   static bb_default_login_shell: [libc::c_char; 0];
 }
 use crate::librb::size_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -445,7 +445,7 @@ use crate::librb::size_t;
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
 /* Returns ptr to NUL */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 1989 - 1991, Julianne Frances Haugh <jockgrrl@austin.rr.com>
  * All rights reserved.

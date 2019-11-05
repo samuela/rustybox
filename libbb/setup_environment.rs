@@ -20,7 +20,7 @@ extern "C" {
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::passwd;
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *
@@ -474,7 +474,7 @@ use crate::librb::passwd;
  * NB: CHANGEENV and CLEARENV use setenv() - this leaks memory!
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
-/* vi: set sw=4 ts=4: */
+
 /*
  * Copyright 1989 - 1991, Julianne Frances Haugh <jockgrrl@austin.rr.com>
  * All rights reserved.

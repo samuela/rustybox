@@ -85,7 +85,7 @@ pub struct inet_prefix {
 //int dnet_pton(int af, const char *src, void *addr);
 //const char *ipx_ntop(int af, const void *addr, char *str, size_t len);
 //int ipx_pton(int af, const char *src, void *addr);
-/* vi: set sw=4 ts=4: */
+
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  *
@@ -501,7 +501,7 @@ pub unsafe extern "C" fn inet_addr_match(
   }
   return 0i32;
 }
-/* vi: set sw=4 ts=4: */
+
 /* UNUSED */
 /* UNUSED */
 /* UNUSED */

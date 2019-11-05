@@ -110,7 +110,7 @@ pub const OPT_x: C2RustUnnamed = 1;
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * reformime: parse MIME-encoded message
  *

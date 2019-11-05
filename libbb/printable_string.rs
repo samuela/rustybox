@@ -17,7 +17,7 @@ pub struct uni_stat_t {
   pub unicode_count: libc::c_uint,
   pub unicode_width: libc::c_uint,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Unicode support routines.
  *
@@ -55,7 +55,7 @@ pub unsafe extern "C" fn printable_string2(
   dst = unicode_conv_to_printable(stats, str);
   return auto_string(dst);
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Busybox main internal header file
  *

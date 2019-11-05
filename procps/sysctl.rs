@@ -127,7 +127,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * Sysctl 1.01 - A utility to read and manipulate the sysctl parameters
  *

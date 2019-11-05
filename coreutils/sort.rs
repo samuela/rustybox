@@ -99,7 +99,7 @@ pub struct tm {
   pub tm_zone: *const libc::c_char,
 }
 use crate::libbb::llist::llist_t;
-/* vi: set sw=4 ts=4: */
+
 /*
  * SuS3 compliant sort implementation for busybox
  *
