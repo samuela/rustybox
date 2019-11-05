@@ -145,9 +145,6 @@ extern "C" {
   fn set_task_comm(comm: *const libc::c_char);
 
   #[no_mangle]
-  static bb_banner: [libc::c_char; 0];
-
-  #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
   #[no_mangle]
@@ -876,10 +873,8 @@ unsafe fn print_rustybox_help() {
   /* -1 prevent last comma to be in the very last pos */
   let output_width = get_terminal_width(2) - 1;
 
-  // See https://linux.die.net/man/2/dup2.
-  dup2(1, 2);
-  full_write2_str(bb_banner.as_ptr()); /* reuse const string */
-  eprintln!(" multi-call binary."); /* reuse */
+  // TODO: add version info to this banner.
+  eprintln!("RustyBox multi-call binary.");
   eprintln!(
     "\
 RustyBox is a BusyBox fork written entirely in Rust. Kudos to the
