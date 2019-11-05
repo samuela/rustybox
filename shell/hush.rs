@@ -407,7 +407,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

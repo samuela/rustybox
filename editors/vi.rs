@@ -202,7 +202,7 @@ pub struct __jmp_buf_tag {
 pub type sigjmp_buf = [__jmp_buf_tag; 1];
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

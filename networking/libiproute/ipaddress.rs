@@ -279,7 +279,7 @@ pub union C2RustUnnamed_1 {
 pub type smallint = libc::c_schar;
 pub type smalluint = libc::c_uchar;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type family_t = int8_t;

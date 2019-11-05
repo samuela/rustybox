@@ -38,7 +38,7 @@ pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

@@ -154,7 +154,7 @@ pub type bb__aliased_uint64_t = uint64_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

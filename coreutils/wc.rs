@@ -30,7 +30,7 @@ pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */

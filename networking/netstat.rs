@@ -300,7 +300,7 @@ pub struct servent {
   pub s_proto: *mut libc::c_char,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed_0 = libc::c_uint;

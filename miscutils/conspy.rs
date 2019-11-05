@@ -119,7 +119,7 @@ pub type pid_t = __pid_t;
 pub type dev_t = __dev_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

@@ -60,7 +60,7 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

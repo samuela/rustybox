@@ -95,8 +95,6 @@ pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
 
-pub type _IO_lock_t = ();
-
 use crate::librb::FILE;
 pub type ptrdiff_t = libc::c_long;
 #[derive(Copy, Clone)]

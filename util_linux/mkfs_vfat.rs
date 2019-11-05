@@ -103,7 +103,7 @@ pub type time_t = __time_t;
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

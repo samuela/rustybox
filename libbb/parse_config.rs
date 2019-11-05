@@ -42,7 +42,7 @@ pub type uint8_t = __uint8_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

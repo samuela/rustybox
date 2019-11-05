@@ -342,7 +342,7 @@ pub type jmp_buf = [__jmp_buf_tag; 1];
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

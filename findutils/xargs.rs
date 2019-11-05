@@ -134,7 +134,7 @@ pub type smalluint = libc::c_uchar;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

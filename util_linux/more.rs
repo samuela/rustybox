@@ -72,7 +72,7 @@ pub type uint32_t = __uint32_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type cc_t = libc::c_uchar;

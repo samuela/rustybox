@@ -53,7 +53,7 @@ pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */

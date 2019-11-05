@@ -194,8 +194,6 @@ pub struct dirent {
 pub type DIR = __dirstream;
 pub type time_t = __time_t;
 
-pub type _IO_lock_t = ();
-
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

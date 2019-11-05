@@ -120,7 +120,7 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

@@ -380,7 +380,7 @@ pub union C2RustUnnamed_9 {
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;

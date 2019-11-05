@@ -19,7 +19,7 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

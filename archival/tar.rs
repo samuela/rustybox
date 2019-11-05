@@ -246,7 +246,7 @@ pub type dev_t = __dev_t;
 pub type time_t = __time_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;

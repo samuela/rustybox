@@ -151,7 +151,7 @@ pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type cc_t = libc::c_uchar;

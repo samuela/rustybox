@@ -107,7 +107,6 @@ pub struct hostent {
   pub h_addr_list: *mut *mut libc::c_char,
 }
 
-pub type _IO_lock_t = ();
 use crate::libbb::llist::llist_t;
 
 use crate::librb::FILE;

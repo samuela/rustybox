@@ -24,7 +24,7 @@ pub type __off64_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type off_t = __off64_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */

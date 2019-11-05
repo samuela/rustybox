@@ -61,7 +61,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */

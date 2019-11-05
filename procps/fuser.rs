@@ -121,7 +121,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

@@ -91,7 +91,7 @@ pub type off_t = __off64_t;
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

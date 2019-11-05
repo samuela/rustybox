@@ -49,7 +49,7 @@ pub type __useconds_t = libc::c_uint;
 pub type size_t = libc::c_ulong;
 pub type time_t = __time_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

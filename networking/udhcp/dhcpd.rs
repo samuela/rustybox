@@ -412,7 +412,7 @@ pub type bb__aliased_uint32_t = uint32_t;
 /* add other arches which benefit from this... */
 pub type smallint = libc::c_schar;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

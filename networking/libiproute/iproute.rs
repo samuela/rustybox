@@ -206,7 +206,7 @@ pub struct sockaddr {
   pub sa_data: [libc::c_char; 14],
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type family_t = int8_t;

@@ -27,7 +27,7 @@ pub type __off64_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 /* writeline outputs the input given, appropriately aligned according to class */

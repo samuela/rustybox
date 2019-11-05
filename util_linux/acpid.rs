@@ -210,7 +210,7 @@ pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

@@ -116,7 +116,7 @@ pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
 pub type smalluint = libc::c_uchar;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type family_t = int8_t;

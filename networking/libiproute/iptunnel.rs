@@ -226,7 +226,7 @@ pub struct ip_tunnel_parm {
   pub iph: iphdr,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;

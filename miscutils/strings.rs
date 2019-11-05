@@ -42,7 +42,7 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[no_mangle]

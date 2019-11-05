@@ -73,7 +73,7 @@ pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 use crate::librb::passwd;

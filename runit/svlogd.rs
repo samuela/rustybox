@@ -213,7 +213,7 @@ pub struct timeval {
   pub tv_usec: __suseconds_t,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

@@ -513,7 +513,7 @@ pub struct C2RustUnnamed_8 {
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

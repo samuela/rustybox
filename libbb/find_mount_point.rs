@@ -28,7 +28,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type dev_t = __dev_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

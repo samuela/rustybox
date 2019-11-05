@@ -151,7 +151,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type id_t = __id_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type __priority_which = libc::c_uint;

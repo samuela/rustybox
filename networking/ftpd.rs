@@ -344,7 +344,7 @@ pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

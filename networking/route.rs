@@ -241,7 +241,7 @@ pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[inline(always)]

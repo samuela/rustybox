@@ -70,7 +70,7 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type socklen_t = __socklen_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

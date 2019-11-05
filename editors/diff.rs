@@ -151,7 +151,7 @@ pub type off_t = __off64_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type __compar_fn_t =

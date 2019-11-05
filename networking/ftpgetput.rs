@@ -144,7 +144,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

@@ -85,7 +85,7 @@ use crate::librb::stat;
 
 
 
-pub type _IO_lock_t = ();
+
 
 
 

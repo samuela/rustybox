@@ -187,7 +187,7 @@ pub type nlink_t = __nlink_t;
 pub type time_t = __time_t;
 pub type blkcnt_t = __blkcnt64_t;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type __compar_fn_t =

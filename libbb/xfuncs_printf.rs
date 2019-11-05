@@ -286,7 +286,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

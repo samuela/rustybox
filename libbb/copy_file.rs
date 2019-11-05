@@ -267,7 +267,7 @@ pub struct timeval {
   pub tv_usec: __suseconds_t,
 }
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

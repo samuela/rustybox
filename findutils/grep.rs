@@ -165,7 +165,7 @@ pub type size_t = libc::c_ulong;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

@@ -159,7 +159,7 @@ pub type uid_t = __uid_t;
 pub type pid_t = __pid_t;
 pub type DIR = __dirstream;
 
-pub type _IO_lock_t = ();
+
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
