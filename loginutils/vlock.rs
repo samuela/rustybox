@@ -53,9 +53,9 @@ pub type __gid_t = libc::c_uint;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 use crate::librb::termios;
 use crate::librb::passwd;
 #[derive(Copy, Clone)]

@@ -245,7 +245,7 @@ pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::smallint;
-use crate::librb::size_t;
+
 use crate::librb::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

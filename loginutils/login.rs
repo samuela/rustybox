@@ -151,10 +151,10 @@ use crate::librb::off_t;
 use crate::librb::pid_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-use crate::librb::cc_t;
+
 use crate::librb::passwd;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
 use crate::librb::termios;
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

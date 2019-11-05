@@ -155,9 +155,9 @@ pub struct timezone {
 }
 
 pub type __timezone_ptr_t = *mut timezone;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 
 use crate::librb::termios;
 

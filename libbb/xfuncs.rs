@@ -156,8 +156,8 @@ use crate::librb::pid_t;
 use crate::librb::winsize;
 
 use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
 
 use crate::librb::termios;
 

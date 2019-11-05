@@ -214,9 +214,9 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed = 16;

@@ -89,9 +89,9 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 use crate::librb::termios;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */

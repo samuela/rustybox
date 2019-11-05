@@ -351,7 +351,7 @@ pub struct rlimit {
 }
 pub type __rlimit_resource_t = __rlimit_resource;
 use crate::librb::cc_t;
-use crate::librb::speed_t;
+
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 /*

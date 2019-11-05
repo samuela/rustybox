@@ -384,9 +384,9 @@ pub union C2RustUnnamed_9 {
 
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 use crate::librb::termios;
 use crate::librb::passwd;
 pub type C2RustUnnamed_10 = libc::c_int;

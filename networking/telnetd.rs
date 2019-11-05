@@ -207,9 +207,9 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
+
+
+
 use crate::librb::winsize;
 use crate::librb::termios;
 #[derive(Copy, Clone)]

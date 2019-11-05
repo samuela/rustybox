@@ -115,12 +115,12 @@ pub type __uint32_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
-use crate::librb::cc_t;
+
 use crate::librb::off_t;
 use crate::librb::smallint;
-use crate::librb::speed_t;
+
 use crate::librb::ssize_t;
-use crate::librb::tcflag_t;
+
 use crate::librb::uint32_t;
 
 use crate::librb::termios;
