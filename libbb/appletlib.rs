@@ -2,7 +2,12 @@ use libc;
 use std::ffi::CStr;
 use std::ffi::CString;
 
-use crate::applets::applet_tables::{applets, InstallLoc};
+use crate::applets::applet_tables::{applets, InstallLoc, BB_SUID_DROP, BB_SUID_REQUIRE};
+use crate::libbb::llist::llist_t;
+use crate::librb::{
+  __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, stat,
+  timespec, uid_t, uint16_t, uint8_t, FILE,
+};
 
 extern "C" {
   #[no_mangle]
@@ -1208,163 +1213,18 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-pub type __uint8_t = libc::c_uchar;
-pub type __uint16_t = libc::c_ushort;
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-pub type uint8_t = __uint8_t;
-pub type uint16_t = __uint16_t;
-
-/* NB: unaligned parameter should be a pointer, aligned one -
- * a lvalue. This makes it more likely to not swap them by mistake
- */
-/* #elif ... - add your favorite arch today! */
-/* Unaligned, fixed-endian accessors */
-/* unxz needs an aligned fixed-endian accessor.
- * (however, the compiler does not realize it's aligned, the cast is still necessary)
- */
-/* ---- Size-saving "small" ints (arch-dependent) ----------- */
-/* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
-pub type ssize_t = __ssize_t;
-pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type mode_t = __mode_t;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timespec {
-  pub tv_sec: __time_t,
-  pub tv_nsec: __syscall_slong_t,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct stat {
-  pub st_dev: __dev_t,
-  pub st_ino: __ino_t,
-  pub st_nlink: __nlink_t,
-  pub st_mode: __mode_t,
-  pub st_uid: __uid_t,
-  pub st_gid: __gid_t,
-  pub __pad0: libc::c_int,
-  pub st_rdev: __dev_t,
-  pub st_size: __off_t,
-  pub st_blksize: __blksize_t,
-  pub st_blocks: __blkcnt_t,
-  pub st_atim: timespec,
-  pub st_mtim: timespec,
-  pub st_ctim: timespec,
-  pub __glibc_reserved: [__syscall_slong_t; 3],
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-  pub _flags: libc::c_int,
-  pub _IO_read_ptr: *mut libc::c_char,
-  pub _IO_read_end: *mut libc::c_char,
-  pub _IO_read_base: *mut libc::c_char,
-  pub _IO_write_base: *mut libc::c_char,
-  pub _IO_write_ptr: *mut libc::c_char,
-  pub _IO_write_end: *mut libc::c_char,
-  pub _IO_buf_base: *mut libc::c_char,
-  pub _IO_buf_end: *mut libc::c_char,
-  pub _IO_save_base: *mut libc::c_char,
-  pub _IO_backup_base: *mut libc::c_char,
-  pub _IO_save_end: *mut libc::c_char,
-  pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
-  pub _fileno: libc::c_int,
-  pub _flags2: libc::c_int,
-  pub _old_offset: __off_t,
-  pub _cur_column: libc::c_ushort,
-  pub _vtable_offset: libc::c_schar,
-  pub _shortbuf: [libc::c_char; 1],
-  pub _lock: *mut libc::c_void,
-  pub _offset: __off64_t,
-  pub __pad1: *mut libc::c_void,
-  pub __pad2: *mut libc::c_void,
-  pub __pad3: *mut libc::c_void,
-  pub __pad4: *mut libc::c_void,
-  pub __pad5: size_t,
-  pub _mode: libc::c_int,
-  pub _unused2: [libc::c_char; 20],
-}
-
-pub type _IO_lock_t = ();
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-
-pub type FILE = _IO_FILE;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
-
-/* real uid */
+// This struct is actually defined in appletlib.c.
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suid_config_t {
+  /* next ptr must be first: this struct needs to be llist-compatible */
   pub m_next: *mut suid_config_t,
   pub m_ugid: bb_uidgid_t,
   pub m_applet: libc::c_int,
   pub m_mode: mode_t,
 }
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
-
-pub type bb_suid_t = libc::c_uint;
-pub const BB_SUID_DROP: bb_suid_t = 0;
-pub const BB_SUID_REQUIRE: bb_suid_t = 2;
-pub const BB_SUID_MAYBE: bb_suid_t = 1;
+static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut suid_config_t;
+static mut suid_cfg_readable: bool = false;
 
 static mut applet_main: [unsafe extern "C" fn(
   _: libc::c_int,
@@ -2098,10 +1958,7 @@ unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
 #[no_mangle]
 pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
 
-/* If not built as a single-applet executable... */
-static mut ruid: uid_t = 0;
-static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut suid_config_t;
-static mut suid_cfg_readable: bool = false;
+static mut ruid: uid_t = 0; /* real uid */
 
 /* libbb candidate */
 unsafe fn get_trimmed_slice(

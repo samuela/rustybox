@@ -20,8 +20,10 @@ pub type __uid_t = libc::c_uint;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
+pub type uid_t = __uid_t;
 pub type gid_t = __gid_t;
 pub type off_t = __off64_t;
+pub type mode_t = __mode_t;
 pub type size_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
@@ -116,3 +118,36 @@ pub struct stat {
   pub st_ctim: timespec,
   pub __glibc_reserved: [__syscall_slong_t; 3],
 }
+
+// See http://man7.org/linux/man-pages/man3/getpwnam.3.html.
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct passwd {
+  pub pw_name: *mut libc::c_char,
+  pub pw_passwd: *mut libc::c_char,
+  pub pw_uid: __uid_t,
+  pub pw_gid: __gid_t,
+  pub pw_gecos: *mut libc::c_char,
+  pub pw_dir: *mut libc::c_char,
+  pub pw_shell: *mut libc::c_char,
+}
+
+// See https://www.mkssoftware.com/docs/man5/struct_group.5.asp.
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct group {
+  pub gr_name: *mut libc::c_char,
+  pub gr_passwd: *mut libc::c_char,
+  pub gr_gid: __gid_t,
+  pub gr_mem: *mut *mut libc::c_char,
+}
+// ... end c2rust stuff
+
+// Defined in libbb.h
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct bb_uidgid_t {
+  pub uid: uid_t,
+  pub gid: gid_t,
+}
+// ... end libbb.h stuff
