@@ -42,15 +42,9 @@ pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
 use crate::librb::_IO_FILE;
 pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-use crate::librb::FILE;
 use crate::libbb::llist::llist_t;
+use crate::librb::_IO_marker;
+use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

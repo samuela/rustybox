@@ -227,13 +227,7 @@ pub struct ip_tunnel_parm {
 }
 use crate::librb::_IO_FILE;
 pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
+use crate::librb::_IO_marker;
 use crate::librb::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;
 pub const ARG_inherit: C2RustUnnamed_2 = 23;

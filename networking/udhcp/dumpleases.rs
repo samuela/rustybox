@@ -62,13 +62,7 @@ pub struct in_addr {
 pub type in_addr_t = uint32_t;
 use crate::librb::_IO_FILE;
 pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
+use crate::librb::_IO_marker;
 use crate::librb::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */
 pub type leasetime_t = uint32_t;

@@ -280,13 +280,7 @@ pub type smallint = libc::c_schar;
 pub type smalluint = libc::c_uchar;
 use crate::librb::_IO_FILE;
 pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
+use crate::librb::_IO_marker;
 use crate::librb::FILE;
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;

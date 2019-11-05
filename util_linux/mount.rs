@@ -204,13 +204,7 @@ pub type __off64_t = libc::c_long;
 pub type _IO_lock_t = ();
 pub type __off_t = libc::c_long;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
+use crate::librb::_IO_marker;
 use crate::librb::FILE;
 
 #[derive(Copy, Clone)]

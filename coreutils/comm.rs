@@ -28,13 +28,7 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 use crate::librb::_IO_FILE;
 pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
+use crate::librb::_IO_marker;
 use crate::librb::FILE;
 /* writeline outputs the input given, appropriately aligned according to class */
 unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
