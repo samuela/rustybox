@@ -1629,109 +1629,6 @@ static mut applet_main: [unsafe extern "C" fn(
 ];
 
 #[no_mangle]
-pub static mut applet_suid: [uint8_t; 99] = [
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x2i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x1i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x8i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x40i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x80i32 as uint8_t,
-  0i32 as uint8_t,
-  0x5i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x20i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x5i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0x8i32 as uint8_t,
-  0x2i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-];
-
-#[no_mangle]
 pub static mut applet_numbers: [uint16_t; 1] = [218i32 as uint16_t];
 
 /*
@@ -1956,7 +1853,7 @@ unsafe fn get_trimmed_slice(
 
 unsafe fn parse_config_file() {
   /* Don't depend on the tools to combine strings. */
-  let config_file = "/etc/busybox.conf";
+  let config_file = "/etc/rustybox.conf";
 
   let mut sct_head: *mut suid_config_t = 0 as *mut suid_config_t;
   let mut applet_no: libc::c_int = 0;
@@ -2230,11 +2127,10 @@ unsafe fn check_suid(applet_no: usize) {
   let mut rgid: gid_t = 0; /* real gid */
 
   /* ruid set by parse_config_file() */
-  if ruid == 0i32 as libc::c_uint {
+  if ruid == 0 {
     /* run by root - no need to check more */
     return;
   }
-
   rgid = getgid();
 
   if suid_cfg_readable {
@@ -2302,9 +2198,7 @@ unsafe fn check_suid(applet_no: usize) {
   }
   match current_block {
     7187160828046810477 => {
-      if applet_suid[(applet_no / 4) as usize] as libc::c_int >> 2i32 * (applet_no as i32 % 4) & 3
-        == BB_SUID_REQUIRE as libc::c_int
-      {
+      if applets[applet_no].need_suid == BB_SUID_REQUIRE {
         /* Real uid is not 0. If euid isn't 0 too, suid bit
          * is most probably not set on our executable */
         if geteuid() != 0 {
@@ -2312,11 +2206,7 @@ unsafe fn check_suid(applet_no: usize) {
             b"must be suid to work properly\x00" as *const u8 as *const libc::c_char,
           );
         }
-      } else if applet_suid[(applet_no / 4) as usize] as libc::c_int
-        >> 2i32 * (applet_no as i32 % 4)
-        & 3
-        == BB_SUID_DROP as libc::c_int
-      {
+      } else if applets[applet_no].need_suid == BB_SUID_DROP {
         /*
          * Drop all privileges.
          *
