@@ -6,8 +6,7 @@ extern "C" {
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 }
 pub type size_t = libc::c_ulong;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+use crate::librb::__compar_fn_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Wrapper for common string vector sorting operation

@@ -142,8 +142,7 @@ pub struct sockaddr {
 
 
 use crate::librb::FILE;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+use crate::librb::__compar_fn_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 #[derive(Copy, Clone)]

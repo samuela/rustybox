@@ -161,8 +161,7 @@ pub type DIR = __dirstream;
 
 
 use crate::librb::FILE;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+use crate::librb::__compar_fn_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

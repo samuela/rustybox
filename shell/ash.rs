@@ -533,8 +533,7 @@ pub union C2RustUnnamed_9 {
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+use crate::librb::__compar_fn_t;
 pub type ptrdiff_t = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]

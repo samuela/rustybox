@@ -460,8 +460,7 @@ pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
 use crate::librb::FILE;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+use crate::librb::__compar_fn_t;
 pub type nfds_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]

@@ -187,9 +187,8 @@ pub type nlink_t = __nlink_t;
 use crate::librb::time_t;
 pub type blkcnt_t = __blkcnt64_t;
 
+use crate::librb::__compar_fn_t;
 use crate::librb::FILE;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

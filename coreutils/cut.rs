@@ -53,9 +53,8 @@ pub type __off64_t = libc::c_long;
 use crate::librb::uint32_t;
 pub type size_t = libc::c_ulong;
 
+use crate::librb::__compar_fn_t;
 use crate::librb::FILE;
-pub type __compar_fn_t =
-  Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cut_list {
