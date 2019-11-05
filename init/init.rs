@@ -328,7 +328,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;

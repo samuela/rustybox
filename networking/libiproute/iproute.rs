@@ -214,7 +214,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;

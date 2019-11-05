@@ -308,7 +308,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed_0 = 64;
 /*ACTION_REVERSE      = (1 << 4), - unused */

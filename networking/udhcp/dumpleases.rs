@@ -69,7 +69,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */
 pub type leasetime_t = uint32_t;
 #[derive(Copy, Clone)]

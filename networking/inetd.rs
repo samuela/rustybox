@@ -588,7 +588,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {

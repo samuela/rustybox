@@ -35,7 +35,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 /* writeline outputs the input given, appropriately aligned according to class */
 unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
   let mut flags: libc::c_int = option_mask32 as libc::c_int;

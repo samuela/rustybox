@@ -234,7 +234,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;
 pub const ARG_inherit: C2RustUnnamed_2 = 23;
 pub const ARG_dsfield: C2RustUnnamed_2 = 25;

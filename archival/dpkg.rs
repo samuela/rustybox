@@ -207,7 +207,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;

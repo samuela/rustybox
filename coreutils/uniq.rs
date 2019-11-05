@@ -49,7 +49,7 @@ pub struct _IO_marker {
   pub _sbuf: *mut _IO_FILE,
   pub _pos: libc::c_int,
 }
-pub type FILE = _IO_FILE;
+use crate::librb::FILE;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_d: C2RustUnnamed = 2;
 pub const OPT_i: C2RustUnnamed = 64;
