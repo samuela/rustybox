@@ -46,12 +46,7 @@ pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type pid_t = __pid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 #[derive(Copy, Clone)]
 #[repr(C)]

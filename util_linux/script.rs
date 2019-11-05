@@ -131,18 +131,8 @@ pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
 pub type time_t = __time_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-
-
-
-
-
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

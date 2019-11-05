@@ -27,12 +27,7 @@ pub type __syscall_slong_t = libc::c_long;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
 pub struct timex {

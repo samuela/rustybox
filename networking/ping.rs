@@ -165,12 +165,7 @@ pub type __socklen_t = libc::c_uint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type int32_t = __int32_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct iovec {

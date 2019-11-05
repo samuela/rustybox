@@ -403,12 +403,7 @@ pub struct __sigset_t {
 }
 pub type sigset_t = __sigset_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

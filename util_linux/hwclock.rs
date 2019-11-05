@@ -75,12 +75,7 @@ pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type time_t = __time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {

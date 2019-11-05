@@ -97,12 +97,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type dev_t = __dev_t;
 pub type time_t = __time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 use crate::librb::passwd;
 use crate::librb::group;
 /* Busybox does not use threads, we can speed up stdio. */

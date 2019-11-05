@@ -292,12 +292,7 @@ pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 pub type __rlimit_resource_t = __rlimit_resource;
 pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;

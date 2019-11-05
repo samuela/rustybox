@@ -330,12 +330,7 @@ pub type socklen_t = __socklen_t;
 pub type id_t = __id_t;
 pub type time_t = __time_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

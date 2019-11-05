@@ -260,12 +260,7 @@ pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
+use crate::librb::timeval;
 
 
 
