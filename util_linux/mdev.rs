@@ -391,32 +391,9 @@ pub type off_t = __off64_t;
 pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timespec {
-  pub tv_sec: __time_t,
-  pub tv_nsec: __syscall_slong_t,
-}
+use crate::librb::timespec;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct stat {
-  pub st_dev: __dev_t,
-  pub st_ino: __ino_t,
-  pub st_nlink: __nlink_t,
-  pub st_mode: __mode_t,
-  pub st_uid: __uid_t,
-  pub st_gid: __gid_t,
-  pub __pad0: libc::c_int,
-  pub st_rdev: __dev_t,
-  pub st_size: __off_t,
-  pub st_blksize: __blksize_t,
-  pub st_blocks: __blkcnt_t,
-  pub st_atim: timespec,
-  pub st_mtim: timespec,
-  pub st_ctim: timespec,
-  pub __glibc_reserved: [__syscall_slong_t; 3],
-}
+use crate::librb::stat;
 pub type time_t = __time_t;
 
 #[derive(Copy, Clone)]

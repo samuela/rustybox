@@ -242,31 +242,8 @@ pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 pub type socklen_t = __socklen_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timespec {
-  pub tv_sec: __time_t,
-  pub tv_nsec: __syscall_slong_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct stat {
-  pub st_dev: __dev_t,
-  pub st_ino: __ino_t,
-  pub st_nlink: __nlink_t,
-  pub st_mode: __mode_t,
-  pub st_uid: __uid_t,
-  pub st_gid: __gid_t,
-  pub __pad0: libc::c_int,
-  pub st_rdev: __dev_t,
-  pub st_size: __off_t,
-  pub st_blksize: __blksize_t,
-  pub st_blocks: __blkcnt_t,
-  pub st_atim: timespec,
-  pub st_mtim: timespec,
-  pub st_ctim: timespec,
-  pub __glibc_reserved: [__syscall_slong_t; 3],
-}
+use crate::librb::timespec;
+use crate::librb::stat;
 pub type time_t = __time_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -699,7 +676,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-  
+
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

@@ -17,12 +17,7 @@ extern "C" {
 }
 pub type __time_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timespec {
-  pub tv_sec: __time_t,
-  pub tv_nsec: __syscall_slong_t,
-}
+use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
