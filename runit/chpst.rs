@@ -119,12 +119,7 @@ pub struct rlimit {
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 /*
 Copyright (c) 2001-2006, Gerrit Pape
 All rights reserved.

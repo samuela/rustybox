@@ -92,12 +92,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct param_t {

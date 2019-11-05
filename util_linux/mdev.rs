@@ -387,8 +387,6 @@ pub type smallint = libc::c_schar;
 pub type smalluint = libc::c_uchar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
 pub type off_t = __off64_t;
 pub type DIR = __dirstream;
 pub type mode_t = __mode_t;
@@ -617,12 +615,7 @@ pub type C2RustUnnamed_10 = libc::c_uint;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed_10 = 2;
 pub const ACTION_RECURSE: C2RustUnnamed_10 = 1;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 
 pub type C2RustUnnamed_11 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_11 = 4653056;

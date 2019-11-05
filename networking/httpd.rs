@@ -634,12 +634,7 @@ pub union C2RustUnnamed_1 {
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const LSA_SIZEOF_SA: C2RustUnnamed_2 = 28;
 pub const LSA_LEN_SIZE: C2RustUnnamed_2 = 4;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

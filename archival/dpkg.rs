@@ -264,12 +264,7 @@ pub struct _IO_marker {
 }
 pub type FILE = _IO_FILE;
 pub type uoff_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

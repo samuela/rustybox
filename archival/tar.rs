@@ -324,12 +324,7 @@ pub struct fd_pair {
   pub rd: libc::c_int,
   pub wr: libc::c_int,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

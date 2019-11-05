@@ -282,12 +282,7 @@ pub union C2RustUnnamed_2 {
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
+use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
