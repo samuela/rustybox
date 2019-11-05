@@ -46,17 +46,7 @@ pub type __gid_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type uid_t = __uid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
+use crate::librb::passwd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

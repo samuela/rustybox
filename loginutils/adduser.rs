@@ -93,17 +93,7 @@ pub type smallint = libc::c_schar;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 pub type time_t = __time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
+use crate::librb::passwd;
 use crate::librb::group;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

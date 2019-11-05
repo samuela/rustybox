@@ -49,18 +49,8 @@ pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
 use crate::librb::group;
+use crate::librb::passwd;
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,
@@ -69,7 +59,7 @@ unsafe extern "C" fn bb_strtoul(
 ) -> libc::c_ulong {
   return bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
-/* vi: set sw=4 ts=4: */
+
 /*
  * password utility routines.
  *

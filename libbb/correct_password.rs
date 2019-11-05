@@ -32,17 +32,7 @@ extern "C" {
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
+use crate::librb::passwd;
 /* vi: set sw=4 ts=4: */
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.

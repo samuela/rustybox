@@ -95,17 +95,7 @@ pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
+use crate::librb::passwd;
 pub const OPT_e: C2RustUnnamed = 8;
 pub const OPT_l: C2RustUnnamed = 4;
 pub const OPT_ler: C2RustUnnamed = 28;

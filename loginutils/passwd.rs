@@ -124,17 +124,7 @@ pub struct rlimit {
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
+use crate::librb::passwd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct spwd {
