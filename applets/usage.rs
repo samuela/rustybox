@@ -4,8 +4,7 @@ pub struct usage_data {
 }
 
 // This is in exactly the same order as `applets` in applet_tables.rs.
-// TODO: "\x08" marks no usage info. We should prefer an option type. This
-// should probably go into `applets`.
+// TODO: This should probably go into `applets`.
 pub static usage_array: [usage_data; 396] = [
   usage_data {
     aname: "gunzip",
@@ -719,7 +718,9 @@ Print prime factors",
   },
   usage_data {
     aname: "false",
-    usage: "\x08",
+    usage: "\
+
+Always exits with a nonzero exit code.",
   },
   usage_data {
     aname: "fold",
@@ -1290,15 +1291,26 @@ Copy stdin to each FILE, and also to stdout
   },
   usage_data {
     aname: "test",
-    usage: "\x08",
+    usage: "\
+[expression]
+
+The test utility evaluates the expression and, if it evaluates to true, returns a zero (true) exit status; otherwise it returns 1 (false).  If there is no expression, test also returns 1 (false).
+    ",
   },
   usage_data {
     aname: "[",
-    usage: "\x08",
+    usage: "\
+expression ]
+
+The test utility evaluates the expression and, if it evaluates to true, returns a zero (true) exit status; otherwise it returns 1 (false).  If there is no expression, test also returns 1 (false).
+    ",
   },
   usage_data {
     aname: "[[",
-    usage: "\x08",
+    usage: "\
+expression ]]
+
+The test utility evaluates the expression and, if it evaluates to true, returns a zero (true) exit status; otherwise it returns 1 (false).  If there is no expression, test also returns 1 (false).",
   },
   usage_data {
     aname: "timeout",
@@ -1334,7 +1346,9 @@ Translate, squeeze, or delete characters from stdin, writing to stdout
   },
   usage_data {
     aname: "true",
-    usage: "\x08",
+    usage: "\
+
+Always exits with a nonzero exit code.",
   },
   usage_data {
     aname: "truncate",
@@ -1474,7 +1488,9 @@ Repeatedly output a line with STRING, or \'y\'",
   },
   usage_data {
     aname: "pipe_progress",
-    usage: "\x08",
+    usage: "\
+
+Monitor a pipe with a simple progress display.",
   },
   usage_data {
     aname: "run-parts",
@@ -1756,11 +1772,15 @@ Search for PATTERN in FILEs (or stdin)
   },
   usage_data {
     aname: "egrep",
-    usage: "\x08",
+    usage: "\
+
+egrep works like grep but can handle extended regular expressions (EREs).",
   },
   usage_data {
     aname: "fgrep",
-    usage: "\x08",
+    usage: "\
+
+fgrep is quicker than both grep and egrep, but can only handle fixed patterns (i.e. it does not interpret regular expressions).",
   },
   usage_data {
     aname: "xargs",
@@ -1834,7 +1854,9 @@ It (re)spawns children according to /etc/inittab."
   },
   usage_data {
     aname: "linuxrc",
-    usage: "\x08",
+    usage: "\
+
+Same as init.",
   },
   usage_data {
     aname: "nuke",
@@ -2383,7 +2405,10 @@ View FILE (or stdin) one screenful at a time
   },
   usage_data {
     aname: "lsscsi",
-    usage: "\x08",
+    usage: "\
+[--classic] [--device] [--generic] [--help] [--hosts] [--kname] [--list] [--long] [--protection] [--sysfsroot=PATH] [--transport] [--verbose] [--version] [H:C:T:L]
+
+Uses information in sysfs (linux kernel series 2.6 and later) to list scsi devices (or hosts) currently attached to the system. Options can be used to control the amount and form of information provided for each device.",
   },
   usage_data {
     aname: "makedevs",
@@ -2857,7 +2882,10 @@ Upload a file to a FTP server
   },
   usage_data {
     aname: "dnsdomainname",
-    usage: "\x08",
+    usage: "\
+[-v]
+
+dnsdomainname will print the domain part of the FQDN (Fully Qualified Domain Name). The complete FQDN of the system is returned with hostname --fqdn.",
   },
   usage_data {
     aname: "hostname",
@@ -4444,7 +4472,9 @@ List all PCI devices
   },
   usage_data {
     aname: "lsusb",
-    usage: "\x08",
+    usage: "\
+
+lsusb is a utility for displaying information about USB buses in the system and the devices connected to them.",
   },
   usage_data {
     aname: "mdev",
@@ -4729,11 +4759,15 @@ PERSONALITY may be:
   },
   usage_data {
     aname: "linux32",
-    usage: "\x08",
+    usage: "\
+
+Equivalent to `setarch linux32`.",
   },
   usage_data {
     aname: "linux64",
-    usage: "\x08",
+    usage: "\
+
+Equivalent to `setarch linux64`.",
   },
   usage_data {
     aname: "setpriv",
