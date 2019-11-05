@@ -1,5 +1,6 @@
-// These bits all seem to be from c2rust...
+pub mod signal;
 
+// These bits all seem to be from c2rust...
 // See https://pubs.opengroup.org/onlinepubs/7908799/xsh/systypes.h.html.
 pub type __blkcnt_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
@@ -80,6 +81,7 @@ pub struct _IO_FILE {
   pub _unused2: [libc::c_char; 20],
 }
 
+pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 
 // This is originally from time.h.
@@ -141,6 +143,37 @@ pub struct group {
   pub gr_gid: __gid_t,
   pub gr_mem: *mut *mut libc::c_char,
 }
+
+// See
+//  * https://www.gnu.org/software/libc/manual/html_node/Mode-Data-Types.html
+//  * http://man7.org/linux/man-pages/man3/termios.3.html
+pub type cc_t = libc::c_uchar;
+pub type speed_t = libc::c_uint;
+pub type tcflag_t = libc::c_uint;
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct termios {
+  pub c_iflag: tcflag_t,
+  pub c_oflag: tcflag_t,
+  pub c_cflag: tcflag_t,
+  pub c_lflag: tcflag_t,
+  pub c_line: cc_t,
+  pub c_cc: [cc_t; 32],
+  pub c_ispeed: speed_t,
+  pub c_ospeed: speed_t,
+}
+
+// See http://www.delorie.com/djgpp/doc/libc/libc_495.html.
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct winsize {
+  pub ws_row: libc::c_ushort,
+  pub ws_col: libc::c_ushort,
+  pub ws_xpixel: libc::c_ushort,
+  pub ws_ypixel: libc::c_ushort,
+}
+
 // ... end c2rust stuff
 
 // Defined in libbb.h

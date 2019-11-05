@@ -1,106 +1,54 @@
 use libc;
+
+use crate::librb::{termios, winsize, FILE, _IO_FILE};
+
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn scanf(_: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
+
   #[no_mangle]
   fn tcsetattr(
     __fd: libc::c_int,
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-  pub _flags: libc::c_int,
-  pub _IO_read_ptr: *mut libc::c_char,
-  pub _IO_read_end: *mut libc::c_char,
-  pub _IO_read_base: *mut libc::c_char,
-  pub _IO_write_base: *mut libc::c_char,
-  pub _IO_write_ptr: *mut libc::c_char,
-  pub _IO_write_end: *mut libc::c_char,
-  pub _IO_buf_base: *mut libc::c_char,
-  pub _IO_buf_end: *mut libc::c_char,
-  pub _IO_save_base: *mut libc::c_char,
-  pub _IO_backup_base: *mut libc::c_char,
-  pub _IO_save_end: *mut libc::c_char,
-  pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
-  pub _fileno: libc::c_int,
-  pub _flags2: libc::c_int,
-  pub _old_offset: __off_t,
-  pub _cur_column: libc::c_ushort,
-  pub _vtable_offset: libc::c_schar,
-  pub _shortbuf: [libc::c_char; 1],
-  pub _lock: *mut libc::c_void,
-  pub _offset: __off64_t,
-  pub __pad1: *mut libc::c_void,
-  pub __pad2: *mut libc::c_void,
-  pub __pad3: *mut libc::c_void,
-  pub __pad4: *mut libc::c_void,
-  pub __pad5: size_t,
-  pub _mode: libc::c_int,
-  pub _unused2: [libc::c_char; 20],
-}
-pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-pub type FILE = _IO_FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct winsize {
-  pub ws_row: libc::c_ushort,
-  pub ws_col: libc::c_ushort,
-  pub ws_xpixel: libc::c_ushort,
-  pub ws_ypixel: libc::c_ushort,
-}
-pub type cc_t = libc::c_uchar;
-pub type speed_t = libc::c_uint;
-pub type tcflag_t = libc::c_uint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
-}
+
 unsafe extern "C" fn onintr(mut _sig: libc::c_int) {
   tcsetattr(2i32, 0i32, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
   _exit(1i32);
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn resize_main(
   mut _argc: libc::c_int,
