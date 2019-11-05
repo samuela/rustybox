@@ -1,8 +1,11 @@
 use libc;
+
 extern "C" {
   pub type __dirstream;
+
   #[no_mangle]
   fn statfs(__file: *const libc::c_char, __buf: *mut statfs) -> libc::c_int;
+
   #[no_mangle]
   fn mount(
     __special_file: *const libc::c_char,
@@ -11,8 +14,10 @@ extern "C" {
     __rwflag: libc::c_ulong,
     __data: *const libc::c_void,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
+
   /*
    * Copyright 2005 Rob Landley <rob@landley.net>
    *
@@ -52,81 +57,116 @@ extern "C" {
   /* system calls - look to libc for function to system call mapping */
   #[no_mangle]
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
+
   #[no_mangle]
   fn getpid() -> __pid_t;
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn rmdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
+
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
+
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
+
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xchroot(path: *const libc::c_char);
+
   #[no_mangle]
   fn xstat(pathname: *const libc::c_char, buf: *mut stat);
+
   #[no_mangle]
   fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn open_read_close(
     filename: *const libc::c_char,
     buf: *mut libc::c_void,
     maxsz: size_t,
   ) -> ssize_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn cap_name_to_number(cap: *const libc::c_char) -> libc::c_uint;
+
   #[no_mangle]
   fn getcaps(caps: *mut libc::c_void);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
