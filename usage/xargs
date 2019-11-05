@@ -1,0 +1,15 @@
+[OPTIONS] [PROG ARGS]
+
+Run PROG on every item given by stdin
+
+	-0	Input is separated by NULs
+	-a FILE	Read from FILE instead of stdin
+	-r	Don't run command if input is empty
+	-t	Print the command on stderr before execution
+	-p	Ask user whether to run each command
+	-E STR,-e[STR]	STR stops input processing
+	-I STR	Replace STR within PROG ARGS with input line
+	-n N	Pass no more than N args to PROG
+	-s N	Pass command line of no more than N bytes
+	-P N	Run up to N PROGs in parallel
+	-x	Exit if size is exceeded

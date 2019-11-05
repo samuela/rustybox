@@ -1,0 +1,3 @@
+[w] [h]
+
+Print dimensions of stdin tty, or 80x24

@@ -1,0 +1,9 @@
+[OPTIONS]
+
+Parse MIME-encoded message on stdin
+
+	-x PREFIX	Extract content of MIME sections to files
+	-X PROG ARGS	Filter content of MIME sections through PROG
+			Must be the last option
+
+Other options are silently ignored

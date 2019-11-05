@@ -1,0 +1,9 @@
+[-c | -l FILE] [-nXX] [-iXX] BLOCKDEV [KBYTES]
+
+Make a MINIX filesystem
+
+	-c		Check device for bad blocks
+	-n [14|30]	Maximum length of filenames
+	-i INODES	Number of inodes for the filesystem
+	-l FILE		Read bad blocks list from FILE
+	-v		Make version 2 filesystem

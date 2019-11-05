@@ -1,0 +1,6 @@
+[-i] [-h SERVER] [-p PORT] NAME...
+
+Query WHOIS info about NAME
+
+	-i	Show redirect results too
+	-h,-p	Server to query

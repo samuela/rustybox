@@ -1,0 +1,19 @@
+COMMAND [BRIDGE [ARGS]]
+
+Manage ethernet bridges
+Commands:
+	show [BRIDGE]...	Show bridges
+	addbr BRIDGE		Create BRIDGE
+	delbr BRIDGE		Delete BRIDGE
+	addif BRIDGE IFACE	Add IFACE to BRIDGE
+	delif BRIDGE IFACE	Delete IFACE from BRIDGE
+	showmacs BRIDGE			List MAC addresses
+	showstp	BRIDGE			Show STP info
+	stp BRIDGE 1/yes/on|0/no/off	Set STP on/off
+	setageing BRIDGE SECONDS	Set ageing time
+	setfd BRIDGE SECONDS		Set bridge forward delay
+	sethello BRIDGE SECONDS		Set hello time
+	setmaxage BRIDGE SECONDS	Set max message age
+	setbridgeprio BRIDGE PRIO	Set bridge priority
+	setportprio BRIDGE IFACE PRIO	Set port priority
+	setpathcost BRIDGE IFACE COST	Set path cost

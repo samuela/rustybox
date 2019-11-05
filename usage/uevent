@@ -1,0 +1,6 @@
+[PROG [ARGS]]
+
+uevent runs PROG for every netlink notification.
+PROG's environment contains data passed from the kernel.
+Typical usage (daemon for dynamic device node creation):
+	# uevent mdev & mdev -s

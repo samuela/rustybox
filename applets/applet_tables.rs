@@ -1084,6 +1084,8 @@ pub struct bb_applet {
   /* true if instead of fork(); exec("applet"); waitpid();
    * one can simply call applet_main(argc,argv); */
   pub nofork: bool,
+
+  pub usage: &'static str,
 }
 
 /*
@@ -1118,6 +1120,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/[")
   },
   bb_applet {
     name: "[[",
@@ -1127,6 +1130,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/[[")
   },
   bb_applet {
     name: "acpid",
@@ -1136,6 +1140,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/acpid")
   },
   bb_applet {
     name: "add-shell",
@@ -1145,6 +1150,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/add-shell")
   },
   bb_applet {
     name: "addgroup",
@@ -1154,6 +1160,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/addgroup")
   },
   bb_applet {
     name: "adduser",
@@ -1163,6 +1170,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/adduser")
   },
   bb_applet {
     name: "adjtimex",
@@ -1172,6 +1180,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/adjtimex")
   },
   bb_applet {
     name: "arch",
@@ -1181,6 +1190,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/arch")
   },
   bb_applet {
     name: "arp",
@@ -1190,6 +1200,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/arp")
   },
   bb_applet {
     name: "arping",
@@ -1199,6 +1210,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/arping")
   },
   bb_applet {
     name: "ash",
@@ -1208,6 +1220,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ash")
   },
   bb_applet {
     name: "awk",
@@ -1217,6 +1230,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/awk")
   },
   bb_applet {
     name: "base64",
@@ -1226,6 +1240,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/base64")
   },
   bb_applet {
     name: "basename",
@@ -1235,6 +1250,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/basename")
   },
   bb_applet {
     name: "bc",
@@ -1244,6 +1260,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/bc")
   },
   bb_applet {
     name: "beep",
@@ -1253,6 +1270,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/beep")
   },
   bb_applet {
     name: "blkdiscard",
@@ -1262,6 +1280,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/blkdiscard")
   },
   bb_applet {
     name: "blkid",
@@ -1271,6 +1290,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/blkid")
   },
   bb_applet {
     name: "blockdev",
@@ -1280,6 +1300,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/blockdev")
   },
   bb_applet {
     name: "bootchartd",
@@ -1289,6 +1310,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/bootchartd")
   },
   bb_applet {
     name: "brctl",
@@ -1298,6 +1320,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/brctl")
   },
   bb_applet {
     name: "bunzip2",
@@ -1307,6 +1330,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/bunzip2")
   },
   bb_applet {
     name: "bzcat",
@@ -1316,6 +1340,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/bzcat")
   },
   bb_applet {
     name: "bzip2",
@@ -1325,6 +1350,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/bzip2")
   },
   bb_applet {
     name: "cal",
@@ -1334,6 +1360,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cal")
   },
   bb_applet {
     name: "cat",
@@ -1343,6 +1370,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/cat")
   },
   bb_applet {
     name: "chat",
@@ -1352,6 +1380,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/chat")
   },
   bb_applet {
     name: "chattr",
@@ -1361,6 +1390,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chattr")
   },
   bb_applet {
     name: "chgrp",
@@ -1370,6 +1400,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chgrp")
   },
   bb_applet {
     name: "chmod",
@@ -1379,6 +1410,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chmod")
   },
   bb_applet {
     name: "chown",
@@ -1388,6 +1420,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chown")
   },
   bb_applet {
     name: "chpasswd",
@@ -1397,6 +1430,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/chpasswd")
   },
   bb_applet {
     name: "chpst",
@@ -1406,6 +1440,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chpst")
   },
   bb_applet {
     name: "chroot",
@@ -1415,6 +1450,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chroot")
   },
   bb_applet {
     name: "chrt",
@@ -1424,6 +1460,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chrt")
   },
   bb_applet {
     name: "chvt",
@@ -1433,6 +1470,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/chvt")
   },
   bb_applet {
     name: "cksum",
@@ -1442,6 +1480,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cksum")
   },
   bb_applet {
     name: "clear",
@@ -1451,6 +1490,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/clear")
   },
   bb_applet {
     name: "cmp",
@@ -1460,6 +1500,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/cmp")
   },
   bb_applet {
     name: "comm",
@@ -1469,6 +1510,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/comm")
   },
   bb_applet {
     name: "conspy",
@@ -1478,6 +1520,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/conspy")
   },
   bb_applet {
     name: "cp",
@@ -1487,6 +1530,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cp")
   },
   bb_applet {
     name: "cpio",
@@ -1496,6 +1540,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/cpio")
   },
   bb_applet {
     name: "crond",
@@ -1505,6 +1550,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/crond")
   },
   bb_applet {
     name: "crontab",
@@ -1514,6 +1560,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/crontab")
   },
   bb_applet {
     name: "cryptpw",
@@ -1523,6 +1570,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cryptpw")
   },
   bb_applet {
     name: "cttyhack",
@@ -1532,6 +1580,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cttyhack")
   },
   bb_applet {
     name: "cut",
@@ -1541,6 +1590,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/cut")
   },
   bb_applet {
     name: "date",
@@ -1550,6 +1600,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/date")
   },
   bb_applet {
     name: "dc",
@@ -1559,6 +1610,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dc")
   },
   bb_applet {
     name: "dd",
@@ -1568,6 +1620,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/dd")
   },
   bb_applet {
     name: "deallocvt",
@@ -1577,6 +1630,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/deallocvt")
   },
   bb_applet {
     name: "delgroup",
@@ -1586,6 +1640,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/delgroup")
   },
   bb_applet {
     name: "deluser",
@@ -1595,6 +1650,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/deluser")
   },
   bb_applet {
     name: "depmod",
@@ -1604,6 +1660,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/depmod")
   },
   bb_applet {
     name: "devmem",
@@ -1613,6 +1670,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/devmem")
   },
   bb_applet {
     name: "df",
@@ -1622,6 +1680,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/df")
   },
   bb_applet {
     name: "dhcprelay",
@@ -1631,6 +1690,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dhcprelay")
   },
   bb_applet {
     name: "diff",
@@ -1640,6 +1700,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/diff")
   },
   bb_applet {
     name: "dirname",
@@ -1649,6 +1710,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/dirname")
   },
   bb_applet {
     name: "dmesg",
@@ -1658,6 +1720,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dmesg")
   },
   bb_applet {
     name: "dnsd",
@@ -1667,6 +1730,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dnsd")
   },
   bb_applet {
     name: "dnsdomainname",
@@ -1676,6 +1740,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/dnsdomainname")
   },
   bb_applet {
     name: "dos2unix",
@@ -1685,6 +1750,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/dos2unix")
   },
   bb_applet {
     name: "dpkg-deb",
@@ -1694,6 +1760,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dpkg-deb")
   },
   bb_applet {
     name: "dpkg",
@@ -1703,6 +1770,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/dpkg")
   },
   bb_applet {
     name: "du",
@@ -1712,6 +1780,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/du")
   },
   bb_applet {
     name: "dumpkmap",
@@ -1721,6 +1790,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/dumpkmap")
   },
   bb_applet {
     name: "dumpleases",
@@ -1730,6 +1800,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/dumpleases")
   },
   bb_applet {
     name: "echo",
@@ -1739,6 +1810,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/echo")
   },
   bb_applet {
     name: "ed",
@@ -1748,6 +1820,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ed")
   },
   bb_applet {
     name: "egrep",
@@ -1757,6 +1830,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/egrep")
   },
   bb_applet {
     name: "eject",
@@ -1766,6 +1840,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/eject")
   },
   bb_applet {
     name: "env",
@@ -1775,6 +1850,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/env")
   },
   bb_applet {
     name: "envdir",
@@ -1784,6 +1860,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/envdir")
   },
   bb_applet {
     name: "envuidgid",
@@ -1793,6 +1870,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/envuidgid")
   },
   bb_applet {
     name: "ether-wake",
@@ -1802,6 +1880,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ether-wake")
   },
   bb_applet {
     name: "expand",
@@ -1811,6 +1890,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/expand")
   },
   bb_applet {
     name: "expr",
@@ -1820,6 +1900,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/expr")
   },
   bb_applet {
     name: "factor",
@@ -1829,6 +1910,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/factor")
   },
   bb_applet {
     name: "fakeidentd",
@@ -1838,6 +1920,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fakeidentd")
   },
   bb_applet {
     name: "fallocate",
@@ -1847,6 +1930,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fallocate")
   },
   bb_applet {
     name: "false",
@@ -1856,6 +1940,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/false")
   },
   bb_applet {
     name: "fatattr",
@@ -1865,6 +1950,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/fatattr")
   },
   bb_applet {
     name: "fbset",
@@ -1874,6 +1960,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fbset")
   },
   bb_applet {
     name: "fbsplash",
@@ -1883,6 +1970,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fbsplash")
   },
   bb_applet {
     name: "fdflush",
@@ -1892,6 +1980,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fdflush")
   },
   bb_applet {
     name: "fdformat",
@@ -1901,6 +1990,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fdformat")
   },
   bb_applet {
     name: "fdisk",
@@ -1910,6 +2000,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fdisk")
   },
   bb_applet {
     name: "fgconsole",
@@ -1919,6 +2010,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/fgconsole")
   },
   bb_applet {
     name: "fgrep",
@@ -1928,6 +2020,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fgrep")
   },
   bb_applet {
     name: "find",
@@ -1937,6 +2030,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/find")
   },
   bb_applet {
     name: "findfs",
@@ -1946,6 +2040,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/findfs")
   },
   bb_applet {
     name: "flock",
@@ -1955,6 +2050,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/flock")
   },
   bb_applet {
     name: "fold",
@@ -1964,6 +2060,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/fold")
   },
   bb_applet {
     name: "free",
@@ -1973,6 +2070,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/free")
   },
   bb_applet {
     name: "freeramdisk",
@@ -1982,6 +2080,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/freeramdisk")
   },
   bb_applet {
     name: "fsck.minix",
@@ -1991,6 +2090,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fsck.minix")
   },
   bb_applet {
     name: "fsck",
@@ -2000,6 +2100,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fsck")
   },
   bb_applet {
     name: "fsfreeze",
@@ -2009,6 +2110,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/fsfreeze")
   },
   bb_applet {
     name: "fstrim",
@@ -2018,6 +2120,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/fstrim")
   },
   bb_applet {
     name: "fsync",
@@ -2027,6 +2130,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/fsync")
   },
   bb_applet {
     name: "ftpd",
@@ -2036,6 +2140,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ftpd")
   },
   bb_applet {
     name: "ftpget",
@@ -2045,6 +2150,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ftpget")
   },
   bb_applet {
     name: "ftpput",
@@ -2054,6 +2160,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ftpput")
   },
   bb_applet {
     name: "fuser",
@@ -2063,6 +2170,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/fuser")
   },
   bb_applet {
     name: "getopt",
@@ -2072,6 +2180,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/getopt")
   },
   bb_applet {
     name: "getty",
@@ -2081,6 +2190,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/getty")
   },
   bb_applet {
     name: "grep",
@@ -2090,6 +2200,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/grep")
   },
   bb_applet {
     name: "groups",
@@ -2099,6 +2210,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/groups")
   },
   bb_applet {
     name: "gunzip",
@@ -2108,6 +2220,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/gunzip")
   },
   bb_applet {
     name: "gzip",
@@ -2117,6 +2230,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/gzip")
   },
   bb_applet {
     name: "halt",
@@ -2126,6 +2240,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/halt")
   },
   bb_applet {
     name: "hd",
@@ -2135,6 +2250,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/hd")
   },
   bb_applet {
     name: "hdparm",
@@ -2144,6 +2260,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/hdparm")
   },
   bb_applet {
     name: "head",
@@ -2153,6 +2270,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/head")
   },
   bb_applet {
     name: "hexdump",
@@ -2162,6 +2280,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/hexdump")
   },
   bb_applet {
     name: "hexedit",
@@ -2171,6 +2290,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/hexedit")
   },
   bb_applet {
     name: "hostid",
@@ -2180,6 +2300,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/hostid")
   },
   bb_applet {
     name: "hostname",
@@ -2189,6 +2310,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/hostname")
   },
   bb_applet {
     name: "httpd",
@@ -2198,6 +2320,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/httpd")
   },
   bb_applet {
     name: "hush",
@@ -2207,6 +2330,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/hush")
   },
   bb_applet {
     name: "hwclock",
@@ -2216,6 +2340,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/hwclock")
   },
   bb_applet {
     name: "i2cdetect",
@@ -2225,6 +2350,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/i2cdetect")
   },
   bb_applet {
     name: "i2cdump",
@@ -2234,6 +2360,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/i2cdump")
   },
   bb_applet {
     name: "i2cget",
@@ -2243,6 +2370,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/i2cget")
   },
   bb_applet {
     name: "i2cset",
@@ -2252,6 +2380,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/i2cset")
   },
   bb_applet {
     name: "i2ctransfer",
@@ -2261,6 +2390,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/i2ctransfer")
   },
   bb_applet {
     name: "id",
@@ -2270,6 +2400,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/id")
   },
   bb_applet {
     name: "ifconfig",
@@ -2279,6 +2410,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ifconfig")
   },
   bb_applet {
     name: "ifdown",
@@ -2288,6 +2420,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ifdown")
   },
   bb_applet {
     name: "ifenslave",
@@ -2297,6 +2430,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ifenslave")
   },
   bb_applet {
     name: "ifplugd",
@@ -2306,6 +2440,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ifplugd")
   },
   bb_applet {
     name: "ifup",
@@ -2315,6 +2450,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ifup")
   },
   bb_applet {
     name: "inetd",
@@ -2324,6 +2460,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/inetd")
   },
   bb_applet {
     name: "init",
@@ -2333,6 +2470,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/init")
   },
   bb_applet {
     name: "insmod",
@@ -2342,6 +2480,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/insmod")
   },
   bb_applet {
     name: "install",
@@ -2351,6 +2490,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/install")
   },
   bb_applet {
     name: "ionice",
@@ -2360,6 +2500,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ionice")
   },
   bb_applet {
     name: "iostat",
@@ -2369,6 +2510,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/iostat")
   },
   bb_applet {
     name: "ip",
@@ -2378,6 +2520,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ip")
   },
   bb_applet {
     name: "ipaddr",
@@ -2387,6 +2530,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ipaddr")
   },
   bb_applet {
     name: "ipcalc",
@@ -2396,6 +2540,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ipcalc")
   },
   bb_applet {
     name: "ipcrm",
@@ -2405,6 +2550,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ipcrm")
   },
   bb_applet {
     name: "ipcs",
@@ -2414,6 +2560,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ipcs")
   },
   bb_applet {
     name: "iplink",
@@ -2423,6 +2570,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/iplink")
   },
   bb_applet {
     name: "ipneigh",
@@ -2432,6 +2580,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ipneigh")
   },
   bb_applet {
     name: "iproute",
@@ -2441,6 +2590,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/iproute")
   },
   bb_applet {
     name: "iprule",
@@ -2450,6 +2600,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/iprule")
   },
   bb_applet {
     name: "iptunnel",
@@ -2459,6 +2610,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/iptunnel")
   },
   bb_applet {
     name: "kbd_mode",
@@ -2468,6 +2620,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/kbd_mode")
   },
   bb_applet {
     name: "kill",
@@ -2477,6 +2630,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/kill")
   },
   bb_applet {
     name: "killall",
@@ -2486,6 +2640,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/killall")
   },
   bb_applet {
     name: "killall5",
@@ -2495,6 +2650,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/killall5")
   },
   bb_applet {
     name: "klogd",
@@ -2504,6 +2660,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/klogd")
   },
   bb_applet {
     name: "last",
@@ -2513,6 +2670,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/last")
   },
   bb_applet {
     name: "less",
@@ -2522,6 +2680,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/less")
   },
   bb_applet {
     name: "link",
@@ -2531,6 +2690,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/link")
   },
   bb_applet {
     name: "linux32",
@@ -2540,6 +2700,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/linux32")
   },
   bb_applet {
     name: "linux64",
@@ -2549,6 +2710,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/linux64")
   },
   bb_applet {
     name: "linuxrc",
@@ -2558,6 +2720,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/linuxrc")
   },
   bb_applet {
     name: "ln",
@@ -2567,6 +2730,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ln")
   },
   bb_applet {
     name: "loadfont",
@@ -2576,6 +2740,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/loadfont")
   },
   bb_applet {
     name: "loadkmap",
@@ -2585,6 +2750,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/loadkmap")
   },
   bb_applet {
     name: "logger",
@@ -2594,6 +2760,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/logger")
   },
   bb_applet {
     name: "login",
@@ -2603,6 +2770,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/login")
   },
   bb_applet {
     name: "logname",
@@ -2612,6 +2780,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/logname")
   },
   bb_applet {
     name: "logread",
@@ -2621,6 +2790,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/logread")
   },
   bb_applet {
     name: "losetup",
@@ -2630,6 +2800,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/losetup")
   },
   bb_applet {
     name: "lpd",
@@ -2639,6 +2810,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lpd")
   },
   bb_applet {
     name: "lpq",
@@ -2648,6 +2820,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lpq")
   },
   bb_applet {
     name: "lpr",
@@ -2657,6 +2830,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lpr")
   },
   bb_applet {
     name: "ls",
@@ -2666,6 +2840,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ls")
   },
   bb_applet {
     name: "lsattr",
@@ -2675,6 +2850,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/lsattr")
   },
   bb_applet {
     name: "lsmod",
@@ -2684,6 +2860,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/lsmod")
   },
   bb_applet {
     name: "lsof",
@@ -2693,6 +2870,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lsof")
   },
   bb_applet {
     name: "lspci",
@@ -2702,6 +2880,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/lspci")
   },
   bb_applet {
     name: "lsscsi",
@@ -2711,6 +2890,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/lsscsi")
   },
   bb_applet {
     name: "lsusb",
@@ -2720,6 +2900,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/lsusb")
   },
   bb_applet {
     name: "lzcat",
@@ -2729,6 +2910,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lzcat")
   },
   bb_applet {
     name: "lzma",
@@ -2738,6 +2920,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lzma")
   },
   bb_applet {
     name: "lzop",
@@ -2747,6 +2930,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/lzop")
   },
   bb_applet {
     name: "makedevs",
@@ -2756,6 +2940,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/makedevs")
   },
   bb_applet {
     name: "makemime",
@@ -2765,6 +2950,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/makemime")
   },
   bb_applet {
     name: "man",
@@ -2774,6 +2960,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/man")
   },
   bb_applet {
     name: "md5sum",
@@ -2783,6 +2970,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/md5sum")
   },
   bb_applet {
     name: "mdev",
@@ -2792,6 +2980,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mdev")
   },
   bb_applet {
     name: "mesg",
@@ -2801,6 +2990,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/mesg")
   },
   bb_applet {
     name: "microcom",
@@ -2810,6 +3000,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/microcom")
   },
   bb_applet {
     name: "mkdir",
@@ -2819,6 +3010,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/mkdir")
   },
   bb_applet {
     name: "mkdosfs",
@@ -2828,6 +3020,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mkdosfs")
   },
   bb_applet {
     name: "mke2fs",
@@ -2837,6 +3030,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mke2fs")
   },
   bb_applet {
     name: "mkfifo",
@@ -2846,6 +3040,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mkfifo")
   },
   bb_applet {
     name: "mkfs.ext2",
@@ -2855,6 +3050,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mkfs.ext2")
   },
   bb_applet {
     name: "mkfs.minix",
@@ -2864,6 +3060,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mkfs.minix")
   },
   bb_applet {
     name: "mkfs.vfat",
@@ -2873,6 +3070,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mkfs.vfat")
   },
   bb_applet {
     name: "mknod",
@@ -2882,6 +3080,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mknod")
   },
   bb_applet {
     name: "mkpasswd",
@@ -2891,6 +3090,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mkpasswd")
   },
   bb_applet {
     name: "mkswap",
@@ -2900,6 +3100,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mkswap")
   },
   bb_applet {
     name: "mktemp",
@@ -2909,6 +3110,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mktemp")
   },
   bb_applet {
     name: "modinfo",
@@ -2918,6 +3120,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/modinfo")
   },
   bb_applet {
     name: "modprobe",
@@ -2927,6 +3130,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/modprobe")
   },
   bb_applet {
     name: "more",
@@ -2936,6 +3140,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/more")
   },
   bb_applet {
     name: "mount",
@@ -2945,6 +3150,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mount")
   },
   bb_applet {
     name: "mountpoint",
@@ -2954,6 +3160,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mountpoint")
   },
   bb_applet {
     name: "mpstat",
@@ -2963,6 +3170,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mpstat")
   },
   bb_applet {
     name: "mt",
@@ -2972,6 +3180,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/mt")
   },
   bb_applet {
     name: "mv",
@@ -2981,6 +3190,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/mv")
   },
   bb_applet {
     name: "nameif",
@@ -2990,6 +3200,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/nameif")
   },
   bb_applet {
     name: "nanddump",
@@ -2999,6 +3210,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nanddump")
   },
   bb_applet {
     name: "nandwrite",
@@ -3008,6 +3220,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nandwrite")
   },
   bb_applet {
     name: "nbd-client",
@@ -3017,6 +3230,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/nbd-client")
   },
   bb_applet {
     name: "nc",
@@ -3026,6 +3240,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nc")
   },
   bb_applet {
     name: "netstat",
@@ -3035,6 +3250,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/netstat")
   },
   bb_applet {
     name: "nice",
@@ -3044,6 +3260,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/nice")
   },
   bb_applet {
     name: "nl",
@@ -3053,6 +3270,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nl")
   },
   bb_applet {
     name: "nmeter",
@@ -3062,6 +3280,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nmeter")
   },
   bb_applet {
     name: "nohup",
@@ -3071,6 +3290,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/nohup")
   },
   bb_applet {
     name: "nologin",
@@ -3080,6 +3300,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nologin")
   },
   bb_applet {
     name: "nproc",
@@ -3089,6 +3310,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/nproc")
   },
   bb_applet {
     name: "nsenter",
@@ -3098,6 +3320,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nsenter")
   },
   bb_applet {
     name: "nslookup",
@@ -3107,6 +3330,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/nslookup")
   },
   bb_applet {
     name: "ntpd",
@@ -3116,6 +3340,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ntpd")
   },
   bb_applet {
     name: "nuke",
@@ -3125,6 +3350,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/nuke")
   },
   bb_applet {
     name: "od",
@@ -3134,6 +3360,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/od")
   },
   bb_applet {
     name: "openvt",
@@ -3143,6 +3370,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/openvt")
   },
   bb_applet {
     name: "partprobe",
@@ -3152,6 +3380,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/partprobe")
   },
   bb_applet {
     name: "passwd",
@@ -3161,6 +3390,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/passwd")
   },
   bb_applet {
     name: "paste",
@@ -3170,6 +3400,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/paste")
   },
   bb_applet {
     name: "patch",
@@ -3179,6 +3410,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/patch")
   },
   bb_applet {
     name: "pgrep",
@@ -3188,6 +3420,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pgrep")
   },
   bb_applet {
     name: "pidof",
@@ -3197,6 +3430,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pidof")
   },
   bb_applet {
     name: "ping",
@@ -3206,6 +3440,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ping")
   },
   bb_applet {
     name: "ping6",
@@ -3215,6 +3450,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ping6")
   },
   bb_applet {
     name: "pipe_progress",
@@ -3224,6 +3460,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pipe_progress")
   },
   bb_applet {
     name: "pivot_root",
@@ -3233,6 +3470,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/pivot_root")
   },
   bb_applet {
     name: "pkill",
@@ -3242,6 +3480,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pkill")
   },
   bb_applet {
     name: "pmap",
@@ -3251,6 +3490,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pmap")
   },
   bb_applet {
     name: "popmaildir",
@@ -3260,6 +3500,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/popmaildir")
   },
   bb_applet {
     name: "poweroff",
@@ -3269,6 +3510,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/poweroff")
   },
   bb_applet {
     name: "powertop",
@@ -3278,6 +3520,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/powertop")
   },
   bb_applet {
     name: "printenv",
@@ -3287,6 +3530,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/printenv")
   },
   bb_applet {
     name: "printf",
@@ -3296,6 +3540,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/printf")
   },
   bb_applet {
     name: "ps",
@@ -3305,6 +3550,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/ps")
   },
   bb_applet {
     name: "pscan",
@@ -3314,6 +3560,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/pscan")
   },
   bb_applet {
     name: "pstree",
@@ -3323,6 +3570,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/pstree")
   },
   bb_applet {
     name: "pwd",
@@ -3332,6 +3580,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/pwd")
   },
   bb_applet {
     name: "pwdx",
@@ -3341,6 +3590,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/pwdx")
   },
   bb_applet {
     name: "raidautorun",
@@ -3350,6 +3600,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/raidautorun")
   },
   bb_applet {
     name: "rdate",
@@ -3359,6 +3610,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rdate")
   },
   bb_applet {
     name: "rdev",
@@ -3368,6 +3620,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/rdev")
   },
   bb_applet {
     name: "readahead",
@@ -3377,6 +3630,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/readahead")
   },
   bb_applet {
     name: "readlink",
@@ -3386,6 +3640,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/readlink")
   },
   bb_applet {
     name: "readprofile",
@@ -3395,6 +3650,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/readprofile")
   },
   bb_applet {
     name: "realpath",
@@ -3404,6 +3660,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/realpath")
   },
   bb_applet {
     name: "reboot",
@@ -3413,6 +3670,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/reboot")
   },
   bb_applet {
     name: "reformime",
@@ -3422,6 +3680,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/reformime")
   },
   bb_applet {
     name: "remove-shell",
@@ -3431,6 +3690,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/remove-shell")
   },
   bb_applet {
     name: "renice",
@@ -3440,6 +3700,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/renice")
   },
   bb_applet {
     name: "reset",
@@ -3449,6 +3710,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/reset")
   },
   bb_applet {
     name: "resize",
@@ -3458,6 +3720,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/resize")
   },
   bb_applet {
     name: "resume",
@@ -3467,6 +3730,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/resume")
   },
   bb_applet {
     name: "rev",
@@ -3476,6 +3740,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rev")
   },
   bb_applet {
     name: "rm",
@@ -3485,6 +3750,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/rm")
   },
   bb_applet {
     name: "rmdir",
@@ -3494,6 +3760,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/rmdir")
   },
   bb_applet {
     name: "rmmod",
@@ -3503,6 +3770,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/rmmod")
   },
   bb_applet {
     name: "route",
@@ -3512,6 +3780,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/route")
   },
   bb_applet {
     name: "rpm",
@@ -3521,6 +3790,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rpm")
   },
   bb_applet {
     name: "rpm2cpio",
@@ -3530,6 +3800,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rpm2cpio")
   },
   bb_applet {
     name: "rtcwake",
@@ -3539,6 +3810,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rtcwake")
   },
   bb_applet {
     name: "run-init",
@@ -3548,6 +3820,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/run-init")
   },
   bb_applet {
     name: "run-parts",
@@ -3557,6 +3830,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/run-parts")
   },
   bb_applet {
     name: "runlevel",
@@ -3566,6 +3840,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/runlevel")
   },
   bb_applet {
     name: "runsv",
@@ -3575,6 +3850,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/runsv")
   },
   bb_applet {
     name: "runsvdir",
@@ -3584,6 +3860,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/runsvdir")
   },
   bb_applet {
     name: "rx",
@@ -3593,6 +3870,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/rx")
   },
   bb_applet {
     name: "script",
@@ -3602,6 +3880,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/script")
   },
   bb_applet {
     name: "scriptreplay",
@@ -3611,6 +3890,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/scriptreplay")
   },
   bb_applet {
     name: "sed",
@@ -3620,6 +3900,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/sed")
   },
   bb_applet {
     name: "sendmail",
@@ -3629,6 +3910,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/sendmail")
   },
   bb_applet {
     name: "seq",
@@ -3638,6 +3920,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/seq")
   },
   bb_applet {
     name: "setarch",
@@ -3647,6 +3930,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setarch")
   },
   bb_applet {
     name: "setconsole",
@@ -3656,6 +3940,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setconsole")
   },
   bb_applet {
     name: "setfattr",
@@ -3665,6 +3950,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setfattr")
   },
   bb_applet {
     name: "setfont",
@@ -3674,6 +3960,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setfont")
   },
   bb_applet {
     name: "setkeycodes",
@@ -3683,6 +3970,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setkeycodes")
   },
   bb_applet {
     name: "setlogcons",
@@ -3692,6 +3980,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setlogcons")
   },
   bb_applet {
     name: "setpriv",
@@ -3701,6 +3990,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/setpriv")
   },
   bb_applet {
     name: "setserial",
@@ -3710,6 +4000,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setserial")
   },
   bb_applet {
     name: "setsid",
@@ -3719,6 +4010,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/setsid")
   },
   bb_applet {
     name: "setuidgid",
@@ -3728,6 +4020,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/setuidgid")
   },
   bb_applet {
     name: "sh",
@@ -3737,6 +4030,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/sh")
   },
   bb_applet {
     name: "sha1sum",
@@ -3746,6 +4040,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sha1sum")
   },
   bb_applet {
     name: "sha256sum",
@@ -3755,6 +4050,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sha256sum")
   },
   bb_applet {
     name: "sha3sum",
@@ -3764,6 +4060,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sha3sum")
   },
   bb_applet {
     name: "sha512sum",
@@ -3773,6 +4070,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sha512sum")
   },
   bb_applet {
     name: "showkey",
@@ -3782,6 +4080,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/showkey")
   },
   bb_applet {
     name: "shred",
@@ -3791,6 +4090,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/shred")
   },
   bb_applet {
     name: "shuf",
@@ -3800,6 +4100,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/shuf")
   },
   bb_applet {
     name: "slattach",
@@ -3809,6 +4110,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/slattach")
   },
   bb_applet {
     name: "sleep",
@@ -3818,6 +4120,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/sleep")
   },
   bb_applet {
     name: "smemcap",
@@ -3827,6 +4130,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/smemcap")
   },
   bb_applet {
     name: "softlimit",
@@ -3836,6 +4140,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/softlimit")
   },
   bb_applet {
     name: "sort",
@@ -3845,6 +4150,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sort")
   },
   bb_applet {
     name: "split",
@@ -3854,6 +4160,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/split")
   },
   bb_applet {
     name: "ssl_client",
@@ -3863,6 +4170,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ssl_client")
   },
   bb_applet {
     name: "start-stop-daemon",
@@ -3872,6 +4180,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/start-stop-daemon")
   },
   bb_applet {
     name: "stat",
@@ -3881,6 +4190,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/stat")
   },
   bb_applet {
     name: "strings",
@@ -3890,6 +4200,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/strings")
   },
   bb_applet {
     name: "stty",
@@ -3899,6 +4210,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/stty")
   },
   bb_applet {
     name: "su",
@@ -3908,6 +4220,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/su")
   },
   bb_applet {
     name: "sulogin",
@@ -3917,6 +4230,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sulogin")
   },
   bb_applet {
     name: "sum",
@@ -3926,6 +4240,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/sum")
   },
   bb_applet {
     name: "sv",
@@ -3935,6 +4250,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sv")
   },
   bb_applet {
     name: "svc",
@@ -3944,6 +4260,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/svc")
   },
   bb_applet {
     name: "svlogd",
@@ -3953,6 +4270,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/svlogd")
   },
   bb_applet {
     name: "svok",
@@ -3962,6 +4280,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/svok")
   },
   bb_applet {
     name: "swapoff",
@@ -3971,6 +4290,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/swapoff")
   },
   bb_applet {
     name: "swapon",
@@ -3980,6 +4300,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/swapon")
   },
   bb_applet {
     name: "switch_root",
@@ -3989,6 +4310,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/switch_root")
   },
   bb_applet {
     name: "sync",
@@ -3998,6 +4320,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/sync")
   },
   bb_applet {
     name: "sysctl",
@@ -4007,6 +4330,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/sysctl")
   },
   bb_applet {
     name: "syslogd",
@@ -4016,6 +4340,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/syslogd")
   },
   bb_applet {
     name: "tac",
@@ -4025,6 +4350,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/tac")
   },
   bb_applet {
     name: "tail",
@@ -4034,6 +4360,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tail")
   },
   bb_applet {
     name: "tar",
@@ -4043,6 +4370,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tar")
   },
   bb_applet {
     name: "taskset",
@@ -4052,6 +4380,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/taskset")
   },
   bb_applet {
     name: "tc",
@@ -4061,6 +4390,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tc")
   },
   bb_applet {
     name: "tcpsvd",
@@ -4070,6 +4400,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tcpsvd")
   },
   bb_applet {
     name: "tee",
@@ -4079,6 +4410,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tee")
   },
   bb_applet {
     name: "telnet",
@@ -4088,6 +4420,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/telnet")
   },
   bb_applet {
     name: "telnetd",
@@ -4097,6 +4430,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/telnetd")
   },
   bb_applet {
     name: "test",
@@ -4106,6 +4440,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/test")
   },
   bb_applet {
     name: "tftp",
@@ -4115,6 +4450,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tftp")
   },
   bb_applet {
     name: "tftpd",
@@ -4124,6 +4460,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tftpd")
   },
   bb_applet {
     name: "time",
@@ -4133,6 +4470,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/time")
   },
   bb_applet {
     name: "timeout",
@@ -4142,6 +4480,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/timeout")
   },
   bb_applet {
     name: "top",
@@ -4151,6 +4490,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/top")
   },
   bb_applet {
     name: "touch",
@@ -4160,6 +4500,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/touch")
   },
   bb_applet {
     name: "tr",
@@ -4169,6 +4510,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/tr")
   },
   bb_applet {
     name: "traceroute",
@@ -4178,6 +4520,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/traceroute")
   },
   bb_applet {
     name: "traceroute6",
@@ -4187,6 +4530,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_MAYBE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/traceroute6")
   },
   bb_applet {
     name: "true",
@@ -4196,6 +4540,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/true")
   },
   bb_applet {
     name: "truncate",
@@ -4205,6 +4550,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/truncate")
   },
   bb_applet {
     name: "ts",
@@ -4214,6 +4560,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ts")
   },
   bb_applet {
     name: "tty",
@@ -4223,6 +4570,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/tty")
   },
   bb_applet {
     name: "ttysize",
@@ -4232,6 +4580,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/ttysize")
   },
   bb_applet {
     name: "tunctl",
@@ -4241,6 +4590,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/tunctl")
   },
   bb_applet {
     name: "ubiattach",
@@ -4250,6 +4600,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubiattach")
   },
   bb_applet {
     name: "ubidetach",
@@ -4259,6 +4610,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubidetach")
   },
   bb_applet {
     name: "ubimkvol",
@@ -4268,6 +4620,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubimkvol")
   },
   bb_applet {
     name: "ubirename",
@@ -4277,6 +4630,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubirename")
   },
   bb_applet {
     name: "ubirmvol",
@@ -4286,6 +4640,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubirmvol")
   },
   bb_applet {
     name: "ubirsvol",
@@ -4295,6 +4650,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubirsvol")
   },
   bb_applet {
     name: "ubiupdatevol",
@@ -4304,6 +4660,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/ubiupdatevol")
   },
   bb_applet {
     name: "udhcpc",
@@ -4313,6 +4670,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/udhcpc")
   },
   bb_applet {
     name: "udhcpc6",
@@ -4322,6 +4680,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/udhcpc6")
   },
   bb_applet {
     name: "udhcpd",
@@ -4331,6 +4690,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/udhcpd")
   },
   bb_applet {
     name: "udpsvd",
@@ -4340,6 +4700,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/udpsvd")
   },
   bb_applet {
     name: "uevent",
@@ -4349,6 +4710,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/uevent")
   },
   bb_applet {
     name: "umount",
@@ -4358,6 +4720,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/umount")
   },
   bb_applet {
     name: "uname",
@@ -4367,6 +4730,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/uname")
   },
   bb_applet {
     name: "unexpand",
@@ -4376,6 +4740,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/unexpand")
   },
   bb_applet {
     name: "uniq",
@@ -4385,6 +4750,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/uniq")
   },
   bb_applet {
     name: "unix2dos",
@@ -4394,6 +4760,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/unix2dos")
   },
   bb_applet {
     name: "unlink",
@@ -4403,6 +4770,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/unlink")
   },
   bb_applet {
     name: "unlzma",
@@ -4412,6 +4780,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/unlzma")
   },
   bb_applet {
     name: "unshare",
@@ -4421,6 +4790,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/unshare")
   },
   bb_applet {
     name: "unxz",
@@ -4430,6 +4800,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/unxz")
   },
   bb_applet {
     name: "unzip",
@@ -4439,6 +4810,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/unzip")
   },
   bb_applet {
     name: "uptime",
@@ -4448,6 +4820,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/uptime")
   },
   bb_applet {
     name: "users",
@@ -4457,6 +4830,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/users")
   },
   bb_applet {
     name: "usleep",
@@ -4466,6 +4840,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/usleep")
   },
   bb_applet {
     name: "uudecode",
@@ -4475,6 +4850,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/uudecode")
   },
   bb_applet {
     name: "uuencode",
@@ -4484,6 +4860,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/uuencode")
   },
   bb_applet {
     name: "vconfig",
@@ -4493,6 +4870,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/vconfig")
   },
   bb_applet {
     name: "vi",
@@ -4502,6 +4880,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/vi")
   },
   bb_applet {
     name: "vlock",
@@ -4511,6 +4890,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/vlock")
   },
   bb_applet {
     name: "volname",
@@ -4520,6 +4900,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/volname")
   },
   bb_applet {
     name: "w",
@@ -4529,6 +4910,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/w")
   },
   bb_applet {
     name: "wall",
@@ -4538,6 +4920,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_REQUIRE,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/wall")
   },
   bb_applet {
     name: "watch",
@@ -4547,6 +4930,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/watch")
   },
   bb_applet {
     name: "watchdog",
@@ -4556,6 +4940,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/watchdog")
   },
   bb_applet {
     name: "wc",
@@ -4565,6 +4950,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/wc")
   },
   bb_applet {
     name: "wget",
@@ -4574,6 +4960,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/wget")
   },
   bb_applet {
     name: "which",
@@ -4583,6 +4970,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/which")
   },
   bb_applet {
     name: "who",
@@ -4592,6 +4980,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/who")
   },
   bb_applet {
     name: "whoami",
@@ -4601,6 +4990,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: true,
+    usage: std::include_str!("../usage/whoami")
   },
   bb_applet {
     name: "whois",
@@ -4610,6 +5000,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/whois")
   },
   bb_applet {
     name: "xargs",
@@ -4619,6 +5010,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/xargs")
   },
   bb_applet {
     name: "xxd",
@@ -4628,6 +5020,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/xxd")
   },
   bb_applet {
     name: "xz",
@@ -4637,6 +5030,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/xz")
   },
   bb_applet {
     name: "xzcat",
@@ -4646,6 +5040,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/xzcat")
   },
   bb_applet {
     name: "yes",
@@ -4655,6 +5050,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: true,
     nofork: false,
+    usage: std::include_str!("../usage/yes")
   },
   bb_applet {
     name: "zcat",
@@ -4664,6 +5060,7 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/zcat")
   },
   bb_applet {
     name: "zcip",
@@ -4673,5 +5070,6 @@ pub static applets: [bb_applet; 396] = [
     need_suid: SUID::BB_SUID_DROP,
     noexec: false,
     nofork: false,
+    usage: std::include_str!("../usage/zcip")
   },
 ];

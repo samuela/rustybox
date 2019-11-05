@@ -1,0 +1,4 @@
+DIR PROG ARGS
+
+Set various environment variables as specified by files
+in the directory DIR, run PROG

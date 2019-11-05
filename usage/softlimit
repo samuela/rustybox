@@ -1,0 +1,20 @@
+[-a BYTES] [-m BYTES] [-d BYTES] [-s BYTES] [-l BYTES]
+	[-f BYTES] [-c BYTES] [-r BYTES] [-o N] [-p N] [-t N]
+	PROG ARGS
+
+Set soft resource limits, then run PROG
+
+	-a BYTES	Limit total size of all segments
+	-m BYTES	Same as -d BYTES -s BYTES -l BYTES -a BYTES
+	-d BYTES	Limit data segment
+	-s BYTES	Limit stack segment
+	-l BYTES	Limit locked memory size
+	-o N		Limit number of open files per process
+	-p N		Limit number of processes per uid
+Options controlling file sizes:
+	-f BYTES	Limit output file sizes
+	-c BYTES	Limit core file size
+Efficiency opts:
+	-r BYTES	Limit resident set size
+	-t N		Limit CPU time, process receives
+			a SIGXCPU after N seconds

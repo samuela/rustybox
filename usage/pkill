@@ -1,0 +1,12 @@
+[-l|-SIGNAL] [-fnovx] [-s SID|-P PPID|PATTERN]
+
+Send a signal to process(es) selected by regex PATTERN
+
+	-l	List all signals
+	-f	Match against entire command line
+	-n	Signal the newest process only
+	-o	Signal the oldest process only
+	-v	Negate the match
+	-x	Match whole name (not substring)
+	-s	Match session ID (0 for current)
+	-P	Match parent process ID

@@ -1,0 +1,7 @@
+[-cdf] MASTER_IFACE SLAVE_IFACE...
+
+Configure network interfaces for parallel routing
+
+	-c	Change active slave
+	-d	Remove slave interface from bonding device
+	-f	Force, even if interface is not Ethernet

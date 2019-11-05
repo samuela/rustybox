@@ -1,0 +1,6 @@
+[-a] [-l USER] HOST [PORT]
+
+Connect to telnet server
+
+	-a	Automatic login with $USER variable
+	-l USER	Automatic login as USER

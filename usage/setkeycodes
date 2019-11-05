@@ -1,0 +1,6 @@
+{ SCANCODE KEYCODE }...
+
+Modify kernel's scancode-to-keycode map,
+allowing unusual keyboards to generate usable keycodes.
+
+SCANCODE is either xx or e0xx (hexadecimal), KEYCODE is decimal.

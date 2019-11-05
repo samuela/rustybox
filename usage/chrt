@@ -1,0 +1,11 @@
+-m | -p [PRIO] PID | [-rfobi] PRIO PROG [ARGS]
+
+Change scheduling priority and class for a process
+
+	-m	Show min/max priorities
+	-p	Operate on PID
+	-r	Set SCHED_RR class
+	-f	Set SCHED_FIFO class
+	-o	Set SCHED_OTHER class
+	-b	Set SCHED_BATCH class
+	-i	Set SCHED_IDLE class

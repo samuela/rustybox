@@ -1,0 +1,9 @@
+[-cfkdt] [FILE]...
+
+Compress FILEs (or stdin)
+
+	-d	Decompress
+	-t	Test file integrity
+	-c	Write to stdout
+	-f	Force
+	-k	Keep input files

@@ -1,0 +1,7 @@
+-f FREQ -l LEN -d DELAY -r COUNT -n
+
+	-f	Frequency in Hz
+	-l	Length in ms
+	-d	Delay in ms
+	-r	Repetitions
+	-n	Start new tone

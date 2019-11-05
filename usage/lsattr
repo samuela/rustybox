@@ -1,0 +1,9 @@
+[-Radlv] [FILE]...
+
+List ext2 file attributes
+
+	-R	Recurse
+	-a	Don't hide entries starting with .
+	-d	List directory entries instead of contents
+	-l	List long flag names
+	-v	List version/generation number

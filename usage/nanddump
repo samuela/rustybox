@@ -1,0 +1,12 @@
+[-no] [--bb padbad|skipbad] [-s ADDR] [-l LEN] [-f FILE] MTD_DEVICE
+
+Dump MTD_DEVICE
+
+	-n	Read without ecc
+	-o	Dump oob data
+	-s ADDR	Start address
+	-l LEN	Length
+	-f FILE	Dump to file ('-' for stdout)
+	--bb METHOD
+		skipbad: skip bad blocks
+		padbad: substitute bad blocks by 0xff (default)

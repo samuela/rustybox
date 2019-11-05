@@ -1,0 +1,6 @@
+EXPECT [SEND [EXPECT [SEND...]]]
+
+Useful for interacting with a modem connected to stdin/stdout.
+A script consists of "expect-send" argument pairs.
+Example:
+chat '' ATZ OK ATD123456 CONNECT '' ogin: pppuser word: ppppass '~'

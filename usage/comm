@@ -1,0 +1,7 @@
+[-123] FILE1 FILE2
+
+Compare FILE1 with FILE2
+
+	-1	Suppress lines unique to FILE1
+	-2	Suppress lines unique to FILE2
+	-3	Suppress lines common to both files

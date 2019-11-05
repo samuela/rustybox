@@ -1,0 +1,3 @@
+>SMEMDATA.TAR
+
+Collect memory usage data in /proc and write it to stdout

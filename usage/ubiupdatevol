@@ -1,0 +1,6 @@
+-t UBI_DEVICE | [-s SIZE] UBI_DEVICE IMG_FILE
+
+Update UBI volume
+
+	-t	Truncate to zero size
+	-s SIZE	Size in bytes to resize to

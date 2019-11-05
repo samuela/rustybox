@@ -1,0 +1,3 @@
+PACKAGE.rpm
+
+Output a cpio archive of the rpm file

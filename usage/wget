@@ -1,0 +1,16 @@
+[-c|--continue] [--spider] [-q|--quiet] [-O|--output-document FILE]
+	[-o|--output-file FILE] [--header 'header: value'] [-Y|--proxy on/off]
+	[-P DIR] [-S|--server-response] [-U|--user-agent AGENT] [-T SEC] URL...
+
+Retrieve files via HTTP or FTP
+
+	--spider	Only check URL existence: $? is 0 if exists
+	-c		Continue retrieval of aborted transfer
+	-q		Quiet
+	-P DIR		Save to DIR (default .)
+	-S    		Show server response
+	-T SEC		Network read timeout is SEC seconds
+	-O FILE		Save to FILE ('-' for stdout)
+	-o FILE		Log messages to FILE
+	-U STR		Use STR for User-Agent header
+	-Y on/off	Use proxy

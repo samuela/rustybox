@@ -1,0 +1,3 @@
+FORMAT [ARG]...
+
+Format and print ARG(s) according to FORMAT (a-la C printf)

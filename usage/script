@@ -1,0 +1,8 @@
+[-afq] [-t[FILE]] [-c PROG] [OUTFILE]
+
+Default OUTFILE is 'typescript'
+
+	-a	Append output
+	-c PROG	Run PROG, not shell
+	-q	Quiet
+	-t[FILE] Send timing to stderr or FILE

@@ -1,0 +1,3 @@
+PROG ARGS
+
+Run PROG immune to hangups, with output to a non-tty

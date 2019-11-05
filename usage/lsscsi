@@ -1,0 +1,3 @@
+[--classic] [--device] [--generic] [--help] [--hosts] [--kname] [--list] [--long] [--protection] [--sysfsroot=PATH] [--transport] [--verbose] [--version] [H:C:T:L]
+
+Uses information in sysfs (linux kernel series 2.6 and later) to list scsi devices (or hosts) currently attached to the system. Options can be used to control the amount and form of information provided for each device.

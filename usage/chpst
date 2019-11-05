@@ -1,0 +1,23 @@
+[-vP012] [-u USER[:GRP]] [-U USER[:GRP]] [-e DIR]
+	[-/ DIR] [-n NICE] [-m BYTES] [-d BYTES] [-o N]
+	[-p N] [-f BYTES] [-c BYTES] PROG ARGS
+
+Change the process state, run PROG
+
+	-u USER[:GRP]	Set uid and gid
+	-U USER[:GRP]	Set $UID and $GID in environment
+	-e DIR		Set environment variables as specified by files
+			in DIR: file=1st_line_of_file
+	-/ DIR		Chroot to DIR
+	-n NICE		Add NICE to nice value
+	-m BYTES	Same as -d BYTES -s BYTES -l BYTES
+	-d BYTES	Limit data segment
+	-o N		Limit number of open files per process
+	-p N		Limit number of processes per uid
+	-f BYTES	Limit output file sizes
+	-c BYTES	Limit core file size
+	-v		Verbose
+	-P		Create new process group
+	-0		Close stdin
+	-1		Close stdout
+	-2		Close stderr

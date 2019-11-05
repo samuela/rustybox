@@ -1,0 +1,3 @@
+LABEL=label or UUID=uuid
+
+Find a filesystem device based on a label or UUID

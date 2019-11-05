@@ -1,0 +1,7 @@
+[OPTIONS] [NAME]...
+
+List PIDs of all processes with names that match NAMEs
+
+	-s	Show only one PID
+	-o PID	Omit given pid
+		Use %PPID to omit pid of pidof's parent

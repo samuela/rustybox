@@ -1,0 +1,14 @@
+[-d device_table] rootdir
+
+Create a range of special files as specified in a device table.
+Device table entries take the form of:
+<name> <type> <mode> <uid> <gid> <major> <minor> <start> <inc> <count>
+Where name is the file name, type can be one of:
+	f	Regular file
+	d	Directory
+	c	Character device
+	b	Block device
+	p	Fifo (named pipe)
+uid is the user id for the target file, gid is the group id for the
+target file. The rest of the entries (major, minor, etc) apply to
+to device special files. A '-' may be used for blank entries.

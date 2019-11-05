@@ -1,0 +1,22 @@
+[-d MSEC] FORMAT_STRING
+
+Monitor system in real time
+
+ -d MSEC	Milliseconds between updates, default:1000, none:-1
+
+Format specifiers:
+ %Nc or %[cN]	CPU. N - bar size (default 10)
+		(displays: S:system U:user N:niced D:iowait I:irq i:softirq)
+ %[nINTERFACE]	Network INTERFACE
+ %m		Allocated memory
+ %[mf]		Free memory
+ %[mt]		Total memory
+ %s		Allocated swap
+ %f		Number of used file descriptors
+ %Ni		Total/specific IRQ rate
+ %x		Context switch rate
+ %p		Forks
+ %[pn]		# of processes
+ %b		Block io
+ %Nt		Time (with N decimal points)
+ %r		Print <cr> instead of <lf> at EOL

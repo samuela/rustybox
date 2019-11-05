@@ -1,0 +1,5 @@
+[-n ADJUST] [PROG ARGS]
+
+Change scheduling priority, run PROG
+
+	-n ADJUST	Adjust priority by ADJUST

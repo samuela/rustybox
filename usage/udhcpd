@@ -1,0 +1,10 @@
+[-fS] [-I ADDR] [CONFFILE]
+
+DHCP server
+
+	-f	Run in foreground
+	-S	Log to syslog too
+	-I ADDR	Local address
+	-a MSEC	Timeout for ARP ping (default 2000)
+Signals:
+	USR1	Update lease file

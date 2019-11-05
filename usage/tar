@@ -1,0 +1,22 @@
+c|x|t [-zJjahmvokO] [-f TARFILE] [-C DIR] [-T FILE] [-X FILE] [--exclude PATTERN]... [FILE]...
+
+Create, extract, or list files from a tar file
+
+	c	Create
+	x	Extract
+	t	List
+	-f FILE	Name of TARFILE ('-' for stdin/out)
+	-C DIR	Change to DIR before operation
+	-v	Verbose
+	-O	Extract to stdout
+	-m	Don't restore mtime
+	-o	Don't restore user:group
+	-k	Don't replace existing files
+	-z	(De)compress using gzip
+	-J	(De)compress using xz
+	-j	(De)compress using bzip2
+	-a	(De)compress based on extension
+	-h	Follow symlinks
+	-T FILE	File with names to include
+	-X FILE	File with glob patterns to exclude
+	--exclude PATTERN	Glob pattern to exclude

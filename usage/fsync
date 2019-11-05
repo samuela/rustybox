@@ -1,0 +1,5 @@
+[-d] FILE...
+
+        Write all buffered blocks in FILEs to disk
+
+        	-d	Avoid syncing metadata

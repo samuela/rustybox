@@ -1,0 +1,32 @@
+[-fbnqvodR] [-i IFACE] [-r IPv6] [-s PROG] [-p PIDFILE]
+	[-x OPT:VAL]... [-O OPT]...
+
+	-i IFACE	Interface to use (default eth0)
+	-p FILE		Create pidfile
+	-s PROG		Run PROG at DHCP events (default /usr/share/udhcpc/default.script)
+	-B		Request broadcast replies
+	-t N		Send up to N discover packets
+	-T N		Pause between packets (default 3 seconds)
+	-A N		Wait N seconds (default 20) after failure
+	-f		Run in foreground
+	-b		Background if lease is not obtained
+	-n		Exit if lease is not obtained
+	-q		Exit after obtaining lease
+	-R		Release IP on exit
+	-S		Log to syslog too
+	-O OPT		Request option OPT from server (cumulative)
+	-o		Don't request any options (unless -O is given)
+	-r IPv6		Request this address ('no' to not request any IP)
+	-d		Request prefix
+	-l		Send 'information request' instead of 'solicit'
+			(used for servers which do not assign IPv6 addresses)
+	-x OPT:VAL	Include option OPT in sent packets (cumulative)
+			Examples of string, numeric, and hex byte opts:
+			-x hostname:bbox - option 12
+			-x lease:3600 - option 51 (lease time)
+			-x 0x3d:0100BEEFC0FFEE - option 61 (client id)
+			-x 14:'"dumpfile"' - option 14 (shell-quoted)
+	-v		Verbose
+Signals:
+	USR1	Renew lease
+	USR2	Release lease

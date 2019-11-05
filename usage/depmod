@@ -1,0 +1,5 @@
+[-n]
+
+Generate modules.dep.bb
+
+	-n	Dry run: print file to stdout

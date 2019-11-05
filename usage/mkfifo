@@ -1,0 +1,5 @@
+[-m MODE] NAME
+
+Create named pipe
+
+	-m MODE	Mode (default a=rw)

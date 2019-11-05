@@ -1,0 +1,6 @@
+[-jy] [[MONTH] YEAR]
+
+Display a calendar
+
+	-j	Use julian dates
+	-y	Display the entire year

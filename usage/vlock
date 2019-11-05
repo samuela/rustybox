@@ -1,0 +1,5 @@
+[-a]
+
+        Lock a virtual terminal. A password is required to unlock.
+
+        	-a	Lock all VTs

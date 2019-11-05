@@ -1,0 +1,3 @@
+{ [-b BLKSIZE] [-N NAME] [-t SEC] [-p] HOST [PORT] | -d } BLOCKDEV
+
+Connect to HOST and provide network block device on BLOCKDEV

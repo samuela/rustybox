@@ -1,0 +1,20 @@
+[-abGvz] { DEVICE [PARAMETER [ARG]]... | -g DEVICE... }
+
+Print or set serial port parameters
+
+	-a	Print all
+	-b	Print summary
+	-G	Print as setserial PARAMETERs
+	-v	Verbose
+	-z	Zero out serial flags before setting
+	-g	All args are device names
+
+PARAMETERs: (* = takes ARG, ^ = can be turned off by preceding ^)
+	*port, *irq, *divisor, *uart, *baud_base, *close_delay, *closing_wait,
+	^fourport, ^auto_irq, ^skip_test, ^sak, ^session_lockout, ^pgrp_lockout,
+	^callout_nohup, ^split_termios, ^hup_notify, ^low_latency, autoconfig,
+	spd_normal, spd_hi, spd_vhi, spd_shi, spd_warp, spd_cust
+ARG for uart:
+	unknown, 8250, 16450, 16550, 16550A, Cirrus, 16650, 16650V2, 16750,
+	16950, 16954, 16654, 16850, RSA, NS16550A, XSCALE, RM9000, OCTEON, AR7,
+	U6_16550A

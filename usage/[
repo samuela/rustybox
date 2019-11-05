@@ -1,0 +1,3 @@
+expression ]
+
+The test utility evaluates the expression and, if it evaluates to true, returns a zero (true) exit status; otherwise it returns 1 (false).  If there is no expression, test also returns 1 (false).

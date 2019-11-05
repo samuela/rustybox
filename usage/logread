@@ -1,0 +1,6 @@
+[-fF]
+
+Show messages in syslogd's circular buffer
+
+	-f	Output data as log grows
+	-F	Same as -f, but dump buffer first

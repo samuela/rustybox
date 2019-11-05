@@ -1,0 +1,17 @@
+[-bmH] [-n COUNT] [-d SECONDS]
+
+Provide a view of process activity in real time.
+Read the status of all processes from /proc each SECONDS
+and display a screenful of them.
+Keys:
+	N/M/P/T: show CPU usage, sort by pid/mem/cpu/time
+	S: show memory
+	R: reverse sort
+	H: toggle threads, 1: toggle SMP
+	Q,^C: exit
+Options:
+	-b	Batch mode
+	-n N	Exit after N iterations
+	-d SEC	Delay between updates
+	-m	Same as 's' key
+	-H	Show threads

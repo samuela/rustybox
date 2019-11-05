@@ -1,0 +1,15 @@
+[-vcsndfFQ] [-x COL] [-y LINE] [CONSOLE_NO]
+
+A text-mode VNC like program for Linux virtual consoles.
+To exit, quickly press ESC 3 times.
+
+	-v	Don't send keystrokes to the console
+	-c	Create missing /dev/{tty,vcsa}N
+	-s	Open a SHELL session
+	-n	Black & white
+	-d	Dump console to stdout
+	-f	Follow cursor
+	-F	Assume console is on a framebuffer device
+	-Q	Disable exit on ESC-ESC-ESC
+	-x COL	Starting column
+	-y LINE	Starting line

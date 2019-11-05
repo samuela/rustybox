@@ -1,0 +1,10 @@
+[-c] [-d] [-t] [-z] [-k|-m] [ALL|BLOCKDEV...] [INTERVAL [COUNT]]
+
+Report CPU and I/O statistics
+
+	-c	Show CPU utilization
+	-d	Show device utilization
+	-t	Print current time
+	-z	Omit devices with no activity
+	-k	Use kb/s
+	-m	Use Mb/s

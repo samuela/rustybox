@@ -1,0 +1,11 @@
+-N NAME [-s SIZE | -m] UBI_DEVICE
+
+Create UBI volume
+
+	-a ALIGNMENT	Volume alignment (default 1)
+	-m		Set volume size to maximum available
+	-n VOLID	Volume ID. If not specified,
+			assigned automatically
+	-N NAME		Volume name
+	-s SIZE		Size in bytes
+	-t TYPE		Volume type (static|dynamic)

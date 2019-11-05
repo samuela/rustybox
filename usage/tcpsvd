@@ -1,0 +1,29 @@
+[-hEv] [-c N] [-C N[:MSG]] [-b N] [-u USER] [-l NAME] IP PORT PROG
+
+Create TCP socket, bind to IP:PORT and listen for incoming connections.
+Run PROG for each connection.
+
+	IP PORT		IP:PORT to listen on
+	PROG ARGS	Program to run
+	-u USER[:GRP]	Change to user/group after bind
+	-c N		Up to N connections simultaneously (default 30)
+	-b N		Allow backlog of approximately N TCP SYNs (default 20)
+	-C N[:MSG]	Allow only up to N connections from the same IP:
+			new connections from this IP address are closed
+			immediately, MSG is written to the peer before close
+	-E		Don't set up environment
+	-h		Look up peer's hostname
+	-l NAME		Local hostname (else look up local hostname in DNS)
+	-v		Verbose
+
+Environment if no -E:
+PROTO='TCP'
+TCPREMOTEADDR='ip:port' ('[ip]:port' for IPv6)
+TCPLOCALADDR='ip:port'
+TCPORIGDSTADDR='ip:port' of destination before firewall
+	Useful for REDIRECTed-to-local connections:
+	iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080
+TCPCONCURRENCY=num_of_connects_from_this_ip
+If -h:
+TCPLOCALHOST='hostname' (-l NAME is used if specified)
+TCPREMOTEHOST='hostname'

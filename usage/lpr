@@ -1,0 +1,6 @@
+-P queue[@host[:port]] -U USERNAME -J TITLE -Vmh [FILE]...
+
+	-P	lp service to connect to (else uses $PRINTER)
+	-m	Send mail on completion
+	-h	Print banner page too
+	-V	Verbose

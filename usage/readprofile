@@ -1,0 +1,12 @@
+[OPTIONS]
+
+	-m mapfile	(Default: /boot/System.map)
+	-p profile	(Default: /proc/profile)
+	-M NUM		Set the profiling multiplier to NUM
+	-i		Print only info about the sampling step
+	-v		Verbose
+	-a		Print all symbols, even if count is 0
+	-b		Print individual histogram-bin counts
+	-s		Print individual counters within functions
+	-r		Reset all the counters (root only)
+	-n		Disable byte order auto-detection

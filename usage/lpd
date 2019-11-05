@@ -1,0 +1,9 @@
+SPOOLDIR [HELPER [ARGS]]
+
+SPOOLDIR must contain (symlinks to) device nodes or directories
+with names matching print queue names. In the first case, jobs are
+sent directly to the device. Otherwise each job is stored in queue
+directory and HELPER program is called. Name of file to print
+is passed in $DATAFILE variable.
+Example:
+	tcpsvd -E 0 515 softlimit -m 999999 lpd /var/spool ./print

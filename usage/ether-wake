@@ -1,0 +1,9 @@
+[-b] [-i IFACE] [-p aa:bb:cc:dd[:ee:ff]/a.b.c.d] MAC
+
+Send a magic packet to wake up sleeping machines.
+MAC must be a station address (00:11:22:33:44:55) or
+a hostname with a known 'ethers' entry.
+
+	-b		Broadcast the packet
+	-i IFACE	Interface to use (default eth0)
+	-p PASSWORD	Append four or six byte PASSWORD to the packet

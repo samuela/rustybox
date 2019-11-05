@@ -1,0 +1,5 @@
+[-t N] [TTY]
+
+Single user login
+
+	-t N	Timeout

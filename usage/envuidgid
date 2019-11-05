@@ -1,0 +1,3 @@
+USER PROG ARGS
+
+Set $UID to USER's uid and $GID to USER's gid, run PROG

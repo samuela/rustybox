@@ -1,0 +1,6 @@
+[-P queue[@host[:port]]] [-U USERNAME] [-d JOBID]... [-fs]
+
+	-P	lp service to connect to (else uses $PRINTER)
+	-d	Delete jobs
+	-f	Force any waiting job to be printed
+	-s	Short display

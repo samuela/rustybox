@@ -1,0 +1,20 @@
+[-R] [-v VERSION] [-+=AacDdijsStTu] FILE...
+
+Change ext2 file attributes
+
+	-R	Recurse
+	-v VER	Set version/generation number
+Modifiers:
+	-,+,=	Remove/add/set attributes
+Attributes:
+	A	Don't track atime
+	a	Append mode only
+	c	Enable compress
+	D	Write dir contents synchronously
+	d	Don't backup with dump
+	i	Cannot be modified (immutable)
+	j	Write all data to journal first
+	s	Zero disk storage when deleted
+	S	Write synchronously
+	t	Disable tail-merging of partial blocks with other files
+	u	Allow file to be undeleted

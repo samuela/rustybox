@@ -1,0 +1,8 @@
+start [PROG ARGS]|stop|init
+
+Create /var/log/bootchart.tgz with boot chart data
+
+start: start background logging; with PROG, run PROG, then kill logging with USR1
+stop: send USR1 to all bootchartd processes
+init: start background logging; stop when getty/xdm is seen (for init scripts)
+Under PID 1: as init, then exec $bootchart_init, /init, /sbin/init

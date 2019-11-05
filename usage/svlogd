@@ -1,0 +1,17 @@
+[-tttv] [-r C] [-R CHARS] [-l MATCHLEN] [-b BUFLEN] DIR...
+
+Read log data from stdin and write to rotated log files in DIRs
+
+-r C		Replace non-printable characters with C
+-R CHARS	Also replace CHARS with C (default _)
+-t		Timestamp with @tai64n
+-tt		Timestamp with yyyy-mm-dd_hh:mm:ss.sssss
+-ttt		Timestamp with yyyy-mm-ddThh:mm:ss.sssss
+-v		Verbose
+
+DIR/config file modifies behavior:
+sSIZE - when to rotate logs (default 1000000, 0 disables)
+nNUM - number of files to retain
+!PROG - process rotated log with PROG
++,-PATTERN - (de)select line for logging
+E,ePATTERN - (de)select line for stderr

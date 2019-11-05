@@ -1,0 +1,11 @@
+[-larvsmf] BLOCKDEV
+
+Check MINIX filesystem
+
+	-l	List all filenames
+	-r	Perform interactive repairs
+	-a	Perform automatic repairs
+	-v	Verbose
+	-s	Output superblock information
+	-m	Show "mode not cleared" warnings
+	-f	Force file system check

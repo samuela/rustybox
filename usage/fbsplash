@@ -1,0 +1,10 @@
+-s IMGFILE [-c] [-d DEV] [-i INIFILE] [-f CMD]
+
+	-s	Image
+	-c	Hide cursor
+	-d	Framebuffer device (default /dev/fb0)
+	-i	Config file (var=value):
+			BAR_LEFT,BAR_TOP,BAR_WIDTH,BAR_HEIGHT
+			BAR_R,BAR_G,BAR_B,IMG_LEFT,IMG_TOP
+	-f	Control pipe (else exit after drawing image)
+			commands: 'NN' (% for progress bar) or 'exit'

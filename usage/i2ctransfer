@@ -1,0 +1,7 @@
+[-fay] I2CBUS {rLENGTH[@ADDR] | wLENGTH[@ADDR] DATA...}...
+
+Read/write I2C data in one transfer
+
+	-f	Force access to busy addresses
+	-a	Force access to non-regular addresses
+	-y	Disable interactive mode

@@ -1,0 +1,3 @@
+[N]
+
+Pin kernel output to VT console N. Default:0 (do not pin)

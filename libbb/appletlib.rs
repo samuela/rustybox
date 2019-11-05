@@ -3,7 +3,6 @@ use std::ffi::CStr;
 use std::ffi::CString;
 
 use crate::applets::applet_tables::{applets, InstallLoc, SUID};
-use crate::applets::usage::usage_array;
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, stat,
@@ -1091,10 +1090,7 @@ unsafe fn usage(app_name: &str) -> Option<&'static str> {
   // This isn't necessarily the fastest way to do this since it involves a
   // linear search over usage_array but sort would require another alloc and
   // this whole setup will hopefully change soon anyways.
-  usage_array
-    .iter()
-    .position(|x| x.aname == app_name)
-    .map(|i| usage_array[i].usage)
+  applets.iter().find(|x| x.name == app_name).map(|x| x.usage)
 }
 unsafe fn find_script_by_name(name: &str) -> Option<usize> {
   find_applet_by_name(name)

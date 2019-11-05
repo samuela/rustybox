@@ -1,0 +1,6 @@
+[-r] [DEVICE]
+
+Make writes to /dev/console appear on DEVICE (default: /dev/tty).
+Does not redirect kernel log output or reads from /dev/console.
+
+	-r	Reset: writes to /dev/console go to kernel log tty(s)

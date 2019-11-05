@@ -1,0 +1,11 @@
+[OPTIONS] [FILE]...
+
+Create multipart MIME-encoded message from FILEs
+
+	-o FILE	Output. Default: stdout
+	-a HDR	Add header(s). Examples:
+		"From: user@host.org", "Date: `date -R`"
+	-c CT	Content type. Default: application/octet-stream
+	-C CS	Charset. Default: us-ascii
+
+Other options are silently ignored

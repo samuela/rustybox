@@ -1,0 +1,6 @@
+-n VOLID / -N VOLNAME UBI_DEVICE
+
+Remove UBI volume
+
+	-n VOLID	Volume ID
+	-N VOLNAME	Volume name

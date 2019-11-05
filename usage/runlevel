@@ -1,0 +1,6 @@
+[FILE]
+
+Find the current and previous system runlevel
+
+If no utmp FILE exists or if no runlevel record can be found,
+print "unknown"

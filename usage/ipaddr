@@ -1,0 +1,8 @@
+add|del IFADDR dev IFACE | show|flush [dev IFACE] [to PREFIX]
+
+ipaddr add|change|replace|delete dev IFACE IFADDR
+	IFADDR := PREFIX | ADDR peer PREFIX [broadcast ADDR|+|-]
+		[anycast ADDR] [label STRING] [scope SCOPE]
+	PREFIX := ADDR[/MASK]
+	SCOPE := [host|link|global|NUMBER]
+ipaddr show|flush [dev IFACE] [scope SCOPE] [to PREFIX] [label PATTERN]

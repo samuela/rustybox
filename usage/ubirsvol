@@ -1,0 +1,6 @@
+-n VOLID -s SIZE UBI_DEVICE
+
+Resize UBI volume
+
+	-n VOLID	Volume ID
+	-s SIZE		Size in bytes

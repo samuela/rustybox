@@ -1,0 +1,3 @@
+[--remove-home] USER
+
+Delete USER from the system

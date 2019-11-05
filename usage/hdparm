@@ -1,0 +1,40 @@
+[OPTIONS] [DEVICE]
+
+	-a	Get/set fs readahead
+	-A	Set drive read-lookahead flag (0/1)
+	-b	Get/set bus state (0 == off, 1 == on, 2 == tristate)
+	-B	Set Advanced Power Management setting (1-255)
+	-c	Get/set IDE 32-bit IO setting
+	-C	Check IDE power mode status
+	-d	Get/set using_dma flag
+	-D	Enable/disable drive defect-mgmt
+	-f	Flush buffer cache for device on exit
+	-g	Display drive geometry
+	-h	Display terse usage information
+	-i	Display drive identification
+	-I	Detailed/current information directly from drive
+	-k	Get/set keep_settings_over_reset flag (0/1)
+	-K	Set drive keep_features_over_reset flag (0/1)
+	-L	Set drive doorlock (0/1) (removable harddisks only)
+	-m	Get/set multiple sector count
+	-n	Get/set ignore-write-errors flag (0/1)
+	-p	Set PIO mode on IDE interface chipset (0,1,2,3,4,...)
+	-P	Set drive prefetch count
+	-Q	Get/set DMA tagged-queuing depth (if supported)
+	-r	Get/set readonly flag (DANGEROUS to set)
+	-R	Register an IDE interface (DANGEROUS)
+	-S	Set standby (spindown) timeout
+	-t	Perform device read timings
+	-T	Perform cache read timings
+	-u	Get/set unmaskirq flag (0/1)
+	-U	Unregister an IDE interface (DANGEROUS)
+	-v	Defaults; same as -mcudkrag for IDE drives
+	-V	Display program version and exit immediately
+	-w	Perform device reset (DANGEROUS)
+	-W	Set drive write-caching flag (0/1) (DANGEROUS)
+	-x	Tristate device for hotswap (0/1) (DANGEROUS)
+	-X	Set IDE xfer mode (DANGEROUS)
+	-y	Put IDE drive in standby mode
+	-Y	Put IDE drive to sleep
+	-Z	Disable Seagate auto-powersaving mode
+	-z	Reread partition table

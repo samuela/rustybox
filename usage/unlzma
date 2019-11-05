@@ -1,0 +1,7 @@
+[-cfk] [FILE]...
+
+Decompress FILE (or stdin)
+
+	-c	Write to stdout
+	-f	Force
+	-k	Keep input files

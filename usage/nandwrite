@@ -1,0 +1,7 @@
+[-np] [-s ADDR] MTD_DEVICE [FILE]
+
+Write to MTD_DEVICE
+
+	-n	Write without ecc
+	-p	Pad to page size
+	-s ADDR	Start address

@@ -1,0 +1,22 @@
+[-hEv] [-c N] [-u USER] [-l NAME] IP PORT PROG
+
+Create UDP socket, bind to IP:PORT and wait for incoming packets.
+Run PROG for each packet, redirecting all further packets with same
+peer ip:port to it.
+
+	IP PORT		IP:PORT to listen on
+	PROG ARGS	Program to run
+	-u USER[:GRP]	Change to user/group after bind
+	-c N		Up to N connections simultaneously (default 30)
+	-E		Don't set up environment
+	-h		Look up peer's hostname
+	-l NAME		Local hostname (else look up local hostname in DNS)
+	-v		Verbose
+
+Environment if no -E:
+PROTO='UDP'
+UDPREMOTEADDR='ip:port' ('[ip]:port' for IPv6)
+UDPLOCALADDR='ip:port'
+If -h:
+UDPLOCALHOST='hostname' (-l NAME is used if specified)
+UDPREMOTEHOST='hostname'

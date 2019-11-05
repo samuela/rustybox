@@ -1,0 +1,7 @@
+-m MTD_NUM [-d UBI_NUM] [-O VID_HDR_OFF] UBI_CTRL_DEV
+
+Attach MTD device to UBI
+
+	-m MTD_NUM	MTD device number to attach
+	-d UBI_NUM	UBI device number to assign
+	-O VID_HDR_OFF	VID header offset

@@ -1,0 +1,3 @@
+FILE [SUFFIX]
+
+Strip directory path and .SUFFIX from FILE

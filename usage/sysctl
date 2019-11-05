@@ -1,0 +1,10 @@
+-p [-enq] [FILE...] / [-enqaw] [KEY[=VALUE]]...
+
+Show/set kernel parameters
+
+	-p	Set values from FILEs (default /etc/sysctl.conf)
+	-e	Don't warn about unknown keys
+	-n	Don't show key names
+	-q      Quiet
+	-a	Show all values
+	-w	Set values

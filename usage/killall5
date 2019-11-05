@@ -1,0 +1,6 @@
+[-l] [-SIG] [-o PID]...
+
+Send a signal (default: TERM) to all processes outside current session
+
+	-l	List all signal names and numbers
+	-o PID	Don't signal this PID

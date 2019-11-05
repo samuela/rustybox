@@ -1,0 +1,4 @@
+[-d] [FILE]
+
+Base64 encode or decode FILE to standard output
+	-d	Decode data

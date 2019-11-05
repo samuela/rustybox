@@ -1,0 +1,4 @@
+USER PROG ARGS
+
+Set uid and gid to USER's uid and gid, drop supplementary group ids,
+run PROG

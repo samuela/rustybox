@@ -1,0 +1,8 @@
+[-h] -n|-x ATTR [-v VALUE] FILE...
+
+Set extended attributes
+
+	-h		Do not follow symlinks
+	-x ATTR		Remove attribute ATTR
+	-n ATTR		Set attribute ATTR to VALUE
+	-v VALUE	(default: empty)

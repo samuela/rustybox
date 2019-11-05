@@ -1,0 +1,8 @@
+[-A] [-I SUM|CPU|ALL|SCPU] [-u] [-P num|ALL] [INTERVAL [COUNT]]
+
+Per-processor statistics
+
+	-A			Same as -I ALL -u -P ALL
+	-I SUM|CPU|ALL|SCPU	Report interrupt statistics
+	-P num|ALL		Processor to monitor
+	-u			Report CPU utilization

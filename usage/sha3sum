@@ -1,0 +1,8 @@
+[-c[sw]] [-a BITS] [FILE]...
+
+Print or check SHA3 checksums
+
+	-c	Check sums against list in FILEs
+	-s	Don't output anything, status code shows success
+	-w	Warn about improperly formatted checksum lines
+	-a BITS	224 (default), 256, 384, 512

@@ -1,0 +1,14 @@
+[[-smq] -i SHMID] | [[-asmq] [-tcplu]]
+
+	-i ID	Show specific resource
+Resource specification:
+	-m	Shared memory segments
+	-q	Message queues
+	-s	Semaphore arrays
+	-a	All (default)
+Output format:
+	-t	Time
+	-c	Creator
+	-p	Pid
+	-l	Limits
+	-u	Summary

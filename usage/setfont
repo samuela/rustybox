@@ -1,0 +1,6 @@
+FONT [-m MAPFILE] [-C TTY]
+
+Load a console font
+
+	-m MAPFILE	Load console screen map
+	-C TTY		Affect TTY instead of /dev/tty
