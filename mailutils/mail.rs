@@ -118,8 +118,9 @@ pub struct globals {
   pub fp0: *mut FILE,
   pub opt_charset: *mut libc::c_char,
 }
-pub const SRC_BUF_SIZE: C2RustUnnamed = 57;
+
 pub type C2RustUnnamed = libc::c_uint;
+pub const SRC_BUF_SIZE: C2RustUnnamed = 57;
 /* This *MUST* be a multiple of 3 */
 pub const DST_BUF_SIZE: C2RustUnnamed = 76;
 
