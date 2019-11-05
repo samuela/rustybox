@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -48,9 +48,9 @@ pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

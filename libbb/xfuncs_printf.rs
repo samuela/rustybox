@@ -77,7 +77,7 @@ extern "C" {
   #[no_mangle]
   fn listen(__fd: libc::c_int, __n: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -285,9 +285,9 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 /* vi: set sw=4 ts=4: */

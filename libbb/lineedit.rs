@@ -24,9 +24,9 @@ extern "C" {
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -379,9 +379,9 @@ pub union C2RustUnnamed_9 {
   pub sa_sigaction:
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type wchar_t = libc::c_int;
 pub type cc_t = libc::c_uchar;

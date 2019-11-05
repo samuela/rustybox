@@ -340,11 +340,11 @@ pub struct __jmp_buf_tag {
 
 pub type jmp_buf = [__jmp_buf_tag; 1];
 
-use crate::librb::_IO_FILE;
+
 
 pub type _IO_lock_t = ();
 
-use crate::librb::_IO_marker;
+
 
 use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;

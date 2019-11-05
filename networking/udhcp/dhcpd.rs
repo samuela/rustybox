@@ -411,9 +411,9 @@ pub type bb__aliased_uint32_t = uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smallint = libc::c_schar;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

@@ -198,9 +198,9 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type dev_t = __dev_t;
 pub type time_t = __time_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;

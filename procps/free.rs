@@ -24,9 +24,9 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type uint8_t = __uint8_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

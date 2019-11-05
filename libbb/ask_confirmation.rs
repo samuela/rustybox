@@ -1,10 +1,10 @@
 use libc;
 
-use crate::librb::{FILE, _IO_FILE};
+use crate::librb::FILE;
 
 extern "C" {
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;

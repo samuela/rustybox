@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -205,9 +205,9 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;

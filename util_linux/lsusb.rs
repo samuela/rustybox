@@ -83,11 +83,11 @@ pub type size_t = libc::c_ulong;
 
 use crate::librb::stat;
 
-use crate::librb::_IO_FILE;
+
 
 pub type _IO_lock_t = ();
 
-use crate::librb::_IO_marker;
+
 
 use crate::librb::FILE;
 

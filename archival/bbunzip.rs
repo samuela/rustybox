@@ -2,7 +2,7 @@ use libc;
 
 use crate::librb::{
   __suseconds_t, off_t, size_t, smallint, stat, time_t, timespec, timeval, uint16_t, uint32_t,
-  uint8_t, uoff_t, FILE, _IO_FILE,
+  uint8_t, uoff_t, FILE,
 };
 
 extern "C" {
@@ -19,7 +19,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
 
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;

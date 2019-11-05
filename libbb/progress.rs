@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -32,9 +32,9 @@ extern "C" {
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;
 #[derive(Copy, Clone)]

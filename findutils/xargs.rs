@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -133,9 +133,9 @@ pub type uint32_t = __uint32_t;
 pub type smalluint = libc::c_uchar;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

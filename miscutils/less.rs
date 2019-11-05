@@ -188,9 +188,9 @@ pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 use crate::librb::stat;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

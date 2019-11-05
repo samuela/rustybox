@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -12,9 +12,9 @@ extern "C" {
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 /* vi: set sw=4 ts=4: */
 /*

@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -101,9 +101,9 @@ pub type mode_t = __mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type time_t = __time_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

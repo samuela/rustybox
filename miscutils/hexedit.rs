@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn setvbuf(
     __stream: *mut FILE,
@@ -105,9 +105,9 @@ pub type uintptr_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;

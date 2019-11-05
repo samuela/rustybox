@@ -5,9 +5,9 @@ extern "C" {
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
   #[no_mangle]
@@ -37,9 +37,9 @@ pub type uint32_t = __uint32_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;

@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -115,9 +115,9 @@ pub type size_t = libc::c_ulong;
 pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
 pub type smalluint = libc::c_uchar;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;

@@ -240,9 +240,9 @@ pub union C2RustUnnamed_0 {
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(

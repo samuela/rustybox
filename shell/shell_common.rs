@@ -15,7 +15,7 @@ extern "C" {
     __shortopts: *const libc::c_char,
   ) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -106,9 +106,9 @@ pub type uintptr_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

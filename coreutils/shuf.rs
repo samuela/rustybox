@@ -47,9 +47,9 @@ pub type __off64_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type uintptr_t = libc::c_ulong;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.

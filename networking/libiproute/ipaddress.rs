@@ -21,7 +21,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -278,9 +278,9 @@ pub union C2RustUnnamed_1 {
 /* add other arches which benefit from this... */
 pub type smallint = libc::c_schar;
 pub type smalluint = libc::c_uchar;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;

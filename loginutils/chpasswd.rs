@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
@@ -54,9 +54,9 @@ pub type __off64_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;

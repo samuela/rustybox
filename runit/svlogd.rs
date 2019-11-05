@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -212,9 +212,9 @@ pub struct timeval {
   pub tv_sec: __time_t,
   pub tv_usec: __suseconds_t,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

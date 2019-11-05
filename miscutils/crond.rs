@@ -28,7 +28,7 @@ extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -190,9 +190,9 @@ pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type time_t = __time_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]

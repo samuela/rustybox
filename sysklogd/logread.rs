@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -56,9 +56,9 @@ pub type int32_t = __int32_t;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 pub type key_t = __key_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

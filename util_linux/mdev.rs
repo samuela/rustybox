@@ -511,11 +511,11 @@ pub struct C2RustUnnamed_8 {
   pub si_uid: __uid_t,
 }
 
-use crate::librb::_IO_FILE;
+
 
 pub type _IO_lock_t = ();
 
-use crate::librb::_IO_marker;
+
 
 use crate::librb::FILE;
 

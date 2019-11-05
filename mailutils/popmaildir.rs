@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -94,9 +94,9 @@ pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
 pub type size_t = libc::c_ulong;
 pub type pid_t = __pid_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type ptrdiff_t = libc::c_long;
 #[derive(Copy, Clone)]

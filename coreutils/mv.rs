@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -72,9 +72,9 @@ pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
 use crate::librb::stat;
 use crate::librb::timespec;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

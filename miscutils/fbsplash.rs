@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -98,9 +98,9 @@ pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;

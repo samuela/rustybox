@@ -456,9 +456,9 @@ pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;

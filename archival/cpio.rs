@@ -3,7 +3,7 @@ use libc;
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __dev_t, __mode_t, __off_t, bb_uidgid_t, dev_t, fd_pair, gid_t, mode_t, off_t, pid_t, size_t,
-  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t, FILE, _IO_FILE,
+  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t, FILE,
 };
 
 extern "C" {
@@ -22,10 +22,10 @@ extern "C" {
   fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
 
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
 
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;

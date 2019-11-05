@@ -319,9 +319,9 @@ pub union C2RustUnnamed_9 {
   pub sa_sigaction:
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 pub type __rlimit_resource = libc::c_uint;

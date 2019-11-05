@@ -1,13 +1,13 @@
 use libc;
 
-use crate::librb::{termios, winsize, FILE, _IO_FILE};
+use crate::librb::{termios, winsize, FILE};
 
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
 
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
 
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;

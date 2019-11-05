@@ -87,9 +87,9 @@ pub type uint32_t = __uint32_t;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
 pub type time_t = __time_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

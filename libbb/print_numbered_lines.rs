@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -19,9 +19,9 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type smallint = libc::c_schar;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

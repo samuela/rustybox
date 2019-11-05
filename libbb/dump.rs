@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
   #[no_mangle]
   fn freopen(
     __filename: *const libc::c_char,
@@ -75,9 +75,9 @@ pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 /* no conversions */
 pub type dump_vflag_t = libc::c_uint;

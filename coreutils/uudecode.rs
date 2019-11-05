@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -81,9 +81,9 @@ pub type __ssize_t = libc::c_long;
 pub type uint32_t = __uint32_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;

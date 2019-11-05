@@ -225,9 +225,9 @@ pub struct ip_tunnel_parm {
   pub o_key: uint32_t,
   pub iph: iphdr,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;
 pub const ARG_inherit: C2RustUnnamed_2 = 23;

@@ -70,9 +70,9 @@ pub struct hostent {
   pub h_length: libc::c_int,
   pub h_addr_list: *mut *mut libc::c_char,
 }
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 /*
  * Config file parser

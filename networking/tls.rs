@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -153,9 +153,9 @@ pub type bb__aliased_uint32_t = uint32_t;
 pub type bb__aliased_uint64_t = uint64_t;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;

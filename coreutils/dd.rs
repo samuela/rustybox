@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn ftruncate(__fd: libc::c_int, __length: __off64_t) -> libc::c_int;
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -104,9 +104,9 @@ pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

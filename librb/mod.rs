@@ -43,7 +43,7 @@ pub type __compar_fn_t =
 #[repr(C)]
 pub struct _IO_marker {
   pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
+  pub _sbuf: *mut FILE,
   pub _pos: libc::c_int,
 }
 
@@ -65,7 +65,7 @@ pub struct _IO_FILE {
   pub _IO_backup_base: *mut libc::c_char,
   pub _IO_save_end: *mut libc::c_char,
   pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
+  pub _chain: *mut FILE,
   pub _fileno: libc::c_int,
   pub _flags2: libc::c_int,
   pub _old_offset: __off_t,

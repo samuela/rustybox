@@ -85,9 +85,9 @@ pub type uid_t = __uid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type dev_t = __dev_t;
-use crate::librb::_IO_FILE;
+
 pub type _IO_lock_t = ();
-use crate::librb::_IO_marker;
+
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

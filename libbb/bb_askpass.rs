@@ -1,7 +1,7 @@
 use libc;
 
 use crate::librb::signal::{__sigset_t, sigaction, C2RustUnnamed_9};
-use crate::librb::{size_t, ssize_t, termios, FILE, _IO_FILE};
+use crate::librb::{size_t, ssize_t, termios, FILE};
 
 extern "C" {
   #[no_mangle]
@@ -14,7 +14,7 @@ extern "C" {
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
 
   #[no_mangle]
-  static mut stdout: *mut _IO_FILE;
+  static mut stdout: *mut FILE;
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;

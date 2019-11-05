@@ -13,7 +13,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  static mut stderr: *mut _IO_FILE;
+  static mut stderr: *mut FILE;
 
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
@@ -101,11 +101,11 @@ use crate::librb::stat;
 
 pub type time_t = __time_t;
 
-use crate::librb::_IO_FILE;
+
 
 pub type _IO_lock_t = ();
 
-use crate::librb::_IO_marker;
+
 
 use crate::librb::FILE;
 pub type uoff_t = libc::c_ulong;

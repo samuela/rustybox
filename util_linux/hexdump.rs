@@ -21,7 +21,7 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  static mut stdin: *mut _IO_FILE;
+  static mut stdin: *mut FILE;
 
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
@@ -89,11 +89,11 @@ pub type __off64_t = libc::c_long;
 pub type smallint = libc::c_schar;
 pub type off_t = __off64_t;
 
-use crate::librb::_IO_FILE;
+
 
 pub type _IO_lock_t = ();
 
-use crate::librb::_IO_marker;
+
 
 use crate::librb::FILE;
 
