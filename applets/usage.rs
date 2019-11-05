@@ -3,7 +3,8 @@ pub struct usage_data {
   pub usage: &'static str,
 }
 
-static mut usage_array: [usage_data; 396] = [
+// This is in exactly the same order as applets in applet_tables.rs.
+static usage_array: [usage_data; 396] = [
   usage_data {
     aname: "gunzip",
     usage: "\
@@ -963,7 +964,8 @@ Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY
 
 \t-f\tDon\'t prompt before overwriting
 \t-i\tInteractive, prompt before overwrite
-\t-n\tDon\'t overwrite an existing file"}
+\t-n\tDon\'t overwrite an existing file"
+  },
   usage_data {
     aname: "nice",
     usage: "\
@@ -971,7 +973,8 @@ Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY
 
 Change scheduling priority, run PROG
 
-\t-n ADJUST\tAdjust priority by ADJUST"}
+\t-n ADJUST\tAdjust priority by ADJUST"
+  },
   usage_data {
     aname: "nl",
     usage: "\
@@ -983,7 +986,8 @@ Write FILEs to standard output with line numbers added
 \t-i N\t\tLine number increment
 \t-s STRING\tUse STRING as line number separator
 \t-v N\t\tStart from N
-\t-w N\t\tWidth of line numbers"}  usage_data {
+\t-w N\t\tWidth of line numbers"},
+  usage_data {
     aname: "nohup",
     usage: "\
 PROG ARGS
