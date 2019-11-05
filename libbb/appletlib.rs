@@ -3,6 +3,7 @@ use std::ffi::CStr;
 use std::ffi::CString;
 
 use crate::applets::applet_tables::{applets, InstallLoc, BB_SUID_DROP, BB_SUID_REQUIRE};
+use crate::applets::usage::usage_array;
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, stat,
@@ -1876,6 +1877,7 @@ static mut packed_scripts: [libc::c_char; 111] = [
   0o330i32 as libc::c_char,
   0o140i32 as libc::c_char,
 ];
+
 /* "Do not compress usage text if uncompressed text is small
  *  and we don't include bunzip2 code for other reasons"
  *
@@ -1901,49 +1903,12 @@ pub unsafe extern "C" fn string_array_len(argv: *mut *mut libc::c_char) -> libc:
 
 #[no_mangle]
 pub unsafe extern "C" fn bb_show_usage() -> ! {
-  panic!("TODO: implement bb_show_usage");
-
-  // let mut p: *const libc::c_char = 0 as *const libc::c_char; /* common string */
-  // p = unpack_bz2_data(
-  //   packed_usage.as_ptr(),
-  //   ::std::mem::size_of::<[libc::c_char; 33501]>() as libc::c_ulong as libc::c_int,
-  //   ::std::mem::size_of::<[libc::c_char; 95697]>() as libc::c_ulong as libc::c_int,
-  // );
-  // let mut usage_string: *const libc::c_char = p;
-  // let mut ap: libc::c_int = find_applet_by_name(applet_name);
-  // if ap < 0i32 || usage_string.is_null() {
-  //   xfunc_die();
-  // }
-  // while ap != 0 {
-  //   loop {
-  //     let fresh0 = p;
-  //     p = p.offset(1);
-  //     if !(*fresh0 != 0) {
-  //       break;
-  //     }
-  //   }
-  //   ap -= 1
-  // }
-  // full_write2_str(bb_banner.as_ptr());
-  // full_write2_str(b" multi-call binary.\n\x00" as *const u8 as *const libc::c_char);
-  // if *p as libc::c_int == '\u{8}' as i32 {
-  //   full_write2_str(b"\nNo help available\n\x00" as *const u8 as *const libc::c_char);
-  // } else {
-  //   full_write2_str(b"\nUsage: \x00" as *const u8 as *const libc::c_char);
-  //   full_write2_str(applet_name);
-  //   if *p.offset(0) != 0 {
-  //     if *p.offset(0) as libc::c_int != '\n' as i32 {
-  //       full_write2_str(b" \x00" as *const u8 as *const libc::c_char);
-  //     }
-  //     full_write2_str(p);
-  //   }
-  //   full_write2_str(b"\n\x00" as *const u8 as *const libc::c_char);
-  // }
-  // xfunc_die();
-}
-
-unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
-  applet_names_sorted().binary_search(&name).ok()
+  let aname = ptr_to_str(applet_name);
+  match usage(&aname) {
+    None | Some("\x08") => println!("No help available"),
+    Some(usage_msg) => println!("Usage: {} {}", aname, usage_msg),
+  }
+  xfunc_die();
 }
 
 /* The code below can well be in applets/applets.c, as it is used only
@@ -2374,22 +2339,6 @@ unsafe fn check_suid(applet_no: usize) {
   llist_free(suid_config as *mut llist_t, None);
 }
 
-unsafe fn applet_names_sorted() -> Vec<&'static str> {
-  let mut ret: Vec<&str> = applets.iter().map(|a| a.name).collect();
-  ret.sort();
-  ret
-}
-
-fn install_loc_to_string(install_loc: InstallLoc) -> String {
-  String::from(match install_loc {
-    InstallLoc::DIR_USR_SBIN => "/usr/sbin/",
-    InstallLoc::DIR_USR_BIN => "/usr/bin/",
-    InstallLoc::DIR_SBIN => "/sbin/",
-    InstallLoc::DIR_BIN => "/bin/",
-    InstallLoc::DIR_ROOT => "/",
-  })
-}
-
 /* create (sym)links for each applet */
 unsafe fn install_links(
   mut rustybox_path: *const libc::c_char,
@@ -2432,11 +2381,6 @@ unsafe fn install_links(
   }
 }
 
-unsafe fn find_script_by_name(name: &str) -> Option<usize> {
-  find_applet_by_name(name)
-    .and_then(|applet_no| applet_numbers.iter().position(|&i| i as usize == applet_no))
-}
-
 // Originally:
 // int scripted_main(int argc UNUSED_PARAM, char **argv)
 // {
@@ -2462,65 +2406,6 @@ pub unsafe extern "C" fn scripted_main(
   };
   ::std::process::exit(exitcode)
 }
-
-/* Helpers for daemonization.
- *
- * bb_daemonize(flags) = daemonize, does not compile on NOMMU
- *
- * bb_daemonize_or_rexec(flags, argv) = daemonizes on MMU (and ignores argv),
- *      rexec's itself on NOMMU with argv passed as command line.
- * Thus bb_daemonize_or_rexec may cause your <applet>_main() to be re-executed
- * from the start. (It will detect it and not reexec again second time).
- * You have to audit carefully that you don't do something twice as a result
- * (opening files/sockets, parsing config files etc...)!
- *
- * Both of the above will redirect fd 0,1,2 to /dev/null and drop ctty
- * (will do setsid()).
- *
- * fork_or_rexec(argv) = bare-bones fork on MMU,
- *      "vfork + re-exec ourself" on NOMMU. No fd redirection, no setsid().
- *      On MMU ignores argv.
- *
- * Helper for network daemons in foreground mode:
- *
- * bb_sanitize_stdio() = make sure that fd 0,1,2 are opened by opening them
- * to /dev/null if they are not.
- */
-/* internal use */
-//DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
-/* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
-/* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
-/* { "-", NULL } */
-/* BSD-derived getopt() functions require that optind be set to 1 in
- * order to reset getopt() state.  This used to be generally accepted
- * way of resetting getopt().  However, glibc's getopt()
- * has additional getopt() state beyond optind (specifically, glibc
- * extensions such as '+' and '-' at the start of the string), and requires
- * that optind be set to zero to reset its state.  BSD-derived versions
- * of getopt() misbehaved if optind is set to 0 in order to reset getopt(),
- * and glibc's getopt() used to coredump if optind is set 1 in order
- * to reset getopt().
- * Then BSD introduced additional variable "optreset" which should be
- * set to 1 in order to reset getopt().  Sigh.  Standards, anyone?
- *
- * By ~2008, OpenBSD 3.4 was changed to survive glibc-like optind = 0
- * (to interpret it as if optreset was set).
- */
-/*def __GLIBC__*/
-/* BSD style */
-/* Having next pointer as a first member allows easy creation
- * of "llist-compatible" structs, and using llist_FOO functions
- * on them.
- */
-/* BTW, surprisingly, changing API to
- *   llist_t *llist_add_to(llist_t *old_head, void *data)
- * etc does not result in smaller code... */
-/* start_stop_daemon and udhcpc are special - they want
- * to create pidfiles regardless of FEATURE_PIDFILE */
-/* True only if we created pidfile which is *file*, not /dev/null etc */
-/* We need to export XXX_main from libbusybox
- * only if we build "individual" binaries
- */
 
 /* Embedded script support */
 #[no_mangle]
@@ -2661,10 +2546,6 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
       return 0;
     }
 
-    /* We support "busybox /a/path/to/applet args..." too. Allows for
-     * "#!/bin/busybox"-style wrappers */
-    applet_name = bb_get_last_path_component_nostrip(str_to_ptr(&argv[1]));
-
     if argv[1] == "--help" {
       /* "busybox --help [<applet>]" */
       if argv.len() < 3 {
@@ -2673,14 +2554,14 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
         return 0;
       } else {
         /* convert to "<applet> --help" */
-        run_applet_and_exit(
-          &ptr_to_str(applet_name),
-          &[argv[2].clone(), "--help".into()],
-        );
+        run_applet_and_exit(&argv[2], &[argv[2].clone(), "--help".into()]);
       }
     }
 
     /* "busybox <applet> arg1 arg2 ..." */
+    /* We support "busybox /a/path/to/applet args..." too. Allows for
+     * "#!/bin/busybox"-style wrappers */
+    applet_name = bb_get_last_path_component_nostrip(str_to_ptr(&argv[1]));
     run_applet_and_exit(&ptr_to_str(applet_name), &argv[1..]);
   }
 }
@@ -2767,4 +2648,37 @@ fn str_vec_to_ptrs(strings: &[String]) -> *mut *mut libc::c_char {
   // small memory leak, but we'll live with it for now.
   let mut nodrop = ::std::mem::ManuallyDrop::new(ret);
   nodrop.as_mut_ptr()
+}
+
+// These could be lazy_static but that would introduce another dependency.
+unsafe fn applet_names_sorted() -> Vec<&'static str> {
+  let mut ret: Vec<&str> = applets.iter().map(|a| a.name).collect();
+  ret.sort();
+  ret
+}
+unsafe fn usage(app_name: &str) -> Option<&'static str> {
+  // This isn't necessarily the fastest way to do this since it involves a
+  // linear search over usage_array but sort would require another alloc and
+  // this whole setup will hopefully change soon anyways.
+  // let name = applet_names_sorted()[applet_no];
+  usage_array
+    .iter()
+    .position(|x| x.aname == app_name)
+    .map(|i| usage_array[i].usage)
+}
+unsafe fn find_script_by_name(name: &str) -> Option<usize> {
+  find_applet_by_name(name)
+    .and_then(|applet_no| applet_numbers.iter().position(|&i| i as usize == applet_no))
+}
+unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
+  applet_names_sorted().binary_search(&name).ok()
+}
+fn install_loc_to_string(install_loc: InstallLoc) -> String {
+  String::from(match install_loc {
+    InstallLoc::DIR_USR_SBIN => "/usr/sbin/",
+    InstallLoc::DIR_USR_BIN => "/usr/bin/",
+    InstallLoc::DIR_SBIN => "/sbin/",
+    InstallLoc::DIR_BIN => "/bin/",
+    InstallLoc::DIR_ROOT => "/",
+  })
 }

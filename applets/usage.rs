@@ -3,8 +3,10 @@ pub struct usage_data {
   pub usage: &'static str,
 }
 
-// This is in exactly the same order as applets in applet_tables.rs.
-static usage_array: [usage_data; 396] = [
+// This is in exactly the same order as `applets` in applet_tables.rs.
+// TODO: "\x08" marks no usage info. We should prefer an option type. This
+// should probably go into `applets`.
+pub static usage_array: [usage_data; 396] = [
   usage_data {
     aname: "gunzip",
     usage: "\
