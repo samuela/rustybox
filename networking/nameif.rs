@@ -76,11 +76,6 @@ extern "C" {
   fn delete_eth_table(ch: *mut ethtable_t);
 }
 
-
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::int32_t;
 use crate::librb::uint16_t;

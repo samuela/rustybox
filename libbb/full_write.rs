@@ -4,8 +4,8 @@ extern "C" {
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred
 

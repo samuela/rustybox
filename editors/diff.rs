@@ -130,31 +130,18 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
-
-
-
-
-
 use crate::librb::__off64_t;
 
-
-
-
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
-
-
-use crate::librb::FILE;
 use crate::librb::__compar_fn_t;
+use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

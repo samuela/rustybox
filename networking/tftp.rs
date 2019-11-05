@@ -170,29 +170,16 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-
-
-
-
-
-
-
-
 use crate::librb::__off_t;
 
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::off_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
 use crate::librb::timespec;

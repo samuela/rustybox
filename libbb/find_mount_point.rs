@@ -12,18 +12,6 @@ extern "C" {
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::dev_t;
 use crate::librb::stat;
 use crate::librb::timespec;

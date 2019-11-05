@@ -99,18 +99,16 @@ extern "C" {
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
 }
 
-
-
 use crate::librb::__ino64_t;
 
 use crate::librb::__off64_t;
 
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::uint8_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -139,10 +137,8 @@ pub struct sockaddr {
   pub sa_data: [libc::c_char; 14],
 }
 
-
-
-use crate::librb::FILE;
 use crate::librb::__compar_fn_t;
+use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 #[derive(Copy, Clone)]

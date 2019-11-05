@@ -184,15 +184,10 @@ extern "C" {
   fn ll_index_to_flags(idx: libc::c_int) -> libc::c_uint;
 }
 
-
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::size_t;
-use crate::librb::int8_t;
 use crate::librb::int16_t;
+use crate::librb::int8_t;
+use crate::librb::size_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -278,8 +273,6 @@ pub union C2RustUnnamed_1 {
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-
-
 
 use crate::librb::FILE;
 pub type family_t = int8_t;

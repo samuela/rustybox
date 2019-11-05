@@ -16,15 +16,7 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
 }
 
-
-
-
 use crate::librb::__mode_t;
-
-
-
-
-
 
 use crate::librb::mode_t;
 use crate::librb::stat;

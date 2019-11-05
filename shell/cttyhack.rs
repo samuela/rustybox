@@ -30,8 +30,8 @@ extern "C" {
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>

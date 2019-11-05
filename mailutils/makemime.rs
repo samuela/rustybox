@@ -34,9 +34,6 @@ extern "C" {
   fn printfile_base64(fname: *const libc::c_char);
 }
 
-
-
-
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;

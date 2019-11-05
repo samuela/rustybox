@@ -45,12 +45,10 @@ extern "C" {
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-
-
-use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uint32_t;
 
 /* %_A */
 /* rep count set, not default */

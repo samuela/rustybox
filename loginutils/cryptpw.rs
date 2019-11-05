@@ -39,8 +39,6 @@ extern "C" {
   fn crypt_make_pw_salt(p: *mut libc::c_char, algo: *const libc::c_char) -> *mut libc::c_char;
 }
 
-
-
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 

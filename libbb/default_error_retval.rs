@@ -1,5 +1,3 @@
-
-
 use crate::librb::uint8_t;
 
 /*

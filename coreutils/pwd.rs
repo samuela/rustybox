@@ -16,17 +16,6 @@ extern "C" {
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint32_t;

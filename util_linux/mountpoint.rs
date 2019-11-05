@@ -24,17 +24,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-
-
 use crate::librb::__dev_t;
-
-
-
-
-
-
-
-
 
 use crate::librb::dev_t;
 use crate::librb::ino_t;

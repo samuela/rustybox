@@ -21,8 +21,8 @@ extern "C" {
 }
 
 use crate::librb::__off64_t;
-use crate::librb::uint32_t;
 use crate::librb::off_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

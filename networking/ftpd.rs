@@ -217,30 +217,19 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-
-
-
-
-
-
 use crate::librb::__mode_t;
-
-
 
 use crate::librb::__pid_t;
 
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
-use crate::librb::smallint;
-use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
 use crate::librb::time_t;
@@ -621,7 +610,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-
+  
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

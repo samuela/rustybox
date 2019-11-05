@@ -4,10 +4,9 @@ extern "C" {
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 
-
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 /*
  * CRC32 table fill function

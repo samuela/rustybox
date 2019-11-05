@@ -8,17 +8,6 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::stat;
 
 /*

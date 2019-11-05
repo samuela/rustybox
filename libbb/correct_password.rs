@@ -30,9 +30,8 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-use crate::librb::size_t;
 use crate::librb::passwd;
+use crate::librb::size_t;
 
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.

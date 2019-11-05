@@ -28,8 +28,8 @@ extern "C" {
 }
 use crate::librb::__dev_t;
 use crate::librb::__mode_t;
-use crate::librb::mode_t;
 use crate::librb::dev_t;
+use crate::librb::mode_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

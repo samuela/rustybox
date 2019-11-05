@@ -75,19 +75,11 @@ extern "C" {
 
 use crate::librb::__dev_t;
 
-
-
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __fsid_t {
   pub __val: [libc::c_int; 2],
 }
-
-
 
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;

@@ -50,10 +50,8 @@ extern "C" {
   fn unicode_strwidth(string: *const libc::c_char) -> size_t;
 }
 
-
-
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 /* expand - convert tabs to spaces

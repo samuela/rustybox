@@ -163,33 +163,18 @@ extern "C" {
   fn regfree(__preg: *mut regex_t);
 }
 
-
 pub type __int64_t = libc::c_long;
 
-
-
-
-
-
-
-
-
-
-
-
-
+use crate::librb::int32_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
 use crate::librb::timespec;
-use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint32_t;
+use crate::librb::signal::__sighandler_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::stat;
-use crate::librb::signal::__sighandler_t;
-
-
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -200,8 +185,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

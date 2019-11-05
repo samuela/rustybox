@@ -12,8 +12,8 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 /*
  * Mini basename implementation for busybox

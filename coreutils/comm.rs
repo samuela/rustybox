@@ -22,8 +22,6 @@ extern "C" {
   static mut option_mask32: uint32_t;
 }
 
-
-
 use crate::librb::uint32_t;
 use crate::librb::FILE;
 

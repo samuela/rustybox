@@ -163,14 +163,11 @@ extern "C" {
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
 
-
-
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
 use crate::librb::__pid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__useconds_t;
-
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::gid_t;

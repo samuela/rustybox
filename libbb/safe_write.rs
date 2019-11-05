@@ -6,8 +6,8 @@ extern "C" {
   static bb_errno: *mut libc::c_int;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 /*
  * Busybox main internal header file

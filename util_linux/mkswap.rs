@@ -43,12 +43,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 use crate::librb::uoff_t;
 
 /*

@@ -31,20 +31,9 @@ extern "C" {
   ) -> !;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-use crate::librb::uint8_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uint8_t;
 
 /*
  * Utility routines.

@@ -68,8 +68,8 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
-use crate::librb::size_t;
 use crate::librb::ptrdiff_t;
+use crate::librb::size_t;
 
 /*
  * printf - format and print data

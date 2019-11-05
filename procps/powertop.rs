@@ -139,14 +139,14 @@ extern "C" {
   #[no_mangle]
   fn get_cpu_count() -> libc::c_uint;
 }
-use crate::librb::__uid_t;
 use crate::librb::__ino64_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__off64_t;
 
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -168,8 +168,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

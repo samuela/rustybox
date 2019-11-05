@@ -41,27 +41,21 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
 pub type __int64_t = libc::c_long;
 use crate::librb::__uint64_t;
 
-
-
-
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::time_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-
-
 
 use crate::librb::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */
@@ -139,7 +133,7 @@ pub unsafe extern "C" fn dumpleases_main(
   fd = xopen(file, 0i32);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
-
+  
   printf(
     b"Mac %-14sIP %-13sHost %-15sExpires %s\n\x00" as *const u8 as *const libc::c_char,
     b"Address\x00" as *const u8 as *const libc::c_char,

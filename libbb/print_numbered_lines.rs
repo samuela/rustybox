@@ -16,11 +16,7 @@ extern "C" {
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
 }
 
-
 use crate::librb::smallint;
-
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

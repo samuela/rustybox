@@ -76,11 +76,11 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use crate::librb::uint32_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use crate::librb::smallint;
 use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -89,8 +89,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-
-
 
 use crate::librb::termios;
 //extern const int const_int_1;

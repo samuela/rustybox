@@ -33,21 +33,14 @@ extern "C" {
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
 }
 
-
-
-
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 
-use crate::librb::__off_t;
 use crate::librb::__off64_t;
+use crate::librb::__off_t;
 
-
-
-
-
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

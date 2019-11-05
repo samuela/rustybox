@@ -8,10 +8,7 @@ extern "C" {
   fn bb_die_memory_exhausted() -> !;
 }
 
-
 use crate::librb::size_t;
-
-
 
 use crate::librb::FILE;
 

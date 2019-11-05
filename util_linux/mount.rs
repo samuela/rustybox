@@ -197,10 +197,7 @@ extern "C" {
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-
 use crate::librb::size_t;
-
-
 
 use crate::librb::FILE;
 
@@ -242,19 +239,6 @@ pub const MS_NOEXEC: C2RustUnnamed = 8;
 pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;

@@ -30,13 +30,8 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
-
-use crate::librb::FILE;
 use crate::librb::uoff_t;
+use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_progress_t {

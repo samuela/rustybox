@@ -56,17 +56,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
-
-
-
 use crate::librb::__off64_t;
 use crate::librb::__off_t;
-
-
-
 
 use crate::librb::stat;
 use crate::librb::timespec;

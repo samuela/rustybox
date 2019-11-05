@@ -234,30 +234,21 @@ extern "C" {
   fn semop(__semid: libc::c_int, __sops: *mut sembuf, __nsops: size_t) -> libc::c_int;
 }
 
-
-
-
-
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;
-
-
 
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
 pub type __key_t = libc::c_int;
 
-
-
-
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -268,9 +259,9 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::stat;
@@ -377,8 +368,6 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 use crate::librb::signal::__sighandler_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

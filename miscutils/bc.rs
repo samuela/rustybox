@@ -146,10 +146,6 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
-
 use crate::librb::int8_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;

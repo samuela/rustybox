@@ -84,8 +84,6 @@ extern "C" {
   fn send_mail_command(fmt: *const libc::c_char, param: *const libc::c_char) -> *mut libc::c_char;
 }
 
-
-
 use crate::librb::__pid_t;
 
 use crate::librb::uint32_t;

@@ -54,8 +54,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
 use crate::librb::FILE;
 
 #[derive(Copy, Clone)]

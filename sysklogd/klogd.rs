@@ -51,9 +51,9 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-use crate::librb::uint32_t;
-use crate::librb::smallint;
 use crate::librb::signal::__sighandler_t;
+use crate::librb::smallint;
+use crate::librb::uint32_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_uint;

@@ -104,11 +104,6 @@ extern "C" {
   fn xrtnl_open(rth: *mut rtnl_handle);
 }
 
-
-
-
-
-
 use crate::librb::int16_t;
 use crate::librb::int8_t;
 use crate::librb::size_t;

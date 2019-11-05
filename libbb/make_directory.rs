@@ -16,15 +16,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-
-
-
 use crate::librb::__mode_t;
-
-
-
-
-
 
 use crate::librb::mode_t;
 use crate::librb::stat;

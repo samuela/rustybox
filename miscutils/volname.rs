@@ -14,8 +14,8 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
 /*
  * Reads and displays CD-ROM volume name
  *

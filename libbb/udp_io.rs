@@ -33,15 +33,12 @@ extern "C" {
   fn setsockopt_1(fd: libc::c_int, level: libc::c_int, optname: libc::c_int) -> libc::c_int;
 }
 
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

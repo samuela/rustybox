@@ -324,8 +324,6 @@ extern "C" {
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
 
-
-
 use crate::librb::__pid_t;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;

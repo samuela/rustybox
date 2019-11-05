@@ -8,14 +8,11 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
-
-
-
-use crate::librb::uint8_t;
+use crate::librb::size_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

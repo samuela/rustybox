@@ -97,8 +97,6 @@ extern "C" {
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
 
-
-
 pub type __rlim64_t = libc::c_ulong;
 
 use crate::librb::uint8_t;

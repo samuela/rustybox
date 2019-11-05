@@ -85,23 +85,13 @@ extern "C" {
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
 }
 
-
-
-
-
 use crate::librb::__mode_t;
 
-
-
-
-
-
-
-use crate::librb::uint32_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

@@ -77,24 +77,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 use crate::librb::off_t;
 pub type socklen_t = __socklen_t;
@@ -143,8 +129,6 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

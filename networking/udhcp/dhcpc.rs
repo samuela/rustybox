@@ -299,13 +299,10 @@ extern "C" {
   fn sprint_nip6(dest: *mut libc::c_char, ip: *const uint8_t) -> libc::c_int;
 }
 
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint16_t = uint16_t;
 pub type bb__aliased_uint32_t = uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -318,9 +315,9 @@ pub type bb__aliased_uint32_t = uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

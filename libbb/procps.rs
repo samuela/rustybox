@@ -110,29 +110,17 @@ extern "C" {
   fn getpagesize() -> libc::c_int;
 }
 
-
-
-
-
-
 use crate::librb::__ino64_t;
-
-
 
 use crate::librb::__off64_t;
 
-
-
-
-
-
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uid_t;
+use crate::librb::uint16_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -145,8 +133,6 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

@@ -76,9 +76,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
 use crate::librb::uint32_t;
 
 /*
@@ -131,10 +128,8 @@ use crate::librb::uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::size_t;
 use crate::librb::pid_t;
-
-
+use crate::librb::size_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

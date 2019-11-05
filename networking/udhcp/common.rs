@@ -113,14 +113,11 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
-
-
-
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;

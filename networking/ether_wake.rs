@@ -53,13 +53,11 @@ extern "C" {
   fn ether_hostton(__hostname: *const libc::c_char, __addr: *mut ether_addr) -> libc::c_int;
 }
 
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

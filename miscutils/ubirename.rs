@@ -27,8 +27,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
 use crate::librb::int16_t;
 use crate::librb::int32_t;
 use crate::librb::int8_t;

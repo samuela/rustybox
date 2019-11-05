@@ -33,12 +33,10 @@ extern "C" {
   fn free(__ptr: *mut libc::c_void);
 }
 
-
-
 use crate::librb::int32_t;
+use crate::librb::size_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::size_t;
 pub type uint64 = uint64_t;
 pub type uint32 = uint32_t;
 pub type int32 = int32_t;

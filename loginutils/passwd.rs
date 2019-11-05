@@ -87,7 +87,6 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-
 use crate::librb::__mode_t;
 use crate::librb::__uid_t;
 pub type __rlim64_t = libc::c_ulong;

@@ -85,20 +85,15 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint16_t = uint16_t;
 pub type bb__aliased_uint32_t = uint32_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -153,8 +148,6 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

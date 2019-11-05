@@ -43,10 +43,8 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
-
-
+use crate::librb::ssize_t;
 
 use crate::librb::termios;
 unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {

@@ -1,8 +1,7 @@
 use libc;
 
-
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
+use crate::librb::uint8_t;
 
 /*
  * Busybox main internal header file

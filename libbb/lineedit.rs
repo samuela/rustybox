@@ -217,25 +217,16 @@ extern "C" {
   static lineedit_ptr_to_statics: *mut lineedit_statics;
 }
 
-
-
 use crate::librb::__uint32_t;
 pub type __int64_t = libc::c_long;
 
-
 use crate::librb::__ino64_t;
-
-
 
 use crate::librb::__off64_t;
 
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 pub type __clock_t = libc::c_long;
-
-
-
-
 
 use crate::librb::int16_t;
 use crate::librb::int32_t;

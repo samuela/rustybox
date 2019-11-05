@@ -62,18 +62,9 @@ extern "C" {
   fn print_e2flags(f: *mut FILE, flags: libc::c_ulong, options: libc::c_uint);
 }
 
-
-
-
-
 use crate::librb::__ino64_t;
 
-
-
 use crate::librb::__off64_t;
-
-
-
 
 use crate::librb::uint32_t;
 
@@ -88,8 +79,6 @@ pub struct dirent {
 }
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
 
 use crate::librb::FILE;
 

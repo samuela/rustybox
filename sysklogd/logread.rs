@@ -48,16 +48,11 @@ extern "C" {
   ) -> *mut libc::c_void;
 }
 
-
-
-
 pub type __key_t = libc::c_int;
 use crate::librb::int32_t;
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
 pub type key_t = __key_t;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

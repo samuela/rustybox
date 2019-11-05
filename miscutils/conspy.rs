@@ -101,25 +101,20 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::__dev_t;
 use crate::librb::__mode_t;
 
-
 use crate::librb::__pid_t;
 
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::dev_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::pid_t;
-use crate::librb::dev_t;
-use crate::librb::signal::__sighandler_t;
-
-
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -130,8 +125,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

@@ -282,19 +282,7 @@ extern "C" {
   fn sun_write_table();
 }
 
-
-
-
-
-
-
-
 use crate::librb::__off64_t;
-
-
-
-
-
 
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;

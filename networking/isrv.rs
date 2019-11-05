@@ -40,15 +40,13 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-
-
-use crate::librb::__time_t;
 use crate::librb::__suseconds_t;
+use crate::librb::__time_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
+use crate::librb::size_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::time_t;
 use crate::librb::timeval;

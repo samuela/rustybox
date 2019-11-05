@@ -53,7 +53,6 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
@@ -67,8 +66,8 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
 use crate::librb::size_t;
+use crate::librb::smallint;
 pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

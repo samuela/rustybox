@@ -123,21 +123,19 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-
-
 use crate::librb::__pid_t;
+use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
 use crate::librb::__useconds_t;
-use crate::librb::__suseconds_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::timeval;
 pub type __fd_mask = libc::c_long;
@@ -345,7 +343,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-
+      
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

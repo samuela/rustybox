@@ -6,9 +6,8 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
-
-use crate::librb::uint8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
 use crate::librb::size_t;
 #[derive(Copy, Clone)]

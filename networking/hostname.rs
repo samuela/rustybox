@@ -51,10 +51,8 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-
-
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
@@ -70,8 +68,6 @@ pub struct hostent {
   pub h_length: libc::c_int,
   pub h_addr_list: *mut *mut libc::c_char,
 }
-
-
 
 use crate::librb::FILE;
 /*

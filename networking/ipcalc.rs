@@ -44,8 +44,8 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint32_t;
 use crate::librb::smallint;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {

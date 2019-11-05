@@ -6,11 +6,6 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 }
 
-
-
-
-
-
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PRINTABLE_META: C2RustUnnamed = 256;

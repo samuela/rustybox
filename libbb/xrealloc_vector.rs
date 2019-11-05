@@ -6,8 +6,8 @@ extern "C" {
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
 }
 
-use crate::librb::uint8_t;
 use crate::librb::size_t;
+use crate::librb::uint8_t;
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
  * at least v[idx] and v[idx+1], for all idx values.
  * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)

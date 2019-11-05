@@ -18,12 +18,10 @@ extern "C" {
   fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
 }
 
-
-
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type wchar_t = libc::c_int;
 #[derive(Copy, Clone)]
 #[repr(C)]

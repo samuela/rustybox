@@ -42,18 +42,9 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-
-
-
 use crate::librb::__ino64_t;
 
-
-
 use crate::librb::__off64_t;
-
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -67,8 +58,6 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

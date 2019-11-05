@@ -14,12 +14,10 @@ extern "C" {
   fn s_pstm_sub(a: *mut pstm_int, b: *mut pstm_int, c: *mut pstm_int) -> int32;
 }
 
-
-
 use crate::librb::int32_t;
+use crate::librb::size_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::size_t;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *

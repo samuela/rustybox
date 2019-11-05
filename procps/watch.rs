@@ -28,9 +28,8 @@ extern "C" {
   fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
 }
 
-
-use crate::librb::uint32_t;
 use crate::librb::time_t;
+use crate::librb::uint32_t;
 pub type duration_t = libc::c_double;
 
 /*

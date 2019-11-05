@@ -43,18 +43,7 @@ extern "C" {
   );
 }
 
-
-
-
-
-
 use crate::librb::__mode_t;
-
-
-
-
-
-
 
 use crate::librb::mode_t;
 use crate::librb::size_t;

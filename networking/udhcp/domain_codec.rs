@@ -18,8 +18,8 @@ extern "C" {
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 
-use crate::librb::uint8_t;
 use crate::librb::size_t;
+use crate::librb::uint8_t;
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";
  * returns a newly allocated string containing the space-separated domains,

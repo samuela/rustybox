@@ -231,18 +231,15 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 use crate::librb::__dev_t;
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 
-
 use crate::librb::__off64_t;
 
 use crate::librb::__suseconds_t;
-
-
 
 use crate::librb::smallint;
 
@@ -261,8 +258,6 @@ use crate::librb::mode_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::timeval;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

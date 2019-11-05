@@ -55,13 +55,11 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 pub type smalluint = libc::c_uchar;
 pub type socklen_t = __socklen_t;

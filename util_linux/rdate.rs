@@ -38,9 +38,6 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-
-
-
 use crate::librb::int32_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;

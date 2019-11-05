@@ -72,13 +72,11 @@ extern "C" {
   fn vfork() -> libc::c_int;
 }
 
-
-
 use crate::librb::__pid_t;
 use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;
-use crate::librb::signal::__sighandler_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

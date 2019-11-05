@@ -149,27 +149,22 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::__dev_t;
 
 use crate::librb::__ino64_t;
 
-
 use crate::librb::__nlink_t;
 use crate::librb::__off64_t;
-
-
 
 pub type __blkcnt64_t = libc::c_long;
 
 use crate::librb::gid_t;
+use crate::librb::ino_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
-use crate::librb::ino_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

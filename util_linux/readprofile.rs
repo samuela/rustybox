@@ -59,8 +59,6 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
 }
 
-
-
 use crate::librb::__uint64_t;
 
 use crate::librb::size_t;

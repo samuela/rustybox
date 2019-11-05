@@ -20,13 +20,12 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
-
 use crate::librb::__off64_t;
 
-use crate::librb::uint8_t;
-use crate::librb::uint64_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

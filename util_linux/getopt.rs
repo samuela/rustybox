@@ -75,9 +75,9 @@ pub struct option {
   pub val: libc::c_int,
 }
 
-use crate::librb::uint32_t;
-use crate::librb::size_t;
 use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
+use crate::librb::uint32_t;
 
 /*
  * getopt.c - Enhanced implementation of BSD getopt(1)

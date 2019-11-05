@@ -35,16 +35,16 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
+use crate::librb::__uid_t;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::time_t;
 use crate::librb::size_t;
+use crate::librb::time_t;
+use crate::librb::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ipc_perm {
@@ -153,9 +153,9 @@ pub struct shm_info {
   pub swap_attempts: __syscall_ulong_t,
   pub swap_successes: __syscall_ulong_t,
 }
-use crate::librb::uint32_t;
 use crate::librb::group;
 use crate::librb::passwd;
+use crate::librb::uint32_t;
 
 /*
  * ipcs.c -- provides information on allocated ipc resources.

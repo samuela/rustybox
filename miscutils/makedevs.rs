@@ -67,24 +67,18 @@ extern "C" {
 }
 
 use crate::librb::__dev_t;
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;
 
-
-
-
-
-
-
-use crate::librb::uint32_t;
-use crate::librb::size_t;
-use crate::librb::gid_t;
-use crate::librb::uid_t;
 use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uid_t;
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_int;

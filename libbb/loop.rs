@@ -31,18 +31,10 @@ extern "C" {
 }
 use crate::librb::__dev_t;
 
-
-
 use crate::librb::__mode_t;
 
-
-
-
-
-
-
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type __u8 = libc::c_uchar;

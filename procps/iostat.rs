@@ -80,15 +80,10 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
 
-
-
-
-use crate::librb::uint32_t;
-use crate::librb::smallint;
 use crate::librb::size_t;
+use crate::librb::smallint;
 use crate::librb::time_t;
-
-
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

@@ -147,27 +147,17 @@ extern "C" {
   fn sed_free_and_close_stuff();
 }
 
-
-
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;
 
-
-
-
-
-
-
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::smallint;
 use crate::librb::size_t;
+use crate::librb::smallint;
 use crate::librb::stat;
 use crate::librb::timespec;
-
-
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 use crate::librb::FILE;
 /* BSD-derived getopt() functions require that optind be set to 1 in

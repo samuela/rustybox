@@ -8,8 +8,8 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

@@ -6,16 +6,6 @@ extern "C" {
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
-
 use crate::librb::stat;
 use crate::librb::timespec;
 

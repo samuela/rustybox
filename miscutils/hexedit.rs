@@ -92,25 +92,19 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
 pub type __int64_t = libc::c_long;
 
 use crate::librb::__off64_t;
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::smallint;
-use crate::librb::size_t;
 use crate::librb::off_t;
-
-
+use crate::librb::size_t;
+use crate::librb::smallint;
 
 use crate::librb::FILE;
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

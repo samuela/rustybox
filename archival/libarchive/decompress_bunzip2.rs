@@ -37,9 +37,6 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-
-
-
 use crate::librb::off_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;

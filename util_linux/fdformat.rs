@@ -33,18 +33,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::stat;

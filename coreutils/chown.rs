@@ -46,15 +46,7 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-
-
-
 use crate::librb::__gid_t;
-
-
-
-
-
 
 use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;

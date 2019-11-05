@@ -195,32 +195,22 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
-
-
-
+use crate::librb::__uid_t;
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uid_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type DIR = __dirstream;
 
@@ -285,8 +275,6 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-
-
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

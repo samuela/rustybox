@@ -386,28 +386,16 @@ pub struct __va_list_tag {
 }
 use crate::librb::size_t;
 
-
-
 use crate::librb::__uint32_t;
 
 use crate::librb::__uid_t;
 
-
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
-
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 pub type __clock_t = libc::c_long;
-
-
-
-
-
-
-
-
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
@@ -457,9 +445,9 @@ pub struct utsname {
   pub domainname: [libc::c_char; 65],
 }
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -473,8 +461,8 @@ pub type uintptr_t = libc::c_ulong;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::pid_t;
 use crate::librb::mode_t;
+use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
 pub type sigset_t = __sigset_t;
 use crate::librb::timeval;

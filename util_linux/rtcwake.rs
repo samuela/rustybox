@@ -78,7 +78,6 @@ extern "C" {
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
 
-
 use crate::librb::__useconds_t;
 
 use crate::librb::size_t;

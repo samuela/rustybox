@@ -117,14 +117,10 @@ extern "C" {
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
 
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -136,8 +132,8 @@ pub type intptr_t = libc::c_long;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
 use crate::librb::size_t;
+use crate::librb::smallint;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -191,8 +187,6 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

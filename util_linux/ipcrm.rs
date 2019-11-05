@@ -57,10 +57,10 @@ extern "C" {
   #[no_mangle]
   fn semget(__key: key_t, __nsems: libc::c_int, __semflg: libc::c_int) -> libc::c_int;
 }
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
+use crate::librb::__uid_t;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 use crate::librb::size_t;

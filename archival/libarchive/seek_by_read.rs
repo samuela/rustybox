@@ -5,7 +5,6 @@ extern "C" {
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
 }
 
-
 use crate::librb::off_t;
 
 /*  If we are reading through a pipe, or from stdin then we can't lseek,

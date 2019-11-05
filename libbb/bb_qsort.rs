@@ -5,8 +5,8 @@ extern "C" {
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 }
-use crate::librb::size_t;
 use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 
 /*
  * Wrapper for common string vector sorting operation

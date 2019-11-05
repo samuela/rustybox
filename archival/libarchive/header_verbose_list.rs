@@ -17,12 +17,6 @@ extern "C" {
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 }
 
-
-
-
-
-
-
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;

@@ -154,17 +154,14 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
 use crate::librb::__pid_t;
-use crate::librb::__time_t;
 use crate::librb::__suseconds_t;
+use crate::librb::__time_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::int32_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::timeval;
 #[derive(Copy, Clone)]
 #[repr(C)]

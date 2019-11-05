@@ -65,15 +65,9 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
 use crate::librb::__gid_t;
 
 use crate::librb::__mode_t;
-
-
-
 
 use crate::librb::__uid_t;
 use crate::librb::gid_t;

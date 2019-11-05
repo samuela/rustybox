@@ -250,23 +250,16 @@ extern "C" {
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
 
-
-
-
-
-
-
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 
 pub type __id_t = libc::c_uint;
 use crate::librb::__suseconds_t;
 
-
 use crate::librb::__syscall_slong_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int8_t;
 use crate::librb::int32_t;
+use crate::librb::int8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;

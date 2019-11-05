@@ -159,24 +159,16 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
-
 use crate::librb::__ino64_t;
-
-
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
 
-
-
-use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::size_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -188,10 +180,8 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 use crate::librb::stat;
-use crate::librb::timespec;
 use crate::librb::time_t;
-
-
+use crate::librb::timespec;
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

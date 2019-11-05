@@ -8,20 +8,18 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
-
-
 use crate::librb::__uint64_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint64_t = uint64_t;
-use crate::librb::size_t;
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
 use crate::librb::sha256_ctx_t;
-use crate::librb::sha512_ctx_t;
 use crate::librb::sha3_ctx_t;
+use crate::librb::sha512_ctx_t;
+use crate::librb::size_t;
 /* Constants for SHA512 from FIPS 180-2:4.2.3.
  * SHA256 constants from FIPS 180-2:4.2.2
  * are the most significant half of first 64 elements

@@ -35,17 +35,7 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-
-
-
-
-
-
-
-
 use crate::librb::__suseconds_t;
-
-
 
 use crate::librb::stat;
 use crate::librb::time_t;

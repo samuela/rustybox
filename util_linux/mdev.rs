@@ -351,7 +351,6 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-
 use crate::librb::__dev_t;
 use crate::librb::__gid_t;
 
@@ -364,14 +363,12 @@ use crate::librb::__uid_t;
 use crate::librb::__uint32_t;
 pub type __clock_t = libc::c_long;
 
-
 use crate::librb::__time_t;
 
-
 use crate::librb::__syscall_slong_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

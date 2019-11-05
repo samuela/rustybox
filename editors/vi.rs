@@ -147,28 +147,15 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
 pub type __int64_t = libc::c_long;
-
-
-
-
-
-
-
 
 use crate::librb::__off64_t;
 
-
-
-
-
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -182,11 +169,11 @@ pub type uintptr_t = libc::c_ulong;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::ssize_t;
+use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-use crate::librb::signal::__sigset_t;
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -198,8 +185,6 @@ pub struct __jmp_buf_tag {
 pub type sigjmp_buf = [__jmp_buf_tag; 1];
 use crate::librb::signal::__sighandler_t;
 
-
-
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
@@ -210,8 +195,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_int;

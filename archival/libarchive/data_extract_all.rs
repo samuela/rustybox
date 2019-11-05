@@ -78,17 +78,13 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-
 use crate::librb::__dev_t;
 use crate::librb::__gid_t;
 
 use crate::librb::__mode_t;
 
-
-
 use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
-
 
 use crate::librb::__uid_t;
 use crate::librb::dev_t;

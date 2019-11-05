@@ -29,10 +29,10 @@ extern "C" {
   fn getppid() -> __pid_t;
 }
 
-use crate::librb::__pid_t;
-use crate::librb::uint32_t;
-use crate::librb::pid_t;
 use crate::libbb::llist::llist_t;
+use crate::librb::__pid_t;
+use crate::librb::pid_t;
+use crate::librb::uint32_t;
 
 /*
  * pidof implementation for busybox

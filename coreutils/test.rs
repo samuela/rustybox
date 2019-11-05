@@ -48,14 +48,7 @@ extern "C" {
 }
 pub type __int64_t = libc::c_long;
 
-
-
 use crate::librb::__gid_t;
-
-
-
-
-
 
 use crate::librb::__uid_t;
 pub type int64_t = __int64_t;

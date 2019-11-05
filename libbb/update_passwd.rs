@@ -78,18 +78,15 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
+use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;
-
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
 use crate::librb::__useconds_t;
-
-
 
 use crate::librb::size_t;
 #[derive(Copy, Clone)]
@@ -102,10 +99,8 @@ pub struct flock {
   pub l_pid: __pid_t,
 }
 use crate::librb::stat;
-use crate::librb::timespec;
 use crate::librb::time_t;
-
-
+use crate::librb::timespec;
 
 use crate::librb::FILE;
 

@@ -41,9 +41,6 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-
-
-
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;

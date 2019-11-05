@@ -15,8 +15,8 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-use crate::librb::__time_t;
 use crate::librb::__syscall_slong_t;
+use crate::librb::__time_t;
 use crate::librb::timespec;
 #[derive(Copy, Clone)]
 #[repr(C)]

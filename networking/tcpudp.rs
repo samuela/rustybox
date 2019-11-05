@@ -157,21 +157,17 @@ extern "C" {
   fn ipsvd_perhost_remove(cc: *mut hcc, pid: libc::c_int);
 }
 
-
-
-
-
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
+use crate::librb::gid_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uid_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::gid_t;
-use crate::librb::uid_t;
-use crate::librb::pid_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

@@ -52,17 +52,6 @@ extern "C" {
   fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint32_t;

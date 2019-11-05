@@ -71,9 +71,7 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
-
 use crate::librb::__pid_t;
-
 
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

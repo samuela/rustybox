@@ -61,27 +61,15 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-
 pub type __int64_t = libc::c_long;
-
-
-
-
-
-
-
-
-
-
-
 
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::timespec;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

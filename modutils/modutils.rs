@@ -40,8 +40,8 @@ extern "C" {
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
 }
-use crate::librb::size_t;
 use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct module_entry {

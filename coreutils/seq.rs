@@ -22,8 +22,8 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::uint32_t;
 use crate::librb::size_t;
+use crate::librb::uint32_t;
 pub const OPT_w: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_s: C2RustUnnamed = 2;

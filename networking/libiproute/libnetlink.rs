@@ -56,8 +56,6 @@ pub struct iovec {
   pub iov_len: size_t,
 }
 
-
-
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::time_t;

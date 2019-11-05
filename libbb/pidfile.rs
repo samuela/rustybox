@@ -27,21 +27,11 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
-
-
 use crate::librb::__pid_t;
 
-
-
-
-
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 

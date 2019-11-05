@@ -16,10 +16,7 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-
 use crate::librb::size_t;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

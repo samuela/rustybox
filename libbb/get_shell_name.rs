@@ -12,8 +12,8 @@ extern "C" {
 }
 use crate::librb::__uid_t;
 
-use crate::librb::uid_t;
 use crate::librb::passwd;
+use crate::librb::uid_t;
 
 /*
  * Busybox main internal header file

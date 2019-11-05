@@ -14,13 +14,10 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-
-
-
-use crate::librb::uint8_t;
+use crate::librb::size_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

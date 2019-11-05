@@ -171,14 +171,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-
-
-
-
-
 use crate::librb::__ino64_t;
-
-
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
@@ -189,14 +182,9 @@ pub struct __fsid_t {
   pub __val: [libc::c_int; 2],
 }
 
-
-
-
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -263,9 +251,9 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

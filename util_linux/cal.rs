@@ -49,10 +49,9 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

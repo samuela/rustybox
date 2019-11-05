@@ -22,8 +22,8 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pollfd {

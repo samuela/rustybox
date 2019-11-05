@@ -69,15 +69,14 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
 use crate::librb::__useconds_t;
 
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::signal::__sighandler_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -37,7 +37,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;

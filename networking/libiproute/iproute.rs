@@ -172,17 +172,11 @@ extern "C" {
   fn get_hz() -> libc::c_uint;
 }
 
-
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int8_t;
 use crate::librb::int16_t;
-use crate::librb::uint8_t;
+use crate::librb::int8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -195,8 +189,8 @@ use crate::librb::uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
@@ -205,8 +199,6 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-
-
 
 use crate::librb::FILE;
 pub type family_t = int8_t;

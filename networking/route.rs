@@ -108,11 +108,6 @@ extern "C" {
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
 
-
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -240,8 +235,6 @@ pub union C2RustUnnamed_0 {
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-
-
 
 use crate::librb::FILE;
 #[inline(always)]

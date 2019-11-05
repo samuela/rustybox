@@ -21,9 +21,9 @@ extern "C" {
 pub type __int64_t = libc::c_long;
 
 pub type int64_t = __int64_t;
-use crate::librb::uint32_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::uint32_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

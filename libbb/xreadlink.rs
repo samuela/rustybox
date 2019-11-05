@@ -33,8 +33,8 @@ extern "C" {
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 }
 
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 pub const GROWBY: C2RustUnnamed = 80;
 pub type C2RustUnnamed = libc::c_uint;
 

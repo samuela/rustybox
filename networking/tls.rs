@@ -137,22 +137,17 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
 use crate::librb::__uint64_t;
 
-
-
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
 pub type bb__aliased_uint64_t = uint64_t;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 use crate::librb::FILE;
 pub type va_list = __builtin_va_list;

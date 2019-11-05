@@ -20,9 +20,9 @@ extern "C" {
 }
 use crate::librb::__off64_t;
 
-use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 pub const buffer_size: C2RustUnnamed = 4096;
 pub type C2RustUnnamed = libc::c_uint;
 /* Used by NOFORK applets (e.g. cat) - must not use xmalloc.

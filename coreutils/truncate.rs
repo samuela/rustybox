@@ -30,7 +30,6 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-
 use crate::librb::__off64_t;
 use crate::librb::off_t;
 use crate::librb::uint32_t;

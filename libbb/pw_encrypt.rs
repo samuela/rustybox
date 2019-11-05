@@ -56,11 +56,9 @@ extern "C" {
   fn md5_begin(ctx: *mut md5_ctx_t);
 }
 
-
-
 use crate::librb::__pid_t;
-use crate::librb::uint8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 use crate::librb::size_t;
 #[derive(Copy, Clone)]

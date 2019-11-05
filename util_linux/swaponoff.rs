@@ -59,31 +59,12 @@ extern "C" {
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-use crate::librb::uint32_t;
 use crate::librb::off_t;
+use crate::librb::uint32_t;
 
 use crate::librb::timespec;
 
 use crate::librb::stat;
-
-
-
-
-
-
 
 use crate::librb::FILE;
 

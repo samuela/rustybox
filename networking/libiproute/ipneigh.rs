@@ -118,13 +118,10 @@ extern "C" {
   fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
 }
 
-
-
-
-use crate::librb::int8_t;
 use crate::librb::int16_t;
-use crate::librb::uint8_t;
+use crate::librb::int8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;

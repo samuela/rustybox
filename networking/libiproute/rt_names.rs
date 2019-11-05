@@ -38,12 +38,8 @@ extern "C" {
   fn config_close(parser: *mut parser_t);
 }
 
-
-
-use crate::librb::uint32_t;
 use crate::librb::size_t;
-
-
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

@@ -57,20 +57,13 @@ extern "C" {
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
 }
 
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
-use crate::librb::uint8_t;
+use crate::librb::size_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

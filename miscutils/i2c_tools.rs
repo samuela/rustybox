@@ -118,16 +118,13 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
 use crate::librb::__ino64_t;
 
 use crate::librb::__off64_t;
 use crate::librb::int32_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 use crate::librb::size_t;
 #[derive(Copy, Clone)]
@@ -140,8 +137,6 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-
-
 
 use crate::librb::FILE;
 pub type __u8 = libc::c_uchar;

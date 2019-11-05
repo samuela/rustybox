@@ -229,22 +229,18 @@ extern "C" {
   fn vfork() -> libc::c_int;
 }
 
-
-
-
-
 use crate::librb::__off64_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
 use crate::librb::smallint;
+use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 pub type smalluint = libc::c_uchar;
-use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

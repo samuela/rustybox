@@ -291,25 +291,19 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
 pub type __int64_t = libc::c_long;
 use crate::librb::__uint64_t;
 
-
-
-
 pub type __socklen_t = libc::c_uint;
+use crate::librb::int32_t;
+use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::time_t;
-use crate::librb::size_t;
-use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ether_addr {
@@ -411,8 +405,6 @@ pub type bb__aliased_uint32_t = uint32_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-
-
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

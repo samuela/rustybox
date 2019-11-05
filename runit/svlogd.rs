@@ -166,29 +166,18 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
-
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 
-
 use crate::librb::__off64_t;
 
-
-
-
-
-
-
-use crate::librb::size_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -199,12 +188,10 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::time_t;
 use crate::librb::signal::__sigset_t;
+use crate::librb::time_t;
 pub type sigset_t = __sigset_t;
 use crate::librb::timeval;
-
-
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;

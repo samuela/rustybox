@@ -260,11 +260,9 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-
-
-use crate::librb::FILE;
-use crate::librb::fd_pair;
 use crate::libbb::llist::llist_t;
+use crate::librb::fd_pair;
+use crate::librb::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

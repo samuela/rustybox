@@ -1,11 +1,5 @@
 use libc;
 
-
-
-
-
-
-
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;

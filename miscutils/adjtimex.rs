@@ -20,14 +20,11 @@ extern "C" {
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
 
-
-
-
 use crate::librb::__syscall_slong_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::timeval;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
 pub struct timex {

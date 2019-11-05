@@ -96,15 +96,12 @@ extern "C" {
   static mut dhcp_verbose: libc::c_uint;
 }
 
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::ssize_t;
-use crate::librb::size_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

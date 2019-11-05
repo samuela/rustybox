@@ -82,8 +82,8 @@ extern "C" {
 use crate::librb::cc_t;
 use crate::librb::speed_t;
 use crate::librb::tcflag_t;
-use crate::librb::uint32_t;
 use crate::librb::termios;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -37,17 +37,13 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-
-
-
-
-use crate::librb::uint8_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uid_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::smallint;
-use crate::librb::size_t;
-use crate::librb::uid_t;
-use crate::librb::pid_t;
+use crate::librb::uint8_t;
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
 #[repr(C)]

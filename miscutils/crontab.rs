@@ -75,27 +75,19 @@ extern "C" {
   static bb_msg_you_must_be_root: [libc::c_char; 0];
 }
 
-
-use crate::librb::__uid_t;
 use crate::librb::__gid_t;
-
-
-
-
+use crate::librb::__uid_t;
 
 use crate::librb::__pid_t;
 
-
-
-
-use crate::librb::uint32_t;
 use crate::librb::gid_t;
-use crate::librb::uid_t;
 use crate::librb::off_t;
+use crate::librb::passwd;
 use crate::librb::pid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
-use crate::librb::passwd;
+use crate::librb::uid_t;
+use crate::librb::uint32_t;
 pub const OPT_e: C2RustUnnamed = 8;
 pub const OPT_l: C2RustUnnamed = 4;
 pub const OPT_ler: C2RustUnnamed = 28;

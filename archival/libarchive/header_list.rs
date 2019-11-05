@@ -4,12 +4,6 @@ extern "C" {
   fn puts(__s: *const libc::c_char) -> libc::c_int;
 }
 
-
-
-
-
-
-
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;

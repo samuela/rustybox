@@ -36,13 +36,9 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-
-
-use crate::librb::uint32_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
-
-
+use crate::librb::size_t;
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 #[no_mangle]

@@ -30,13 +30,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
+use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
-use crate::librb::signal::__sighandler_t;
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

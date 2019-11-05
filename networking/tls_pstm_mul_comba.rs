@@ -12,8 +12,6 @@ extern "C" {
   fn pstm_clamp(a: *mut pstm_int);
 }
 
-
-
 use crate::librb::int32_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;

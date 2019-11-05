@@ -16,13 +16,10 @@ extern "C" {
   fn getsockname(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __len: *mut socklen_t) -> libc::c_int;
 }
 
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
 

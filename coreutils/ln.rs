@@ -43,17 +43,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint32_t;

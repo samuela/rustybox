@@ -67,18 +67,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 use crate::librb::size_t;
 
 use crate::librb::stat;

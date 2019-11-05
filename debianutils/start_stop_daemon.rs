@@ -114,29 +114,21 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::__gid_t;
 
 use crate::librb::__ino64_t;
-
-
 
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 pub type __id_t = libc::c_uint;
 
-
-
-
-
-use crate::librb::uint32_t;
+use crate::librb::gid_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::gid_t;
 use crate::librb::uid_t;
-use crate::librb::pid_t;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -151,16 +143,14 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type id_t = __id_t;
 
-
-
 use crate::librb::FILE;
 pub type __priority_which = libc::c_uint;
 pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;
 pub const PRIO_PROCESS: __priority_which = 0;
 pub type __priority_which_t = __priority_which;
-use crate::librb::passwd;
 use crate::librb::bb_uidgid_t;
+use crate::librb::passwd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

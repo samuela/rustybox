@@ -13,9 +13,8 @@ extern "C" {
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 }
 
-
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 use crate::librb::time_t;
 /* Read a block of data from stdin, write it to stdout.
  * Activity is indicated by a '.' to stderr

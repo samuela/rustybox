@@ -137,29 +137,21 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-
-
-
 pub type __int64_t = libc::c_long;
-
-
-
 
 use crate::librb::__useconds_t;
 
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::uid_t;
-use crate::librb::pid_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type DIR = __dirstream;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
@@ -169,8 +161,6 @@ pub struct div_t {
   pub rem: libc::c_int,
 }
 use crate::librb::__compar_fn_t;
-
-
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

@@ -88,8 +88,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -121,8 +119,6 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

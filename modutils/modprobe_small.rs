@@ -145,28 +145,14 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
-
-
 use crate::librb::__useconds_t;
 
-
-
-
-use crate::librb::uint32_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
+use crate::librb::uint32_t;
 
 use crate::librb::stat;
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed = libc::c_uint;

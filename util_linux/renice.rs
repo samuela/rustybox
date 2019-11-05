@@ -27,7 +27,6 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-
 pub type __id_t = libc::c_uint;
 pub type id_t = __id_t;
 pub type __priority_which = libc::c_uint;

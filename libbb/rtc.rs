@@ -43,13 +43,9 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
-
-
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

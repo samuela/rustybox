@@ -36,10 +36,9 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
 
-
+use crate::librb::size_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct serial_struct {

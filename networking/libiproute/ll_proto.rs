@@ -25,8 +25,8 @@ extern "C" {
   ) -> libc::c_uint;
 }
 
-use crate::librb::uint16_t;
 use crate::librb::size_t;
+use crate::librb::uint16_t;
 
 /*
  * This program is free software; you can redistribute it and/or

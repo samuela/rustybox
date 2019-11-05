@@ -162,26 +162,11 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint8_t;
+use crate::librb::smallint;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
-use crate::librb::smallint;
+use crate::librb::uint8_t;
 
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
@@ -233,8 +218,8 @@ use crate::librb::smallint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 pub type socklen_t = __socklen_t;
 
 use crate::librb::stat;
@@ -299,8 +284,6 @@ pub struct servent {
   pub s_port: libc::c_int,
   pub s_proto: *mut libc::c_char,
 }
-
-
 
 use crate::librb::FILE;
 pub type C2RustUnnamed_0 = libc::c_uint;

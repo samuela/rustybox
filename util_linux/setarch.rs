@@ -26,7 +26,6 @@ extern "C" {
   fn personality(__persona: libc::c_ulong) -> libc::c_int;
 }
 
-
 use crate::librb::uint32_t;
 
 pub type C2RustUnnamed = libc::c_uint;

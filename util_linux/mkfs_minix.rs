@@ -61,19 +61,14 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-
-
-
-
-
-use crate::librb::uint8_t;
-use crate::librb::uint16_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use crate::librb::uint32_t;
-use crate::librb::size_t;
 use crate::librb::off_t;
 use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]

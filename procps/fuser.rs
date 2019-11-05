@@ -78,19 +78,14 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::__dev_t;
 
 use crate::librb::__ino64_t;
 use crate::librb::__ino_t;
 
-
 use crate::librb::__off64_t;
 
 use crate::librb::__pid_t;
-
-
 
 use crate::librb::ino_t;
 use crate::librb::pid_t;

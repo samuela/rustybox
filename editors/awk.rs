@@ -182,19 +182,12 @@ extern "C" {
   fn sqrt(_: libc::c_double) -> libc::c_double;
 }
 
-
-
-
-
-
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 use crate::librb::time_t;
-
-
+use crate::librb::uint16_t;
+use crate::librb::uint32_t;
 
 use crate::librb::FILE;
 #[derive(Copy, Clone)]
@@ -959,7 +952,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-
+  
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;

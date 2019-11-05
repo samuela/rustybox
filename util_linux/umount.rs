@@ -73,14 +73,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::size_t;
-
-
-
-
-
 
 use crate::librb::FILE;
 
@@ -122,7 +115,6 @@ pub const MS_REMOUNT: C2RustUnnamed = 32;
 // pub const MS_NODEV: C2RustUnnamed = 4;
 // pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
-
 
 use crate::librb::uint32_t;
 

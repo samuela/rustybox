@@ -205,16 +205,7 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-
 use crate::librb::__dev_t;
-
-
-
-
-
-
-
-
 
 use crate::librb::__uid_t;
 

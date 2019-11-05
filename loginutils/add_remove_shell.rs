@@ -36,16 +36,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-
-
-
-
 use crate::librb::__mode_t;
-
-
-
-
-
 
 pub type uintptr_t = libc::c_ulong;
 

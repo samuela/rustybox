@@ -72,19 +72,10 @@ extern "C" {
   static bb_msg_standard_input: [libc::c_char; 0];
 }
 
-
-
-
-
-
-
-
-
 use crate::librb::__off_t;
 use crate::librb::__pid_t;
 
 use crate::librb::__uid_t;
-
 
 use crate::librb::off_t;
 use crate::librb::size_t;

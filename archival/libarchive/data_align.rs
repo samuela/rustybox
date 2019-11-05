@@ -6,11 +6,6 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-
-
-
-
-
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
 use crate::librb::gid_t;

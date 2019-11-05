@@ -96,16 +96,12 @@ extern "C" {
   static mut _SL_: libc::c_char;
 }
 
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -225,8 +221,6 @@ pub struct ip_tunnel_parm {
   pub o_key: uint32_t,
   pub iph: iphdr,
 }
-
-
 
 use crate::librb::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;

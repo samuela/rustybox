@@ -101,31 +101,23 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
 use crate::librb::__uint64_t;
 
-
-
-
 use crate::librb::__mode_t;
-
 
 use crate::librb::__pid_t;
 
 pub type __clockid_t = libc::c_int;
 
-
-
-
-use crate::librb::size_t;
 use crate::librb::pid_t;
-use crate::librb::stat;
-use crate::librb::timespec;
-use crate::librb::uint8_t;
-use crate::librb::uint32_t;
-use crate::librb::uint64_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
+use crate::librb::stat;
+use crate::librb::timespec;
+use crate::librb::uint32_t;
+use crate::librb::uint64_t;
+use crate::librb::uint8_t;
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
