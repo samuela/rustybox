@@ -1,39 +1,57 @@
 use libc;
+
 extern "C" {
   pub type hardlinks_t;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xopen_stdin(pathname: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn init_handle() -> *mut archive_handle_t;
+
   #[no_mangle]
   fn filter_accept_list(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn filter_accept_list_reassign(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn unpack_ar_archive(ar_archive: *mut archive_handle_t);
+
   #[no_mangle]
   fn data_extract_all(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn data_extract_to_stdout(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn header_list(file_header: *const file_header_t);
+
   #[no_mangle]
   fn header_verbose_list(file_header: *const file_header_t);
 }
+
 pub type __uint32_t = libc::c_uint;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
@@ -51,6 +69,7 @@ pub type dev_t = __dev_t;
 pub type time_t = __time_t;
 pub type uoff_t = libc::c_ulong;
 use crate::libbb::llist::llist_t;
+
 use crate::librb::bb_uidgid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -66,6 +85,7 @@ pub struct file_header_t {
   pub mtime: time_t,
   pub device: dev_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {
@@ -96,6 +116,7 @@ pub struct archive_handle_t {
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn dpkg_deb_main(
   mut _argc: libc::c_int,
