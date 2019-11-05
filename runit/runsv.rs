@@ -124,7 +124,7 @@ use crate::librb::timespec;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;

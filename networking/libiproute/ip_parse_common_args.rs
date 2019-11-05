@@ -21,7 +21,7 @@ pub type int8_t = __int8_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type family_t = int8_t;
 pub const ARG_IPv4: C2RustUnnamed = 2;
 pub const ARG_family: C2RustUnnamed = 1;

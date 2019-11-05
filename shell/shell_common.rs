@@ -103,7 +103,7 @@ pub type __rlim64_t = libc::c_ulong;
 pub type __ssize_t = libc::c_long;
 pub type uint8_t = __uint8_t;
 pub type uintptr_t = libc::c_ulong;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 

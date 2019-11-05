@@ -102,7 +102,7 @@ pub type uint32_t = __uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

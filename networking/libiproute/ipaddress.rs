@@ -276,7 +276,7 @@ pub union C2RustUnnamed_1 {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 
 

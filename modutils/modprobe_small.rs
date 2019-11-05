@@ -160,7 +160,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 

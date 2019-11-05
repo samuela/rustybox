@@ -248,7 +248,7 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

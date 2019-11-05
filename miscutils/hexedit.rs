@@ -102,7 +102,7 @@ pub type int64_t = __int64_t;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
 pub type uintptr_t = libc::c_ulong;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;
 

@@ -92,7 +92,7 @@ pub type __gid_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
 pub type __rlim64_t = libc::c_ulong;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type uid_t = __uid_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;

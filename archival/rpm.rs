@@ -148,7 +148,7 @@ pub type uint32_t = __uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;

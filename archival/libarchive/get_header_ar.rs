@@ -33,7 +33,7 @@ pub type __mode_t = libc::c_uint;
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;

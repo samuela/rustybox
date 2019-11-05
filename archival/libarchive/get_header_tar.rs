@@ -87,7 +87,7 @@ pub type __ssize_t = libc::c_long;
 pub type int8_t = __int8_t;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type gid_t = __gid_t;

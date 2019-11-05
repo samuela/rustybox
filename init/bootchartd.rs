@@ -177,7 +177,7 @@ pub type __pid_t = libc::c_int;
 pub type __time_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type off_t = __off64_t;

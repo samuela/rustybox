@@ -44,7 +44,7 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 pub type __ssize_t = libc::c_long;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;

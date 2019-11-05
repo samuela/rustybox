@@ -44,7 +44,7 @@ pub type __pid_t = libc::c_int;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type uid_t = __uid_t;
 pub type pid_t = __pid_t;

@@ -433,7 +433,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_1 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_1 = 255;

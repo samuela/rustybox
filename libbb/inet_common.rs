@@ -49,7 +49,7 @@ pub type __socklen_t = libc::c_uint;
 pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type size_t = libc::c_ulong;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;

@@ -271,7 +271,7 @@ pub type uint8_t = __uint8_t;
 pub type uint16_t = __uint16_t;
 pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 /* vi: set sw=4 ts=4: */
 /*
  * Copyright 2006, Bernhard Reutner-Fischer

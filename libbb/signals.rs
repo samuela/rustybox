@@ -25,7 +25,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __uid_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type __clock_t = libc::c_long;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {

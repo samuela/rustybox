@@ -94,7 +94,7 @@ use crate::librb::timespec;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
 pub type uint64_t = __uint64_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type time_t = __time_t;
 //extern const int const_int_1;

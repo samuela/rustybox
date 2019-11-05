@@ -89,7 +89,7 @@ pub type __gid_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
 pub type __time_t = libc::c_long;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 pub type time_t = __time_t;

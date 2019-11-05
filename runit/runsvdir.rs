@@ -86,7 +86,7 @@ pub type pid_t = __pid_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ino_t = __ino64_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

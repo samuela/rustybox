@@ -410,7 +410,7 @@ pub type bb__aliased_uint32_t = uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 
 
 

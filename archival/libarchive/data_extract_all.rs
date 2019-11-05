@@ -88,7 +88,7 @@ pub type __suseconds_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type gid_t = __gid_t;
 pub type uid_t = __uid_t;
 pub type off_t = __off64_t;

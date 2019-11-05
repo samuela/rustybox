@@ -74,7 +74,7 @@ pub type __useconds_t = libc::c_uint;
 pub type __ssize_t = libc::c_long;
 pub type uint8_t = __uint8_t;
 pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
+use crate::librb::smallint;
 pub type ssize_t = __ssize_t;
 pub type size_t = libc::c_ulong;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
