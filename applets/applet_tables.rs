@@ -65,7 +65,7 @@ s     - suid type:
         NB: please update FEATURE_SUID help text whenever you add/remove
         BB_SUID_REQUIRE or BB_SUID_MAYBE applet.
 */
-pub static mut applets: [bb_applet; 396] = [
+pub static applets: [bb_applet; 396] = [
   bb_applet {
     name: "gunzip",
     main: "gunzip",
