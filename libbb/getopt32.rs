@@ -48,9 +48,9 @@ pub struct option {
   pub flag: *mut libc::c_int,
   pub val: libc::c_int,
 }
-use crate::librb::__int32_t;
 
-use crate::librb::int32_t;
+
+
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::size_t;

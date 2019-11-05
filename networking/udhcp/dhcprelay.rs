@@ -80,7 +80,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__time_t;
 use crate::librb::__suseconds_t;

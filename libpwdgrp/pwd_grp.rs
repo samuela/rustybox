@@ -62,10 +62,10 @@ extern "C" {
   ) -> *mut libc::c_void;
 }
 
-use crate::librb::__uid_t;
+
 use crate::librb::__gid_t;
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::uint8_t;
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;

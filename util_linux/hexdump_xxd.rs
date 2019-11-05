@@ -46,7 +46,7 @@ extern "C" {
 }
 
 
-use crate::librb::__off64_t;
+
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::size_t;

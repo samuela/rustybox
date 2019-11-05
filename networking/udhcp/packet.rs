@@ -63,7 +63,7 @@ extern "C" {
   fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: uint8_t, data: uint32_t);
 }
 
-use crate::librb::__uint16_t;
+
 
 
 pub type __socklen_t = libc::c_uint;

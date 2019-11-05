@@ -44,8 +44,8 @@ extern "C" {
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::uint32_t;
 use crate::librb::size_t;
 

@@ -40,7 +40,7 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__time_t;
 use crate::librb::__suseconds_t;

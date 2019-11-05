@@ -82,7 +82,7 @@ extern "C" {
   #[no_mangle]
   fn ll_proto_a2n(id: *mut libc::c_ushort, buf: *mut libc::c_char) -> libc::c_int;
 }
-use crate::librb::__uint16_t;
+
 
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

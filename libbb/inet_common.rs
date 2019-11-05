@@ -43,7 +43,7 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__uint16_t;
+
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;

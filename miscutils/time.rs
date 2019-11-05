@@ -41,8 +41,8 @@ extern "C" {
 }
 
 use crate::librb::__pid_t;
-use crate::librb::__time_t;
-use crate::librb::__suseconds_t;
+
+
 use crate::librb::__syscall_slong_t;
 use crate::librb::uint32_t;
 use crate::librb::pid_t;

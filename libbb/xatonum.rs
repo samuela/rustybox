@@ -112,7 +112,7 @@ extern "C" {
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-use crate::librb::__uint16_t;
+
 use crate::librb::uint16_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

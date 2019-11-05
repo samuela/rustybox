@@ -6,9 +6,9 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__uint64_t;
+
+
 use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

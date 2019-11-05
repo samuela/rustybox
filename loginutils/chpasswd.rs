@@ -48,8 +48,8 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
-use crate::librb::__off_t;
+
+
 use crate::librb::__uid_t;
 use crate::librb::smallint;
 use crate::librb::uint32_t;

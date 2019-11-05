@@ -49,7 +49,7 @@ extern "C" {
   fn print_signames();
 }
 
-use crate::librb::__uint16_t;
+
 use crate::librb::__pid_t;
 use crate::librb::uint8_t;
 use crate::librb::uint16_t;

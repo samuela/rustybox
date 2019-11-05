@@ -123,7 +123,7 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__pid_t;
 use crate::librb::__time_t;

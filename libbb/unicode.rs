@@ -18,7 +18,7 @@ extern "C" {
   fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
 }
 
-use crate::librb::__int32_t;
+
 
 use crate::librb::int32_t;
 use crate::librb::uint8_t;

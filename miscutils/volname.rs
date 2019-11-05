@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
 }
-use crate::librb::__off64_t;
+
 use crate::librb::size_t;
 use crate::librb::off_t;
 /*

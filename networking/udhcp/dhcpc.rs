@@ -299,7 +299,7 @@ extern "C" {
   fn sprint_nip6(dest: *mut libc::c_char, ip: *const uint8_t) -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
+
 
 
 pub type __socklen_t = libc::c_uint;

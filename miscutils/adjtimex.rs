@@ -19,10 +19,10 @@ extern "C" {
   #[no_mangle]
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
-use crate::librb::__uint16_t;
 
-use crate::librb::__time_t;
-use crate::librb::__suseconds_t;
+
+
+
 use crate::librb::__syscall_slong_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

@@ -50,8 +50,8 @@ extern "C" {
   fn unicode_strwidth(string: *const libc::c_char) -> size_t;
 }
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::uint32_t;
 use crate::librb::size_t;
 

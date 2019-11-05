@@ -172,14 +172,14 @@ extern "C" {
 }
 
 
-use crate::librb::__dev_t;
-use crate::librb::__uid_t;
-use crate::librb::__gid_t;
-use crate::librb::__ino_t;
+
+
+
+
 use crate::librb::__ino64_t;
-use crate::librb::__mode_t;
-use crate::librb::__nlink_t;
-use crate::librb::__off_t;
+
+
+
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
@@ -189,14 +189,14 @@ pub struct __fsid_t {
   pub __val: [libc::c_int; 2],
 }
 
-use crate::librb::__time_t;
-use crate::librb::__blksize_t;
-use crate::librb::__blkcnt_t;
+
+
+
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 
-use crate::librb::__syscall_slong_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

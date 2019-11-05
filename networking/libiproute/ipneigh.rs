@@ -117,9 +117,9 @@ extern "C" {
   #[no_mangle]
   fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
 }
-use crate::librb::__int8_t;
 
-use crate::librb::__int16_t;
+
+
 
 use crate::librb::int8_t;
 use crate::librb::int16_t;

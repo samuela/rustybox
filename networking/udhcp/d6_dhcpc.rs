@@ -240,7 +240,7 @@ extern "C" {
   fn d6_dump_packet(packet: *mut d6_packet);
 }
 
-use crate::librb::__uint16_t;
+
 
 
 pub type __socklen_t = libc::c_uint;

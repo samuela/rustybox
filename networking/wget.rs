@@ -229,10 +229,10 @@ extern "C" {
   fn vfork() -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__uint64_t;
-use crate::librb::__off_t;
+
+
+
 use crate::librb::__off64_t;
 
 pub type __socklen_t = libc::c_uint;

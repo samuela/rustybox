@@ -50,9 +50,9 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__uint64_t;
+
+
 use crate::librb::__off64_t;
 use crate::librb::uint8_t;
 use crate::librb::uint16_t;

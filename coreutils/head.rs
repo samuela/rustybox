@@ -51,8 +51,8 @@ extern "C" {
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::size_t;
 
 

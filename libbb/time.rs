@@ -44,9 +44,9 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_longlong;
 }
-use crate::librb::__time_t;
+
 pub type __clockid_t = libc::c_int;
-use crate::librb::__syscall_slong_t;
+
 use crate::librb::size_t;
 use crate::librb::timespec;
 pub type clockid_t = __clockid_t;

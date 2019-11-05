@@ -41,7 +41,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
-use crate::librb::__int32_t;
+
 
 use crate::librb::int32_t;
 use crate::librb::uint32_t;

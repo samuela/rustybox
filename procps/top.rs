@@ -137,13 +137,13 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-use crate::librb::__uint16_t;
-use crate::librb::__int32_t;
+
+
 
 pub type __int64_t = libc::c_long;
-use crate::librb::__uid_t;
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
+
 
 use crate::librb::__useconds_t;
 

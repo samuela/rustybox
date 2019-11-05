@@ -69,10 +69,10 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__uid_t;
-use crate::librb::__gid_t;
+
+
+
 use crate::librb::uint8_t;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

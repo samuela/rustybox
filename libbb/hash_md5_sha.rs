@@ -8,7 +8,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__uint64_t;
 use crate::librb::uint8_t;

@@ -96,9 +96,9 @@ extern "C" {
   #[no_mangle]
   fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
 }
-use crate::librb::__int8_t;
 
-use crate::librb::__uint16_t;
+
+
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;

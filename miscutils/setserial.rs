@@ -35,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
-use crate::librb::__uint16_t;
+
 
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;

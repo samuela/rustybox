@@ -312,8 +312,8 @@ extern "C" {
   #[no_mangle]
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
 }
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 
 
 

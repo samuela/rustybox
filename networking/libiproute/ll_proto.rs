@@ -24,7 +24,7 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_uint;
 }
-use crate::librb::__uint16_t;
+
 use crate::librb::uint16_t;
 use crate::librb::size_t;
 

@@ -109,10 +109,10 @@ extern "C" {
 }
 
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
+
 pub type __caddr_t = *mut libc::c_char;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

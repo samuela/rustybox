@@ -52,7 +52,7 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__useconds_t;
 

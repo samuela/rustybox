@@ -20,8 +20,8 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::uint8_t;
 
 

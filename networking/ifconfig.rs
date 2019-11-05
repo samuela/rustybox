@@ -55,7 +55,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
+
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;

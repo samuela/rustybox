@@ -48,7 +48,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__gid_t;
+
 use crate::librb::__uid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::uid_t;

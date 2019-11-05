@@ -96,10 +96,10 @@ extern "C" {
   static mut _SL_: libc::c_char;
 }
 
-use crate::librb::__uint16_t;
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
+
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 

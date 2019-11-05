@@ -23,7 +23,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__mode_t;
+
 use crate::librb::uint32_t;
 use crate::librb::mode_t;
 pub type C2RustUnnamed = libc::c_int;

@@ -145,10 +145,10 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-use crate::librb::__int8_t;
 
-use crate::librb::__off64_t;
-use crate::librb::__off_t;
+
+
+
 
 use crate::librb::int8_t;
 use crate::librb::uint32_t;

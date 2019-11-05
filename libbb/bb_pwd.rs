@@ -45,8 +45,8 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::__uid_t;
-use crate::librb::__gid_t;
+
+
 use crate::librb::gid_t;
 use crate::librb::uid_t;
 use crate::librb::group;

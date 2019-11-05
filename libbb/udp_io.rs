@@ -33,7 +33,7 @@ extern "C" {
   fn setsockopt_1(fd: libc::c_int, level: libc::c_int, optname: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__uint16_t;
+
 
 
 pub type __socklen_t = libc::c_uint;

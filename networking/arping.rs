@@ -140,7 +140,7 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-use crate::librb::__uint16_t;
+
 
 
 pub type __caddr_t = *mut libc::c_char;

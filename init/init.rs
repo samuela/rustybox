@@ -186,8 +186,8 @@ pub struct __va_list_tag {
 }
 use crate::librb::__uint32_t;
 
-use crate::librb::__off64_t;
-use crate::librb::__off_t;
+
+
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 pub type __clock_t = libc::c_long;

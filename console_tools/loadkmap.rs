@@ -20,7 +20,7 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__uint16_t;
+
 use crate::librb::size_t;
 use crate::librb::uint16_t;
 

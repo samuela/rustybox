@@ -29,8 +29,8 @@ extern "C" {
     cleanup: libc::c_int,
   ) -> *mut libc::c_char;
 }
-use crate::librb::__uid_t;
-use crate::librb::__gid_t;
+
+
 use crate::librb::size_t;
 use crate::librb::passwd;
 

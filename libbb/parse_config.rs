@@ -35,8 +35,8 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 use crate::librb::__ssize_t;
 use crate::librb::uint8_t;
 use crate::librb::ssize_t;

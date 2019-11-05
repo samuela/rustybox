@@ -98,7 +98,7 @@ extern "C" {
   fn xzalloc(size: size_t) -> *mut libc::c_void;
 }
 
-use crate::librb::__uint64_t;
+
 use crate::librb::uint8_t;
 use crate::librb::uint64_t;
 use crate::librb::size_t;

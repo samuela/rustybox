@@ -11,7 +11,7 @@ extern "C" {
 }
 
 
-use crate::librb::__uint64_t;
+
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;

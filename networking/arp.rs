@@ -88,8 +88,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off_t;
-use crate::librb::__off64_t;
+
+
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -

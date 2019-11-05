@@ -47,7 +47,7 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-use crate::librb::__uint16_t;
+
 
 use crate::librb::__pid_t;
 use crate::librb::uint8_t;
