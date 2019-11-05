@@ -250,12 +250,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -1002,7 +997,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;

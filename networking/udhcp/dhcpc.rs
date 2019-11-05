@@ -426,12 +426,7 @@ pub struct pollfd {
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed_0 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_0 = 2;

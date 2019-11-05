@@ -164,12 +164,7 @@ pub struct C2RustUnnamed {
   pub tv_usec: __int32_t,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const GONE: C2RustUnnamed_0 = 5;

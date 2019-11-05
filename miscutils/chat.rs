@@ -86,12 +86,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 // max length of "abort string",

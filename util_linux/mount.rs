@@ -397,12 +397,7 @@ pub union C2RustUnnamed_1 {
   pub sin6: sockaddr_in6,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

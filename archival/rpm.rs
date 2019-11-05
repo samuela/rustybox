@@ -262,12 +262,7 @@ pub struct bb_uidgid_t {
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

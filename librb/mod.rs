@@ -21,10 +21,12 @@ pub type __uid_t = libc::c_uint;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
+pub type dev_t = __dev_t;
 pub type uid_t = __uid_t;
 pub type gid_t = __gid_t;
-pub type off_t = __off64_t;
 pub type mode_t = __mode_t;
+pub type off_t = __off64_t;
+pub type pid_t = __pid_t;
 pub type size_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
@@ -182,5 +184,14 @@ pub struct winsize {
 pub struct bb_uidgid_t {
   pub uid: uid_t,
   pub gid: gid_t,
+}
+
+// TODO: probably not as readable as a rust tuple.
+/* In this form code with pipes is much more readable */
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct fd_pair {
+  pub rd: libc::c_int,
+  pub wr: libc::c_int,
 }
 // ... end libbb.h stuff

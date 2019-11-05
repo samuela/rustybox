@@ -77,12 +77,7 @@ pub struct option {
 pub type __uint32_t = libc::c_uint;
 pub type uint32_t = __uint32_t;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 /* vi: set sw=4 ts=4: */
 /*
  * getopt.c - Enhanced implementation of BSD getopt(1)

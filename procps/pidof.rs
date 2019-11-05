@@ -32,12 +32,7 @@ pub type __uint32_t = libc::c_uint;
 pub type __pid_t = libc::c_int;
 pub type uint32_t = __uint32_t;
 pub type pid_t = __pid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 /* vi: set sw=4 ts=4: */
 /*
  * pidof implementation for busybox

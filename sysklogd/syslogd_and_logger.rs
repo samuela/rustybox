@@ -506,12 +506,7 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_2 = 1;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 /*
  * Config file parser
  */

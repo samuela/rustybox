@@ -68,12 +68,7 @@ pub struct t_complementary {
   pub counter: *mut libc::c_int,
 }
 pub const PARAM_INT: C2RustUnnamed = 2;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 pub const PARAM_LIST: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARAM_STRING: C2RustUnnamed = 0;

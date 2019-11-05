@@ -41,12 +41,7 @@ extern "C" {
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
 }
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct module_entry {

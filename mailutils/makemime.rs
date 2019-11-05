@@ -82,12 +82,7 @@ pub struct _IO_marker {
   pub _pos: libc::c_int,
 }
 pub type FILE = _IO_FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -408,12 +408,7 @@ pub struct tls_state {
   pub H: [uint8_t; 16],
 }
 pub type tls_state_t = tls_state;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_progress_t {

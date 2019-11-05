@@ -1,66 +1,104 @@
 use libc;
+
+use crate::libbb::llist::llist_t;
+use crate::librb::{
+  __dev_t, __mode_t, __off_t, bb_uidgid_t, dev_t, fd_pair, gid_t, mode_t, off_t, pid_t, size_t,
+  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t, FILE, _IO_FILE,
+};
+
 extern "C" {
   pub type hardlinks_t;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   static mut stdin: *mut _IO_FILE;
+
   #[no_mangle]
   static mut stderr: *mut _IO_FILE;
+
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xpipe(filedes: *mut libc::c_int);
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn bb_get_chunk_from_file(file: *mut FILE, end: *mut size_t) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn parse_chown_usergroup_or_die(u: *mut bb_uidgid_t, user_group: *mut libc::c_char);
+
   #[no_mangle]
   fn xfork() -> pid_t;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
@@ -68,148 +106,53 @@ extern "C" {
     longopts: *const libc::c_char,
     _: ...
   ) -> uint32_t;
+
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   #[no_mangle]
   static cpio_TRAILER: [libc::c_char; 0];
+
   #[no_mangle]
   fn init_handle() -> *mut archive_handle_t;
+
   #[no_mangle]
   fn filter_accept_list(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn data_extract_all(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn data_extract_to_stdout(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn header_list(file_header: *const file_header_t);
+
   #[no_mangle]
   fn header_verbose_list(file_header: *const file_header_t);
+
   #[no_mangle]
   fn get_header_cpio(archive_handle: *mut archive_handle_t) -> libc::c_char;
+
   #[no_mangle]
   fn create_links_from_list(list: *mut llist_t);
 }
-pub type __uint32_t = libc::c_uint;
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
-pub type __time_t = libc::c_long;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-pub type uint32_t = __uint32_t;
-pub type smallint = libc::c_schar;
-pub type size_t = libc::c_ulong;
-pub type gid_t = __gid_t;
-pub type uid_t = __uid_t;
-pub type off_t = __off64_t;
-pub type pid_t = __pid_t;
-pub type mode_t = __mode_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timespec {
-  pub tv_sec: __time_t,
-  pub tv_nsec: __syscall_slong_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct stat {
-  pub st_dev: __dev_t,
-  pub st_ino: __ino_t,
-  pub st_nlink: __nlink_t,
-  pub st_mode: __mode_t,
-  pub st_uid: __uid_t,
-  pub st_gid: __gid_t,
-  pub __pad0: libc::c_int,
-  pub st_rdev: __dev_t,
-  pub st_size: __off_t,
-  pub st_blksize: __blksize_t,
-  pub st_blocks: __blkcnt_t,
-  pub st_atim: timespec,
-  pub st_mtim: timespec,
-  pub st_ctim: timespec,
-  pub __glibc_reserved: [__syscall_slong_t; 3],
-}
-pub type dev_t = __dev_t;
-pub type time_t = __time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-  pub _flags: libc::c_int,
-  pub _IO_read_ptr: *mut libc::c_char,
-  pub _IO_read_end: *mut libc::c_char,
-  pub _IO_read_base: *mut libc::c_char,
-  pub _IO_write_base: *mut libc::c_char,
-  pub _IO_write_ptr: *mut libc::c_char,
-  pub _IO_write_end: *mut libc::c_char,
-  pub _IO_buf_base: *mut libc::c_char,
-  pub _IO_buf_end: *mut libc::c_char,
-  pub _IO_save_base: *mut libc::c_char,
-  pub _IO_backup_base: *mut libc::c_char,
-  pub _IO_save_end: *mut libc::c_char,
-  pub _markers: *mut _IO_marker,
-  pub _chain: *mut _IO_FILE,
-  pub _fileno: libc::c_int,
-  pub _flags2: libc::c_int,
-  pub _old_offset: __off_t,
-  pub _cur_column: libc::c_ushort,
-  pub _vtable_offset: libc::c_schar,
-  pub _shortbuf: [libc::c_char; 1],
-  pub _lock: *mut libc::c_void,
-  pub _offset: __off64_t,
-  pub __pad1: *mut libc::c_void,
-  pub __pad2: *mut libc::c_void,
-  pub __pad3: *mut libc::c_void,
-  pub __pad4: *mut libc::c_void,
-  pub __pad5: size_t,
-  pub _mode: libc::c_int,
-  pub _unused2: [libc::c_char; 20],
-}
-pub type _IO_lock_t = ();
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut _IO_FILE,
-  pub _pos: libc::c_int,
-}
-pub type FILE = _IO_FILE;
-pub type uoff_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct fd_pair {
-  pub rd: libc::c_int,
-  pub wr: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_uidgid_t {
-  pub uid: uid_t,
-  pub gid: gid_t,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
   pub owner_ugid: bb_uidgid_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {
@@ -224,6 +167,7 @@ pub struct file_header_t {
   pub mtime: time_t,
   pub device: dev_t,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {
@@ -254,6 +198,7 @@ pub struct archive_handle_t {
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_2STDOUT: C2RustUnnamed = 16384;
 pub const OPT_QUIET: C2RustUnnamed = 8192;
@@ -276,6 +221,7 @@ pub const OPT_UNCONDITIONAL: C2RustUnnamed = 8;
 pub const OPT_NUL_TERMINATED: C2RustUnnamed = 4;
 pub const OPT_TEST: C2RustUnnamed = 2;
 pub const OPT_EXTRACT: C2RustUnnamed = 1;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inodes_s {
@@ -283,12 +229,14 @@ pub struct inodes_s {
   pub names: *mut name_s,
   pub st: stat,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct name_s {
   pub next: *mut name_s,
   pub name: [libc::c_char; 1],
 }
+
 unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
   let mut i: libc::c_int = 0;
   i = (-size & 3i32 as libc::c_long) as libc::c_int;

@@ -232,12 +232,7 @@ pub struct bb_uidgid_t {
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {

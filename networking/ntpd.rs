@@ -575,12 +575,7 @@ pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_3 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_3 = 4;
 pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed_3 = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_3 = 1;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed_4 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_4 = 2;

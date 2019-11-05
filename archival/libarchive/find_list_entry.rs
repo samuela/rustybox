@@ -7,12 +7,7 @@ extern "C" {
     __flags: libc::c_int,
   ) -> libc::c_int;
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct llist_t {
-  pub link: *mut llist_t,
-  pub data: *mut libc::c_char,
-}
+use crate::libbb::llist::llist_t;
 /* vi: set sw=4 ts=4: */
 /*
  * Copyright (C) 2002 by Glenn McGrath
