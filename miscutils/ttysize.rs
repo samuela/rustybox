@@ -7,14 +7,7 @@ extern "C" {
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct winsize {
-  pub ws_row: libc::c_ushort,
-  pub ws_col: libc::c_ushort,
-  pub ws_xpixel: libc::c_ushort,
-  pub ws_ypixel: libc::c_ushort,
-}
+use crate::librb::winsize;
 /* vi: set sw=4 ts=4: */
 /*
  * Replacement for "stty size", which is awkward for shell script use.

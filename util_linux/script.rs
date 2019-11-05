@@ -161,14 +161,7 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct winsize {
-  pub ws_row: libc::c_ushort,
-  pub ws_col: libc::c_ushort,
-  pub ws_xpixel: libc::c_ushort,
-  pub ws_ypixel: libc::c_ushort,
-}
+use crate::librb::winsize;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

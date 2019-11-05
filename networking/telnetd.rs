@@ -212,14 +212,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct winsize {
-  pub ws_row: libc::c_ushort,
-  pub ws_col: libc::c_ushort,
-  pub ws_xpixel: libc::c_ushort,
-  pub ws_ypixel: libc::c_ushort,
-}
+use crate::librb::winsize;
 pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
