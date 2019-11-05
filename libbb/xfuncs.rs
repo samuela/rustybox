@@ -145,9 +145,9 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-pub type __uint8_t = libc::c_uchar;
-pub type __pid_t = libc::c_int;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__uint8_t;
+use crate::librb::__pid_t;
+use crate::librb::__ssize_t;
 use crate::librb::uint8_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;

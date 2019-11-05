@@ -169,7 +169,7 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::uint32_t;

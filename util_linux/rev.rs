@@ -35,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn bb_wcstombs(dest: *mut libc::c_char, src: *const wchar_t, n: size_t) -> size_t;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 use crate::librb::uint32_t;

@@ -323,10 +323,10 @@ extern "C" {
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
+use crate::librb::__uint32_t;
+use crate::librb::__pid_t;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;

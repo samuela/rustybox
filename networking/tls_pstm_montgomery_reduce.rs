@@ -14,7 +14,7 @@ extern "C" {
   fn s_pstm_sub(a: *mut pstm_int, b: *mut pstm_int, c: *mut pstm_int) -> int32;
 }
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uint64_t = libc::c_ulong;
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;

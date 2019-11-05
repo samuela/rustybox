@@ -45,7 +45,7 @@ extern "C" {
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off64_t = libc::c_long;
 use crate::librb::uint32_t;
 use crate::librb::smallint;

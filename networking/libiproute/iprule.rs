@@ -104,9 +104,9 @@ extern "C" {
   fn xrtnl_open(rth: *mut rtnl_handle);
 }
 pub type __int8_t = libc::c_schar;
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __int16_t = libc::c_short;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 use crate::librb::uint8_t;

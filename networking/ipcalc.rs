@@ -42,7 +42,7 @@ extern "C" {
   #[no_mangle]
   fn bb_herror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint32_t;
 use crate::librb::smallint;

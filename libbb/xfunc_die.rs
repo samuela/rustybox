@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut xfunc_error_retval: uint8_t;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 use crate::librb::uint8_t;
 
 /*

@@ -75,15 +75,15 @@ extern "C" {
   fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
 }
 pub type __int8_t = libc::c_schar;
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint8_t;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type int8_t = __int8_t;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;

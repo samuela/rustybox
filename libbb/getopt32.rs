@@ -49,7 +49,7 @@ pub struct option {
   pub val: libc::c_int,
 }
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type int32_t = __int32_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;

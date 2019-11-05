@@ -184,15 +184,15 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
+use crate::librb::__uint8_t;
 pub type __uid_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __clock_t = libc::c_long;
 pub type __rlim64_t = libc::c_ulong;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -204,10 +204,10 @@ use crate::librb::uint8_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::pid_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __sigset_t {

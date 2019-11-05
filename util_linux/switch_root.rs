@@ -171,7 +171,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -181,7 +181,7 @@ pub type __mode_t = libc::c_uint;
 pub type __nlink_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -195,7 +195,7 @@ pub type __blkcnt_t = libc::c_long;
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type __syscall_slong_t = libc::c_long;
 
 #[derive(Copy, Clone)]

@@ -43,7 +43,7 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::size_t;

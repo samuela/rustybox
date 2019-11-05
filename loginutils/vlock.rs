@@ -47,17 +47,15 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-
-
-use crate::librb::termios;
 use crate::librb::passwd;
+use crate::librb::termios;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct vt_mode {

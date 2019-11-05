@@ -70,13 +70,13 @@ extern "C" {
   #[no_mangle]
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;

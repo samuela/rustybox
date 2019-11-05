@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 

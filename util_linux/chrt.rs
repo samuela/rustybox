@@ -46,8 +46,8 @@ extern "C" {
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
-pub type __uint32_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
+use crate::librb::__uint32_t;
 use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

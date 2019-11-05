@@ -11,9 +11,9 @@ extern "C" {
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
 }
 
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uint64_t = libc::c_ulong;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

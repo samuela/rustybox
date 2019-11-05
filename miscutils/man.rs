@@ -90,7 +90,7 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

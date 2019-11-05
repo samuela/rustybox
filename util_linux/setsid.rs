@@ -13,10 +13,10 @@ extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
-pub type __uint32_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
-use crate::librb::uint32_t;
+use crate::librb::__pid_t;
+use crate::librb::__uint32_t;
 use crate::librb::pid_t;
+use crate::librb::uint32_t;
 
 /*
  * setsid.c -- execute a command in a new session

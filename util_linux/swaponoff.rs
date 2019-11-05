@@ -59,7 +59,7 @@ extern "C" {
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

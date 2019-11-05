@@ -74,7 +74,7 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;

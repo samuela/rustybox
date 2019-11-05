@@ -47,8 +47,8 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-pub type __uint32_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
+use crate::librb::__uint32_t;
+use crate::librb::__pid_t;
 use crate::librb::size_t;
 use crate::librb::pid_t;
 pub type __cpu_mask = libc::c_ulong;

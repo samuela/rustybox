@@ -184,9 +184,9 @@ extern "C" {
   fn ll_index_to_flags(idx: libc::c_int) -> libc::c_uint;
 }
 pub type __int8_t = libc::c_schar;
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __int16_t = libc::c_short;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __caddr_t = *mut libc::c_char;

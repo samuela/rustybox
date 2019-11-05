@@ -1,5 +1,5 @@
 use libc;
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 use crate::librb::uint8_t;
 
 /*

@@ -84,12 +84,12 @@ extern "C" {
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

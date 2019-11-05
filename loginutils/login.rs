@@ -138,22 +138,20 @@ extern "C" {
   #[no_mangle]
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
-use crate::librb::uint32_t;
-use crate::librb::size_t;
+use crate::librb::__pid_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::uint32_t;
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
-
 use crate::librb::passwd;
-
 
 use crate::librb::termios;
 use crate::librb::FILE;

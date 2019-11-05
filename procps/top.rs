@@ -136,17 +136,17 @@ extern "C" {
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __int64_t = libc::c_long;
 pub type __uid_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __useconds_t = libc::c_uint;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type int32_t = __int32_t;
 pub type int64_t = __int64_t;
 use crate::librb::uint8_t;

@@ -96,16 +96,16 @@ extern "C" {
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __rlim64_t = libc::c_ulong;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::uint8_t;
 pub type uintptr_t = libc::c_ulong;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
 
 use crate::librb::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -145,7 +145,6 @@ pub struct rlimit {
 }
 pub type __rlimit_resource_t = __rlimit_resource;
 use crate::librb::cc_t;
-
 
 use crate::librb::termios;
 /* "OPTIND=1" */

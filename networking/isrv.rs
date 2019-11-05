@@ -39,9 +39,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __time_t = libc::c_long;
 pub type __suseconds_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;

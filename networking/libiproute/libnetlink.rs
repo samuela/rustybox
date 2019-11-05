@@ -55,9 +55,9 @@ pub struct iovec {
   pub iov_base: *mut libc::c_void,
   pub iov_len: size_t,
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __time_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
 use crate::librb::time_t;

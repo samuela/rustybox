@@ -25,7 +25,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

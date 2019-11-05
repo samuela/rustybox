@@ -13,7 +13,7 @@ extern "C" {
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 }
 pub type __time_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 use crate::librb::time_t;

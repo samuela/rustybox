@@ -39,7 +39,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 pub type __off64_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::ssize_t;
 use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;

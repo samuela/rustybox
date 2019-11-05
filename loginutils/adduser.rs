@@ -83,18 +83,18 @@ extern "C" {
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __mode_t = libc::c_uint;
 pub type __time_t = libc::c_long;
-use crate::librb::uint32_t;
 use crate::librb::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::time_t;
 use crate::librb::uid_t;
+use crate::librb::uint32_t;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

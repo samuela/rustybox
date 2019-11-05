@@ -127,12 +127,14 @@ extern "C" {
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
-pub type __ssize_t = libc::c_long;
-use crate::librb::uint8_t;
+
+use crate::librb::__pid_t;
+use crate::librb::__ssize_t;
+use crate::librb::__uint32_t;
+use crate::librb::__uint8_t;
 use crate::librb::uint32_t;
+use crate::librb::uint8_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -143,10 +145,10 @@ use crate::librb::uint32_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
+use crate::librb::pid_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::size_t;
-use crate::librb::pid_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

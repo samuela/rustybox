@@ -11,11 +11,11 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __int16_t = libc::c_short;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uint64_t = libc::c_ulong;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;

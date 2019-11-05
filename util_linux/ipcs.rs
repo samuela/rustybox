@@ -34,10 +34,10 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;

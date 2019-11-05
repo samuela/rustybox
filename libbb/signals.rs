@@ -21,9 +21,9 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __clock_t = libc::c_long;
 use crate::librb::smallint;
 #[derive(Copy, Clone)]

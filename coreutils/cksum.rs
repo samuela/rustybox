@@ -28,15 +28,15 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
+use crate::librb::__uint8_t;
 pub type __off64_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
+use crate::librb::off_t;
+use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
-use crate::librb::size_t;
-use crate::librb::off_t;
 use crate::librb::uoff_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;

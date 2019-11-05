@@ -73,11 +73,11 @@ extern "C" {
   #[no_mangle]
   fn read_base64(src_stream: *mut FILE, dst_stream: *mut FILE, flags: libc::c_int);
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __mode_t = libc::c_uint;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
 use crate::librb::size_t;

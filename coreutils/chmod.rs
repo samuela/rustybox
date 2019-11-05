@@ -46,7 +46,7 @@ extern "C" {
   #[no_mangle]
   fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -58,8 +58,8 @@ pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-use crate::librb::uint32_t;
 use crate::librb::mode_t;
+use crate::librb::uint32_t;
 
 use crate::librb::stat;
 

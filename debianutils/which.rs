@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 use crate::librb::uint32_t;
 
 /*

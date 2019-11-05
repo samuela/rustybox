@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 use crate::librb::uint32_t;
 
 /*

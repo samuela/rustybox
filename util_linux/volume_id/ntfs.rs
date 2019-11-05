@@ -20,9 +20,9 @@ extern "C" {
 }
 
 pub type __int8_t = libc::c_schar;
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uint64_t = libc::c_ulong;
 pub type int8_t = __int8_t;
 use crate::librb::uint8_t;

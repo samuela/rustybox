@@ -17,9 +17,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-pub type __ssize_t = libc::c_long;
-use crate::librb::ssize_t;
+use crate::librb::__ssize_t;
 use crate::librb::size_t;
+use crate::librb::ssize_t;
 
 /*
  * Busybox main internal header file

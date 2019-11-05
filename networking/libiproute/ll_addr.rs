@@ -25,9 +25,9 @@ extern "C" {
   #[no_mangle]
   fn get_addr_1(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int) -> libc::c_int;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __int16_t = libc::c_short;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __socklen_t = libc::c_uint;
 pub type int16_t = __int16_t;
 pub type socklen_t = __socklen_t;

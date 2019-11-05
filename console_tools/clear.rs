@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn full_write1_str(str: *const libc::c_char) -> ssize_t;
 }
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 use crate::librb::ssize_t;
 
 /*

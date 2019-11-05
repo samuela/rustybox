@@ -3,8 +3,8 @@ extern "C" {
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint8_t;
+use crate::librb::__uint32_t;
 pub type __uint64_t = libc::c_ulong;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;

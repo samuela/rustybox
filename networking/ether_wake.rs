@@ -52,9 +52,9 @@ extern "C" {
   #[no_mangle]
   fn ether_hostton(__hostname: *const libc::c_char, __addr: *mut ether_addr) -> libc::c_int;
 }
-pub type __uint8_t = libc::c_uchar;
-pub type __uint32_t = libc::c_uint;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__uint8_t;
+use crate::librb::__uint32_t;
+use crate::librb::__ssize_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::uint8_t;
 use crate::librb::uint32_t;

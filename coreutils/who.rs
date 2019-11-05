@@ -36,7 +36,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -44,16 +44,16 @@ pub type __ino_t = libc::c_ulong;
 pub type __mode_t = libc::c_uint;
 pub type __nlink_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
-use crate::librb::uint32_t;
 use crate::librb::size_t;
 use crate::librb::stat;
 use crate::librb::time_t;
 use crate::librb::timespec;
+use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 use crate::librb::uint32_t;
 /*
  * link implementation for busybox

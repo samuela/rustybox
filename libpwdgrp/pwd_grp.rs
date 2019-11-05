@@ -61,7 +61,7 @@ extern "C" {
     idx: libc::c_int,
   ) -> *mut libc::c_void;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
 pub type __off_t = libc::c_long;

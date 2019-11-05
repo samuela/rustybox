@@ -29,7 +29,7 @@ extern "C" {
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
 
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 use crate::librb::uint32_t;
 
 pub type C2RustUnnamed = libc::c_uint;

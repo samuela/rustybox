@@ -95,8 +95,8 @@ extern "C" {
     linger_timeout: libc::c_int,
   );
 }
-pub type __uint32_t = libc::c_uint;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__uint32_t;
+use crate::librb::__ssize_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

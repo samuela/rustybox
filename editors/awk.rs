@@ -182,11 +182,11 @@ extern "C" {
   fn sqrt(_: libc::c_double) -> libc::c_double;
 }
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type uint16_t = __uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::smallint;

@@ -98,13 +98,13 @@ extern "C" {
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __ino64_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::uint8_t;
 pub type uint16_t = __uint16_t;

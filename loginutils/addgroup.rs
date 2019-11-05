@@ -51,12 +51,12 @@ extern "C" {
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
-use crate::librb::uint32_t;
 use crate::librb::gid_t;
 use crate::librb::group;
+use crate::librb::uint32_t;
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;
   /* Make sure gr_name is unused */

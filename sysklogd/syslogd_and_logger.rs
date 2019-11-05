@@ -233,10 +233,10 @@ extern "C" {
   #[no_mangle]
   fn semop(__semid: libc::c_int, __sops: *mut sembuf, __nsops: size_t) -> libc::c_int;
 }
-pub type __uint8_t = libc::c_uchar;
+use crate::librb::__uint8_t;
 pub type __uint16_t = libc::c_ushort;
 pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+use crate::librb::__uint32_t;
 pub type __dev_t = libc::c_ulong;
 pub type __uid_t = libc::c_uint;
 pub type __gid_t = libc::c_uint;
@@ -245,12 +245,12 @@ pub type __mode_t = libc::c_uint;
 pub type __nlink_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
+use crate::librb::__pid_t;
 pub type __time_t = libc::c_long;
 pub type __key_t = libc::c_int;
 pub type __blksize_t = libc::c_long;
 pub type __blkcnt_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
+use crate::librb::__ssize_t;
 pub type __syscall_slong_t = libc::c_long;
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
