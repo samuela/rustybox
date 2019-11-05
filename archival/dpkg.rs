@@ -242,8 +242,8 @@ pub type __blkcnt_t = libc::c_long;
 pub type __ssize_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 use crate::librb::uint32_t;
-use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
