@@ -117,7 +117,6 @@ extern "C" {
 
   #[no_mangle]
   fn xfunc_die() -> !;
-  /* DO NOT EDIT. This file is generated from applets.src.h */
 
   /*
    * applets.h - a listing of all busybox applets.
@@ -2554,7 +2553,24 @@ unsafe fn print_rustybox_help() {
   dup2(1, 2);
   full_write2_str(bb_banner.as_ptr()); /* reuse const string */
   eprintln!(" multi-call binary."); /* reuse */
-  eprintln!("BusyBox is copyrighted by many authors between 1998-2015.\nLicensed under GPLv2. See source distribution for detailed\ncopyright notices.\n\nUsage: busybox [function [arguments]...]\n   or: busybox --list[-full]\n   or: busybox --show SCRIPT\n   or: busybox --install [-s] [DIR]\n   or: function [arguments]...\n\n\tBusyBox is a multi-call binary that combines many common Unix\n\tutilities into a single executable.  Most people will create a\n\tlink to busybox for each function they wish to use and BusyBox\n\twill act like whatever it was invoked as.\n\nCurrently defined functions:");
+  eprintln!(
+    "\
+RustyBox is a BusyBox fork written entirely in Rust. Kudos to the
+developers of the BusyBox and c2rust projects!
+
+Usage: rustybox [function [arguments]...]
+   or: rustybox --list[-full]
+   or: rustybox --show SCRIPT
+   or: rustybox --install [-s] [DIR]
+   or: function [arguments]...
+
+\tRustyBox is a multi-call binary that combines many common Unix
+\tutilities into a single executable.  Most people will create a
+\tlink to rustybox for each function they wish to use and RustyBox
+\twill act like whatever it was invoked as.
+
+Functions:"
+  );
 
   let mut col: libc::c_int = 0;
   for appname in applet_names_sorted().iter() {
