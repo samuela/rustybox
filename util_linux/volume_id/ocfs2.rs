@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 
 extern "C" {
@@ -13,13 +14,6 @@ extern "C" {
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
-
-use crate::librb::int16_t;
-use crate::librb::size_t;
-
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -50,7 +44,7 @@ This is one has been simplified since we only care about the superblock.
 pub struct ocfs2_super_block {
   pub i_signature: [u8; 8],
   pub i_generation: u32,
-  pub i_suballoc_slot: int16_t,
+  pub i_suballoc_slot: i16,
   pub i_suballoc_bit: u16,
   pub i_reserved0: u32,
   pub i_clusters: u32,
@@ -75,7 +69,7 @@ pub struct ocfs2_super_block {
   pub s_major_rev_level: u16,
   pub s_minor_rev_level: u16,
   pub s_mnt_count: u16,
-  pub s_max_mnt_count: int16_t,
+  pub s_max_mnt_count: i16,
   pub s_state: u16,
   pub s_errors: u16,
   pub s_checkinterval: u32,

@@ -27,7 +27,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::int16_t;
 use crate::librb::int32_t;
 
 use crate::librb::size_t;
@@ -69,7 +68,7 @@ pub struct ubi_rnvol_req {
 #[repr(C)]
 pub struct C2RustUnnamed {
   pub vol_id: int32_t,
-  pub name_len: int16_t,
+  pub name_len: i16,
   pub padding2: [i8; 2],
   pub name: [libc::c_char; 128],
 }
@@ -111,7 +110,7 @@ pub unsafe extern "C" fn ubirename_main(
     (*rnvol).ents[n as usize].name_len = strnlen(
       *argv.offset(1),
       ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
-    ) as int16_t;
+    ) as i16;
     if (*rnvol).ents[n as usize].name_len as libc::c_ulong
       >= ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong
     {

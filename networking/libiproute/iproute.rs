@@ -173,9 +173,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int16_t;
-
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -407,7 +404,7 @@ pub const gw_ok: C2RustUnnamed_3 = 1;
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
-  pub bitlen: int16_t,
+  pub bitlen: i16,
   pub data: [u32; 4],
 }
 pub const dst_ok: C2RustUnnamed_3 = 2;
@@ -722,7 +719,7 @@ unsafe extern "C" fn print_route(
     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
   );
   if !tb[RTA_SRC as libc::c_int as usize].is_null() {
-    src.bitlen = (*r).rtm_src_len as int16_t;
+    src.bitlen = (*r).rtm_src_len as i16;
     src.bytelen = if (*r).rtm_family as libc::c_int == 10i32 {
       16i32
     } else {
@@ -741,7 +738,7 @@ unsafe extern "C" fn print_route(
     );
   }
   if !tb[RTA_DST as libc::c_int as usize].is_null() {
-    dst.bitlen = (*r).rtm_dst_len as int16_t;
+    dst.bitlen = (*r).rtm_dst_len as i16;
     dst.bytelen = if (*r).rtm_family as libc::c_int == 10i32 {
       16i32
     } else {
@@ -1597,10 +1594,10 @@ unsafe extern "C" fn iproute_reset_filter() {
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .mdst
-    .bitlen = -1i32 as int16_t;
+    .bitlen = -1i32 as i16;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .msrc
-    .bitlen = -1i32 as int16_t;
+    .bitlen = -1i32 as i16;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iproute_list_or_flush(

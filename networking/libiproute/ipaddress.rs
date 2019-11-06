@@ -185,7 +185,7 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::int16_t;
+
 
 use crate::librb::size_t;
 pub type __socket_type = libc::c_uint;
@@ -486,7 +486,7 @@ pub struct filter_t {
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
-  pub bitlen: int16_t,
+  pub bitlen: i16,
   pub data: [u32; 4],
 }
 #[derive(Copy, Clone)]

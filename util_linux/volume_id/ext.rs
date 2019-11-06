@@ -11,13 +11,8 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
-use crate::librb::int16_t;
 use crate::librb::int32_t;
 use crate::librb::size_t;
-
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -87,7 +82,7 @@ pub struct ext2_super_block {
   pub s_mtime: u32,
   pub s_wtime: u32,
   pub s_mnt_count: u16,
-  pub s_max_mnt_count: int16_t,
+  pub s_max_mnt_count: i16,
   pub s_magic: u16,
   pub s_state: u16,
   pub s_errors: u16,

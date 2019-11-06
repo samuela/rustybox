@@ -11,7 +11,7 @@ use crate::librb::__compar_fn_t;
 use crate::librb::__off64_t;
 use crate::librb::dev_t;
 use crate::librb::group;
-use crate::librb::int16_t;
+
 use crate::librb::int32_t;
 
 use crate::librb::mode_t;
@@ -631,7 +631,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
     tmpint = tmpint.offset((itemindex * 2i32) as isize);
     return ({
       let mut __v: libc::c_ushort = 0;
-      let mut __x: libc::c_ushort = *(tmpint as *mut int16_t) as libc::c_ushort;
+      let mut __x: libc::c_ushort = *(tmpint as *mut i16) as libc::c_ushort;
       if 0 != 0 {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort

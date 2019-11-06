@@ -58,10 +58,8 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int16_t;
+
 use crate::librb::size_t;
-
-
 
 pub type socklen_t = __socklen_t;
 
@@ -71,7 +69,7 @@ use libc::FILE;
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
-  pub bitlen: int16_t,
+  pub bitlen: i16,
   pub data: [u32; 4],
 }
 //const char *dnet_ntop(int af, const void *addr, char *str, size_t len);
@@ -190,7 +188,7 @@ pub unsafe extern "C" fn get_addr_1(
   {
     (*addr).family = family as u8;
     (*addr).bytelen = if family == 10i32 { 16i32 } else { 4i32 } as u8;
-    (*addr).bitlen = -1i32 as int16_t;
+    (*addr).bitlen = -1i32 as i16;
     return 0i32;
   }
   if !strchr(name, ':' as i32).is_null() {
@@ -202,7 +200,7 @@ pub unsafe extern "C" fn get_addr_1(
       return -1i32;
     }
     (*addr).bytelen = 16i32 as u8;
-    (*addr).bitlen = -1i32 as int16_t;
+    (*addr).bitlen = -1i32 as i16;
     return 0i32;
   }
   if family != 0i32 && family != 2i32 {
@@ -237,7 +235,7 @@ pub unsafe extern "C" fn get_addr_1(
     }
   }
   (*addr).bytelen = 4i32 as u8;
-  (*addr).bitlen = -1i32 as int16_t;
+  (*addr).bitlen = -1i32 as i16;
   return 0i32;
 }
 unsafe extern "C" fn get_prefix_1(
@@ -270,7 +268,7 @@ unsafe extern "C" fn get_prefix_1(
       128i32
     } else {
       32i32
-    } as int16_t;
+    } as i16;
     if !slash.is_null() {
       let mut plen: libc::c_uint = 0;
       let mut netmask_pfx: inet_prefix = inet_prefix {
@@ -330,7 +328,7 @@ unsafe extern "C" fn get_prefix_1(
         match current_block {
           5733981528044815378 => {}
           _ => {
-            (*dst).bitlen = plen as int16_t;
+            (*dst).bitlen = plen as i16;
             current_block = 17478428563724192186;
           }
         }

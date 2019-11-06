@@ -104,7 +104,7 @@ extern "C" {
   fn xrtnl_open(rth: *mut rtnl_handle);
 }
 
-use crate::librb::int16_t;
+
 
 use crate::librb::size_t;
 
@@ -300,7 +300,7 @@ pub const ARG_preference: C2RustUnnamed_2 = 3;
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
-  pub bitlen: int16_t,
+  pub bitlen: i16,
   pub data: [u32; 4],
 }
 pub const ARG_to: C2RustUnnamed_2 = 2;

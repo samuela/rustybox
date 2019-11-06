@@ -227,7 +227,7 @@ use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 
 
-use crate::librb::int16_t;
+
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
 
@@ -1074,7 +1074,7 @@ unsafe extern "C" fn complete_cmd_dir_file(
   return pf_len;
 }
 unsafe extern "C" fn remove_chunk(
-  mut int_buf: *mut int16_t,
+  mut int_buf: *mut i16,
   mut beg: libc::c_int,
   mut end: libc::c_int,
 ) {
@@ -1100,11 +1100,11 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut command_mode: libc::c_int = 0;
-  let mut int_buf: *mut int16_t = match_buf as *mut int16_t;
+  let mut int_buf: *mut i16 = match_buf as *mut i16;
   /* Copy in reverse order, since they overlap */
   i = strlen(match_buf) as libc::c_int;
   loop {
-    *int_buf.offset(i as isize) = *match_buf.offset(i as isize) as libc::c_uchar as int16_t;
+    *int_buf.offset(i as isize) = *match_buf.offset(i as isize) as libc::c_uchar as i16;
     i -= 1;
     if !(i >= 0i32) {
       break;
@@ -1116,7 +1116,7 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
     if *int_buf.offset(i as isize) as libc::c_int == '\\' as i32 {
       remove_chunk(int_buf, i, i + 1i32);
       let ref mut fresh7 = *int_buf.offset(i as isize);
-      *fresh7 = (*fresh7 as libc::c_int | 127i32 * 2i32 + 1i32 + 1i32) as int16_t
+      *fresh7 = (*fresh7 as libc::c_int | 127i32 * 2i32 + 1i32 + 1i32) as i16
     }
     i += 1
   }
@@ -1136,7 +1136,7 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
       }
     }
     if in_quote != 0 {
-      *int_buf.offset(i as isize) = (cur | 127i32 * 2i32 + 1i32 + 1i32) as int16_t
+      *int_buf.offset(i as isize) = (cur | 127i32 * 2i32 + 1i32 + 1i32) as i16
     }
     i += 1
   }
@@ -1403,13 +1403,13 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
   *lastWasTab = 1i32 as smallint;
   chosen_match = 0 as *mut libc::c_char;
   /* Make a local copy of the string up to the position of the cursor.
-   * build_match_prefix will expand it into int16_t's, need to allocate
+   * build_match_prefix will expand it into i16's, need to allocate
    * twice as much as the string_len+1.
    * (we then also (ab)use this extra space later - see (**))
    */
   match_buf = xmalloc(
     (MAX_LINELEN as libc::c_int as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<int16_t>() as libc::c_ulong),
+      .wrapping_mul(::std::mem::size_of::<i16>() as libc::c_ulong),
   ) as *mut libc::c_char;
   let mut wc: wchar_t = *(*lineedit_ptr_to_statics)
     .command_ps

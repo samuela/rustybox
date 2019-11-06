@@ -118,10 +118,6 @@ extern "C" {
   fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
 }
 
-use crate::librb::int16_t;
-
-
-
 pub type family_t = i8;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
@@ -268,7 +264,7 @@ pub struct rtnl_handle {
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
-  pub bitlen: int16_t,
+  pub bitlen: i16,
   pub data: [u32; 4],
 }
 pub const KW_to: C2RustUnnamed_1 = 0;
