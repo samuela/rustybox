@@ -1,4 +1,12 @@
 use libc;
+use libc::uid_t;
+use libc::FILE;
+
+use crate::librb::gid_t;
+use crate::librb::group;
+use crate::librb::passwd;
+use crate::librb::size_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -19,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -62,16 +70,8 @@ extern "C" {
   ) -> *mut libc::c_void;
 }
 
-use crate::librb::__gid_t;
-
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::gid_t;
-use crate::librb::group;
-use crate::librb::passwd;
-use crate::librb::size_t;
-use libc::uid_t;
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

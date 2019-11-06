@@ -1,6 +1,17 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::gid_t;
+use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -171,7 +182,7 @@ extern "C" {
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   /* Search for an entry with a matching username.  */
 
   #[no_mangle]
@@ -365,14 +376,7 @@ extern "C" {
   ) -> ssize_t;
 }
 
-use crate::librb::__gid_t;
-
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
-
 pub type __socklen_t = libc::c_uint;
-
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -384,15 +388,7 @@ pub type __socklen_t = libc::c_uint;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::gid_t;
-use crate::librb::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::uid_t;
 pub type socklen_t = __socklen_t;
-use libc::time_t;
-use libc::stat;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -405,6 +401,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

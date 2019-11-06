@@ -38,15 +38,15 @@ extern "C" {
   #[no_mangle]
   fn geteuid() -> __uid_t;
   #[no_mangle]
-  fn getegid() -> __gid_t;
+  fn getegid() -> gid_t;
   #[no_mangle]
   fn setuid(__uid: __uid_t) -> libc::c_int;
   #[no_mangle]
   fn seteuid(__uid: __uid_t) -> libc::c_int;
   #[no_mangle]
-  fn setgid(__gid: __gid_t) -> libc::c_int;
+  fn setgid(__gid: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn setegid(__gid: __gid_t) -> libc::c_int;
+  fn setegid(__gid: gid_t) -> libc::c_int;
   #[no_mangle]
   fn fork() -> __pid_t;
   #[no_mangle]
@@ -194,26 +194,22 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__uid_t;
-
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-
-pub type __socklen_t = libc::c_uint;
+use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
+use libc::stat;
 use libc::uid_t;
 
-
+pub type __socklen_t = libc::c_uint;
 
 pub type socklen_t = __socklen_t;
 pub type DIR = __dirstream;
 
-use libc::stat;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]

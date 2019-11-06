@@ -3,6 +3,16 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::timeval;
+use libc::uid_t;
+
+use crate::librb::__pid_t;
+use crate::librb::__uid_t;
+use crate::librb::__useconds_t;
+use crate::librb::gid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn setsockopt(
@@ -30,7 +40,7 @@ extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
@@ -163,18 +173,8 @@ extern "C" {
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::__useconds_t;
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::gid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
- use libc::timeval;
-use libc::uid_t;
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -187,6 +187,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {
@@ -238,7 +239,6 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
-
 
 pub type in_port_t = u16;
 #[derive(Copy, Clone)]

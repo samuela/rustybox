@@ -1,10 +1,11 @@
 use libc;
 
-use crate::librb::{__gid_t, gid_t, size_t};
+use crate::librb::gid_t;
+use crate::librb::size_t;
 
 extern "C" {
   #[no_mangle]
-  fn getgroups(__size: libc::c_int, __list: *mut __gid_t) -> libc::c_int;
+  fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

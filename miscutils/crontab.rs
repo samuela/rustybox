@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -75,17 +75,13 @@ extern "C" {
   static bb_msg_you_must_be_root: [libc::c_char; 0];
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__uid_t;
-
 use crate::librb::__pid_t;
-
+use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::pid_t;
 use libc::stat;
-
 use libc::uid_t;
 
 pub const OPT_e: C2RustUnnamed = 8;

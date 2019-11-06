@@ -7,7 +7,6 @@ use crate::applets::applet_tables::applets;
 use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
-use crate::librb::__gid_t;
 use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::gid_t;
@@ -24,7 +23,7 @@ extern "C" {
   fn setresuid(__ruid: __uid_t, __euid: __uid_t, __suid: __uid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn setresgid(__rgid: __gid_t, __egid: __gid_t, __sgid: __gid_t) -> libc::c_int;
+  fn setresgid(__rgid: gid_t, __egid: gid_t, __sgid: gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -655,7 +654,7 @@ unsafe fn check_suid(applet_no: usize) {
           rgid = (*sct).m_ugid.gid
         }
         /* else: we will set egid = rgid, thus dropping sgid effect */
-        if setresgid(-1i32 as __gid_t, rgid, rgid) != 0 {
+        if setresgid(-1i32 as gid_t, rgid, rgid) != 0 {
           bb_simple_perror_msg_and_die(b"setresgid\x00" as *const u8 as *const libc::c_char);
         }
         /* Are we directed to change uid

@@ -302,7 +302,7 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
@@ -353,7 +353,7 @@ extern "C" {
 }
 
 use crate::librb::__dev_t;
-use crate::librb::__gid_t;
+use crate::librb::gid_t;
 
 use crate::librb::__mode_t;
 

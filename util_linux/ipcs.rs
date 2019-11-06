@@ -1,4 +1,13 @@
 use libc;
+use libc::time_t;
+use libc::uid_t;
+
+use crate::librb::__pid_t;
+use crate::librb::__time_t;
+use crate::librb::__uid_t;
+use crate::librb::gid_t;
+use crate::librb::size_t;
+
 extern "C" {
   #[no_mangle]
   fn semctl(__semid: libc::c_int, __semnum: libc::c_int, __cmd: libc::c_int, _: ...)
@@ -35,24 +44,17 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__pid_t;
-use crate::librb::__time_t;
-use crate::librb::__uid_t;
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
-use crate::librb::gid_t;
-use crate::librb::size_t;
-use libc::time_t;
-use libc::uid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ipc_perm {
   pub __key: __key_t,
   pub uid: __uid_t,
-  pub gid: __gid_t,
+  pub gid: gid_t,
   pub cuid: __uid_t,
-  pub cgid: __gid_t,
+  pub cgid: gid_t,
   pub mode: libc::c_ushort,
   pub __pad1: libc::c_ushort,
   pub __seq: libc::c_ushort,
@@ -155,7 +157,6 @@ pub struct shm_info {
 }
 use crate::librb::group;
 use crate::librb::passwd;
-
 
 /*
  * ipcs.c -- provides information on allocated ipc resources.

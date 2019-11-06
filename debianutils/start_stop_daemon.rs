@@ -1,4 +1,15 @@
 use libc;
+use libc::uid_t;
+
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::gid_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -45,7 +56,7 @@ extern "C" {
   fn setpriority(__which: __priority_which_t, __who: id_t, __prio: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -113,20 +124,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__gid_t;
-
-use crate::librb::__ino64_t;
-
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
 pub type __id_t = libc::c_uint;
-
-use crate::librb::gid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::uid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

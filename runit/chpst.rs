@@ -1,4 +1,13 @@
 use libc;
+use libc::uid_t;
+
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::gid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -26,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -69,16 +78,7 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__ino64_t;
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
 pub type __rlim64_t = libc::c_ulong;
-
-use crate::librb::gid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use libc::uid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

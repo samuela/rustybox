@@ -4,7 +4,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn lchown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn lchown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -230,7 +230,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 use crate::librb::__dev_t;
-use crate::librb::__gid_t;
+use crate::librb::gid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__ino64_t;

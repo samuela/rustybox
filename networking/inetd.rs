@@ -1,6 +1,21 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::time_t;
+use libc::timeval;
+use libc::uid_t;
+
+use crate::librb::__clock_t;
+use crate::librb::__pid_t;
+use crate::librb::__uid_t;
+use crate::librb::gid_t;
+use crate::librb::int8_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::signal::sigset_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;
@@ -83,7 +98,7 @@ extern "C" {
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
   fn fork() -> __pid_t;
   #[no_mangle]
@@ -125,7 +140,7 @@ extern "C" {
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   /* Search for an entry with a matching username.  */
   #[no_mangle]
   fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
@@ -251,13 +266,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__gid_t;
-
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::__clock_t;
-
 pub type __rlim64_t = libc::c_ulong;
 
 pub type __socklen_t = libc::c_uint;
@@ -288,18 +296,10 @@ pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
-use libc::timeval;
+
 pub type __rlimit_resource_t = __rlimit_resource;
-use crate::librb::gid_t;
-use crate::librb::int8_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sigset_t;
-use crate::librb::signal::sigset_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use libc::time_t;
-use libc::uid_t;
 pub type __fd_mask = libc::c_long;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fd_set {
@@ -391,7 +391,6 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
-
 
 pub type in_port_t = u16;
 #[derive(Copy, Clone)]

@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -84,9 +84,7 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-use crate::librb::__gid_t;
 use crate::librb::__mode_t;
-
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::group;
@@ -292,7 +290,7 @@ pub unsafe extern "C" fn adduser_main(
     xgroup2gid(usegroup)
   } else {
     -1i32 as libc::c_long
-  } as __gid_t;
+  } as gid_t;
   /* make sure everything is kosher and setup uid && maybe gid */
   passwd_study(&mut pw);
   p = xasprintf(

@@ -1,6 +1,11 @@
 use libc;
-extern "C" {
 
+use crate::librb::gid_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use libc::uid_t;
+
+extern "C" {
   #[no_mangle]
   fn setns(__fd: libc::c_int, __nstype: libc::c_int) -> libc::c_int;
 
@@ -14,7 +19,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
+  fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn xsetgid(gid: gid_t);
@@ -62,14 +67,6 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
-
-use crate::librb::__gid_t;
-
-use crate::librb::gid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use libc::uid_t;
-
 
 /*
  * Mini nsenter implementation for busybox.
@@ -338,7 +335,7 @@ pub unsafe extern "C" fn nsenter_main(
      * We call setgroups() before and after setns() and only
      * bail-out if it fails twice.
      */
-    setgroups_failed = (setgroups(0i32 as size_t, 0 as *const __gid_t) < 0i32) as libc::c_int
+    setgroups_failed = (setgroups(0i32 as size_t, 0 as *const gid_t) < 0i32) as libc::c_int
   }
   i = 0i32;
   while i < NS_COUNT as libc::c_int {
@@ -389,7 +386,7 @@ pub unsafe extern "C" fn nsenter_main(
     /* Child continues */
   }
   if opts & OPT_setgid as libc::c_int as libc::c_uint != 0 {
-    if setgroups(0i32 as size_t, 0 as *const __gid_t) < 0i32 && setgroups_failed != 0 {
+    if setgroups(0i32 as size_t, 0 as *const gid_t) < 0i32 && setgroups_failed != 0 {
       bb_simple_perror_msg_and_die(b"setgroups\x00" as *const u8 as *const libc::c_char);
     }
     xsetgid(gid as gid_t);

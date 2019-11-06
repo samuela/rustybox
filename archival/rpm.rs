@@ -1,16 +1,37 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+
+use crate::libbb::llist::llist_t;
+use crate::librb::__compar_fn_t;
+use crate::librb::__off64_t;
+use crate::librb::__uid_t;
+use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::group;
+use crate::librb::int16_t;
+use crate::librb::int32_t;
+use crate::librb::int8_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
+
 extern "C" {
   pub type hardlinks_t;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -118,33 +139,6 @@ extern "C" {
   #[no_mangle]
   fn check_errors_in_children(signo: libc::c_int);
 }
-
-use crate::libbb::llist::llist_t;
-
-use crate::librb::__compar_fn_t;
-
-use crate::librb::__gid_t;
-
-use crate::librb::__off64_t;
-
-use crate::librb::__uid_t;
-use crate::librb::dev_t;
-use crate::librb::gid_t;
-use crate::librb::group;
-use crate::librb::int16_t;
-use crate::librb::int32_t;
-use crate::librb::int8_t;
-use crate::librb::mode_t;
-use crate::librb::off_t;
-use crate::librb::passwd;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::stat;
-use libc::time_t;
-
-use libc::uid_t;
-
-use crate::librb::uoff_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -505,8 +499,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
                                            __v
                                        });
       if pass == 0i32 as libc::c_uint {
-        (*tag).tag =
-          ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as u32 as u32
+        (*tag).tag = ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as u32 as u32
       }
       idx = idx.wrapping_add(1)
     }
@@ -725,7 +718,7 @@ unsafe extern "C" fn fileaction_setowngrp(
   } else {
     getgid()
   } as libc::c_int;
-  chown(filename, uid as __uid_t, gid as __gid_t);
+  chown(filename, uid as __uid_t, gid as gid_t);
 }
 unsafe extern "C" fn loop_through_files(
   mut filetag: libc::c_int,

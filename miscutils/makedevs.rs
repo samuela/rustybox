@@ -1,13 +1,14 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -66,20 +67,15 @@ extern "C" {
 }
 
 use crate::librb::__dev_t;
-use crate::librb::__gid_t;
-use crate::librb::__uid_t;
-
 use crate::librb::__mode_t;
-
+use crate::librb::__uid_t;
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::size_t;
-
-use libc::uid_t;
-
 use libc::stat;
-
+use libc::uid_t;
 use libc::FILE;
+
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

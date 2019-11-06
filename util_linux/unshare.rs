@@ -1,5 +1,14 @@
 use libc;
 
+use crate::librb::__pid_t;
+use crate::librb::__uid_t;
+use crate::librb::fd_pair;
+use crate::librb::gid_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn unshare(__flags: libc::c_int) -> libc::c_int;
@@ -20,7 +29,7 @@ extern "C" {
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn getegid() -> __gid_t;
+  fn getegid() -> gid_t;
 
   #[no_mangle]
   fn geteuid() -> __uid_t;
@@ -81,13 +90,6 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
 
-use crate::librb::__gid_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-
 pub type C2RustUnnamed = libc::c_int;
 // pub const MS_NOUSER: C2RustUnnamed = -2147483648;
 // pub const MS_ACTIVE: C2RustUnnamed = 1073741824;
@@ -116,13 +118,7 @@ pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 // pub const MS_RDONLY: C2RustUnnamed = 1;
 
-
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::gid_t;
-use crate::librb::ssize_t;
-use libc::uid_t;
-
-use crate::librb::fd_pair;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

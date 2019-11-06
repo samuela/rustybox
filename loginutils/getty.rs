@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -134,11 +134,11 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__gid_t;
 use crate::librb::__mode_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::__useconds_t;
+use crate::librb::gid_t;
 
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
@@ -260,7 +260,7 @@ unsafe extern "C" fn open_tty() {
     /* crw--w---- */
     close(0i32);
     xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
-    fchown(0i32, 0i32 as __uid_t, 0i32 as __gid_t);
+    fchown(0i32, 0i32 as __uid_t, 0i32 as gid_t);
     fchmod(0i32, 0o620i32 as __mode_t);
   } else {
     let mut n: *mut libc::c_char = 0 as *mut libc::c_char;

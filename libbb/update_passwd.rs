@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
   #[no_mangle]
@@ -78,7 +78,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use crate::librb::__gid_t;
+use crate::librb::gid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;

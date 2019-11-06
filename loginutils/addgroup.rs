@@ -52,7 +52,6 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-use crate::librb::__gid_t;
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::group;
@@ -73,10 +72,10 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   /* gid values is set to [0, INT_MAX] */
   if option_mask32 & (1i32 << 0i32) as libc::c_uint == 0 {
     if option_mask32 & (1i32 << 1i32) as libc::c_uint != 0 {
-      (*g).gr_gid = 100i32 as __gid_t;
+      (*g).gr_gid = 100i32 as gid_t;
       max = 999i32 as libc::c_uint
     } else {
-      (*g).gr_gid = (999i32 + 1i32) as __gid_t
+      (*g).gr_gid = (999i32 + 1i32) as gid_t
     }
   }
   loop

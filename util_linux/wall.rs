@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn getuid() -> __uid_t;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -31,7 +31,6 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-use crate::librb::__gid_t;
 use crate::librb::__int32_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;

@@ -1,4 +1,11 @@
 use libc;
+use libc::stat;
+
+use crate::librb::__uid_t;
+use crate::librb::gid_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::size_t;
+
 extern "C" {
   #[no_mangle]
   fn strtoll(
@@ -11,9 +18,9 @@ extern "C" {
   #[no_mangle]
   fn geteuid() -> __uid_t;
   #[no_mangle]
-  fn getgid() -> __gid_t;
+  fn getgid() -> gid_t;
   #[no_mangle]
-  fn getegid() -> __gid_t;
+  fn getegid() -> gid_t;
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -46,16 +53,8 @@ extern "C" {
   static test_ptr_to_statics: *mut test_statics;
 }
 pub type __int64_t = libc::c_long;
-
-use crate::librb::__gid_t;
-
-use crate::librb::__uid_t;
 pub type int64_t = __int64_t;
-use crate::librb::gid_t;
-use crate::librb::signal::__sigset_t;
-use crate::librb::size_t;
 
-use libc::stat;
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -234,7 +234,7 @@ extern "C" {
   fn semop(__semid: libc::c_int, __sops: *mut sembuf, __nsops: size_t) -> libc::c_int;
 }
 
-use crate::librb::__gid_t;
+use crate::librb::gid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;
@@ -561,9 +561,9 @@ pub type shmatt_t = __syscall_ulong_t;
 pub struct ipc_perm {
   pub __key: __key_t,
   pub uid: __uid_t,
-  pub gid: __gid_t,
+  pub gid: gid_t,
   pub cuid: __uid_t,
-  pub cgid: __gid_t,
+  pub cgid: gid_t,
   pub mode: libc::c_ushort,
   pub __pad1: libc::c_ushort,
   pub __seq: libc::c_ushort,

@@ -1,5 +1,23 @@
 use libc;
 use libc::stat;
+use libc::time_t;
+use libc::timeval;
+use libc::uid_t;
+
+use crate::libbb::llist::llist_t;
+use crate::librb::__dev_t;
+use crate::librb::__mode_t;
+use crate::librb::__pid_t;
+use crate::librb::__suseconds_t;
+use crate::librb::__uid_t;
+use crate::librb::dev_t;
+use crate::librb::gid_t;
+use crate::librb::group;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 
 extern "C" {
   pub type hardlinks_t;
@@ -10,7 +28,7 @@ extern "C" {
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: __gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -76,25 +94,6 @@ extern "C" {
     hard_link: libc::c_int,
   );
 }
-
-use crate::libbb::llist::llist_t;
-use crate::librb::__dev_t;
-use crate::librb::__gid_t;
-use crate::librb::__mode_t;
-use crate::librb::__pid_t;
-use crate::librb::__suseconds_t;
-use crate::librb::__uid_t;
-use crate::librb::dev_t;
-use crate::librb::gid_t;
-use crate::librb::group;
-use crate::librb::mode_t;
-use crate::librb::off_t;
-use crate::librb::passwd;
-use crate::librb::smallint;
-use libc::time_t;
-use libc::uid_t;
-use crate::librb::uoff_t;
-use libc::timeval;
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
