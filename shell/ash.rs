@@ -367,7 +367,7 @@ pub type clock_t = __clock_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::signal::C2RustUnnamed_9;
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 use crate::librb::__compar_fn_t;
 use crate::librb::ptrdiff_t;

@@ -319,7 +319,7 @@ extern "C" {
 
 use crate::librb::uint8_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * fflush_stdout_and_exit implementation for busybox

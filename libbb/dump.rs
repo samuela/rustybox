@@ -65,7 +65,7 @@ use crate::librb::smallint;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 /* no conversions */
 pub type dump_vflag_t = libc::c_uint;
 pub const WAIT: dump_vflag_t = 3;

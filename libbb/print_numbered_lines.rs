@@ -18,7 +18,7 @@ extern "C" {
 
 use crate::librb::smallint;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct number_state {

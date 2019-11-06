@@ -369,7 +369,7 @@ pub union __CONST_SOCKADDR_ARG {
 }
 use crate::librb::signal::__sighandler_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

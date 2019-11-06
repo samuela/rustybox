@@ -1,6 +1,7 @@
 use libc;
+use libc::FILE;
 
-use crate::librb::{size_t, FILE};
+use crate::librb::size_t;
 
 extern "C" {
   #[no_mangle]

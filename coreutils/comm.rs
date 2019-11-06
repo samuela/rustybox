@@ -23,7 +23,7 @@ extern "C" {
 }
 
 use crate::librb::uint32_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 /* writeline outputs the input given, appropriately aligned according to class */
 unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {

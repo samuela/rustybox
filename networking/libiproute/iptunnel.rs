@@ -222,7 +222,7 @@ pub struct ip_tunnel_parm {
   pub iph: iphdr,
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 pub const ARG_name: C2RustUnnamed_2 = 26;
 pub const ARG_inherit: C2RustUnnamed_2 = 23;
 pub const ARG_dsfield: C2RustUnnamed_2 = 25;

@@ -14,7 +14,7 @@ extern "C" {
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Factored out of mpstat/iostat.

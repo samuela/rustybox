@@ -38,7 +38,7 @@ extern "C" {
 
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_d: C2RustUnnamed = 2;
 pub const OPT_i: C2RustUnnamed = 64;

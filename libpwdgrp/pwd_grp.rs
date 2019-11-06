@@ -71,7 +71,7 @@ use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::uid_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

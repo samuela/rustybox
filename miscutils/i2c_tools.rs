@@ -138,7 +138,7 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;

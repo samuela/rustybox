@@ -111,7 +111,7 @@ use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 pub type smalluint = libc::c_uchar;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;

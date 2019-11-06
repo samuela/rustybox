@@ -27,7 +27,7 @@ extern "C" {
 use crate::librb::smallint;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.

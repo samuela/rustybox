@@ -28,7 +28,7 @@ use crate::librb::size_t;
 use crate::librb::uint32_t;
 
 use crate::libbb::llist::llist_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * tac implementation for busybox

@@ -66,7 +66,7 @@ use crate::librb::timespec;
 
 use crate::librb::stat;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

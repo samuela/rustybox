@@ -65,7 +65,7 @@ use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {

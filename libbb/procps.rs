@@ -134,7 +134,7 @@ pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cache_t {

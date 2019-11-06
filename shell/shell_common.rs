@@ -105,7 +105,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

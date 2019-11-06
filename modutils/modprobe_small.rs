@@ -154,7 +154,7 @@ use crate::librb::uint32_t;
 
 use crate::librb::stat;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

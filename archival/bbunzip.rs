@@ -1,8 +1,9 @@
 use libc;
+use libc::FILE;
 
 use crate::librb::{
   __suseconds_t, off_t, size_t, smallint, stat, time_t, timespec, timeval, uint16_t, uint32_t,
-  uint8_t, uoff_t, FILE,
+  uint8_t, uoff_t,
 };
 
 extern "C" {

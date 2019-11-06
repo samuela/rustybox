@@ -10,7 +10,7 @@ extern "C" {
 
 use crate::librb::size_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Utility routines.

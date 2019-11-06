@@ -143,7 +143,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 pub type id_t = __id_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type __priority_which = libc::c_uint;
 pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;

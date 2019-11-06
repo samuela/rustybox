@@ -490,7 +490,7 @@ pub union __CONST_SOCKADDR_ARG {
 }
 use crate::librb::signal::__sighandler_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

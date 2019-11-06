@@ -87,7 +87,7 @@ extern "C" {
 use crate::librb::off_t;
 use crate::librb::smallint;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

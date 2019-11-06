@@ -323,7 +323,7 @@ pub struct __jmp_buf_tag {
 pub type jmp_buf = [__jmp_buf_tag; 1];
 
 use crate::librb::uoff_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -51,7 +51,7 @@ extern "C" {
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

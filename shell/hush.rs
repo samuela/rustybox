@@ -393,7 +393,7 @@ use crate::librb::__pid_t;
 
 
 use crate::librb::size_t;
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 use crate::librb::int32_t;
 use crate::librb::uint16_t;

@@ -183,7 +183,7 @@ use crate::librb::stat;
 use crate::librb::time_t;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]

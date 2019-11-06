@@ -107,7 +107,7 @@ pub struct hostent {
 
 use crate::libbb::llist::llist_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

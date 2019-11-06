@@ -80,7 +80,7 @@ pub struct dirent {
 use crate::librb::stat;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * lsattr.c		- List file attributes on an ext2 file system

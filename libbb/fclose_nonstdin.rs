@@ -10,7 +10,7 @@ extern "C" {
   static bb_errno: *mut libc::c_int;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Busybox main internal header file

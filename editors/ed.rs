@@ -72,7 +72,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PRINTABLE_META: C2RustUnnamed = 256;
 #[derive(Copy, Clone)]

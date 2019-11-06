@@ -23,7 +23,7 @@ extern "C" {
 use crate::librb::__useconds_t;
 use crate::librb::off_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * scriptreplay - play back typescripts, using timing information

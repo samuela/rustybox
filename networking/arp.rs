@@ -120,7 +120,7 @@ pub struct sockaddr {
   pub sa_data: [libc::c_char; 14],
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct aftype {

@@ -96,7 +96,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 /*
  * Config file parser
  */

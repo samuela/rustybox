@@ -159,7 +159,7 @@ use crate::librb::timespec;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()

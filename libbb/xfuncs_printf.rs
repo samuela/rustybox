@@ -276,7 +276,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 
 /*

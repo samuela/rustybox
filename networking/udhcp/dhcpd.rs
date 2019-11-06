@@ -406,7 +406,7 @@ pub type bb__aliased_uint32_t = uint32_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

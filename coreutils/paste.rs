@@ -35,7 +35,7 @@ extern "C" {
 
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * paste.c - implementation of the posix paste command

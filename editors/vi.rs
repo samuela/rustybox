@@ -185,7 +185,7 @@ pub struct __jmp_buf_tag {
 pub type sigjmp_buf = [__jmp_buf_tag; 1];
 use crate::librb::signal::__sighandler_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

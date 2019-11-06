@@ -10,7 +10,7 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * yes implementation for busybox

@@ -188,7 +188,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct aftype {

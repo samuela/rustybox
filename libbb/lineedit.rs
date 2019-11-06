@@ -339,7 +339,7 @@ pub struct C2RustUnnamed_8 {
 
 use crate::librb::signal::sigaction;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type wchar_t = libc::c_int;
 
 use crate::librb::passwd;

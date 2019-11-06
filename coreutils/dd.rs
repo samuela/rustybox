@@ -92,7 +92,7 @@ use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::uint16_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

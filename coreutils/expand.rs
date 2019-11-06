@@ -53,7 +53,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 /* expand - convert tabs to spaces
  * unexpand - convert spaces to tabs
  *

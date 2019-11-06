@@ -274,7 +274,7 @@ pub union C2RustUnnamed_1 {
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;

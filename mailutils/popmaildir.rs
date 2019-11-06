@@ -93,7 +93,7 @@ use crate::librb::size_t;
 
 use crate::librb::md5_ctx_t;
 use crate::librb::ptrdiff_t;
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -1,9 +1,10 @@
 use libc;
+use libc::FILE;
 
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __dev_t, __mode_t, __off_t, bb_uidgid_t, dev_t, fd_pair, gid_t, mode_t, off_t, pid_t, size_t,
-  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t, FILE,
+  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t,
 };
 
 extern "C" {

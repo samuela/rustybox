@@ -163,7 +163,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]

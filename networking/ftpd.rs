@@ -333,7 +333,7 @@ pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 use crate::librb::signal::__sighandler_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -610,7 +610,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-  
+
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

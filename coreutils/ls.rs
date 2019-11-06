@@ -183,7 +183,7 @@ use crate::librb::time_t;
 pub type blkcnt_t = __blkcnt64_t;
 
 use crate::librb::__compar_fn_t;
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

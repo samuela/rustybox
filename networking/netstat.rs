@@ -285,7 +285,7 @@ pub struct servent {
   pub s_proto: *mut libc::c_char,
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed_0 = 64;
 /*ACTION_REVERSE      = (1 << 4), - unused */

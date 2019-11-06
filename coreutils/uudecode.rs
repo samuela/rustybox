@@ -80,7 +80,7 @@ use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;
 pub const BASE64_FLAG_UU_STOP: C2RustUnnamed = 256;

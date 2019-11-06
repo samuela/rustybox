@@ -69,7 +69,7 @@ pub struct hostent {
   pub h_addr_list: *mut *mut libc::c_char,
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 /*
  * Config file parser
  */

@@ -131,7 +131,7 @@ pub type smalluint = libc::c_uchar;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

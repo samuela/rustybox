@@ -104,7 +104,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

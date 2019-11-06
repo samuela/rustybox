@@ -47,7 +47,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * whois - tiny client for the whois directory service

@@ -94,7 +94,7 @@ pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;

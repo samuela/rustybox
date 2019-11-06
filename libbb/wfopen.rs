@@ -132,7 +132,7 @@ extern "C" {
   fn bb_die_memory_exhausted() -> !;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Utility routines.

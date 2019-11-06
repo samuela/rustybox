@@ -319,7 +319,7 @@ pub type __rlimit_resource_t = __rlimit_resource;
 use crate::librb::cc_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Config file parser

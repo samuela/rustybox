@@ -44,7 +44,7 @@ pub type DIR = __dirstream;
 use crate::librb::stat;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * See README for additional information

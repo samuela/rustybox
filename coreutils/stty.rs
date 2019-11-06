@@ -116,7 +116,7 @@ pub struct __va_list_tag {
 use crate::librb::uint16_t;
 use crate::librb::uint8_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 use crate::librb::cc_t;
 use crate::librb::speed_t;

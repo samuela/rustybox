@@ -242,7 +242,7 @@ use crate::librb::timespec;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 use crate::librb::uoff_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake

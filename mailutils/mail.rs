@@ -104,7 +104,7 @@ extern "C" {
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

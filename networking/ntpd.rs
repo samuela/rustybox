@@ -453,7 +453,7 @@ pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 use crate::librb::signal::__sighandler_t;
 
 use crate::librb::__compar_fn_t;
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]

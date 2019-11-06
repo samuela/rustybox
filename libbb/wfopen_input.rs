@@ -313,7 +313,7 @@ extern "C" {
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * wfopen_input implementation for busybox

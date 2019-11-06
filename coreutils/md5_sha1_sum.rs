@@ -116,7 +116,7 @@ use crate::librb::sha1_ctx_t;
 use crate::librb::sha256_ctx_t;
 use crate::librb::sha3_ctx_t;
 use crate::librb::sha512_ctx_t;
-use crate::librb::FILE;
+use libc::FILE;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const HASH_SHA512: C2RustUnnamed = 53;

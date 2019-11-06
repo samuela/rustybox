@@ -176,7 +176,7 @@ use crate::librb::ssize_t;
 use crate::librb::stat;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

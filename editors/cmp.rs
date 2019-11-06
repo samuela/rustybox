@@ -38,7 +38,7 @@ use crate::librb::uint8_t;
 
 use crate::librb::off_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

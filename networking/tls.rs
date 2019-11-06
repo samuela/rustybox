@@ -149,7 +149,7 @@ pub type bb__aliased_uint64_t = uint64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

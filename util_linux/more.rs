@@ -65,7 +65,7 @@ use crate::librb::uint32_t;
 
 use crate::librb::termios;
 use crate::librb::uoff_t;
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

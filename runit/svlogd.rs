@@ -193,7 +193,7 @@ use crate::librb::time_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::timeval;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

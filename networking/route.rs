@@ -236,7 +236,7 @@ pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

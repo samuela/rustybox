@@ -42,7 +42,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::FILE;
+use libc::FILE;
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

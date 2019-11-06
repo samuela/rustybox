@@ -42,7 +42,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * cryptpw.c - output a crypt(3)ed password to stdout.

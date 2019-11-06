@@ -40,7 +40,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::uint32_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 #[no_mangle]
 pub unsafe extern "C" fn strings_main(
   mut _argc: libc::c_int,

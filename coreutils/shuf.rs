@@ -46,7 +46,7 @@ use crate::librb::uint32_t;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
 
-use crate::librb::FILE;
+use libc::FILE;
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.
  */

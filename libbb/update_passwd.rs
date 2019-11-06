@@ -102,7 +102,7 @@ use crate::librb::stat;
 use crate::librb::time_t;
 use crate::librb::timespec;
 
-use crate::librb::FILE;
+use libc::FILE;
 
 /*
  * Busybox main internal header file

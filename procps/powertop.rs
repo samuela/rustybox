@@ -159,7 +159,7 @@ pub struct dirent {
 pub type DIR = __dirstream;
 
 use crate::librb::__compar_fn_t;
-use crate::librb::FILE;
+use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

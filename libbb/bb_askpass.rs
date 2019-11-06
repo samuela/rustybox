@@ -1,7 +1,8 @@
 use libc;
+use libc::FILE;
 
 use crate::librb::signal::{__sigset_t, sigaction, C2RustUnnamed_9};
-use crate::librb::{size_t, ssize_t, termios, FILE};
+use crate::librb::{size_t, ssize_t, termios};
 
 extern "C" {
   #[no_mangle]

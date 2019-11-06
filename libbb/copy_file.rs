@@ -259,7 +259,7 @@ use crate::librb::stat;
 use crate::librb::timespec;
 use crate::librb::timeval;
 
-use crate::librb::FILE;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
