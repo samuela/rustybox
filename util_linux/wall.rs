@@ -37,7 +37,7 @@ use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::size_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

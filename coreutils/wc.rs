@@ -25,7 +25,7 @@ extern "C" {
 }
 
 use crate::librb::smallint;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 use libc::FILE;
 

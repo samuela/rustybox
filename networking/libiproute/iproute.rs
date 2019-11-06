@@ -175,8 +175,8 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
 use crate::librb::int8_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

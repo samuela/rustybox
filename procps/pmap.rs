@@ -28,7 +28,7 @@ extern "C" {
   );
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::pid_t;
 #[derive(Copy, Clone)]

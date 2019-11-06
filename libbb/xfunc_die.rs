@@ -5,7 +5,7 @@ extern "C" {
   static mut xfunc_error_retval: uint8_t;
 }
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 /* Keeping it separate allows to NOT pull in stdio for VERY small applets.
  * Try building busybox with only "true" enabled... */

@@ -68,8 +68,8 @@ use crate::librb::__gid_t;
 use crate::librb::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 
 /*
  * Mini nsenter implementation for busybox.

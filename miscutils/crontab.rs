@@ -86,8 +86,8 @@ use crate::librb::passwd;
 use crate::librb::pid_t;
 use libc::stat;
 
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 pub const OPT_e: C2RustUnnamed = 8;
 pub const OPT_l: C2RustUnnamed = 4;
 pub const OPT_ler: C2RustUnnamed = 28;

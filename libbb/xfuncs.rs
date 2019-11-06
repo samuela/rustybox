@@ -150,7 +150,7 @@ use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 use crate::librb::winsize;
 

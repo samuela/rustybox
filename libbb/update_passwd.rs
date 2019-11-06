@@ -99,7 +99,7 @@ pub struct flock {
   pub l_pid: __pid_t,
 }
 use libc::stat;
-use crate::librb::time_t;
+use libc::time_t;
 
 
 use libc::FILE;

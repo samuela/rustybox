@@ -91,7 +91,7 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use crate::librb::uint16_t;
+use libc::uint16_t;
 use libc::FILE;
 
 #[derive(Copy, Clone)]

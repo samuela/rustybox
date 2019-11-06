@@ -32,7 +32,7 @@ extern "C" {
 
 use crate::librb::__uid_t;
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]

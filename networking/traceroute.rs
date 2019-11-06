@@ -174,7 +174,7 @@ use crate::librb::gid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
  use libc::timeval;
-use crate::librb::uid_t;
+use libc::uid_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -225,7 +225,7 @@ pub struct sockaddr_in6 {
   pub sin6_addr: in6_addr,
   pub sin6_scope_id: uint32_t,
 }
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -238,8 +238,8 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr16: [uint16_t; 8],
   pub __u6_addr32: [uint32_t; 4],
 }
-use crate::librb::uint16_t;
-use crate::librb::uint8_t;
+use libc::uint16_t;
+ use libc::uint8_t;
 pub type in_port_t = uint16_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

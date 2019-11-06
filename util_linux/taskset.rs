@@ -57,7 +57,7 @@ pub type __cpu_mask = libc::c_ulong;
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * taskset - retrieve or set a processes' CPU affinity

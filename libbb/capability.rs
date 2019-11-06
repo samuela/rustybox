@@ -43,7 +43,7 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

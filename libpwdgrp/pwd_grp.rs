@@ -63,14 +63,14 @@ extern "C" {
 }
 
 use crate::librb::__gid_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::size_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 use libc::FILE;
 
 #[derive(Copy, Clone)]

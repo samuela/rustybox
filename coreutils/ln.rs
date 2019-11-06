@@ -43,7 +43,7 @@ extern "C" {
 }
 
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use libc::stat;
 #[no_mangle]
 pub unsafe extern "C" fn ln_main(

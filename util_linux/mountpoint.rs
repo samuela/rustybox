@@ -35,9 +35,9 @@ extern "C" {
 
 use crate::librb::__dev_t;
 use crate::librb::dev_t;
-use crate::librb::ino_t;
+use libc::ino_t;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * mountpoint implementation for busybox

@@ -24,11 +24,11 @@ use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::time_t;
-use crate::librb::uid_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::time_t;
+use libc::uid_t;
+use libc::uint16_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 use crate::librb::uoff_t;
 
 #[derive(Copy, Clone)]

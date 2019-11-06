@@ -28,7 +28,7 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * pwdx implementation for busybox

@@ -197,7 +197,7 @@ use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake

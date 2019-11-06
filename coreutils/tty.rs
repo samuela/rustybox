@@ -16,8 +16,8 @@ extern "C" {
   fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
 }
 
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 
 /*
  * tty implementation for busybox

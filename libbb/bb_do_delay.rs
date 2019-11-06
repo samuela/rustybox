@@ -1,6 +1,6 @@
 use libc;
 
-use crate::librb::time_t;
+use libc::time_t;
 
 extern "C" {
   #[no_mangle]

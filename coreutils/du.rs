@@ -52,7 +52,7 @@ use crate::librb::__off64_t;
 use crate::librb::dev_t;
 use libc::stat;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

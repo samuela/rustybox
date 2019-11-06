@@ -72,9 +72,9 @@ use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;
 
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
 use libc::stat;
+use libc::uid_t;
+use libc::uint32_t;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

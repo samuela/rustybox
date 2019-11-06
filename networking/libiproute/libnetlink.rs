@@ -58,7 +58,7 @@ pub struct iovec {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::ssize_t;
-use crate::librb::time_t;
+use libc::time_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -111,7 +111,7 @@ pub struct msghdr {
   pub msg_controllen: size_t,
   pub msg_flags: libc::c_int,
 }
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type bb__aliased_uint32_t = uint32_t;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;

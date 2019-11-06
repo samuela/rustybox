@@ -19,9 +19,9 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const FL_SCALE512: C2RustUnnamed = 16;
 /* argument is provided by user */

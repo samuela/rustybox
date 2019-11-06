@@ -116,11 +116,11 @@ pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 // pub const MS_RDONLY: C2RustUnnamed = 1;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::gid_t;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 
 use crate::librb::fd_pair;
 

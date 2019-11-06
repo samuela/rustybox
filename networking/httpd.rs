@@ -153,8 +153,6 @@ extern "C" {
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
 
@@ -373,9 +371,9 @@ use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint16_t;
+use libc::uint32_t;
+use libc::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -391,10 +389,10 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 pub type socklen_t = __socklen_t;
+use libc::time_t;
 use libc::stat;
-use crate::librb::time_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

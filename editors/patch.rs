@@ -90,7 +90,7 @@ use crate::librb::__mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use libc::stat;
 
 use libc::FILE;

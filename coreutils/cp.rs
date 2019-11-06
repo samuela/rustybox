@@ -52,7 +52,7 @@ extern "C" {
 }
 
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use libc::stat;
 
 pub type C2RustUnnamed = libc::c_int;

@@ -10,7 +10,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * Mini hostid implementation for busybox

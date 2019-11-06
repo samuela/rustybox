@@ -317,7 +317,7 @@ extern "C" {
   static mut xfunc_error_retval: uint8_t;
 }
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 use libc::FILE;
 

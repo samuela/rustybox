@@ -191,7 +191,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::time_t;
+use libc::time_t;
 
 use libc::FILE;
 #[derive(Copy, Clone)]

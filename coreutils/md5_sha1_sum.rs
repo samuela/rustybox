@@ -106,10 +106,10 @@ extern "C" {
 }
 
 use crate::librb::ssize_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 use crate::librb::size_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;

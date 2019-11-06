@@ -75,8 +75,8 @@ use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::size_t;
 
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 use libc::stat;
 
 use libc::FILE;

@@ -50,8 +50,8 @@ extern "C" {
 
 use crate::librb::__uid_t;
 use crate::librb::signal::__sighandler_t;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 
 use crate::librb::passwd;
 use crate::librb::termios;

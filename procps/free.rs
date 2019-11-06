@@ -20,7 +20,7 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 use libc::FILE;
 #[derive(Copy, Clone)]

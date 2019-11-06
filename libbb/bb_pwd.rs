@@ -48,7 +48,7 @@ extern "C" {
 use crate::librb::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;
-use crate::librb::uid_t;
+use libc::uid_t;
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,

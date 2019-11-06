@@ -82,8 +82,8 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::time_t;
-use crate::librb::uint32_t;
+use libc::time_t;
+use libc::uint32_t;
 
 use libc::FILE;
 #[derive(Copy, Clone)]

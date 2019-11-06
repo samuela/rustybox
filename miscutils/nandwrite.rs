@@ -56,7 +56,7 @@ pub type __loff_t = __off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type loff_t = __loff_t;
 pub type __u8 = libc::c_uchar;
 pub type __u32 = libc::c_uint;

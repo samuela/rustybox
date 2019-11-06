@@ -176,7 +176,7 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -188,7 +188,7 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-use crate::librb::time_t;
+use libc::time_t;
 use crate::librb::signal::sigset_t;
  use libc::timeval;
 

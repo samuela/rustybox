@@ -12,7 +12,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 use crate::librb::__uid_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 
 /*
  * Mini whoami implementation for busybox

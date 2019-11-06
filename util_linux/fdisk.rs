@@ -283,9 +283,9 @@ extern "C" {
 
 use crate::librb::__off64_t;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -

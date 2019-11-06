@@ -79,11 +79,11 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
-use crate::librb::time_t;
+use libc::time_t;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

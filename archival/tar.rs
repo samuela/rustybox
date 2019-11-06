@@ -204,29 +204,26 @@ extern "C" {
 }
 
 use crate::libbb::llist::llist_t;
-
 use crate::librb::__dev_t;
-
 use crate::librb::__uid_t;
-
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
 use crate::librb::fd_pair;
 use crate::librb::gid_t;
-use crate::librb::ino_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::stat;
-use crate::librb::time_t;
-use crate::librb::uid_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
 use crate::librb::uoff_t;
+use libc::ino_t;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+use libc::uint16_t;
+use libc::uint32_t;
+use libc::uint8_t;
 use libc::FILE;
 
 /* NB: unaligned parameter should be a pointer, aligned one -

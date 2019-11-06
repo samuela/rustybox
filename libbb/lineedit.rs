@@ -230,7 +230,7 @@ use crate::librb::__uid_t;
 use crate::librb::int16_t;
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -245,7 +245,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -259,7 +259,7 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::signal::__sigval_t;
 use libc::stat;
-use crate::librb::time_t;
+use libc::time_t;
 
 
 #[derive(Copy, Clone)]

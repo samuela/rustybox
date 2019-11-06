@@ -32,7 +32,7 @@ extern "C" {
 }
 
 use crate::librb::signal::__sighandler_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 /*
  * nohup - invoke a utility immune to hangups.

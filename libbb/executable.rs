@@ -32,7 +32,7 @@ extern "C" {
 
 use libc::stat;
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 /*
  * Utility routines.

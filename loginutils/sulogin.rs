@@ -43,8 +43,8 @@ extern "C" {
 
 use crate::librb::passwd;
 use crate::librb::smallint;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

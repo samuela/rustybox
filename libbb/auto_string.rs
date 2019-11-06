@@ -1,6 +1,6 @@
 use libc;
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 extern "C" {
   #[no_mangle]

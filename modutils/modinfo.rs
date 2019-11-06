@@ -76,7 +76,7 @@ pub struct utsname {
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;

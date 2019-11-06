@@ -36,7 +36,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 use libc::FILE;
 pub const OPT_c: C2RustUnnamed = 1;

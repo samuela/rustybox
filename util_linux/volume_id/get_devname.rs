@@ -78,7 +78,7 @@ use crate::librb::__dev_t;
 
 use crate::librb::size_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 use libc::stat;
 

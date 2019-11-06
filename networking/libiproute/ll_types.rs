@@ -7,7 +7,7 @@ extern "C" {
 }
 use crate::librb::size_t;
 
-use crate::librb::uint16_t;
+use libc::uint16_t;
 
 /*
  * This program is free software; you can redistribute it and/or

@@ -167,14 +167,14 @@ pub type __int64_t = libc::c_long;
 
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use crate::librb::time_t;
+use libc::time_t;
 
 pub type int64_t = __int64_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;

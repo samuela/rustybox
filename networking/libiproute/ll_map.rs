@@ -51,7 +51,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type __u16 = libc::c_ushort;
 pub type __u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;

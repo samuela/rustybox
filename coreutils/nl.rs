@@ -21,7 +21,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct number_state {

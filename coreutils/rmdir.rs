@@ -23,7 +23,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[no_mangle]
 pub unsafe extern "C" fn rmdir_main(
   mut _argc: libc::c_int,

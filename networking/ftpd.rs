@@ -221,9 +221,9 @@ use crate::librb::__mode_t;
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint16_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 pub type bb__aliased_uint32_t = uint32_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
@@ -231,7 +231,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 pub type socklen_t = __socklen_t;
 use libc::stat;
-use crate::librb::time_t;
+use libc::time_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

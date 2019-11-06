@@ -54,7 +54,7 @@ use crate::librb::pid_t;
 pub struct sched_param {
   pub sched_priority: libc::c_int,
 }
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

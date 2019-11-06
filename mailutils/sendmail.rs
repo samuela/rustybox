@@ -93,8 +93,8 @@ use crate::librb::__uid_t;
 
 use crate::librb::pid_t;
 use crate::librb::size_t;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hostent {

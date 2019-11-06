@@ -22,7 +22,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

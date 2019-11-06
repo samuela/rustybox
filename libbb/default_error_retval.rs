@@ -1,4 +1,4 @@
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 
 /*
  * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>

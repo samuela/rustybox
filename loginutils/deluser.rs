@@ -43,7 +43,7 @@ extern "C" {
 use crate::librb::__uid_t;
 use crate::librb::group;
 use crate::librb::passwd;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

@@ -16,7 +16,7 @@ extern "C" {
 
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
 /*
  * Copyright (C) 2017 Denys Vlasenko

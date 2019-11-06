@@ -20,7 +20,7 @@ extern "C" {
 }
 
 use crate::librb::ptrdiff_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 pub const UNICODE: C2RustUnnamed = 8;
 pub type C2RustUnnamed = libc::c_uint;

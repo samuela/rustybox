@@ -233,10 +233,10 @@ use crate::librb::__off64_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+use libc::uint16_t;
+use libc::uint32_t;
+use libc::uint8_t;
 pub type smalluint = libc::c_uchar;
 use crate::librb::off_t;
 use crate::librb::pid_t;

@@ -153,9 +153,9 @@ use crate::librb::__off64_t;
 
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake

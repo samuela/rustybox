@@ -21,7 +21,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::uint16_t;
+use libc::uint16_t;
 
 /* From <linux/kd.h> */
 #[derive(Copy, Clone)]

@@ -26,7 +26,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sg_io_hdr {

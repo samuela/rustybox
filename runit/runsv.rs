@@ -115,9 +115,9 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use crate::librb::uint64_t;
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

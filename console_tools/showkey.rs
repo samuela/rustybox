@@ -51,7 +51,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::termios;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

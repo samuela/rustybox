@@ -89,7 +89,7 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

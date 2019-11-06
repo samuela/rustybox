@@ -113,7 +113,7 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::uint16_t;
+use libc::uint16_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

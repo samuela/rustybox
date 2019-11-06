@@ -107,8 +107,8 @@ extern "C" {
 use crate::librb::int16_t;
 use crate::librb::int8_t;
 use crate::librb::size_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 pub type smalluint = libc::c_uchar;
 
 use libc::FILE;

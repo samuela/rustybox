@@ -22,7 +22,7 @@ extern "C" {
   static mut option_mask32: uint32_t;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 use libc::FILE;
 
 /* writeline outputs the input given, appropriately aligned according to class */

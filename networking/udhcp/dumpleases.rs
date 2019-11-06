@@ -47,9 +47,9 @@ use crate::librb::__uint64_t;
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::time_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::time_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {

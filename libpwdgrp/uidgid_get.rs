@@ -43,7 +43,7 @@ use crate::librb::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::size_t;
-use crate::librb::uid_t;
+use libc::uid_t;
 /*
 Copyright (c) 2001-2006, Gerrit Pape
 All rights reserved.

@@ -117,9 +117,9 @@ use crate::librb::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
-use crate::librb::uint16_t;
-use crate::librb::uint8_t;
+use libc::uid_t;
+use libc::uint16_t;
+ use libc::uint8_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

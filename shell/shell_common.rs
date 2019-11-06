@@ -99,7 +99,7 @@ extern "C" {
 
 pub type __rlim64_t = libc::c_ulong;
 
-use crate::librb::uint8_t;
+ use libc::uint8_t;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
 use crate::librb::smallint;

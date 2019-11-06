@@ -78,8 +78,8 @@ pub type __rlim64_t = libc::c_ulong;
 use crate::librb::gid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

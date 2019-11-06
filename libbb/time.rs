@@ -51,7 +51,7 @@ pub type __clockid_t = libc::c_int;
 use crate::librb::size_t;
 
 pub type clockid_t = __clockid_t;
-use crate::librb::time_t;
+use libc::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

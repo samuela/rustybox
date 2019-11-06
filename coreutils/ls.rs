@@ -158,12 +158,12 @@ use crate::librb::__off64_t;
 pub type __blkcnt64_t = libc::c_long;
 
 use crate::librb::gid_t;
-use crate::librb::ino_t;
+ use libc::ino_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::uid_t;
-use crate::librb::uint32_t;
+use libc::uid_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -178,7 +178,7 @@ use crate::librb::mode_t;
 
 use libc::stat;
 pub type nlink_t = __nlink_t;
-use crate::librb::time_t;
+use libc::time_t;
 pub type blkcnt_t = __blkcnt64_t;
 
 use crate::librb::__compar_fn_t;

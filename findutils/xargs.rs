@@ -76,7 +76,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * Copyright 2006, Bernhard Reutner-Fischer

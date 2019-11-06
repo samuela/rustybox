@@ -27,7 +27,7 @@ extern "C" {
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
 
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 /*
  * Copyright (C) 1999-2004 by Erik Andersen <andersen@codepoet.org>

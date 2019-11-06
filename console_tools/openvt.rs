@@ -58,7 +58,7 @@ pub struct vt_stat {
 use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::ptrdiff_t;
-use crate::librb::uint32_t;
+use libc::uint32_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;

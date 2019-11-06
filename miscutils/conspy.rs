@@ -112,9 +112,9 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uint16_t;
-use crate::librb::uint32_t;
-use crate::librb::uint8_t;
+use libc::uint16_t;
+use libc::uint32_t;
+ use libc::uint8_t;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;

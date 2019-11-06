@@ -85,7 +85,7 @@ pub struct statvfs {
   pub f_namemax: libc::c_ulong,
   pub __f_spare: [libc::c_int; 6],
 }
-use crate::librb::uint32_t;
+use libc::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct uni_stat_t {

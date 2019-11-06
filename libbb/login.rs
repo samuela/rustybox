@@ -53,7 +53,7 @@ extern "C" {
 use crate::librb::__uid_t;
 
 use crate::librb::size_t;
-use crate::librb::time_t;
+use libc::time_t;
 
 use libc::FILE;
 #[derive(Copy, Clone)]
