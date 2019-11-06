@@ -105,14 +105,14 @@ extern "C" {
 }
 
 use crate::librb::int16_t;
-use crate::librb::int8_t;
+
 use crate::librb::size_t;
 
 
 pub type smalluint = libc::c_uchar;
 
 use libc::FILE;
-pub type family_t = int8_t;
+pub type family_t = i8;
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;

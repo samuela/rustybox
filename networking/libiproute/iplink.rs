@@ -99,7 +99,7 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int8_t;
+
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
@@ -200,7 +200,7 @@ pub type u32 = libc::c_uint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-pub type family_t = int8_t;
+pub type family_t = i8;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]

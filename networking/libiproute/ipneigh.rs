@@ -119,10 +119,10 @@ extern "C" {
 }
 
 use crate::librb::int16_t;
-use crate::librb::int8_t;
 
 
-pub type family_t = int8_t;
+
+pub type family_t = i8;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;

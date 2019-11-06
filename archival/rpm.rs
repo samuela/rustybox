@@ -13,7 +13,7 @@ use crate::librb::dev_t;
 use crate::librb::group;
 use crate::librb::int16_t;
 use crate::librb::int32_t;
-use crate::librb::int8_t;
+
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::passwd;
@@ -649,7 +649,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
   }
   if (*found).type_0 == 2i32 as libc::c_uint {
     tmpint = tmpint.offset(itemindex as isize);
-    return *(tmpint as *mut int8_t) as libc::c_int;
+    return *(tmpint as *mut i8) as libc::c_int;
   }
   return -1i32;
 }

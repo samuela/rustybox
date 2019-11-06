@@ -10,7 +10,7 @@ extern "C" {
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
 }
 
-use crate::librb::int8_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -22,7 +22,7 @@ use crate::librb::int8_t;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-pub type family_t = int8_t;
+pub type family_t = i8;
 pub const ARG_IPv4: C2RustUnnamed = 2;
 pub const ARG_family: C2RustUnnamed = 1;
 pub const ARG_oneline: C2RustUnnamed = 0;

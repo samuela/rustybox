@@ -174,7 +174,7 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
-use crate::librb::int8_t;
+
 
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -201,7 +201,7 @@ pub struct sockaddr {
 }
 
 use libc::FILE;
-pub type family_t = int8_t;
+pub type family_t = i8;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
 pub type u32 = libc::c_uint;

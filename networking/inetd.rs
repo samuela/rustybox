@@ -1,6 +1,6 @@
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
-use crate::librb::int8_t;
+
 use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigset_t;
@@ -570,8 +570,8 @@ pub type __timezone_ptr_t = *mut timezone;
 use crate::librb::group;
 use crate::librb::passwd;
 /* Useful for having small structure members/global variables */
-pub type socktype_t = int8_t;
-pub type family_t = int8_t;
+pub type socktype_t = i8;
+pub type family_t = i8;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -1079,13 +1079,13 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
     (*sep).se_service = xstrdup(arg);
     /* socktype proto wait user[:group] prog [args] */
     if !(argc < 6i32) {
-      static mut SOCK_xxx: [int8_t; 6] = [
-        -1i32 as int8_t,
-        SOCK_STREAM as libc::c_int as int8_t,
-        SOCK_DGRAM as libc::c_int as int8_t,
-        SOCK_RDM as libc::c_int as int8_t,
-        SOCK_SEQPACKET as libc::c_int as int8_t,
-        SOCK_RAW as libc::c_int as int8_t,
+      static mut SOCK_xxx: [i8; 6] = [
+        -1i32 as i8,
+        SOCK_STREAM as libc::c_int as i8,
+        SOCK_DGRAM as libc::c_int as i8,
+        SOCK_RDM as libc::c_int as i8,
+        SOCK_SEQPACKET as libc::c_int as i8,
+        SOCK_RAW as libc::c_int as i8,
       ];
       (*sep).se_socktype = SOCK_xxx[(1i32
         + index_in_strings(

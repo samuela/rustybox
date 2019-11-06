@@ -19,12 +19,7 @@ extern "C" {
   );
 }
 
-use crate::librb::int8_t;
 use crate::librb::size_t;
-
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -123,9 +118,9 @@ pub struct ntfs_super_block {
   pub number_of_sectors: u64,
   pub mft_cluster_location: u64,
   pub mft_mirror_cluster_location: u64,
-  pub cluster_per_mft_record: int8_t,
+  pub cluster_per_mft_record: i8,
   pub reserved1: [u8; 3],
-  pub cluster_per_index_record: int8_t,
+  pub cluster_per_index_record: i8,
   pub reserved2: [u8; 3],
   pub volume_serial: [u8; 8],
   pub checksum: u16,

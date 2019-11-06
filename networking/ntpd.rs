@@ -2,7 +2,7 @@ use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::int32_t;
-use crate::librb::int8_t;
+
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
@@ -624,7 +624,7 @@ pub struct msg_t {
   pub m_status: u8,
   pub m_stratum: u8,
   pub m_ppoll: u8,
-  pub m_precision_exp: int8_t,
+  pub m_precision_exp: i8,
   pub m_rootdelay: s_fixedpt_t,
   pub m_rootdisp: s_fixedpt_t,
   pub m_refid: u32,
@@ -2815,7 +2815,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
       }) as u8;
     msg.m_stratum = (*ptr_to_globals).stratum;
     msg.m_ppoll = (*ptr_to_globals).poll_exp;
-    msg.m_precision_exp = -9i32 as int8_t;
+    msg.m_precision_exp = -9i32 as i8;
     /* this time was obtained between poll() and recv() */
     msg.m_rectime = d_to_lfp((*ptr_to_globals).cur_time); /* this instant */
     msg.m_xmttime = d_to_lfp(gettime1900d());

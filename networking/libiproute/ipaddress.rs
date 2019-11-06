@@ -186,7 +186,7 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::int16_t;
-use crate::librb::int8_t;
+
 use crate::librb::size_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -275,7 +275,7 @@ use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 
 use libc::FILE;
-pub type family_t = int8_t;
+pub type family_t = i8;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;

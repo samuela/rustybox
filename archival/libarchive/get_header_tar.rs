@@ -82,7 +82,7 @@ use crate::librb::__off64_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
 use libc::gid_t;
-use crate::librb::int8_t;
+
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
@@ -205,7 +205,7 @@ unsafe extern "C" fn getOctal(
   /* std: "Each numeric field is terminated by one or more
    * <space> or NUL characters". We must support ' '! */
   if *end as libc::c_int != '\u{0}' as i32 && *end as libc::c_int != ' ' as i32 {
-    let mut first: int8_t = *str.offset(0) as int8_t;
+    let mut first: i8 = *str.offset(0) as i8;
     if first as libc::c_int & 0x80i32 == 0 {
       bb_simple_error_msg_and_die(
         b"corrupted octal value in tar header\x00" as *const u8 as *const libc::c_char,
@@ -228,8 +228,8 @@ unsafe extern "C" fn getOctal(
      * NB: tarballs with NEGATIVE unix times encoded that way were seen!
      */
     /* Sign-extend 7bit 'first' to 64bit 'v' (that is, using 6th bit as sign): */
-    first = ((first as libc::c_int) << 1i32) as int8_t; /* now 7th bit = 6th bit */
-    first = (first as libc::c_int >> 1i32) as int8_t; /* sign-extend 8 bits to 64 */
+    first = ((first as libc::c_int) << 1i32) as i8; /* now 7th bit = 6th bit */
+    first = (first as libc::c_int >> 1i32) as i8; /* sign-extend 8 bits to 64 */
     v = first as libc::c_ulonglong;
     loop {
       len -= 1;
