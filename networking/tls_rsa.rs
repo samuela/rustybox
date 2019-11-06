@@ -42,10 +42,10 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::int32_t;
+
 
 pub type uint32 = u32;
-pub type int32 = int32_t;
+pub type int32 = i32;
 pub type pstm_digit = uint32;
 #[derive(Copy, Clone)]
 #[repr(C)]

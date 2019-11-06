@@ -33,7 +33,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 use libc::time_t;
  use libc::timeval;
@@ -154,7 +154,7 @@ pub unsafe extern "C" fn ts_main(
       ts.tv_sec -= base.tv_sec;
       //printf("%d %d\n", ts.tv_sec, base.tv_sec);
       ts.tv_usec -= base.tv_usec;
-      if (ts.tv_usec as int32_t) < 0i32 {
+      if (ts.tv_usec as i32) < 0i32 {
         ts.tv_sec -= 1;
         ts.tv_usec += (1000i32 * 1000i32) as libc::c_long
       }

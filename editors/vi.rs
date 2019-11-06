@@ -151,7 +151,7 @@ pub type __int64_t = libc::c_long;
 
 use crate::librb::__off64_t;
 
-use crate::librb::int32_t;
+
 pub type int64_t = __int64_t;
 
 
@@ -97711,7 +97711,7 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
     write1(b"\x1b[999;999H\x1b[6n\x00" as *const u8 as *const libc::c_char); // default Yank/Delete reg
     fflush_all();
     k = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32) as u64;
-    if k as int32_t == KEYCODE_CURSOR_POS as libc::c_int {
+    if k as i32 == KEYCODE_CURSOR_POS as libc::c_int {
       let mut rc: u32 = (k >> 32i32) as u32;
       (*ptr_to_globals).columns = rc & 0x7fffi32 as libc::c_uint;
       if (*ptr_to_globals).columns > MAX_SCR_COLS as libc::c_int as libc::c_uint {

@@ -63,7 +63,7 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-use crate::librb::int32_t;
+
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -311,7 +311,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     //usage:#define ubidetach_full_usage "\n\n"
     //usage:       "Detach MTD device from UBI\n"
     //usage:     "\n	-d UBI_NUM	UBI device number"
-    /* FIXME? kernel expects int32_t* here: */
+    /* FIXME? kernel expects i32* here: */
     bb_xioctl(
       fd,
       ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
@@ -431,8 +431,8 @@ pub unsafe extern "C" fn ubi_tools_main(
       //usage:       "Remove UBI volume\n"
       //usage:     "\n	-n VOLID	Volume ID"
       //usage:     "\n	-N VOLNAME	Volume name"
-      /* kernel expects int32_t* in this ioctl */
-      let mut t: int32_t = vol_id;
+      /* kernel expects i32* in this ioctl */
+      let mut t: i32 = vol_id;
       bb_xioctl(
         fd,
         ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
@@ -440,7 +440,7 @@ pub unsafe extern "C" fn ubi_tools_main(
           | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
           | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
           as libc::c_uint,
-        &mut t as *mut int32_t as *mut libc::c_void,
+        &mut t as *mut i32 as *mut libc::c_void,
         b"UBI_IOCRMVOL\x00" as *const u8 as *const libc::c_char,
       );
     } else {

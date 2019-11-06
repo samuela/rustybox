@@ -141,7 +141,7 @@ pub type __int64_t = libc::c_long;
 
 use crate::librb::__useconds_t;
 
-use crate::librb::int32_t;
+
 pub type int64_t = __int64_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
@@ -1235,12 +1235,12 @@ unsafe extern "C" fn handle_input(
     return scan_mask;
   }
   loop {
-    let mut c: int32_t = 0;
+    let mut c: i32 = 0;
     c = read_key(
       0i32,
       (*ptr_to_globals).kbd_input.as_mut_ptr(),
       (interval * 1000i32 as libc::c_double) as libc::c_int,
-    ) as int32_t;
+    ) as i32;
     if c == -1i32 && *bb_errno != 11i32 {
       /* unknown key -> force refresh */
       /* error/EOF */

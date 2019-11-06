@@ -49,7 +49,7 @@ extern "C" {
 }
 
 pub type __key_t = libc::c_int;
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 
 pub type key_t = __key_t;
@@ -67,8 +67,8 @@ pub struct globals {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct shbuf_ds {
-  pub size: int32_t,
-  pub tail: int32_t,
+  pub size: i32,
+  pub tail: i32,
   pub data: [libc::c_char; 1],
 }
 #[derive(Copy, Clone)]

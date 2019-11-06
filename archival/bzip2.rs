@@ -60,7 +60,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -138,38 +138,38 @@ pub struct EState {
   pub arr2: *mut u32,
   pub ftab: *mut u32,
   pub quadrant: *mut u16,
-  pub budget: int32_t,
+  pub budget: i32,
   pub ptr: *mut u32,
   pub block: *mut u8,
   pub mtfv: *mut u16,
   pub zbits: *mut u8,
   pub state_in_ch: u32,
-  pub state_in_len: int32_t,
-  pub nblock: int32_t,
-  pub nblockMAX: int32_t,
+  pub state_in_len: i32,
+  pub nblock: i32,
+  pub nblockMAX: i32,
   pub posZ: *mut u8,
   pub state_out_pos: *mut u8,
   pub bsBuff: u32,
-  pub bsLive: int32_t,
+  pub bsLive: i32,
   pub crc32table: *mut u32,
   pub blockCRC: u32,
   pub combinedCRC: u32,
-  pub blockNo: int32_t,
-  pub nMTF: int32_t,
-  pub nInUse: int32_t,
+  pub blockNo: i32,
+  pub nMTF: i32,
+  pub nInUse: i32,
   pub inUse: [Bool; 256],
   pub unseqToSeq: [u8; 256],
-  pub mtfFreq: [int32_t; 258],
+  pub mtfFreq: [i32; 258],
   pub selector: [u8; 18002],
   pub selectorMtf: [u8; 18002],
   pub len: [[u8; 258]; 6],
-  pub sendMTFValues__code: [[int32_t; 258]; 6],
-  pub sendMTFValues__rfreq: [[int32_t; 258]; 6],
-  pub BZ2_hbMakeCodeLengths__heap: [int32_t; 260],
-  pub BZ2_hbMakeCodeLengths__weight: [int32_t; 516],
-  pub BZ2_hbMakeCodeLengths__parent: [int32_t; 516],
-  pub mainSort__copyStart: [int32_t; 256],
-  pub mainSort__copyEnd: [int32_t; 256],
+  pub sendMTFValues__code: [[i32; 258]; 6],
+  pub sendMTFValues__rfreq: [[i32; 258]; 6],
+  pub BZ2_hbMakeCodeLengths__heap: [i32; 260],
+  pub BZ2_hbMakeCodeLengths__weight: [i32; 516],
+  pub BZ2_hbMakeCodeLengths__parent: [i32; 516],
+  pub mainSort__copyStart: [i32; 256],
+  pub mainSort__copyEnd: [i32; 256],
 }
 /*
  * bzip2 is written by Julian Seward <jseward@bzip.org>.
@@ -309,12 +309,12 @@ in the file LICENSE.
 /* #include "bzlib_private.h" */
 unsafe extern "C" fn mvswap(
   mut ptr: *mut u32,
-  mut zzp1: int32_t,
-  mut zzp2: int32_t,
-  mut zzn: int32_t,
+  mut zzp1: i32,
+  mut zzp2: i32,
+  mut zzn: i32,
 ) {
   while zzn > 0i32 {
-    let mut zztmp: int32_t = *ptr.offset(zzp1 as isize) as int32_t;
+    let mut zztmp: i32 = *ptr.offset(zzp1 as isize) as i32;
     *ptr.offset(zzp1 as isize) = *ptr.offset(zzp2 as isize);
     *ptr.offset(zzp2 as isize) = zztmp as u32;
     zzp1 += 1;
@@ -323,7 +323,7 @@ unsafe extern "C" fn mvswap(
   }
 }
 #[inline(always)]
-unsafe extern "C" fn mmin(mut a: int32_t, mut b: int32_t) -> int32_t {
+unsafe extern "C" fn mmin(mut a: i32, mut b: i32) -> i32 {
   return if a < b { a } else { b };
 }
 /*---------------------------------------------*/
@@ -335,12 +335,12 @@ unsafe extern "C" fn mmin(mut a: int32_t, mut b: int32_t) -> int32_t {
 unsafe extern "C" fn fallbackSimpleSort(
   mut fmap: *mut u32,
   mut eclass: *mut u32,
-  mut lo: int32_t,
-  mut hi: int32_t,
+  mut lo: i32,
+  mut hi: i32,
 ) {
-  let mut i: int32_t = 0;
-  let mut j: int32_t = 0;
-  let mut tmp: int32_t = 0;
+  let mut i: i32 = 0;
+  let mut j: i32 = 0;
+  let mut tmp: i32 = 0;
   let mut ec_tmp: u32 = 0;
   if lo == hi {
     return;
@@ -348,7 +348,7 @@ unsafe extern "C" fn fallbackSimpleSort(
   if hi - lo > 3i32 {
     i = hi - 4i32;
     while i >= lo {
-      tmp = *fmap.offset(i as isize) as int32_t;
+      tmp = *fmap.offset(i as isize) as i32;
       ec_tmp = *eclass.offset(tmp as isize);
       j = i + 4i32;
       while j <= hi && ec_tmp > *eclass.offset(*fmap.offset(j as isize) as isize) {
@@ -361,7 +361,7 @@ unsafe extern "C" fn fallbackSimpleSort(
   }
   i = hi - 1i32;
   while i >= lo {
-    tmp = *fmap.offset(i as isize) as int32_t;
+    tmp = *fmap.offset(i as isize) as i32;
     ec_tmp = *eclass.offset(tmp as isize);
     j = i + 1i32;
     while j <= hi && ec_tmp > *eclass.offset(*fmap.offset(j as isize) as isize) {
@@ -375,27 +375,27 @@ unsafe extern "C" fn fallbackSimpleSort(
 unsafe extern "C" fn fallbackQSort3(
   mut fmap: *mut u32,
   mut eclass: *mut u32,
-  mut loSt: int32_t,
-  mut hiSt: int32_t,
+  mut loSt: i32,
+  mut hiSt: i32,
 ) {
-  let mut sp: int32_t = 0;
+  let mut sp: i32 = 0;
   let mut r: u32 = 0;
-  let mut stackLo: [int32_t; 100] = [0; 100];
-  let mut stackHi: [int32_t; 100] = [0; 100];
+  let mut stackLo: [i32; 100] = [0; 100];
+  let mut stackHi: [i32; 100] = [0; 100];
   r = 0i32 as u32;
   sp = 0i32;
   stackLo[sp as usize] = loSt;
   stackHi[sp as usize] = hiSt;
   sp += 1;
   while sp > 0i32 {
-    let mut unLo: int32_t = 0;
-    let mut unHi: int32_t = 0;
-    let mut ltLo: int32_t = 0;
-    let mut gtHi: int32_t = 0;
-    let mut n: int32_t = 0;
-    let mut m: int32_t = 0;
-    let mut lo: int32_t = 0;
-    let mut hi: int32_t = 0;
+    let mut unLo: i32 = 0;
+    let mut unHi: i32 = 0;
+    let mut ltLo: i32 = 0;
+    let mut gtHi: i32 = 0;
+    let mut n: i32 = 0;
+    let mut m: i32 = 0;
+    let mut lo: i32 = 0;
+    let mut hi: i32 = 0;
     let mut med: u32 = 0;
     let mut r3: u32 = 0;
     sp -= 1;
@@ -429,9 +429,9 @@ unsafe extern "C" fn fallbackQSort3(
       unHi = gtHi;
       loop {
         while !(unLo > unHi) {
-          n = *eclass.offset(*fmap.offset(unLo as isize) as isize) as int32_t - med as int32_t;
+          n = *eclass.offset(*fmap.offset(unLo as isize) as isize) as i32 - med as i32;
           if n == 0i32 {
-            let mut zztmp: int32_t = *fmap.offset(unLo as isize) as int32_t;
+            let mut zztmp: i32 = *fmap.offset(unLo as isize) as i32;
             *fmap.offset(unLo as isize) = *fmap.offset(ltLo as isize);
             *fmap.offset(ltLo as isize) = zztmp as u32;
             ltLo += 1;
@@ -444,9 +444,9 @@ unsafe extern "C" fn fallbackQSort3(
           }
         }
         while !(unLo > unHi) {
-          n = *eclass.offset(*fmap.offset(unHi as isize) as isize) as int32_t - med as int32_t;
+          n = *eclass.offset(*fmap.offset(unHi as isize) as isize) as i32 - med as i32;
           if n == 0i32 {
-            let mut zztmp_0: int32_t = *fmap.offset(unHi as isize) as int32_t;
+            let mut zztmp_0: i32 = *fmap.offset(unHi as isize) as i32;
             *fmap.offset(unHi as isize) = *fmap.offset(gtHi as isize);
             *fmap.offset(gtHi as isize) = zztmp_0 as u32;
             gtHi -= 1;
@@ -461,7 +461,7 @@ unsafe extern "C" fn fallbackQSort3(
         if unLo > unHi {
           break;
         }
-        let mut zztmp_1: int32_t = *fmap.offset(unLo as isize) as int32_t;
+        let mut zztmp_1: i32 = *fmap.offset(unLo as isize) as i32;
         *fmap.offset(unLo as isize) = *fmap.offset(unHi as isize);
         *fmap.offset(unHi as isize) = zztmp_1 as u32;
         unLo += 1;
@@ -508,23 +508,23 @@ unsafe extern "C" fn fallbackQSort3(
  *	bhtab[0 .. 2+(nblock/32)] destroyed
 */
 unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
-  let mut ftab: [int32_t; 257] = [0; 257];
-  let mut ftabCopy: [int32_t; 256] = [0; 256];
-  let mut H: int32_t = 0;
-  let mut i: int32_t = 0;
-  let mut j: int32_t = 0;
-  let mut k: int32_t = 0;
-  let mut l: int32_t = 0;
-  let mut r: int32_t = 0;
-  let mut cc: int32_t = 0;
-  let mut cc1: int32_t = 0;
-  let mut nNotDone: int32_t = 0;
-  let mut nBhtab: int32_t = 0;
+  let mut ftab: [i32; 257] = [0; 257];
+  let mut ftabCopy: [i32; 256] = [0; 256];
+  let mut H: i32 = 0;
+  let mut i: i32 = 0;
+  let mut j: i32 = 0;
+  let mut k: i32 = 0;
+  let mut l: i32 = 0;
+  let mut r: i32 = 0;
+  let mut cc: i32 = 0;
+  let mut cc1: i32 = 0;
+  let mut nNotDone: i32 = 0;
+  let mut nBhtab: i32 = 0;
   /* params */
   let fmap: *mut u32 = (*state).arr1;
   let eclass: *mut u32 = (*state).arr2;
   let bhtab: *mut u32 = (*state).ftab;
-  let nblock: int32_t = (*state).nblock;
+  let nblock: i32 = (*state).nblock;
   /*
    * Initial 1-char radix sort to generate
    * initial fmap and initial BH bits.
@@ -553,14 +553,14 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
   }
   i = 0i32;
   while i < nblock {
-    j = *(eclass as *mut u8).offset(i as isize) as int32_t;
+    j = *(eclass as *mut u8).offset(i as isize) as i32;
     k = ftab[j as usize] - 1i32;
     ftab[j as usize] = k;
     *fmap.offset(k as isize) = i as u32;
     i += 1
   }
   nBhtab = (2i32 as libc::c_uint)
-    .wrapping_add((nblock as u32).wrapping_div(32i32 as libc::c_uint)) as int32_t;
+    .wrapping_add((nblock as u32).wrapping_div(32i32 as libc::c_uint)) as i32;
   i = 0i32;
   while i < nBhtab {
     *bhtab.offset(i as isize) = 0i32 as u32;
@@ -595,7 +595,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
       if *bhtab.offset((i >> 5i32) as isize) & (1i32 << (i & 31i32)) as libc::c_uint != 0 {
         j = i
       }
-      k = (*fmap.offset(i as isize)).wrapping_sub(H as libc::c_uint) as int32_t;
+      k = (*fmap.offset(i as isize)).wrapping_sub(H as libc::c_uint) as i32;
       if k < 0i32 {
         k += nblock
       }
@@ -649,7 +649,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
         cc = -1i32;
         i = l;
         while i <= r {
-          cc1 = *eclass.offset(*fmap.offset(i as isize) as isize) as int32_t;
+          cc1 = *eclass.offset(*fmap.offset(i as isize) as isize) as i32;
           if cc != cc1 {
             let ref mut fresh3 = *bhtab.offset((i >> 5i32) as isize);
             *fresh3 |= (1i32 << (i & 31i32)) as libc::c_uint;
@@ -692,14 +692,14 @@ unsafe extern "C" fn mainGtU(
   mut i1: u32,
   mut i2: u32,
 ) -> libc::c_int {
-  let mut k: int32_t = 0;
+  let mut k: i32 = 0;
   let mut c1: u8 = 0;
   let mut c2: u8 = 0;
   let mut s1: u16 = 0;
   let mut s2: u16 = 0;
   let block: *mut u8 = (*state).block;
   let quadrant: *mut u16 = (*state).quadrant;
-  let nblock: int32_t = (*state).nblock;
+  let nblock: i32 = (*state).nblock;
   /* Loop unrolling here is actually very useful
    * (generated code is much simpler),
    * code size increase is only 270 bytes (i386)
@@ -926,9 +926,9 @@ static mut incs: [u32; 14] = [
 ];
 unsafe extern "C" fn mainSimpleSort(
   mut state: *mut EState,
-  mut lo: int32_t,
-  mut hi: int32_t,
-  mut d: int32_t,
+  mut lo: i32,
+  mut hi: i32,
+  mut d: i32,
 ) {
   let ptr: *mut u32 = (*state).ptr;
   /* At which increment to start? */
@@ -942,10 +942,10 @@ unsafe extern "C" fn mainSimpleSort(
   }
   hp -= 1;
   while hp >= 0i32 {
-    let mut i: int32_t = 0;
+    let mut i: i32 = 0;
     let mut h: libc::c_uint = 0;
     h = incs[hp as usize];
-    i = (lo as libc::c_uint).wrapping_add(h) as int32_t;
+    i = (lo as libc::c_uint).wrapping_add(h) as i32;
     loop {
       let mut j: libc::c_uint = 0;
       let mut v: libc::c_uint = 0;
@@ -1006,26 +1006,26 @@ unsafe extern "C" fn mmed3(mut a: u8, mut b: u8, mut c: u8) -> u8 {
   return b;
 }
 #[inline(never)]
-unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut hiSt: int32_t)
-/*int32_t dSt*/
+unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: i32, mut hiSt: i32)
+/*i32 dSt*/
 {
-  let mut unLo: int32_t = 0;
-  let mut unHi: int32_t = 0;
-  let mut ltLo: int32_t = 0;
-  let mut gtHi: int32_t = 0;
-  let mut n: int32_t = 0;
-  let mut m: int32_t = 0;
-  let mut med: int32_t = 0;
-  let mut sp: int32_t = 0;
-  let mut lo: int32_t = 0;
-  let mut hi: int32_t = 0;
-  let mut d: int32_t = 0;
-  let mut stackLo: [int32_t; 100] = [0; 100];
-  let mut stackHi: [int32_t; 100] = [0; 100];
-  let mut stackD: [int32_t; 100] = [0; 100];
-  let mut nextLo: [int32_t; 3] = [0; 3];
-  let mut nextHi: [int32_t; 3] = [0; 3];
-  let mut nextD: [int32_t; 3] = [0; 3];
+  let mut unLo: i32 = 0;
+  let mut unHi: i32 = 0;
+  let mut ltLo: i32 = 0;
+  let mut gtHi: i32 = 0;
+  let mut n: i32 = 0;
+  let mut m: i32 = 0;
+  let mut med: i32 = 0;
+  let mut sp: i32 = 0;
+  let mut lo: i32 = 0;
+  let mut hi: i32 = 0;
+  let mut d: i32 = 0;
+  let mut stackLo: [i32; 100] = [0; 100];
+  let mut stackHi: [i32; 100] = [0; 100];
+  let mut stackD: [i32; 100] = [0; 100];
+  let mut nextLo: [i32; 3] = [0; 3];
+  let mut nextHi: [i32; 3] = [0; 3];
+  let mut nextD: [i32; 3] = [0; 3];
   let ptr: *mut u32 = (*state).ptr;
   let block: *mut u8 = (*state).block;
   sp = 0i32;
@@ -1050,7 +1050,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
         *block.offset(
           (*ptr.offset((lo + hi >> 1i32) as isize)).wrapping_add(d as libc::c_uint) as isize,
         ),
-      ) as int32_t;
+      ) as i32;
       ltLo = lo;
       unLo = ltLo;
       gtHi = hi;
@@ -1058,10 +1058,10 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
       loop {
         while !(unLo > unHi) {
           n = *block.offset((*ptr.offset(unLo as isize)).wrapping_add(d as libc::c_uint) as isize)
-            as int32_t
+            as i32
             - med;
           if n == 0i32 {
-            let mut zztmp: int32_t = *ptr.offset(unLo as isize) as int32_t;
+            let mut zztmp: i32 = *ptr.offset(unLo as isize) as i32;
             *ptr.offset(unLo as isize) = *ptr.offset(ltLo as isize);
             *ptr.offset(ltLo as isize) = zztmp as u32;
             ltLo += 1;
@@ -1075,10 +1075,10 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
         }
         while !(unLo > unHi) {
           n = *block.offset((*ptr.offset(unHi as isize)).wrapping_add(d as libc::c_uint) as isize)
-            as int32_t
+            as i32
             - med;
           if n == 0i32 {
-            let mut zztmp_0: int32_t = *ptr.offset(unHi as isize) as int32_t;
+            let mut zztmp_0: i32 = *ptr.offset(unHi as isize) as i32;
             *ptr.offset(unHi as isize) = *ptr.offset(gtHi as isize);
             *ptr.offset(gtHi as isize) = zztmp_0 as u32;
             gtHi -= 1;
@@ -1093,7 +1093,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
         if unLo > unHi {
           break;
         }
-        let mut zztmp_1: int32_t = *ptr.offset(unLo as isize) as int32_t;
+        let mut zztmp_1: i32 = *ptr.offset(unLo as isize) as i32;
         *ptr.offset(unLo as isize) = *ptr.offset(unHi as isize);
         *ptr.offset(unHi as isize) = zztmp_1 as u32;
         unLo += 1;
@@ -1121,7 +1121,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
         nextHi[2] = m - 1i32;
         nextD[2] = d + 1i32;
         if nextHi[0] - nextLo[0] < nextHi[1] - nextLo[1] {
-          let mut tz: int32_t = 0;
+          let mut tz: i32 = 0;
           tz = nextLo[0];
           nextLo[0] = nextLo[1];
           nextLo[1] = tz;
@@ -1133,7 +1133,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
           nextD[1] = tz
         }
         if nextHi[1] - nextLo[1] < nextHi[2] - nextLo[2] {
-          let mut tz_0: int32_t = 0;
+          let mut tz_0: i32 = 0;
           tz_0 = nextLo[1];
           nextLo[1] = nextLo[2];
           nextLo[2] = tz_0;
@@ -1145,7 +1145,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
           nextD[2] = tz_0
         }
         if nextHi[0] - nextLo[0] < nextHi[1] - nextLo[1] {
-          let mut tz_1: int32_t = 0;
+          let mut tz_1: i32 = 0;
           tz_1 = nextLo[0];
           nextLo[0] = nextLo[1];
           nextLo[1] = tz_1;
@@ -1174,18 +1174,18 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
 }
 #[inline(never)]
 unsafe extern "C" fn mainSort(mut state: *mut EState) {
-  let mut i: int32_t = 0;
-  let mut j: int32_t = 0;
+  let mut i: i32 = 0;
+  let mut j: i32 = 0;
   let mut bigDone: [Bool; 256] = [0; 256];
   let mut runningOrder: [u8; 256] = [0; 256];
   /* bbox: moved to EState to save stack
-  int32_t  copyStart[256];
-  int32_t  copyEnd  [256];
+  i32  copyStart[256];
+  i32  copyEnd  [256];
   */
   let ptr: *mut u32 = (*state).ptr;
   let block: *mut u8 = (*state).block;
   let ftab: *mut u32 = (*state).ftab;
-  let nblock: int32_t = (*state).nblock;
+  let nblock: i32 = (*state).nblock;
   let quadrant: *mut u16 = (*state).quadrant;
   /*-- set up the 2-byte frequency table --*/
   /* was: for (i = 65536; i >= 0; i--) ftab[i] = 0; */
@@ -1200,7 +1200,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   while i >= 0i32 {
     *quadrant.offset(i as isize) = 0i32 as u16;
     j = ((j >> 8i32) as libc::c_uint | (*block.offset(i as isize) as libc::c_uint) << 8i32)
-      as int32_t;
+      as i32;
     let ref mut fresh4 = *ftab.offset(j as isize);
     *fresh4 = (*fresh4).wrapping_add(1);
     i -= 1
@@ -1213,10 +1213,10 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     i += 1
   }
   /*-- Complete the initial radix sort --*/
-  j = *ftab.offset(0) as int32_t; /* bbox: optimized */
+  j = *ftab.offset(0) as i32; /* bbox: optimized */
   i = 1i32;
   while i <= 65536i32 {
-    j = (j as libc::c_uint).wrapping_add(*ftab.offset(i as isize)) as int32_t as int32_t;
+    j = (j as libc::c_uint).wrapping_add(*ftab.offset(i as isize)) as i32 as i32;
     *ftab.offset(i as isize) = j as u32;
     i += 1
   }
@@ -1225,7 +1225,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   i = nblock - 1i32;
   while i >= 0i32 {
     s = s >> 8i32 | ((*block.offset(i as isize) as libc::c_int) << 8i32) as libc::c_uint;
-    j = (*ftab.offset(s as isize)).wrapping_sub(1i32 as libc::c_uint) as int32_t;
+    j = (*ftab.offset(s as isize)).wrapping_sub(1i32 as libc::c_uint) as i32;
     *ftab.offset(s as isize) = j as u32;
     *ptr.offset(j as isize) = i as u32;
     i -= 1
@@ -1241,13 +1241,13 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     runningOrder[i as usize] = i as u8;
     i += 1
   }
-  /* bbox: was: int32_t h = 1; */
+  /* bbox: was: i32 h = 1; */
   /* do h = 3 * h + 1; while (h <= 256); */
   let mut h: libc::c_uint = 364i32 as libc::c_uint;
   loop {
     /*h = h / 3;*/
     h = h.wrapping_mul(171i32 as libc::c_uint) >> 9i32; /* bbox: fast h/3 */
-    i = h as int32_t; /* uint8[] */
+    i = h as i32; /* uint8[] */
     while i <= 255i32 {
       let mut vv: libc::c_uint = 0;
       let mut jh: libc::c_uint = 0;
@@ -1265,7 +1265,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
           break;
         }
         runningOrder[j as usize] = runningOrder[jh as usize];
-        j = jh as int32_t;
+        j = jh as i32;
         if (j as libc::c_uint) < h {
           break;
         }
@@ -1304,10 +1304,10 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
         let mut sb: libc::c_uint = 0;
         sb = (ss << 8i32).wrapping_add(j as libc::c_uint);
         if *ftab.offset(sb as isize) & (1i32 << 21i32) as libc::c_uint == 0 {
-          let mut lo: int32_t = *ftab.offset(sb as isize) as int32_t;
-          let mut hi: int32_t = (*ftab.offset(sb.wrapping_add(1i32 as libc::c_uint) as isize)
+          let mut lo: i32 = *ftab.offset(sb as isize) as i32;
+          let mut hi: i32 = (*ftab.offset(sb.wrapping_add(1i32 as libc::c_uint) as isize)
             & !(1i32 << 21i32) as libc::c_uint)
-            .wrapping_sub(1i32 as libc::c_uint) as int32_t;
+            .wrapping_sub(1i32 as libc::c_uint) as i32;
           if hi > lo {
             mainQSort3(state, lo, hi);
             if (*state).budget < 0i32 {
@@ -1332,21 +1332,21 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     while j <= 255i32 {
       (*state).mainSort__copyStart[j as usize] =
         (*ftab.offset(((j << 8i32) as libc::c_uint).wrapping_add(ss) as isize)
-          & !(1i32 << 21i32) as libc::c_uint) as int32_t;
+          & !(1i32 << 21i32) as libc::c_uint) as i32;
       (*state).mainSort__copyEnd[j as usize] = (*ftab.offset(
         ((j << 8i32) as libc::c_uint)
           .wrapping_add(ss)
           .wrapping_add(1i32 as libc::c_uint) as isize,
       ) & !(1i32 << 21i32) as libc::c_uint)
         .wrapping_sub(1i32 as libc::c_uint)
-        as int32_t;
+        as i32;
       j += 1
     }
-    j = (*ftab.offset((ss << 8i32) as isize) & !(1i32 << 21i32) as libc::c_uint) as int32_t;
+    j = (*ftab.offset((ss << 8i32) as isize) & !(1i32 << 21i32) as libc::c_uint) as i32;
     while j < (*state).mainSort__copyStart[ss as usize] {
       let mut c1: libc::c_uint = 0;
-      let mut k: int32_t = 0;
-      k = (*ptr.offset(j as isize)).wrapping_sub(1i32 as libc::c_uint) as int32_t;
+      let mut k: i32 = 0;
+      k = (*ptr.offset(j as isize)).wrapping_sub(1i32 as libc::c_uint) as i32;
       if k < 0i32 {
         k += nblock
       }
@@ -1360,11 +1360,11 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     }
     j = (*ftab.offset((ss.wrapping_add(1i32 as libc::c_uint) << 8i32) as isize)
       & !(1i32 << 21i32) as libc::c_uint)
-      .wrapping_sub(1i32 as libc::c_uint) as int32_t;
+      .wrapping_sub(1i32 as libc::c_uint) as i32;
     while j > (*state).mainSort__copyEnd[ss as usize] {
       let mut c1_0: libc::c_uint = 0;
-      let mut k_0: int32_t = 0;
-      k_0 = (*ptr.offset(j as isize)).wrapping_sub(1i32 as libc::c_uint) as int32_t;
+      let mut k_0: i32 = 0;
+      k_0 = (*ptr.offset(j as isize)).wrapping_sub(1i32 as libc::c_uint) as i32;
       if k_0 < 0i32 {
         k_0 += nblock
       }
@@ -1439,7 +1439,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     while bbSize >> shifts > 65534i32 as libc::c_uint {
       shifts = shifts.wrapping_add(1)
     }
-    j = bbSize.wrapping_sub(1i32 as libc::c_uint) as int32_t;
+    j = bbSize.wrapping_sub(1i32 as libc::c_uint) as i32;
     while j >= 0i32 {
       let mut a2update: libc::c_uint =
         *ptr.offset(bbStart.wrapping_add(j as libc::c_uint) as isize);
@@ -1468,12 +1468,12 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
  *	arr1[0 .. nblock-1] holds sorted order
  */
 #[inline(never)]
-unsafe extern "C" fn BZ2_blockSort(mut state: *mut EState) -> int32_t {
+unsafe extern "C" fn BZ2_blockSort(mut state: *mut EState) -> i32 {
   let mut current_block: u64;
   /* In original bzip2 1.0.4, it's a parameter, but 30
    * (which was the default) should work ok. */
   let mut i: libc::c_uint = 0;
-  let mut origPtr: int32_t = 0;
+  let mut origPtr: i32 = 0;
   origPtr = origPtr;
   if (*state).nblock >= 10000i32 {
     /* Calculate the location for quadrant, remembering to get
@@ -1512,7 +1512,7 @@ unsafe extern "C" fn BZ2_blockSort(mut state: *mut EState) -> int32_t {
   i = 0i32 as libc::c_uint;
   while i < (*state).nblock as libc::c_uint {
     if *(*state).ptr.offset(i as isize) == 0i32 as libc::c_uint {
-      origPtr = i as int32_t;
+      origPtr = i as i32;
       break;
     } else {
       i = i.wrapping_add(1)
@@ -1606,7 +1606,7 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
   (*s).state = 2i32 as u8;
   (*s).mode = 2i32 as u8;
   (*s).blockSize100k = blockSize100k as u8;
-  (*s).nblockMAX = n.wrapping_sub(19i32 as libc::c_uint) as int32_t;
+  (*s).nblockMAX = n.wrapping_sub(19i32 as libc::c_uint) as i32;
   (*strm).state = s as *mut libc::c_void;
   /*strm->total_in     = 0;*/
   (*strm).total_out = 0i32 as libc::c_ulonglong;
@@ -1615,7 +1615,7 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
 }
 /*---------------------------------------------------*/
 unsafe extern "C" fn add_pair_to_block(mut s: *mut EState) {
-  let mut i: int32_t = 0;
+  let mut i: i32 = 0;
   let mut ch: u8 = (*s).state_in_ch as u8;
   i = 0i32;
   while i < (*s).state_in_len {
@@ -1882,7 +1882,7 @@ unsafe extern "C" fn bsFinishWrite(mut s: *mut EState) {
   }
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn bsW(mut s: *mut EState, mut n: int32_t, mut v: u32) {
+unsafe extern "C" fn bsW(mut s: *mut EState, mut n: i32, mut v: u32) {
   while (*s).bsLive >= 8i32 {
     let fresh11 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
@@ -1957,7 +1957,7 @@ unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
     }
     i += 1
   }
-  (*s).nInUse = cnt as int32_t;
+  (*s).nInUse = cnt as i32;
 }
 /*---------------------------------------------------*/
 /*
@@ -1991,12 +1991,12 @@ unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
 #[inline(never)]
 unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
   let mut ll_i: u8 = 0;
-  let mut j: int32_t = 0;
+  let mut j: i32 = 0;
   let mut current_block: u64;
   let mut yy: [u8; 256] = [0; 256];
   let mut i: libc::c_int = 0;
   let mut zPend: libc::c_int = 0;
-  let mut wr: int32_t = 0;
+  let mut wr: i32 = 0;
   /*
    * After sorting (eg, here),
    * s->arr1[0 .. s->nblock-1] holds sorted order,
@@ -2037,7 +2037,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
     if i < (*s).nblock {
       ll_i = ll_i;
       j = 0;
-      j = (*ptr.offset(i as isize)).wrapping_sub(1i32 as libc::c_uint) as int32_t;
+      j = (*ptr.offset(i as isize)).wrapping_sub(1i32 as libc::c_uint) as i32;
       if j < 0i32 {
         j += (*s).nblock
       }
@@ -2100,20 +2100,20 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
 }
 #[inline(never)]
 unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
-  let mut t: int32_t = 0;
-  let mut i: int32_t = 0;
+  let mut t: i32 = 0;
+  let mut i: i32 = 0;
   let mut iter: libc::c_uint = 0;
   let mut gs: libc::c_uint = 0;
-  let mut alphaSize: int32_t = 0;
+  let mut alphaSize: i32 = 0;
   let mut nSelectors: libc::c_uint = 0;
   let mut selCtr: libc::c_uint = 0;
-  let mut nGroups: int32_t = 0;
+  let mut nGroups: i32 = 0;
   /*
    * u8 len[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
    * is a global since the decoder also needs it.
    *
-   * int32_t  code[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
-   * int32_t  rfreq[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
+   * i32  code[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
+   * i32  rfreq[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
    * are also globals only used in this proc.
    * Made global to keep stack frame size small.
    */
@@ -2227,7 +2227,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
         t += 1
       }
       /*--- slow version which correctly handles all situations ---*/
-      i = gs as int32_t;
+      i = gs as i32;
       while i as libc::c_uint <= ge_0 {
         let mut icv: libc::c_uint = *mtfv.offset(i as isize) as libc::c_uint;
         t = 0i32;
@@ -2337,8 +2337,8 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
       &mut *(*(*s).len.as_mut_ptr().offset(t as isize))
         .as_mut_ptr()
         .offset(0),
-      minLen as int32_t,
-      maxLen as int32_t,
+      minLen as i32,
+      maxLen as i32,
       alphaSize,
     );
     t += 1
@@ -2449,16 +2449,16 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
       .offset(*(*s).selector.as_mut_ptr().offset(selCtr as isize) as isize))
     .as_mut_ptr()
     .offset(0) as *mut u8;
-    let mut s_code_sel_selCtr: *mut int32_t = &mut *(*(*s)
+    let mut s_code_sel_selCtr: *mut i32 = &mut *(*(*s)
       .sendMTFValues__code
       .as_mut_ptr()
       .offset(*(*s).selector.as_mut_ptr().offset(selCtr as isize) as isize))
     .as_mut_ptr()
-    .offset(0) as *mut int32_t;
+    .offset(0) as *mut i32;
     while gs <= ge_1 {
       bsW(
         s,
-        *s_len_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as int32_t,
+        *s_len_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as i32,
         *s_code_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as u32,
       );
       gs = gs.wrapping_add(1)
@@ -2468,7 +2468,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
 }
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_compressBlock(mut s: *mut EState, mut is_last_block: libc::c_int) {
-  let mut origPtr: int32_t = 0; // was: s->numZ = 0;
+  let mut origPtr: i32 = 0; // was: s->numZ = 0;
   origPtr = origPtr;
   if (*s).nblock > 0i32 {
     (*s).blockCRC = !(*s).blockCRC;
@@ -2563,26 +2563,26 @@ in the file LICENSE.
 unsafe extern "C" fn BZ2_hbMakeCodeLengths(
   mut s: *mut EState,
   mut len: *mut u8,
-  mut freq: *mut int32_t,
-  mut alphaSize: int32_t,
-  mut maxLen: int32_t,
+  mut freq: *mut i32,
+  mut alphaSize: i32,
+  mut maxLen: i32,
 ) {
   /*
    * Nodes and heap entries run from 1.  Entry 0
    * for both the heap and nodes is a sentinel.
    */
-  let mut nNodes: int32_t = 0;
-  let mut nHeap: int32_t = 0;
-  let mut n1: int32_t = 0;
-  let mut n2: int32_t = 0;
-  let mut i: int32_t = 0;
-  let mut j: int32_t = 0;
-  let mut k: int32_t = 0;
+  let mut nNodes: i32 = 0;
+  let mut nHeap: i32 = 0;
+  let mut n1: i32 = 0;
+  let mut n2: i32 = 0;
+  let mut i: i32 = 0;
+  let mut j: i32 = 0;
+  let mut k: i32 = 0;
   let mut tooLong: Bool = 0;
   /* bbox: moved to EState to save stack
-  int32_t heap  [BZ_MAX_ALPHA_SIZE + 2];
-  int32_t weight[BZ_MAX_ALPHA_SIZE * 2];
-  int32_t parent[BZ_MAX_ALPHA_SIZE * 2];
+  i32 heap  [BZ_MAX_ALPHA_SIZE + 2];
+  i32 weight[BZ_MAX_ALPHA_SIZE * 2];
+  i32 parent[BZ_MAX_ALPHA_SIZE * 2];
   */
   i = 0i32;
   while i < alphaSize {
@@ -2604,8 +2604,8 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
       (*s).BZ2_hbMakeCodeLengths__parent[i as usize] = -1i32;
       nHeap += 1;
       (*s).BZ2_hbMakeCodeLengths__heap[nHeap as usize] = i;
-      let mut zz: int32_t = 0;
-      let mut tmp: int32_t = 0;
+      let mut zz: i32 = 0;
+      let mut tmp: i32 = 0;
       zz = nHeap;
       tmp = (*s).BZ2_hbMakeCodeLengths__heap[zz as usize];
       while (*s).BZ2_hbMakeCodeLengths__weight[tmp as usize]
@@ -2623,9 +2623,9 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
       n1 = (*s).BZ2_hbMakeCodeLengths__heap[1];
       (*s).BZ2_hbMakeCodeLengths__heap[1] = (*s).BZ2_hbMakeCodeLengths__heap[nHeap as usize];
       nHeap -= 1;
-      let mut zz_0: int32_t = 0;
-      let mut yy: int32_t = 0;
-      let mut tmp_0: int32_t = 0;
+      let mut zz_0: i32 = 0;
+      let mut yy: i32 = 0;
+      let mut tmp_0: i32 = 0;
       zz_0 = 1i32;
       tmp_0 = (*s).BZ2_hbMakeCodeLengths__heap[zz_0 as usize];
       loop {
@@ -2655,9 +2655,9 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
       n2 = (*s).BZ2_hbMakeCodeLengths__heap[1];
       (*s).BZ2_hbMakeCodeLengths__heap[1] = (*s).BZ2_hbMakeCodeLengths__heap[nHeap as usize];
       nHeap -= 1;
-      let mut zz_1: int32_t = 0;
-      let mut yy_0: int32_t = 0;
-      let mut tmp_1: int32_t = 0;
+      let mut zz_1: i32 = 0;
+      let mut yy_0: i32 = 0;
+      let mut tmp_1: i32 = 0;
       zz_1 = 1i32;
       tmp_1 = (*s).BZ2_hbMakeCodeLengths__heap[zz_1 as usize];
       loop {
@@ -2700,12 +2700,12 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
               ((*s).BZ2_hbMakeCodeLengths__weight[n1 as usize]) & 0xffi32
             } else {
               ((*s).BZ2_hbMakeCodeLengths__weight[n2 as usize]) & 0xffi32
-            })) as libc::c_uint) as int32_t;
+            })) as libc::c_uint) as i32;
       (*s).BZ2_hbMakeCodeLengths__parent[nNodes as usize] = -1i32;
       nHeap += 1;
       (*s).BZ2_hbMakeCodeLengths__heap[nHeap as usize] = nNodes;
-      let mut zz_2: int32_t = 0;
-      let mut tmp_2: int32_t = 0;
+      let mut zz_2: i32 = 0;
+      let mut tmp_2: i32 = 0;
       zz_2 = nHeap;
       tmp_2 = (*s).BZ2_hbMakeCodeLengths__heap[zz_2 as usize];
       while (*s).BZ2_hbMakeCodeLengths__weight[tmp_2 as usize]
@@ -2765,15 +2765,15 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
 }
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_hbAssignCodes(
-  mut code: *mut int32_t,
+  mut code: *mut i32,
   mut length: *mut u8,
-  mut minLen: int32_t,
-  mut maxLen: int32_t,
-  mut alphaSize: int32_t,
+  mut minLen: i32,
+  mut maxLen: i32,
+  mut alphaSize: i32,
 ) {
-  let mut n: int32_t = 0;
-  let mut vec: int32_t = 0;
-  let mut i: int32_t = 0;
+  let mut n: i32 = 0;
+  let mut vec: i32 = 0;
+  let mut i: i32 = 0;
   vec = 0i32;
   n = minLen;
   while n <= maxLen {

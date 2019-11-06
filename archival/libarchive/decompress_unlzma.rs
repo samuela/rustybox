@@ -22,7 +22,7 @@ extern "C" {
   ) -> ssize_t;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -336,7 +336,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
         let mut match_byte: libc::c_int = 0;
         let mut pos: u32 = 0;
         pos = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
-        if (pos as int32_t) < 0i32 {
+        if (pos as i32) < 0i32 {
           pos = (pos as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32
         }
         match_byte = *buffer.offset(pos as isize) as libc::c_int;
@@ -510,7 +510,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
                  * unpack more bytes than expected?" check - which
                  * never happens for well-formed compression data...
                  */
-                // Note: (int32_t)rep0 may be < 0 here
+                // Note: (i32)rep0 may be < 0 here
                 // (I have linux-3.3.4.tar.lzma which has it).
                 // I moved the check after "++rep0 == 0" check below.
                 prob3 = p.offset(LZMA_ALIGN as libc::c_int as isize)
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
               }
             }
             rep0 = rep0.wrapping_add(1);
-            if rep0 as int32_t <= 0i32 {
+            if rep0 as i32 <= 0i32 {
               if rep0 == 0i32 as libc::c_uint {
                 current_block = 2884634553824165030;
                 break;
@@ -592,10 +592,10 @@ pub unsafe extern "C" fn unpack_lzma_stream(
          */
         {
           pos_0 = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
-          if (pos_0 as int32_t) < 0i32 {
+          if (pos_0 as i32) < 0i32 {
             pos_0 = (pos_0 as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32;
             /* bug 10436 has an example file where this triggers: */
-            //if ((int32_t)pos < 0)
+            //if ((i32)pos < 0)
             //	goto bad;
             /* more stringent test (see unzip_bad_lzma_1.zip): */
             if pos_0 >= buffer_size {

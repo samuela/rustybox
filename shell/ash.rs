@@ -342,7 +342,7 @@ use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
 
-use crate::librb::int32_t;
+
 
 
 
@@ -533,7 +533,7 @@ pub struct globals_misc {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct random_t {
-  pub galois_LFSR: int32_t,
+  pub galois_LFSR: i32,
   pub LCG: u32,
   pub xs64_x: u32,
   pub xs64_y: u32,
@@ -11248,7 +11248,7 @@ unsafe extern "C" fn change_random(mut value: *const libc::c_char) {
     t = strtoul(value, 0 as *mut *mut libc::c_char, 10i32) as u32;
     (*ash_ptr_to_globals_misc).random_gen.xs64_x = if t != 0 { t } else { 1i32 as libc::c_uint };
     (*ash_ptr_to_globals_misc).random_gen.galois_LFSR =
-      (*ash_ptr_to_globals_misc).random_gen.xs64_x as int32_t;
+      (*ash_ptr_to_globals_misc).random_gen.xs64_x as i32;
     (*ash_ptr_to_globals_misc).random_gen.xs64_y = t;
     (*ash_ptr_to_globals_misc).random_gen.LCG = (*ash_ptr_to_globals_misc).random_gen.xs64_y
   };

@@ -95,7 +95,7 @@ extern "C" {
 pub type __int64_t = libc::c_long;
 
 use crate::librb::__off64_t;
-use crate::librb::int32_t;
+
 pub type int64_t = __int64_t;
 
 
@@ -441,13 +441,13 @@ pub unsafe extern "C" fn hexedit_main(
   {
     let mut cnt: libc::c_uint = 0; /* for (;;) */
     /* switch */
-    let mut key: int32_t = 0; /* for compiler */
+    let mut key: i32 = 0; /* for compiler */
     key = key; /* convert A-Z to a-z */
     let mut byte: u8 = 0;
     fflush_all();
     (*ptr_to_globals).in_read_key = 1i32 as smallint;
     if bb_got_signal == 0 {
-      key = read_key(0i32, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32) as int32_t
+      key = read_key(0i32, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32) as i32
     }
     (*ptr_to_globals).in_read_key = 0i32 as smallint;
     if bb_got_signal != 0 {

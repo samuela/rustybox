@@ -395,7 +395,7 @@ use crate::librb::__pid_t;
 use crate::librb::size_t;
 use libc::FILE;
 pub type va_list = __builtin_va_list;
-use crate::librb::int32_t;
+
 
 
 
@@ -672,7 +672,7 @@ pub struct variable {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct random_t {
-  pub galois_LFSR: int32_t,
+  pub galois_LFSR: i32,
   pub LCG: u32,
   pub xs64_x: u32,
   pub xs64_y: u32,

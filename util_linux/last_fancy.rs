@@ -85,7 +85,7 @@ extern "C" {
   );
 }
 
-use crate::librb::__int32_t;
+
 
 use crate::librb::__pid_t;
 
@@ -117,17 +117,17 @@ pub struct utmpx {
   pub ut_user: [libc::c_char; 32],
   pub ut_host: [libc::c_char; 256],
   pub ut_exit: __exit_status,
-  pub ut_session: __int32_t,
+  pub ut_session: i32,
   pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [__int32_t; 4],
+  pub ut_addr_v6: [i32; 4],
   pub __glibc_reserved: [libc::c_char; 20],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
-  pub tv_sec: __int32_t,
-  pub tv_usec: __int32_t,
+  pub tv_sec: i32,
+  pub tv_usec: i32,
 }
 
 use crate::libbb::llist::llist_t;

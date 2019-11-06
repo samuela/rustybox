@@ -52,7 +52,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -93,7 +93,7 @@ pub struct globals {
   pub bi_valid: libc::c_uint,
 }
 pub type ulg = u32;
-pub type lng = int32_t;
+pub type lng = i32;
 pub type ush = u16;
 pub type uch = u8;
 #[derive(Copy, Clone)]

@@ -12,7 +12,7 @@ extern "C" {
   fn xorbuf_aligned_AES_BLOCK_SIZE(buf: *mut libc::c_void, mask: *const libc::c_void);
 }
 
-use crate::librb::int32_t;
+
 
 
 /*
@@ -151,7 +151,7 @@ unsafe extern "C" fn GMULT(mut X: *mut byte, mut Y: *mut byte) {
       } // was V, not X
       RIGHTSHIFTX(X);
       y = y << 1i32;
-      if (y as int32_t) < 0i32 {
+      if (y as i32) < 0i32 {
         break;
       }
     }

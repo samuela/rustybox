@@ -35,7 +35,6 @@ extern "C" {
   #[no_mangle]
   static bb_path_wtmp_file: [libc::c_char; 0];
 }
-use crate::librb::__int32_t;
 use crate::librb::__pid_t;
 
 use crate::librb::pid_t;
@@ -57,16 +56,16 @@ pub struct utmpx {
   pub ut_user: [libc::c_char; 32],
   pub ut_host: [libc::c_char; 256],
   pub ut_exit: __exit_status,
-  pub ut_session: __int32_t,
+  pub ut_session: i32,
   pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [__int32_t; 4],
+  pub ut_addr_v6: [i32; 4],
   pub __glibc_reserved: [libc::c_char; 20],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
-  pub tv_sec: __int32_t,
-  pub tv_usec: __int32_t,
+  pub tv_sec: i32,
+  pub tv_usec: i32,
 }
 
 /*
@@ -137,7 +136,7 @@ pub unsafe extern "C" fn write_new_utmp(
       ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
     );
   }
-  utent.ut_tv.tv_sec = time(0 as *mut time_t) as __int32_t;
+  utent.ut_tv.tv_sec = time(0 as *mut time_t) as i32;
   /* Invent our own ut_id. ut_id is only 4 chars wide.
    * Try to fit something remotely meaningful... */
   id = utent.ut_id.as_mut_ptr(); /* else: usually it's "ttyXXXX", map to "XXXX" */
@@ -261,7 +260,7 @@ pub unsafe extern "C" fn update_utmp(
       ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
     );
   }
-  utent.ut_tv.tv_sec = time(0 as *mut time_t) as __int32_t;
+  utent.ut_tv.tv_sec = time(0 as *mut time_t) as i32;
   /* Update, or append new one */
   //setutxent();
   pututxline(&mut utent);

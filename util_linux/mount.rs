@@ -240,7 +240,7 @@ pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
+
 
 
 
@@ -350,7 +350,7 @@ pub const OPT_r: C2RustUnnamed_3 = 4;
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const GETMNTENT_BUFSIZE: C2RustUnnamed_4 = 1008;
 
-static mut mount_options: [int32_t; 44] = [
+static mut mount_options: [i32; 44] = [
   0i32,
   0i32,
   MOUNT_NOAUTO as libc::c_int,
@@ -513,8 +513,8 @@ unsafe extern "C" fn parse_mount_options(
     i = 0i32 as libc::c_uint;
     loop {
       if !(i
-        < (::std::mem::size_of::<[int32_t; 44]>() as libc::c_ulong)
-          .wrapping_div(::std::mem::size_of::<int32_t>() as libc::c_ulong)
+        < (::std::mem::size_of::<[i32; 44]>() as libc::c_ulong)
+          .wrapping_div(::std::mem::size_of::<i32>() as libc::c_ulong)
           as libc::c_uint)
       {
         current_block_14 = 10048703153582371463;

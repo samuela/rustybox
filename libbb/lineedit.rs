@@ -228,7 +228,7 @@ use crate::librb::__pid_t;
 
 
 
-use crate::librb::int32_t;
+
 pub type int64_t = __int64_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -3182,7 +3182,7 @@ unsafe extern "C" fn lineedit_read_key(
         break;
       }
       wc = 0;
-      if (ic as int32_t) < 0i32 {
+      if (ic as i32) < 0i32 {
         break;
       }
       // TODO: imagine sequence like: 0xff,<left-arrow>: we are currently losing 0xff...
@@ -3223,7 +3223,7 @@ unsafe extern "C" fn lineedit_read_key(
  * Backspace deletes last matched char.
  * Control keys exit search and return to normal editing (at current history line).
  */
-unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> int32_t {
+unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
   let mut h: libc::c_int = 0; /* for user input */
   let mut match_buf_len: libc::c_uint = 0;
   let mut match_0: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -3232,7 +3232,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> int32_t {
   let mut matched_history_line: *const libc::c_char = 0 as *const libc::c_char;
   let mut saved_prompt: *const libc::c_char = 0 as *const libc::c_char;
   let mut saved_prmt_len: libc::c_uint = 0;
-  let mut ic: int32_t = 0;
+  let mut ic: i32 = 0;
   matched_history_line = 0 as *const libc::c_char;
   read_key_buffer[0] = 0i32 as libc::c_char;
   match_buf[0] = '\u{0}' as i32 as libc::c_char;
@@ -4013,8 +4013,8 @@ pub unsafe extern "C" fn read_line_input(
    * in one place.
    */
   {
-    let mut ic: int32_t = 0; /* switch (ic) */
-    let mut ic_raw: int32_t = 0;
+    let mut ic: i32 = 0; /* switch (ic) */
+    let mut ic_raw: i32 = 0;
     let mut count: libc::c_uint = 0;
     count = (*lineedit_ptr_to_statics).SIGWINCH_count;
     if (*lineedit_ptr_to_statics).SIGWINCH_saved != count {

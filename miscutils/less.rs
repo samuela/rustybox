@@ -165,7 +165,7 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 use libc::time_t;
 
@@ -2202,7 +2202,7 @@ pub unsafe extern "C" fn less_main(
         current_block = 15393578494707868645;
       } else {
         keypress = less_getch(-1i32);
-        if !(keypress as int32_t == KEYCODE_CURSOR_POS as libc::c_int) {
+        if !(keypress as i32 == KEYCODE_CURSOR_POS as libc::c_int) {
           break;
         }
         let mut rc: u32 = (keypress >> 32i32) as u32;

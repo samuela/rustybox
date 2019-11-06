@@ -85,7 +85,7 @@ extern "C" {
   fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::off_t;
 use crate::librb::size_t;
 
@@ -291,7 +291,7 @@ pub struct ext2_super_block {
   pub s_free_inodes_count: u32,
   pub s_first_data_block: u32,
   pub s_log_block_size: u32,
-  pub s_log_frag_size: int32_t,
+  pub s_log_frag_size: i32,
   pub s_blocks_per_group: u32,
   pub s_frags_per_group: u32,
   pub s_inodes_per_group: u32,
@@ -703,7 +703,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       inodesize = user_inodesize
     }
   }
-  if (bytes_per_inode as int32_t as libc::c_uint) < blocksize {
+  if (bytes_per_inode as i32 as libc::c_uint) < blocksize {
     bb_error_msg_and_die(
       b"-%c is bad\x00" as *const u8 as *const libc::c_char,
       'i' as i32,
@@ -932,12 +932,12 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<int32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as int32_t
-  } else if ::std::mem::size_of::<int32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u16 as int32_t
-  } else if ::std::mem::size_of::<int32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u8 as int32_t
+  if ::std::mem::size_of::<i32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as i32
+  } else if ::std::mem::size_of::<i32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u16 as i32
+  } else if ::std::mem::size_of::<i32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u8 as i32
   } else {
     BUG_wrong_field_size();
   }

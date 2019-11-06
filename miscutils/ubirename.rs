@@ -27,7 +27,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::int32_t;
+
 
 use crate::librb::size_t;
 /* ubirename - port of the ubirename from the mtd-utils package
@@ -60,14 +60,14 @@ use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ubi_rnvol_req {
-  pub count: int32_t,
+  pub count: i32,
   pub padding1: [i8; 12],
   pub ents: [C2RustUnnamed; 32],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
-  pub vol_id: int32_t,
+  pub vol_id: i32,
   pub name_len: i16,
   pub padding2: [i8; 2],
   pub name: [libc::c_char; 128],

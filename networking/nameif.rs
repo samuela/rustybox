@@ -77,7 +77,7 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::int32_t;
+
 
 
 
@@ -190,7 +190,7 @@ pub struct ethtable_s {
   pub mac: *mut ether_addr,
   pub bus_info: *mut libc::c_char,
   pub driver: *mut libc::c_char,
-  pub phy_address: int32_t,
+  pub phy_address: i32,
 }
 pub type ethtable_t = ethtable_s;
 /* Cut'n'paste from ethtool.h */

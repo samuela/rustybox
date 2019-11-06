@@ -38,7 +38,7 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -129,10 +129,10 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
      * current time  cur = 0x123ffffffff.
      * Assuming our time is not some 40 years off,
      * remote time must be 0x12400000001.
-     * Need to adjust our time by (int32_t)(nett - cur).
+     * Need to adjust our time by (i32)(nett - cur).
      */
     let mut cur: time_t = time(0 as *mut time_t);
-    let mut adjust: int32_t = nett.wrapping_sub(cur as u32) as int32_t;
+    let mut adjust: i32 = nett.wrapping_sub(cur as u32) as i32;
     return cur + adjust as libc::c_long;
   }
   /* This is not going to work, but what can we do */

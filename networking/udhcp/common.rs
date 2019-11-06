@@ -114,7 +114,7 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
+
 
 
 
@@ -273,18 +273,18 @@ unsafe extern "C" fn bb_strtoi32(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
-) -> int32_t {
-  if ::std::mem::size_of::<int32_t>() as libc::c_ulong
+) -> i32 {
+  if ::std::mem::size_of::<i32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
   {
     return bb_strtoi(arg, endp, base);
   }
-  if ::std::mem::size_of::<int32_t>() as libc::c_ulong
+  if ::std::mem::size_of::<i32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_long>() as libc::c_ulong
   {
-    return bb_strtol(arg, endp, base) as int32_t;
+    return bb_strtol(arg, endp, base) as i32;
   }
-  return BUG_bb_strtou32_unimplemented() as int32_t;
+  return BUG_bb_strtou32_unimplemented() as i32;
 }
 
 /*
@@ -1153,7 +1153,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         current_block_58 = 10778260831612459202;
       }
       8 => {
-        let mut tmp_1: int32_t = bb_strtoi32(val, 0 as *mut *mut libc::c_char, 0i32);
+        let mut tmp_1: i32 = bb_strtoi32(val, 0 as *mut *mut libc::c_char, 0i32);
         *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_1 as libc::c_uint;

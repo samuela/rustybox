@@ -160,7 +160,7 @@ use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::timeval;
@@ -825,9 +825,9 @@ unsafe extern "C" fn unpack_tail(
   let mut triptime: libc::c_uint = 0;
   triptime = triptime;
   if !tp.is_null() {
-    /* (int32_t) cast is for hypothetical 64-bit unsigned */
+    /* (i32) cast is for hypothetical 64-bit unsigned */
     /* (doesn't hurt 32-bit real-world anyway) */
-    triptime = (monotonic_us() as u32).wrapping_sub(*tp) as int32_t as libc::c_uint;
+    triptime = (monotonic_us() as u32).wrapping_sub(*tp) as i32 as libc::c_uint;
     let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tsum;
     *fresh10 = (*fresh10).wrapping_add(triptime as libc::c_ulonglong);
     if triptime < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tmin {

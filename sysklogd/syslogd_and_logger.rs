@@ -245,7 +245,7 @@ pub type __key_t = libc::c_int;
 
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
+
 
 
 
@@ -505,8 +505,8 @@ pub struct globals {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct shbuf_ds {
-  pub size: int32_t,
-  pub tail: int32_t,
+  pub size: i32,
+  pub tail: i32,
   pub data: [libc::c_char; 1],
 }
 #[derive(Copy, Clone)]
@@ -1276,7 +1276,7 @@ unsafe extern "C" fn ipcsyslog_init() {
   );
   (*(*ptr_to_globals).shbuf).size = ((*ptr_to_globals).shm_size as libc::c_ulong)
     .wrapping_sub(8u64)
-    .wrapping_sub(1i32 as libc::c_ulong) as int32_t;
+    .wrapping_sub(1i32 as libc::c_ulong) as i32;
   /*G.shbuf->tail = 0;*/
   /* we'll trust the OS to set initial semval to 0 (let's hope) */
   (*ptr_to_globals).s_semid = semget(KEY_ID as libc::c_int, 2i32, 0o1000i32 | 0o2000i32 | 1023i32);

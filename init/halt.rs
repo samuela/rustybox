@@ -43,13 +43,12 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-use crate::librb::__int32_t;
 use crate::librb::__pid_t;
+
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::time_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -67,16 +66,16 @@ pub struct utmpx {
   pub ut_user: [libc::c_char; 32],
   pub ut_host: [libc::c_char; 256],
   pub ut_exit: __exit_status,
-  pub ut_session: __int32_t,
+  pub ut_session: i32,
   pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [__int32_t; 4],
+  pub ut_addr_v6: [i32; 4],
   pub __glibc_reserved: [libc::c_char; 20],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
-  pub tv_sec: __int32_t,
-  pub tv_usec: __int32_t,
+  pub tv_sec: i32,
+  pub tv_usec: i32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -216,7 +215,7 @@ unsafe extern "C" fn write_wtmp() {
     0i32,
     ::std::mem::size_of::<utmpx>() as libc::c_ulong,
   ); /* it is wide enough */
-  utmp.ut_tv.tv_sec = time(0 as *mut time_t) as __int32_t; /* = strcpy(utmp.ut_id, "~~"); */
+  utmp.ut_tv.tv_sec = time(0 as *mut time_t) as i32; /* = strcpy(utmp.ut_id, "~~"); */
   strcpy(
     utmp.ut_user.as_mut_ptr(),
     b"shutdown\x00" as *const u8 as *const libc::c_char,

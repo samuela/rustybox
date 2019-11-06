@@ -12,7 +12,7 @@ use crate::librb::__off64_t;
 use crate::librb::dev_t;
 use crate::librb::group;
 
-use crate::librb::int32_t;
+
 
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -609,7 +609,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
     tmpint = tmpint.offset((itemindex * 4i32) as isize);
     return ({
       let mut __v: libc::c_uint = 0;
-      let mut __x: libc::c_uint = *(tmpint as *mut int32_t) as libc::c_uint;
+      let mut __x: libc::c_uint = *(tmpint as *mut i32) as libc::c_uint;
       if 0 != 0 {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32

@@ -18,7 +18,7 @@ extern "C" {
   fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 
 
@@ -40,7 +40,7 @@ pub const UNICODE_OFF: C2RustUnnamed = 1;
 pub const UNICODE_UNKNOWN: C2RustUnnamed = 0;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const UNI_FLAG_PAD: C2RustUnnamed_0 = 1;
-pub type bb_wint_t = int32_t;
+pub type bb_wint_t = i32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_mbstate_t {

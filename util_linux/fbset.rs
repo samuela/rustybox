@@ -61,7 +61,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 
 
@@ -234,7 +234,7 @@ unsafe extern "C" fn copy_if_gt0(
   mut cnt: libc::c_uint,
 ) {
   loop {
-    if *src as int32_t > 0i32 {
+    if *src as i32 > 0i32 {
       *dst = *src
     }
     src = src.offset(1);
@@ -251,24 +251,24 @@ unsafe extern "C" fn copy_changed_values(
   mut base: *mut fb_var_screeninfo,
   mut set: *mut fb_var_screeninfo,
 ) {
-  //if ((int32_t) set->xres > 0) base->xres = set->xres;
-  //if ((int32_t) set->yres > 0) base->yres = set->yres;
-  //if ((int32_t) set->xres_virtual > 0)   base->xres_virtual = set->xres_virtual;
-  //if ((int32_t) set->yres_virtual > 0)   base->yres_virtual = set->yres_virtual;
+  //if ((i32) set->xres > 0) base->xres = set->xres;
+  //if ((i32) set->yres > 0) base->yres = set->yres;
+  //if ((i32) set->xres_virtual > 0)   base->xres_virtual = set->xres_virtual;
+  //if ((i32) set->yres_virtual > 0)   base->yres_virtual = set->yres_virtual;
   copy_if_gt0(&mut (*set).xres, &mut (*base).xres, 4i32 as libc::c_uint);
-  if (*set).bits_per_pixel as int32_t > 0i32 {
+  if (*set).bits_per_pixel as i32 > 0i32 {
     (*base).bits_per_pixel = (*set).bits_per_pixel
   }
   //copy_if_gt0(&set->bits_per_pixel, &base->bits_per_pixel, 1);
-  //if ((int32_t) set->pixclock > 0)       base->pixclock = set->pixclock;
-  //if ((int32_t) set->left_margin > 0)    base->left_margin = set->left_margin;
-  //if ((int32_t) set->right_margin > 0)   base->right_margin = set->right_margin;
-  //if ((int32_t) set->upper_margin > 0)   base->upper_margin = set->upper_margin;
-  //if ((int32_t) set->lower_margin > 0)   base->lower_margin = set->lower_margin;
-  //if ((int32_t) set->hsync_len > 0) base->hsync_len = set->hsync_len;
-  //if ((int32_t) set->vsync_len > 0) base->vsync_len = set->vsync_len;
-  //if ((int32_t) set->sync > 0)  base->sync = set->sync;
-  //if ((int32_t) set->vmode > 0) base->vmode = set->vmode;
+  //if ((i32) set->pixclock > 0)       base->pixclock = set->pixclock;
+  //if ((i32) set->left_margin > 0)    base->left_margin = set->left_margin;
+  //if ((i32) set->right_margin > 0)   base->right_margin = set->right_margin;
+  //if ((i32) set->upper_margin > 0)   base->upper_margin = set->upper_margin;
+  //if ((i32) set->lower_margin > 0)   base->lower_margin = set->lower_margin;
+  //if ((i32) set->hsync_len > 0) base->hsync_len = set->hsync_len;
+  //if ((i32) set->vsync_len > 0) base->vsync_len = set->vsync_len;
+  //if ((i32) set->sync > 0)  base->sync = set->sync;
+  //if ((i32) set->vmode > 0) base->vmode = set->vmode;
   copy_if_gt0(
     &mut (*set).pixclock,
     &mut (*base).pixclock,

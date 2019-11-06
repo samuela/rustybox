@@ -8,12 +8,10 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use crate::librb::int32_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct random_t {
-  pub galois_LFSR: int32_t,
+  pub galois_LFSR: i32,
   pub LCG: u32,
   pub xs64_x: u32,
   pub xs64_y: u32,
@@ -41,7 +39,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
      * it is not used anywhere else in busybox... so avoid bloat
      */
     (*rnd).xs64_x = getpid() as u32;
-    (*rnd).galois_LFSR = (*rnd).xs64_x as int32_t;
+    (*rnd).galois_LFSR = (*rnd).xs64_x as i32;
     (*rnd).xs64_y = monotonic_us() as u32;
     (*rnd).LCG = (*rnd).xs64_y
   }
@@ -64,7 +62,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
     /* if we just shifted 1 out of msb... */
     t ^= MASK as libc::c_uint
   }
-  (*rnd).galois_LFSR = t as int32_t;
+  (*rnd).galois_LFSR = t as i32;
   loop
   /* http://en.wikipedia.org/wiki/Xorshift
    * Moderately good statistical properties:

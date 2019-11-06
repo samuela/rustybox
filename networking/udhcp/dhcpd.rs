@@ -295,7 +295,7 @@ pub type __int64_t = libc::c_long;
 
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::time_t;
@@ -636,7 +636,7 @@ pub struct server_data_t {
   /* List of ip/mac pairs to assign static leases */
 }
 pub type leasetime_t = u32;
-pub type signed_leasetime_t = int32_t;
+pub type signed_leasetime_t = i32;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dyn_lease {

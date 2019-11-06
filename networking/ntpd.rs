@@ -1,8 +1,6 @@
 use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
 use crate::librb::__syscall_slong_t;
-use crate::librb::int32_t;
-
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
@@ -707,7 +705,7 @@ pub const OPT_n: C2RustUnnamed_8 = 1;
 #[repr(C)]
 pub union C2RustUnnamed_9 {
   pub f: libc::c_float,
-  pub i: int32_t,
+  pub i: i32,
 }
 
 #[derive(Copy, Clone)]

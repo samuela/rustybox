@@ -12,7 +12,7 @@ extern "C" {
   fn pstm_clamp(a: *mut pstm_int);
 }
 
-use crate::librb::int32_t;
+
 use crate::librb::size_t;
 
 
@@ -20,7 +20,7 @@ use crate::librb::size_t;
 /* Failure on sanity/limit tests */
 pub type uint64 = u64;
 pub type uint32 = u32;
-pub type int32 = int32_t;
+pub type int32 = i32;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;
 #[derive(Copy, Clone)]

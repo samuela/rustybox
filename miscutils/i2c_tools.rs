@@ -121,7 +121,7 @@ extern "C" {
 use crate::librb::__ino64_t;
 
 use crate::librb::__off64_t;
-use crate::librb::int32_t;
+
 
 
 
@@ -208,7 +208,7 @@ unsafe extern "C" fn i2c_smbus_access(
   mut cmd: u8,
   mut size: libc::c_int,
   mut data: *mut i2c_smbus_data,
-) -> int32_t {
+) -> i32 {
   let mut args: i2c_smbus_ioctl_data = i2c_smbus_ioctl_data {
     read_write: 0,
     command: 0,
@@ -225,16 +225,16 @@ unsafe extern "C" fn i2c_smbus_access(
     &mut args as *mut i2c_smbus_ioctl_data,
   );
 }
-unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> int32_t {
+unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, 0i32 as u8, 1i32, &mut data);
   if err < 0i32 {
     return err;
   }
-  return data.byte as int32_t;
+  return data.byte as i32;
 }
-unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> int32_t {
+unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> i32 {
   return i2c_smbus_access(
     fd,
     0i32 as libc::c_char,
@@ -243,30 +243,30 @@ unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> i
     0 as *mut i2c_smbus_data,
   );
 }
-unsafe extern "C" fn i2c_smbus_read_byte_data(mut fd: libc::c_int, mut cmd: u8) -> int32_t {
+unsafe extern "C" fn i2c_smbus_read_byte_data(mut fd: libc::c_int, mut cmd: u8) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, cmd, 2i32, &mut data);
   if err < 0i32 {
     return err;
   }
-  return data.byte as int32_t;
+  return data.byte as i32;
 }
-unsafe extern "C" fn i2c_smbus_read_word_data(mut fd: libc::c_int, mut cmd: u8) -> int32_t {
+unsafe extern "C" fn i2c_smbus_read_word_data(mut fd: libc::c_int, mut cmd: u8) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, cmd, 3i32, &mut data);
   if err < 0i32 {
     return err;
   }
-  return data.word as int32_t;
+  return data.word as i32;
 }
 /* ENABLE_I2CGET || ENABLE_I2CSET || ENABLE_I2CDUMP */
 unsafe extern "C" fn i2c_smbus_write_byte_data(
   mut file: libc::c_int,
   mut cmd: u8,
   mut value: u8,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   data.byte = value;
   return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 2i32, &mut data);
@@ -275,7 +275,7 @@ unsafe extern "C" fn i2c_smbus_write_word_data(
   mut file: libc::c_int,
   mut cmd: u8,
   mut value: u16,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   data.word = value;
   return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 3i32, &mut data);
@@ -285,7 +285,7 @@ unsafe extern "C" fn i2c_smbus_write_block_data(
   mut cmd: u8,
   mut length: u8,
   mut values: *const u8,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   if length as libc::c_int > 32i32 {
     length = 32i32 as u8
@@ -303,7 +303,7 @@ unsafe extern "C" fn i2c_smbus_write_i2c_block_data(
   mut cmd: u8,
   mut length: u8,
   mut values: *const u8,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   if length as libc::c_int > 32i32 {
     length = 32i32 as u8
@@ -325,7 +325,7 @@ unsafe extern "C" fn i2c_smbus_read_block_data(
   mut fd: libc::c_int,
   mut cmd: u8,
   mut vals: *mut u8,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut i: libc::c_int = 0;
   let mut err: libc::c_int = 0;
@@ -340,14 +340,14 @@ unsafe extern "C" fn i2c_smbus_read_block_data(
     *fresh0 = data.block[i as usize];
     i += 1
   }
-  return data.block[0] as int32_t;
+  return data.block[0] as i32;
 }
 unsafe extern "C" fn i2c_smbus_read_i2c_block_data(
   mut fd: libc::c_int,
   mut cmd: u8,
   mut len: u8,
   mut vals: *mut u8,
-) -> int32_t {
+) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut i: libc::c_int = 0;
   let mut err: libc::c_int = 0;
@@ -376,10 +376,10 @@ unsafe extern "C" fn i2c_smbus_read_i2c_block_data(
     *fresh1 = data.block[i as usize];
     i += 1
   }
-  return data.block[0] as int32_t;
+  return data.block[0] as i32;
 }
 /* ENABLE_I2CDUMP */
-unsafe extern "C" fn i2c_smbus_write_quick(mut fd: libc::c_int, mut val: u8) -> int32_t {
+unsafe extern "C" fn i2c_smbus_write_quick(mut fd: libc::c_int, mut val: u8) -> i32 {
   return i2c_smbus_access(
     fd,
     val as libc::c_char,

@@ -139,7 +139,7 @@ pub struct __va_list_tag {
 
 
 
-use crate::librb::int32_t;
+
 
 
 
@@ -188,7 +188,7 @@ pub struct psRsaKey_t {
   pub size: uint32,
   pub optimized: int32,
 }
-pub type int32 = int32_t;
+pub type int32 = i32;
 pub type uint32 = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -138,7 +138,7 @@ use crate::libbb::llist::llist_t;
 
 use crate::librb::__off64_t;
 
-use crate::librb::int32_t;
+
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
@@ -1027,7 +1027,7 @@ pub unsafe extern "C" fn unzip_main(
             [(zip.fmt.zip_flags as libc::c_int >> 1i32 & 3i32) as usize]
         } /* happens if ucmpsize < cmpsize */
         percents = zip.fmt.ucmpsize.wrapping_sub(zip.fmt.cmpsize) as libc::c_ulong;
-        if (percents as int32_t) < 0i32 {
+        if (percents as i32) < 0i32 {
           percents = 0i32 as libc::c_ulong
         }
         percents = percents.wrapping_mul(100i32 as libc::c_ulong);
