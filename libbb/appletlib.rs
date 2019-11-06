@@ -781,9 +781,9 @@ unsafe fn check_suid(applet_no: usize) {
 
 /* create (sym)links for each applet */
 unsafe fn install_links(
-  mut rustybox_path: *const libc::c_char,
+  rustybox_path: &str,
   use_symbolic_links: bool,
-  mut custom_install_dir: *mut libc::c_char,
+  custom_install_dir: *mut libc::c_char,
 ) {
   /* directory table
    * this should be consistent w/ the enum,
@@ -791,11 +791,7 @@ unsafe fn install_links(
   let mut fpc: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut rc: libc::c_int = 0;
 
-  let lf = if use_symbolic_links {
-    symlink as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int
-  } else {
-    link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int
-  };
+  let lf = if use_symbolic_links { symlink } else { link };
 
   for app in applets.iter() {
     fpc = concat_path_file(
@@ -809,7 +805,7 @@ unsafe fn install_links(
 
     // debug: bb_error_msg("%slinking %s to busybox",
     //		use_symbolic_links ? "sym" : "", fpc);
-    rc = lf(rustybox_path, fpc);
+    rc = lf(str_to_ptr(rustybox_path), fpc);
     if rc != 0i32 && *bb_errno != 17i32 {
       bb_simple_perror_msg(fpc);
     }
@@ -954,8 +950,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
     }
 
     if argv[1] == "--install" {
-      let mut busybox: *const libc::c_char = 0 as *const libc::c_char;
-      busybox = xmalloc_readlink(bb_busybox_exec_path.as_ptr());
+      let mut busybox: *const libc::c_char = xmalloc_readlink(bb_busybox_exec_path.as_ptr());
       if busybox.is_null() {
         /* bb_busybox_exec_path is usually "/proc/self/exe".
          * In chroot, readlink("/proc/self/exe") usually fails.
