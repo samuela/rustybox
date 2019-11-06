@@ -992,9 +992,7 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) 
 }
 
 unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
-  // This was originally `is_prefixed_with(name, "busybox")` in the C source.
-  // Not sure why it's not ==.
-  if name.starts_with("rustybox") {
+  if name == "rustybox" {
     ::std::process::exit(rustybox_main(argv));
   } else {
     /* find_applet_by_name() search is more expensive, so goes second */
