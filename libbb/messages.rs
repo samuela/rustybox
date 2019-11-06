@@ -77,14 +77,17 @@ pub static mut bb_hexdigits_upcase: [libc::c_char; 17] = [
   48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 0,
 ];
 
+// CONFIG_BUSYBOX_EXEC_PATH
 #[no_mangle]
 pub static mut bb_busybox_exec_path: [libc::c_char; 15] = [
   47, 112, 114, 111, 99, 47, 115, 101, 108, 102, 47, 101, 120, 101, 0,
 ];
 
+// LIBBB_DEFAULT_LOGIN_SHELL
 #[no_mangle]
 pub static mut bb_default_login_shell: [libc::c_char; 9] = [45, 47, 98, 105, 110, 47, 115, 104, 0];
 
+// BB_PATH_ROOT_PATH
 /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
  * but I want to save a few bytes here. Check libbb.h before changing! */
 #[no_mangle]
