@@ -181,7 +181,7 @@ use crate::librb::uint32_t;
 
 use libc::stat;
 
-use crate::librb::timeval;
+ use libc::timeval;
 
 use crate::librb::signal::__sighandler_t;
 

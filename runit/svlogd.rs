@@ -190,7 +190,7 @@ pub type DIR = __dirstream;
 
 use crate::librb::time_t;
 use crate::librb::signal::sigset_t;
-use crate::librb::timeval;
+ use libc::timeval;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;

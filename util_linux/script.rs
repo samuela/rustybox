@@ -127,7 +127,7 @@ use crate::librb::time_t;
 use crate::librb::uint32_t;
 
 use crate::librb::signal::__sighandler_t;
-use crate::librb::timeval;
+ use libc::timeval;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;

@@ -90,7 +90,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::time_t;
-use crate::librb::timeval;
+ use libc::timeval;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

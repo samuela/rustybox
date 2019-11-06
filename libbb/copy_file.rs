@@ -256,7 +256,7 @@ pub type DIR = __dirstream;
 use crate::librb::mode_t;
 use libc::stat;
 
-use crate::librb::timeval;
+ use libc::timeval;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;

@@ -36,7 +36,7 @@ extern "C" {
 use crate::librb::int32_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
-use crate::librb::timeval;
+ use libc::timeval;
 use crate::librb::uint32_t;
 
 use libc::FILE;

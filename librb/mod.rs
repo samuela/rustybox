@@ -61,14 +61,6 @@ pub struct _IO_marker {
 
 pub type _IO_lock_t = ();
 
-// See https://pubs.opengroup.org/onlinepubs/7908799/xsh/systime.h.html.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct timeval {
-  pub tv_sec: __time_t,
-  pub tv_usec: __suseconds_t,
-}
-
 // See http://man7.org/linux/man-pages/man3/getpwnam.3.html.
 #[derive(Copy, Clone)]
 #[repr(C)]

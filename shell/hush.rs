@@ -410,7 +410,7 @@ use crate::librb::signal::__sigset_t;
 
 use crate::librb::signal::sigset_t;
 
-use crate::librb::timeval;
+ use libc::timeval;
 pub type __timezone_ptr_t = *mut timezone;
 use crate::librb::fd_pair;
 pub type sighandler_t = __sighandler_t;

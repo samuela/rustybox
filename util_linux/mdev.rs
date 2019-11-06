@@ -393,7 +393,7 @@ use libc::stat;
 
 use crate::librb::signal::sigset_t;
 
-use crate::librb::timeval;
+use libc::timeval;
 
 use crate::librb::signal::__sigval_t;
 

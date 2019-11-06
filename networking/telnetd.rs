@@ -137,7 +137,7 @@ use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::timeval;
+ use libc::timeval;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -343,7 +343,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

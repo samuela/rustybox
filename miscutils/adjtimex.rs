@@ -22,7 +22,7 @@ extern "C" {
 
 use crate::librb::__syscall_slong_t;
 use crate::librb::size_t;
-use crate::librb::timeval;
+ use libc::timeval;
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone, BitfieldStruct)]

@@ -354,7 +354,7 @@ use crate::librb::signal::sigset_t;
 
 use libc::stat;
 
-use crate::librb::timeval;
+ use libc::timeval;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;

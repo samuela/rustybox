@@ -323,7 +323,7 @@ pub type socklen_t = __socklen_t;
 pub type id_t = __id_t;
 use crate::librb::time_t;
 
-use crate::librb::timeval;
+ use libc::timeval;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

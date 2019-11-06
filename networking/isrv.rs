@@ -49,7 +49,7 @@ use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
 use crate::librb::time_t;
-use crate::librb::timeval;
+ use libc::timeval;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]

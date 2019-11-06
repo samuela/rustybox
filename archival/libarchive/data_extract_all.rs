@@ -1,4 +1,5 @@
 use libc;
+use libc::stat;
 
 extern "C" {
   pub type hardlinks_t;
@@ -77,15 +78,11 @@ extern "C" {
 }
 
 use crate::libbb::llist::llist_t;
-
 use crate::librb::__dev_t;
 use crate::librb::__gid_t;
-
 use crate::librb::__mode_t;
-
 use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
-
 use crate::librb::__uid_t;
 use crate::librb::dev_t;
 use crate::librb::gid_t;
@@ -95,11 +92,9 @@ use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::time_t;
-
-use crate::librb::timeval;
 use crate::librb::uid_t;
 use crate::librb::uoff_t;
-use libc::stat;
+use libc::timeval;
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */

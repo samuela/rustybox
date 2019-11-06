@@ -45,7 +45,7 @@ use crate::librb::__pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
-use crate::librb::timeval;
+ use libc::timeval;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

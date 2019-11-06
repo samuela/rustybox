@@ -288,7 +288,7 @@ pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
-use crate::librb::timeval;
+ use libc::timeval;
 pub type __rlimit_resource_t = __rlimit_resource;
 use crate::librb::gid_t;
 use crate::librb::int8_t;

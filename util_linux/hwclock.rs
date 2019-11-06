@@ -73,7 +73,7 @@ extern "C" {
 use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
 use crate::librb::time_t;
-use crate::librb::timeval;
+ use libc::timeval;
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
