@@ -1,6 +1,7 @@
 use libc;
 use std::ffi::CStr;
 use std::ffi::CString;
+use std::path::Path;
 
 use crate::applets::applet_tables::{applets, InstallLoc, SUID};
 use crate::libbb::llist::llist_t;
@@ -11,9 +12,6 @@ use crate::librb::{
 use crate::shell::ash::ash_main;
 
 extern "C" {
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
-
   #[no_mangle]
   fn getuid() -> __uid_t;
 
@@ -36,12 +34,6 @@ extern "C" {
   fn setresgid(__rgid: __gid_t, __egid: __gid_t, __sgid: __gid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
@@ -53,9 +45,6 @@ extern "C" {
 
   #[no_mangle]
   fn feof_unlocked(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
 
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
@@ -99,13 +88,7 @@ extern "C" {
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
 
   #[no_mangle]
-  fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn full_write1_str(str: *const libc::c_char) -> ssize_t;
-
-  #[no_mangle]
-  fn full_write2_str(str: *const libc::c_char) -> ssize_t;
 
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
@@ -124,12 +107,6 @@ extern "C" {
 
   #[no_mangle]
   fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
 
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
@@ -781,35 +758,28 @@ unsafe fn check_suid(applet_no: usize) {
 
 /* create (sym)links for each applet */
 unsafe fn install_links(
-  rustybox_path: &str,
+  rustybox_path: &Path,
   use_symbolic_links: bool,
-  custom_install_dir: *mut libc::c_char,
+  custom_install_dir: Option<&Path>,
 ) {
-  /* directory table
-   * this should be consistent w/ the enum,
-   * busybox.h::bb_install_loc_t, or else... */
-  let mut fpc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut rc: libc::c_int = 0;
-
-  let lf = if use_symbolic_links { symlink } else { link };
+  let lf = if use_symbolic_links {
+    std::os::unix::fs::symlink
+  } else {
+    std::fs::hard_link
+  };
 
   for app in applets.iter() {
-    fpc = concat_path_file(
-      if !custom_install_dir.is_null() {
-        custom_install_dir
-      } else {
-        str_to_ptr(&install_loc_to_string(app.install_loc))
-      },
-      str_to_ptr(&app.name),
-    );
+    let default_dst_str = install_loc_to_string(app.install_loc);
+    let dst = custom_install_dir
+      .unwrap_or_else(|| Path::new(&default_dst_str))
+      .join(app.name);
 
-    // debug: bb_error_msg("%slinking %s to busybox",
-    //		use_symbolic_links ? "sym" : "", fpc);
-    rc = lf(str_to_ptr(rustybox_path), fpc);
-    if rc != 0i32 && *bb_errno != 17i32 {
-      bb_simple_perror_msg(fpc);
-    }
-    free(fpc as *mut libc::c_void);
+    eprintln!(
+      "linky linkin {} -> {}",
+      rustybox_path.display(),
+      dst.display()
+    );
+    lf(rustybox_path, dst).expect("Failed to link!");
   }
 }
 
@@ -953,28 +923,23 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
     }
 
     if argv[1] == "--install" {
-      let mut busybox: *const libc::c_char = xmalloc_readlink(bb_busybox_exec_path.as_ptr());
-      if busybox.is_null() {
-        /* bb_busybox_exec_path is usually "/proc/self/exe".
-         * In chroot, readlink("/proc/self/exe") usually fails.
-         * In such case, better use argv[0] as symlink target
-         * if it is a full path name.
-         */
-        if !argv[0].starts_with("/") {
-          bb_error_msg_and_die(
-            b"\'%s\' is not an absolute path\x00" as *const u8 as *const libc::c_char,
-            str_to_ptr(&argv[0]),
-          );
-        }
-        busybox = str_to_ptr(&argv[0])
-      }
+      // According to the docs using this can have negative security
+      // implications in some scenarios. In the future we should ask the user to
+      // confirm this value.
+      let current_exe = std::env::current_exe()
+        .expect("Unable to get std::env::current_exe()")
+        .canonicalize()
+        .expect("Could not get absolute path of the rustybox executable.");
 
       /* busybox --install [-s] [DIR]:
        * -s: make symlinks
        * DIR: directory to install links to
        */
       let use_symbolic_links = (argv.len() > 2) && (argv[2] == "-s");
-      install_links(busybox, use_symbolic_links, str_to_ptr(&argv[3]));
+      let custom_dir = argv
+        .get(if use_symbolic_links { 3 } else { 2 })
+        .map(Path::new);
+      install_links(&current_exe, use_symbolic_links, custom_dir);
       return 0;
     }
 
