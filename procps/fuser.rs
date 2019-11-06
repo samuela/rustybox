@@ -1,4 +1,15 @@
+use crate::librb::__dev_t;
+use crate::librb::__ino64_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::dev_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::ino_t;
+use libc::FILE;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -77,20 +88,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__dev_t;
-
-use crate::librb::__ino64_t;
-use crate::librb::__ino_t;
-
-use crate::librb::__off64_t;
-
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-use libc::ino_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -101,7 +98,6 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::dev_t;
 
 use libc::stat;
 pub type __socket_type = libc::c_uint;
@@ -115,7 +111,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -232,7 +227,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
     if r != 3i32 {
       continue;
     }
-    statbuf.st_ino = uint64_inode as __ino_t;
+    statbuf.st_ino = uint64_inode as ino_t;
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recursion_depth
       == PROC_NET as libc::c_int
     {
