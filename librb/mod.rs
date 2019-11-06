@@ -26,16 +26,6 @@ pub type ptrdiff_t = libc::c_long;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_marker {
-  pub _next: *mut _IO_marker,
-  pub _sbuf: *mut libc::FILE,
-  pub _pos: libc::c_int,
-}
-
-pub type _IO_lock_t = ();
-
 // See http://man7.org/linux/man-pages/man3/getpwnam.3.html.
 #[derive(Copy, Clone)]
 #[repr(C)]
