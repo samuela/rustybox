@@ -353,10 +353,8 @@ pub unsafe extern "C" fn string_array_len(argv: *mut *mut libc::c_char) -> libc:
 #[no_mangle]
 pub unsafe extern "C" fn bb_show_usage() -> ! {
   let aname = ptr_to_str(applet_name);
-  match usage(&aname) {
-    None => panic!("Applet name {} not found.", aname),
-    Some(usage_msg) => println!("Usage: {} {}", aname, usage_msg),
-  }
+  let usage_msg = usage(&aname).expect("Applet usage failed.");
+  println!("Usage: {} {}", aname, usage_msg);
   xfunc_die();
 }
 
