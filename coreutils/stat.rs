@@ -5,9 +5,9 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
   static mut stdout: *mut FILE;
   #[no_mangle]
@@ -72,8 +72,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__dev_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __fsid_t {
@@ -84,14 +82,13 @@ pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 
-use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::size_t;
+use libc::gid_t;
 use libc::time_t;
 
 use libc::stat;
 use libc::uid_t;
-
 
 use libc::FILE;
 #[derive(Copy, Clone)]

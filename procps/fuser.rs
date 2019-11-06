@@ -1,8 +1,7 @@
-use crate::librb::__dev_t;
 use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-use crate::librb::dev_t;
+
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -125,7 +124,7 @@ pub struct globals {
 pub struct inode_list {
   pub next: *mut inode_list,
   pub inode: ino_t,
-  pub dev: dev_t,
+  pub dev: libc::dev_t,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_IP4: C2RustUnnamed = 16;
@@ -200,7 +199,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   {
     let mut fd: libc::c_int = 0;
     /* find socket dev */
-    statbuf.st_dev = 0i32 as __dev_t; /* . or .. */
+    statbuf.st_dev = 0i32 as libc::dev_t; /* . or .. */
     fd = socket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
     if fd >= 0i32 {
       fstat(fd, &mut statbuf);
@@ -245,7 +244,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
       if !(major != 0i32 && minor != 0i32 && statbuf.st_ino != 0i32 as libc::c_ulong) {
         continue;
       }
-      statbuf.st_dev = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as __dev_t;
+      statbuf.st_dev = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
       retval = search_dev_inode(&mut statbuf);
       if retval != 0 {
         break;

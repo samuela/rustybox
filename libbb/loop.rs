@@ -12,7 +12,7 @@ extern "C" {
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -28,7 +28,6 @@ extern "C" {
   #[no_mangle]
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
-use crate::librb::__dev_t;
 
 use crate::librb::__mode_t;
 
@@ -652,7 +651,7 @@ pub unsafe extern "C" fn set_loop(
           if mknod(
             dev.as_mut_ptr(),
             (0o60000i32 | 0o644i32) as __mode_t,
-            bb_makedev(7i32 as libc::c_uint, i as libc::c_uint) as __dev_t,
+            bb_makedev(7i32 as libc::c_uint, i as libc::c_uint) as libc::dev_t,
           ) == 0i32
           {
             current_block = 5504172152099367553;

@@ -1,9 +1,9 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -58,12 +58,9 @@ extern "C" {
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
-use crate::librb::__dev_t;
-use crate::librb::dev_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::stat;
-
 
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
@@ -89,7 +86,7 @@ unsafe extern "C" fn bb_strtoul(
 /* name_to_dev_t() in klibc-utils supports extended device name formats,
  * apart from the usual case where /dev/NAME already exists.
  *
- * - device number in hexadecimal represents itself (in dev_t layout).
+ * - device number in hexadecimal represents itself (in libc::dev_t layout).
  * - device number in major:minor decimal represents itself.
  * - if block device (or partition) with this name is found in sysfs.
  * - if /dev/ prefix is not given, it is assumed.
@@ -100,7 +97,7 @@ unsafe extern "C" fn bb_strtoul(
  * - /dev/ram (alias to /dev/ram0)
  * - /dev/mtd
  */
-unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> dev_t {
+unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::dev_t {
   let mut devfile: [libc::c_char; 28] = [0; 28];
   let mut sysname: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut major_num: libc::c_uint = 0;
@@ -124,11 +121,11 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> dev_t {
       }
       *cptr = ':' as i32 as libc::c_char;
       if *bb_errno == 0 {
-        return bb_makedev(major_num, minor_num) as dev_t;
+        return bb_makedev(major_num, minor_num) as libc::dev_t;
       }
     } else {
       /* Hexadecimal device number? */
-      let mut res: dev_t = bb_strtoul(devname, 0 as *mut *mut libc::c_char, 16i32);
+      let mut res: libc::dev_t = bb_strtoul(devname, 0 as *mut *mut libc::c_char, 16i32);
       if *bb_errno == 0 {
         return res;
       }
@@ -164,10 +161,10 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> dev_t {
       &mut minor_num as *mut libc::c_uint,
     ) == 2i32
     {
-      return bb_makedev(major_num, minor_num) as dev_t;
+      return bb_makedev(major_num, minor_num) as libc::dev_t;
     }
   }
-  return 0i32 as dev_t;
+  return 0i32 as libc::dev_t;
 }
 //usage:#define resume_trivial_usage
 //usage:       "BLOCKDEV [OFFSET]"
@@ -179,7 +176,7 @@ pub unsafe extern "C" fn resume_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ofs: libc::c_ulonglong = 0;
-  let mut resume_device: dev_t = 0;
+  let mut resume_device: libc::dev_t = 0;
   let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut fd: libc::c_int = 0;
   argv = argv.offset(1);

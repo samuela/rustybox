@@ -13,7 +13,7 @@ extern "C" {
 use crate::librb::size_t;
 use libc::ino_t;
 
-use crate::librb::dev_t;
+
 use libc::stat;
 
 /*
@@ -29,7 +29,7 @@ pub type ino_dev_hashtable_bucket_t = ino_dev_hash_bucket_struct;
 #[repr(C)]
 pub struct ino_dev_hash_bucket_struct {
   pub ino: ino_t,
-  pub dev: dev_t,
+  pub dev: libc::dev_t,
   pub next: *mut ino_dev_hash_bucket_struct,
   pub isdir: libc::c_char,
   pub name: [libc::c_char; 1],

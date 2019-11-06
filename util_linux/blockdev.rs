@@ -52,7 +52,7 @@ pub union C2RustUnnamed_0 {
 //config:	Performs some ioctls with block devices.
 //applet:IF_BLOCKDEV(APPLET_NOEXEC(blockdev, blockdev, BB_DIR_SBIN, BB_SUID_DROP, blockdev))
 //kbuild:lib-$(CONFIG_BLOCKDEV) += blockdev.o
-//usage:#define blockdev_trivial_usage
+//usage:#define blocklibc::dev_trivial_usage
 //usage:	"OPTION BLOCKDEV"
 //usage:#define blockdev_full_usage "\n\n"
 //usage:       "	--setro		Set ro"

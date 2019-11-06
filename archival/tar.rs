@@ -26,9 +26,9 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
@@ -204,12 +204,10 @@ extern "C" {
 }
 
 use crate::libbb::llist::llist_t;
-use crate::librb::__dev_t;
 
 use crate::librb::bb_uidgid_t;
-use crate::librb::dev_t;
+
 use crate::librb::fd_pair;
-use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
@@ -217,12 +215,11 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
+use libc::gid_t;
 use libc::ino_t;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
-
-
 
 use libc::FILE;
 
@@ -256,7 +253,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -335,7 +332,7 @@ pub union C2RustUnnamed_0 {
 #[repr(C)]
 pub struct HardLinkInfo {
   pub next: *mut HardLinkInfo,
-  pub dev: dev_t,
+  pub dev: libc::dev_t,
   pub ino: ino_t,
   pub name: [libc::c_char; 1],
 }

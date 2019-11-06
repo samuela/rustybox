@@ -1,15 +1,15 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn xatoull_range(
     str: *const libc::c_char,
@@ -26,9 +26,9 @@ extern "C" {
   #[no_mangle]
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
-use crate::librb::__dev_t;
+
 use crate::librb::__mode_t;
-use crate::librb::dev_t;
+
 use crate::librb::mode_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn mknod_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: mode_t = 0;
-  let mut dev: dev_t = 0;
+  let mut dev: libc::dev_t = 0;
   let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
   let mut arg: *const libc::c_char = 0 as *const libc::c_char;
   mode = getopt_mk_fifo_nod(argv);
@@ -111,7 +111,7 @@ pub unsafe extern "C" fn mknod_main(
     bb_show_usage();
   }
   mode |= modes_cubp[*type_0.offset(4) as libc::c_int as usize];
-  dev = 0i32 as dev_t;
+  dev = 0i32 as libc::dev_t;
   arg = *argv.offset(2);
   if *type_0 as libc::c_int != 'p' as i32 {
     if (*argv.offset(2)).is_null() || (*argv.offset(3)).is_null() {
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn mknod_main(
         gnu_dev_major(
           (2147483647i32 as libc::c_uint)
             .wrapping_mul(2u32)
-            .wrapping_add(1u32) as __dev_t,
+            .wrapping_add(1u32) as libc::dev_t,
         ) as libc::c_ulong,
       ) as libc::c_uint,
       xatoul_range(
@@ -135,10 +135,10 @@ pub unsafe extern "C" fn mknod_main(
         gnu_dev_minor(
           (2147483647i32 as libc::c_uint)
             .wrapping_mul(2u32)
-            .wrapping_add(1u32) as __dev_t,
+            .wrapping_add(1u32) as libc::dev_t,
         ) as libc::c_ulong,
       ) as libc::c_uint,
-    ) as dev_t;
+    ) as libc::dev_t;
     arg = *argv.offset(4)
   }
   if !arg.is_null() {

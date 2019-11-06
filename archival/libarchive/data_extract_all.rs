@@ -6,11 +6,11 @@ use libc::timeval;
 use libc::uid_t;
 
 use crate::libbb::llist::llist_t;
-use crate::librb::__dev_t;
+
 use crate::librb::__mode_t;
 use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
-use crate::librb::dev_t;
+
 use crate::librb::group;
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -44,7 +44,7 @@ extern "C" {
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
   /* Search for an entry with a matching username.  */
@@ -188,7 +188,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

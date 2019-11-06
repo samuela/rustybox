@@ -6,10 +6,10 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
@@ -33,11 +33,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__dev_t;
-use crate::librb::dev_t;
 use libc::ino_t;
-
-
 
 /*
  * mountpoint implementation for busybox
@@ -102,7 +98,7 @@ pub unsafe extern "C" fn mountpoint_main(
     } else {
       *bb_errno = 20i32;
       if st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-        let mut st_dev: dev_t = st.st_dev;
+        let mut st_dev: libc::dev_t = st.st_dev;
         let mut st_ino: ino_t = st.st_ino;
         let mut p: *mut libc::c_char =
           xasprintf(b"%s/..\x00" as *const u8 as *const libc::c_char, arg);

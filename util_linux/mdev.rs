@@ -1,4 +1,3 @@
-use crate::librb::__dev_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
@@ -52,10 +51,10 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
@@ -124,7 +123,7 @@ extern "C" {
   fn umask(__mask: __mode_t) -> __mode_t;
 
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -1379,7 +1378,7 @@ unsafe extern "C" fn make_device(
       if mknod(
         node_name,
         (*rule).mode | type_0 as libc::c_uint,
-        bb_makedev(major as libc::c_uint, minor as libc::c_uint) as __dev_t,
+        bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t,
       ) != 0
         && *bb_errno != 17i32
       {

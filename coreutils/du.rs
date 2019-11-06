@@ -49,10 +49,8 @@ extern "C" {
 
 use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
-use crate::librb::dev_t;
+
 use libc::stat;
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -74,7 +72,7 @@ pub struct globals {
   pub status: bool,
   pub slink_depth: libc::c_int,
   pub du_depth: libc::c_int,
-  pub dir_dev: dev_t,
+  pub dir_dev: libc::dev_t,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_m_mbytes: C2RustUnnamed = 1024;

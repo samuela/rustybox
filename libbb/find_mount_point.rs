@@ -11,7 +11,7 @@ extern "C" {
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
 }
 
-use crate::librb::dev_t;
+
 use libc::stat;
 
 
@@ -443,7 +443,7 @@ pub unsafe extern "C" fn find_mount_point(
   let mut s: stat = std::mem::zeroed();
   let mut mtab_fp: *mut FILE = 0 as *mut FILE;
   let mut mountEntry: *mut mntent = 0 as *mut mntent;
-  let mut devno_of_name: dev_t = 0;
+  let mut devno_of_name: libc::dev_t = 0;
   let mut block_dev: bool = false;
   if stat(name, &mut s) != 0i32 {
     return 0 as *mut mntent;
@@ -487,7 +487,7 @@ pub unsafe extern "C" fn find_mount_point(
     if !(subdir_too != 0 || block_dev as libc::c_int != 0) {
       continue;
     }
-    /* Is device's dev_t == name's dev_t? */
+    /* Is device's libc::dev_t == name's libc::dev_t? */
     if *(*mountEntry).mnt_fsname.offset(0) as libc::c_int == '/' as i32
       && stat((*mountEntry).mnt_fsname, &mut s) == 0i32
       && s.st_rdev == devno_of_name

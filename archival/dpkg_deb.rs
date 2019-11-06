@@ -57,15 +57,14 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__mode_t;
 
 use crate::librb::bb_uidgid_t;
-use crate::librb::dev_t;
-use libc::gid_t;
+
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
+use libc::gid_t;
 use libc::time_t;
 use libc::uid_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -79,7 +78,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 
 #[derive(Copy, Clone)]

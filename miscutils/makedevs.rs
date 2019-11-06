@@ -1,6 +1,5 @@
-use crate::librb::__dev_t;
 use crate::librb::__mode_t;
-use crate::librb::dev_t;
+
 use crate::librb::size_t;
 
 use libc;
@@ -32,7 +31,7 @@ extern "C" {
   #[no_mangle]
   fn umask(__mask: __mode_t) -> __mode_t;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -367,7 +366,7 @@ pub unsafe extern "C" fn makedevs_main(
         }
         i = 0i32 as libc::c_uint;
         while i <= count {
-          let mut rdev: dev_t = 0;
+          let mut rdev: libc::dev_t = 0;
           let mut nameN: *mut libc::c_char = full_name;
           if count != 0i32 as libc::c_uint {
             nameN = xasprintf(
@@ -376,7 +375,7 @@ pub unsafe extern "C" fn makedevs_main(
               start.wrapping_add(i),
             )
           }
-          rdev = bb_makedev(major, minor.wrapping_add(i.wrapping_mul(increment))) as dev_t;
+          rdev = bb_makedev(major, minor.wrapping_add(i.wrapping_mul(increment))) as libc::dev_t;
           if mknod(nameN, mode, rdev) != 0i32 && *bb_errno != 17i32 {
             bb_perror_msg(
               b"line %d: can\'t create node %s\x00" as *const u8 as *const libc::c_char,

@@ -80,7 +80,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__off64_t;
 
 use crate::librb::bb_uidgid_t;
-use crate::librb::dev_t;
+
 use libc::gid_t;
 
 use crate::librb::mode_t;
@@ -124,7 +124,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -469,7 +469,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               tar.devmajor.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as libc::c_int,
             ) as libc::c_uint;
-            (*file_header).device = bb_makedev(major, minor) as dev_t;
+            (*file_header).device = bb_makedev(major, minor) as libc::dev_t;
             tar.prefix[0] = t
           }
           /* 0 is reserved for high perf file, treat as normal file */

@@ -9,10 +9,8 @@ use libc::uid_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::__off64_t;
-use crate::librb::dev_t;
+
 use crate::librb::group;
-
-
 
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -236,7 +234,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

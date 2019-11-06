@@ -39,14 +39,14 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::dev_t;
+
 use libc::stat;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct arena {
   pub st: stat,
-  pub dev: dev_t,
+  pub dev: libc::dev_t,
   pub devpath: [libc::c_char; 256],
 }
 pub const DEVNAME_MAX: C2RustUnnamed = 256;

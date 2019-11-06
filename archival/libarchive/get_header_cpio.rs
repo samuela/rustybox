@@ -37,7 +37,7 @@ extern "C" {
 use crate::libbb::llist::llist_t;
 
 use crate::librb::bb_uidgid_t;
-use crate::librb::dev_t;
+
 use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -60,7 +60,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 
 #[derive(Copy, Clone)]
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn get_header_cpio(
         (*new).next = (*archive_handle).cpio__created_hardlinks;
         (*archive_handle).cpio__created_hardlinks = new
       }
-      (*file_header).device = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as dev_t;
+      (*file_header).device = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
       if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
         == 0i32
       {

@@ -1,4 +1,3 @@
-use crate::librb::__dev_t;
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
@@ -55,7 +54,7 @@ extern "C" {
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
   #[no_mangle]

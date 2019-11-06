@@ -84,7 +84,6 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::time_t;
 
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -391,7 +390,10 @@ unsafe extern "C" fn cpu_report(mut stats: *mut stats_cpu_pair_t) {
   /* Print current statistics */
   print_stats_cpu_struct(stats);
 }
-unsafe extern "C" fn print_stats_dev_struct(mut stats_dev: *mut stats_dev_t, mut itv: cputime_t) {
+unsafe extern "C" fn print_stats_dev_struct(
+  mut stats_dev: *mut stats_dev_t,
+  mut itv: cputime_t,
+) {
   let mut p: *mut stats_dev_data_t = &mut (*stats_dev).prev_data;
   let mut c: *mut stats_dev_data_t = &mut (*stats_dev).curr_data;
   if option_mask32 & OPT_z as libc::c_int as libc::c_uint != 0 {
@@ -447,7 +449,9 @@ unsafe extern "C" fn is_partition(mut dev: *const libc::c_char) -> libc::c_int {
     && (*dev.offset(3) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32)
     as libc::c_int;
 }
-unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) -> *mut stats_dev_t {
+unsafe extern "C" fn stats_dev_find_or_new(
+  mut dev_name: *const libc::c_char,
+) -> *mut stats_dev_t {
   let mut curr: *mut *mut stats_dev_t = &mut (*ptr_to_globals).stats_dev_list;
   while !(*curr).is_null() {
     if strcmp((**curr).dname.as_mut_ptr(), dev_name) == 0i32 {
@@ -455,7 +459,8 @@ unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) ->
     }
     curr = &mut (**curr).next
   }
-  *curr = xzalloc(::std::mem::size_of::<stats_dev_t>() as libc::c_ulong) as *mut stats_dev_t;
+  *curr =
+    xzalloc(::std::mem::size_of::<stats_dev_t>() as libc::c_ulong) as *mut stats_dev_t;
   strncpy(
     (**curr).dname.as_mut_ptr(),
     dev_name,

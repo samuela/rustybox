@@ -1,5 +1,5 @@
 use crate::librb::__compar_fn_t;
-use crate::librb::__dev_t;
+
 use crate::librb::__ino64_t;
 use crate::librb::__nlink_t;
 use crate::librb::__off64_t;
@@ -41,10 +41,10 @@ extern "C" {
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
 
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   static mut stdout: *mut FILE;

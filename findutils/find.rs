@@ -195,7 +195,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::dev_t;
+
 use crate::librb::mode_t;
 use libc::stat;
 use libc::time_t;
@@ -221,7 +221,7 @@ pub struct suffix_mult {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
-  pub xdev_dev: *mut dev_t,
+  pub xdev_dev: *mut libc::dev_t,
   pub xdev_count: libc::c_int,
   pub minmaxdepth: [libc::c_int; 2],
   pub actions: *mut *mut *mut action,
@@ -2018,8 +2018,8 @@ pub unsafe extern "C" fn find_main(
     let ref mut fresh21 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_dev;
     *fresh21 = xzalloc(
       ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_count as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<dev_t>() as libc::c_ulong),
-    ) as *mut dev_t;
+        .wrapping_mul(::std::mem::size_of::<libc::dev_t>() as libc::c_ulong),
+    ) as *mut libc::dev_t;
     i = 0i32;
     while !(*argv.offset(i as isize)).is_null() {
       /* not xstat(): shouldn't bomb out on
@@ -2031,7 +2031,7 @@ pub unsafe extern "C" fn find_main(
       }
       i += 1
       /* else G.xdev_dev[i] stays 0 and
-       * won't match any real device dev_t
+       * won't match any real device libc::dev_t
        */
     }
   }

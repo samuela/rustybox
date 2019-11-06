@@ -17,7 +17,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
@@ -74,11 +74,7 @@ extern "C" {
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__dev_t;
-
 use crate::librb::size_t;
-
-
 
 use libc::stat;
 

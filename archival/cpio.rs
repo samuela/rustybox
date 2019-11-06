@@ -1,9 +1,9 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::__dev_t;
+
 use crate::librb::__mode_t;
 use crate::librb::__off_t;
 use crate::librb::bb_uidgid_t;
-use crate::librb::dev_t;
+
 use crate::librb::fd_pair;
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -28,10 +28,10 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+  fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   static mut stdin: *mut FILE;
@@ -174,7 +174,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 
 #[derive(Copy, Clone)]

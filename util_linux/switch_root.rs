@@ -252,7 +252,6 @@ pub type cap_user_data_t = *mut __user_cap_data_struct;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -264,7 +263,6 @@ pub struct dirent {
 }
 
 pub type DIR = __dirstream;
-use crate::librb::dev_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -275,7 +273,7 @@ pub struct caps {
 }
 
 // Recursively delete contents of rootfs
-unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut rootdev: dev_t) {
+unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut rootdev: libc::dev_t) {
   let mut dir: *mut DIR = 0 as *mut DIR;
   let mut d: *mut dirent = 0 as *mut dirent;
   let mut st: stat = std::mem::zeroed();
@@ -438,7 +436,7 @@ pub unsafe extern "C" fn switch_root_main(
     f_spare: [0; 4],
   };
   let mut dry_run: libc::c_uint = 0i32 as libc::c_uint;
-  let mut rootdev: dev_t = 0;
+  let mut rootdev: libc::dev_t = 0;
   // Parse args. '+': stop at first non-option
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 's' as i32) {
     //usage:#define switch_root_trivial_usage

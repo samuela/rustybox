@@ -41,7 +41,7 @@ extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: __dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]
@@ -101,20 +101,15 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__dev_t;
 use crate::librb::__mode_t;
 
 use crate::librb::__pid_t;
 
-use crate::librb::dev_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-
-
-
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -453,7 +448,10 @@ unsafe extern "C" fn curmove() {
   }
   set_cursor(cursor);
 }
-unsafe extern "C" fn create_cdev_if_doesnt_exist(mut name: *const libc::c_char, mut dev: dev_t) {
+unsafe extern "C" fn create_cdev_if_doesnt_exist(
+  mut name: *const libc::c_char,
+  mut dev: libc::dev_t,
+) {
   let mut fd: libc::c_int = open(name, 0i32);
   if fd != -1i32 {
     close(fd);
@@ -575,7 +573,7 @@ pub unsafe extern "C" fn conspy_main(
     {
       create_cdev_if_doesnt_exist(
         tty_name.as_mut_ptr(),
-        bb_makedev(4i32 as libc::c_uint, ttynum) as dev_t,
+        bb_makedev(4i32 as libc::c_uint, ttynum) as libc::dev_t,
       );
     }
     create_cdev_if_doesnt_exist(
@@ -583,7 +581,7 @@ pub unsafe extern "C" fn conspy_main(
       bb_makedev(
         7i32 as libc::c_uint,
         (128i32 as libc::c_uint).wrapping_add(ttynum),
-      ) as dev_t,
+      ) as libc::dev_t,
     );
   }
   if opts & (1i32 << FLAG_s as libc::c_int) as libc::c_uint != 0 && ttynum != 0 {

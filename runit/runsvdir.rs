@@ -79,7 +79,6 @@ use crate::librb::smallint;
 use libc::ino_t;
 use libc::stat;
 
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -90,7 +89,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::dev_t;
+
 use libc::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -341,7 +340,7 @@ pub unsafe extern "C" fn runsvdir_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut s: stat = std::mem::zeroed();
-  let mut last_dev: dev_t = 0;
+  let mut last_dev: libc::dev_t = 0;
   last_dev = last_dev;
   let mut last_ino: ino_t = 0;
   last_ino = last_ino;

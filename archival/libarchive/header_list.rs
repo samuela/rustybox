@@ -4,7 +4,7 @@ extern "C" {
   fn puts(__s: *const libc::c_char) -> libc::c_int;
 }
 
-use crate::librb::dev_t;
+
 use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
@@ -23,7 +23,7 @@ pub struct file_header_t {
   pub gid: gid_t,
   pub mode: mode_t,
   pub mtime: time_t,
-  pub device: dev_t,
+  pub device: libc::dev_t,
 }
 
 /*
