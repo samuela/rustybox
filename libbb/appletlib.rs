@@ -867,11 +867,14 @@ unsafe fn print_rustybox_help() {
   let output_width = get_terminal_width(2) - 1;
 
   // TODO: add version info to this banner.
-  eprintln!("RustyBox multi-call binary.");
   eprintln!(
     "\
-RustyBox is a BusyBox fork written entirely in Rust. Kudos to the
-developers of the BusyBox and c2rust projects!
+█▀▀█ █  █ █▀▀ ▀▀█▀▀ █  █ █▀▀▄ █▀▀█ █ █
+█▄▄▀ █  █ ▀▀█   █   █▄▄█ █▀▀▄ █  █ ▄▀▄
+▀ ▀▀  ▀▀▀ ▀▀▀   ▀   ▄▄▄█ ▀▀▀  ▀▀▀▀ ▀ ▀
+
+RustyBox is a BusyBox fork written entirely in Rust. Kudos go to
+the developers of the BusyBox and c2rust projects!
 
 Usage: rustybox [function [arguments]...]
    or: rustybox --list[-full]
