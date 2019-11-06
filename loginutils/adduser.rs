@@ -1,15 +1,25 @@
 use libc;
+use libc::gid_t;
+use libc::time_t;
+use libc::uid_t;
+
+use crate::librb::__mode_t;
+use crate::librb::group;
+use crate::librb::passwd;
+use crate::librb::smallint;
+
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -84,15 +94,6 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-use crate::librb::__mode_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
-use crate::librb::group;
-use crate::librb::passwd;
-use crate::librb::smallint;
-use libc::time_t;
-use libc::uid_t;
-
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -129,10 +130,10 @@ unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
   }
   if option_mask32 & (1i32 << 7i32) as libc::c_uint == 0 {
     if option_mask32 & (1i32 << 5i32) as libc::c_uint != 0 {
-      (*p).pw_uid = 100i32 as __uid_t;
+      (*p).pw_uid = 100i32 as uid_t;
       max = 999i32
     } else {
-      (*p).pw_uid = (999i32 + 1i32) as __uid_t
+      (*p).pw_uid = (999i32 + 1i32) as uid_t
     }
   }
   /* check for a free uid (and maybe gid) */

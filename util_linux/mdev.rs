@@ -1,7 +1,28 @@
+use crate::librb::__clock_t;
+use crate::librb::__dev_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::__syscall_slong_t;
+use crate::librb::__time_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::signal::__sigval_t;
+use crate::librb::signal::siginfo_t;
+use crate::librb::signal::sigset_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::time_t;
 use libc::timespec;
+use libc::timeval;
+use libc::uid_t;
 
 extern "C" {
   pub type __dirstream;
@@ -302,7 +323,7 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
@@ -352,21 +373,6 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-use crate::librb::__dev_t;
-use libc::gid_t;
-
-use crate::librb::__mode_t;
-
-use crate::librb::__off64_t;
-
-use crate::librb::__clock_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::__time_t;
-
-use crate::librb::__syscall_slong_t;
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -377,24 +383,9 @@ use crate::librb::__syscall_slong_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
-pub type smalluint = libc::c_uchar;
-use crate::librb::off_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
+
 pub type DIR = __dirstream;
-use crate::librb::mode_t;
-
-use libc::stat;
-use libc::time_t;
-
-use crate::librb::signal::sigset_t;
-
-use libc::timeval;
-
-use crate::librb::signal::__sigval_t;
-
-use crate::librb::signal::siginfo_t;
+pub type smalluint = libc::c_uchar;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -450,7 +441,7 @@ pub struct C2RustUnnamed_4 {
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
@@ -460,7 +451,7 @@ pub struct C2RustUnnamed_5 {
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
 
@@ -476,7 +467,7 @@ pub struct C2RustUnnamed_7 {
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
 }
 
 use libc::FILE;
@@ -515,8 +506,6 @@ pub type C2RustUnnamed_10 = libc::c_uint;
 // pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed_10 = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed_10 = 2;
 pub const ACTION_RECURSE: C2RustUnnamed_10 = 1;
-
-use crate::librb::bb_uidgid_t;
 
 pub type C2RustUnnamed_11 = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed_11 = 4653056;

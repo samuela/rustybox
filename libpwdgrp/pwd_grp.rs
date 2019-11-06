@@ -1,8 +1,8 @@
 use libc;
+use libc::gid_t;
 use libc::uid_t;
 use libc::FILE;
 
-use libc::gid_t;
 use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::size_t;

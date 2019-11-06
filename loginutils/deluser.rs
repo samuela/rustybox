@@ -1,7 +1,11 @@
+use crate::librb::group;
+use crate::librb::passwd;
 use libc;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   /* Read an entry from the password-file stream, opening it if necessary.  */
   #[no_mangle]
   fn bb_internal_getpwent() -> *mut passwd;
@@ -39,10 +43,6 @@ extern "C" {
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
-
-use crate::librb::__uid_t;
-use crate::librb::group;
-use crate::librb::passwd;
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

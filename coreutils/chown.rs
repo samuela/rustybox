@@ -1,16 +1,15 @@
 use libc;
+use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
 
-use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
-use libc::gid_t;
 
 extern "C" {
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn lchown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -577,12 +576,11 @@ pub unsafe extern "C" fn chown_main(
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
   /* This matches coreutils behavior (almost - see below) */
-  param.chown_func = Some(
-    chown as unsafe extern "C" fn(_: *const libc::c_char, _: __uid_t, _: gid_t) -> libc::c_int,
-  ); /* match coreutils order */
+  param.chown_func =
+    Some(chown as unsafe extern "C" fn(_: *const libc::c_char, _: uid_t, _: gid_t) -> libc::c_int); /* match coreutils order */
   if opt & 2i32 != 0 || opt & (1i32 | (0x20i32 | 0x40i32)) == 1i32 {
     param.chown_func = Some(
-      lchown as unsafe extern "C" fn(_: *const libc::c_char, _: __uid_t, _: gid_t) -> libc::c_int,
+      lchown as unsafe extern "C" fn(_: *const libc::c_char, _: uid_t, _: gid_t) -> libc::c_int,
     )
   } /* -H/-L: follow links on depth 0 */
   flags = ACTION_DEPTHFIRST as libc::c_int; /* follow links if -L */

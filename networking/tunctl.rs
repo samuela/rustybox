@@ -1,7 +1,9 @@
 use libc;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -30,7 +32,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__uid_t;
 pub type __caddr_t = *mut libc::c_char;
 
 pub type sa_family_t = libc::c_ushort;

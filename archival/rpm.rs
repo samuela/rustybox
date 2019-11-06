@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::gid_t;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
@@ -8,9 +9,7 @@ use libc::uid_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::__off64_t;
-use crate::librb::__uid_t;
 use crate::librb::dev_t;
-use libc::gid_t;
 use crate::librb::group;
 use crate::librb::int16_t;
 use crate::librb::int32_t;
@@ -20,6 +19,7 @@ use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
+
 use crate::librb::uoff_t;
 
 extern "C" {
@@ -27,9 +27,9 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
@@ -718,7 +718,7 @@ unsafe extern "C" fn fileaction_setowngrp(
   } else {
     getgid()
   } as libc::c_int;
-  chown(filename, uid as __uid_t, gid as gid_t);
+  chown(filename, uid as uid_t, gid as gid_t);
 }
 unsafe extern "C" fn loop_through_files(
   mut filetag: libc::c_int,

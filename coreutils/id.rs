@@ -44,9 +44,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
@@ -55,10 +55,9 @@ extern "C" {
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 }
 
-use crate::librb::__uid_t;
-use libc::gid_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
+use libc::gid_t;
 use libc::uid_t;
 
 /*

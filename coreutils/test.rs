@@ -1,10 +1,9 @@
-use libc;
-use libc::stat;
-
-use crate::librb::__uid_t;
-use libc::gid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
+use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
 
 extern "C" {
   #[no_mangle]
@@ -16,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]

@@ -1,4 +1,10 @@
+use crate::librb::__mode_t;
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -41,17 +47,10 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
 }
-
-use crate::librb::__mode_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
-
-use libc::stat;
-use libc::FILE;
 
 /*
  * dos2unix for BusyBox

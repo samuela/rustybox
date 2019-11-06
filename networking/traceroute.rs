@@ -3,15 +3,15 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::gid_t;
 use libc::timeval;
 use libc::uid_t;
 
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
 use crate::librb::__useconds_t;
-use libc::gid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
+
 
 extern "C" {
   #[no_mangle]
@@ -42,7 +42,7 @@ extern "C" {
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]

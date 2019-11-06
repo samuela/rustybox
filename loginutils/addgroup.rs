@@ -1,11 +1,15 @@
+use crate::librb::group;
 use libc;
+use libc::gid_t;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -51,10 +55,6 @@ extern "C" {
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
-
-use crate::librb::__uid_t;
-use libc::gid_t;
-use crate::librb::group;
 
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;

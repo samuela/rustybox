@@ -10,7 +10,7 @@ extern "C" {
   #[no_mangle]
   fn getpid() -> __pid_t;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]
@@ -225,7 +225,7 @@ use crate::librb::__off64_t;
 
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
+
 
 use crate::librb::int16_t;
 use crate::librb::int32_t;
@@ -310,7 +310,7 @@ pub struct C2RustUnnamed_4 {
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
@@ -319,7 +319,7 @@ pub struct C2RustUnnamed_5 {
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
 #[derive(Copy, Clone)]
@@ -333,7 +333,7 @@ pub struct C2RustUnnamed_7 {
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
 }
 
 use crate::librb::signal::sigaction;

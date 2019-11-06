@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
 
   /* Copyright (C) 1991,92,95,96,97,98,99,2000,01 Free Software Foundation, Inc.
     This file is part of the GNU C Library.
@@ -47,7 +47,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-use crate::librb::__uid_t;
+
 
 use libc::gid_t;
 use crate::librb::passwd;

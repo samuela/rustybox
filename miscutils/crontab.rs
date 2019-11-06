@@ -1,15 +1,24 @@
+use crate::librb::__pid_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::pid_t;
+
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn getpid() -> __pid_t;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -75,22 +84,14 @@ extern "C" {
   static bb_msg_you_must_be_root: [libc::c_char; 0];
 }
 
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
-use crate::librb::off_t;
-use crate::librb::passwd;
-use crate::librb::pid_t;
-use libc::stat;
-use libc::uid_t;
-
+pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_e: C2RustUnnamed = 8;
 pub const OPT_l: C2RustUnnamed = 4;
 pub const OPT_ler: C2RustUnnamed = 28;
 pub const OPT_u: C2RustUnnamed = 1;
 pub const OPT_c: C2RustUnnamed = 2;
-pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_r: C2RustUnnamed = 16;
+
 unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_char) {
   let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
   let mut pid: pid_t = 0;

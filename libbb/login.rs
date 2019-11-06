@@ -1,4 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::time_t;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -7,9 +12,9 @@ extern "C" {
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   static mut stdout: *mut FILE;
   #[no_mangle]
@@ -50,12 +55,7 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-use crate::librb::__uid_t;
 
-use crate::librb::size_t;
-use libc::time_t;
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {

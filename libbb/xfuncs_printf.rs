@@ -1,4 +1,16 @@
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
+
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::off_t;
+use crate::librb::pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+
+
 extern "C" {
   pub type __dirstream;
   pub type sockaddr_x25;
@@ -36,13 +48,13 @@ extern "C" {
   #[no_mangle]
   fn getpid() -> __pid_t;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn getegid() -> gid_t;
   #[no_mangle]
-  fn setuid(__uid: __uid_t) -> libc::c_int;
+  fn setuid(__uid: uid_t) -> libc::c_int;
   #[no_mangle]
-  fn seteuid(__uid: __uid_t) -> libc::c_int;
+  fn seteuid(__uid: uid_t) -> libc::c_int;
   #[no_mangle]
   fn setgid(__gid: gid_t) -> libc::c_int;
   #[no_mangle]
@@ -193,17 +205,6 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
-use crate::librb::off_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use libc::stat;
-use libc::uid_t;
 
 pub type __socklen_t = libc::c_uint;
 

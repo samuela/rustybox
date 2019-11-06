@@ -1,8 +1,3 @@
-use libc;
-use libc::gid_t;
-use libc::stat;
-use libc::FILE;
-
 use crate::libbb::llist::llist_t;
 use crate::librb::__dev_t;
 use crate::librb::__mode_t;
@@ -16,8 +11,12 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::time_t;
-use crate::librb::uid_t;
 use crate::librb::uoff_t;
+use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
+use libc::FILE;
 
 extern "C" {
   pub type hardlinks_t;

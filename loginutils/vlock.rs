@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -48,10 +48,8 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__uid_t;
 use crate::librb::signal::__sighandler_t;
 use libc::uid_t;
-
 
 use crate::librb::passwd;
 use crate::librb::termios;

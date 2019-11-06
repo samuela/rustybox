@@ -21,7 +21,6 @@ pub type __useconds_t = libc::c_uint;
 pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type __time_t = libc::c_long;
-pub type __uid_t = libc::c_uint;
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
 pub type __uint32_t = libc::c_uint;
@@ -31,7 +30,6 @@ pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
 pub type dev_t = __dev_t;
-pub type uid_t = __uid_t;
 pub type mode_t = __mode_t;
 pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
@@ -65,7 +63,7 @@ pub type _IO_lock_t = ();
 pub struct passwd {
   pub pw_name: *mut libc::c_char,
   pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: __uid_t,
+  pub pw_uid: libc::uid_t,
   pub pw_gid: libc::gid_t,
   pub pw_gecos: *mut libc::c_char,
   pub pw_dir: *mut libc::c_char,
@@ -118,7 +116,7 @@ pub struct winsize {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bb_uidgid_t {
-  pub uid: uid_t,
+  pub uid: libc::uid_t,
   pub gid: libc::gid_t,
 }
 

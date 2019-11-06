@@ -1,17 +1,16 @@
-use c2rust_asm_casts;
-use c2rust_asm_casts::AsmCastTrait;
-use libc;
-use libc::stat;
-use libc::time_t;
-use libc::uid_t;
-
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
-use libc::gid_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
+use c2rust_asm_casts;
+use c2rust_asm_casts::AsmCastTrait;
+use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
 
 extern "C" {
   pub type sockaddr_x25;

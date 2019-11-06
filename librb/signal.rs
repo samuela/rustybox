@@ -3,7 +3,9 @@
 //  * http://man7.org/linux/man-pages/man7/sigevent.7.html
 //  * https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html
 
-use crate::librb::{__clock_t, __pid_t, __uid_t, __uint32_t};
+use crate::librb::__clock_t;
+use crate::librb::__pid_t;
+use crate::librb::__uint32_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -87,7 +89,7 @@ pub struct C2RustUnnamed_4 {
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: libc::uid_t,
   pub si_status: libc::c_int,
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
@@ -97,7 +99,7 @@ pub struct C2RustUnnamed_5 {
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: libc::uid_t,
   pub si_sigval: __sigval_t,
 }
 
@@ -113,7 +115,7 @@ pub struct C2RustUnnamed_7 {
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: libc::uid_t,
 }
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 

@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -57,7 +57,7 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__uid_t;
+
 use crate::librb::passwd;
 use crate::librb::size_t;
 use libc::uid_t;

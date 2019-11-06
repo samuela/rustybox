@@ -1,4 +1,19 @@
+use crate::librb::__mode_t;
+use crate::librb::__pid_t;
+use crate::librb::__useconds_t;
+use crate::librb::cc_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::speed_t;
+use crate::librb::ssize_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 use libc;
+use libc::gid_t;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
@@ -27,7 +42,7 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -134,28 +149,14 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__mode_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use crate::librb::__useconds_t;
-use libc::gid_t;
-
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
 pub type sighandler_t = __sighandler_t;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
-use crate::librb::termios;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -260,7 +261,7 @@ unsafe extern "C" fn open_tty() {
     /* crw--w---- */
     close(0i32);
     xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
-    fchown(0i32, 0i32 as __uid_t, 0i32 as gid_t);
+    fchown(0i32, 0i32 as uid_t, 0i32 as gid_t);
     fchmod(0i32, 0o620i32 as __mode_t);
   } else {
     let mut n: *mut libc::c_char = 0 as *mut libc::c_char;

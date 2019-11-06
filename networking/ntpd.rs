@@ -1,8 +1,16 @@
+use crate::librb::__pid_t;
+use crate::librb::__suseconds_t;
+use crate::librb::__syscall_slong_t;
+use crate::librb::int32_t;
+use crate::librb::int8_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::uid_t;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -167,7 +175,7 @@ extern "C" {
   #[no_mangle]
   fn settimeofday(__tv: *const timeval, __tz: *const timezone) -> libc::c_int;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn getpid() -> __pid_t;
   #[no_mangle]
@@ -250,21 +258,8 @@ extern "C" {
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
 
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
 pub type __id_t = libc::c_uint;
-use crate::librb::__suseconds_t;
-
-use crate::librb::__syscall_slong_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::int32_t;
-use crate::librb::int8_t;
-
-
-
-
-use crate::librb::smallint;
 
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
@@ -323,7 +318,7 @@ pub type socklen_t = __socklen_t;
 pub type id_t = __id_t;
 use libc::time_t;
 
- use libc::timeval;
+use libc::timeval;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

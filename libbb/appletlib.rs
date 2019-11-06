@@ -1,26 +1,24 @@
-use libc;
-use std::ffi::CStr;
-use std::ffi::CString;
-use std::path::Path;
-
 use crate::applets::applet_tables::applets;
 use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
-use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
-use libc::gid_t;
 use crate::librb::group;
 use crate::librb::mode_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::uid_t;
 use crate::shell::ash::ash_main;
+use libc;
+use libc::gid_t;
+use libc::uid_t;
+use std::ffi::CStr;
+use std::ffi::CString;
+use std::path::Path;
 
 extern "C" {
   #[no_mangle]
-  fn setresuid(__ruid: __uid_t, __euid: __uid_t, __suid: __uid_t) -> libc::c_int;
+  fn setresuid(__ruid: uid_t, __euid: uid_t, __suid: uid_t) -> libc::c_int;
 
   #[no_mangle]
   fn setresgid(__rgid: gid_t, __egid: gid_t, __sgid: gid_t) -> libc::c_int;
@@ -665,7 +663,7 @@ unsafe fn check_suid(applet_no: usize) {
           uid = (*sct).m_ugid.uid
         }
         /* else: we will set euid = ruid, thus dropping suid effect */
-        if setresuid(-1i32 as __uid_t, uid, uid) != 0 {
+        if setresuid(-1i32 as uid_t, uid, uid) != 0 {
           bb_simple_perror_msg_and_die(b"setresuid\x00" as *const u8 as *const libc::c_char);
         }
         current_block = 14136749492126903395;

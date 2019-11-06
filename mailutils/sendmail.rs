@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -89,7 +89,7 @@ extern "C" {
   fn printstr_base64(buf: *const libc::c_char);
 }
 
-use crate::librb::__uid_t;
+
 
 use crate::librb::pid_t;
 use crate::librb::size_t;

@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn getpid() -> __pid_t;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -74,8 +74,6 @@ extern "C" {
 
 use crate::librb::__off_t;
 use crate::librb::__pid_t;
-
-use crate::librb::__uid_t;
 
 use crate::librb::off_t;
 use crate::librb::size_t;

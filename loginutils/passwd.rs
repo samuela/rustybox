@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -88,7 +88,7 @@ extern "C" {
 }
 
 use crate::librb::__mode_t;
-use crate::librb::__uid_t;
+
 pub type __rlim64_t = libc::c_ulong;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;

@@ -1,3 +1,5 @@
+use crate::librb::size_t;
+use crate::librb::uint64_t;
 use libc;
 
 extern "C" {
@@ -13,12 +15,6 @@ extern "C" {
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
-
-use crate::librb::size_t;
-
-
-use crate::librb::uint64_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

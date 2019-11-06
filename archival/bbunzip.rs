@@ -1,14 +1,13 @@
-use libc;
-use libc::stat;
-use libc::timeval;
-use libc::FILE;
-
 use crate::librb::__suseconds_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::time_t;
 use crate::librb::uoff_t;
+use libc;
+use libc::stat;
+use libc::timeval;
+use libc::FILE;
 
 extern "C" {
   #[no_mangle]

@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
@@ -33,9 +33,9 @@ extern "C" {
 }
 use crate::librb::__int32_t;
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
+
 use crate::librb::size_t;
+use libc::gid_t;
 use libc::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

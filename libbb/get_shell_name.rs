@@ -3,14 +3,14 @@ extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
-use crate::librb::__uid_t;
+
 
 use crate::librb::passwd;
 use libc::uid_t;

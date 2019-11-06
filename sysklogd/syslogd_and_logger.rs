@@ -24,7 +24,7 @@ extern "C" {
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -235,7 +235,7 @@ extern "C" {
 }
 
 use libc::gid_t;
-use crate::librb::__uid_t;
+
 
 use crate::librb::__mode_t;
 
@@ -560,9 +560,9 @@ pub type shmatt_t = __syscall_ulong_t;
 #[repr(C)]
 pub struct ipc_perm {
   pub __key: __key_t,
-  pub uid: __uid_t,
+  pub uid: uid_t,
   pub gid: gid_t,
-  pub cuid: __uid_t,
+  pub cuid: uid_t,
   pub cgid: gid_t,
   pub mode: libc::c_ushort,
   pub __pad1: libc::c_ushort,

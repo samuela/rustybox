@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-use crate::librb::__uid_t;
+
 use libc::uid_t;
 
 /*

@@ -1,4 +1,15 @@
+use crate::librb::__clock_t;
+use crate::librb::__pid_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::signal::__sigval_t;
+use crate::librb::signal::sigset_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use libc;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -185,18 +196,7 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::__clock_t;
-use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-
 pub type __rlim64_t = libc::c_ulong;
-use crate::librb::pid_t;
-use crate::librb::signal::__sigset_t;
-use crate::librb::signal::__sigval_t;
-use crate::librb::signal::sigset_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -256,7 +256,7 @@ pub struct C2RustUnnamed_4 {
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
@@ -265,7 +265,7 @@ pub struct C2RustUnnamed_5 {
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
 #[derive(Copy, Clone)]
@@ -279,7 +279,7 @@ pub struct C2RustUnnamed_7 {
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
 }
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;

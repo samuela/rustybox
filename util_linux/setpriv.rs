@@ -90,7 +90,7 @@ extern "C" {
   fn free(__ptr: *mut libc::c_void);
 
   #[no_mangle]
-  fn getresuid(__ruid: *mut __uid_t, __euid: *mut __uid_t, __suid: *mut __uid_t) -> libc::c_int;
+  fn getresuid(__ruid: *mut uid_t, __euid: *mut uid_t, __suid: *mut uid_t) -> libc::c_int;
 
   #[no_mangle]
   fn getresgid(__rgid: *mut gid_t, __egid: *mut gid_t, __sgid: *mut gid_t) -> libc::c_int;
@@ -170,7 +170,7 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
-use crate::librb::__uid_t;
+
 use libc::gid_t;
 use libc::uid_t;
 

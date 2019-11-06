@@ -1,19 +1,19 @@
 use libc;
+use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
 
 use crate::librb::__mode_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
 use crate::librb::mode_t;
+
 
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn lchown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]

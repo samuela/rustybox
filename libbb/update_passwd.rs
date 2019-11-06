@@ -1,4 +1,15 @@
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::__useconds_t;
+use crate::librb::size_t;
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -27,7 +38,7 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
   #[no_mangle]
@@ -78,17 +89,6 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use libc::gid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::__mode_t;
-
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
-
-use crate::librb::__useconds_t;
-
-use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct flock {
@@ -98,11 +98,6 @@ pub struct flock {
   pub l_len: __off64_t,
   pub l_pid: __pid_t,
 }
-use libc::stat;
-use libc::time_t;
-
-
-use libc::FILE;
 
 /*
  * Busybox main internal header file

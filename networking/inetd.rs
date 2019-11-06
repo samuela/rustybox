@@ -1,20 +1,19 @@
-use c2rust_asm_casts;
-use c2rust_asm_casts::AsmCastTrait;
-use libc;
-use libc::time_t;
-use libc::timeval;
-use libc::uid_t;
-
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
 use crate::librb::int8_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
+
+use c2rust_asm_casts;
+use c2rust_asm_casts::AsmCastTrait;
+use libc;
+use libc::gid_t;
+use libc::time_t;
+use libc::timeval;
+use libc::uid_t;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -96,7 +95,7 @@ extern "C" {
   #[no_mangle]
   fn setsid() -> __pid_t;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
@@ -267,7 +266,6 @@ extern "C" {
 }
 
 pub type __rlim64_t = libc::c_ulong;
-
 pub type __socklen_t = libc::c_uint;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
@@ -519,7 +517,7 @@ pub struct C2RustUnnamed_7 {
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: __clock_t,
   pub si_stime: __clock_t,
@@ -528,7 +526,7 @@ pub struct C2RustUnnamed_8 {
 #[repr(C)]
 pub struct C2RustUnnamed_9 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
 #[derive(Copy, Clone)]
@@ -542,7 +540,7 @@ pub struct C2RustUnnamed_10 {
 #[repr(C)]
 pub struct C2RustUnnamed_11 {
   pub si_pid: __pid_t,
-  pub si_uid: __uid_t,
+  pub si_uid: uid_t,
 }
 use crate::librb::signal::__sighandler_t;
 #[derive(Copy, Clone)]

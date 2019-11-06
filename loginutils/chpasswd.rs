@@ -1,9 +1,13 @@
+use crate::librb::smallint;
 use libc;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
@@ -48,11 +52,6 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-use crate::librb::__uid_t;
-use crate::librb::smallint;
-
-
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

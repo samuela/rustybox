@@ -1,12 +1,11 @@
-use libc;
-
 use crate::librb::__pid_t;
-use crate::librb::__uid_t;
 use crate::librb::fd_pair;
-use libc::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
+
+use libc;
+use libc::gid_t;
 use libc::uid_t;
 
 extern "C" {
@@ -32,7 +31,7 @@ extern "C" {
   fn getegid() -> gid_t;
 
   #[no_mangle]
-  fn geteuid() -> __uid_t;
+  fn geteuid() -> uid_t;
 
   #[no_mangle]
   fn getpid() -> __pid_t;

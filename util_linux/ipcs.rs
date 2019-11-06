@@ -1,12 +1,11 @@
-use libc;
-use libc::time_t;
-use libc::uid_t;
-
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
 use crate::librb::size_t;
+
+use libc;
+use libc::gid_t;
+use libc::time_t;
+use libc::uid_t;
 
 extern "C" {
   #[no_mangle]
@@ -51,9 +50,9 @@ pub type __syscall_ulong_t = libc::c_ulong;
 #[repr(C)]
 pub struct ipc_perm {
   pub __key: __key_t,
-  pub uid: __uid_t,
+  pub uid: uid_t,
   pub gid: gid_t,
-  pub cuid: __uid_t,
+  pub cuid: uid_t,
   pub cgid: gid_t,
   pub mode: libc::c_ushort,
   pub __pad1: libc::c_ushort,

@@ -1,4 +1,16 @@
+use crate::librb::__mode_t;
+use crate::librb::__pid_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::termios;
 use libc;
+use libc::gid_t;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -39,7 +51,7 @@ extern "C" {
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -139,20 +151,6 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__mode_t;
-use crate::librb::__uid_t;
-use libc::gid_t;
-
-use crate::librb::__pid_t;
-use crate::librb::off_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-
-use crate::librb::passwd;
-
-use crate::librb::termios;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

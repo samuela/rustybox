@@ -1,6 +1,15 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::__mode_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn strtol(
@@ -37,7 +46,7 @@ extern "C" {
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -146,19 +155,6 @@ extern "C" {
   fn sed_free_and_close_stuff();
 }
 
-use libc::gid_t;
-use crate::librb::__uid_t;
-
-use crate::librb::__mode_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-
-
-use libc::stat;
-
-use libc::FILE;
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()
@@ -180,7 +176,7 @@ use libc::FILE;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::libbb::llist::llist_t;
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

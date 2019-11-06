@@ -20,7 +20,7 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getuid() -> __uid_t;
+  fn getuid() -> uid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -205,7 +205,7 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 use crate::librb::__dev_t;
-use crate::librb::__uid_t;
+
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
 use crate::librb::fd_pair;

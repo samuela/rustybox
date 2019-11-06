@@ -1,10 +1,24 @@
+use crate::librb::__dev_t;
+use crate::librb::__ino64_t;
+use crate::librb::__mode_t;
+use crate::librb::__off64_t;
+use crate::librb::__suseconds_t;
+use crate::librb::mode_t;
+use crate::librb::off_t;
+use crate::librb::smallint;
 use libc;
+use libc::gid_t;
+use libc::stat;
+use libc::timeval;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn lchown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -26,7 +40,7 @@ extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: __uid_t, __group: gid_t) -> libc::c_int;
+  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -229,20 +243,7 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 }
-use crate::librb::__dev_t;
-use libc::gid_t;
-use crate::librb::__uid_t;
 
-use crate::librb::__ino64_t;
-use crate::librb::__mode_t;
-
-use crate::librb::__off64_t;
-
-use crate::librb::__suseconds_t;
-
-use crate::librb::smallint;
-
-use crate::librb::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -253,12 +254,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::mode_t;
-use libc::stat;
 
- use libc::timeval;
-
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

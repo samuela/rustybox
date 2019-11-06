@@ -1,4 +1,10 @@
+use crate::librb::__pid_t;
+use crate::librb::__time_t;
+use crate::librb::size_t;
 use libc;
+use libc::gid_t;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
@@ -57,21 +63,18 @@ extern "C" {
   #[no_mangle]
   fn semget(__key: key_t, __nsems: libc::c_int, __semflg: libc::c_int) -> libc::c_int;
 }
-use libc::gid_t;
-use crate::librb::__pid_t;
-use crate::librb::__time_t;
-use crate::librb::__uid_t;
+
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
-use crate::librb::size_t;
 pub type key_t = __key_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ipc_perm {
   pub __key: __key_t,
-  pub uid: __uid_t,
+  pub uid: uid_t,
   pub gid: gid_t,
-  pub cuid: __uid_t,
+  pub cuid: uid_t,
   pub cgid: gid_t,
   pub mode: libc::c_ushort,
   pub __pad1: libc::c_ushort,
