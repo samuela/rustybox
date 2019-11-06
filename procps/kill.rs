@@ -52,17 +52,17 @@ extern "C" {
 use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
-use libc::uint16_t;
- use libc::uint8_t;
+
+
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,
@@ -338,7 +338,7 @@ pub const PSSCAN_PPID: C2RustUnnamed = 2;
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

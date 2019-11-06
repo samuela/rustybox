@@ -28,7 +28,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -40,7 +40,7 @@ use crate::librb::__suseconds_t;
 use libc::time_t;
 
  use libc::timeval;
-use libc::uint32_t;
+
 use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -109,13 +109,13 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
   #[no_mangle]
@@ -154,8 +154,8 @@ use crate::librb::__mode_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 use libc::stat;
 
 use libc::FILE;
@@ -1228,7 +1228,7 @@ unsafe extern "C" fn puts_maybe_newline(
   }
   if ferror_unlocked(file) != 0 {
     /* had trailing '\n' or '\0'? */
-    xfunc_error_retval = 4i32 as uint8_t; /* It's what gnu sed exits with... */
+    xfunc_error_retval = 4i32 as u8; /* It's what gnu sed exits with... */
     bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
   }
   *last_puts_char = lpc;

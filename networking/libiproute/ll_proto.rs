@@ -26,7 +26,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
+
 
 /*
  * This program is free software; you can redistribute it and/or
@@ -37,50 +37,50 @@ use libc::uint16_t;
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
 /* Please conditionalize exotic protocols on CONFIG_something */
-static mut llproto_ids: [uint16_t; 43] = [
-  0x60i32 as uint16_t,
-  0x200i32 as uint16_t,
-  0x201i32 as uint16_t,
-  0x800i32 as uint16_t,
-  0x805i32 as uint16_t,
-  0x806i32 as uint16_t,
-  0x8ffi32 as uint16_t,
-  0xa00i32 as uint16_t,
-  0xa01i32 as uint16_t,
-  0x6000i32 as uint16_t,
-  0x6001i32 as uint16_t,
-  0x6002i32 as uint16_t,
-  0x6003i32 as uint16_t,
-  0x6004i32 as uint16_t,
-  0x6005i32 as uint16_t,
-  0x6006i32 as uint16_t,
-  0x6007i32 as uint16_t,
-  0x8035i32 as uint16_t,
-  0x809bi32 as uint16_t,
-  0x80f3i32 as uint16_t,
-  0x8137i32 as uint16_t,
-  0x86ddi32 as uint16_t,
-  0x8863i32 as uint16_t,
-  0x8864i32 as uint16_t,
-  0x884ci32 as uint16_t,
-  0x8884i32 as uint16_t,
-  0x1i32 as uint16_t,
-  0x2i32 as uint16_t,
-  0x3i32 as uint16_t,
-  0x4i32 as uint16_t,
-  0x5i32 as uint16_t,
-  0x6i32 as uint16_t,
-  0x7i32 as uint16_t,
-  0x8i32 as uint16_t,
-  0x9i32 as uint16_t,
-  0x10i32 as uint16_t,
-  0x11i32 as uint16_t,
-  0x15i32 as uint16_t,
-  0x16i32 as uint16_t,
-  0x17i32 as uint16_t,
-  0x18i32 as uint16_t,
-  0x8100i32 as uint16_t,
-  0x800i32 as uint16_t,
+static mut llproto_ids: [u16; 43] = [
+  0x60i32 as u16,
+  0x200i32 as u16,
+  0x201i32 as u16,
+  0x800i32 as u16,
+  0x805i32 as u16,
+  0x806i32 as u16,
+  0x8ffi32 as u16,
+  0xa00i32 as u16,
+  0xa01i32 as u16,
+  0x6000i32 as u16,
+  0x6001i32 as u16,
+  0x6002i32 as u16,
+  0x6003i32 as u16,
+  0x6004i32 as u16,
+  0x6005i32 as u16,
+  0x6006i32 as u16,
+  0x6007i32 as u16,
+  0x8035i32 as u16,
+  0x809bi32 as u16,
+  0x80f3i32 as u16,
+  0x8137i32 as u16,
+  0x86ddi32 as u16,
+  0x8863i32 as u16,
+  0x8864i32 as u16,
+  0x884ci32 as u16,
+  0x8884i32 as u16,
+  0x1i32 as u16,
+  0x2i32 as u16,
+  0x3i32 as u16,
+  0x4i32 as u16,
+  0x5i32 as u16,
+  0x6i32 as u16,
+  0x7i32 as u16,
+  0x8i32 as u16,
+  0x9i32 as u16,
+  0x10i32 as u16,
+  0x11i32 as u16,
+  0x15i32 as u16,
+  0x16i32 as u16,
+  0x17i32 as u16,
+  0x18i32 as u16,
+  0x8100i32 as u16,
+  0x800i32 as u16,
 ];
 /* Keep declarations above and below in sync! */
 static mut llproto_names: [libc::c_char; 264] = [
@@ -124,8 +124,8 @@ pub unsafe extern "C" fn ll_proto_n2a(
   };
   i = 0i32 as libc::c_uint;
   while i
-    < (::std::mem::size_of::<[uint16_t; 43]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint
+    < (::std::mem::size_of::<[u16; 43]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
   {
     if llproto_ids[i as usize] as libc::c_int == id as libc::c_int {
       return nth_string(llproto_names.as_ptr(), i as libc::c_int);
@@ -151,8 +151,8 @@ pub unsafe extern "C" fn ll_proto_a2n(
   i = 0i32 as libc::c_uint;
   loop {
     if !(i
-      < (::std::mem::size_of::<[uint16_t; 43]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint)
+      < (::std::mem::size_of::<[u16; 43]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint)
     {
       current_block = 11006700562992250127;
       break;

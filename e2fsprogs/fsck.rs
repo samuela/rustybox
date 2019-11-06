@@ -94,7 +94,7 @@ use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
- use libc::uint8_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -114,7 +114,7 @@ pub struct globals {
   pub num_args: libc::c_int,
   pub verbose: libc::c_int,
   pub fs_type_list: *mut *mut libc::c_char,
-  pub fs_type_flag: *mut uint8_t,
+  pub fs_type_flag: *mut u8,
   pub fs_type_negated: smallint,
   pub noexecute: smallint,
   pub serialize: smallint,
@@ -898,8 +898,8 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
   ) as *mut *mut libc::c_char;
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_flag;
   *fresh10 =
-    xzalloc((num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint8_t>() as libc::c_ulong))
-      as *mut uint8_t;
+    xzalloc((num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong))
+      as *mut u8;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_negated = -1i32 as smallint;
   num = 0i32;
   s = fs_type;
@@ -944,7 +944,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
           2i32
         } else {
           1i32
-        } as uint8_t
+        } as u8
       }
       _ => {}
     }

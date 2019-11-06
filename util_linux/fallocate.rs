@@ -13,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -22,7 +22,7 @@ extern "C" {
 
 use crate::librb::__off64_t;
 use crate::librb::off_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

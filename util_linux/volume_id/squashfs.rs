@@ -5,9 +5,9 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -15,8 +15,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -42,11 +42,11 @@ pub struct volume_id {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct squashfs_superblock {
-  pub magic: uint32_t,
+  pub magic: u32,
   /*
-    uint32_t	dummy[6];
-    uint16_t        major;
-    uint16_t        minor;
+    u32	dummy[6];
+    u16        major;
+    u16        minor;
   */
 }
 /*
@@ -71,9 +71,9 @@ pub struct squashfs_superblock {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -93,7 +93,7 @@ pub struct squashfs_superblock {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -141,19 +141,19 @@ pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> lib
   // Old SquashFS (pre 4.0) can be both big and little endian, so test for both.
   // Likewise, it is commonly used in firwmare with some non-standard signatures.
   if (*sb).magic
-    == ((('s' as i32 * 256i32 + 'q' as i32) * 256i32 + 's' as i32) as uint32_t)
+    == ((('s' as i32 * 256i32 + 'q' as i32) * 256i32 + 's' as i32) as u32)
       .wrapping_mul(256i32 as libc::c_uint)
       .wrapping_add('h' as i32 as libc::c_uint)
     || (*sb).magic
-      == ((('h' as i32 * 256i32 + 's' as i32) * 256i32 + 'q' as i32) as uint32_t)
+      == ((('h' as i32 * 256i32 + 's' as i32) * 256i32 + 'q' as i32) as u32)
         .wrapping_mul(256i32 as libc::c_uint)
         .wrapping_add('s' as i32 as libc::c_uint)
     || (*sb).magic
-      == ((('s' as i32 * 256i32 + 'h' as i32) * 256i32 + 's' as i32) as uint32_t)
+      == ((('s' as i32 * 256i32 + 'h' as i32) * 256i32 + 's' as i32) as u32)
         .wrapping_mul(256i32 as libc::c_uint)
         .wrapping_add('q' as i32 as libc::c_uint)
     || (*sb).magic
-      == ((('q' as i32 * 256i32 + 's' as i32) * 256i32 + 'h' as i32) as uint32_t)
+      == ((('q' as i32 * 256i32 + 's' as i32) * 256i32 + 'h' as i32) as u32)
         .wrapping_mul(256i32 as libc::c_uint)
         .wrapping_add('s' as i32 as libc::c_uint)
   {

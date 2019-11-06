@@ -43,8 +43,8 @@ extern "C" {
 }
 
 use crate::librb::int32_t;
-use libc::uint32_t;
-pub type uint32 = uint32_t;
+
+pub type uint32 = u32;
 pub type int32 = int32_t;
 pub type pstm_digit = uint32;
 #[derive(Copy, Clone)]

@@ -153,9 +153,9 @@ use crate::librb::__off64_t;
 
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -280,7 +280,7 @@ pub struct undo_object {
   pub prev: *mut undo_object,
   pub start: libc::c_int,
   pub length: libc::c_int,
-  pub u_type: uint8_t,
+  pub u_type: u8,
   pub undo_text: [libc::c_char; 1],
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -1507,7 +1507,7 @@ unsafe extern "C" fn flush_undo_data() {
 unsafe extern "C" fn undo_push(
   mut src: *mut libc::c_char,
   mut length: libc::c_uint,
-  mut u_type: uint8_t,
+  mut u_type: u8,
 ) {
   let mut undo_entry: *mut undo_object = 0 as *mut undo_object;
   // "u_type" values
@@ -1622,7 +1622,7 @@ unsafe extern "C" fn undo_push(
       src.wrapping_offset_from((*ptr_to_globals).text) as libc::c_long as libc::c_int
     // use offset from start of text buffer
   }
-  u_type = (u_type as libc::c_int & !32i32) as uint8_t;
+  u_type = (u_type as libc::c_int & !32i32) as u8;
   (*undo_entry).u_type = u_type;
   // Push it on undo stack
   (*undo_entry).prev = (*ptr_to_globals).undo_stack_tail;
@@ -97712,7 +97712,7 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
     fflush_all();
     k = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32) as uint64_t;
     if k as int32_t == KEYCODE_CURSOR_POS as libc::c_int {
-      let mut rc: uint32_t = (k >> 32i32) as uint32_t;
+      let mut rc: u32 = (k >> 32i32) as u32;
       (*ptr_to_globals).columns = rc & 0x7fffi32 as libc::c_uint;
       if (*ptr_to_globals).columns > MAX_SCR_COLS as libc::c_int as libc::c_uint {
         (*ptr_to_globals).columns = MAX_SCR_COLS as libc::c_int as libc::c_uint

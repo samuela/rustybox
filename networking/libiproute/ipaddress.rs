@@ -77,7 +77,7 @@ extern "C" {
   #[no_mangle]
   fn rtnl_rtscope_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
-  fn rtnl_rtscope_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rtscope_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn ll_type_n2a(type_0: libc::c_int, buf: *mut libc::c_char) -> *const libc::c_char;
   #[no_mangle]
@@ -109,7 +109,7 @@ extern "C" {
   #[no_mangle]
   fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
   //TODO: pass rth->fd instead of full rth?
@@ -205,8 +205,8 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;
@@ -278,24 +278,24 @@ use libc::FILE;
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed_2 = 50;
@@ -356,7 +356,7 @@ pub struct ifaddrmsg {
   pub ifa_prefixlen: __u8,
   pub ifa_flags: __u8,
   pub ifa_scope: __u8,
-  pub ifa_index: __u32,
+  pub ifa_index: u32,
 }
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const __IFA_MAX: C2RustUnnamed_3 = 9;
@@ -372,10 +372,10 @@ pub const IFA_UNSPEC: C2RustUnnamed_3 = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ifa_cacheinfo {
-  pub ifa_prefered: __u32,
-  pub ifa_valid: __u32,
-  pub cstamp: __u32,
-  pub tstamp: __u32,
+  pub ifa_prefered: u32,
+  pub ifa_valid: u32,
+  pub cstamp: u32,
+  pub tstamp: u32,
 }
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed_4 = 97;
@@ -484,10 +484,10 @@ pub struct filter_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -495,8 +495,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -953,7 +953,7 @@ unsafe extern "C" fn print_addrinfo(
       );
       dst.family = (*ifa).ifa_family;
       memcpy(
-        &mut dst.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut dst.data as *mut [u32; 4] as *mut libc::c_void,
         (rta_tb[IFA_LOCAL as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
@@ -1354,14 +1354,14 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
       }
     } else if key as libc::c_int == 1i32 {
       /* scope */
-      let mut scope: uint32_t = 0i32 as uint32_t;
+      let mut scope: u32 = 0i32 as u32;
       argv = next_arg(argv);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = -1i32;
       if rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
         if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0i32 {
           invarg_1_to_2(*argv, b"scope\x00" as *const u8 as *const libc::c_char);
         }
-        scope = RT_SCOPE_NOWHERE as libc::c_int as uint32_t;
+        scope = RT_SCOPE_NOWHERE as libc::c_int as u32;
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0i32
       }
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope = scope as libc::c_int
@@ -1564,7 +1564,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
                   );
                   dst.family = (*ifa).ifa_family;
                   memcpy(
-                    &mut dst.data as *mut [uint32_t; 4] as *mut libc::c_void,
+                    &mut dst.data as *mut [u32; 4] as *mut libc::c_void,
                     (tb[IFA_LOCAL as libc::c_int as usize] as *mut libc::c_char).offset(
                       ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
                         .wrapping_add(4u32 as libc::c_ulong)
@@ -1679,7 +1679,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
 unsafe extern "C" fn default_scope(mut lcl: *mut inet_prefix) -> libc::c_int {
   if (*lcl).family as libc::c_int == 2i32 {
     if (*lcl).bytelen as libc::c_int >= 1i32
-      && *(&mut (*lcl).data as *mut [uint32_t; 4] as *mut uint8_t) as libc::c_int == 127i32
+      && *(&mut (*lcl).data as *mut [u32; 4] as *mut u8) as libc::c_int == 127i32
     {
       return RT_SCOPE_HOST as libc::c_int;
     }
@@ -1762,7 +1762,7 @@ unsafe extern "C" fn ipaddr_modify(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = (0x1i32 | flags) as __u16;
   req.n.nlmsg_type = cmd as __u16;
   req.ifa.ifa_family = preferred_family as __u8;
@@ -1786,7 +1786,7 @@ unsafe extern "C" fn ipaddr_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
         IFA_ADDRESS as libc::c_int,
-        &mut peer.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut peer.data as *mut [u32; 4] as *mut libc::c_void,
         peer.bytelen as libc::c_int,
       );
       req.ifa.ifa_prefixlen = peer.bitlen as __u8
@@ -1820,7 +1820,7 @@ unsafe extern "C" fn ipaddr_modify(
           &mut req.n,
           ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
           IFA_BROADCAST as libc::c_int,
-          &mut addr.data as *mut [uint32_t; 4] as *mut libc::c_void,
+          &mut addr.data as *mut [u32; 4] as *mut libc::c_void,
           addr.bytelen as libc::c_int,
         );
         brd_len = addr.bytelen as libc::c_int
@@ -1852,13 +1852,13 @@ unsafe extern "C" fn ipaddr_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
         IFA_ANYCAST as libc::c_int,
-        &mut addr_0.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut addr_0.data as *mut [u32; 4] as *mut libc::c_void,
         addr_0.bytelen as libc::c_int,
       );
       any_len = addr_0.bytelen as libc::c_int
     } else if arg == 5i32 as libc::c_uint {
       /* scope */
-      let mut scope: uint32_t = 0i32 as uint32_t;
+      let mut scope: u32 = 0i32 as u32;
       if rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
         invarg_1_to_2(*argv, b"scope\x00" as *const u8 as *const libc::c_char);
       }
@@ -1890,7 +1890,7 @@ unsafe extern "C" fn ipaddr_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
         IFA_LOCAL as libc::c_int,
-        &mut lcl.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut lcl.data as *mut [u32; 4] as *mut libc::c_void,
         lcl.bytelen as libc::c_int,
       );
       local_len = lcl.bytelen as libc::c_int
@@ -1914,7 +1914,7 @@ unsafe extern "C" fn ipaddr_modify(
       &mut req.n,
       ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
       IFA_ADDRESS as libc::c_int,
-      &mut lcl.data as *mut [uint32_t; 4] as *mut libc::c_void,
+      &mut lcl.data as *mut [u32; 4] as *mut libc::c_void,
       lcl.bytelen as libc::c_int,
     );
   }
@@ -1985,7 +1985,7 @@ unsafe extern "C" fn ipaddr_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as libc::c_int,
         IFA_BROADCAST as libc::c_int,
-        &mut brd.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut brd.data as *mut [u32; 4] as *mut libc::c_void,
         brd.bytelen as libc::c_int,
       );
       brd_len = brd.bytelen as libc::c_int
@@ -1996,7 +1996,7 @@ unsafe extern "C" fn ipaddr_modify(
   }
   xrtnl_open(&mut rth);
   ll_init_map(&mut rth);
-  req.ifa.ifa_index = xll_name_to_index(d) as __u32;
+  req.ifa.ifa_index = xll_name_to_index(d) as u32;
   if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0i32 {
     return 2i32;
   }

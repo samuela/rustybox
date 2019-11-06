@@ -10,7 +10,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_xioctl(
     fd: libc::c_int,
@@ -20,7 +20,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>

@@ -35,10 +35,10 @@ extern "C" {
 
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
 pub type uint64 = uint64_t;
-pub type uint32 = uint32_t;
+pub type uint32 = u32;
 pub type int32 = int32_t;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;

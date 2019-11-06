@@ -156,10 +156,10 @@ extern "C" {
   ) -> libc::c_ulonglong;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -283,10 +283,10 @@ extern "C" {
 
 use crate::librb::__off64_t;
 
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+pub type bb__aliased_u32 = u32;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -382,7 +382,7 @@ pub struct pte {
   pub changed: libc::c_char,
 }
 
-pub type sector_t = uint32_t;
+pub type sector_t = u32;
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -470,8 +470,8 @@ pub struct sun_partition {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sun_partinfo {
-  pub start_cylinder: uint32_t,
-  pub num_sectors: uint32_t,
+  pub start_cylinder: u32,
+  pub num_sectors: u32,
 }
 
 pub const COLS: C2RustUnnamed_0 = 3;
@@ -620,7 +620,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
         b"device has more than 2^32 sectors, can\'t use all of them\x00" as *const u8
           as *const libc::c_char,
       );
-      v64 = -1i64 as uint32_t as uint64_t
+      v64 = -1i64 as u32 as uint64_t
     }
     _ => {}
   }
@@ -698,7 +698,7 @@ unsafe extern "C" fn str_units() -> *const libc::c_char {
 }
 unsafe extern "C" fn valid_part_table_flag(mut mbuffer: *const libc::c_char) -> libc::c_int {
   return (*mbuffer.offset(510) as libc::c_int == 0x55i32
-    && *mbuffer.offset(511) as uint8_t as libc::c_int == 0xaai32) as libc::c_int;
+    && *mbuffer.offset(511) as u8 as libc::c_int == 0xaai32) as libc::c_int;
 }
 unsafe extern "C" fn fdisk_fatal(mut why: *const libc::c_char) {
   if (*ptr_to_globals).listing != 0 {
@@ -805,8 +805,8 @@ unsafe extern "C" fn write_sector(mut secno: sector_t, mut buf: *const libc::c_v
 }
 #[inline(always)]
 unsafe extern "C" fn read4_little_endian(mut cp: *const libc::c_uchar) -> libc::c_uint {
-  let mut v: uint32_t = 0;
-  v = *(cp as *mut bb__aliased_uint32_t);
+  let mut v: u32 = 0;
+  v = *(cp as *mut bb__aliased_u32);
   return v;
 }
 unsafe extern "C" fn get_start_sect(mut p: *const partition) -> sector_t {
@@ -819,8 +819,8 @@ unsafe extern "C" fn get_nr_sects(mut p: *const partition) -> sector_t {
 /* moreover, they are not aligned correctly */
 #[inline(always)]
 unsafe extern "C" fn store4_little_endian(mut cp: *mut libc::c_uchar, mut val: libc::c_uint) {
-  let mut v: uint32_t = val;
-  *(cp as *mut bb__aliased_uint32_t) = v;
+  let mut v: u32 = val;
+  *(cp as *mut bb__aliased_u32) = v;
 }
 unsafe extern "C" fn set_start_sect(mut p: *mut partition, mut start_sect: libc::c_uint) {
   store4_little_endian((*p).start4.as_mut_ptr(), start_sect);

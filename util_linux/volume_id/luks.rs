@@ -5,17 +5,17 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -24,8 +24,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -41,37 +41,37 @@ pub const UUID_DCE_STRING: uuid_format = 3;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct luks_phdr {
-  pub magic: [uint8_t; 6],
-  pub version: uint16_t,
-  pub cipherName: [uint8_t; 32],
-  pub cipherMode: [uint8_t; 32],
-  pub hashSpec: [uint8_t; 32],
-  pub payloadOffset: uint32_t,
-  pub keyBytes: uint32_t,
-  pub mkDigest: [uint8_t; 20],
-  pub mkDigestSalt: [uint8_t; 32],
-  pub mkDigestIterations: uint32_t,
-  pub uuid: [uint8_t; 40],
+  pub magic: [u8; 6],
+  pub version: u16,
+  pub cipherName: [u8; 32],
+  pub cipherMode: [u8; 32],
+  pub hashSpec: [u8; 32],
+  pub payloadOffset: u32,
+  pub keyBytes: u32,
+  pub mkDigest: [u8; 20],
+  pub mkDigestSalt: [u8; 32],
+  pub mkDigestIterations: u32,
+  pub uuid: [u8; 40],
   pub keyblock: [C2RustUnnamed; 8],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
-  pub active: uint32_t,
-  pub passwordIterations: uint32_t,
-  pub passwordSalt: [uint8_t; 32],
-  pub keyMaterialOffset: uint32_t,
-  pub stripes: uint32_t,
+  pub active: u32,
+  pub passwordIterations: u32,
+  pub passwordSalt: [u8; 32],
+  pub keyMaterialOffset: u32,
+  pub stripes: u32,
 }
 
-static mut LUKS_MAGIC: [uint8_t; 6] = [
-  'L' as i32 as uint8_t,
-  'U' as i32 as uint8_t,
-  'K' as i32 as uint8_t,
-  'S' as i32 as uint8_t,
-  0xbai32 as uint8_t,
-  0xbei32 as uint8_t,
+static mut LUKS_MAGIC: [u8; 6] = [
+  'L' as i32 as u8,
+  'U' as i32 as u8,
+  'K' as i32 as u8,
+  'S' as i32 as u8,
+  0xbai32 as u8,
+  0xbei32 as u8,
 ];
 
 /*
@@ -96,9 +96,9 @@ static mut LUKS_MAGIC: [uint8_t; 6] = [
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -118,7 +118,7 @@ static mut LUKS_MAGIC: [uint8_t; 6] = [
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

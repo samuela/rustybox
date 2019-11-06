@@ -37,9 +37,9 @@ extern "C" {
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -89,7 +89,7 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use libc::uint32_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */

@@ -21,7 +21,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
+
 
 /* From <linux/kd.h> */
 #[derive(Copy, Clone)]
@@ -44,7 +44,7 @@ pub unsafe extern "C" fn loadkmap_main(
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
-  let mut ibuff: [uint16_t; 128] = [0; 128];
+  let mut ibuff: [u16; 128] = [0; 128];
   /*	const char *tty_name = CURRENT_TTY; */
   let mut flags: *mut libc::c_char = xmalloc(256i32 as size_t) as *mut libc::c_char;
   /* When user accidentally runs "loadkmap FILE"
@@ -72,7 +72,7 @@ pub unsafe extern "C" fn loadkmap_main(
       xread(
         0i32,
         ibuff.as_mut_ptr() as *mut libc::c_void,
-        (128i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint16_t>() as libc::c_ulong),
+        (128i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u16>() as libc::c_ulong),
       );
       j = 0i32;
       while j < 128i32 {

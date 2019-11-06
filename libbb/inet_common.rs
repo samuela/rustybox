@@ -46,9 +46,9 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
@@ -62,9 +62,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -74,11 +74,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -92,7 +92,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hostent {
@@ -118,7 +118,7 @@ pub struct addrinfo {
 #[repr(C)]
 pub struct addr {
   pub next: *mut addr,
-  pub nip: uint32_t,
+  pub nip: u32,
   pub is_host: smallint,
   pub name: [libc::c_char; 1],
 }
@@ -197,13 +197,13 @@ pub unsafe extern "C" fn INET_resolve(
 pub unsafe extern "C" fn INET_rresolve(
   mut s_in: *mut sockaddr_in,
   mut numeric: libc::c_int,
-  mut netmask: uint32_t,
+  mut netmask: u32,
 ) -> *mut libc::c_char {
   /* addr-to-name cache */
   static mut cache: *mut addr = 0 as *const addr as *mut addr; /* no '+ 1', it's already accounted for */
   let mut pn: *mut addr = 0 as *mut addr;
   let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut nip: uint32_t = 0;
+  let mut nip: u32 = 0;
   let mut is_host: smallint = 0;
   if (*s_in).sin_family as libc::c_int != 2i32 {
     *bb_errno = 97i32;

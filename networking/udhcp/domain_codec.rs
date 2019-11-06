@@ -19,7 +19,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
- use libc::uint8_t;
+
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";
  * returns a newly allocated string containing the space-separated domains,
@@ -27,7 +27,7 @@ use crate::librb::size_t;
  */
 #[no_mangle]
 pub unsafe extern "C" fn dname_dec(
-  mut cstr: *const uint8_t,
+  mut cstr: *const u8,
   mut clen: libc::c_int,
   mut pre: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -45,7 +45,7 @@ pub unsafe extern "C" fn dname_dec(
   /* note: "return NULL" below are leak-safe since
    * dst isn't allocated yet */
   {
-    let mut c: *const uint8_t = 0 as *const uint8_t;
+    let mut c: *const u8 = 0 as *const u8;
     let mut crtpos: libc::c_uint = 0;
     let mut retpos: libc::c_uint = 0;
     let mut depth: libc::c_uint = 0;
@@ -135,20 +135,20 @@ pub unsafe extern "C" fn dname_dec(
  * RFC1035 encoding "\003foo\004blah\003com\000". Return allocated string, or
  * NULL if an error occurs.
  */
-unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut uint8_t {
-  let mut c: uint8_t = 0;
-  let mut res: *mut uint8_t = 0 as *mut uint8_t;
-  let mut lenptr: *mut uint8_t = 0 as *mut uint8_t;
-  let mut dst: *mut uint8_t = 0 as *mut uint8_t;
+unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
+  let mut c: u8 = 0;
+  let mut res: *mut u8 = 0 as *mut u8;
+  let mut lenptr: *mut u8 = 0 as *mut u8;
+  let mut dst: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_int = 0;
-  res = xmalloc(strlen(src).wrapping_add(2i32 as libc::c_ulong)) as *mut uint8_t;
+  res = xmalloc(strlen(src).wrapping_add(2i32 as libc::c_ulong)) as *mut u8;
   lenptr = res;
   dst = lenptr;
   dst = dst.offset(1);
   loop {
     let fresh0 = src;
     src = src.offset(1);
-    c = *fresh0 as uint8_t;
+    c = *fresh0 as u8;
     if c as libc::c_int == '.' as i32 || c as libc::c_int == '\u{0}' as i32 {
       /* end of label */
       len =
@@ -159,9 +159,9 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut uint8_t
         || c as libc::c_int == '.' as i32 && *src as libc::c_int == '.' as i32
       {
         free(res as *mut libc::c_void);
-        return 0 as *mut uint8_t;
+        return 0 as *mut u8;
       }
-      *lenptr = len as uint8_t;
+      *lenptr = len as u8;
       if c as libc::c_int == '\u{0}' as i32 || *src as libc::c_int == '\u{0}' as i32 {
         break;
       }
@@ -171,7 +171,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut uint8_t
     } else {
       if c as libc::c_int >= 'A' as i32 && c as libc::c_int <= 'Z' as i32 {
         /* uppercase? convert to lower */
-        c = (c as libc::c_int + ('a' as i32 - 'A' as i32)) as uint8_t
+        c = (c as libc::c_int + ('a' as i32 - 'A' as i32)) as u8
       }
       let fresh2 = dst;
       dst = dst.offset(1);
@@ -181,19 +181,19 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut uint8_t
   if dst.wrapping_offset_from(res) as libc::c_long >= 255i32 as libc::c_long {
     /* dname too long? abort */
     free(res as *mut libc::c_void);
-    return 0 as *mut uint8_t;
+    return 0 as *mut u8;
   }
-  *dst = 0i32 as uint8_t;
+  *dst = 0i32 as u8;
   return res;
 }
 /* Returns the offset within cstr at which dname can be found, or -1 */
 unsafe extern "C" fn find_offset(
-  mut cstr: *const uint8_t,
+  mut cstr: *const u8,
   mut clen: libc::c_int,
-  mut dname: *const uint8_t,
+  mut dname: *const u8,
 ) -> libc::c_int {
-  let mut c: *const uint8_t = 0 as *const uint8_t;
-  let mut d: *const uint8_t = 0 as *const uint8_t;
+  let mut c: *const u8 = 0 as *const u8;
+  let mut d: *const u8 = 0 as *const u8;
   let mut off: libc::c_int = 0;
   /* find all labels in cstr */
   off = 0i32;
@@ -349,18 +349,18 @@ unsafe extern "C" fn find_offset(
  */
 #[no_mangle]
 pub unsafe extern "C" fn dname_enc(
-  mut cstr: *const uint8_t,
+  mut cstr: *const u8,
   mut clen: libc::c_int,
   mut src: *const libc::c_char,
   mut retlen: *mut libc::c_int,
-) -> *mut uint8_t {
-  let mut d: *mut uint8_t = 0 as *mut uint8_t;
-  let mut dname: *mut uint8_t = 0 as *mut uint8_t;
+) -> *mut u8 {
+  let mut d: *mut u8 = 0 as *mut u8;
+  let mut dname: *mut u8 = 0 as *mut u8;
   let mut off: libc::c_int = 0;
   dname = convert_dname(src);
   if dname.is_null() {
     *retlen = 0i32;
-    return 0 as *mut uint8_t;
+    return 0 as *mut u8;
   }
   d = dname;
   while *d != 0 {
@@ -370,8 +370,8 @@ pub unsafe extern "C" fn dname_enc(
         /* found a match, add pointer and return */
         let fresh3 = d;
         d = d.offset(1);
-        *fresh3 = (0xc0i32 | off >> 8i32) as uint8_t;
-        *d = off as uint8_t;
+        *fresh3 = (0xc0i32 | off >> 8i32) as u8;
+        *d = off as u8;
         break;
       }
     }

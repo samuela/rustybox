@@ -111,27 +111,27 @@ pub struct msghdr {
   pub msg_controllen: size_t,
   pub msg_flags: libc::c_int,
 }
-use libc::uint32_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+pub type bb__aliased_u32 = u32;
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -156,8 +156,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -219,7 +219,7 @@ pub unsafe extern "C" fn xrtnl_open(mut rth: *mut rtnl_handle)
     if (rth->local.nl_family != AF_NETLINK)
       bb_error_msg_and_die("wrong address family %d", rth->local.nl_family);
   */
-  (*rth).seq = time(0 as *mut time_t) as uint32_t;
+  (*rth).seq = time(0 as *mut time_t) as u32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn xrtnl_wilddump_request(
@@ -237,10 +237,10 @@ pub unsafe extern "C" fn xrtnl_wilddump_request(
     },
     g: rtgenmsg { rtgen_family: 0 },
   };
-  req.nlh.nlmsg_len = ::std::mem::size_of::<C2RustUnnamed_0>() as libc::c_ulong as __u32;
+  req.nlh.nlmsg_len = ::std::mem::size_of::<C2RustUnnamed_0>() as libc::c_ulong as u32;
   req.nlh.nlmsg_type = type_0 as __u16;
   req.nlh.nlmsg_flags = (0x100i32 | 0x200i32 | 0x1i32) as __u16;
-  req.nlh.nlmsg_pid = 0i32 as __u32;
+  req.nlh.nlmsg_pid = 0i32 as u32;
   (*rth).seq = (*rth).seq.wrapping_add(1);
   (*rth).dump = (*rth).seq;
   req.nlh.nlmsg_seq = (*rth).dump;
@@ -392,7 +392,7 @@ pub unsafe extern "C" fn rtnl_dump_request(
       .wrapping_add(4u32 as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int)
-    as __u32;
+    as u32;
   s.nlh.nlmsg_type = type_0 as __u16;
   s.nlh.nlmsg_flags = (0x100i32 | 0x200i32 | 0x1i32) as __u16;
   /*s.nlh.nlmsg_pid = 0; - already is */
@@ -760,7 +760,7 @@ pub unsafe extern "C" fn addattr32(
   mut n: *mut nlmsghdr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
-  mut data: uint32_t,
+  mut data: u32,
 ) -> libc::c_int {
   let mut len: libc::c_int = ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
     .wrapping_add(4u32 as libc::c_ulong)
@@ -793,7 +793,7 @@ pub unsafe extern "C" fn addattr32(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
       .wrapping_add(0i32 as libc::c_ulong) as isize,
-  ) as *mut libc::c_void as *mut bb__aliased_uint32_t) = data;
+  ) as *mut libc::c_void as *mut bb__aliased_u32) = data;
   (*n).nlmsg_len = (*n)
     .nlmsg_len
     .wrapping_add(len as libc::c_uint)
@@ -859,7 +859,7 @@ pub unsafe extern "C" fn rta_addattr32(
   mut rta: *mut rtattr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
-  mut data: uint32_t,
+  mut data: u32,
 ) -> libc::c_int {
   let mut len: libc::c_int = ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
     .wrapping_add(4u32 as libc::c_ulong)
@@ -889,7 +889,7 @@ pub unsafe extern "C" fn rta_addattr32(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
       .wrapping_add(0i32 as libc::c_ulong) as isize,
-  ) as *mut libc::c_void as *mut bb__aliased_uint32_t) = data;
+  ) as *mut libc::c_void as *mut bb__aliased_u32) = data;
   (*rta).rta_len = ((((*rta).rta_len as libc::c_int + len) as libc::c_uint)
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
@@ -944,7 +944,7 @@ pub unsafe extern "C" fn rta_addattr_l(
   return 0i32;
 }
 
-/* We need linux/types.h because older kernels use __u32 etc
+/* We need linux/types.h because older kernels use u32 etc
  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
 /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
 //TODO: pass rth->fd instead of full rth?

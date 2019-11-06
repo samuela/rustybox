@@ -5,12 +5,12 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
@@ -20,10 +20,10 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -32,8 +32,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -47,15 +47,15 @@ pub const BE: endian = 1;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dstring {
-  pub clen: uint8_t,
-  pub c: [uint8_t; 31],
+  pub clen: u8,
+  pub c: [u8; 31],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct primary_descriptor {
-  pub seq_num: uint32_t,
-  pub desc_num: uint32_t,
+  pub seq_num: u32,
+  pub desc_num: u32,
   pub ident: dstring,
 }
 
@@ -69,8 +69,8 @@ pub union C2RustUnnamed {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct anchor_descriptor {
-  pub length: uint32_t,
-  pub location: uint32_t,
+  pub length: u32,
+  pub location: u32,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -105,21 +105,21 @@ pub struct volume_descriptor {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct descriptor_tag {
-  pub id: uint16_t,
-  pub version: uint16_t,
-  pub checksum: uint8_t,
-  pub reserved: uint8_t,
-  pub serial: uint16_t,
-  pub crc: uint16_t,
-  pub crc_len: uint16_t,
-  pub location: uint32_t,
+  pub id: u16,
+  pub version: u16,
+  pub checksum: u8,
+  pub reserved: u8,
+  pub serial: u16,
+  pub crc: u16,
+  pub crc_len: u16,
+  pub location: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct volume_structure_descriptor {
-  pub type_0: uint8_t,
-  pub id: [uint8_t; 5],
-  pub version: uint8_t,
+  pub type_0: u8,
+  pub id: [u8; 5],
+  pub version: u8,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -143,9 +143,9 @@ pub struct volume_structure_descriptor {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -165,7 +165,7 @@ pub struct volume_structure_descriptor {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

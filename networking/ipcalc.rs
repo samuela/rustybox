@@ -30,7 +30,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -45,13 +45,13 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hostent {
@@ -252,7 +252,7 @@ pub unsafe extern "C" fn ipcalc_main(
   let mut s_network: in_addr = in_addr { s_addr: 0 };
   let mut s_ipaddr: in_addr = in_addr { s_addr: 0 };
   /* struct in_addr { in_addr_t s_addr; }  and  in_addr_t
-   * (which in turn is just a typedef to uint32_t)
+   * (which in turn is just a typedef to u32)
    * are essentially the same type. A few macros for less verbosity: */
   let mut ipstr: *mut libc::c_char = 0 as *mut libc::c_char; /* suppress error_msg() output */
   opt = getopt32long(

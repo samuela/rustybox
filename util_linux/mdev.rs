@@ -248,7 +248,7 @@ extern "C" {
   fn bb_sanitize_stdio();
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -362,14 +362,11 @@ use crate::librb::__off64_t;
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-use crate::librb::__uint32_t;
 
 use crate::librb::__time_t;
 
 use crate::librb::__syscall_slong_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -388,8 +385,8 @@ use crate::librb::ssize_t;
 pub type DIR = __dirstream;
 use crate::librb::mode_t;
 
-use libc::time_t;
 use libc::stat;
+use libc::time_t;
 
 use crate::librb::signal::sigset_t;
 
@@ -439,7 +436,7 @@ pub struct C2RustUnnamed_2 {
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
-  pub _pkey: __uint32_t,
+  pub _pkey: u32,
 }
 
 #[derive(Copy, Clone)]
@@ -567,9 +564,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,

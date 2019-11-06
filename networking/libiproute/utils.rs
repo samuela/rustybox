@@ -60,19 +60,19 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 //const char *dnet_ntop(int af, const void *addr, char *str, size_t len);
 //int dnet_pton(int af, const char *src, void *addr);
@@ -143,14 +143,14 @@ pub unsafe extern "C" fn get_unsigned(
 pub unsafe extern "C" fn get_u32(
   mut arg: *mut libc::c_char,
   mut errmsg: *const libc::c_char,
-) -> uint32_t {
+) -> u32 {
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0i32);
     //FIXME: "" will be accepted too, is it correct?!
     if *ptr == 0 && res <= 0xffffffffu64 {
-      return res as uint32_t;
+      return res as u32;
     }
   }
   invarg_1_to_2(arg, errmsg);
@@ -160,14 +160,14 @@ pub unsafe extern "C" fn get_u32(
 pub unsafe extern "C" fn get_u16(
   mut arg: *mut libc::c_char,
   mut errmsg: *const libc::c_char,
-) -> uint16_t {
+) -> u16 {
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0i32);
     //FIXME: "" will be accepted too, is it correct?!
     if *ptr == 0 && res <= 0xffffi32 as libc::c_ulong {
-      return res as uint16_t;
+      return res as u16;
     }
   }
   invarg_1_to_2(arg, errmsg);
@@ -188,20 +188,20 @@ pub unsafe extern "C" fn get_addr_1(
     || strcmp(name, b"all\x00" as *const u8 as *const libc::c_char) == 0i32
     || strcmp(name, b"any\x00" as *const u8 as *const libc::c_char) == 0i32
   {
-    (*addr).family = family as uint8_t;
-    (*addr).bytelen = if family == 10i32 { 16i32 } else { 4i32 } as uint8_t;
+    (*addr).family = family as u8;
+    (*addr).bytelen = if family == 10i32 { 16i32 } else { 4i32 } as u8;
     (*addr).bitlen = -1i32 as int16_t;
     return 0i32;
   }
   if !strchr(name, ':' as i32).is_null() {
-    (*addr).family = 10i32 as uint8_t;
+    (*addr).family = 10i32 as u8;
     if family != 0i32 && family != 10i32 {
       return -1i32;
     }
     if inet_pton(10i32, name, (*addr).data.as_mut_ptr() as *mut libc::c_void) <= 0i32 {
       return -1i32;
     }
-    (*addr).bytelen = 16i32 as uint8_t;
+    (*addr).bytelen = 16i32 as u8;
     (*addr).bitlen = -1i32 as int16_t;
     return 0i32;
   }
@@ -209,7 +209,7 @@ pub unsafe extern "C" fn get_addr_1(
     return -1i32;
   }
   /* Try to parse it as IPv4 */
-  (*addr).family = 2i32 as uint8_t;
+  (*addr).family = 2i32 as u8;
   /* Doesn't handle e.g. "10.10", for example, "ip r l root 10.10/16" */
   let mut i: libc::c_uint = 0i32 as libc::c_uint;
   let mut n: libc::c_uint = 0i32 as libc::c_uint;
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn get_addr_1(
       if n >= 256i32 as libc::c_uint {
         return -1i32;
       }
-      *((*addr).data.as_mut_ptr() as *mut uint8_t).offset(i as isize) = n as uint8_t
+      *((*addr).data.as_mut_ptr() as *mut u8).offset(i as isize) = n as u8
     } else if *cp as libc::c_int == '.' as i32 && {
       i = i.wrapping_add(1);
       (i) <= 3i32 as libc::c_uint
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn get_addr_1(
       return -1i32;
     }
   }
-  (*addr).bytelen = 4i32 as uint8_t;
+  (*addr).bytelen = 4i32 as u8;
   (*addr).bitlen = -1i32 as int16_t;
   return 0i32;
 }
@@ -256,7 +256,7 @@ unsafe extern "C" fn get_prefix_1(
     || strcmp(arg, b"all\x00" as *const u8 as *const libc::c_char) == 0i32
     || strcmp(arg, b"any\x00" as *const u8 as *const libc::c_char) == 0i32
   {
-    (*dst).family = family as uint8_t;
+    (*dst).family = family as u8;
     /*dst->bytelen = 0; - done by memset */
     /*dst->bitlen = 0;*/
     return;
@@ -279,7 +279,7 @@ unsafe extern "C" fn get_prefix_1(
         bitlen: 0,
         data: [0; 4],
       };
-      netmask_pfx.family = 0i32 as uint8_t;
+      netmask_pfx.family = 0i32 as u8;
       plen = bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0i32);
       if (*bb_errno != 0 || plen > (*dst).bitlen as libc::c_uint)
         && get_addr_1(&mut netmask_pfx, slash.offset(1), family) != 0i32
@@ -288,7 +288,7 @@ unsafe extern "C" fn get_prefix_1(
       } else {
         if netmask_pfx.family as libc::c_int == 2i32 {
           /* fill in prefix length of dotted quad */
-          let mut mask: uint32_t = {
+          let mut mask: u32 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = netmask_pfx.data[0];
             if 0 != 0 {
@@ -307,7 +307,7 @@ unsafe extern "C" fn get_prefix_1(
             }
             __v
           };
-          let mut host: uint32_t = !mask;
+          let mut host: u32 = !mask;
           /* a valid netmask must be 2^n - 1 */
           if host & host.wrapping_add(1i32 as libc::c_uint) != 0 {
             current_block = 5733981528044815378;
@@ -393,7 +393,7 @@ pub unsafe extern "C" fn get_prefix(
   get_prefix_1(dst, arg, family);
 }
 #[no_mangle]
-pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> uint32_t {
+pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> u32 {
   let mut addr: inet_prefix = inet_prefix {
     family: 0,
     bytelen: 0,
@@ -449,8 +449,8 @@ pub unsafe extern "C" fn inet_addr_match(
   mut b: *const inet_prefix,
   mut bits: libc::c_int,
 ) -> libc::c_int {
-  let mut a1: *const uint32_t = (*a).data.as_ptr();
-  let mut a2: *const uint32_t = (*b).data.as_ptr();
+  let mut a1: *const u32 = (*a).data.as_ptr();
+  let mut a2: *const u32 = (*b).data.as_ptr();
   let mut words: libc::c_int = bits >> 5i32;
   bits &= 0x1fi32;
   if words != 0 {
@@ -464,9 +464,9 @@ pub unsafe extern "C" fn inet_addr_match(
     }
   }
   if bits != 0 {
-    let mut w1: uint32_t = 0;
-    let mut w2: uint32_t = 0;
-    let mut mask: uint32_t = 0;
+    let mut w1: u32 = 0;
+    let mut w2: u32 = 0;
+    let mut mask: u32 = 0;
     w1 = *a1.offset(words as isize);
     w2 = *a2.offset(words as isize);
     mask = {

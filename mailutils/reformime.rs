@@ -63,7 +63,7 @@ extern "C" {
   #[no_mangle]
   fn wait4pid(pid: pid_t) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -76,7 +76,7 @@ use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]

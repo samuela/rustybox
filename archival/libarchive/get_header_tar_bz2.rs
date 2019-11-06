@@ -30,9 +30,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::time_t;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 use crate::librb::uoff_t;
 
 #[derive(Copy, Clone)]
@@ -93,7 +93,7 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
@@ -101,9 +101,9 @@ pub struct transformer_state_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 
 /*

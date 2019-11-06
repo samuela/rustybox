@@ -64,13 +64,13 @@ extern "C" {
   fn xclose(fd_0: libc::c_int);
 
   #[no_mangle]
-  fn generate_uuid(buf: *mut uint8_t);
+  fn generate_uuid(buf: *mut u8);
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
@@ -90,9 +90,9 @@ use crate::librb::int32_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::uint64_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 
 use libc::stat;
 
@@ -117,14 +117,14 @@ use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ext2_group_desc {
-  pub bg_block_bitmap: uint32_t,
-  pub bg_inode_bitmap: uint32_t,
-  pub bg_inode_table: uint32_t,
-  pub bg_free_blocks_count: uint16_t,
-  pub bg_free_inodes_count: uint16_t,
-  pub bg_used_dirs_count: uint16_t,
-  pub bg_pad: uint16_t,
-  pub bg_reserved: [uint32_t; 3],
+  pub bg_block_bitmap: u32,
+  pub bg_inode_bitmap: u32,
+  pub bg_inode_table: u32,
+  pub bg_free_blocks_count: u16,
+  pub bg_free_inodes_count: u16,
+  pub bg_used_dirs_count: u16,
+  pub bg_pad: u16,
+  pub bg_reserved: [u32; 3],
 }
 
 /*
@@ -170,23 +170,23 @@ pub struct ext2_group_desc {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ext2_inode {
-  pub i_mode: uint16_t,
-  pub i_uid: uint16_t,
-  pub i_size: uint32_t,
-  pub i_atime: uint32_t,
-  pub i_ctime: uint32_t,
-  pub i_mtime: uint32_t,
-  pub i_dtime: uint32_t,
-  pub i_gid: uint16_t,
-  pub i_links_count: uint16_t,
-  pub i_blocks: uint32_t,
-  pub i_flags: uint32_t,
+  pub i_mode: u16,
+  pub i_uid: u16,
+  pub i_size: u32,
+  pub i_atime: u32,
+  pub i_ctime: u32,
+  pub i_mtime: u32,
+  pub i_dtime: u32,
+  pub i_gid: u16,
+  pub i_links_count: u16,
+  pub i_blocks: u32,
+  pub i_flags: u32,
   pub osd1: C2RustUnnamed_3,
-  pub i_block: [uint32_t; 15],
-  pub i_generation: uint32_t,
-  pub i_file_acl: uint32_t,
-  pub i_dir_acl: uint32_t,
-  pub i_faddr: uint32_t,
+  pub i_block: [u32; 15],
+  pub i_generation: u32,
+  pub i_file_acl: u32,
+  pub i_dir_acl: u32,
+  pub i_faddr: u32,
   pub osd2: C2RustUnnamed,
   /* OS dependent 2 */
 }
@@ -202,32 +202,32 @@ pub union C2RustUnnamed {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_0 {
-  pub m_i_frag: uint8_t,
-  pub m_i_fsize: uint8_t,
-  pub m_pad1: uint16_t,
-  pub m_i_reserved2: [uint32_t; 2],
+  pub m_i_frag: u8,
+  pub m_i_fsize: u8,
+  pub m_pad1: u16,
+  pub m_i_reserved2: [u32; 2],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
-  pub h_i_frag: uint8_t,
-  pub h_i_fsize: uint8_t,
-  pub h_i_mode_high: uint16_t,
-  pub h_i_uid_high: uint16_t,
-  pub h_i_gid_high: uint16_t,
-  pub h_i_author: uint32_t,
+  pub h_i_frag: u8,
+  pub h_i_fsize: u8,
+  pub h_i_mode_high: u16,
+  pub h_i_uid_high: u16,
+  pub h_i_gid_high: u16,
+  pub h_i_author: u32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
-  pub l_i_frag: uint8_t,
-  pub l_i_fsize: uint8_t,
-  pub i_pad1: uint16_t,
-  pub l_i_uid_high: uint16_t,
-  pub l_i_gid_high: uint16_t,
-  pub l_i_reserved2: uint32_t,
+  pub l_i_frag: u8,
+  pub l_i_fsize: u8,
+  pub i_pad1: u16,
+  pub l_i_uid_high: u16,
+  pub l_i_gid_high: u16,
+  pub l_i_reserved2: u32,
 }
 
 #[derive(Copy, Clone)]
@@ -241,19 +241,19 @@ pub union C2RustUnnamed_3 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
-  pub m_i_reserved1: uint32_t,
+  pub m_i_reserved1: u32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
-  pub h_i_translator: uint32_t,
+  pub h_i_translator: u32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
-  pub l_i_reserved1: uint32_t,
+  pub l_i_reserved1: u32,
 }
 /*
  * File system states
@@ -289,70 +289,70 @@ pub struct C2RustUnnamed_6 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ext2_super_block {
-  pub s_inodes_count: uint32_t,
-  pub s_blocks_count: uint32_t,
-  pub s_r_blocks_count: uint32_t,
-  pub s_free_blocks_count: uint32_t,
-  pub s_free_inodes_count: uint32_t,
-  pub s_first_data_block: uint32_t,
-  pub s_log_block_size: uint32_t,
+  pub s_inodes_count: u32,
+  pub s_blocks_count: u32,
+  pub s_r_blocks_count: u32,
+  pub s_free_blocks_count: u32,
+  pub s_free_inodes_count: u32,
+  pub s_first_data_block: u32,
+  pub s_log_block_size: u32,
   pub s_log_frag_size: int32_t,
-  pub s_blocks_per_group: uint32_t,
-  pub s_frags_per_group: uint32_t,
-  pub s_inodes_per_group: uint32_t,
-  pub s_mtime: uint32_t,
-  pub s_wtime: uint32_t,
-  pub s_mnt_count: uint16_t,
+  pub s_blocks_per_group: u32,
+  pub s_frags_per_group: u32,
+  pub s_inodes_per_group: u32,
+  pub s_mtime: u32,
+  pub s_wtime: u32,
+  pub s_mnt_count: u16,
   pub s_max_mnt_count: int16_t,
-  pub s_magic: uint16_t,
-  pub s_state: uint16_t,
-  pub s_errors: uint16_t,
-  pub s_minor_rev_level: uint16_t,
-  pub s_lastcheck: uint32_t,
-  pub s_checkinterval: uint32_t,
-  pub s_creator_os: uint32_t,
-  pub s_rev_level: uint32_t,
-  pub s_def_resuid: uint16_t,
-  pub s_def_resgid: uint16_t,
-  pub s_first_ino: uint32_t,
-  pub s_inode_size: uint16_t,
-  pub s_block_group_nr: uint16_t,
-  pub s_feature_compat: uint32_t,
-  pub s_feature_incompat: uint32_t,
-  pub s_feature_ro_compat: uint32_t,
-  pub s_uuid: [uint8_t; 16],
+  pub s_magic: u16,
+  pub s_state: u16,
+  pub s_errors: u16,
+  pub s_minor_rev_level: u16,
+  pub s_lastcheck: u32,
+  pub s_checkinterval: u32,
+  pub s_creator_os: u32,
+  pub s_rev_level: u32,
+  pub s_def_resuid: u16,
+  pub s_def_resgid: u16,
+  pub s_first_ino: u32,
+  pub s_inode_size: u16,
+  pub s_block_group_nr: u16,
+  pub s_feature_compat: u32,
+  pub s_feature_incompat: u32,
+  pub s_feature_ro_compat: u32,
+  pub s_uuid: [u8; 16],
   pub s_volume_name: [libc::c_char; 16],
   pub s_last_mounted: [libc::c_char; 64],
-  pub s_algorithm_usage_bitmap: uint32_t,
-  pub s_prealloc_blocks: uint8_t,
-  pub s_prealloc_dir_blocks: uint8_t,
-  pub s_reserved_gdt_blocks: uint16_t,
-  pub s_journal_uuid: [uint8_t; 16],
-  pub s_journal_inum: uint32_t,
-  pub s_journal_dev: uint32_t,
-  pub s_last_orphan: uint32_t,
-  pub s_hash_seed: [uint32_t; 4],
-  pub s_def_hash_version: uint8_t,
-  pub s_jnl_backup_type: uint8_t,
-  pub s_reserved_word_pad: uint16_t,
-  pub s_default_mount_opts: uint32_t,
-  pub s_first_meta_bg: uint32_t,
-  pub s_mkfs_time: uint32_t,
-  pub s_jnl_blocks: [uint32_t; 17],
-  pub s_blocks_count_hi: uint32_t,
-  pub s_r_blocks_count_hi: uint32_t,
-  pub s_free_blocks_count_hi: uint32_t,
-  pub s_min_extra_isize: uint16_t,
-  pub s_want_extra_isize: uint16_t,
-  pub s_flags: uint32_t,
-  pub s_raid_stride: uint16_t,
-  pub s_mmp_interval: uint16_t,
+  pub s_algorithm_usage_bitmap: u32,
+  pub s_prealloc_blocks: u8,
+  pub s_prealloc_dir_blocks: u8,
+  pub s_reserved_gdt_blocks: u16,
+  pub s_journal_uuid: [u8; 16],
+  pub s_journal_inum: u32,
+  pub s_journal_dev: u32,
+  pub s_last_orphan: u32,
+  pub s_hash_seed: [u32; 4],
+  pub s_def_hash_version: u8,
+  pub s_jnl_backup_type: u8,
+  pub s_reserved_word_pad: u16,
+  pub s_default_mount_opts: u32,
+  pub s_first_meta_bg: u32,
+  pub s_mkfs_time: u32,
+  pub s_jnl_blocks: [u32; 17],
+  pub s_blocks_count_hi: u32,
+  pub s_r_blocks_count_hi: u32,
+  pub s_free_blocks_count_hi: u32,
+  pub s_min_extra_isize: u16,
+  pub s_want_extra_isize: u16,
+  pub s_flags: u32,
+  pub s_raid_stride: u16,
+  pub s_mmp_interval: u16,
   pub s_mmp_block: uint64_t,
-  pub s_raid_stripe_width: uint32_t,
-  pub s_log_groups_per_flex: uint8_t,
-  pub s_reserved_char_pad2: uint8_t,
-  pub s_reserved_pad: uint16_t,
-  pub s_reserved: [uint32_t; 162],
+  pub s_raid_stripe_width: u32,
+  pub s_log_groups_per_flex: u8,
+  pub s_reserved_char_pad2: u8,
+  pub s_reserved_pad: u16,
+  pub s_reserved: [u32; 162],
   /* Padding to the end of the block */
 }
 
@@ -360,20 +360,20 @@ pub struct ext2_super_block {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ext2_dir {
-  pub inode1: uint32_t,
-  pub rec_len1: uint16_t,
-  pub name_len1: uint8_t,
-  pub file_type1: uint8_t,
+  pub inode1: u32,
+  pub rec_len1: u16,
+  pub name_len1: u8,
+  pub file_type1: u8,
   pub name1: [libc::c_char; 4],
-  pub inode2: uint32_t,
-  pub rec_len2: uint16_t,
-  pub name_len2: uint8_t,
-  pub file_type2: uint8_t,
+  pub inode2: u32,
+  pub rec_len2: u16,
+  pub name_len2: u8,
+  pub file_type2: u8,
   pub name2: [libc::c_char; 4],
-  pub inode3: uint32_t,
-  pub rec_len3: uint16_t,
-  pub name_len3: uint8_t,
-  pub file_type3: uint8_t,
+  pub inode3: u32,
+  pub rec_len3: u16,
+  pub name_len3: u8,
+  pub file_type3: u8,
   pub name3: [libc::c_char; 12],
 }
 
@@ -382,12 +382,12 @@ pub struct ext2_dir {
 // 256-byte one just has these fields appended:
 //      __u16   i_extra_isize;
 //      __u16   i_pad1;
-//      __u32   i_ctime_extra;  /* extra Change time (nsec << 2 | epoch) */
-//      __u32   i_mtime_extra;  /* extra Modification time (nsec << 2 | epoch) */
-//      __u32   i_atime_extra;  /* extra Access time (nsec << 2 | epoch) */
-//      __u32   i_crtime;       /* File creation time */
-//      __u32   i_crtime_extra; /* extra File creation time (nsec << 2 | epoch)*/
-//      __u32   i_version_hi;   /* high 32 bits for 64-bit version */
+//      u32   i_ctime_extra;  /* extra Change time (nsec << 2 | epoch) */
+//      u32   i_mtime_extra;  /* extra Modification time (nsec << 2 | epoch) */
+//      u32   i_atime_extra;  /* extra Access time (nsec << 2 | epoch) */
+//      u32   i_crtime;       /* File creation time */
+//      u32   i_crtime_extra; /* extra File creation time (nsec << 2 | epoch)*/
+//      u32   i_version_hi;   /* high 32 bits for 64-bit version */
 // the rest is padding.
 //
 // linux/ext2_fs.h has "#define i_size_high i_dir_acl" which suggests that even
@@ -459,23 +459,23 @@ unsafe extern "C" fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {
   return r;
 }
 // taken from mkfs_minix.c. libbb candidate?
-// "uint32_t size", since we never use it for anything >32 bits
-unsafe extern "C" fn div_roundup(mut size: uint32_t, mut n: uint32_t) -> uint32_t {
+// "u32 size", since we never use it for anything >32 bits
+unsafe extern "C" fn div_roundup(mut size: u32, mut n: u32) -> u32 {
   // Overflow-resistant
-  let mut res: uint32_t = size.wrapping_div(n);
+  let mut res: u32 = size.wrapping_div(n);
   if res.wrapping_mul(n) != size {
     res = res.wrapping_add(1)
   }
   return res;
 }
 unsafe extern "C" fn allocate(
-  mut bitmap: *mut uint8_t,
-  mut blocksize: uint32_t,
-  mut start: uint32_t,
-  mut end: uint32_t,
+  mut bitmap: *mut u8,
+  mut blocksize: u32,
+  mut start: u32,
+  mut end: u32,
 ) {
-  let mut i: uint32_t = 0;
-  //bb_error_msg("ALLOC: [%u][%u][%u]: [%u-%u]:=[%x],[%x]", blocksize, start, end, start/8, blocksize - end/8 - 1, (1 << (start & 7)) - 1, (uint8_t)(0xFF00 >> (end & 7)));
+  let mut i: u32 = 0;
+  //bb_error_msg("ALLOC: [%u][%u][%u]: [%u-%u]:=[%x],[%x]", blocksize, start, end, start/8, blocksize - end/8 - 1, (1 << (start & 7)) - 1, (u8)(0xFF00 >> (end & 7)));
   memset(
     bitmap as *mut libc::c_void,
     0i32,
@@ -483,11 +483,11 @@ unsafe extern "C" fn allocate(
   ); //0..7 => 00000000..01111111
   i = start.wrapping_div(8i32 as libc::c_uint); //0..7 => 00000000..11111110
   memset(bitmap as *mut libc::c_void, 0xffi32, i as libc::c_ulong);
-  *bitmap.offset(i as isize) = ((1i32 << (start & 7i32 as libc::c_uint)) - 1i32) as uint8_t;
+  *bitmap.offset(i as isize) = ((1i32 << (start & 7i32 as libc::c_uint)) - 1i32) as u8;
   i = end.wrapping_div(8i32 as libc::c_uint);
   let ref mut fresh0 =
     *bitmap.offset(blocksize.wrapping_sub(i).wrapping_sub(1i32 as libc::c_uint) as isize);
-  *fresh0 = (*fresh0 as libc::c_int | 0x7f00i32 >> (end & 7i32 as libc::c_uint)) as uint8_t;
+  *fresh0 = (*fresh0 as libc::c_int | 0x7f00i32 >> (end & 7i32 as libc::c_uint)) as u8;
   memset(
     bitmap.offset(blocksize as isize).offset(-(i as isize)) as *mut libc::c_void,
     0xffi32,
@@ -495,73 +495,73 @@ unsafe extern "C" fn allocate(
   );
   // N.B. no overflow here!
 }
-unsafe extern "C" fn has_super(mut x: uint32_t) -> uint32_t {
+unsafe extern "C" fn has_super(mut x: u32) -> u32 {
   // 0, 1 and powers of 3, 5, 7 up to 2^32 limit
-  static mut supers: [uint32_t; 46] = [
-    0i32 as uint32_t,
-    1i32 as uint32_t,
-    3i32 as uint32_t,
-    5i32 as uint32_t,
-    7i32 as uint32_t,
-    9i32 as uint32_t,
-    25i32 as uint32_t,
-    27i32 as uint32_t,
-    49i32 as uint32_t,
-    81i32 as uint32_t,
-    125i32 as uint32_t,
-    243i32 as uint32_t,
-    343i32 as uint32_t,
-    625i32 as uint32_t,
-    729i32 as uint32_t,
-    2187i32 as uint32_t,
-    2401i32 as uint32_t,
-    3125i32 as uint32_t,
-    6561i32 as uint32_t,
-    15625i32 as uint32_t,
-    16807i32 as uint32_t,
-    19683i32 as uint32_t,
-    59049i32 as uint32_t,
-    78125i32 as uint32_t,
-    117649i32 as uint32_t,
-    177147i32 as uint32_t,
-    390625i32 as uint32_t,
-    531441i32 as uint32_t,
-    823543i32 as uint32_t,
-    1594323i32 as uint32_t,
-    1953125i32 as uint32_t,
-    4782969i32 as uint32_t,
-    5764801i32 as uint32_t,
-    9765625i32 as uint32_t,
-    14348907i32 as uint32_t,
-    40353607i32 as uint32_t,
-    43046721i32 as uint32_t,
-    48828125i32 as uint32_t,
-    129140163i32 as uint32_t,
-    244140625i32 as uint32_t,
-    282475249i32 as uint32_t,
-    387420489i32 as uint32_t,
-    1162261467i32 as uint32_t,
-    1220703125i32 as uint32_t,
-    1977326743i32 as uint32_t,
-    3486784401i64 as uint32_t,
+  static mut supers: [u32; 46] = [
+    0i32 as u32,
+    1i32 as u32,
+    3i32 as u32,
+    5i32 as u32,
+    7i32 as u32,
+    9i32 as u32,
+    25i32 as u32,
+    27i32 as u32,
+    49i32 as u32,
+    81i32 as u32,
+    125i32 as u32,
+    243i32 as u32,
+    343i32 as u32,
+    625i32 as u32,
+    729i32 as u32,
+    2187i32 as u32,
+    2401i32 as u32,
+    3125i32 as u32,
+    6561i32 as u32,
+    15625i32 as u32,
+    16807i32 as u32,
+    19683i32 as u32,
+    59049i32 as u32,
+    78125i32 as u32,
+    117649i32 as u32,
+    177147i32 as u32,
+    390625i32 as u32,
+    531441i32 as u32,
+    823543i32 as u32,
+    1594323i32 as u32,
+    1953125i32 as u32,
+    4782969i32 as u32,
+    5764801i32 as u32,
+    9765625i32 as u32,
+    14348907i32 as u32,
+    40353607i32 as u32,
+    43046721i32 as u32,
+    48828125i32 as u32,
+    129140163i32 as u32,
+    244140625i32 as u32,
+    282475249i32 as u32,
+    387420489i32 as u32,
+    1162261467i32 as u32,
+    1220703125i32 as u32,
+    1977326743i32 as u32,
+    3486784401i64 as u32,
   ];
-  let mut sp: *const uint32_t = supers.as_ptr().offset(
-    (::std::mem::size_of::<[uint32_t; 46]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint32_t>() as libc::c_ulong) as libc::c_uint
+  let mut sp: *const u32 = supers.as_ptr().offset(
+    (::std::mem::size_of::<[u32; 46]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u32>() as libc::c_ulong) as libc::c_uint
       as isize,
   );
   loop {
     sp = sp.offset(-1);
     if x == *sp {
-      return 1i32 as uint32_t;
+      return 1i32 as u32;
     }
     if x > *sp {
-      return 0i32 as uint32_t;
+      return 0i32 as u32;
     }
   }
 }
 /* predefined output descriptor */
-unsafe extern "C" fn PUT(mut off: uint64_t, mut buf: *mut libc::c_void, mut size: uint32_t) {
+unsafe extern "C" fn PUT(mut off: uint64_t, mut buf: *mut libc::c_void, mut size: u32) {
   //bb_error_msg("PUT[%llu]:[%u]", off, size);
   xlseek(3i32, off as off_t, 0i32); // superblock
   xwrite(3i32, buf, size as size_t); // group descriptors
@@ -582,16 +582,16 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   let mut user_inodesize: libc::c_uint = 0;
   let mut reserved_percent: libc::c_uint = 5i32 as libc::c_uint;
   let mut kilobytes: libc::c_ulonglong = 0;
-  let mut nblocks: uint32_t = 0;
-  let mut nblocks_full: uint32_t = 0;
-  let mut nreserved: uint32_t = 0;
-  let mut ngroups: uint32_t = 0;
-  let mut bytes_per_inode: uint32_t = 0;
-  let mut first_block: uint32_t = 0;
-  let mut inodes_per_group: uint32_t = 0;
-  let mut group_desc_blocks: uint32_t = 0;
-  let mut inode_table_blocks: uint32_t = 0;
-  let mut lost_and_found_blocks: uint32_t = 0;
+  let mut nblocks: u32 = 0;
+  let mut nblocks_full: u32 = 0;
+  let mut nreserved: u32 = 0;
+  let mut ngroups: u32 = 0;
+  let mut bytes_per_inode: u32 = 0;
+  let mut first_block: u32 = 0;
+  let mut inodes_per_group: u32 = 0;
+  let mut group_desc_blocks: u32 = 0;
+  let mut inode_table_blocks: u32 = 0;
+  let mut lost_and_found_blocks: u32 = 0;
   let mut timestamp: time_t = 0;
   let mut label: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut st: stat = std::mem::zeroed();
@@ -599,7 +599,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   let mut gd: *mut ext2_group_desc = 0 as *mut ext2_group_desc;
   let mut inode: *mut ext2_inode = 0 as *mut ext2_inode;
   let mut dir: *mut ext2_dir = 0 as *mut ext2_dir;
-  let mut buf: *mut uint8_t = 0 as *mut uint8_t;
+  let mut buf: *mut u8 = 0 as *mut u8;
   // using global "option_mask32" instead of local "opts":
   // we are register starved here
   /*opts =*/
@@ -653,12 +653,12 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     (option_mask32 & OPT_n as libc::c_int as libc::c_uint == 0) as libc::c_int,
   )
   .wrapping_div(1024i32 as libc::c_ulong) as libc::c_ulonglong;
-  bytes_per_inode = 16384i32 as uint32_t;
+  bytes_per_inode = 16384i32 as u32;
   if kilobytes < (512i32 * 1024i32) as libc::c_ulonglong {
-    bytes_per_inode = 4096i32 as uint32_t
+    bytes_per_inode = 4096i32 as u32
   }
   if kilobytes < (3i32 * 1024i32) as libc::c_ulonglong {
-    bytes_per_inode = 8192i32 as uint32_t
+    bytes_per_inode = 8192i32 as u32
   }
   if option_mask32 & OPT_i as libc::c_int as libc::c_uint != 0 {
     bytes_per_inode = bpi
@@ -716,11 +716,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     );
   }
   // number of bits in one block, i.e. 8*blocksize
-  first_block = ((1i32 << 10i32) as libc::c_uint == blocksize) as libc::c_int as uint32_t;
+  first_block = ((1i32 << 10i32) as libc::c_uint == blocksize) as libc::c_int as u32;
   blocksize_log2 = int_log2(blocksize);
   // Determine number of blocks
   kilobytes >>= blocksize_log2.wrapping_sub(10i32 as libc::c_uint);
-  nblocks = kilobytes as uint32_t;
+  nblocks = kilobytes as u32;
   if nblocks as libc::c_ulonglong != kilobytes {
     bb_simple_error_msg_and_die(
       b"block count doesn\'t fit in 32 bits\x00" as *const u8 as *const libc::c_char,
@@ -739,7 +739,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   nreserved = (nblocks as uint64_t)
     .wrapping_mul(reserved_percent as libc::c_ulong)
-    .wrapping_div(100i32 as libc::c_ulong) as uint32_t;
+    .wrapping_div(100i32 as libc::c_ulong) as u32;
   // N.B. killing e2fsprogs feature! Unused blocks don't account in calculations
   nblocks_full = nblocks;
   loop
@@ -756,24 +756,24 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     group_desc_blocks = div_roundup(
       ngroups,
       (blocksize as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<ext2_group_desc>() as libc::c_ulong) as uint32_t,
+        .wrapping_div(::std::mem::size_of::<ext2_group_desc>() as libc::c_ulong) as u32,
     );
     // TODO: reserved blocks must be marked as such in the bitmaps,
     // or resulting filesystem is corrupt
     // N.B. e2fsprogs does as follows!
-    let mut overhead: uint32_t = 0;
-    let mut remainder: uint32_t = 0;
+    let mut overhead: u32 = 0;
+    let mut remainder: u32 = 0;
     // ninodes is the max number of inodes in this filesystem
-    let mut ninodes: uint32_t = (nblocks_full as uint64_t)
+    let mut ninodes: u32 = (nblocks_full as uint64_t)
       .wrapping_mul(blocksize as libc::c_ulong)
-      .wrapping_div(bytes_per_inode as libc::c_ulong) as uint32_t;
+      .wrapping_div(bytes_per_inode as libc::c_ulong) as u32;
     if ninodes < (11i32 + 1i32) as libc::c_uint {
-      ninodes = (11i32 + 1i32) as uint32_t
+      ninodes = (11i32 + 1i32) as u32
     }
     inodes_per_group = div_roundup(ninodes, ngroups);
     // minimum number because the first EXT2_GOOD_OLD_FIRST_INO-1 are reserved
     if inodes_per_group < 16i32 as libc::c_uint {
-      inodes_per_group = 16i32 as uint32_t
+      inodes_per_group = 16i32 as u32
     }
     // a block group can't have more inodes than blocks
     if inodes_per_group > (8i32 as libc::c_uint).wrapping_mul(blocksize) {
@@ -795,7 +795,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       12i32
     } else {
       (16i32) >> blocksize_log2.wrapping_sub(10i32 as libc::c_uint)
-    } as uint32_t;
+    } as u32;
     // the last group needs more attention: isn't it too small for possible overhead?
     overhead = (if has_super(ngroups.wrapping_sub(1i32 as libc::c_uint)) != 0 {
       (1i32 as libc::c_uint).wrapping_add(group_desc_blocks)
@@ -824,7 +824,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       break;
     }
     //bb_error_msg("CHOP[%u]", remainder);
-    nblocks = (nblocks as libc::c_uint).wrapping_sub(remainder) as uint32_t as uint32_t
+    nblocks = (nblocks as libc::c_uint).wrapping_sub(remainder) as u32 as u32
   }
   if nblocks_full.wrapping_sub(nblocks) != 0 {
     printf(
@@ -872,71 +872,71 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // TODO: 3/5 dir_index?
   // fill the superblock
   sb = xzalloc(1024i32 as size_t) as *mut ext2_super_block; // revision 1 filesystem
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_rev_level = 1i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_rev_level = 1i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_rev_level = 1i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_magic = 0xef53i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_magic = 0xef53i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_magic = 0xef53i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_inode_size = inodesize as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_inode_size = inodesize as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_inode_size = inodesize as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_inode_size = inodesize as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_inode_size = inodesize as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_inode_size = inodesize as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
   // set "Required extra isize" and "Desired extra isize" fields to 28
   if inodesize as libc::c_ulong != ::std::mem::size_of::<ext2_inode>() as libc::c_ulong {
-    if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as uint32_t as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as uint8_t as uint16_t
+    if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (*sb).s_min_extra_isize = 0x1ci32 as u32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*sb).s_min_extra_isize = 0x1ci32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*sb).s_min_extra_isize = 0x1ci32 as u8 as u16
     } else {
       BUG_wrong_field_size();
     }
-    if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as uint32_t as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as uint8_t as uint16_t
+    if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (*sb).s_want_extra_isize = 0x1ci32 as u32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*sb).s_want_extra_isize = 0x1ci32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*sb).s_want_extra_isize = 0x1ci32 as u8 as u16
     } else {
       BUG_wrong_field_size();
     }
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_first_ino = 11i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_first_ino = 11i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_first_ino = 11i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_log_block_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*sb).s_log_block_size =
-      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*sb).s_log_block_size =
-      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as uint8_t as uint32_t
+      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -944,160 +944,160 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as int32_t
   } else if ::std::mem::size_of::<int32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*sb).s_log_frag_size =
-      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as uint16_t as int32_t
+      blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u16 as int32_t
   } else if ::std::mem::size_of::<int32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as uint8_t as int32_t
+    (*sb).s_log_frag_size = blocksize_log2.wrapping_sub(10i32 as libc::c_uint) as u8 as int32_t
   } else {
     BUG_wrong_field_size();
   }
   // first 1024 bytes of the device are for boot record. If block size is 1024 bytes, then
   // the first block is 1, otherwise 0
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_first_data_block = first_block
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_first_data_block = first_block as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_first_data_block = first_block as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_first_data_block = first_block as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_first_data_block = first_block as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // block and inode bitmaps occupy no more than one block, so maximum number of blocks is
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_blocks_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*sb).s_blocks_per_group =
-      (8i32 as libc::c_uint).wrapping_mul(blocksize) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_blocks_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as uint8_t as uint32_t
+      (8i32 as libc::c_uint).wrapping_mul(blocksize) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_blocks_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_frags_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_frags_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_frags_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_frags_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_frags_per_group = (8i32 as libc::c_uint).wrapping_mul(blocksize) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // blocks
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_blocks_count = nblocks
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_blocks_count = nblocks as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_blocks_count = nblocks as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_blocks_count = nblocks as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_blocks_count = nblocks as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // reserve blocks for superuser
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_r_blocks_count = nreserved
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_r_blocks_count = nreserved as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_r_blocks_count = nreserved as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_r_blocks_count = nreserved as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_r_blocks_count = nreserved as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // ninodes
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_inodes_per_group = inodes_per_group
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_inodes_per_group = inodes_per_group as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_inodes_per_group = inodes_per_group as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_inodes_per_group = inodes_per_group as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_inodes_per_group = inodes_per_group as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_inodes_count = inodes_per_group.wrapping_mul(ngroups)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_inodes_count = inodes_per_group.wrapping_mul(ngroups) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_inodes_count = inodes_per_group.wrapping_mul(ngroups) as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_inodes_count = inodes_per_group.wrapping_mul(ngroups) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_inodes_count = inodes_per_group.wrapping_mul(ngroups) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_free_inodes_count = inodes_per_group
       .wrapping_mul(ngroups)
       .wrapping_sub(11i32 as libc::c_uint)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*sb).s_free_inodes_count = inodes_per_group
       .wrapping_mul(ngroups)
-      .wrapping_sub(11i32 as libc::c_uint) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      .wrapping_sub(11i32 as libc::c_uint) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*sb).s_free_inodes_count = inodes_per_group
       .wrapping_mul(ngroups)
-      .wrapping_sub(11i32 as libc::c_uint) as uint8_t as uint32_t
+      .wrapping_sub(11i32 as libc::c_uint) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // timestamps
   timestamp = time(0 as *mut time_t);
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_mkfs_time = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_mkfs_time = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_mkfs_time = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_mkfs_time = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_mkfs_time = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_mkfs_time = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_wtime = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_wtime = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_wtime = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_wtime = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_wtime = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_wtime = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_lastcheck = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_lastcheck = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_lastcheck = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_lastcheck = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_lastcheck = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_lastcheck = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // misc. Values are chosen to match mke2fs 1.41.9
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_state = 1i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_state = 1i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_state = 1i32 as u8 as u16
   } else {
     BUG_wrong_field_size(); // TODO: what's 1?
   } // 180 days
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_creator_os = 0i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_creator_os = 0i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_creator_os = 0i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_errors = 1i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_errors = 1i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_errors = 1i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
@@ -1105,53 +1105,53 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // and if >= 0.5GB, EXT3_FEATURE_RO_COMPAT_LARGE_FILE.
   // we use values which match "mke2fs -O ^resize_inode":
   // in this case 1.41.9 never sets EXT3_FEATURE_RO_COMPAT_LARGE_FILE.
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_feature_incompat = 0x2i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_feature_incompat = 0x2i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_feature_incompat = 0x2i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_feature_ro_compat = 0x1i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_feature_ro_compat = 0x1i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_feature_ro_compat = 0x1i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_flags = (0x2i32 * 1i32) as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_flags = (0x2i32 * 1i32) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_flags = (0x2i32 * 1i32) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   generate_uuid((*sb).s_uuid.as_mut_ptr());
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*sb).s_def_hash_version = 1i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_def_hash_version = 1i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_def_hash_version = 1i32 as u8
   } else {
     BUG_wrong_field_size();
   }
-  generate_uuid((*sb).s_hash_seed.as_mut_ptr() as *mut uint8_t);
+  generate_uuid((*sb).s_hash_seed.as_mut_ptr() as *mut u8);
   /*
    * From e2fsprogs: add "jitter" to the superblock's check interval so that we
    * don't check all the filesystems at the same time.  We use a
@@ -1159,25 +1159,25 @@ pub unsafe extern "C" fn mkfs_ext2_main(
    */
   if ::std::mem::size_of::<int16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_max_mnt_count = (20i32
-      + (*sb).s_uuid[((::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<uint8_t>() as libc::c_ulong)
+      + (*sb).s_uuid[((::std::mem::size_of::<[u8; 16]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong)
         as libc::c_uint)
         .wrapping_sub(1i32 as libc::c_uint) as usize] as libc::c_int
-        % 20i32) as uint32_t as int16_t
+        % 20i32) as u32 as int16_t
   } else if ::std::mem::size_of::<int16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*sb).s_max_mnt_count = (20i32
-      + (*sb).s_uuid[((::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<uint8_t>() as libc::c_ulong)
+      + (*sb).s_uuid[((::std::mem::size_of::<[u8; 16]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong)
         as libc::c_uint)
         .wrapping_sub(1i32 as libc::c_uint) as usize] as libc::c_int
-        % 20i32) as uint16_t as int16_t
+        % 20i32) as u16 as int16_t
   } else if ::std::mem::size_of::<int16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*sb).s_max_mnt_count = (20i32
-      + (*sb).s_uuid[((::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<uint8_t>() as libc::c_ulong)
+      + (*sb).s_uuid[((::std::mem::size_of::<[u8; 16]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong)
         as libc::c_uint)
         .wrapping_sub(1i32 as libc::c_uint) as usize] as libc::c_int
-        % 20i32) as uint8_t as int16_t
+        % 20i32) as u8 as int16_t
   } else {
     BUG_wrong_field_size();
   }
@@ -1189,49 +1189,49 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   );
   // calculate filesystem skeleton structures
   gd = xzalloc(group_desc_blocks.wrapping_mul(blocksize) as size_t) as *mut ext2_group_desc;
-  buf = xmalloc(blocksize as size_t) as *mut uint8_t;
-  (*sb).s_free_blocks_count = 0i32 as uint32_t;
+  buf = xmalloc(blocksize as size_t) as *mut u8;
+  (*sb).s_free_blocks_count = 0i32 as u32;
   i = 0i32 as libc::c_uint;
   pos = first_block;
   n = nblocks.wrapping_sub(first_block);
   while i < ngroups {
-    let mut overhead_0: uint32_t = pos.wrapping_add(if has_super(i) != 0 {
+    let mut overhead_0: u32 = pos.wrapping_add(if has_super(i) != 0 {
       (1i32 as libc::c_uint).wrapping_add(group_desc_blocks)
     } else {
       0i32 as libc::c_uint
     });
-    let mut free_blocks: uint32_t = 0;
+    let mut free_blocks: u32 = 0;
     // fill group descriptors
-    if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_block_bitmap = overhead_0.wrapping_add(0i32 as libc::c_uint)
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_block_bitmap =
-        overhead_0.wrapping_add(0i32 as libc::c_uint) as uint16_t as uint32_t
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+        overhead_0.wrapping_add(0i32 as libc::c_uint) as u16 as u32
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_block_bitmap =
-        overhead_0.wrapping_add(0i32 as libc::c_uint) as uint8_t as uint32_t
+        overhead_0.wrapping_add(0i32 as libc::c_uint) as u8 as u32
     } else {
       BUG_wrong_field_size();
     }
-    if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_bitmap = overhead_0.wrapping_add(1i32 as libc::c_uint)
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_bitmap =
-        overhead_0.wrapping_add(1i32 as libc::c_uint) as uint16_t as uint32_t
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+        overhead_0.wrapping_add(1i32 as libc::c_uint) as u16 as u32
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_bitmap =
-        overhead_0.wrapping_add(1i32 as libc::c_uint) as uint8_t as uint32_t
+        overhead_0.wrapping_add(1i32 as libc::c_uint) as u8 as u32
     } else {
       BUG_wrong_field_size();
     }
-    if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_table = overhead_0.wrapping_add(2i32 as libc::c_uint)
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_table =
-        overhead_0.wrapping_add(2i32 as libc::c_uint) as uint16_t as uint32_t
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+        overhead_0.wrapping_add(2i32 as libc::c_uint) as u16 as u32
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_inode_table =
-        overhead_0.wrapping_add(2i32 as libc::c_uint) as uint8_t as uint32_t
+        overhead_0.wrapping_add(2i32 as libc::c_uint) as u8 as u32
     } else {
       BUG_wrong_field_size();
     }
@@ -1240,7 +1240,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       .wrapping_add(1i32 as libc::c_uint)
       .wrapping_add(1i32 as libc::c_uint)
       .wrapping_add(inode_table_blocks);
-    (*gd.offset(i as isize)).bg_free_inodes_count = inodes_per_group as uint16_t;
+    (*gd.offset(i as isize)).bg_free_inodes_count = inodes_per_group as u16;
     //STORE_LE(gd[i].bg_used_dirs_count, 0);
     // N.B. both "/" and "/lost+found" are within the first block group
     // "/" occupies 1 block, "/lost+found" occupies lost_and_found_blocks...
@@ -1248,20 +1248,20 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       // ... thus increased overhead for the first block group ...
       overhead_0 = (overhead_0 as libc::c_uint)
         .wrapping_add((1i32 as libc::c_uint).wrapping_add(lost_and_found_blocks))
-        as uint32_t as uint32_t;
+        as u32 as u32;
       // ... and 2 used directories
-      if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as uint32_t as uint16_t
-      } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as uint16_t
-      } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as uint8_t as uint16_t
+      if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u32 as u16
+      } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u16
+      } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u8 as u16
       } else {
         BUG_wrong_field_size();
       }
       // well known reserved inodes belong to the first block too
       let ref mut fresh1 = (*gd.offset(i as isize)).bg_free_inodes_count;
-      *fresh1 = (*fresh1 as libc::c_int - 11i32) as uint16_t
+      *fresh1 = (*fresh1 as libc::c_int - 11i32) as u16
     }
     // cache free block count of the group
     free_blocks = (if n < (8i32 as libc::c_uint).wrapping_mul(blocksize) {
@@ -1282,7 +1282,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     );
     // dump block bitmap
     PUT(
-      ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
         (*gd.offset(i as isize)).bg_block_bitmap
       } else {
         BUG_wrong_field_size() as libc::c_uint
@@ -1291,12 +1291,12 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       buf as *mut libc::c_void,
       blocksize,
     );
-    if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as uint8_t as uint16_t
+    if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*gd.offset(i as isize)).bg_free_blocks_count = free_blocks as u8 as u16
     } else {
       BUG_wrong_field_size();
     }
@@ -1313,30 +1313,30 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     //PUT((uint64_t)(FETCH_LE32(gd[i].bg_block_bitmap)) * blocksize, buf, blocksize);
     //but it's right after block bitmap, so we can just:
     xwrite(3i32, buf as *const libc::c_void, blocksize as size_t);
-    if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_free_inodes_count =
-        (*gd.offset(i as isize)).bg_free_inodes_count as uint32_t as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+        (*gd.offset(i as isize)).bg_free_inodes_count as u32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_free_inodes_count = (*gd.offset(i as isize)).bg_free_inodes_count
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_free_inodes_count =
-        (*gd.offset(i as isize)).bg_free_inodes_count as uint8_t as uint16_t
+        (*gd.offset(i as isize)).bg_free_inodes_count as u8 as u16
     } else {
       BUG_wrong_field_size();
     }
     // count overall free blocks
     (*sb).s_free_blocks_count =
-      ((*sb).s_free_blocks_count as libc::c_uint).wrapping_add(free_blocks) as uint32_t as uint32_t;
+      ((*sb).s_free_blocks_count as libc::c_uint).wrapping_add(free_blocks) as u32 as u32;
     i = i.wrapping_add(1);
     pos = pos.wrapping_add((8i32 as libc::c_uint).wrapping_mul(blocksize));
     n = n.wrapping_sub((8i32 as libc::c_uint).wrapping_mul(blocksize))
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_free_blocks_count = (*sb).s_free_blocks_count
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_free_blocks_count = (*sb).s_free_blocks_count as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_free_blocks_count = (*sb).s_free_blocks_count as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*sb).s_free_blocks_count = (*sb).s_free_blocks_count as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*sb).s_free_blocks_count = (*sb).s_free_blocks_count as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -1359,7 +1359,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
             }) as libc::c_ulong,
           ),
         sb as *mut libc::c_void,
-        1024i32 as uint32_t,
+        1024i32 as u32,
       );
       PUT(
         (pos as uint64_t)
@@ -1384,7 +1384,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     n = 0i32 as libc::c_uint;
     while n < inode_table_blocks {
       PUT(
-        ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+        ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
           (*gd.offset(i as isize)).bg_inode_table
         } else {
           BUG_wrong_field_size() as libc::c_uint
@@ -1400,116 +1400,116 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   // prepare directory inode
   inode = buf as *mut ext2_inode;
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_mode = (0o40000i32
       | (0o400i32 | 0o200i32 | 0o100i32)
       | 0o400i32 >> 3i32
       | 0o400i32 >> 3i32 >> 3i32
       | 0o100i32 >> 3i32
-      | 0o100i32 >> 3i32 >> 3i32) as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      | 0o100i32 >> 3i32 >> 3i32) as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*inode).i_mode = (0o40000i32
       | (0o400i32 | 0o200i32 | 0o100i32)
       | 0o400i32 >> 3i32
       | 0o400i32 >> 3i32 >> 3i32
       | 0o100i32 >> 3i32
-      | 0o100i32 >> 3i32 >> 3i32) as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      | 0o100i32 >> 3i32 >> 3i32) as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*inode).i_mode = (0o40000i32
       | (0o400i32 | 0o200i32 | 0o100i32)
       | 0o400i32 >> 3i32
       | 0o400i32 >> 3i32 >> 3i32
       | 0o100i32 >> 3i32
-      | 0o100i32 >> 3i32 >> 3i32) as uint8_t as uint16_t
+      | 0o100i32 >> 3i32 >> 3i32) as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*inode).i_mtime = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_mtime = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_mtime = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*inode).i_mtime = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_mtime = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_mtime = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*inode).i_atime = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_atime = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_atime = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*inode).i_atime = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_atime = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_atime = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*inode).i_ctime = timestamp as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_ctime = timestamp as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_ctime = timestamp as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*inode).i_ctime = timestamp as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_ctime = timestamp as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_ctime = timestamp as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_size = blocksize
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_size = blocksize as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_size = blocksize as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_size = blocksize as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_size = blocksize as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // inode->i_blocks stores the number of 512 byte data blocks
   // (512, because it goes directly to struct stat without scaling)
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_blocks = blocksize.wrapping_div(512i32 as libc::c_uint)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_blocks = blocksize.wrapping_div(512i32 as libc::c_uint) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_blocks = blocksize.wrapping_div(512i32 as libc::c_uint) as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_blocks = blocksize.wrapping_div(512i32 as libc::c_uint) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_blocks = blocksize.wrapping_div(512i32 as libc::c_uint) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // dump root dir inode
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*inode).i_links_count = 3i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_links_count = 3i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_links_count = 3i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*inode).i_links_count = 3i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_links_count = 3i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_links_count = 3i32 as u8 as u16
   } else {
     BUG_wrong_field_size(); // "/.", "/..", "/lost+found/.." point to this inode
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_block[0] =
-      (if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
         (*gd.offset(0)).bg_inode_table
       } else {
         BUG_wrong_field_size() as libc::c_uint
       })
       .wrapping_add(inode_table_blocks)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*inode).i_block[0] =
-      (if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
         (*gd.offset(0)).bg_inode_table
       } else {
         BUG_wrong_field_size() as libc::c_uint
       })
-      .wrapping_add(inode_table_blocks) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      .wrapping_add(inode_table_blocks) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*inode).i_block[0] =
-      (if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
         (*gd.offset(0)).bg_inode_table
       } else {
         BUG_wrong_field_size() as libc::c_uint
       })
-      .wrapping_add(inode_table_blocks) as uint8_t as uint32_t
+      .wrapping_add(inode_table_blocks) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   PUT(
-    ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint
@@ -1520,40 +1520,40 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     inodesize,
   );
   // dump lost+found dir inode
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*inode).i_links_count = 2i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_links_count = 2i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_links_count = 2i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*inode).i_links_count = 2i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_links_count = 2i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_links_count = 2i32 as u8 as u16
   } else {
     BUG_wrong_field_size(); // both "/lost+found" and "/lost+found/." point to this inode
   } // use next block
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_size = lost_and_found_blocks.wrapping_mul(blocksize)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*inode).i_size = lost_and_found_blocks.wrapping_mul(blocksize) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_size = lost_and_found_blocks.wrapping_mul(blocksize) as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*inode).i_size = lost_and_found_blocks.wrapping_mul(blocksize) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*inode).i_size = lost_and_found_blocks.wrapping_mul(blocksize) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_blocks = lost_and_found_blocks
       .wrapping_mul(blocksize)
       .wrapping_div(512i32 as libc::c_uint)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*inode).i_blocks = lost_and_found_blocks
       .wrapping_mul(blocksize)
-      .wrapping_div(512i32 as libc::c_uint) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      .wrapping_div(512i32 as libc::c_uint) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*inode).i_blocks = lost_and_found_blocks
       .wrapping_mul(blocksize)
-      .wrapping_div(512i32 as libc::c_uint) as uint8_t as uint32_t
+      .wrapping_div(512i32 as libc::c_uint) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  n = (if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  n = (if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*inode).i_block[0]
   } else {
     BUG_wrong_field_size() as libc::c_uint
@@ -1561,12 +1561,12 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   .wrapping_add(1i32 as libc::c_uint);
   i = 0i32 as libc::c_uint;
   while i < lost_and_found_blocks {
-    if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*inode).i_block[i as usize] = i.wrapping_add(n)
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*inode).i_block[i as usize] = i.wrapping_add(n) as uint16_t as uint32_t
-    } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*inode).i_block[i as usize] = i.wrapping_add(n) as uint8_t as uint32_t
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*inode).i_block[i as usize] = i.wrapping_add(n) as u16 as u32
+    } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*inode).i_block[i as usize] = i.wrapping_add(n) as u8 as u32
     } else {
       BUG_wrong_field_size();
     }
@@ -1574,7 +1574,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   //bb_error_msg("LAST BLOCK USED[%u]", i + n);
   PUT(
-    ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint
@@ -1588,19 +1588,19 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   memset(buf as *mut libc::c_void, 0i32, blocksize as libc::c_ulong);
   dir = buf as *mut ext2_dir;
   // dump 2nd+ blocks of "/lost+found"
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).rec_len1 = blocksize as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).rec_len1 = blocksize as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).rec_len1 = blocksize as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).rec_len1 = blocksize as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).rec_len1 = blocksize as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).rec_len1 = blocksize as u8 as u16
   } else {
     BUG_wrong_field_size(); // e2fsck 1.41.4 compat (1.41.9 does not need this)
   }
   i = 1i32 as libc::c_uint;
   while i < lost_and_found_blocks {
     PUT(
-      ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
         (*gd.offset(0)).bg_inode_table
       } else {
         BUG_wrong_field_size() as libc::c_uint
@@ -1615,83 +1615,83 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     i = i.wrapping_add(1)
   }
   // dump 1st block of "/lost+found"
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).inode1 = 11i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).inode1 = 11i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).inode1 = 11i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).inode1 = 11i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).inode1 = 11i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).inode1 = 11i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).rec_len1 = 12i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).rec_len1 = 12i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).rec_len1 = 12i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).rec_len1 = 12i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).rec_len1 = 12i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).rec_len1 = 12i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).name_len1 = 1i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).name_len1 = 1i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).name_len1 = 1i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).name_len1 = 1i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).name_len1 = 1i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).name_len1 = 1i32 as u8
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).file_type1 = 2i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).file_type1 = 2i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).file_type1 = 2i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).file_type1 = 2i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).file_type1 = 2i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).file_type1 = 2i32 as u8
   } else {
     BUG_wrong_field_size();
   }
   (*dir).name1[0] = '.' as i32 as libc::c_char;
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).inode2 = 2i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).inode2 = 2i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).inode2 = 2i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).inode2 = 2i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).inode2 = 2i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).inode2 = 2i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).rec_len2 = blocksize.wrapping_sub(12i32 as libc::c_uint) as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).name_len2 = 2i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).name_len2 = 2i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).name_len2 = 2i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).name_len2 = 2i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).name_len2 = 2i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).name_len2 = 2i32 as u8
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).file_type2 = 2i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).file_type2 = 2i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).file_type2 = 2i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).file_type2 = 2i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).file_type2 = 2i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).file_type2 = 2i32 as u8
   } else {
     BUG_wrong_field_size();
   }
   (*dir).name2[0] = '.' as i32 as libc::c_char;
   (*dir).name2[1] = '.' as i32 as libc::c_char;
   PUT(
-    ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint
@@ -1703,63 +1703,63 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     blocksize,
   );
   // dump root dir block
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).inode1 = 2i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).inode1 = 2i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).inode1 = 2i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).inode1 = 2i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).inode1 = 2i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).inode1 = 2i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).rec_len2 = 12i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).rec_len2 = 12i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).rec_len2 = 12i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).rec_len2 = 12i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).rec_len2 = 12i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).rec_len2 = 12i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).inode3 = 11i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).inode3 = 11i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).inode3 = 11i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).inode3 = 11i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).inode3 = 11i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).inode3 = 11i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*dir).rec_len3 = blocksize
       .wrapping_sub(12i32 as libc::c_uint)
-      .wrapping_sub(12i32 as libc::c_uint) as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      .wrapping_sub(12i32 as libc::c_uint) as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*dir).rec_len3 = blocksize
       .wrapping_sub(12i32 as libc::c_uint)
-      .wrapping_sub(12i32 as libc::c_uint) as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      .wrapping_sub(12i32 as libc::c_uint) as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*dir).rec_len3 = blocksize
       .wrapping_sub(12i32 as libc::c_uint)
-      .wrapping_sub(12i32 as libc::c_uint) as uint8_t as uint16_t
+      .wrapping_sub(12i32 as libc::c_uint) as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).name_len3 = 10i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).name_len3 = 10i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).name_len3 = 10i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).name_len3 = 10i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).name_len3 = 10i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).name_len3 = 10i32 as u8
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*dir).file_type3 = 2i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*dir).file_type3 = 2i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*dir).file_type3 = 2i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*dir).file_type3 = 2i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*dir).file_type3 = 2i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*dir).file_type3 = 2i32 as u8
   } else {
     BUG_wrong_field_size();
   }
@@ -1768,7 +1768,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     b"lost+found\x00" as *const u8 as *const libc::c_char,
   );
   PUT(
-    ((if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint

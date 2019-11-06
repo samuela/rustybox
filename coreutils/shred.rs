@@ -23,7 +23,7 @@ extern "C" {
   #[no_mangle]
   fn xclose(fd: libc::c_int);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
@@ -34,7 +34,7 @@ use crate::librb::__off64_t;
 
 use crate::librb::off_t;
 
-use libc::uint32_t;
+
 use libc::stat;
 pub const OPT_u: C2RustUnnamed = 2;
 pub const OPT_z: C2RustUnnamed = 4;

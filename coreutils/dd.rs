@@ -91,7 +91,7 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use libc::uint16_t;
+
 use libc::FILE;
 
 #[derive(Copy, Clone)]
@@ -660,7 +660,7 @@ pub unsafe extern "C" fn dd_main(
                   & FLAG_SWAB as libc::c_int
                   != 0
                 {
-                  let mut p16: *mut uint16_t = 0 as *mut uint16_t;
+                  let mut p16: *mut u16 = 0 as *mut u16;
                   let mut n2: ssize_t = 0;
                   /* Our code allows only last read to be odd-sized */
                   if Z.prev_read_size & 1i32 as libc::c_long != 0 {
@@ -674,7 +674,7 @@ pub unsafe extern "C" fn dd_main(
                    *  echo -n "qwe" | dd conv=swab
                    * prints "wqe".
                    */
-                  p16 = ibuf as *mut libc::c_void as *mut uint16_t;
+                  p16 = ibuf as *mut libc::c_void as *mut u16;
                   n2 = n_1 >> 1i32;
                   loop {
                     n2 -= 1;

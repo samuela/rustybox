@@ -30,7 +30,7 @@ extern "C" {
   #[no_mangle]
   fn str_tolower(str: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
@@ -67,7 +67,7 @@ extern "C" {
   #[no_mangle]
   static mut preferred_family: family_t;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   #[no_mangle]
   fn xrtnl_open(rth: *mut rtnl_handle);
@@ -86,9 +86,9 @@ extern "C" {
   #[no_mangle]
   fn get_unsigned(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> libc::c_uint;
   #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> uint32_t;
+  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
   #[no_mangle]
-  fn get_u16(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> uint16_t;
+  fn get_u16(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u16;
   #[no_mangle]
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
   #[no_mangle]
@@ -119,9 +119,9 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;
@@ -188,7 +188,7 @@ pub struct sockaddr_ll {
   pub sll_addr: [libc::c_uchar; 8],
 }
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -207,17 +207,17 @@ pub type __kernel_sa_family_t = libc::c_ushort;
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed_2 = 50;
@@ -290,8 +290,8 @@ pub const IFLA_VLAN_UNSPEC: C2RustUnnamed_4 = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ifla_vlan_flags {
-  pub flags: __u32,
-  pub mask: __u32,
+  pub flags: u32,
+  pub mask: u32,
 }
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const __IFLA_VRF_MAX: C2RustUnnamed_5 = 2;
@@ -381,8 +381,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 pub const PARM_on: C2RustUnnamed_8 = 0;
 pub const ARG_promisc: C2RustUnnamed_9 = 7;
@@ -442,8 +442,8 @@ unsafe extern "C" fn get_ctl_fd() -> libc::c_int {
 /* Exits on error */
 unsafe extern "C" fn do_chflags(
   mut dev: *mut libc::c_char,
-  mut flags: uint32_t,
-  mut mask: uint32_t,
+  mut flags: u32,
+  mut mask: u32,
 ) {
   let mut ifr: ifreq = ifreq {
     ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
@@ -603,7 +603,7 @@ unsafe extern "C" fn set_master(mut dev: *mut libc::c_char, mut master: libc::c_
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = 0x1i32 as __u16;
   req.n.nlmsg_type = RTM_NEWLINK as libc::c_int as __u16;
   req.i.ifi_family = preferred_family as libc::c_uchar;
@@ -758,8 +758,8 @@ unsafe extern "C" fn die_must_be_on_off(mut msg: *const libc::c_char) -> ! {
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut dev: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut mask: uint32_t = 0i32 as uint32_t;
-  let mut flags: uint32_t = 0i32 as uint32_t;
+  let mut mask: u32 = 0i32 as u32;
+  let mut flags: u32 = 0i32 as u32;
   let mut qlen: libc::c_int = -1i32;
   let mut mtu: libc::c_int = -1i32;
   let mut master: libc::c_int = -1i32;
@@ -934,8 +934,8 @@ unsafe extern "C" fn vlan_parse_opt(
     56, 48, 50, 46, 49, 113, 0, 56, 48, 50, 46, 49, 97, 100, 0, 0,
   ];
   let mut arg: libc::c_int = 0;
-  let mut id: uint16_t = 0;
-  let mut proto: uint16_t = 0;
+  let mut id: u16 = 0;
+  let mut proto: u16 = 0;
   let mut flags: ifla_vlan_flags = {
     let mut init = ifla_vlan_flags { flags: 0, mask: 0 };
     init
@@ -952,8 +952,8 @@ unsafe extern "C" fn vlan_parse_opt(
         n,
         size as libc::c_int,
         IFLA_VLAN_ID as libc::c_int,
-        &mut id as *mut uint16_t as *mut libc::c_void,
-        ::std::mem::size_of::<uint16_t>() as libc::c_ulong as libc::c_int,
+        &mut id as *mut u16 as *mut libc::c_void,
+        ::std::mem::size_of::<u16>() as libc::c_ulong as libc::c_int,
       );
     } else if arg == ARG_protocol as libc::c_int {
       arg = index_in_substrings(protocols.as_ptr(), str_tolower(*argv));
@@ -1003,8 +1003,8 @@ unsafe extern "C" fn vlan_parse_opt(
         n,
         size as libc::c_int,
         5i32,
-        &mut proto as *mut uint16_t as *mut libc::c_void,
-        ::std::mem::size_of::<uint16_t>() as libc::c_ulong as libc::c_int,
+        &mut proto as *mut u16 as *mut libc::c_void,
+        ::std::mem::size_of::<u16>() as libc::c_ulong as libc::c_int,
       );
     } else {
       let mut param: libc::c_int = index_in_strings(
@@ -1060,7 +1060,7 @@ unsafe extern "C" fn vrf_parse_opt(
   /* IFLA_VRF_TABLE is an enum, not a define -
    * can't test "defined(IFLA_VRF_TABLE)".
    */
-  let mut table: uint32_t = 0;
+  let mut table: u32 = 0;
   if strcmp(*argv, b"table\x00" as *const u8 as *const libc::c_char) != 0i32 {
     invarg_1_to_2(*argv, b"type vrf\x00" as *const u8 as *const libc::c_char);
   }
@@ -1070,8 +1070,8 @@ unsafe extern "C" fn vrf_parse_opt(
     n,
     size as libc::c_int,
     IFLA_VRF_TABLE as libc::c_int,
-    &mut table as *mut uint32_t as *mut libc::c_void,
-    ::std::mem::size_of::<uint32_t>() as libc::c_ulong as libc::c_int,
+    &mut table as *mut u32 as *mut libc::c_void,
+    ::std::mem::size_of::<u32>() as libc::c_ulong as libc::c_int,
   );
 }
 /* Return value becomes exitcode. It's okay to not return at all */
@@ -1135,7 +1135,7 @@ unsafe extern "C" fn do_add_or_delete(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = 0x1i32 as __u16;
   req.n.nlmsg_type = rtm as __u16;
   req.i.ifi_family = preferred_family as libc::c_uchar;
@@ -1321,7 +1321,7 @@ pub unsafe extern "C" fn do_iplink(mut argv: *mut *mut libc::c_char) -> libc::c_
     97, 100, 100, 0, 100, 101, 108, 101, 116, 101, 0, 115, 101, 116, 0, 115, 104, 111, 119, 0, 108,
     115, 116, 0, 108, 105, 115, 116, 0, 0,
   ]; //TODO: move up to "ip"? Is it the common rule for all "ip" tools?
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   if !(*argv).is_null() {
     let mut key: libc::c_int = index_in_substrings(keywords.as_ptr(), *argv);
     if key < 0i32 {

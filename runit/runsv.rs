@@ -115,9 +115,9 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -160,12 +160,12 @@ pub struct svdir {
 #[repr(C)]
 pub struct svstatus_t {
   pub time_be64: uint64_t,
-  pub time_nsec_be32: uint32_t,
-  pub pid_le32: uint32_t,
-  pub paused: uint8_t,
-  pub want: uint8_t,
-  pub got_term: uint8_t,
-  pub run_or_finish: uint8_t,
+  pub time_nsec_be32: u32,
+  pub pid_le32: u32,
+  pub paused: u8,
+  pub want: u8,
+  pub got_term: u8,
+  pub run_or_finish: u8,
 }
 unsafe extern "C" fn gettimeofday_ns(mut ts: *mut timespec) {
   clock_gettime(0i32, ts);
@@ -370,19 +370,19 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
     }
     __v
   };
-  status.pid_le32 = (*s).pid as uint32_t;
+  status.pid_le32 = (*s).pid as u32;
   if (*s).ctrl as libc::c_int & 2i32 != 0 {
-    status.paused = 1i32 as uint8_t
+    status.paused = 1i32 as u8
   }
   if (*s).sd_want as libc::c_int == 0i32 {
-    status.want = 'u' as i32 as uint8_t
+    status.want = 'u' as i32 as u8
   } else {
-    status.want = 'd' as i32 as uint8_t
+    status.want = 'd' as i32 as u8
   }
   if (*s).ctrl as libc::c_int & 1i32 != 0 {
-    status.got_term = 1i32 as uint8_t
+    status.got_term = 1i32 as u8
   }
-  status.run_or_finish = (*s).state as uint8_t;
+  status.run_or_finish = (*s).state as u8;
   fd = open_trunc_or_warn(fstatusnew);
   if fd < 0i32 {
     return;

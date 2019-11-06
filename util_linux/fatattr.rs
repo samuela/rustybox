@@ -23,7 +23,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 
 /*
  * Display or change file attributes on a fat file system
@@ -109,16 +109,16 @@ pub unsafe extern "C" fn fatattr_main(
   loop {
     let mut fd: libc::c_int = 0;
     let mut i: libc::c_int = 0;
-    let mut attr: uint32_t = 0;
+    let mut attr: u32 = 0;
     fd = xopen(*argv, 0i32);
     bb_xioctl(
       fd,
       ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
         | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
         | (0x10i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<uint32_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
         as libc::c_uint,
-      &mut attr as *mut uint32_t as *mut libc::c_void,
+      &mut attr as *mut u32 as *mut libc::c_void,
       b"FAT_IOCTL_GET_ATTRIBUTES\x00" as *const u8 as *const libc::c_char,
     );
     attr = (attr | set_mask) & !clear_mask;
@@ -128,9 +128,9 @@ pub unsafe extern "C" fn fatattr_main(
         ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
           | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
           | (0x11i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<uint32_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+          | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
           as libc::c_uint,
-        &mut attr as *mut uint32_t as *mut libc::c_void,
+        &mut attr as *mut u32 as *mut libc::c_void,
         b"FAT_IOCTL_SET_ATTRIBUTES\x00" as *const u8 as *const libc::c_char,
       );
     } else {

@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
@@ -25,7 +25,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use crate::libbb::llist::llist_t;
 use libc::FILE;

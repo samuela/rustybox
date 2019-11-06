@@ -43,7 +43,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -69,7 +69,7 @@ use crate::librb::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 
 /*
  * Mini nsenter implementation for busybox.

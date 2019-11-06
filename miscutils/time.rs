@@ -33,7 +33,7 @@ extern "C" {
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -46,7 +46,7 @@ use crate::librb::__syscall_slong_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
  use libc::timeval;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rusage {

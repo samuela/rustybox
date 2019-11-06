@@ -20,7 +20,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
@@ -33,7 +33,7 @@ extern "C" {
   fn get_shell_name() -> *const libc::c_char;
 }
 
-use libc::uint32_t;
+
 pub const OPT_c: C2RustUnnamed = 16;
 pub const OPT_n: C2RustUnnamed = 4;
 pub const OPT_s: C2RustUnnamed = 1;

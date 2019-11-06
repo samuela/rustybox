@@ -58,17 +58,17 @@ pub struct loop_info64 {
   pub lo_rdevice: __u64,
   pub lo_offset: __u64,
   pub lo_sizelimit: __u64,
-  pub lo_number: __u32,
-  pub lo_encrypt_type: __u32,
-  pub lo_encrypt_key_size: __u32,
-  pub lo_flags: __u32,
+  pub lo_number: u32,
+  pub lo_encrypt_type: u32,
+  pub lo_encrypt_key_size: u32,
+  pub lo_flags: u32,
   pub lo_file_name: [__u8; 64],
   pub lo_crypt_name: [__u8; 64],
   pub lo_encrypt_key: [__u8; 32],
   pub lo_init: [__u64; 2],
 }
 pub type __u64 = libc::c_ulonglong;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 #[no_mangle]
 pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut libc::c_char {
   let mut fd: libc::c_int = 0;
@@ -346,7 +346,7 @@ pub unsafe extern "C" fn get_free_loop() -> libc::c_int {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -713,8 +713,8 @@ pub unsafe extern "C" fn set_loop(
                 /* Old kernel, does not support LO_FLAGS_AUTOCLEAR? */
                 /* (this code path is not tested) */
                 loopinfo.lo_flags = (loopinfo.lo_flags as libc::c_uint)
-                  .wrapping_sub(4i32 as libc::c_uint) as __u32
-                  as __u32;
+                  .wrapping_sub(4i32 as libc::c_uint) as u32
+                  as u32;
                 rc = ioctl(
                   dfd,
                   0x4c04i32 as libc::c_ulong,

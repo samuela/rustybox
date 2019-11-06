@@ -90,8 +90,8 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
 use libc::uid_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 use crate::librb::uoff_t;
 
 /* Busybox does not use threads, we can speed up stdio. */
@@ -189,7 +189,7 @@ pub struct tar_header_t {
  *    Opengroup's ustar interchange format,
  *    http://www.opengroup.org/onlinepubs/007904975/utilities/pax.html
  */
-pub type aliased_uint32_t = uint32_t;
+pub type aliased_u32 = u32;
 /* NB: _DESTROYS_ str[len] character! */
 unsafe extern "C" fn getOctal(
   mut str: *mut libc::c_char,
@@ -237,7 +237,7 @@ unsafe extern "C" fn getOctal(
         break;
       }
       str = str.offset(1);
-      v = (v << 8i32).wrapping_add(*str as uint8_t as libc::c_ulonglong)
+      v = (v << 8i32).wrapping_add(*str as u8 as libc::c_ulonglong)
     }
   }
   return v;
@@ -351,7 +351,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
     /* return get_header_tar(archive_handle); */
     /* to prevent misdetection of bz2 sig */
     {
-      *(&mut tar as *mut tar_header_t as *mut aliased_uint32_t) = 0i32 as aliased_uint32_t;
+      *(&mut tar as *mut tar_header_t as *mut aliased_u32) = 0i32 as aliased_u32;
       i = full_read(
         (*archive_handle).src_fd,
         &mut tar as *mut tar_header_t as *mut libc::c_void,
@@ -446,7 +446,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
            * Need to use GET_OCTAL. This overwrites tar.typeflag ---+
            * (the '0' char immediately after chksum in example above) with NUL.
            */
-          tar_typeflag = tar.typeflag as uint8_t as libc::c_int; /* save it */
+          tar_typeflag = tar.typeflag as u8 as libc::c_int; /* save it */
           sum = getOctal(
             tar.chksum.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as libc::c_int,

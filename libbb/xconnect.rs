@@ -101,7 +101,7 @@ extern "C" {
   //   active state.  Sequence numbers are of type uint64 and may not
   //   exceed 2^64-1.
   /*uint64_t read_seq64_be;*/
-  /*uint8_t *server_write_MAC_key;*/
+  /*u8 *server_write_MAC_key;*/
   //used by AES_GCM
   /* 0 if argv[0] is NULL: */
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -374,11 +374,11 @@ pub struct sockaddr_un {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -387,13 +387,13 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-use libc::uint16_t;
- use libc::uint8_t;
-pub type in_port_t = uint16_t;
+
+
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -407,7 +407,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -462,15 +462,15 @@ pub union C2RustUnnamed_0 {
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -750,7 +750,7 @@ pub unsafe extern "C" fn bb_lookup_port(
     }
     *bb_errno = old_errno
   }
-  return port_nr as uint16_t as libc::c_uint;
+  return port_nr as u16 as libc::c_uint;
 }
 /* "New" networking API */
 #[no_mangle]
@@ -1176,8 +1176,8 @@ pub unsafe extern "C" fn create_and_bind_to_netlink(
     ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong,
   );
   sa.nl_family = 16i32 as __kernel_sa_family_t;
-  sa.nl_pid = getpid() as __u32;
-  sa.nl_groups = grp as __u32;
+  sa.nl_pid = getpid() as u32;
+  sa.nl_groups = grp as u32;
   fd = xsocket(16i32, SOCK_DGRAM as libc::c_int, proto);
   xbind(
     fd,

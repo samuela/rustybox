@@ -26,7 +26,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_ask_noecho_stdin(prompt: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -40,7 +40,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 

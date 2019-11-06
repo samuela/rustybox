@@ -39,7 +39,7 @@ extern "C" {
     xname2id: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long>,
   ) -> libc::c_ulong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -76,7 +76,7 @@ use crate::librb::gid_t;
 use crate::librb::size_t;
 
 use libc::uid_t;
-use libc::uint32_t;
+
 use libc::stat;
 
 use libc::FILE;

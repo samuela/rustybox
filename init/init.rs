@@ -188,7 +188,7 @@ pub struct __va_list_tag {
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-use crate::librb::__uint32_t;
+
 pub type __rlim64_t = libc::c_ulong;
 use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
@@ -197,7 +197,6 @@ use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
- use libc::uint8_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -245,7 +244,7 @@ pub struct C2RustUnnamed_2 {
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
-  pub _pkey: __uint32_t,
+  pub _pkey: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -376,7 +375,7 @@ pub struct globals {
 pub struct init_action {
   pub next: *mut init_action,
   pub pid: pid_t,
-  pub action_type: uint8_t,
+  pub action_type: u8,
   pub terminal: [libc::c_char; 32],
   pub command: [libc::c_char; 1],
 }
@@ -774,7 +773,7 @@ unsafe extern "C" fn run_actions(mut action_type: libc::c_int) {
   }
 }
 unsafe extern "C" fn new_init_action(
-  mut action_type: uint8_t,
+  mut action_type: u8,
   mut command: *const libc::c_char,
   mut cons: *const libc::c_char,
 ) {
@@ -853,53 +852,53 @@ unsafe extern "C" fn parse_inittab() {
     /* No inittab file - set up some default behavior */
     /* Sysinit */
     new_init_action(
-      0x1i32 as uint8_t,
+      0x1i32 as u8,
       b"/etc/init.d/rcS\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
     /* Askfirst shell on tty1-4 */
     new_init_action(
-      0x10i32 as uint8_t,
+      0x10i32 as u8,
       bb_default_login_shell.as_ptr(),
       b"\x00" as *const u8 as *const libc::c_char,
     );
     //TODO: VC_1 instead of ""? "" is console -> ctty problems -> angry users
     new_init_action(
-      0x10i32 as uint8_t,
+      0x10i32 as u8,
       bb_default_login_shell.as_ptr(),
       b"/dev/tty2\x00" as *const u8 as *const libc::c_char,
     );
     new_init_action(
-      0x10i32 as uint8_t,
+      0x10i32 as u8,
       bb_default_login_shell.as_ptr(),
       b"/dev/tty3\x00" as *const u8 as *const libc::c_char,
     );
     new_init_action(
-      0x10i32 as uint8_t,
+      0x10i32 as u8,
       bb_default_login_shell.as_ptr(),
       b"/dev/tty4\x00" as *const u8 as *const libc::c_char,
     );
     /* Reboot on Ctrl-Alt-Del */
     new_init_action(
-      0x20i32 as uint8_t,
+      0x20i32 as u8,
       b"reboot\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
     /* Umount all filesystems on halt/reboot */
     new_init_action(
-      0x40i32 as uint8_t,
+      0x40i32 as u8,
       b"umount -a -r\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
     /* Swapoff on halt/reboot */
     new_init_action(
-      0x40i32 as uint8_t,
+      0x40i32 as u8,
       b"swapoff -a\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
     /* Restart init when a QUIT is received */
     new_init_action(
-      0x80i32 as uint8_t,
+      0x80i32 as u8,
       b"init\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
@@ -936,7 +935,7 @@ unsafe extern "C" fn parse_inittab() {
             skip_dev_pfx(tty),
           )
         }
-        new_init_action((1i32 << action) as uint8_t, token[3], tty);
+        new_init_action((1i32 << action) as u8, token[3], tty);
         if *tty.offset(0) != 0 {
           free(tty as *mut libc::c_void);
         }
@@ -1140,7 +1139,7 @@ unsafe extern "C" fn reload_inittab() {
   /* Disable old entries */
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
-    (*a).action_type = 0i32 as uint8_t;
+    (*a).action_type = 0i32 as u8;
     a = (*a).next
   }
   /* Append new entries, or modify existing entries
@@ -1275,7 +1274,7 @@ pub unsafe extern "C" fn init_main(
     /* ??? shouldn't we set RUNLEVEL="b" here? */
     /* Start a shell on console */
     new_init_action(
-      0x8i32 as uint8_t,
+      0x8i32 as u8,
       bb_default_login_shell.as_ptr(),
       b"\x00" as *const u8 as *const libc::c_char,
     );

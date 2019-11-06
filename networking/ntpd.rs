@@ -181,9 +181,9 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
@@ -260,9 +260,9 @@ use crate::librb::__syscall_slong_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
 use crate::librb::int8_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 
 use crate::librb::smallint;
 
@@ -373,9 +373,9 @@ pub const MSG_OOB: C2RustUnnamed = 1;
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -385,11 +385,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -403,7 +403,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -582,11 +582,11 @@ pub struct globals {
   pub if_name: *mut libc::c_char,
   pub verbose: libc::c_uint,
   pub peer_cnt: libc::c_uint,
-  pub refid: uint32_t,
-  pub ntp_status: uint8_t,
-  pub stratum: uint8_t,
-  pub discipline_state: uint8_t,
-  pub poll_exp: uint8_t,
+  pub refid: u32,
+  pub ntp_status: u8,
+  pub stratum: u8,
+  pub discipline_state: u8,
+  pub poll_exp: u8,
   pub polladj_count: libc::c_int,
   pub FREQHOLD_cnt: libc::c_int,
   pub kernel_freq_drift: libc::c_long,
@@ -604,11 +604,11 @@ pub struct peer_t {
   pub key_entry: *mut key_entry_t,
   pub p_fd: libc::c_int,
   pub datapoint_idx: libc::c_int,
-  pub lastpkt_refid: uint32_t,
-  pub lastpkt_status: uint8_t,
-  pub lastpkt_stratum: uint8_t,
-  pub reachable_bits: uint8_t,
-  pub dns_errors: uint8_t,
+  pub lastpkt_refid: u32,
+  pub lastpkt_status: u8,
+  pub lastpkt_stratum: u8,
+  pub reachable_bits: u8,
+  pub dns_errors: u8,
   pub next_action_time: libc::c_double,
   pub p_xmttime: libc::c_double,
   pub p_raw_delay: libc::c_double,
@@ -626,31 +626,31 @@ pub struct peer_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct msg_t {
-  pub m_status: uint8_t,
-  pub m_stratum: uint8_t,
-  pub m_ppoll: uint8_t,
+  pub m_status: u8,
+  pub m_stratum: u8,
+  pub m_ppoll: u8,
   pub m_precision_exp: int8_t,
   pub m_rootdelay: s_fixedpt_t,
   pub m_rootdisp: s_fixedpt_t,
-  pub m_refid: uint32_t,
+  pub m_refid: u32,
   pub m_reftime: l_fixedpt_t,
   pub m_orgtime: l_fixedpt_t,
   pub m_rectime: l_fixedpt_t,
   pub m_xmttime: l_fixedpt_t,
-  pub m_keyid: uint32_t,
-  pub m_digest: [uint8_t; 20],
+  pub m_keyid: u32,
+  pub m_digest: [u8; 20],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct l_fixedpt_t {
-  pub int_partl: uint32_t,
-  pub fractionl: uint32_t,
+  pub int_partl: u32,
+  pub fractionl: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct s_fixedpt_t {
-  pub int_parts: uint16_t,
-  pub fractions: uint16_t,
+  pub int_parts: u16,
+  pub fractions: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -910,11 +910,11 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
     int_partl: 0,
     fractionl: 0,
   };
-  lfp.int_partl = d as uint32_t;
+  lfp.int_partl = d as u32;
   lfp.fractionl = ((d - lfp.int_partl as libc::c_double)
     * (2147483647i32 as libc::c_uint)
       .wrapping_mul(2u32)
-      .wrapping_add(1u32) as libc::c_double) as uint32_t;
+      .wrapping_add(1u32) as libc::c_double) as u32;
   lfp.int_partl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.int_partl;
@@ -960,9 +960,9 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
     int_parts: 0,
     fractions: 0,
   };
-  sfp.int_parts = d as uint16_t;
+  sfp.int_parts = d as u16;
   sfp.fractions = ((d - sfp.int_parts as libc::c_int as libc::c_double)
-    * (32767i32 * 2i32 + 1i32) as libc::c_double) as uint16_t;
+    * (32767i32 * 2i32 + 1i32) as libc::c_double) as u16;
   sfp.int_parts = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.int_parts;
@@ -1139,10 +1139,10 @@ unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_s
         );
       }
     }
-    (*p).dns_errors = 0i32 as uint8_t;
+    (*p).dns_errors = 0i32 as u8;
     return lsa;
   }
-  (*p).dns_errors = ((((*p).dns_errors as libc::c_int) << 1i32 | 1i32) & 0x3fi32) as uint8_t;
+  (*p).dns_errors = ((((*p).dns_errors as libc::c_int) << 1i32 | 1i32) & 0x3fi32) as u8;
   return lsa;
 }
 unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut key_entry_t) {
@@ -1153,7 +1153,7 @@ unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut k
   strcpy((*p).p_hostname.as_mut_ptr(), s);
   (*p).p_fd = -1i32;
   (*p).p_xmt_msg.m_status =
-    (MODE_CLIENT as libc::c_int | (NTP_VERSION as libc::c_int) << 3i32) as uint8_t;
+    (MODE_CLIENT as libc::c_int | (NTP_VERSION as libc::c_int) << 3i32) as u8;
   (*p).next_action_time = (*ptr_to_globals).cur_time;
   reset_peer_stats(p, 1i32 as libc::c_double);
   /* Names like N.<country2chars>.pool.ntp.org are randomly resolved
@@ -1221,7 +1221,7 @@ unsafe extern "C" fn do_sendto(
 unsafe extern "C" fn hash(
   mut key_entry: *mut key_entry_t,
   mut msg: *const msg_t,
-  mut output: *mut uint8_t,
+  mut output: *mut u8,
 ) {
   let mut ctx: C2RustUnnamed_10 = C2RustUnnamed_10 {
     m: md5_ctx_t {
@@ -1232,8 +1232,8 @@ unsafe extern "C" fn hash(
     },
   };
   let mut hash_size: libc::c_uint = (::std::mem::size_of::<msg_t>() as libc::c_ulong)
-    .wrapping_sub(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
-    .wrapping_sub(::std::mem::size_of::<[uint8_t; 20]>() as libc::c_ulong)
+    .wrapping_sub(::std::mem::size_of::<u32>() as libc::c_ulong)
+    .wrapping_sub(::std::mem::size_of::<[u8; 20]>() as libc::c_ulong)
     as libc::c_uint;
   match (*key_entry).type_0 as libc::c_int {
     0 => {
@@ -1286,14 +1286,14 @@ unsafe extern "C" fn hash_peer(mut p: *mut peer_t) {
   );
 }
 unsafe extern "C" fn hashes_differ(mut p: *mut peer_t, mut msg: *const msg_t) -> libc::c_int {
-  let mut digest: [uint8_t; 20] = [0; 20];
+  let mut digest: [u8; 20] = [0; 20];
   hash((*p).key_entry, msg, digest.as_mut_ptr());
   return memcmp(
     digest.as_mut_ptr() as *const libc::c_void,
     (*msg).m_digest.as_ptr() as *const libc::c_void,
     (((*(*p).key_entry).msg_size as libc::c_int - NTP_MSGSIZE_NOAUTH as libc::c_int)
       as libc::c_ulong)
-      .wrapping_sub(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
+      .wrapping_sub(::std::mem::size_of::<u32>() as libc::c_ulong),
   );
 }
 unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
@@ -1358,8 +1358,8 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
    *
    * Save the real transmit timestamp locally.
    */
-  (*p).p_xmt_msg.m_xmttime.int_partl = rand() as uint32_t;
-  (*p).p_xmt_msg.m_xmttime.fractionl = rand() as uint32_t;
+  (*p).p_xmt_msg.m_xmttime.int_partl = rand() as u32;
+  (*p).p_xmt_msg.m_xmttime.fractionl = rand() as u32;
   (*p).p_xmttime = gettime1900d();
   /* Were doing it only if sendto worked, but
    * loss of sync detection needs reachable_bits updated
@@ -1367,7 +1367,7 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
    * "network is unreachable" because cable was pulled?
    * We still need to declare "unsync" if this condition persists.
    */
-  (*p).reachable_bits = (((*p).reachable_bits as libc::c_int) << 1i32) as uint8_t;
+  (*p).reachable_bits = (((*p).reachable_bits as libc::c_int) << 1i32) as u8;
   if !(*p).key_entry.is_null() {
     hash_peer(p);
   }
@@ -1539,13 +1539,13 @@ unsafe extern "C" fn step_time(mut offset: libc::c_double) {
 }
 unsafe extern "C" fn clamp_pollexp_and_set_MAXSTRAT() {
   if ((*ptr_to_globals).poll_exp as libc::c_int) < 5i32 {
-    (*ptr_to_globals).poll_exp = 5i32 as uint8_t
+    (*ptr_to_globals).poll_exp = 5i32 as u8
   }
   if (*ptr_to_globals).poll_exp as libc::c_int > 9i32 {
-    (*ptr_to_globals).poll_exp = 9i32 as uint8_t
+    (*ptr_to_globals).poll_exp = 9i32 as u8
   }
   (*ptr_to_globals).polladj_count = 0i32;
-  (*ptr_to_globals).stratum = 16i32 as uint8_t;
+  (*ptr_to_globals).stratum = 16i32 as u8;
 }
 unsafe extern "C" fn compare_point_edge(
   mut aa: *const libc::c_void,
@@ -2003,7 +2003,7 @@ unsafe extern "C" fn set_new_values(
       recv_time,
     );
   }
-  (*ptr_to_globals).discipline_state = disc_state as uint8_t;
+  (*ptr_to_globals).discipline_state = disc_state as u8;
   (*ptr_to_globals).last_update_offset = offset;
   (*ptr_to_globals).last_update_recv_time = recv_time;
 }
@@ -2139,7 +2139,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
       }
     }
     if (*ptr_to_globals).stratum as libc::c_int != (*p).lastpkt_stratum as libc::c_int + 1i32 {
-      (*ptr_to_globals).stratum = ((*p).lastpkt_stratum as libc::c_int + 1i32) as uint8_t;
+      (*ptr_to_globals).stratum = ((*p).lastpkt_stratum as libc::c_int + 1i32) as u8;
       run_script(b"stratum\x00" as *const u8 as *const libc::c_char, offset);
     }
   }
@@ -2283,8 +2283,8 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   if tmx.constant < 0i32 as libc::c_long {
     tmx.constant = 0i32 as __syscall_slong_t
   }
-  //tmx.esterror = (uint32_t)(clock_jitter * 1e6);
-  //tmx.maxerror = (uint32_t)((sys_rootdelay / 2 + sys_rootdisp) * 1e6);
+  //tmx.esterror = (u32)(clock_jitter * 1e6);
+  //tmx.maxerror = (u32)((sys_rootdelay / 2 + sys_rootdisp) * 1e6);
   rc = adjtimex(&mut tmx);
   if rc < 0i32 {
     bb_simple_perror_msg_and_die(b"adjtimex\x00" as *const u8 as *const libc::c_char);
@@ -2624,7 +2624,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
             i += 1
           }
         }
-        (*p).reachable_bits = ((*p).reachable_bits as libc::c_int | 1i32) as uint8_t;
+        (*p).reachable_bits = ((*p).reachable_bits as libc::c_int | 1i32) as u8;
         if 3i32 != 0 && (*ptr_to_globals).verbose != 0
           || option_mask32 & OPT_w as libc::c_int as libc::c_uint != 0
         {
@@ -2718,7 +2718,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
 /*int fd*/
 {
   let mut size: ssize_t = 0;
-  //uint8_t          version;
+  //u8          version;
   let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut from: *mut sockaddr = 0 as *mut sockaddr;
   let mut msg: msg_t = msg_t {
@@ -2754,7 +2754,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     m_keyid: 0,
     m_digest: [0; 20],
   };
-  let mut query_status: uint8_t = 0;
+  let mut query_status: u8 = 0;
   let mut query_xmttime: l_fixedpt_t = l_fixedpt_t {
     int_partl: 0,
     fractionl: 0,
@@ -2809,15 +2809,15 @@ unsafe extern "C" fn recv_and_process_client_pkt()
       ((*ptr_to_globals).ntp_status as libc::c_int) & LI_MASK as libc::c_int
     } else {
       LI_ALARM as libc::c_int
-    } as uint8_t;
+    } as u8;
     msg.m_status = (msg.m_status as libc::c_int
-      | query_status as libc::c_int & VERSION_MASK as libc::c_int) as uint8_t;
+      | query_status as libc::c_int & VERSION_MASK as libc::c_int) as u8;
     msg.m_status = (msg.m_status as libc::c_int
       | if query_status as libc::c_int & MODE_MASK as libc::c_int == MODE_CLIENT as libc::c_int {
         MODE_SERVER as libc::c_int
       } else {
         MODE_SYM_PAS as libc::c_int
-      }) as uint8_t;
+      }) as u8;
     msg.m_stratum = (*ptr_to_globals).stratum;
     msg.m_ppoll = (*ptr_to_globals).poll_exp;
     msg.m_precision_exp = -9i32 as int8_t;
@@ -2965,9 +2965,9 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   }
   /* Set some globals */
   (*ptr_to_globals).discipline_jitter = 0.002f64; /* speeds up initial sync */
-  (*ptr_to_globals).stratum = 16i32 as uint8_t; /* sets G.cur_time too */
+  (*ptr_to_globals).stratum = 16i32 as u8; /* sets G.cur_time too */
   if 0i32 != 0i32 {
-    (*ptr_to_globals).poll_exp = 0i32 as uint8_t
+    (*ptr_to_globals).poll_exp = 0i32 as u8
   }
   (*ptr_to_globals).last_update_recv_time = gettime1900d();
   (*ptr_to_globals).reftime = (*ptr_to_globals).last_update_recv_time;
@@ -3175,7 +3175,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       bb_show_usage();
     }
     /* -l but no peers: "stratum 1 server" mode */
-    (*ptr_to_globals).stratum = 1i32 as uint8_t
+    (*ptr_to_globals).stratum = 1i32 as u8
   }
   if opts & OPT_n as libc::c_int as libc::c_uint == 0 {
     /* only if backgrounded: */
@@ -3297,7 +3297,7 @@ pub unsafe extern "C" fn ntpd_main(
               bb_simple_error_msg(b"disabling burst mode\x00" as *const u8 as *const libc::c_char);
             }
             G.polladj_count = 0i32;
-            G.poll_exp = 5i32 as uint8_t
+            G.poll_exp = 5i32 as u8
           }
           send_query_to_peer(p);
         } else {

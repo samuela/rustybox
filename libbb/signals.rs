@@ -25,7 +25,7 @@ extern "C" {
 use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-use crate::librb::__uint32_t;
+
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::smallint;
@@ -66,7 +66,7 @@ pub struct C2RustUnnamed_2 {
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
-  pub _pkey: __uint32_t,
+  pub _pkey: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -38,7 +38,7 @@ extern "C" {
 use crate::librb::__ssize_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
- use libc::uint8_t;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -384,7 +384,7 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -643,8 +643,8 @@ pub unsafe extern "C" fn config_read(
     delims = delims.offset(1);
     alt_comment_ch = *fresh0
   }
-  ntokens = flags as uint8_t as libc::c_int;
-  mintokens = (flags >> 8i32) as uint8_t as libc::c_int;
+  ntokens = flags as u8 as libc::c_int;
+  mintokens = (flags >> 8i32) as u8 as libc::c_int;
   loop {
     memset(
       tokens as *mut libc::c_void,

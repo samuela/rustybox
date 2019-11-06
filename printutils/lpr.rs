@@ -57,7 +57,7 @@ extern "C" {
   #[no_mangle]
   fn xuid2uname(uid: uid_t) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
@@ -83,7 +83,7 @@ use crate::librb::ssize_t;
 
 use libc::stat;
 use libc::uid_t;
-use libc::uint32_t;
+
 // -U username
 pub const LPR_V: C2RustUnnamed = 4;
 // -J title: the job title for the banner page

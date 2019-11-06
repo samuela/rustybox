@@ -19,7 +19,7 @@ extern "C" {
   fn xopen_stdin(pathname: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
@@ -65,7 +65,7 @@ use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc::time_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -113,9 +113,6 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use libc::uint16_t;
- use libc::uint8_t;
-
 use libc::FILE;
 pub type va_list = __builtin_va_list;
 use crate::librb::cc_t;
@@ -153,15 +150,15 @@ pub const control: C2RustUnnamed = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct control_info {
-  pub saneval: uint8_t,
-  pub offset: uint8_t,
+  pub saneval: u8,
+  pub offset: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mode_info {
-  pub type_0: uint8_t,
-  pub flags: uint8_t,
-  pub mask: uint16_t,
+  pub type_0: u8,
+  pub flags: u8,
+  pub mask: u16,
   pub bits: tcflag_t,
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -235,12 +232,7 @@ unsafe extern "C" fn get_ptr_to_tcflag(
   mut type_0: libc::c_uint,
   mut mode: *const termios,
 ) -> *mut tcflag_t {
-  static mut tcflag_offsets: [uint8_t; 4] = [
-    8u64 as uint8_t,
-    0u64 as uint8_t,
-    4u64 as uint8_t,
-    12u64 as uint8_t,
-  ];
+  static mut tcflag_offsets: [u8; 4] = [8u64 as u8, 0u64 as u8, 4u64 as u8, 12u64 as u8];
   if type_0 <= local as libc::c_int as libc::c_uint {
     return (mode as *mut libc::c_char)
       .offset(tcflag_offsets[type_0 as usize] as libc::c_int as isize) as *mut tcflag_t;
@@ -277,801 +269,801 @@ static mut mode_name: [libc::c_char; 524] = [
 static mut mode_info: [mode_info; 89] = [
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: 8i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: 8i32 as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: 8i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: 8i32 as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: 8i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: 8i32 as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: 8i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: 8i32 as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: combination as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: combination as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o10000000000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 0i32 as uint8_t,
-      mask: 0o60i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 0i32 as u8,
+      mask: 0o60i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 0i32 as uint8_t,
-      mask: 0o60i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 0i32 as u8,
+      mask: 0o60i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 0i32 as uint8_t,
-      mask: 0o60i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 0i32 as u8,
+      mask: 0o60i32 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 0i32 as uint8_t,
-      mask: 0o60i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 0i32 as u8,
+      mask: 0o60i32 as u16,
       bits: 0o60i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: (4i32 | 8i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: (4i32 | 8i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: control as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: control as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o20000000000u32,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: 4i32 as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: 4i32 as u8,
+      mask: 0i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (8i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (8i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o20000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: input as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: input as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o40000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o400i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o400i32 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o400i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o400i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o3000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o3000i32 as u16,
       bits: 0o3000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o3000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o3000i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o3000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o3000i32 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o3000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o3000i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o14000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o14000i32 as u16,
       bits: 0o14000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o14000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o14000i32 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o14000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o14000i32 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o14000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o14000i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o20000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o20000i32 as u16,
       bits: 0o20000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o20000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o20000i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o40000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o40000i32 as u16,
       bits: 0o40000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o40000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o40000i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 2i32 as uint8_t,
-      mask: 0o100000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 2i32 as u8,
+      mask: 0o100000i32 as u16,
       bits: 0o100000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: output as libc::c_int as uint8_t,
-      flags: 1i32 as uint8_t,
-      mask: 0o100000i32 as uint16_t,
+      type_0: output as libc::c_int as u8,
+      flags: 1i32 as u8,
+      mask: 0o100000i32 as u16,
       bits: 0i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o100000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (8i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (8i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (8i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (8i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (8i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (8i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (1i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (1i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (8i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (8i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
-      type_0: local as libc::c_int as uint8_t,
-      flags: (2i32 | 4i32) as uint8_t,
-      mask: 0i32 as uint16_t,
+      type_0: local as libc::c_int as u8,
+      flags: (2i32 | 4i32) as u8,
+      mask: 0i32 as u16,
       bits: 0o200000i32 as tcflag_t,
     };
     init
@@ -1087,120 +1079,120 @@ static mut control_name: [libc::c_char; 91] = [
 static mut control_info: [control_info; 17] = [
   {
     let mut init = control_info {
-      saneval: ('c' as i32 & 0o37i32) as uint8_t,
-      offset: 0i32 as uint8_t,
+      saneval: ('c' as i32 & 0o37i32) as u8,
+      offset: 0i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: 0o34i32 as uint8_t,
-      offset: 1i32 as uint8_t,
+      saneval: 0o34i32 as u8,
+      offset: 1i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: 0o177i32 as uint8_t,
-      offset: 2i32 as uint8_t,
+      saneval: 0o177i32 as u8,
+      offset: 2i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('u' as i32 & 0o37i32) as uint8_t,
-      offset: 3i32 as uint8_t,
+      saneval: ('u' as i32 & 0o37i32) as u8,
+      offset: 3i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('d' as i32 & 0o37i32) as uint8_t,
-      offset: 4i32 as uint8_t,
+      saneval: ('d' as i32 & 0o37i32) as u8,
+      offset: 4i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: '\u{0}' as i32 as uint8_t,
-      offset: 11i32 as uint8_t,
+      saneval: '\u{0}' as i32 as u8,
+      offset: 11i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: '\u{0}' as i32 as uint8_t,
-      offset: 16i32 as uint8_t,
+      saneval: '\u{0}' as i32 as u8,
+      offset: 16i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: '\u{0}' as i32 as uint8_t,
-      offset: 7i32 as uint8_t,
+      saneval: '\u{0}' as i32 as u8,
+      offset: 7i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('q' as i32 & 0o37i32) as uint8_t,
-      offset: 8i32 as uint8_t,
+      saneval: ('q' as i32 & 0o37i32) as u8,
+      offset: 8i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('s' as i32 & 0o37i32) as uint8_t,
-      offset: 9i32 as uint8_t,
+      saneval: ('s' as i32 & 0o37i32) as u8,
+      offset: 9i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('z' as i32 & 0o37i32) as uint8_t,
-      offset: 10i32 as uint8_t,
+      saneval: ('z' as i32 & 0o37i32) as u8,
+      offset: 10i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('r' as i32 & 0o37i32) as uint8_t,
-      offset: 12i32 as uint8_t,
+      saneval: ('r' as i32 & 0o37i32) as u8,
+      offset: 12i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('w' as i32 & 0o37i32) as uint8_t,
-      offset: 14i32 as uint8_t,
+      saneval: ('w' as i32 & 0o37i32) as u8,
+      offset: 14i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('v' as i32 & 0o37i32) as uint8_t,
-      offset: 15i32 as uint8_t,
+      saneval: ('v' as i32 & 0o37i32) as u8,
+      offset: 15i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: ('o' as i32 & 0x1fi32) as uint8_t,
-      offset: 13i32 as uint8_t,
+      saneval: ('o' as i32 & 0x1fi32) as u8,
+      offset: 13i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: 1i32 as uint8_t,
-      offset: 6i32 as uint8_t,
+      saneval: 1i32 as u8,
+      offset: 6i32 as u8,
     };
     init
   },
   {
     let mut init = control_info {
-      saneval: 0i32 as uint8_t,
-      offset: 5i32 as uint8_t,
+      saneval: 0i32 as u8,
+      offset: 5i32 as u8,
     };
     init
   },

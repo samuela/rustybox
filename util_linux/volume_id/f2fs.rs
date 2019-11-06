@@ -4,23 +4,23 @@ extern "C" {
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -29,8 +29,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -54,38 +54,38 @@ pub const LE: endian = 0;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct f2fs_super_block {
-  pub magic: uint32_t,
-  pub major_ver: uint16_t,
-  pub minor_ver: uint16_t,
-  pub log_sectorsize: uint32_t,
-  pub log_sectors_per_block: uint32_t,
-  pub log_blocksize: uint32_t,
-  pub log_blocks_per_seg: uint32_t,
-  pub segs_per_sec: uint32_t,
-  pub secs_per_zone: uint32_t,
-  pub checksum_offset: uint32_t,
+  pub magic: u32,
+  pub major_ver: u16,
+  pub minor_ver: u16,
+  pub log_sectorsize: u32,
+  pub log_sectors_per_block: u32,
+  pub log_blocksize: u32,
+  pub log_blocks_per_seg: u32,
+  pub segs_per_sec: u32,
+  pub secs_per_zone: u32,
+  pub checksum_offset: u32,
   pub block_count: uint64_t,
-  pub section_count: uint32_t,
-  pub segment_count: uint32_t,
-  pub segment_count_ckpt: uint32_t,
-  pub segment_count_sit: uint32_t,
-  pub segment_count_nat: uint32_t,
-  pub segment_count_ssa: uint32_t,
-  pub segment_count_main: uint32_t,
-  pub segment0_blkaddr: uint32_t,
-  pub cp_blkaddr: uint32_t,
-  pub sit_blkaddr: uint32_t,
-  pub nat_blkaddr: uint32_t,
-  pub ssa_blkaddr: uint32_t,
-  pub main_blkaddr: uint32_t,
-  pub root_ino: uint32_t,
-  pub node_ino: uint32_t,
-  pub meta_ino: uint32_t,
-  pub uuid: [uint8_t; 16],
-  pub volume_name: [uint16_t; 512],
+  pub section_count: u32,
+  pub segment_count: u32,
+  pub segment_count_ckpt: u32,
+  pub segment_count_sit: u32,
+  pub segment_count_nat: u32,
+  pub segment_count_ssa: u32,
+  pub segment_count_main: u32,
+  pub segment0_blkaddr: u32,
+  pub cp_blkaddr: u32,
+  pub sit_blkaddr: u32,
+  pub nat_blkaddr: u32,
+  pub ssa_blkaddr: u32,
+  pub main_blkaddr: u32,
+  pub root_ino: u32,
+  pub node_ino: u32,
+  pub meta_ino: u32,
+  pub uuid: [u8; 16],
+  pub volume_name: [u16; 512],
   // volume name
-  // /* 0x47C */	uint32_t	extension_count;	// # of extensions below
-  // /* 0x480 */	uint8_t		extension_list[64][8];	// extension array
+  // /* 0x47C */	u32	extension_count;	// # of extensions below
+  // /* 0x480 */	u8		extension_list[64][8];	// extension array
 }
 
 /*
@@ -110,9 +110,9 @@ pub struct f2fs_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -132,7 +132,7 @@ pub struct f2fs_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -180,14 +180,14 @@ pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c
   }
   (*id).type_0 = b"f2fs\x00" as *const u8 as *const libc::c_char;
   // For version 1.0 we don't know sb structure and can't set label/uuid
-  if (*sb).major_ver as libc::c_int == 1i32 as uint16_t as libc::c_int
-    && (*sb).minor_ver as libc::c_int == 0i32 as uint16_t as libc::c_int
+  if (*sb).major_ver as libc::c_int == 1i32 as u16 as libc::c_int
+    && (*sb).minor_ver as libc::c_int == 0i32 as u16 as libc::c_int
   {
     return 0i32;
   }
   volume_id_set_label_unicode16(
     id,
-    (*sb).volume_name.as_mut_ptr() as *mut uint8_t,
+    (*sb).volume_name.as_mut_ptr() as *mut u8,
     LE,
     if 1024i32 < 64i32 { 1024i32 } else { 64i32 } as size_t,
   );

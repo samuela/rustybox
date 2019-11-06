@@ -5,7 +5,7 @@ use libc::FILE;
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __dev_t, __mode_t, __off_t, bb_uidgid_t, dev_t, fd_pair, gid_t, mode_t, off_t, pid_t, size_t,
-  smallint, time_t, uid_t, uint32_t, uoff_t,
+  smallint, time_t, uid_t, uoff_t,
 };
 
 extern "C" {
@@ -96,7 +96,7 @@ extern "C" {
   fn xfork() -> pid_t;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
   fn getopt32long(
@@ -104,7 +104,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
@@ -388,13 +388,13 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
           bytes += printf(
             b"070701%08X%08X%08X%08X%08X%08X%08X%08X%08X%08X%08X%08X00000000%s%c\x00" as *const u8
               as *const libc::c_char,
-            st.st_ino as uint32_t,
+            st.st_ino as u32,
             st.st_mode,
             st.st_uid,
             st.st_gid,
-            st.st_nlink as uint32_t,
-            st.st_mtime as uint32_t,
-            st.st_size as uint32_t,
+            st.st_nlink as u32,
+            st.st_mtime as u32,
+            st.st_size as u32,
             gnu_dev_major(st.st_dev),
             gnu_dev_minor(st.st_dev),
             gnu_dev_major(st.st_rdev),

@@ -53,9 +53,9 @@ extern "C" {
   #[no_mangle]
   fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
   #[no_mangle]
@@ -79,7 +79,7 @@ use crate::librb::smallint;
 use libc::ino_t;
 use libc::stat;
 
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

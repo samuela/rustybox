@@ -16,14 +16,13 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-use libc::uint32_t;
 #[no_mangle]
 pub unsafe extern "C" fn rmdir_main(
   mut _argc: libc::c_int,

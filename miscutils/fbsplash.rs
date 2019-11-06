@@ -54,7 +54,7 @@ extern "C" {
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -94,8 +94,8 @@ use crate::librb::__off64_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -137,69 +137,69 @@ pub struct globals {
 pub struct fb_fix_screeninfo {
   pub id: [libc::c_char; 16],
   pub smem_start: libc::c_ulong,
-  pub smem_len: __u32,
-  pub type_0: __u32,
-  pub type_aux: __u32,
-  pub visual: __u32,
+  pub smem_len: u32,
+  pub type_0: u32,
+  pub type_aux: u32,
+  pub visual: u32,
   pub xpanstep: __u16,
   pub ypanstep: __u16,
   pub ywrapstep: __u16,
-  pub line_length: __u32,
+  pub line_length: u32,
   pub mmio_start: libc::c_ulong,
-  pub mmio_len: __u32,
-  pub accel: __u32,
+  pub mmio_len: u32,
+  pub accel: u32,
   pub capabilities: __u16,
   pub reserved: [__u16; 2],
 }
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_var_screeninfo {
-  pub xres: __u32,
-  pub yres: __u32,
-  pub xres_virtual: __u32,
-  pub yres_virtual: __u32,
-  pub xoffset: __u32,
-  pub yoffset: __u32,
-  pub bits_per_pixel: __u32,
-  pub grayscale: __u32,
+  pub xres: u32,
+  pub yres: u32,
+  pub xres_virtual: u32,
+  pub yres_virtual: u32,
+  pub xoffset: u32,
+  pub yoffset: u32,
+  pub bits_per_pixel: u32,
+  pub grayscale: u32,
   pub red: fb_bitfield,
   pub green: fb_bitfield,
   pub blue: fb_bitfield,
   pub transp: fb_bitfield,
-  pub nonstd: __u32,
-  pub activate: __u32,
-  pub height: __u32,
-  pub width: __u32,
-  pub accel_flags: __u32,
-  pub pixclock: __u32,
-  pub left_margin: __u32,
-  pub right_margin: __u32,
-  pub upper_margin: __u32,
-  pub lower_margin: __u32,
-  pub hsync_len: __u32,
-  pub vsync_len: __u32,
-  pub sync: __u32,
-  pub vmode: __u32,
-  pub rotate: __u32,
-  pub colorspace: __u32,
-  pub reserved: [__u32; 4],
+  pub nonstd: u32,
+  pub activate: u32,
+  pub height: u32,
+  pub width: u32,
+  pub accel_flags: u32,
+  pub pixclock: u32,
+  pub left_margin: u32,
+  pub right_margin: u32,
+  pub upper_margin: u32,
+  pub lower_margin: u32,
+  pub hsync_len: u32,
+  pub vsync_len: u32,
+  pub sync: u32,
+  pub vmode: u32,
+  pub rotate: u32,
+  pub colorspace: u32,
+  pub reserved: [u32; 4],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_bitfield {
-  pub offset: __u32,
-  pub length: __u32,
-  pub msb_right: __u32,
+  pub offset: u32,
+  pub length: u32,
+  pub msb_right: u32,
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_cmap {
-  pub start: __u32,
-  pub len: __u32,
+  pub start: u32,
+  pub len: u32,
   pub red: *mut __u16,
   pub green: *mut __u16,
   pub blue: *mut __u16,
@@ -258,8 +258,8 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
       (i & 0x3i32 as libc::c_uint).wrapping_mul(0x5555i32 as libc::c_uint) as libc::c_ushort;
     i = i.wrapping_add(1)
   }
-  cmap.start = 0i32 as __u32;
-  cmap.len = 256i32 as __u32;
+  cmap.start = 0i32 as u32;
+  cmap.len = 256i32 as u32;
   cmap.red = red.as_mut_ptr();
   cmap.green = green.as_mut_ptr();
   cmap.blue = blue.as_mut_ptr();
@@ -384,8 +384,8 @@ unsafe extern "C" fn fb_pixel_value(
 unsafe extern "C" fn fb_write_pixel(mut addr: *mut libc::c_uchar, mut pixel: libc::c_uint) {
   match (*ptr_to_globals).bytes_per_pixel {
     1 => *addr = pixel as libc::c_uchar,
-    2 => *(addr as *mut uint16_t) = pixel as uint16_t,
-    4 => *(addr as *mut uint32_t) = pixel,
+    2 => *(addr as *mut u16) = pixel as u16,
+    4 => *(addr as *mut u32) = pixel,
     _ => {
       // 24 bits per pixel
       *addr.offset(0) = pixel as libc::c_uchar;

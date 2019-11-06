@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -36,7 +36,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
-use libc::uint32_t;
+
 use libc::stat;
 
 /*

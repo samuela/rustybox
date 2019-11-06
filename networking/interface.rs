@@ -111,16 +111,16 @@ extern "C" {
   fn INET_rresolve(
     s_in: *mut sockaddr_in,
     numeric: libc::c_int,
-    netmask: uint32_t,
+    netmask: u32,
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type intptr_t = libc::c_long;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -156,9 +156,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -168,11 +168,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -186,7 +186,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -1656,7 +1656,7 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

@@ -34,14 +34,14 @@ extern "C" {
   #[no_mangle]
   fn parse_chown_usergroup_or_die(u: *mut bb_uidgid_t, user_group: *mut libc::c_char);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
@@ -53,7 +53,7 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::gid_t;
 use libc::stat;
 use libc::uid_t;
-use libc::uint32_t;
+
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
@@ -384,7 +384,7 @@ unsafe extern "C" fn fileAction(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

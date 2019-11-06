@@ -36,7 +36,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -54,8 +54,7 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use libc::uint16_t;
-use libc::uint32_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -209,7 +208,7 @@ pub struct ifmap {
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type net_device_flags = libc::c_uint;
 pub const IFF_ECHO: net_device_flags = 262144;
 pub const IFF_DORMANT: net_device_flags = 131072;
@@ -233,26 +232,26 @@ pub const IFF_UP: net_device_flags = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ethtool_drvinfo {
-  pub cmd: __u32,
+  pub cmd: u32,
   pub driver: [libc::c_char; 32],
   pub version: [libc::c_char; 32],
   pub fw_version: [libc::c_char; 32],
   pub bus_info: [libc::c_char; 32],
   pub erom_version: [libc::c_char; 32],
   pub reserved2: [libc::c_char; 12],
-  pub n_priv_flags: __u32,
-  pub n_stats: __u32,
-  pub testinfo_len: __u32,
-  pub eedump_len: __u32,
-  pub regdump_len: __u32,
+  pub n_priv_flags: u32,
+  pub n_stats: u32,
+  pub testinfo_len: u32,
+  pub eedump_len: u32,
+  pub regdump_len: u32,
 }
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const skfd: C2RustUnnamed_2 = 3;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_3 {
-  pub g_ioctl: uint16_t,
-  pub s_ioctl: uint16_t,
+  pub g_ioctl: u16,
+  pub s_ioctl: u16,
 }
 pub const OPT_d: C2RustUnnamed_4 = 2;
 pub const OPT_c: C2RustUnnamed_4 = 1;
@@ -391,29 +390,29 @@ unsafe extern "C" fn set_if_addr(
   static mut ifra: [C2RustUnnamed_3; 4] = [
     {
       let mut init = C2RustUnnamed_3 {
-        g_ioctl: 0x8915i32 as uint16_t,
-        s_ioctl: 0x8916i32 as uint16_t,
+        g_ioctl: 0x8915i32 as u16,
+        s_ioctl: 0x8916i32 as u16,
       };
       init
     },
     {
       let mut init = C2RustUnnamed_3 {
-        g_ioctl: 0x8917i32 as uint16_t,
-        s_ioctl: 0x8918i32 as uint16_t,
+        g_ioctl: 0x8917i32 as u16,
+        s_ioctl: 0x8918i32 as u16,
       };
       init
     },
     {
       let mut init = C2RustUnnamed_3 {
-        g_ioctl: 0x8919i32 as uint16_t,
-        s_ioctl: 0x891ai32 as uint16_t,
+        g_ioctl: 0x8919i32 as u16,
+        s_ioctl: 0x891ai32 as u16,
       };
       init
     },
     {
       let mut init = C2RustUnnamed_3 {
-        g_ioctl: 0x891bi32 as uint16_t,
-        s_ioctl: 0x891ci32 as uint16_t,
+        g_ioctl: 0x891bi32 as u16,
+        s_ioctl: 0x891ci32 as u16,
       };
       init
     },
@@ -762,7 +761,7 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   ifr.ifr_ifru.ifru_data = &mut info as *mut ethtool_drvinfo as caddr_t as *mut libc::c_void;
-  info.cmd = 0x3i32 as __u32;
+  info.cmd = 0x3i32 as u32;
   /* both fields are 32 bytes long (long enough) */
   strcpy(
     info.driver.as_mut_ptr(),

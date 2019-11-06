@@ -25,7 +25,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 }
 
 use crate::librb::__ino64_t;
@@ -38,7 +38,7 @@ pub type __cpu_mask = libc::c_ulong;
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

@@ -27,24 +27,24 @@ extern "C" {
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
-  static mut global_crc32_table: *mut uint32_t;
+  static mut global_crc32_table: *mut u32;
   #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut uint32_t;
+  fn global_crc32_new_table_le() -> *mut u32;
   #[no_mangle]
   fn crc32_block_endian0(
-    val: uint32_t,
+    val: u32,
     buf: *const libc::c_void,
     len: libc::c_uint,
-    crc_table: *mut uint32_t,
-  ) -> uint32_t;
+    crc_table: *mut u32,
+  ) -> u32;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
   #[no_mangle]
@@ -91,29 +91,29 @@ extern "C" {
   */
   #[no_mangle]
   fn lzo1x_1_compress(
-    src: *const uint8_t,
+    src: *const u8,
     src_len: libc::c_uint,
-    dst: *mut uint8_t,
+    dst: *mut u8,
     dst_len: *mut libc::c_uint,
     wrkmem: *mut libc::c_void,
   ) -> libc::c_int;
   #[no_mangle]
   fn lzo1x_1_15_compress(
-    src: *const uint8_t,
+    src: *const u8,
     src_len: libc::c_uint,
-    dst: *mut uint8_t,
+    dst: *mut u8,
     dst_len: *mut libc::c_uint,
     wrkmem: *mut libc::c_void,
   ) -> libc::c_int;
   /* decompression */
-  //int lzo1x_decompress(const uint8_t* src, unsigned src_len,
-  //		uint8_t* dst, unsigned* dst_len /*, void* wrkmem */);
+  //int lzo1x_decompress(const u8* src, unsigned src_len,
+  //		u8* dst, unsigned* dst_len /*, void* wrkmem */);
   /* safe decompression with overrun testing */
   #[no_mangle]
   fn lzo1x_decompress_safe(
-    src: *const uint8_t,
+    src: *const u8,
     src_len: libc::c_uint,
-    dst: *mut uint8_t,
+    dst: *mut u8,
     dst_len: *mut libc::c_uint,
   ) -> libc::c_int;
 }
@@ -123,9 +123,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -144,8 +144,8 @@ pub struct globals {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct chksum_t {
-  pub f_adler32: uint32_t,
-  pub f_crc32: uint32_t,
+  pub f_adler32: u32,
+  pub f_crc32: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -159,16 +159,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const M_LZO1X_999: C2RustUnnamed_0 = 3;
@@ -177,15 +177,15 @@ pub const M_LZO1X_1: C2RustUnnamed_0 = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct header_t {
-  pub version_be16: uint16_t,
-  pub lib_version_be16: uint16_t,
-  pub version_needed_to_extract_be16: uint16_t,
-  pub method: uint8_t,
-  pub level: uint8_t,
-  pub flags32: uint32_t,
-  pub mode_be32: uint32_t,
-  pub mtime_be32: uint32_t,
-  pub gmtdiff_be32: uint32_t,
+  pub version_be16: u16,
+  pub lib_version_be16: u16,
+  pub version_needed_to_extract_be16: u16,
+  pub method: u8,
+  pub level: u8,
+  pub flags32: u32,
+  pub mode_be32: u32,
+  pub mtime_be32: u32,
+  pub gmtdiff_be32: u32,
   pub len_and_name: [libc::c_char; 257],
 }
 /* Note: must be kept in sync with archival/bbunzip.c */
@@ -216,7 +216,7 @@ pub const LZO_BASE: C2RustUnnamed_2 = 65521;
  * 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1 */
 pub const LZO_NMAX: C2RustUnnamed_2 = 5552;
 pub type C2RustUnnamed_2 = libc::c_uint;
-unsafe extern "C" fn copy2(mut ip: *mut uint8_t, mut m_pos: *const uint8_t, mut off: libc::c_uint) {
+unsafe extern "C" fn copy2(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
   *ip.offset(0) = *m_pos.offset(0);
   if off == 1i32 as libc::c_uint {
     *ip.offset(1) = *m_pos.offset(0)
@@ -224,7 +224,7 @@ unsafe extern "C" fn copy2(mut ip: *mut uint8_t, mut m_pos: *const uint8_t, mut 
     *ip.offset(1) = *m_pos.offset(1)
   };
 }
-unsafe extern "C" fn copy3(mut ip: *mut uint8_t, mut m_pos: *const uint8_t, mut off: libc::c_uint) {
+unsafe extern "C" fn copy3(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
   *ip.offset(0) = *m_pos.offset(0);
   if off == 1i32 as libc::c_uint {
     let ref mut fresh0 = *ip.offset(1);
@@ -240,19 +240,19 @@ unsafe extern "C" fn copy3(mut ip: *mut uint8_t, mut m_pos: *const uint8_t, mut 
 }
 #[inline(never)]
 unsafe extern "C" fn lzo1x_optimize(
-  mut in_0: *mut uint8_t,
+  mut in_0: *mut u8,
   mut in_len: libc::c_uint,
-  mut out: *mut uint8_t,
+  mut out: *mut u8,
   mut out_len: *mut libc::c_uint,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut op: *mut uint8_t = 0 as *mut uint8_t;
-  let mut ip: *mut uint8_t = 0 as *mut uint8_t;
+  let mut op: *mut u8 = 0 as *mut u8;
+  let mut ip: *mut u8 = 0 as *mut u8;
   let mut t: libc::c_uint = 0;
-  let mut m_pos: *mut uint8_t = 0 as *mut uint8_t;
-  let ip_end: *mut uint8_t = in_0.offset(in_len as isize);
-  let op_end: *mut uint8_t = out.offset(*out_len as isize);
-  let mut litp: *mut uint8_t = 0 as *mut uint8_t;
+  let mut m_pos: *mut u8 = 0 as *mut u8;
+  let ip_end: *mut u8 = in_0.offset(in_len as isize);
+  let op_end: *mut u8 = out.offset(*out_len as isize);
+  let mut litp: *mut u8 = 0 as *mut u8;
   let mut lit: libc::c_uint = 0i32 as libc::c_uint;
   let mut next_lit: libc::c_uint = (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
@@ -402,7 +402,7 @@ unsafe extern "C" fn lzo1x_optimize(
               let fresh21 = ip;
               ip = ip.offset(1);
               t = *fresh21 as libc::c_uint;
-              *litp = (*litp as libc::c_int & !3i32) as uint8_t;
+              *litp = (*litp as libc::c_int & !3i32) as u8;
               copy2(
                 ip.offset(-3).offset(1),
                 m_pos,
@@ -595,7 +595,7 @@ unsafe extern "C" fn lzo1x_optimize(
               let fresh44 = ip;
               ip = ip.offset(1);
               t = *fresh44 as libc::c_uint;
-              *litp = (*litp as libc::c_int & !3i32) as uint8_t;
+              *litp = (*litp as libc::c_int & !3i32) as u8;
               copy3(
                 ip.offset(-4).offset(1),
                 m_pos,
@@ -732,15 +732,15 @@ unsafe extern "C" fn lzo1x_optimize(
 // see http://www.zlib.org/
 /* *********************************************************************/
 unsafe extern "C" fn lzo_adler32(
-  mut adler: uint32_t,
-  mut buf: *const uint8_t,
+  mut adler: u32,
+  mut buf: *const u8,
   mut len: libc::c_uint,
-) -> uint32_t {
-  let mut s1: uint32_t = adler & 0xffffi32 as libc::c_uint;
-  let mut s2: uint32_t = adler >> 16i32 & 0xffffi32 as libc::c_uint;
+) -> u32 {
+  let mut s1: u32 = adler & 0xffffi32 as libc::c_uint;
+  let mut s2: u32 = adler >> 16i32 & 0xffffi32 as libc::c_uint;
   let mut k: libc::c_uint = 0;
   if buf.is_null() {
-    return 1i32 as uint32_t;
+    return 1i32 as u32;
   }
   while len > 0i32 as libc::c_uint {
     k = if len < LZO_NMAX as libc::c_int as libc::c_uint {
@@ -753,26 +753,26 @@ unsafe extern "C" fn lzo_adler32(
       loop {
         let fresh60 = buf;
         buf = buf.offset(1);
-        s1 = (s1 as libc::c_uint).wrapping_add(*fresh60 as libc::c_uint) as uint32_t as uint32_t;
-        s2 = (s2 as libc::c_uint).wrapping_add(s1) as uint32_t as uint32_t;
+        s1 = (s1 as libc::c_uint).wrapping_add(*fresh60 as libc::c_uint) as u32 as u32;
+        s2 = (s2 as libc::c_uint).wrapping_add(s1) as u32 as u32;
         k = k.wrapping_sub(1);
         if !(k > 0i32 as libc::c_uint) {
           break;
         }
       }
     }
-    s1 = (s1 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as uint32_t
-      as uint32_t;
-    s2 = (s2 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as uint32_t
-      as uint32_t
+    s1 = (s1 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32
+      as u32;
+    s2 = (s2 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32
+      as u32
   }
   return s2 << 16i32 | s1;
 }
 unsafe extern "C" fn lzo_crc32(
-  mut c: uint32_t,
-  mut buf: *const uint8_t,
+  mut c: u32,
+  mut buf: *const u8,
   mut len: libc::c_uint,
-) -> uint32_t {
+) -> u32 {
   //if (buf == NULL) - impossible
   //	return 0;
   return !crc32_block_endian0(!c, buf as *const libc::c_void, len, global_crc32_table);
@@ -781,10 +781,10 @@ unsafe extern "C" fn lzo_crc32(
 unsafe extern "C" fn init_chksum() {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .chksum
-    .f_adler32 = 1i32 as uint32_t;
+    .f_adler32 = 1i32 as u32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .chksum
-    .f_crc32 = 0i32 as uint32_t;
+    .f_crc32 = 0i32 as u32;
 }
 unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
   /* We need to handle the two checksums at once, because at the
@@ -796,7 +796,7 @@ unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: 
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .chksum
       .f_adler32,
-    buf as *const uint8_t,
+    buf as *const u8,
     cnt as libc::c_uint,
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -805,11 +805,11 @@ unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: 
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .chksum
       .f_crc32,
-    buf as *const uint8_t,
+    buf as *const u8,
     cnt as libc::c_uint,
   );
 }
-unsafe extern "C" fn chksum_getresult(mut h_flags32: uint32_t) -> uint32_t {
+unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
   return if h_flags32 as libc::c_long & 0x1000i64 != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .chksum
@@ -821,11 +821,11 @@ unsafe extern "C" fn chksum_getresult(mut h_flags32: uint32_t) -> uint32_t {
   };
 }
 /* *********************************************************************/
-unsafe extern "C" fn read32() -> uint32_t {
-  let mut v: uint32_t = 0;
+unsafe extern "C" fn read32() -> u32 {
+  let mut v: u32 = 0;
   xread(
     0i32,
-    &mut v as *mut uint32_t as *mut libc::c_void,
+    &mut v as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
   );
   return {
@@ -854,19 +854,19 @@ unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
 }
 //static int f_read8(void)
 //{
-//	uint8_t v;
+//	u8 v;
 //	f_read(&v, 1);
 //	return v;
 //}
 //static unsigned f_read16(void)
 //{
-//	uint16_t v;
+//	u16 v;
 //	f_read(&v, 2);
 //	return ntohs(v);
 //}
-unsafe extern "C" fn f_read32() -> uint32_t {
-  let mut v: uint32_t = 0;
-  f_read(&mut v as *mut uint32_t as *mut libc::c_void, 4i32);
+unsafe extern "C" fn f_read32() -> u32 {
+  let mut v: u32 = 0;
+  f_read(&mut v as *mut u32 as *mut libc::c_void, 4i32);
   return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
@@ -887,7 +887,7 @@ unsafe extern "C" fn f_read32() -> uint32_t {
     __v
   };
 }
-unsafe extern "C" fn write32(mut v: uint32_t) {
+unsafe extern "C" fn write32(mut v: u32) {
   v = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
@@ -909,7 +909,7 @@ unsafe extern "C" fn write32(mut v: uint32_t) {
   };
   xwrite(
     1i32,
-    &mut v as *mut uint32_t as *const libc::c_void,
+    &mut v as *mut u32 as *const libc::c_void,
     4i32 as size_t,
   );
 }
@@ -926,16 +926,16 @@ unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int)
 unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint; /* LZO_E_OK */
   let mut r: libc::c_int = 0i32;
-  let b1: *mut uint8_t = xzalloc(block_size as size_t) as *mut uint8_t;
-  let b2: *mut uint8_t = xzalloc(
+  let b1: *mut u8 = xzalloc(block_size as size_t) as *mut u8;
+  let b2: *mut u8 = xzalloc(
     block_size
       .wrapping_add(block_size.wrapping_div(16i32 as libc::c_uint))
       .wrapping_add(64i32 as libc::c_uint)
       .wrapping_add(3i32 as libc::c_uint) as size_t,
-  ) as *mut uint8_t;
-  let mut d_adler32: uint32_t = 1i32 as uint32_t;
-  let mut d_crc32: uint32_t = 0i32 as uint32_t;
-  let mut wrk_mem: *mut uint8_t = 0 as *mut uint8_t;
+  ) as *mut u8;
+  let mut d_adler32: u32 = 1i32 as u32;
+  let mut d_crc32: u32 = 0i32 as u32;
+  let mut wrk_mem: *mut u8 = 0 as *mut u8;
   /* Only these methods are possible, see lzo_set_method():
    * -1:    M_LZO1X_1_15
    * -2..6: M_LZO1X_1
@@ -944,21 +944,21 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
     wrk_mem = xzalloc(
       (16384i32 as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<*mut uint8_t>() as libc::c_ulong),
-    ) as *mut uint8_t
+        .wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
+    ) as *mut u8
   } else {
     /* check only if it's not the only possibility */
     wrk_mem = xzalloc(
       (32768i32 as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<*mut uint8_t>() as libc::c_ulong),
-    ) as *mut uint8_t
+        .wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
+    ) as *mut u8
   }
   loop {
     let mut src_len: libc::c_uint = 0;
     let mut dst_len: libc::c_uint = 0;
     let mut l: libc::c_int = 0;
-    let mut wordbuf: [uint32_t; 6] = [0; 6];
-    let mut wordptr: *mut uint32_t = wordbuf.as_mut_ptr();
+    let mut wordbuf: [u32; 6] = [0; 6];
+    let mut wordptr: *mut u32 = wordbuf.as_mut_ptr();
     // /* if full_read() was nevertheless "short", it was EOF */
     // if (src_len < block_size)
     // 	break;
@@ -966,7 +966,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
     l = full_read(0i32, b1 as *mut libc::c_void, block_size as size_t) as libc::c_int;
     src_len = if l > 0i32 { l } else { 0i32 } as libc::c_uint;
     if src_len == 0i32 as libc::c_uint {
-      write32(0i32 as uint32_t);
+      write32(0i32 as u32);
       break;
     } else {
       let fresh73 = wordptr;
@@ -994,10 +994,10 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       /* exit if last block */
       /* compute checksum of uncompressed block */
       if (*h).flags32 as libc::c_long & 0x1i64 != 0 {
-        d_adler32 = lzo_adler32(1i32 as uint32_t, b1, src_len)
+        d_adler32 = lzo_adler32(1i32 as u32, b1, src_len)
       }
       if (*h).flags32 as libc::c_long & 0x100i64 != 0 {
-        d_crc32 = lzo_crc32(0i32 as uint32_t, b1, src_len)
+        d_crc32 = lzo_crc32(0i32 as u32, b1, src_len)
       }
       /* compress */
       if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
@@ -1126,7 +1126,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           wordptr = wordptr.offset(1);
           *fresh93 = {
             let mut __v: libc::c_uint = 0;
-            let mut __x: libc::c_uint = lzo_adler32(1i32 as uint32_t, b2, dst_len);
+            let mut __x: libc::c_uint = lzo_adler32(1i32 as u32, b2, dst_len);
             if 0 != 0 {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -1149,7 +1149,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           wordptr = wordptr.offset(1);
           *fresh97 = {
             let mut __v: libc::c_uint = 0;
-            let mut __x: libc::c_uint = lzo_crc32(0i32 as uint32_t, b2, dst_len);
+            let mut __x: libc::c_uint = lzo_crc32(0i32 as u32, b2, dst_len);
             if 0 != 0 {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -1190,19 +1190,19 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   return 1i32;
 }
 unsafe extern "C" fn lzo_check(
-  mut init: uint32_t,
-  mut buf: *mut uint8_t,
+  mut init: u32,
+  mut buf: *mut u8,
   mut len: libc::c_uint,
   mut fn_0: Option<
-    unsafe extern "C" fn(_: uint32_t, _: *const uint8_t, _: libc::c_uint) -> uint32_t,
+    unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
   >,
-  mut ref_0: uint32_t,
+  mut ref_0: u32,
 ) {
   /* This function, by having the same order of parameters
    * as fn, and by being marked FAST_FUNC (same as fn),
    * saves a dozen bytes of code.
    */
-  let mut c: uint32_t = fn_0.expect("non-null function pointer")(init, buf, len);
+  let mut c: u32 = fn_0.expect("non-null function pointer")(init, buf, len);
   if c != ref_0 {
     bb_simple_error_msg_and_die(b"checksum error\x00" as *const u8 as *const libc::c_char);
   };
@@ -1213,23 +1213,23 @@ unsafe extern "C" fn lzo_check(
 // used to have "const header_t *h" parameter, but since it uses
 // only flags32 field, changed to receive only that.
 #[inline(never)]
-unsafe extern "C" fn lzo_decompress(mut h_flags32: uint32_t) -> libc::c_int {
+unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint;
   let mut r: libc::c_int = 0;
-  let mut src_len: uint32_t = 0;
-  let mut dst_len: uint32_t = 0;
-  let mut c_adler32: uint32_t = 1i32 as uint32_t;
-  let mut d_adler32: uint32_t = 1i32 as uint32_t;
-  let mut c_crc32: uint32_t = 0i32 as uint32_t;
-  let mut d_crc32: uint32_t = 0i32 as uint32_t;
-  let mut b1: *mut uint8_t = 0 as *mut uint8_t;
-  let mut mcs_block_size: uint32_t = block_size
+  let mut src_len: u32 = 0;
+  let mut dst_len: u32 = 0;
+  let mut c_adler32: u32 = 1i32 as u32;
+  let mut d_adler32: u32 = 1i32 as u32;
+  let mut c_crc32: u32 = 0i32 as u32;
+  let mut d_crc32: u32 = 0i32 as u32;
+  let mut b1: *mut u8 = 0 as *mut u8;
+  let mut mcs_block_size: u32 = block_size
     .wrapping_add(block_size.wrapping_div(16i32 as libc::c_uint))
     .wrapping_add(64i32 as libc::c_uint)
     .wrapping_add(3i32 as libc::c_uint);
-  let mut b2: *mut uint8_t = 0 as *mut uint8_t;
+  let mut b2: *mut u8 = 0 as *mut u8;
   loop {
-    let mut dst: *mut uint8_t = 0 as *mut uint8_t;
+    let mut dst: *mut u8 = 0 as *mut u8;
     /* read uncompressed block size */
     dst_len = read32();
     /* exit if last block */
@@ -1254,7 +1254,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: uint32_t) -> libc::c_int {
     if dst_len > block_size {
       if !b2.is_null() {
         free(b2 as *mut libc::c_void);
-        b2 = 0 as *mut uint8_t
+        b2 = 0 as *mut u8
       }
       block_size = dst_len;
       mcs_block_size = block_size
@@ -1279,7 +1279,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: uint32_t) -> libc::c_int {
       }
     }
     if b2.is_null() {
-      b2 = xzalloc(mcs_block_size as size_t) as *mut uint8_t
+      b2 = xzalloc(mcs_block_size as size_t) as *mut u8
     }
     /* read the block into the end of our buffer */
     b1 = b2
@@ -1292,32 +1292,32 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: uint32_t) -> libc::c_int {
         /* verify checksum of compressed block */
         if h_flags32 as libc::c_long & 0x2i64 != 0 {
           lzo_check(
-            1i32 as uint32_t,
+            1i32 as u32,
             b1,
             src_len,
             Some(
               lzo_adler32
                 as unsafe extern "C" fn(
-                  _: uint32_t,
-                  _: *const uint8_t,
+                  _: u32,
+                  _: *const u8,
                   _: libc::c_uint,
-                ) -> uint32_t,
+                ) -> u32,
             ),
             c_adler32,
           );
         }
         if h_flags32 as libc::c_long & 0x200i64 != 0 {
           lzo_check(
-            0i32 as uint32_t,
+            0i32 as u32,
             b1,
             src_len,
             Some(
               lzo_crc32
                 as unsafe extern "C" fn(
-                  _: uint32_t,
-                  _: *const uint8_t,
+                  _: u32,
+                  _: *const u8,
                   _: libc::c_uint,
-                ) -> uint32_t,
+                ) -> u32,
             ),
             c_crc32,
           );
@@ -1340,24 +1340,24 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: uint32_t) -> libc::c_int {
       /* verify checksum of uncompressed block */
       if h_flags32 as libc::c_long & 0x1i64 != 0 {
         lzo_check(
-          1i32 as uint32_t,
+          1i32 as u32,
           dst,
           dst_len,
           Some(
             lzo_adler32
-              as unsafe extern "C" fn(_: uint32_t, _: *const uint8_t, _: libc::c_uint) -> uint32_t,
+              as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
           ),
           d_adler32,
         );
       }
       if h_flags32 as libc::c_long & 0x100i64 != 0 {
         lzo_check(
-          0i32 as uint32_t,
+          0i32 as u32,
           dst,
           dst_len,
           Some(
             lzo_crc32
-              as unsafe extern "C" fn(_: uint32_t, _: *const uint8_t, _: libc::c_uint) -> uint32_t,
+              as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
           ),
           d_crc32,
         );
@@ -1441,8 +1441,8 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
   /* Store length byte */
   /*h->len_and_name[0] = end - (h->len_and_name+1); - zero already */
   f_write(
-    &mut (*h).version_be16 as *mut uint16_t as *const libc::c_void,
-    end.wrapping_offset_from(&mut (*h).version_be16 as *mut uint16_t as *mut libc::c_char)
+    &mut (*h).version_be16 as *mut u16 as *const libc::c_void,
+    end.wrapping_offset_from(&mut (*h).version_be16 as *mut u16 as *mut libc::c_char)
       as libc::c_long as libc::c_int,
   ); /* native endianness for lzo_compress() */
   (*h).flags32 = {
@@ -1468,7 +1468,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
 }
 unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   let mut l: libc::c_int = 0;
-  let mut checksum: uint32_t = 0;
+  let mut checksum: u32 = 0;
   /* As it stands now, only h->flags32 is used by our caller.
    * Therefore we don't store many fields in h->FIELD.
    */
@@ -1482,9 +1482,9 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
    */
   /* Read up to and including name length byte */
   f_read(
-    &mut (*h).version_be16 as *mut uint16_t as *mut libc::c_void,
+    &mut (*h).version_be16 as *mut u16 as *mut libc::c_void,
     (&mut *(*h).len_and_name.as_mut_ptr().offset(1) as *mut libc::c_char)
-      .wrapping_offset_from(&mut (*h).version_be16 as *mut uint16_t as *mut libc::c_char)
+      .wrapping_offset_from(&mut (*h).version_be16 as *mut u16 as *mut libc::c_char)
       as libc::c_long as libc::c_int,
   );
   h_version = ({
@@ -1536,15 +1536,15 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   /* former lzo_get_method(h): */
   if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
     if (*h).level as libc::c_int == 0i32 {
-      (*h).level = 3i32 as uint8_t
+      (*h).level = 3i32 as u8
     }
   } else if (*h).method as libc::c_int == M_LZO1X_1_15 as libc::c_int {
     if (*h).level as libc::c_int == 0i32 {
-      (*h).level = 1i32 as uint8_t
+      (*h).level = 1i32 as u8
     }
   } else if (*h).method as libc::c_int == M_LZO1X_999 as libc::c_int {
     if (*h).level as libc::c_int == 0i32 {
-      (*h).level = 9i32 as uint8_t
+      (*h).level = 9i32 as u8
     }
   } else {
     return -1i32;
@@ -1595,14 +1595,14 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   }
   /* skip extra field [not used yet] */
   if (*h).flags32 as libc::c_long & 0x40i64 != 0 {
-    let mut extra_field_len: uint32_t = 0;
-    let mut extra_field_checksum: uint32_t = 0;
-    let mut k: uint32_t = 0;
+    let mut extra_field_len: u32 = 0;
+    let mut extra_field_checksum: u32 = 0;
+    let mut k: u32 = 0;
     let mut dummy: libc::c_char = 0;
     /* note: the checksum also covers the length */
     init_chksum();
     extra_field_len = f_read32();
-    k = 0i32 as uint32_t;
+    k = 0i32 as u32;
     while k < extra_field_len {
       f_read(&mut dummy as *mut libc::c_char as *mut libc::c_void, 1i32);
       k = k.wrapping_add(1)
@@ -1621,10 +1621,10 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
 unsafe extern "C" fn lzo_set_method(mut h: *mut header_t) {
   let mut level: smallint = 0;
   /* levels 2..6 or none (defaults to level 3) */
-  (*h).method = M_LZO1X_1 as libc::c_int as uint8_t; /* levels 2-6 are actually the same */
+  (*h).method = M_LZO1X_1 as libc::c_int as u8; /* levels 2-6 are actually the same */
   level = 5i32 as smallint;
   if option_mask32 & OPT_1 as libc::c_int as libc::c_uint != 0 {
-    (*h).method = M_LZO1X_1_15 as libc::c_int as uint8_t;
+    (*h).method = M_LZO1X_1_15 as libc::c_int as u8;
     level = 1i32 as smallint
   }
   if option_mask32 & OPT_789 as libc::c_int as libc::c_uint != 0 {
@@ -1632,7 +1632,7 @@ unsafe extern "C" fn lzo_set_method(mut h: *mut header_t) {
       b"high compression not compiled in\x00" as *const u8 as *const libc::c_char,
     );
   }
-  (*h).level = level as uint8_t;
+  (*h).level = level as u8;
 }
 unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   let mut header: header_t = header_t {

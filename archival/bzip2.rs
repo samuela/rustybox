@@ -26,10 +26,10 @@ extern "C" {
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
@@ -41,7 +41,7 @@ extern "C" {
   fn bunzip2_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn crc32_filltable(tbl256: *mut uint32_t, endian: libc::c_int) -> *mut uint32_t;
+  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
 
   #[no_mangle]
   fn append_ext(
@@ -66,11 +66,11 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+pub type bb__aliased_u32 = u32;
 pub type bb__aliased_uint64_t = uint64_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -95,16 +95,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
@@ -131,38 +131,38 @@ pub struct bz_stream {
 #[repr(C)]
 pub struct EState {
   pub strm: *mut bz_stream,
-  pub mode: uint8_t,
-  pub state: uint8_t,
-  pub blockSize100k: uint8_t,
-  pub arr1: *mut uint32_t,
-  pub arr2: *mut uint32_t,
-  pub ftab: *mut uint32_t,
-  pub quadrant: *mut uint16_t,
+  pub mode: u8,
+  pub state: u8,
+  pub blockSize100k: u8,
+  pub arr1: *mut u32,
+  pub arr2: *mut u32,
+  pub ftab: *mut u32,
+  pub quadrant: *mut u16,
   pub budget: int32_t,
-  pub ptr: *mut uint32_t,
-  pub block: *mut uint8_t,
-  pub mtfv: *mut uint16_t,
-  pub zbits: *mut uint8_t,
-  pub state_in_ch: uint32_t,
+  pub ptr: *mut u32,
+  pub block: *mut u8,
+  pub mtfv: *mut u16,
+  pub zbits: *mut u8,
+  pub state_in_ch: u32,
   pub state_in_len: int32_t,
   pub nblock: int32_t,
   pub nblockMAX: int32_t,
-  pub posZ: *mut uint8_t,
-  pub state_out_pos: *mut uint8_t,
-  pub bsBuff: uint32_t,
+  pub posZ: *mut u8,
+  pub state_out_pos: *mut u8,
+  pub bsBuff: u32,
   pub bsLive: int32_t,
-  pub crc32table: *mut uint32_t,
-  pub blockCRC: uint32_t,
-  pub combinedCRC: uint32_t,
+  pub crc32table: *mut u32,
+  pub blockCRC: u32,
+  pub combinedCRC: u32,
   pub blockNo: int32_t,
   pub nMTF: int32_t,
   pub nInUse: int32_t,
   pub inUse: [Bool; 256],
-  pub unseqToSeq: [uint8_t; 256],
+  pub unseqToSeq: [u8; 256],
   pub mtfFreq: [int32_t; 258],
-  pub selector: [uint8_t; 18002],
-  pub selectorMtf: [uint8_t; 18002],
-  pub len: [[uint8_t; 258]; 6],
+  pub selector: [u8; 18002],
+  pub selectorMtf: [u8; 18002],
+  pub len: [[u8; 258]; 6],
   pub sendMTFValues__code: [[int32_t; 258]; 6],
   pub sendMTFValues__rfreq: [[int32_t; 258]; 6],
   pub BZ2_hbMakeCodeLengths__heap: [int32_t; 260],
@@ -308,7 +308,7 @@ in the file LICENSE.
 ------------------------------------------------------------------ */
 /* #include "bzlib_private.h" */
 unsafe extern "C" fn mvswap(
-  mut ptr: *mut uint32_t,
+  mut ptr: *mut u32,
   mut zzp1: int32_t,
   mut zzp2: int32_t,
   mut zzn: int32_t,
@@ -316,7 +316,7 @@ unsafe extern "C" fn mvswap(
   while zzn > 0i32 {
     let mut zztmp: int32_t = *ptr.offset(zzp1 as isize) as int32_t;
     *ptr.offset(zzp1 as isize) = *ptr.offset(zzp2 as isize);
-    *ptr.offset(zzp2 as isize) = zztmp as uint32_t;
+    *ptr.offset(zzp2 as isize) = zztmp as u32;
     zzp1 += 1;
     zzp2 += 1;
     zzn -= 1
@@ -333,15 +333,15 @@ unsafe extern "C" fn mmin(mut a: int32_t, mut b: int32_t) -> int32_t {
 /*---------------------------------------------*/
 #[inline]
 unsafe extern "C" fn fallbackSimpleSort(
-  mut fmap: *mut uint32_t,
-  mut eclass: *mut uint32_t,
+  mut fmap: *mut u32,
+  mut eclass: *mut u32,
   mut lo: int32_t,
   mut hi: int32_t,
 ) {
   let mut i: int32_t = 0;
   let mut j: int32_t = 0;
   let mut tmp: int32_t = 0;
-  let mut ec_tmp: uint32_t = 0;
+  let mut ec_tmp: u32 = 0;
   if lo == hi {
     return;
   }
@@ -355,7 +355,7 @@ unsafe extern "C" fn fallbackSimpleSort(
         *fmap.offset((j - 4i32) as isize) = *fmap.offset(j as isize);
         j += 4i32
       }
-      *fmap.offset((j - 4i32) as isize) = tmp as uint32_t;
+      *fmap.offset((j - 4i32) as isize) = tmp as u32;
       i -= 1
     }
   }
@@ -368,21 +368,21 @@ unsafe extern "C" fn fallbackSimpleSort(
       *fmap.offset((j - 1i32) as isize) = *fmap.offset(j as isize);
       j += 1
     }
-    *fmap.offset((j - 1i32) as isize) = tmp as uint32_t;
+    *fmap.offset((j - 1i32) as isize) = tmp as u32;
     i -= 1
   }
 }
 unsafe extern "C" fn fallbackQSort3(
-  mut fmap: *mut uint32_t,
-  mut eclass: *mut uint32_t,
+  mut fmap: *mut u32,
+  mut eclass: *mut u32,
   mut loSt: int32_t,
   mut hiSt: int32_t,
 ) {
   let mut sp: int32_t = 0;
-  let mut r: uint32_t = 0;
+  let mut r: u32 = 0;
   let mut stackLo: [int32_t; 100] = [0; 100];
   let mut stackHi: [int32_t; 100] = [0; 100];
-  r = 0i32 as uint32_t;
+  r = 0i32 as u32;
   sp = 0i32;
   stackLo[sp as usize] = loSt;
   stackHi[sp as usize] = hiSt;
@@ -396,8 +396,8 @@ unsafe extern "C" fn fallbackQSort3(
     let mut m: int32_t = 0;
     let mut lo: int32_t = 0;
     let mut hi: int32_t = 0;
-    let mut med: uint32_t = 0;
-    let mut r3: uint32_t = 0;
+    let mut med: u32 = 0;
+    let mut r3: u32 = 0;
     sp -= 1;
     lo = stackLo[sp as usize];
     hi = stackHi[sp as usize];
@@ -433,7 +433,7 @@ unsafe extern "C" fn fallbackQSort3(
           if n == 0i32 {
             let mut zztmp: int32_t = *fmap.offset(unLo as isize) as int32_t;
             *fmap.offset(unLo as isize) = *fmap.offset(ltLo as isize);
-            *fmap.offset(ltLo as isize) = zztmp as uint32_t;
+            *fmap.offset(ltLo as isize) = zztmp as u32;
             ltLo += 1;
             unLo += 1
           } else {
@@ -448,7 +448,7 @@ unsafe extern "C" fn fallbackQSort3(
           if n == 0i32 {
             let mut zztmp_0: int32_t = *fmap.offset(unHi as isize) as int32_t;
             *fmap.offset(unHi as isize) = *fmap.offset(gtHi as isize);
-            *fmap.offset(gtHi as isize) = zztmp_0 as uint32_t;
+            *fmap.offset(gtHi as isize) = zztmp_0 as u32;
             gtHi -= 1;
             unHi -= 1
           } else {
@@ -463,7 +463,7 @@ unsafe extern "C" fn fallbackQSort3(
         }
         let mut zztmp_1: int32_t = *fmap.offset(unLo as isize) as int32_t;
         *fmap.offset(unLo as isize) = *fmap.offset(unHi as isize);
-        *fmap.offset(unHi as isize) = zztmp_1 as uint32_t;
+        *fmap.offset(unHi as isize) = zztmp_1 as u32;
         unLo += 1;
         unHi -= 1
       }
@@ -498,11 +498,11 @@ unsafe extern "C" fn fallbackQSort3(
 /* Pre:
  *	nblock > 0
  *	eclass exists for [0 .. nblock-1]
- *	((uint8_t*)eclass) [0 .. nblock-1] holds block
+ *	((u8*)eclass) [0 .. nblock-1] holds block
  *	ptr exists for [0 .. nblock-1]
  *
  * Post:
- *	((uint8_t*)eclass) [0 .. nblock-1] holds block
+ *	((u8*)eclass) [0 .. nblock-1] holds block
  *	All other areas of eclass destroyed
  *	fmap [0 .. nblock-1] holds sorted order
  *	bhtab[0 .. 2+(nblock/32)] destroyed
@@ -521,9 +521,9 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
   let mut nNotDone: int32_t = 0;
   let mut nBhtab: int32_t = 0;
   /* params */
-  let fmap: *mut uint32_t = (*state).arr1;
-  let eclass: *mut uint32_t = (*state).arr2;
-  let bhtab: *mut uint32_t = (*state).ftab;
+  let fmap: *mut u32 = (*state).arr1;
+  let eclass: *mut u32 = (*state).arr2;
+  let bhtab: *mut u32 = (*state).ftab;
   let nblock: int32_t = (*state).nblock;
   /*
    * Initial 1-char radix sort to generate
@@ -536,7 +536,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
   }
   i = 0i32;
   while i < nblock {
-    ftab[*(eclass as *mut uint8_t).offset(i as isize) as usize] += 1;
+    ftab[*(eclass as *mut u8).offset(i as isize) as usize] += 1;
     i += 1
   }
   i = 0i32;
@@ -553,17 +553,17 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
   }
   i = 0i32;
   while i < nblock {
-    j = *(eclass as *mut uint8_t).offset(i as isize) as int32_t;
+    j = *(eclass as *mut u8).offset(i as isize) as int32_t;
     k = ftab[j as usize] - 1i32;
     ftab[j as usize] = k;
-    *fmap.offset(k as isize) = i as uint32_t;
+    *fmap.offset(k as isize) = i as u32;
     i += 1
   }
   nBhtab = (2i32 as libc::c_uint)
-    .wrapping_add((nblock as uint32_t).wrapping_div(32i32 as libc::c_uint)) as int32_t;
+    .wrapping_add((nblock as u32).wrapping_div(32i32 as libc::c_uint)) as int32_t;
   i = 0i32;
   while i < nBhtab {
-    *bhtab.offset(i as isize) = 0i32 as uint32_t;
+    *bhtab.offset(i as isize) = 0i32 as u32;
     i += 1
   }
   i = 0i32;
@@ -599,7 +599,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
       if k < 0i32 {
         k += nblock
       }
-      *eclass.offset(k as isize) = j as uint32_t;
+      *eclass.offset(k as isize) = j as u32;
       i += 1
     }
     nNotDone = 0i32;
@@ -676,7 +676,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
       j += 1
     }
     ftabCopy[j as usize] -= 1;
-    *(eclass as *mut uint8_t).offset(*fmap.offset(i as isize) as isize) = j as uint8_t;
+    *(eclass as *mut u8).offset(*fmap.offset(i as isize) as isize) = j as u8;
     i += 1
   }
 }
@@ -689,16 +689,16 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
 #[inline(never)]
 unsafe extern "C" fn mainGtU(
   mut state: *mut EState,
-  mut i1: uint32_t,
-  mut i2: uint32_t,
+  mut i1: u32,
+  mut i2: u32,
 ) -> libc::c_int {
   let mut k: int32_t = 0;
-  let mut c1: uint8_t = 0;
-  let mut c2: uint8_t = 0;
-  let mut s1: uint16_t = 0;
-  let mut s2: uint16_t = 0;
-  let block: *mut uint8_t = (*state).block;
-  let quadrant: *mut uint16_t = (*state).quadrant;
+  let mut c1: u8 = 0;
+  let mut c2: u8 = 0;
+  let mut s1: u16 = 0;
+  let mut s2: u16 = 0;
+  let block: *mut u8 = (*state).block;
+  let quadrant: *mut u16 = (*state).quadrant;
   let nblock: int32_t = (*state).nblock;
   /* Loop unrolling here is actually very useful
    * (generated code is much simpler),
@@ -888,10 +888,10 @@ unsafe extern "C" fn mainGtU(
     i1 = i1.wrapping_add(1);
     i2 = i2.wrapping_add(1);
     if i1 >= nblock as libc::c_uint {
-      i1 = (i1 as libc::c_uint).wrapping_sub(nblock as libc::c_uint) as uint32_t as uint32_t
+      i1 = (i1 as libc::c_uint).wrapping_sub(nblock as libc::c_uint) as u32 as u32
     }
     if i2 >= nblock as libc::c_uint {
-      i2 = (i2 as libc::c_uint).wrapping_sub(nblock as libc::c_uint) as uint32_t as uint32_t
+      i2 = (i2 as libc::c_uint).wrapping_sub(nblock as libc::c_uint) as u32 as u32
     }
     (*state).budget -= 1;
     k -= 8i32;
@@ -908,21 +908,21 @@ unsafe extern "C" fn mainGtU(
  * because the number of elems to sort is
  * usually small, typically <= 20.
  */
-static mut incs: [uint32_t; 14] = [
-  1i32 as uint32_t,
-  4i32 as uint32_t,
-  13i32 as uint32_t,
-  40i32 as uint32_t,
-  121i32 as uint32_t,
-  364i32 as uint32_t,
-  1093i32 as uint32_t,
-  3280i32 as uint32_t,
-  9841i32 as uint32_t,
-  29524i32 as uint32_t,
-  88573i32 as uint32_t,
-  265720i32 as uint32_t,
-  797161i32 as uint32_t,
-  2391484i32 as uint32_t,
+static mut incs: [u32; 14] = [
+  1i32 as u32,
+  4i32 as u32,
+  13i32 as u32,
+  40i32 as u32,
+  121i32 as u32,
+  364i32 as u32,
+  1093i32 as u32,
+  3280i32 as u32,
+  9841i32 as u32,
+  29524i32 as u32,
+  88573i32 as u32,
+  265720i32 as u32,
+  797161i32 as u32,
+  2391484i32 as u32,
 ];
 unsafe extern "C" fn mainSimpleSort(
   mut state: *mut EState,
@@ -930,7 +930,7 @@ unsafe extern "C" fn mainSimpleSort(
   mut hi: int32_t,
   mut d: int32_t,
 ) {
-  let ptr: *mut uint32_t = (*state).ptr;
+  let ptr: *mut u32 = (*state).ptr;
   /* At which increment to start? */
   let mut hp: libc::c_int = 0i32;
   let mut bigN: libc::c_int = hi - lo;
@@ -989,8 +989,8 @@ unsafe extern "C" fn mainSimpleSort(
  * Sedgewick and Jon L. Bentley.
  */
 #[inline(always)]
-unsafe extern "C" fn mmed3(mut a: uint8_t, mut b: uint8_t, mut c: uint8_t) -> uint8_t {
-  let mut t: uint8_t = 0;
+unsafe extern "C" fn mmed3(mut a: u8, mut b: u8, mut c: u8) -> u8 {
+  let mut t: u8 = 0;
   if a as libc::c_int > b as libc::c_int {
     t = a;
     a = b;
@@ -1026,8 +1026,8 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
   let mut nextLo: [int32_t; 3] = [0; 3];
   let mut nextHi: [int32_t; 3] = [0; 3];
   let mut nextD: [int32_t; 3] = [0; 3];
-  let ptr: *mut uint32_t = (*state).ptr;
-  let block: *mut uint8_t = (*state).block;
+  let ptr: *mut u32 = (*state).ptr;
+  let block: *mut u8 = (*state).block;
   sp = 0i32;
   stackLo[sp as usize] = loSt;
   stackHi[sp as usize] = hiSt;
@@ -1063,7 +1063,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
           if n == 0i32 {
             let mut zztmp: int32_t = *ptr.offset(unLo as isize) as int32_t;
             *ptr.offset(unLo as isize) = *ptr.offset(ltLo as isize);
-            *ptr.offset(ltLo as isize) = zztmp as uint32_t;
+            *ptr.offset(ltLo as isize) = zztmp as u32;
             ltLo += 1;
             unLo += 1
           } else {
@@ -1080,7 +1080,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
           if n == 0i32 {
             let mut zztmp_0: int32_t = *ptr.offset(unHi as isize) as int32_t;
             *ptr.offset(unHi as isize) = *ptr.offset(gtHi as isize);
-            *ptr.offset(gtHi as isize) = zztmp_0 as uint32_t;
+            *ptr.offset(gtHi as isize) = zztmp_0 as u32;
             gtHi -= 1;
             unHi -= 1
           } else {
@@ -1095,7 +1095,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: int32_t, mut h
         }
         let mut zztmp_1: int32_t = *ptr.offset(unLo as isize) as int32_t;
         *ptr.offset(unLo as isize) = *ptr.offset(unHi as isize);
-        *ptr.offset(unHi as isize) = zztmp_1 as uint32_t;
+        *ptr.offset(unHi as isize) = zztmp_1 as u32;
         unLo += 1;
         unHi -= 1
       }
@@ -1177,28 +1177,28 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   let mut i: int32_t = 0;
   let mut j: int32_t = 0;
   let mut bigDone: [Bool; 256] = [0; 256];
-  let mut runningOrder: [uint8_t; 256] = [0; 256];
+  let mut runningOrder: [u8; 256] = [0; 256];
   /* bbox: moved to EState to save stack
   int32_t  copyStart[256];
   int32_t  copyEnd  [256];
   */
-  let ptr: *mut uint32_t = (*state).ptr;
-  let block: *mut uint8_t = (*state).block;
-  let ftab: *mut uint32_t = (*state).ftab;
+  let ptr: *mut u32 = (*state).ptr;
+  let block: *mut u8 = (*state).block;
+  let ftab: *mut u32 = (*state).ftab;
   let nblock: int32_t = (*state).nblock;
-  let quadrant: *mut uint16_t = (*state).quadrant;
+  let quadrant: *mut u16 = (*state).quadrant;
   /*-- set up the 2-byte frequency table --*/
   /* was: for (i = 65536; i >= 0; i--) ftab[i] = 0; */
   memset(
     ftab as *mut libc::c_void,
     0i32,
-    (65537i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
+    (65537i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
   );
   j = (*block.offset(0) as libc::c_int) << 8i32;
   i = nblock - 1i32;
   /* 3%, +300 bytes */
   while i >= 0i32 {
-    *quadrant.offset(i as isize) = 0i32 as uint16_t;
+    *quadrant.offset(i as isize) = 0i32 as u16;
     j = ((j >> 8i32) as libc::c_uint | (*block.offset(i as isize) as libc::c_uint) << 8i32)
       as int32_t;
     let ref mut fresh4 = *ftab.offset(j as isize);
@@ -1209,7 +1209,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   i = 0i32;
   while i < 2i32 + 12i32 + 18i32 + 2i32 {
     *block.offset((nblock + i) as isize) = *block.offset(i as isize);
-    *quadrant.offset((nblock + i) as isize) = 0i32 as uint16_t;
+    *quadrant.offset((nblock + i) as isize) = 0i32 as u16;
     i += 1
   }
   /*-- Complete the initial radix sort --*/
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   i = 1i32;
   while i <= 65536i32 {
     j = (j as libc::c_uint).wrapping_add(*ftab.offset(i as isize)) as int32_t as int32_t;
-    *ftab.offset(i as isize) = j as uint32_t;
+    *ftab.offset(i as isize) = j as u32;
     i += 1
   }
   let mut s: libc::c_uint = 0;
@@ -1226,8 +1226,8 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   while i >= 0i32 {
     s = s >> 8i32 | ((*block.offset(i as isize) as libc::c_int) << 8i32) as libc::c_uint;
     j = (*ftab.offset(s as isize)).wrapping_sub(1i32 as libc::c_uint) as int32_t;
-    *ftab.offset(s as isize) = j as uint32_t;
-    *ptr.offset(j as isize) = i as uint32_t;
+    *ftab.offset(s as isize) = j as u32;
+    *ptr.offset(j as isize) = i as u32;
     i -= 1
   }
   /*
@@ -1238,7 +1238,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   i = 0i32;
   while i <= 255i32 {
     bigDone[i as usize] = 0i32 as Bool;
-    runningOrder[i as usize] = i as uint8_t;
+    runningOrder[i as usize] = i as u8;
     i += 1
   }
   /* bbox: was: int32_t h = 1; */
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
           break;
         }
       }
-      runningOrder[j as usize] = vv as uint8_t;
+      runningOrder[j as usize] = vv as u8;
       i += 1
     }
     if !(h != 1i32 as libc::c_uint) {
@@ -1354,7 +1354,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
       if bigDone[c1 as usize] == 0 {
         let fresh6 = (*state).mainSort__copyStart[c1 as usize];
         (*state).mainSort__copyStart[c1 as usize] = (*state).mainSort__copyStart[c1 as usize] + 1;
-        *ptr.offset(fresh6 as isize) = k as uint32_t
+        *ptr.offset(fresh6 as isize) = k as u32
       }
       j += 1
     }
@@ -1372,7 +1372,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
       if bigDone[c1_0 as usize] == 0 {
         let fresh7 = (*state).mainSort__copyEnd[c1_0 as usize];
         (*state).mainSort__copyEnd[c1_0 as usize] = (*state).mainSort__copyEnd[c1_0 as usize] - 1;
-        *ptr.offset(fresh7 as isize) = k_0 as uint32_t
+        *ptr.offset(fresh7 as isize) = k_0 as u32
       }
       j -= 1
     }
@@ -1443,7 +1443,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
     while j >= 0i32 {
       let mut a2update: libc::c_uint =
         *ptr.offset(bbStart.wrapping_add(j as libc::c_uint) as isize);
-      let mut qVal: uint16_t = (j >> shifts) as uint16_t;
+      let mut qVal: u16 = (j >> shifts) as u16;
       *quadrant.offset(a2update as isize) = qVal;
       if a2update < (2i32 + 12i32 + 18i32 + 2i32) as libc::c_uint {
         *quadrant.offset(a2update.wrapping_add(nblock as libc::c_uint) as isize) = qVal
@@ -1458,11 +1458,11 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
 /* Pre:
  *	nblock > 0
  *	arr2 exists for [0 .. nblock-1 +N_OVERSHOOT]
- *	  ((uint8_t*)arr2)[0 .. nblock-1] holds block
+ *	  ((u8*)arr2)[0 .. nblock-1] holds block
  *	arr1 exists for [0 .. nblock-1]
  *
  * Post:
- *	((uint8_t*)arr2) [0 .. nblock-1] holds block
+ *	((u8*)arr2) [0 .. nblock-1] holds block
  *	All other areas of block destroyed
  *	ftab[0 .. 65536] destroyed
  *	arr1[0 .. nblock-1] holds sorted order
@@ -1485,7 +1485,7 @@ unsafe extern "C" fn BZ2_blockSort(mut state: *mut EState) -> int32_t {
     if i & 1i32 as libc::c_uint != 0 {
       i = i.wrapping_add(1)
     }
-    (*state).quadrant = &mut *(*state).block.offset(i as isize) as *mut uint8_t as *mut uint16_t;
+    (*state).quadrant = &mut *(*state).block.offset(i as isize) as *mut u8 as *mut u16;
     /* (wfact-1) / 3 puts the default-factor-30
      * transition point at very roughly the same place as
      * with v0.1 and v0.9.0.
@@ -1563,7 +1563,7 @@ unsafe extern "C" fn prepare_new_block(mut s: *mut EState) {
   //indexes into s->zbits[], initialzation moved to init of s->zbits
   //s->posZ = s->zbits; // was: s->numZ = 0;
   //s->state_out_pos = s->zbits;
-  (*s).blockCRC = 0xffffffffi64 as uint32_t;
+  (*s).blockCRC = 0xffffffffi64 as u32;
   /* inlined memset would be nice to have here */
   i = 0i32;
   while i < 256i32 {
@@ -1575,7 +1575,7 @@ unsafe extern "C" fn prepare_new_block(mut s: *mut EState) {
 /*---------------------------------------------------*/
 #[inline(always)]
 unsafe extern "C" fn init_RL(mut s: *mut EState) {
-  (*s).state_in_ch = 256i32 as uint32_t;
+  (*s).state_in_ch = 256i32 as u32;
   (*s).state_in_len = 0i32;
 }
 unsafe extern "C" fn isempty_RL(mut s: *mut EState) -> libc::c_int {
@@ -1590,22 +1590,22 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
   (*s).strm = strm;
   n = (100000i32 * blockSize100k) as libc::c_uint;
   (*s).arr1 =
-    xmalloc((n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong))
-      as *mut uint32_t;
-  (*s).mtfv = (*s).arr1 as *mut uint16_t;
+    xmalloc((n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong))
+      as *mut u32;
+  (*s).mtfv = (*s).arr1 as *mut u16;
   (*s).ptr = (*s).arr1;
   (*s).arr2 = xmalloc(
     (n.wrapping_add((2i32 + 12i32 + 18i32 + 2i32) as libc::c_uint) as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
-  ) as *mut uint32_t;
-  (*s).block = (*s).arr2 as *mut uint8_t;
+      .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+  ) as *mut u32;
+  (*s).block = (*s).arr2 as *mut u8;
   (*s).ftab = xmalloc(
-    (65537i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
-  ) as *mut uint32_t;
-  (*s).crc32table = crc32_filltable(0 as *mut uint32_t, 1i32);
-  (*s).state = 2i32 as uint8_t;
-  (*s).mode = 2i32 as uint8_t;
-  (*s).blockSize100k = blockSize100k as uint8_t;
+    (65537i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+  ) as *mut u32;
+  (*s).crc32table = crc32_filltable(0 as *mut u32, 1i32);
+  (*s).state = 2i32 as u8;
+  (*s).mode = 2i32 as u8;
+  (*s).blockSize100k = blockSize100k as u8;
   (*s).nblockMAX = n.wrapping_sub(19i32 as libc::c_uint) as int32_t;
   (*strm).state = s as *mut libc::c_void;
   /*strm->total_in     = 0;*/
@@ -1616,7 +1616,7 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
 /*---------------------------------------------------*/
 unsafe extern "C" fn add_pair_to_block(mut s: *mut EState) {
   let mut i: int32_t = 0;
-  let mut ch: uint8_t = (*s).state_in_ch as uint8_t;
+  let mut ch: u8 = (*s).state_in_ch as u8;
   i = 0i32;
   while i < (*s).state_in_len {
     (*s).blockCRC = (*s).blockCRC << 8i32
@@ -1649,7 +1649,7 @@ unsafe extern "C" fn add_pair_to_block(mut s: *mut EState) {
       (*s).nblock += 1;
       *(*s).block.offset((*s).nblock as isize) = ch;
       (*s).nblock += 1;
-      *(*s).block.offset((*s).nblock as isize) = ((*s).state_in_len - 4i32) as uint8_t;
+      *(*s).block.offset((*s).nblock as isize) = ((*s).state_in_len - 4i32) as u8;
       (*s).nblock += 1;
       current_block_23 = 2719512138335094285;
     }
@@ -1697,9 +1697,9 @@ unsafe extern "C" fn copy_input_until_stop(mut s: *mut EState) {
     //#	/*-- flush/finish end? --*/
     //#	if (s->avail_in_expect == 0) break;
     /*progress_in = True;*/
-    let mut zchh: uint32_t = *((*(*s).strm).next_in as *mut uint8_t) as uint32_t;
+    let mut zchh: u32 = *((*(*s).strm).next_in as *mut u8) as u32;
     if zchh != (*s).state_in_ch && (*s).state_in_len == 1i32 {
-      let mut ch: uint8_t = (*s).state_in_ch as uint8_t;
+      let mut ch: u8 = (*s).state_in_ch as u8;
       (*s).blockCRC = (*s).blockCRC << 8i32
         ^ *(*s)
           .crc32table
@@ -1760,7 +1760,7 @@ unsafe extern "C" fn handle_compress(mut strm: *mut bz_stream) {
         break;
       }
       prepare_new_block(s);
-      (*s).state = 2i32 as uint8_t
+      (*s).state = 2i32 as u8
     }
     if !((*s).state as libc::c_int == 2i32) {
       continue;
@@ -1771,10 +1771,10 @@ unsafe extern "C" fn handle_compress(mut strm: *mut bz_stream) {
     if (*s).mode as libc::c_int != 2i32 && (*(*s).strm).avail_in == 0i32 as libc::c_uint {
       flush_RL(s);
       BZ2_compressBlock(s, ((*s).mode as libc::c_int == 4i32) as libc::c_int);
-      (*s).state = 1i32 as uint8_t
+      (*s).state = 1i32 as u8
     } else if (*s).nblock >= (*s).nblockMAX {
       BZ2_compressBlock(s, 0i32);
-      (*s).state = 1i32 as uint8_t
+      (*s).state = 1i32 as u8
     } else if (*(*s).strm).avail_in == 0i32 as libc::c_uint {
       break;
     }
@@ -1799,7 +1799,7 @@ unsafe extern "C" fn BZ2_bzCompress(
       } else {
         /*if (action == BZ_FINISH)*/
         //#s->avail_in_expect = strm->avail_in;
-        (*s).mode = 4i32 as uint8_t
+        (*s).mode = 4i32 as u8
       }
     }
     _ => {}
@@ -1868,7 +1868,7 @@ in the file LICENSE.
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_bsInitWrite(mut s: *mut EState) {
   (*s).bsLive = 0i32;
-  (*s).bsBuff = 0i32 as uint32_t;
+  (*s).bsBuff = 0i32 as u32;
 }
 /*---------------------------------------------------*/
 #[inline(never)]
@@ -1876,17 +1876,17 @@ unsafe extern "C" fn bsFinishWrite(mut s: *mut EState) {
   while (*s).bsLive > 0i32 {
     let fresh10 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
-    *fresh10 = ((*s).bsBuff >> 24i32) as uint8_t;
+    *fresh10 = ((*s).bsBuff >> 24i32) as u8;
     (*s).bsBuff <<= 8i32;
     (*s).bsLive -= 8i32
   }
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn bsW(mut s: *mut EState, mut n: int32_t, mut v: uint32_t) {
+unsafe extern "C" fn bsW(mut s: *mut EState, mut n: int32_t, mut v: u32) {
   while (*s).bsLive >= 8i32 {
     let fresh11 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
-    *fresh11 = ((*s).bsBuff >> 24i32) as uint8_t;
+    *fresh11 = ((*s).bsBuff >> 24i32) as u8;
     (*s).bsBuff <<= 8i32;
     (*s).bsLive -= 8i32
   }
@@ -1894,11 +1894,11 @@ unsafe extern "C" fn bsW(mut s: *mut EState, mut n: int32_t, mut v: uint32_t) {
   (*s).bsLive += n;
 }
 /* Same with n == 16: */
-unsafe extern "C" fn bsW16(mut s: *mut EState, mut v: uint32_t) {
+unsafe extern "C" fn bsW16(mut s: *mut EState, mut v: u32) {
   while (*s).bsLive >= 8i32 {
     let fresh12 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
-    *fresh12 = ((*s).bsBuff >> 24i32) as uint8_t;
+    *fresh12 = ((*s).bsBuff >> 24i32) as u8;
     (*s).bsBuff <<= 8i32;
     (*s).bsLive -= 8i32
   }
@@ -1912,7 +1912,7 @@ unsafe extern "C" fn bsW1_1(mut s: *mut EState) {
   if (*s).bsLive >= 8i32 {
     let fresh13 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
-    *fresh13 = ((*s).bsBuff >> 24i32) as uint8_t;
+    *fresh13 = ((*s).bsBuff >> 24i32) as u8;
     (*s).bsBuff <<= 8i32;
     (*s).bsLive -= 8i32
   }
@@ -1924,7 +1924,7 @@ unsafe extern "C" fn bsW1_0(mut s: *mut EState) {
   if (*s).bsLive >= 8i32 {
     let fresh14 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
-    *fresh14 = ((*s).bsBuff >> 24i32) as uint8_t;
+    *fresh14 = ((*s).bsBuff >> 24i32) as u8;
     (*s).bsBuff <<= 8i32;
     (*s).bsLive -= 8i32
   }
@@ -1952,7 +1952,7 @@ unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
   i = 0i32;
   while i < 256i32 {
     if (*s).inUse[i as usize] != 0 {
-      (*s).unseqToSeq[i as usize] = cnt as uint8_t;
+      (*s).unseqToSeq[i as usize] = cnt as u8;
       cnt = cnt.wrapping_add(1)
     }
     i += 1
@@ -1971,29 +1971,29 @@ unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
  * Therefore NOINLINE is enabled for the entire 32bit x86 arch for now,
  * without a check for gcc version.
  */
-unsafe extern "C" fn inner_loop(mut yy: *mut uint8_t, mut ll_i: uint8_t) -> libc::c_int {
-  let mut rtmp: uint8_t = 0;
-  let mut ryy_j: *mut uint8_t = 0 as *mut uint8_t;
+unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
+  let mut rtmp: u8 = 0;
+  let mut ryy_j: *mut u8 = 0 as *mut u8;
   rtmp = *yy.offset(1);
   *yy.offset(1) = *yy.offset(0);
-  ryy_j = &mut *yy.offset(1) as *mut uint8_t;
+  ryy_j = &mut *yy.offset(1) as *mut u8;
   while ll_i as libc::c_int != rtmp as libc::c_int {
-    let mut rtmp2: uint8_t = 0;
+    let mut rtmp2: u8 = 0;
     ryy_j = ryy_j.offset(1);
     rtmp2 = rtmp;
     rtmp = *ryy_j;
     *ryy_j = rtmp2
   }
   *yy.offset(0) = rtmp;
-  return ryy_j.wrapping_offset_from(&mut *yy.offset(0) as *mut uint8_t) as libc::c_long
+  return ryy_j.wrapping_offset_from(&mut *yy.offset(0) as *mut u8) as libc::c_long
     as libc::c_int;
 }
 #[inline(never)]
 unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
-  let mut ll_i: uint8_t = 0;
+  let mut ll_i: u8 = 0;
   let mut j: int32_t = 0;
   let mut current_block: u64;
-  let mut yy: [uint8_t; 256] = [0; 256];
+  let mut yy: [u8; 256] = [0; 256];
   let mut i: libc::c_int = 0;
   let mut zPend: libc::c_int = 0;
   let mut wr: int32_t = 0;
@@ -2001,24 +2001,24 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
    * After sorting (eg, here),
    * s->arr1[0 .. s->nblock-1] holds sorted order,
    * and
-   * ((uint8_t*)s->arr2)[0 .. s->nblock-1]
+   * ((u8*)s->arr2)[0 .. s->nblock-1]
    * holds the original block data.
    *
    * The first thing to do is generate the MTF values,
-   * and put them in ((uint16_t*)s->arr1)[0 .. s->nblock-1].
+   * and put them in ((u16*)s->arr1)[0 .. s->nblock-1].
    *
    * Because there are strictly fewer or equal MTF values
    * than block values, ptr values in this area are overwritten
    * with MTF values only when they are no longer needed.
    *
    * The final compressed bitstream is generated into the
-   * area starting at &((uint8_t*)s->arr2)[s->nblock]
+   * area starting at &((u8*)s->arr2)[s->nblock]
    *
    * These storage aliases are set up in bzCompressInit(),
    * except for the last one, which is arranged in
    * compressBlock().
    */
-  let mut ptr: *mut uint32_t = (*s).ptr; /* gcc 4.3.1 thinks it may be used w/o init */
+  let mut ptr: *mut u32 = (*s).ptr; /* gcc 4.3.1 thinks it may be used w/o init */
   makeMaps_e(s); /* "process it and come back here" */
   wr = 0i32;
   zPend = 0i32;
@@ -2029,7 +2029,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
   }
   i = 0i32;
   while i < (*s).nInUse {
-    yy[i as usize] = i as uint8_t;
+    yy[i as usize] = i as u8;
     i += 1
   }
   i = 0i32;
@@ -2064,7 +2064,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
         /* same as above, since BZ_RUNA is 0 and BZ_RUNB is 1 */
         {
           let mut run: libc::c_uint = (zPend & 1i32) as libc::c_uint;
-          *(*s).mtfv.offset(wr as isize) = run as uint16_t;
+          *(*s).mtfv.offset(wr as isize) = run as u16;
           wr += 1;
           (*s).mtfFreq[run as usize] += 1;
           zPend -= 2i32;
@@ -2084,7 +2084,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
     match current_block {
       8845338526596852646 => {
         j = inner_loop(yy.as_mut_ptr(), ll_i);
-        *(*s).mtfv.offset(wr as isize) = (j + 1i32) as uint16_t;
+        *(*s).mtfv.offset(wr as isize) = (j + 1i32) as u16;
         wr += 1;
         (*s).mtfFreq[(j + 1i32) as usize] += 1
       }
@@ -2093,7 +2093,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
     i += 1
   }
   /* came via "goto process_zPend"? exit */
-  *(*s).mtfv.offset(wr as isize) = ((*s).nInUse + 1i32) as uint16_t;
+  *(*s).mtfv.offset(wr as isize) = ((*s).nInUse + 1i32) as u16;
   wr += 1;
   (*s).mtfFreq[((*s).nInUse + 1i32) as usize] += 1;
   (*s).nMTF = wr;
@@ -2109,7 +2109,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
   let mut selCtr: libc::c_uint = 0;
   let mut nGroups: int32_t = 0;
   /*
-   * uint8_t len[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
+   * u8 len[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
    * is a global since the decoder also needs it.
    *
    * int32_t  code[BZ_N_GROUPS][BZ_MAX_ALPHA_SIZE];
@@ -2118,14 +2118,14 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
    * Made global to keep stack frame size small.
    */
   let mut cost: [libc::c_uint; 6] = [0; 6];
-  let mut mtfv: *mut uint16_t = (*s).mtfv;
+  let mut mtfv: *mut u16 = (*s).mtfv;
   alphaSize = (*s).nInUse + 2i32;
   t = 0i32;
   while t < 6i32 {
     let mut v: libc::c_uint = 0;
     v = 0i32 as libc::c_uint;
     while v < alphaSize as libc::c_uint {
-      (*s).len[t as usize][v as usize] = 15i32 as uint8_t;
+      (*s).len[t as usize][v as usize] = 15i32 as u8;
       v = v.wrapping_add(1)
     }
     t += 1
@@ -2176,9 +2176,9 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     v_0 = 0i32 as libc::c_uint;
     while v_0 < alphaSize as libc::c_uint {
       if v_0 >= gs && v_0 <= ge {
-        (*s).len[nPart.wrapping_sub(1i32 as libc::c_uint) as usize][v_0 as usize] = 0i32 as uint8_t
+        (*s).len[nPart.wrapping_sub(1i32 as libc::c_uint) as usize][v_0 as usize] = 0i32 as u8
       } else {
-        (*s).len[nPart.wrapping_sub(1i32 as libc::c_uint) as usize][v_0 as usize] = 15i32 as uint8_t
+        (*s).len[nPart.wrapping_sub(1i32 as libc::c_uint) as usize][v_0 as usize] = 15i32 as u8
       }
       v_0 = v_0.wrapping_add(1)
     }
@@ -2254,7 +2254,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
         }
         t += 1
       }
-      (*s).selector[nSelectors as usize] = bt as uint8_t;
+      (*s).selector[nSelectors as usize] = bt as u8;
       nSelectors = nSelectors.wrapping_add(1);
       /*
        * Increment the symbol frequencies for the selected table.
@@ -2289,13 +2289,13 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     iter = iter.wrapping_add(1)
   }
   /*--- Compute MTF values for the selectors. ---*/
-  let mut pos: [uint8_t; 6] = [0; 6];
-  let mut ll_i: uint8_t = 0;
-  let mut tmp2: uint8_t = 0;
-  let mut tmp: uint8_t = 0;
+  let mut pos: [u8; 6] = [0; 6];
+  let mut ll_i: u8 = 0;
+  let mut tmp2: u8 = 0;
+  let mut tmp: u8 = 0;
   i = 0i32;
   while i < nGroups {
-    pos[i as usize] = i as uint8_t;
+    pos[i as usize] = i as u8;
     i += 1
   }
   i = 0i32;
@@ -2311,7 +2311,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
       pos[j as usize] = tmp2
     }
     pos[0] = tmp;
-    (*s).selectorMtf[i as usize] = j as uint8_t;
+    (*s).selectorMtf[i as usize] = j as u8;
     i += 1
   }
   /*--- Assign actual codes for the tables. --*/
@@ -2351,13 +2351,13 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     if ::std::mem::size_of::<libc::c_long>() as libc::c_ulong <= 4i32 as libc::c_ulong {
       inUse16 = inUse16 * 2i32
         + (*(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 0i32) as isize) as *mut Bool
-          as *mut bb__aliased_uint32_t)
+          as *mut bb__aliased_u32)
           | *(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 4i32) as isize) as *mut Bool
-            as *mut bb__aliased_uint32_t)
+            as *mut bb__aliased_u32)
           | *(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 8i32) as isize) as *mut Bool
-            as *mut bb__aliased_uint32_t)
+            as *mut bb__aliased_u32)
           | *(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 12i32) as isize) as *mut Bool
-            as *mut bb__aliased_uint32_t)
+            as *mut bb__aliased_u32)
           != 0i32 as libc::c_uint) as libc::c_int
     } else {
       inUse16 = inUse16 * 2i32
@@ -2369,7 +2369,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     }
     i += 1
   }
-  bsW16(s, inUse16 as uint32_t);
+  bsW16(s, inUse16 as u32);
   inUse16 <<= (::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
     .wrapping_mul(8i32 as libc::c_ulong)
     .wrapping_sub(16i32 as libc::c_ulong);
@@ -2391,7 +2391,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     i += 1
   }
   /*--- Now the selectors. ---*/
-  bsW(s, 3i32, nGroups as uint32_t);
+  bsW(s, 3i32, nGroups as u32);
   bsW(s, 15i32, nSelectors);
   i = 0i32;
   while (i as libc::c_uint) < nSelectors {
@@ -2412,12 +2412,12 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     i = 0i32;
     while i < alphaSize {
       while curr < (*s).len[t as usize][i as usize] as libc::c_uint {
-        bsW(s, 2i32, 2i32 as uint32_t);
+        bsW(s, 2i32, 2i32 as u32);
         curr = curr.wrapping_add(1)
         /* 10 */
       }
       while curr > (*s).len[t as usize][i as usize] as libc::c_uint {
-        bsW(s, 2i32, 3i32 as uint32_t);
+        bsW(s, 2i32, 3i32 as u32);
         curr = curr.wrapping_sub(1)
         /* 11 */
       }
@@ -2443,12 +2443,12 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     /* Costs 1300 bytes and is _slower_ (on Intel Core 2) */
     /*--- slow version which correctly handles all situations ---*/
     /* code is bit bigger, but moves multiply out of the loop */
-    let mut s_len_sel_selCtr: *mut uint8_t = &mut *(*(*s)
+    let mut s_len_sel_selCtr: *mut u8 = &mut *(*(*s)
       .len
       .as_mut_ptr()
       .offset(*(*s).selector.as_mut_ptr().offset(selCtr as isize) as isize))
     .as_mut_ptr()
-    .offset(0) as *mut uint8_t;
+    .offset(0) as *mut u8;
     let mut s_code_sel_selCtr: *mut int32_t = &mut *(*(*s)
       .sendMTFValues__code
       .as_mut_ptr()
@@ -2459,7 +2459,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
       bsW(
         s,
         *s_len_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as int32_t,
-        *s_code_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as uint32_t,
+        *s_code_sel_selCtr.offset(*mtfv.offset(gs as isize) as isize) as u32,
       );
       gs = gs.wrapping_add(1)
     }
@@ -2479,7 +2479,7 @@ unsafe extern "C" fn BZ2_compressBlock(mut s: *mut EState, mut is_last_block: li
     }
     origPtr = BZ2_blockSort(s)
   }
-  (*s).zbits = &mut *((*s).arr2 as *mut uint8_t).offset((*s).nblock as isize) as *mut uint8_t;
+  (*s).zbits = &mut *((*s).arr2 as *mut u8).offset((*s).nblock as isize) as *mut u8;
   (*s).posZ = (*s).zbits;
   (*s).state_out_pos = (*s).zbits;
   /*-- If this is the first block, create the stream header. --*/
@@ -2515,7 +2515,7 @@ unsafe extern "C" fn BZ2_compressBlock(mut s: *mut EState, mut is_last_block: li
      * older versions of bzip2.
      */
     bsW1_0(s);
-    bsW(s, 24i32, origPtr as uint32_t);
+    bsW(s, 24i32, origPtr as u32);
     generateMTFValues(s);
     sendMTFValues(s);
   }
@@ -2562,7 +2562,7 @@ in the file LICENSE.
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_hbMakeCodeLengths(
   mut s: *mut EState,
-  mut len: *mut uint8_t,
+  mut len: *mut u8,
   mut freq: *mut int32_t,
   mut alphaSize: int32_t,
   mut maxLen: int32_t,
@@ -2727,7 +2727,7 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
         k = (*s).BZ2_hbMakeCodeLengths__parent[k as usize];
         j += 1
       }
-      *len.offset((i - 1i32) as isize) = j as uint8_t;
+      *len.offset((i - 1i32) as isize) = j as u8;
       if j > maxLen {
         tooLong = 1i32 as Bool
       }
@@ -2766,7 +2766,7 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_hbAssignCodes(
   mut code: *mut int32_t,
-  mut length: *mut uint8_t,
+  mut length: *mut u8,
   mut minLen: int32_t,
   mut maxLen: int32_t,
   mut alphaSize: int32_t,

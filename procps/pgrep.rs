@@ -22,9 +22,9 @@ extern "C" {
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -49,9 +49,9 @@ extern "C" {
 
 use crate::librb::__pid_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -75,9 +75,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,

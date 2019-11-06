@@ -144,7 +144,7 @@ extern "C" {
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   /* { "-", NULL } */
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -168,9 +168,9 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 use libc::FILE;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
@@ -195,9 +195,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -207,11 +207,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -225,7 +225,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type __ns_sect = libc::c_uint;
 pub const ns_s_max: __ns_sect = 4;
 pub const ns_s_ar: __ns_sect = 3;
@@ -241,9 +241,9 @@ pub type ns_sect = __ns_sect;
 pub struct __ns_msg {
   pub _msg: *const libc::c_uchar,
   pub _eom: *const libc::c_uchar,
-  pub _id: uint16_t,
-  pub _flags: uint16_t,
-  pub _counts: [uint16_t; 4],
+  pub _id: u16,
+  pub _flags: u16,
+  pub _counts: [u16; 4],
   pub _sections: [*const libc::c_uchar; 4],
   pub _sect: ns_sect,
   pub _rrnum: libc::c_int,
@@ -254,10 +254,10 @@ pub type ns_msg = __ns_msg;
 #[repr(C)]
 pub struct __ns_rr {
   pub name: [libc::c_char; 1025],
-  pub type_0: uint16_t,
-  pub rr_class: uint16_t,
-  pub ttl: uint32_t,
-  pub rdlength: uint16_t,
+  pub type_0: u16,
+  pub rr_class: u16,
+  pub ttl: u32,
+  pub rdlength: u16,
   pub rdata: *const libc::c_uchar,
 }
 pub type ns_rr = __ns_rr;
@@ -868,7 +868,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
   let mut recvlen: libc::c_int = 0;
   let mut current_block: u64;
   let mut reply: [libc::c_uchar; 512] = [0; 512];
-  let mut rcode: uint8_t = 0;
+  let mut rcode: u8 = 0;
   let mut local_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut pfd: pollfd = pollfd {
     fd: 0,
@@ -1016,7 +1016,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                 {
                   current_block = 6236198777448170658;
                 } else {
-                  rcode = (reply[3] as libc::c_int & 0xfi32) as uint8_t;
+                  rcode = (reply[3] as libc::c_int & 0xfi32) as u8;
                   /* Retry immediately on SERVFAIL */
                   if rcode as libc::c_int == 2i32 {
                     //UNUSED: ns->failures++;

@@ -8,12 +8,12 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
@@ -21,10 +21,10 @@ extern "C" {
 
 use crate::librb::int8_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -33,8 +33,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -54,29 +54,29 @@ pub const LE: endian = 0;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct file_attribute {
-  pub type_0: uint32_t,
-  pub len: uint32_t,
-  pub non_resident: uint8_t,
-  pub name_len: uint8_t,
-  pub name_offset: uint16_t,
-  pub flags: uint16_t,
-  pub instance: uint16_t,
-  pub value_len: uint32_t,
-  pub value_offset: uint16_t,
+  pub type_0: u32,
+  pub len: u32,
+  pub non_resident: u8,
+  pub name_len: u8,
+  pub name_offset: u16,
+  pub flags: u16,
+  pub instance: u16,
+  pub value_len: u32,
+  pub value_offset: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct master_file_table_record {
-  pub magic: [uint8_t; 4],
-  pub usa_ofs: uint16_t,
-  pub usa_count: uint16_t,
+  pub magic: [u8; 4],
+  pub usa_ofs: u16,
+  pub usa_count: u16,
   pub lsn: uint64_t,
-  pub sequence_number: uint16_t,
-  pub link_count: uint16_t,
-  pub attrs_offset: uint16_t,
-  pub flags: uint16_t,
-  pub bytes_in_use: uint32_t,
-  pub bytes_allocated: uint32_t,
+  pub sequence_number: u16,
+  pub link_count: u16,
+  pub attrs_offset: u16,
+  pub flags: u16,
+  pub bytes_in_use: u32,
+  pub bytes_allocated: u32,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -105,30 +105,30 @@ pub struct master_file_table_record {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ntfs_super_block {
-  pub jump: [uint8_t; 3],
-  pub oem_id: [uint8_t; 8],
-  pub bytes_per_sector: uint16_t,
-  pub sectors_per_cluster: uint8_t,
-  pub reserved_sectors: uint16_t,
-  pub fats: uint8_t,
-  pub root_entries: uint16_t,
-  pub sectors: uint16_t,
-  pub media_type: uint8_t,
-  pub sectors_per_fat: uint16_t,
-  pub sectors_per_track: uint16_t,
-  pub heads: uint16_t,
-  pub hidden_sectors: uint32_t,
-  pub large_sectors: uint32_t,
-  pub unused: [uint16_t; 2],
+  pub jump: [u8; 3],
+  pub oem_id: [u8; 8],
+  pub bytes_per_sector: u16,
+  pub sectors_per_cluster: u8,
+  pub reserved_sectors: u16,
+  pub fats: u8,
+  pub root_entries: u16,
+  pub sectors: u16,
+  pub media_type: u8,
+  pub sectors_per_fat: u16,
+  pub sectors_per_track: u16,
+  pub heads: u16,
+  pub hidden_sectors: u32,
+  pub large_sectors: u32,
+  pub unused: [u16; 2],
   pub number_of_sectors: uint64_t,
   pub mft_cluster_location: uint64_t,
   pub mft_mirror_cluster_location: uint64_t,
   pub cluster_per_mft_record: int8_t,
-  pub reserved1: [uint8_t; 3],
+  pub reserved1: [u8; 3],
   pub cluster_per_index_record: int8_t,
-  pub reserved2: [uint8_t; 3],
-  pub volume_serial: [uint8_t; 8],
-  pub checksum: uint16_t,
+  pub reserved2: [u8; 3],
+  pub volume_serial: [u8; 8],
+  pub checksum: u16,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -152,9 +152,9 @@ pub struct ntfs_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -174,7 +174,7 @@ pub struct ntfs_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -221,8 +221,8 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   let mut val_len: libc::c_uint = 0;
   let mut mftr: *mut master_file_table_record = 0 as *mut master_file_table_record;
   let mut ns: *mut ntfs_super_block = 0 as *mut ntfs_super_block;
-  let mut buf: *const uint8_t = 0 as *const uint8_t;
-  let mut val: *const uint8_t = 0 as *const uint8_t;
+  let mut buf: *const u8 = 0 as *const u8;
+  let mut val: *const u8 = 0 as *const u8;
   ns = volume_id_get_buffer(id, 0i32 as uint64_t, 0x200i32 as size_t) as *mut ntfs_super_block;
   if ns.is_null() {
     return -1i32;
@@ -252,7 +252,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
       .wrapping_add(mft_off)
       .wrapping_add((3i32 as libc::c_uint).wrapping_mul(mft_record_size) as libc::c_ulong),
     mft_record_size as size_t,
-  ) as *const uint8_t;
+  ) as *const u8;
   if !buf.is_null() {
     mftr = buf as *mut master_file_table_record;
     if !(memcmp(
@@ -264,7 +264,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
       attr_off = (*mftr).attrs_offset as libc::c_uint;
       loop {
         let mut attr: *mut file_attribute = 0 as *mut file_attribute;
-        attr = &*buf.offset(attr_off as isize) as *const uint8_t as *mut file_attribute;
+        attr = &*buf.offset(attr_off as isize) as *const u8 as *mut file_attribute;
         attr_type = (*attr).type_0;
         attr_len = (*attr).len;
         val_off = (*attr).value_offset as libc::c_uint;
@@ -282,7 +282,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
         //		if (attr_type == MFT_RECORD_ATTR_VOLUME_INFO) {
         //			struct volume_info *info;
         //			dbg("found info, len %i", val_len);
-        //			info = (struct volume_info*) (((uint8_t *) attr) + val_off);
+        //			info = (struct volume_info*) (((u8 *) attr) + val_off);
         //			snprintf(id->type_version, sizeof(id->type_version)-1,
         //				 "%u.%u", info->major_ver, info->minor_ver);
         //		}
@@ -290,7 +290,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
           if val_len > 64i32 as libc::c_uint {
             val_len = 64i32 as libc::c_uint
           }
-          val = (attr as *mut uint8_t).offset(val_off as isize);
+          val = (attr as *mut u8).offset(val_off as isize);
           //			volume_id_set_label_raw(id, val, val_len);
           volume_id_set_label_unicode16(id, val, LE, val_len as size_t);
         }

@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   /* Applets which are useful from another applets */
   #[no_mangle]
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
@@ -32,7 +32,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 use libc::FILE;
 
 #[derive(Copy, Clone)]

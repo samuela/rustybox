@@ -63,14 +63,14 @@ extern "C" {
   #[no_mangle]
   fn xatoi(str: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -90,7 +90,7 @@ use crate::librb::__mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 
-use libc::uint32_t;
+
 use libc::stat;
 
 use libc::FILE;

@@ -10,20 +10,20 @@ extern "C" {
   #[no_mangle]
   fn tls_run_copy_loop(tls: *mut tls_state_t, flags: libc::c_uint);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tls_aes {
-  pub key: [uint32_t; 60],
+  pub key: [u32; 60],
   pub rounds: libc::c_uint,
 }
 #[derive(Copy, Clone)]
@@ -33,31 +33,31 @@ pub struct tls_state {
   pub ofd: libc::c_int,
   pub ifd: libc::c_int,
   pub min_encrypted_len_on_read: libc::c_uint,
-  pub cipher_id: uint16_t,
+  pub cipher_id: u16,
   pub MAC_size: libc::c_uint,
   pub key_size: libc::c_uint,
   pub IV_size: libc::c_uint,
-  pub outbuf: *mut uint8_t,
+  pub outbuf: *mut u8,
   pub outbuf_size: libc::c_int,
   pub inbuf_size: libc::c_int,
   pub ofs_to_buffered: libc::c_int,
   pub buffered_size: libc::c_int,
-  pub inbuf: *mut uint8_t,
+  pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
   pub write_seq64_be: uint64_t,
-  pub client_write_key: *mut uint8_t,
-  pub server_write_key: *mut uint8_t,
-  pub client_write_IV: *mut uint8_t,
-  pub server_write_IV: *mut uint8_t,
-  pub client_write_MAC_key: [uint8_t; 32],
-  pub server_write_MAC_k__: [uint8_t; 32],
-  pub client_write_k__: [uint8_t; 32],
-  pub server_write_k__: [uint8_t; 32],
-  pub client_write_I_: [uint8_t; 4],
-  pub server_write_I_: [uint8_t; 4],
+  pub client_write_key: *mut u8,
+  pub server_write_key: *mut u8,
+  pub client_write_IV: *mut u8,
+  pub server_write_IV: *mut u8,
+  pub client_write_MAC_key: [u8; 32],
+  pub server_write_MAC_k__: [u8; 32],
+  pub client_write_k__: [u8; 32],
+  pub server_write_k__: [u8; 32],
+  pub client_write_I_: [u8; 4],
+  pub server_write_I_: [u8; 4],
   pub aes_encrypt: tls_aes,
   pub aes_decrypt: tls_aes,
-  pub H: [uint8_t; 16],
+  pub H: [u8; 16],
 }
 pub type tls_state_t = tls_state;
 #[inline]

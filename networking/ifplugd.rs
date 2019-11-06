@@ -115,9 +115,9 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_info_msg(s: *const libc::c_char);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
   #[no_mangle]
@@ -130,8 +130,8 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -224,7 +224,7 @@ pub type __u8 = libc::c_uchar;
 pub type __s16 = libc::c_short;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sync_serial_settings {
@@ -353,8 +353,8 @@ pub union C2RustUnnamed_4 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ethtool_value {
-  pub cmd: __u32,
-  pub data: __u32,
+  pub cmd: u32,
+  pub data: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -367,11 +367,11 @@ pub struct mii_ioctl_data {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed_5 = 50;
@@ -539,7 +539,7 @@ pub union iwreq_data {
   pub txpower: iw_param,
   pub rts: iw_param,
   pub frag: iw_param,
-  pub mode: __u32,
+  pub mode: u32,
   pub retry: iw_param,
   pub encoding: iw_point,
   pub power: iw_param,
@@ -716,7 +716,7 @@ unsafe extern "C" fn detect_link_ethtool() -> smallint {
   };
   let mut edata: ethtool_value = ethtool_value { cmd: 0, data: 0 };
   set_ifreq_to_ifname(&mut ifreq);
-  edata.cmd = 0xai32 as __u32;
+  edata.cmd = 0xai32 as u32;
   ifreq.ifr_ifru.ifru_data = &mut edata as *mut ethtool_value as *mut libc::c_void;
   if network_ioctl(
     0x8946i32,
@@ -774,7 +774,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
     ifr_ifrn: C2RustUnnamed_7 { ifrn_name: [0; 16] },
     u: iwreq_data { name: [0; 16] },
   };
-  let mut mac: [uint8_t; 6] = [0; 6];
+  let mut mac: [u8; 6] = [0; 6];
   memset(
     &mut iwrequest as *mut iwreq as *mut libc::c_void,
     0i32,

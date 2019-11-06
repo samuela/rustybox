@@ -5,10 +5,10 @@ extern "C" {
   #[no_mangle]
   fn xunlink(pathname: *const libc::c_char);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 
-use libc::uint32_t;
+
 
 /*
  * unlink for busybox

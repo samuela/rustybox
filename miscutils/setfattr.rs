@@ -25,13 +25,13 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 pub const OPT_h: C2RustUnnamed = 1;
 pub const OPT_x: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;

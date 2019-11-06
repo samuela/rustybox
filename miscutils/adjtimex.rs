@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn xatoll(str: *const libc::c_char) -> libc::c_longlong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
   #[no_mangle]
@@ -23,8 +23,8 @@ extern "C" {
 use crate::librb::__syscall_slong_t;
 use crate::librb::size_t;
  use libc::timeval;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
 pub struct timex {
@@ -99,21 +99,21 @@ unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
 //usage:     "\n	-t TICK	Microseconds per tick, usually 10000"
 //usage:     "\n		(positive -t or -f values make clock run faster)"
 //usage:     "\n	-p TCONST"
-static mut statlist_bit: [uint16_t; 14] = [
-  0x1i32 as uint16_t,
-  0x2i32 as uint16_t,
-  0x4i32 as uint16_t,
-  0x8i32 as uint16_t,
-  0x10i32 as uint16_t,
-  0x20i32 as uint16_t,
-  0x40i32 as uint16_t,
-  0x80i32 as uint16_t,
-  0x100i32 as uint16_t,
-  0x200i32 as uint16_t,
-  0x400i32 as uint16_t,
-  0x800i32 as uint16_t,
-  0x1000i32 as uint16_t,
-  0i32 as uint16_t,
+static mut statlist_bit: [u16; 14] = [
+  0x1i32 as u16,
+  0x2i32 as u16,
+  0x4i32 as u16,
+  0x8i32 as u16,
+  0x10i32 as u16,
+  0x20i32 as u16,
+  0x40i32 as u16,
+  0x80i32 as u16,
+  0x100i32 as u16,
+  0x200i32 as u16,
+  0x400i32 as u16,
+  0x800i32 as u16,
+  0x1000i32 as u16,
+  0i32 as u16,
 ];
 static mut statlist_name: [libc::c_char; 96] = [
   80, 76, 76, 0, 80, 80, 83, 70, 82, 69, 81, 0, 80, 80, 83, 84, 73, 77, 69, 0, 70, 70, 76, 0, 73,

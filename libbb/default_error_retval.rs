@@ -1,4 +1,4 @@
- use libc::uint8_t;
+
 
 /*
  * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
@@ -13,4 +13,4 @@
  * that too seems silly.
  */
 #[no_mangle]
-pub static mut xfunc_error_retval: uint8_t = 1i32 as uint8_t;
+pub static mut xfunc_error_retval: u8 = 1i32 as u8;

@@ -51,14 +51,14 @@ extern "C" {
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -77,7 +77,7 @@ pub struct option {
 
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 /*
  * getopt.c - Enhanced implementation of BSD getopt(1)

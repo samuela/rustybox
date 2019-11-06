@@ -138,9 +138,9 @@ extern "C" {
   #[no_mangle]
   fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -177,9 +177,9 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 
 use libc::stat;
@@ -222,9 +222,9 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -234,11 +234,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -252,7 +252,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 use crate::librb::ptrdiff_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -300,7 +300,7 @@ pub struct bb_progress_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
-  pub error_pkt: [uint8_t; 36],
+  pub error_pkt: [u8; 36],
   pub pw: *mut passwd,
   pub block_buf: [libc::c_char; 516],
   pub block_buf_tail: [libc::c_char; 1],
@@ -434,9 +434,9 @@ unsafe extern "C" fn tftp_protocol(
   let mut send_len: libc::c_int = 0;
   let mut expect_OACK: smallint = 0i32 as smallint;
   let mut finished: smallint = 0i32 as smallint;
-  let mut opcode: uint16_t = 0;
-  let mut block_nr: uint16_t = 0;
-  let mut recv_blk: uint16_t = 0;
+  let mut opcode: u16 = 0;
+  let mut block_nr: u16 = 0;
+  let mut recv_blk: u16 = 0;
   let mut open_mode: libc::c_int = 0;
   let mut local_fd: libc::c_int = 0;
   let mut retries: libc::c_int = 0;
@@ -532,14 +532,14 @@ unsafe extern "C" fn tftp_protocol(
        *         "\0\4\0\1" <- tftpd
        * ...
        */
-      block_nr = 1i32 as uint16_t; /* tftp */
+      block_nr = 1i32 as u16; /* tftp */
       cp = xbuf.offset(2);
       if 1i32 == 0 || !our_lsa.is_null() {
         /* tftpd */
         /* Open file (must be after changing user) */
         local_fd = open(local_file, open_mode, 0o666i32);
         if local_fd < 0i32 {
-          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 1i32 as uint8_t;
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 1i32 as u8;
           strcpy(
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .error_pkt
@@ -554,14 +554,14 @@ unsafe extern "C" fn tftp_protocol(
           /* For the download case, block_nr is still 1 -
            * we expect 1st ACK from peer to be for (block_nr-1),
            * that is, for "block 0" which is our OACK pkt */
-          opcode = 6i32 as uint16_t;
+          opcode = 6i32 as u16;
           current_block = 1694039017486245274;
         } else {
           if option_mask32 & TFTP_OPT_GET as libc::c_int as libc::c_uint != 0 {
             /* It's upload and we don't send OACK.
              * We must ACK 1st packet (with filename)
              * as if it is "block 0" */
-            block_nr = 0i32 as uint16_t
+            block_nr = 0i32 as u16
           }
           /* Using mostly goto's - continue/break will be less clear
            * in where we actually jump to */
@@ -593,9 +593,9 @@ unsafe extern "C" fn tftp_protocol(
          * our first packet. We can connect() only when we get
          * first reply. */
         /* build opcode */
-        opcode = 2i32 as uint16_t;
+        opcode = 2i32 as u16;
         if option_mask32 & TFTP_OPT_GET as libc::c_int as libc::c_uint != 0 {
-          opcode = 1i32 as uint16_t
+          opcode = 1i32 as u16
         }
         /* add filename and mode */
         /* fill in packet if the filename fits into xbuf */
@@ -697,7 +697,7 @@ unsafe extern "C" fn tftp_protocol(
                 /* returns 1 on failure */
                 /* Build ACK or DATA */
                 cp = xbuf.offset(2);
-                *(cp as *mut uint16_t) = {
+                *(cp as *mut u16) = {
                   let mut __v: libc::c_ushort = 0;
                   let mut __x: libc::c_ushort = block_nr;
                   if 0 != 0 {
@@ -718,12 +718,12 @@ unsafe extern "C" fn tftp_protocol(
                 };
                 cp = cp.offset(2);
                 block_nr = block_nr.wrapping_add(1);
-                opcode = 4i32 as uint16_t;
+                opcode = 4i32 as u16;
                 if !(option_mask32 & TFTP_OPT_PUT as libc::c_int as libc::c_uint != 0) {
                   current_block = 1653815207292225316;
                   continue;
                 }
-                opcode = 3i32 as uint16_t;
+                opcode = 3i32 as u16;
                 len =
                   full_read(local_fd, cp as *mut libc::c_void, blksize as size_t) as libc::c_int;
                 if len < 0i32 {
@@ -748,7 +748,7 @@ unsafe extern "C" fn tftp_protocol(
                  */
               }
               _ => {
-                *(xbuf as *mut uint16_t) = {
+                *(xbuf as *mut u16) = {
                   let mut __v: libc::c_ushort = 0; /* fill in opcode part */
                   let mut __x: libc::c_ushort = opcode;
                   if 0 != 0 {
@@ -848,7 +848,7 @@ unsafe extern "C" fn tftp_protocol(
                           /* Process recv'ed packet */
                           opcode = {
                             let mut __v: libc::c_ushort = 0;
-                            let mut __x: libc::c_ushort = *(rbuf as *mut uint16_t).offset(0);
+                            let mut __x: libc::c_ushort = *(rbuf as *mut u16).offset(0);
                             if 0 != 0 {
                               __v = (__x as libc::c_int >> 8i32 & 0xffi32
                                 | (__x as libc::c_int & 0xffi32) << 8i32)
@@ -872,7 +872,7 @@ unsafe extern "C" fn tftp_protocol(
                           };
                           recv_blk = {
                             let mut __v: libc::c_ushort = 0;
-                            let mut __x: libc::c_ushort = *(rbuf as *mut uint16_t).offset(1);
+                            let mut __x: libc::c_ushort = *(rbuf as *mut u16).offset(1);
                             if 0 != 0 {
                               __v = (__x as libc::c_int >> 8i32 & 0xffi32
                                 | (__x as libc::c_int & 0xffi32) << 8i32)
@@ -985,7 +985,7 @@ unsafe extern "C" fn tftp_protocol(
                             }
                             /* did peer ACK our last DATA pkt? */
                             if !(recv_blk as libc::c_int
-                              == (block_nr as libc::c_int - 1i32) as uint16_t as libc::c_int)
+                              == (block_nr as libc::c_int - 1i32) as u16 as libc::c_int)
                             {
                               continue;
                             }
@@ -1033,7 +1033,7 @@ unsafe extern "C" fn tftp_protocol(
                       b"write error\x00" as *const u8 as *const libc::c_char,
                     );
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] =
-                      3i32 as uint8_t;
+                      3i32 as u8;
                     current_block = 15308042354214156955;
                     break;
                   }
@@ -1041,7 +1041,7 @@ unsafe extern "C" fn tftp_protocol(
                     blksize = tftp_blksize_check(res, blksize);
                     if blksize < 0i32 {
                       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] =
-                        8i32 as uint8_t;
+                        8i32 as u8;
                       current_block = 15308042354214156955;
                       break;
                     } else {
@@ -1080,7 +1080,7 @@ unsafe extern "C" fn tftp_protocol(
                 if option_mask32 & TFTP_OPT_GET as libc::c_int as libc::c_uint != 0 {
                   /* We'll send ACK for OACK,
                    * such ACK has "block no" of 0 */
-                  block_nr = 0i32 as uint16_t
+                  block_nr = 0i32 as u16
                 }
                 current_block = 13484060386966298149;
               }
@@ -1117,7 +1117,7 @@ unsafe extern "C" fn tftp_protocol(
         .offset(4) as *mut libc::c_char,
     );
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[1] = 5i32 as uint8_t;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[1] = 5i32 as u8;
   xsendto(
     pfd[0].fd,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1324,7 +1324,7 @@ pub unsafe extern "C" fn tftpd_main(
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = *((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .block_buf
-      .as_mut_ptr() as *mut uint16_t);
+      .as_mut_ptr() as *mut u16);
     if 0 != 0 {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
@@ -1392,7 +1392,7 @@ pub unsafe extern "C" fn tftpd_main(
           if !res.is_null() {
             blksize = tftp_blksize_check(res, 65564i32);
             if blksize < 0i32 {
-              (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 8i32 as uint8_t;
+              (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 8i32 as u8;
               /* will just send error pkt */
               current_block = 13887286082274607397;
             } else {

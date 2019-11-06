@@ -5,16 +5,16 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -23,8 +23,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -64,24 +64,24 @@ pub const UUID_DCE: uuid_format = 2;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct mdp_super_block {
-  pub md_magic: uint32_t,
-  pub major_version: uint32_t,
-  pub minor_version: uint32_t,
-  pub patch_version: uint32_t,
-  pub gvalid_words: uint32_t,
-  pub set_uuid0: uint32_t,
-  pub ctime: uint32_t,
-  pub level: uint32_t,
-  pub size: uint32_t,
-  pub nr_disks: uint32_t,
-  pub raid_disks: uint32_t,
-  pub md_minor: uint32_t,
-  pub not_persistent: uint32_t,
-  pub set_uuid1: uint32_t,
-  pub set_uuid2: uint32_t,
-  pub set_uuid3: uint32_t,
+  pub md_magic: u32,
+  pub major_version: u32,
+  pub minor_version: u32,
+  pub patch_version: u32,
+  pub gvalid_words: u32,
+  pub set_uuid0: u32,
+  pub ctime: u32,
+  pub level: u32,
+  pub size: u32,
+  pub nr_disks: u32,
+  pub raid_disks: u32,
+  pub md_minor: u32,
+  pub not_persistent: u32,
+  pub set_uuid1: u32,
+  pub set_uuid2: u32,
+  pub set_uuid3: u32,
 }
-pub type aliased_uint32_t = uint32_t;
+pub type aliased_u32 = u32;
 /*
  * volume_id - reads filesystem label and uuid
  *
@@ -104,9 +104,9 @@ pub type aliased_uint32_t = uint32_t;
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -126,7 +126,7 @@ pub type aliased_uint32_t = uint32_t;
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
   mut size: uint64_t,
 ) -> libc::c_int {
   let mut sboff: uint64_t = 0;
-  let mut uuid: [uint8_t; 16] = [0; 16];
+  let mut uuid: [u8; 16] = [0; 16];
   let mut mdp: *mut mdp_super_block = 0 as *mut mdp_super_block;
   if size < 0x10000i32 as libc::c_ulong {
     return -1i32;
@@ -155,10 +155,10 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
   if (*mdp).md_magic != 0xa92b4efcu32 {
     return -1i32;
   }
-  *(uuid.as_mut_ptr() as *mut aliased_uint32_t) = (*mdp).set_uuid0;
+  *(uuid.as_mut_ptr() as *mut aliased_u32) = (*mdp).set_uuid0;
   memcpy(
-    &mut *uuid.as_mut_ptr().offset(4) as *mut uint8_t as *mut libc::c_void,
-    &mut (*mdp).set_uuid1 as *mut uint32_t as *const libc::c_void,
+    &mut *uuid.as_mut_ptr().offset(4) as *mut u8 as *mut libc::c_void,
+    &mut (*mdp).set_uuid1 as *mut u32 as *const libc::c_void,
     12i32 as libc::c_ulong,
   );
   volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);

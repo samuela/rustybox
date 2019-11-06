@@ -53,14 +53,14 @@ extern "C" {
   #[no_mangle]
   fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -94,7 +94,7 @@ use crate::librb::passwd;
 use crate::librb::smallint;
 use libc::time_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

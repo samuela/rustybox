@@ -305,10 +305,10 @@ extern "C" {
   fn bb_daemonize_or_rexec(flags: libc::c_int);
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
@@ -371,9 +371,9 @@ use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -437,9 +437,9 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -449,11 +449,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -467,7 +467,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -708,18 +708,18 @@ static mut HTTP_200: [libc::c_char; 18] = [
   72, 84, 84, 80, 47, 49, 46, 48, 32, 50, 48, 48, 32, 79, 75, 13, 10, 0,
 ];
 static mut index_html: [libc::c_char; 11] = [105, 110, 100, 101, 120, 46, 104, 116, 109, 108, 0];
-static mut http_response_type: [uint16_t; 11] = [
-  HTTP_OK as libc::c_int as uint16_t,
-  HTTP_PARTIAL_CONTENT as libc::c_int as uint16_t,
-  HTTP_MOVED_TEMPORARILY as libc::c_int as uint16_t,
-  HTTP_REQUEST_TIMEOUT as libc::c_int as uint16_t,
-  HTTP_NOT_IMPLEMENTED as libc::c_int as uint16_t,
-  HTTP_UNAUTHORIZED as libc::c_int as uint16_t,
-  HTTP_NOT_FOUND as libc::c_int as uint16_t,
-  HTTP_BAD_REQUEST as libc::c_int as uint16_t,
-  HTTP_FORBIDDEN as libc::c_int as uint16_t,
-  HTTP_INTERNAL_SERVER_ERROR as libc::c_int as uint16_t,
-  HTTP_ENTITY_TOO_LARGE as libc::c_int as uint16_t,
+static mut http_response_type: [u16; 11] = [
+  HTTP_OK as libc::c_int as u16,
+  HTTP_PARTIAL_CONTENT as libc::c_int as u16,
+  HTTP_MOVED_TEMPORARILY as libc::c_int as u16,
+  HTTP_REQUEST_TIMEOUT as libc::c_int as u16,
+  HTTP_NOT_IMPLEMENTED as libc::c_int as u16,
+  HTTP_UNAUTHORIZED as libc::c_int as u16,
+  HTTP_NOT_FOUND as libc::c_int as u16,
+  HTTP_BAD_REQUEST as libc::c_int as u16,
+  HTTP_FORBIDDEN as libc::c_int as u16,
+  HTTP_INTERNAL_SERVER_ERROR as libc::c_int as u16,
+  HTTP_ENTITY_TOO_LARGE as libc::c_int as u16,
 ];
 static mut http_response: [C2RustUnnamed_5; 11] = [
   {
@@ -1093,8 +1093,8 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           /* then error page; find matching status */
           i = 0i32 as libc::c_uint;
           while i
-            < (::std::mem::size_of::<[uint16_t; 11]>() as libc::c_ulong)
-              .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong)
+            < (::std::mem::size_of::<[u16; 11]>() as libc::c_ulong)
+              .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong)
               as libc::c_uint
           {
             if http_response_type[i as usize] as libc::c_int == status {
@@ -1397,8 +1397,8 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
   let mut timer: time_t = time(0 as *mut time_t);
   i = 0i32 as libc::c_uint;
   while i
-    < (::std::mem::size_of::<[uint16_t; 11]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint
+    < (::std::mem::size_of::<[u16; 11]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
   {
     if http_response_type[i as usize] as libc::c_uint == responseNum {
       responseString = http_response[i as usize].name;
@@ -2033,7 +2033,7 @@ unsafe extern "C" fn send_cgi_and_exit(
     let mut current_block_69: u64;
     /* Child process */
     let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
-    xfunc_error_retval = 242i32 as uint8_t;
+    xfunc_error_retval = 242i32 as u8;
     /* NB: close _first_, then move fds! */
     close(toCgi.wr); /* replace stdin with the pipe */
     close(fromCgi.rd); /* replace stdout with the pipe */
@@ -2103,7 +2103,7 @@ unsafe extern "C" fn send_cgi_and_exit(
   }
   /* Parent process */
   /* Restore variables possibly changed by child */
-  xfunc_error_retval = 0i32 as uint8_t;
+  xfunc_error_retval = 0i32 as u8;
   /* Pump data */
   close(fromCgi.wr);
   close(toCgi.rd);
@@ -3274,7 +3274,7 @@ pub unsafe extern "C" fn httpd_main(
       Some(sighup_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
   }
-  xfunc_error_retval = 0i32 as uint8_t;
+  xfunc_error_retval = 0i32 as u8;
   if opt & OPT_INETD as libc::c_int as libc::c_uint != 0 {
     mini_httpd_inetd();
   }

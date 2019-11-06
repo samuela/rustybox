@@ -22,12 +22,12 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
-  pub version: __u32,
+  pub version: u32,
   pub pid: libc::c_int,
 }
 
@@ -36,14 +36,14 @@ pub type cap_user_header_t = *mut __user_cap_header_struct;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
-  pub effective: __u32,
-  pub permitted: __u32,
-  pub inheritable: __u32,
+  pub effective: u32,
+  pub permitted: u32,
+  pub inheritable: u32,
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -375,7 +375,7 @@ pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: li
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -604,20 +604,20 @@ pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: li
 #[no_mangle]
 pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
   let mut current_block: u64;
-  static mut versions: [uint8_t; 3] = [2i32 as uint8_t, 2i32 as uint8_t, 1i32 as uint8_t];
+  static mut versions: [u8; 3] = [2i32 as u8, 2i32 as u8, 1i32 as u8];
   let mut i: libc::c_int = 0;
   let mut caps: *mut caps = arg as *mut caps;
   (*caps).header.pid = 0i32;
   i = 0i32;
   loop {
     if !((i as libc::c_uint)
-      < (::std::mem::size_of::<[uint8_t; 3]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<uint8_t>() as libc::c_ulong) as libc::c_uint)
+      < (::std::mem::size_of::<[u8; 3]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong) as libc::c_uint)
     {
       current_block = 11006700562992250127;
       break;
     }
-    (*caps).header.version = versions[i as usize] as __u32;
+    (*caps).header.version = versions[i as usize] as u32;
     if capget(&mut (*caps).header, 0 as cap_user_data_t) == 0i32 {
       current_block = 3807955613399749250;
       break;

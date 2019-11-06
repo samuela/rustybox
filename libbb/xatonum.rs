@@ -113,7 +113,7 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use libc::uint16_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
@@ -956,7 +956,7 @@ pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -1033,8 +1033,8 @@ pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc
  */
 /* Useful for reading port numbers */
 #[no_mangle]
-pub unsafe extern "C" fn xatou16(mut numstr: *const libc::c_char) -> uint16_t {
-  return xatou_range(numstr, 0i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as uint16_t;
+pub unsafe extern "C" fn xatou16(mut numstr: *const libc::c_char) -> u16 {
+  return xatou_range(numstr, 0i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16;
 }
 #[no_mangle]
 pub static mut bkm_suffixes: [suffix_mult; 4] = [

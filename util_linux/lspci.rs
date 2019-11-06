@@ -47,10 +47,10 @@ extern "C" {
   fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn config_open2(
@@ -77,7 +77,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::stat;
 

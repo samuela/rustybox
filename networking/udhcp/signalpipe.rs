@@ -230,7 +230,7 @@ pub unsafe extern "C" fn udhcp_sp_fd_set(mut pfds: *mut pollfd, mut extra_fd: li
 // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
 /* ** Logging ***/
 /* ** Other shared functions ***/
-/* 2nd param is "uint32_t*" */
+/* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
 /* Read a signal from the signal pipe. Returns 0 if there is
  * no signal, -1 on error (and sets errno appropriately), and

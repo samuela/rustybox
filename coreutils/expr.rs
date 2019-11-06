@@ -35,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -62,7 +62,7 @@ pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
- use libc::uint8_t;
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
@@ -620,7 +620,7 @@ pub unsafe extern "C" fn expr_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut v: *mut VALUE = 0 as *mut VALUE;
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
   *fresh13 = argv.offset(1);
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {

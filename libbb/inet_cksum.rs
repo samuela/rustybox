@@ -1,7 +1,7 @@
 use libc;
 
-use libc::uint16_t;
- use libc::uint8_t;
+
+
 
 /*
  * Busybox main internal header file
@@ -213,7 +213,7 @@ use libc::uint16_t;
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /*
  * Checksum routine for Internet Protocol family headers (C Version)
@@ -221,7 +221,7 @@ use libc::uint16_t;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 #[no_mangle]
-pub unsafe extern "C" fn inet_cksum(mut addr: *mut uint16_t, mut nleft: libc::c_int) -> uint16_t {
+pub unsafe extern "C" fn inet_cksum(mut addr: *mut u16, mut nleft: libc::c_int) -> u16 {
   /*
    * Our algorithm is simple, using a 32 bit accumulator,
    * we add sequential 16 bit words to it, and at the end, fold
@@ -237,10 +237,10 @@ pub unsafe extern "C" fn inet_cksum(mut addr: *mut uint16_t, mut nleft: libc::c_
   }
   /* Mop up an odd byte, if necessary */
   if nleft == 1i32 {
-    sum = sum.wrapping_add(*(addr as *mut uint8_t) as libc::c_uint)
+    sum = sum.wrapping_add(*(addr as *mut u8) as libc::c_uint)
   }
   /* Add back carry outs from top 16 bits to low 16 bits */
   sum = (sum >> 16i32).wrapping_add(sum & 0xffffi32 as libc::c_uint); /* add hi 16 to low 16 */
   sum = sum.wrapping_add(sum >> 16i32); /* add carry */
-  return !sum as uint16_t;
+  return !sum as u16;
 }

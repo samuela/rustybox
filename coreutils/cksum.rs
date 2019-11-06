@@ -15,16 +15,16 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  fn crc32_filltable(tbl256: *mut uint32_t, endian: libc::c_int) -> *mut uint32_t;
+  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
   #[no_mangle]
   fn crc32_block_endian1(
-    val: uint32_t,
+    val: u32,
     buf: *const libc::c_void,
     len: libc::c_uint,
-    crc_table: *mut uint32_t,
-  ) -> uint32_t;
+    crc_table: *mut u32,
+  ) -> u32;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -33,8 +33,6 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uoff_t;
-use libc::uint32_t;
-use libc::uint8_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
@@ -64,12 +62,12 @@ pub unsafe extern "C" fn cksum_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut crc32_table: *mut uint32_t = crc32_filltable(0 as *mut uint32_t, 1i32); /* coreutils 6.9 compat */
+  let mut crc32_table: *mut u32 = crc32_filltable(0 as *mut u32, 1i32); /* coreutils 6.9 compat */
   let mut exit_code: libc::c_int = 0i32;
   getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   loop {
-    let mut crc: uint32_t = 0;
+    let mut crc: u32 = 0;
     let mut filesize: off_t = 0;
     let mut fd: libc::c_int = open_or_warn_stdin(if !(*argv).is_null() {
       *argv
@@ -79,7 +77,7 @@ pub unsafe extern "C" fn cksum_main(
     if fd < 0i32 {
       exit_code = 1i32
     } else {
-      crc = 0i32 as uint32_t;
+      crc = 0i32 as u32;
       filesize = 0i32 as off_t;
       loop {
         let mut t: uoff_t = 0;
@@ -99,7 +97,7 @@ pub unsafe extern "C" fn cksum_main(
           while t != 0i32 as libc::c_ulong {
             let fresh0 = bytes_read;
             bytes_read = bytes_read + 1;
-            *bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) = t as uint8_t as libc::c_char;
+            *bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) = t as u8 as libc::c_char;
             t >>= 8i32
           }
         }

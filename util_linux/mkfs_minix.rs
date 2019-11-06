@@ -48,7 +48,7 @@ extern "C" {
   #[no_mangle]
   fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut msg_eol: *const libc::c_char;
   #[no_mangle]
@@ -66,9 +66,9 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -87,7 +87,7 @@ use crate::librb::uoff_t;
 pub struct globals {
   pub version2: smallint,
   pub device_name: *mut libc::c_char,
-  pub total_blocks: uint32_t,
+  pub total_blocks: u32,
   pub badblocks: libc::c_int,
   pub namelen: libc::c_int,
   pub dirsize: libc::c_int,
@@ -120,16 +120,16 @@ pub union C2RustUnnamed {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix_superblock {
-  pub s_ninodes: uint16_t,
-  pub s_nzones: uint16_t,
-  pub s_imap_blocks: uint16_t,
-  pub s_zmap_blocks: uint16_t,
-  pub s_firstdatazone: uint16_t,
-  pub s_log_zone_size: uint16_t,
-  pub s_max_size: uint32_t,
-  pub s_magic: uint16_t,
-  pub s_state: uint16_t,
-  pub s_zones: uint32_t,
+  pub s_ninodes: u16,
+  pub s_nzones: u16,
+  pub s_imap_blocks: u16,
+  pub s_zmap_blocks: u16,
+  pub s_firstdatazone: u16,
+  pub s_log_zone_size: u16,
+  pub s_max_size: u32,
+  pub s_magic: u16,
+  pub s_state: u16,
+  pub s_zones: u32,
 }
 /*
  * This is the original minix inode layout on disk.
@@ -138,13 +138,13 @@ pub struct minix_superblock {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix1_inode {
-  pub i_mode: uint16_t,
-  pub i_uid: uint16_t,
-  pub i_size: uint32_t,
-  pub i_time: uint32_t,
-  pub i_gid: uint8_t,
-  pub i_nlinks: uint8_t,
-  pub i_zone: [uint16_t; 9],
+  pub i_mode: u16,
+  pub i_uid: u16,
+  pub i_size: u32,
+  pub i_time: u32,
+  pub i_gid: u8,
+  pub i_nlinks: u8,
+  pub i_zone: [u16; 9],
 }
 /*
  * The new minix inode has all the time entries, as well as
@@ -155,15 +155,15 @@ pub struct minix1_inode {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix2_inode {
-  pub i_mode: uint16_t,
-  pub i_nlinks: uint16_t,
-  pub i_uid: uint16_t,
-  pub i_gid: uint16_t,
-  pub i_size: uint32_t,
-  pub i_atime: uint32_t,
-  pub i_mtime: uint32_t,
-  pub i_ctime: uint32_t,
-  pub i_zone: [uint32_t; 10],
+  pub i_mode: u16,
+  pub i_nlinks: u16,
+  pub i_uid: u16,
+  pub i_gid: u16,
+  pub i_size: u32,
+  pub i_atime: u32,
+  pub i_mtime: u32,
+  pub i_ctime: u32,
+  pub i_zone: [u32; 10],
 }
 /* Believe it or not, but mount.h has this one #defined */
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -228,9 +228,9 @@ unsafe extern "C" fn minix_clrbit(mut a: *mut libc::c_char, mut i: libc::c_uint)
 unsafe extern "C" fn write_tables() {
   /* Mark the superblock valid. */
   (*ptr_to_globals).u.SB.s_state =
-    ((*ptr_to_globals).u.SB.s_state as libc::c_int | MINIX_VALID_FS as libc::c_int) as uint16_t;
+    ((*ptr_to_globals).u.SB.s_state as libc::c_int | MINIX_VALID_FS as libc::c_int) as u16;
   (*ptr_to_globals).u.SB.s_state =
-    ((*ptr_to_globals).u.SB.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as uint16_t;
+    ((*ptr_to_globals).u.SB.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16;
   msg_eol = b"seek to 0 failed\x00" as *const u8 as *const libc::c_char;
   xlseek(dev_fd as libc::c_int, 0i32 as off_t, 0i32);
   msg_eol = b"can\'t clear boot sector\x00" as *const u8 as *const libc::c_char;
@@ -390,12 +390,12 @@ unsafe extern "C" fn make_bad_inode() {
     (*ptr_to_globals).inode_map,
     MINIX_BAD_INO as libc::c_int as libc::c_uint,
   );
-  (*inode).i_nlinks = 1i32 as uint8_t;
+  (*inode).i_nlinks = 1i32 as u8;
   /* BTW, setting this makes all images different */
   /* it's harder to check for bugs then - diff isn't helpful :(... */
-  (*inode).i_time = 0i32 as uint32_t;
-  (*inode).i_mode = (0o100000i32 + 0i32) as uint16_t;
-  (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as uint32_t;
+  (*inode).i_time = 0i32 as u32;
+  (*inode).i_mode = (0o100000i32 + 0i32) as u16;
+  (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as u32;
   zone = next(0i32);
   i = 0i32;
   loop {
@@ -403,7 +403,7 @@ unsafe extern "C" fn make_bad_inode() {
       current_block = 2979737022853876585;
       break;
     }
-    (*inode).i_zone[i as usize] = zone as uint16_t;
+    (*inode).i_zone[i as usize] = zone as u16;
     zone = next(zone);
     if zone == 0 {
       current_block = 5743758918637478998;
@@ -414,7 +414,7 @@ unsafe extern "C" fn make_bad_inode() {
   match current_block {
     2979737022853876585 => {
       ind = get_free_block();
-      (*inode).i_zone[7] = ind as uint16_t;
+      (*inode).i_zone[7] = ind as u16;
       memset(
         (*ptr_to_globals).ind_block1.as_mut_ptr() as *mut libc::c_void,
         0i32,
@@ -438,7 +438,7 @@ unsafe extern "C" fn make_bad_inode() {
         5743758918637478998 => {}
         _ => {
           dind = get_free_block();
-          (*inode).i_zone[8] = dind as uint16_t;
+          (*inode).i_zone[8] = dind as u16;
           memset(
             (*ptr_to_globals).dind_block1.as_mut_ptr() as *mut libc::c_void,
             0i32,
@@ -521,12 +521,12 @@ unsafe extern "C" fn make_bad_inode2() {
     (*ptr_to_globals).inode_map,
     MINIX_BAD_INO as libc::c_int as libc::c_uint,
   );
-  (*inode).i_nlinks = 1i32 as uint16_t;
-  (*inode).i_ctime = 0i32 as uint32_t;
+  (*inode).i_nlinks = 1i32 as u16;
+  (*inode).i_ctime = 0i32 as u32;
   (*inode).i_mtime = (*inode).i_ctime;
   (*inode).i_atime = (*inode).i_mtime;
-  (*inode).i_mode = (0o100000i32 + 0i32) as uint16_t;
-  (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as uint32_t;
+  (*inode).i_mode = (0o100000i32 + 0i32) as u16;
+  (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as u32;
   zone = next(0i32);
   i = 0i32;
   loop {
@@ -534,7 +534,7 @@ unsafe extern "C" fn make_bad_inode2() {
       current_block = 2979737022853876585;
       break;
     }
-    (*inode).i_zone[i as usize] = zone as uint32_t;
+    (*inode).i_zone[i as usize] = zone as u32;
     zone = next(zone);
     if zone == 0 {
       current_block = 6635813614084111333;
@@ -545,7 +545,7 @@ unsafe extern "C" fn make_bad_inode2() {
   match current_block {
     2979737022853876585 => {
       ind = get_free_block();
-      (*inode).i_zone[7] = ind as uint32_t;
+      (*inode).i_zone[7] = ind as u32;
       memset(
         (*ptr_to_globals).ind_block2.as_mut_ptr() as *mut libc::c_void,
         0i32,
@@ -569,7 +569,7 @@ unsafe extern "C" fn make_bad_inode2() {
         6635813614084111333 => {}
         _ => {
           dind = get_free_block();
-          (*inode).i_zone[8] = dind as uint32_t;
+          (*inode).i_zone[8] = dind as u32;
           memset(
             (*ptr_to_globals).dind_block2.as_mut_ptr() as *mut libc::c_void,
             0i32,
@@ -640,22 +640,22 @@ unsafe extern "C" fn make_root_inode() {
     (*ptr_to_globals).inode_map,
     MINIX_ROOT_INO as libc::c_int as libc::c_uint,
   );
-  (*inode).i_zone[0] = get_free_block() as uint16_t;
-  (*inode).i_nlinks = 2i32 as uint8_t;
-  (*inode).i_time = 0i32 as uint32_t;
+  (*inode).i_zone[0] = get_free_block() as u16;
+  (*inode).i_nlinks = 2i32 as u8;
+  (*inode).i_time = 0i32 as u32;
   if (*ptr_to_globals).badblocks != 0 {
-    (*inode).i_size = (3i32 * (*ptr_to_globals).dirsize) as uint32_t
+    (*inode).i_size = (3i32 * (*ptr_to_globals).dirsize) as u32
   } else {
     (*ptr_to_globals).root_block[(2i32 * (*ptr_to_globals).dirsize) as usize] =
       '\u{0}' as i32 as libc::c_char;
     (*ptr_to_globals).root_block[(2i32 * (*ptr_to_globals).dirsize + 1i32) as usize] =
       '\u{0}' as i32 as libc::c_char;
-    (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as uint32_t
+    (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as u32
   }
-  (*inode).i_mode = (0o40000i32 + 0o755i32) as uint16_t;
-  (*inode).i_uid = 0i32 as uint16_t;
+  (*inode).i_mode = (0o40000i32 + 0o755i32) as u16;
+  (*inode).i_uid = 0i32 as u16;
   if (*inode).i_uid != 0 {
-    (*inode).i_gid = 0i32 as uint8_t
+    (*inode).i_gid = 0i32 as u8
   }
   write_block(
     (*inode).i_zone[0] as libc::c_int,
@@ -671,24 +671,24 @@ unsafe extern "C" fn make_root_inode2() {
     (*ptr_to_globals).inode_map,
     MINIX_ROOT_INO as libc::c_int as libc::c_uint,
   );
-  (*inode).i_zone[0] = get_free_block() as uint32_t;
-  (*inode).i_nlinks = 2i32 as uint16_t;
-  (*inode).i_ctime = 0i32 as uint32_t;
+  (*inode).i_zone[0] = get_free_block() as u32;
+  (*inode).i_nlinks = 2i32 as u16;
+  (*inode).i_ctime = 0i32 as u32;
   (*inode).i_mtime = (*inode).i_ctime;
   (*inode).i_atime = (*inode).i_mtime;
   if (*ptr_to_globals).badblocks != 0 {
-    (*inode).i_size = (3i32 * (*ptr_to_globals).dirsize) as uint32_t
+    (*inode).i_size = (3i32 * (*ptr_to_globals).dirsize) as u32
   } else {
     (*ptr_to_globals).root_block[(2i32 * (*ptr_to_globals).dirsize) as usize] =
       '\u{0}' as i32 as libc::c_char;
     (*ptr_to_globals).root_block[(2i32 * (*ptr_to_globals).dirsize + 1i32) as usize] =
       '\u{0}' as i32 as libc::c_char;
-    (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as uint32_t
+    (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as u32
   }
-  (*inode).i_mode = (0o40000i32 + 0o755i32) as uint16_t;
-  (*inode).i_uid = 0i32 as uint16_t;
+  (*inode).i_mode = (0o40000i32 + 0o755i32) as u16;
+  (*inode).i_uid = 0i32 as u16;
   if (*inode).i_uid != 0 {
-    (*inode).i_gid = 0i32 as uint16_t
+    (*inode).i_gid = 0i32 as u16
   }
   write_block(
     (*inode).i_zone[0] as libc::c_int,
@@ -859,17 +859,17 @@ unsafe extern "C" fn setup_tables() {
   let mut i: libc::c_uint = 0;
   /* memset(G.u.superblock_buffer, 0, BLOCK_SIZE); */
   /* memset(G.boot_block_buffer, 0, 512); */
-  (*ptr_to_globals).u.SB.s_magic = (*ptr_to_globals).magic as uint16_t;
-  (*ptr_to_globals).u.SB.s_log_zone_size = 0i32 as uint16_t;
+  (*ptr_to_globals).u.SB.s_magic = (*ptr_to_globals).magic as u16;
+  (*ptr_to_globals).u.SB.s_log_zone_size = 0i32 as u16;
   (*ptr_to_globals).u.SB.s_max_size = if (*ptr_to_globals).version2 as libc::c_int != 0 {
     0x7fffffffi32
   } else {
     (7i32 + 512i32 + 512i32 * 512i32) * 1024i32
-  } as uint32_t;
+  } as u32;
   if (*ptr_to_globals).version2 != 0 {
     (*ptr_to_globals).u.SB.s_zones = (*ptr_to_globals).total_blocks
   } else {
-    (*ptr_to_globals).u.SB.s_nzones = (*ptr_to_globals).total_blocks as uint16_t
+    (*ptr_to_globals).u.SB.s_nzones = (*ptr_to_globals).total_blocks as u16
   }
   /* some magic nrs: 1 inode / 3 blocks */
   if (*ptr_to_globals).req_nr_inodes == 0i32 as libc::c_ulong {
@@ -894,11 +894,11 @@ unsafe extern "C" fn setup_tables() {
   if inodes > 65535i32 as libc::c_ulong {
     inodes = 65535i32 as libc::c_ulong
   }
-  (*ptr_to_globals).u.SB.s_ninodes = inodes as uint16_t;
+  (*ptr_to_globals).u.SB.s_ninodes = inodes as u16;
   (*ptr_to_globals).u.SB.s_imap_blocks = div_roundup(
     ((*ptr_to_globals).u.SB.s_ninodes as libc::c_int + 1i32) as libc::c_uint,
     BITS_PER_BLOCK as libc::c_int as libc::c_uint,
-  ) as uint16_t;
+  ) as u16;
   /* Real bad hack but overwise mkfs.minix can be thrown
    * in infinite loop...
    * try:
@@ -908,7 +908,7 @@ unsafe extern "C" fn setup_tables() {
   /* This code is not insane: NORM_FIRSTZONE is not a constant,
    * it is calculated from SB_INODES, SB_IMAPS and SB_ZMAPS */
   i = 999i32 as libc::c_uint;
-  (*ptr_to_globals).u.SB.s_zmap_blocks = 0i32 as uint16_t;
+  (*ptr_to_globals).u.SB.s_zmap_blocks = 0i32 as u16;
   loop {
     norm_firstzone = ((2i32
       + (*ptr_to_globals).u.SB.s_imap_blocks as libc::c_int
@@ -932,7 +932,7 @@ unsafe extern "C" fn setup_tables() {
       current_block = 6633475714167083212;
       break;
     }
-    (*ptr_to_globals).u.SB.s_zmap_blocks = sb_zmaps as uint16_t;
+    (*ptr_to_globals).u.SB.s_zmap_blocks = sb_zmaps as u16;
     i = i.wrapping_sub(1);
     if !(i != 0) {
       current_block = 1109700713171191020;
@@ -948,7 +948,7 @@ unsafe extern "C" fn setup_tables() {
       );
     }
     _ => {
-      (*ptr_to_globals).u.SB.s_firstdatazone = norm_firstzone as uint16_t;
+      (*ptr_to_globals).u.SB.s_firstdatazone = norm_firstzone as u16;
       (*ptr_to_globals).inode_map = xmalloc(
         ((*ptr_to_globals).u.SB.s_imap_blocks as libc::c_int * BLOCK_SIZE as libc::c_int) as size_t,
       ) as *mut libc::c_char;
@@ -1102,7 +1102,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
     1024i32 as libc::c_uint,
     1i32,
   )
-  .wrapping_div(1024i32 as libc::c_ulong) as uint32_t;
+  .wrapping_div(1024i32 as libc::c_ulong) as u32;
   if (*ptr_to_globals).total_blocks < 10i32 as libc::c_uint {
     bb_simple_error_msg_and_die(
       b"must have at least 10 blocks\x00" as *const u8 as *const libc::c_char,
@@ -1114,7 +1114,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
       (*ptr_to_globals).magic = MINIX2_SUPER_MAGIC as libc::c_int
     }
   } else if (*ptr_to_globals).total_blocks > 65535i32 as libc::c_uint {
-    (*ptr_to_globals).total_blocks = 65535i32 as uint32_t
+    (*ptr_to_globals).total_blocks = 65535i32 as u32
   }
   tmp = (*ptr_to_globals).root_block.as_mut_ptr();
   *(tmp as *mut libc::c_short) = 1i32 as libc::c_short;

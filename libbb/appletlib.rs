@@ -7,7 +7,6 @@ use crate::applets::applet_tables::{applets, InstallLoc, SUID};
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, uid_t,
-  uint16_t, uint8_t,
 };
 use crate::shell::ash::ash_main;
 
@@ -103,7 +102,7 @@ extern "C" {
   );
 
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 
   /* A bit of bunzip2 internals are exposed for compressed help support: */
   #[no_mangle]
@@ -128,7 +127,7 @@ static mut suid_config: *mut suid_config_t = 0 as *const suid_config_t as *mut s
 static mut suid_cfg_readable: bool = false;
 
 #[no_mangle]
-pub static mut applet_numbers: [uint16_t; 1] = [218i32 as uint16_t];
+pub static mut applet_numbers: [u16; 1] = [218i32 as u16];
 
 /*
  * Utility routines.
@@ -924,13 +923,13 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) 
   if applet_no != 332 && applet_no != 342 && applet_no != 82 {
     if argc == 2 && argv[1] == "--help" {
       /* Make "foo --help" exit with 0: */
-      xfunc_error_retval = 0 as uint8_t;
+      xfunc_error_retval = 0 as u8;
       bb_show_usage();
     }
   }
 
   check_suid(applet_no);
-  xfunc_error_retval = (applets[applet_no].entrypoint)(argc, str_vec_to_ptrs(argv)) as uint8_t;
+  xfunc_error_retval = (applets[applet_no].entrypoint)(argc, str_vec_to_ptrs(argv)) as u8;
 
   /* Note: applet_main() may also not return (die on a xfunc or such) */
   xfunc_die();

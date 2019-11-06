@@ -5,10 +5,10 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
@@ -16,10 +16,10 @@ extern "C" {
 
 use crate::librb::int16_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -28,8 +28,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -48,52 +48,52 @@ This is one has been simplified since we only care about the superblock.
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ocfs2_super_block {
-  pub i_signature: [uint8_t; 8],
-  pub i_generation: uint32_t,
+  pub i_signature: [u8; 8],
+  pub i_generation: u32,
   pub i_suballoc_slot: int16_t,
-  pub i_suballoc_bit: uint16_t,
-  pub i_reserved0: uint32_t,
-  pub i_clusters: uint32_t,
-  pub i_uid: uint32_t,
-  pub i_gid: uint32_t,
+  pub i_suballoc_bit: u16,
+  pub i_reserved0: u32,
+  pub i_clusters: u32,
+  pub i_uid: u32,
+  pub i_gid: u32,
   pub i_size: uint64_t,
-  pub i_mode: uint16_t,
-  pub i_links_count: uint16_t,
-  pub i_flags: uint32_t,
+  pub i_mode: u16,
+  pub i_links_count: u16,
+  pub i_flags: u32,
   pub i_atime: uint64_t,
   pub i_ctime: uint64_t,
   pub i_mtime: uint64_t,
   pub i_dtime: uint64_t,
   pub i_blkno: uint64_t,
   pub i_last_eb_blk: uint64_t,
-  pub i_fs_generation: uint32_t,
-  pub i_atime_nsec: uint32_t,
-  pub i_ctime_nsec: uint32_t,
-  pub i_mtime_nsec: uint32_t,
+  pub i_fs_generation: u32,
+  pub i_atime_nsec: u32,
+  pub i_ctime_nsec: u32,
+  pub i_mtime_nsec: u32,
   pub i_reserved1: [uint64_t; 9],
   pub i_pad1: uint64_t,
-  pub s_major_rev_level: uint16_t,
-  pub s_minor_rev_level: uint16_t,
-  pub s_mnt_count: uint16_t,
+  pub s_major_rev_level: u16,
+  pub s_minor_rev_level: u16,
+  pub s_mnt_count: u16,
   pub s_max_mnt_count: int16_t,
-  pub s_state: uint16_t,
-  pub s_errors: uint16_t,
-  pub s_checkinterval: uint32_t,
+  pub s_state: u16,
+  pub s_errors: u16,
+  pub s_checkinterval: u32,
   pub s_lastcheck: uint64_t,
-  pub s_creator_os: uint32_t,
-  pub s_feature_compat: uint32_t,
-  pub s_feature_incompat: uint32_t,
-  pub s_feature_ro_compat: uint32_t,
+  pub s_creator_os: u32,
+  pub s_feature_compat: u32,
+  pub s_feature_incompat: u32,
+  pub s_feature_ro_compat: u32,
   pub s_root_blkno: uint64_t,
   pub s_system_dir_blkno: uint64_t,
-  pub s_blocksize_bits: uint32_t,
-  pub s_clustersize_bits: uint32_t,
-  pub s_max_slots: uint16_t,
-  pub s_reserved1: uint16_t,
-  pub s_reserved2: uint32_t,
+  pub s_blocksize_bits: u32,
+  pub s_clustersize_bits: u32,
+  pub s_max_slots: u16,
+  pub s_reserved1: u16,
+  pub s_reserved2: u32,
   pub s_first_cluster_group: uint64_t,
-  pub s_label: [uint8_t; 64],
-  pub s_uuid: [uint8_t; 16],
+  pub s_label: [u8; 64],
+  pub s_uuid: [u8; 16],
   /* 128-bit uuid */
 }
 /*
@@ -118,9 +118,9 @@ pub struct ocfs2_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -140,7 +140,7 @@ pub struct ocfs2_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

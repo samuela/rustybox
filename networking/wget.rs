@@ -179,14 +179,14 @@ extern "C" {
   #[no_mangle]
   fn xfork() -> pid_t;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -234,9 +234,9 @@ use crate::librb::__off64_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
 use crate::librb::uint64_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 pub type smalluint = libc::c_uchar;
 use crate::librb::off_t;
 use crate::librb::pid_t;
@@ -268,9 +268,9 @@ pub const SHUT_RD: C2RustUnnamed = 0;
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -280,11 +280,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -298,7 +298,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 use crate::librb::signal::__sighandler_t;
 
 use libc::FILE;
@@ -327,7 +327,7 @@ pub union C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tls_aes {
-  pub key: [uint32_t; 60],
+  pub key: [u32; 60],
   pub rounds: libc::c_uint,
 }
 #[derive(Copy, Clone)]
@@ -337,31 +337,31 @@ pub struct tls_state {
   pub ofd: libc::c_int,
   pub ifd: libc::c_int,
   pub min_encrypted_len_on_read: libc::c_uint,
-  pub cipher_id: uint16_t,
+  pub cipher_id: u16,
   pub MAC_size: libc::c_uint,
   pub key_size: libc::c_uint,
   pub IV_size: libc::c_uint,
-  pub outbuf: *mut uint8_t,
+  pub outbuf: *mut u8,
   pub outbuf_size: libc::c_int,
   pub inbuf_size: libc::c_int,
   pub ofs_to_buffered: libc::c_int,
   pub buffered_size: libc::c_int,
-  pub inbuf: *mut uint8_t,
+  pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
   pub write_seq64_be: uint64_t,
-  pub client_write_key: *mut uint8_t,
-  pub server_write_key: *mut uint8_t,
-  pub client_write_IV: *mut uint8_t,
-  pub server_write_IV: *mut uint8_t,
-  pub client_write_MAC_key: [uint8_t; 32],
-  pub server_write_MAC_k__: [uint8_t; 32],
-  pub client_write_k__: [uint8_t; 32],
-  pub server_write_k__: [uint8_t; 32],
-  pub client_write_I_: [uint8_t; 4],
-  pub server_write_I_: [uint8_t; 4],
+  pub client_write_key: *mut u8,
+  pub server_write_key: *mut u8,
+  pub client_write_IV: *mut u8,
+  pub server_write_IV: *mut u8,
+  pub client_write_MAC_key: [u8; 32],
+  pub server_write_MAC_k__: [u8; 32],
+  pub client_write_k__: [u8; 32],
+  pub server_write_k__: [u8; 32],
+  pub client_write_I_: [u8; 4],
+  pub server_write_I_: [u8; 4],
   pub aes_encrypt: tls_aes,
   pub aes_decrypt: tls_aes,
-  pub H: [uint8_t; 16],
+  pub H: [u8; 16],
 }
 pub type tls_state_t = tls_state;
 use crate::libbb::llist::llist_t;

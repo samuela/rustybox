@@ -103,9 +103,9 @@ extern "C" {
     hostname: *const libc::c_char,
   );
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut msg_eol: *const libc::c_char;
   #[no_mangle]
@@ -145,7 +145,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 pub type sighandler_t = __sighandler_t;
 use crate::librb::cc_t;
 use crate::librb::speed_t;

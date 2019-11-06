@@ -123,10 +123,10 @@ extern "C" {
   fn sanitize_env_if_suid() -> libc::c_int;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
@@ -241,9 +241,9 @@ pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 
 
@@ -264,9 +264,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 
 #[derive(Copy, Clone)]
@@ -278,11 +278,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -299,7 +299,7 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

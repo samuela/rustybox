@@ -20,7 +20,7 @@ extern "C" {
   #[no_mangle]
   fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -61,7 +61,7 @@ use crate::librb::__uid_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 
 /*
  * Mini su implementation for busybox

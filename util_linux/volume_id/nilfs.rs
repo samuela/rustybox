@@ -5,17 +5,17 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -24,8 +24,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -41,19 +41,19 @@ pub const UUID_DCE: uuid_format = 2;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct nilfs2_super_block {
-  pub s_rev_level: uint32_t,
-  pub s_minor_rev_level: uint16_t,
-  pub s_magic: uint16_t,
-  pub s_bytes: uint16_t,
-  pub s_flags: uint16_t,
-  pub s_crc_seed: uint32_t,
-  pub s_sum: uint32_t,
-  pub s_log_block_size: uint32_t,
+  pub s_rev_level: u32,
+  pub s_minor_rev_level: u16,
+  pub s_magic: u16,
+  pub s_bytes: u16,
+  pub s_flags: u16,
+  pub s_crc_seed: u32,
+  pub s_sum: u32,
+  pub s_log_block_size: u32,
   pub s_nsegments: uint64_t,
   pub s_dev_size: uint64_t,
   pub s_first_data_block: uint64_t,
-  pub s_blocks_per_segment: uint32_t,
-  pub s_r_segments_percentage: uint32_t,
+  pub s_blocks_per_segment: u32,
+  pub s_r_segments_percentage: u32,
   pub s_last_cno: uint64_t,
   pub s_last_pseg: uint64_t,
   pub s_last_seq: uint64_t,
@@ -61,22 +61,22 @@ pub struct nilfs2_super_block {
   pub s_ctime: uint64_t,
   pub s_mtime: uint64_t,
   pub s_wtime: uint64_t,
-  pub s_mnt_count: uint16_t,
-  pub s_max_mnt_count: uint16_t,
-  pub s_state: uint16_t,
-  pub s_errors: uint16_t,
+  pub s_mnt_count: u16,
+  pub s_max_mnt_count: u16,
+  pub s_state: u16,
+  pub s_errors: u16,
   pub s_lastcheck: uint64_t,
-  pub s_checkinterval: uint32_t,
-  pub s_creator_os: uint32_t,
-  pub s_def_resuid: uint16_t,
-  pub s_def_resgid: uint16_t,
-  pub s_first_ino: uint32_t,
-  pub s_inode_size: uint16_t,
-  pub s_dat_entry_size: uint16_t,
-  pub s_checkpoint_size: uint16_t,
-  pub s_segment_usage_size: uint16_t,
-  pub s_uuid: [uint8_t; 16],
-  pub s_volume_name: [uint8_t; 80],
+  pub s_checkinterval: u32,
+  pub s_creator_os: u32,
+  pub s_def_resuid: u16,
+  pub s_def_resgid: u16,
+  pub s_first_ino: u32,
+  pub s_inode_size: u16,
+  pub s_dat_entry_size: u16,
+  pub s_checkpoint_size: u16,
+  pub s_segment_usage_size: u16,
+  pub s_uuid: [u8; 16],
+  pub s_volume_name: [u8; 80],
   // Volume label.
   /* 0xF8 */
   // ...
@@ -103,9 +103,9 @@ pub struct nilfs2_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -125,7 +125,7 @@ pub struct nilfs2_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

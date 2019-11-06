@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -54,8 +54,8 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use libc::FILE;
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -305,7 +305,7 @@ unsafe extern "C" fn do_loadtable(
   let mut ct: libc::c_int = 0i32;
   let mut maxct: libc::c_int = 0;
   let mut glyph: libc::c_int = 0;
-  let mut unicode: uint16_t = 0;
+  let mut unicode: u16 = 0;
   maxct = tailsz;
   up = xmalloc(
     (maxct as libc::c_ulong).wrapping_mul(::std::mem::size_of::<unipair>() as libc::c_ulong),
@@ -315,8 +315,8 @@ unsafe extern "C" fn do_loadtable(
     while tailsz > 0i32 {
       if psf2 == 0 {
         /* PSF1 */
-        unicode = (((*inbuf.offset(1) as uint16_t as libc::c_int) << 8i32)
-          + *inbuf.offset(0) as libc::c_int) as uint16_t;
+        unicode = (((*inbuf.offset(1) as u16 as libc::c_int) << 8i32)
+          + *inbuf.offset(0) as libc::c_int) as u16;
         tailsz -= 2i32;
         inbuf = inbuf.offset(2);
         if unicode as libc::c_int == PSF1_SEPARATOR as libc::c_int {
@@ -326,7 +326,7 @@ unsafe extern "C" fn do_loadtable(
         tailsz -= 1;
         let fresh0 = inbuf;
         inbuf = inbuf.offset(1);
-        unicode = *fresh0 as uint16_t;
+        unicode = *fresh0 as u16;
         if unicode as libc::c_int == PSF2_SEPARATOR as libc::c_int {
           break;
         }
@@ -337,19 +337,19 @@ unsafe extern "C" fn do_loadtable(
         } else {
           if unicode as libc::c_int >= 0xc0i32 {
             if unicode as libc::c_int >= 0xfci32 {
-              unicode = (unicode as libc::c_int & 0x1i32) as uint16_t;
+              unicode = (unicode as libc::c_int & 0x1i32) as u16;
               maxct = 5i32
             } else if unicode as libc::c_int >= 0xf8i32 {
-              unicode = (unicode as libc::c_int & 0x3i32) as uint16_t;
+              unicode = (unicode as libc::c_int & 0x3i32) as u16;
               maxct = 4i32
             } else if unicode as libc::c_int >= 0xf0i32 {
-              unicode = (unicode as libc::c_int & 0x7i32) as uint16_t;
+              unicode = (unicode as libc::c_int & 0x7i32) as u16;
               maxct = 3i32
             } else if unicode as libc::c_int >= 0xe0i32 {
-              unicode = (unicode as libc::c_int & 0xfi32) as uint16_t;
+              unicode = (unicode as libc::c_int & 0xfi32) as u16;
               maxct = 2i32
             } else {
-              unicode = (unicode as libc::c_int & 0x1fi32) as uint16_t;
+              unicode = (unicode as libc::c_int & 0x1fi32) as u16;
               maxct = 1i32
             }
             loop {
@@ -365,7 +365,7 @@ unsafe extern "C" fn do_loadtable(
               let fresh1 = inbuf;
               inbuf = inbuf.offset(1);
               unicode = (((unicode as libc::c_int) << 6i32) + (*fresh1 as libc::c_int & 0x3fi32))
-                as uint16_t;
+                as u16;
               maxct -= 1;
               if !(maxct > 0i32) {
                 break;

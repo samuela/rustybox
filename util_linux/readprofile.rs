@@ -44,7 +44,7 @@ extern "C" {
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
@@ -63,7 +63,7 @@ use crate::librb::__uint64_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
 
 use libc::FILE;

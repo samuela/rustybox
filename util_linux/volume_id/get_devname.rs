@@ -78,7 +78,7 @@ use crate::librb::__dev_t;
 
 use crate::librb::size_t;
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 use libc::stat;
 
@@ -119,8 +119,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],

@@ -20,20 +20,20 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
- use libc::uint8_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
   pub mem_unit: libc::c_uint,
-  pub unit_steps: uint8_t,
+  pub unit_steps: u8,
   pub cached_kb: libc::c_ulong,
   pub available_kb: libc::c_ulong,
   pub reclaimable_kb: libc::c_ulong,
 }
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -51,7 +51,7 @@ pub struct sysinfo {
   pub pad: __u16,
   pub totalhigh: __kernel_ulong_t,
   pub freehigh: __kernel_ulong_t,
-  pub mem_unit: __u32,
+  pub mem_unit: u32,
   pub _f: [libc::c_char; 0],
 }
 /* Because of NOFORK, "globals" are not in global data */
@@ -148,18 +148,18 @@ pub unsafe extern "C" fn free_main(
   let mut cached_plus_free: libc::c_ulonglong = 0;
   let mut available: libc::c_ulonglong = 0;
   let mut seen_available: libc::c_int = 0;
-  G.unit_steps = 10i32 as uint8_t;
+  G.unit_steps = 10i32 as u8;
   if !(*argv.offset(1)).is_null() && *(*argv.offset(1)).offset(0) as libc::c_int == '-' as i32 {
     match *(*argv.offset(1)).offset(1) as libc::c_int {
-      98 => G.unit_steps = 0i32 as uint8_t,
+      98 => G.unit_steps = 0i32 as u8,
       107 => {}
       109 => {
         /* 2^(2*10) */
-        G.unit_steps = 20i32 as uint8_t
+        G.unit_steps = 20i32 as u8
       }
       103 => {
         /* 2^(3*10) */
-        G.unit_steps = 30i32 as uint8_t
+        G.unit_steps = 30i32 as u8
       }
       _ => {
         bb_show_usage();

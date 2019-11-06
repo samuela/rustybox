@@ -9,10 +9,10 @@ extern "C" {
 }
 
 use crate::librb::__uint64_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 pub type bb__aliased_uint64_t = uint64_t;
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
@@ -35,12 +35,12 @@ pub type C2RustUnnamed = libc::c_uint;
  */
 //#define rotl32(x,n) (((x) << (n)) | ((x) >> (32 - (n))))
 #[inline(always)]
-unsafe extern "C" fn rotl32(mut x: uint32_t, mut n: libc::c_uint) -> uint32_t {
+unsafe extern "C" fn rotl32(mut x: u32, mut n: libc::c_uint) -> u32 {
   return x << n | x >> (32i32 as libc::c_uint).wrapping_sub(n);
 }
 //#define rotr32(x,n) (((x) >> (n)) | ((x) << (32 - (n))))
 #[inline(always)]
-unsafe extern "C" fn rotr32(mut x: uint32_t, mut n: libc::c_uint) -> uint32_t {
+unsafe extern "C" fn rotr32(mut x: u32, mut n: libc::c_uint) -> u32 {
   return x >> n | x << (32i32 as libc::c_uint).wrapping_sub(n);
 }
 /* rotr64 in needed for sha512 only: */
@@ -95,7 +95,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
   /* Pad the buffer to the next 64-byte boundary with 0x80,0,0,0... */
   let fresh0 = bufpos;
   bufpos = bufpos.wrapping_add(1);
-  (*ctx).wbuffer[fresh0 as usize] = 0x80i32 as uint8_t;
+  (*ctx).wbuffer[fresh0 as usize] = 0x80i32 as u8;
   loop
   /* This loop iterates either once or twice, no more, no less */
   {
@@ -135,7 +135,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
         }
       }
       /* wbuffer is suitably aligned for this */
-      *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((64i32 - 8i32) as isize) as *mut uint8_t
+      *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((64i32 - 8i32) as isize) as *mut u8
         as *mut bb__aliased_uint64_t) = t
     }
     (*ctx).process_block.expect("non-null function pointer")(ctx);
@@ -170,70 +170,70 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     They are defined in RFC 1321 as
     T[i] = (int)(2^32 * fabs(sin(i))), i=1..64
   */
-  static mut C_array: [uint32_t; 64] = [
+  static mut C_array: [u32; 64] = [
     0xd76aa478u32,
     0xe8c7b756u32,
-    0x242070dbi32 as uint32_t,
+    0x242070dbi32 as u32,
     0xc1bdceeeu32,
     0xf57c0fafu32,
-    0x4787c62ai32 as uint32_t,
+    0x4787c62ai32 as u32,
     0xa8304613u32,
     0xfd469501u32,
-    0x698098d8i32 as uint32_t,
+    0x698098d8i32 as u32,
     0x8b44f7afu32,
     0xffff5bb1u32,
     0x895cd7beu32,
-    0x6b901122i32 as uint32_t,
+    0x6b901122i32 as u32,
     0xfd987193u32,
     0xa679438eu32,
-    0x49b40821i32 as uint32_t,
+    0x49b40821i32 as u32,
     0xf61e2562u32,
     0xc040b340u32,
-    0x265e5a51i32 as uint32_t,
+    0x265e5a51i32 as u32,
     0xe9b6c7aau32,
     0xd62f105du32,
-    0x2441453i32 as uint32_t,
+    0x2441453i32 as u32,
     0xd8a1e681u32,
     0xe7d3fbc8u32,
-    0x21e1cde6i32 as uint32_t,
+    0x21e1cde6i32 as u32,
     0xc33707d6u32,
     0xf4d50d87u32,
-    0x455a14edi32 as uint32_t,
+    0x455a14edi32 as u32,
     0xa9e3e905u32,
     0xfcefa3f8u32,
-    0x676f02d9i32 as uint32_t,
+    0x676f02d9i32 as u32,
     0x8d2a4c8au32,
     0xfffa3942u32,
     0x8771f681u32,
-    0x6d9d6122i32 as uint32_t,
+    0x6d9d6122i32 as u32,
     0xfde5380cu32,
     0xa4beea44u32,
-    0x4bdecfa9i32 as uint32_t,
+    0x4bdecfa9i32 as u32,
     0xf6bb4b60u32,
     0xbebfbc70u32,
-    0x289b7ec6i32 as uint32_t,
+    0x289b7ec6i32 as u32,
     0xeaa127fau32,
     0xd4ef3085u32,
-    0x4881d05i32 as uint32_t,
+    0x4881d05i32 as u32,
     0xd9d4d039u32,
     0xe6db99e5u32,
-    0x1fa27cf8i32 as uint32_t,
+    0x1fa27cf8i32 as u32,
     0xc4ac5665u32,
     0xf4292244u32,
-    0x432aff97i32 as uint32_t,
+    0x432aff97i32 as u32,
     0xab9423a7u32,
     0xfc93a039u32,
-    0x655b59c3i32 as uint32_t,
+    0x655b59c3i32 as u32,
     0x8f0ccc92u32,
     0xffeff47du32,
     0x85845dd1u32,
-    0x6fa87e4fi32 as uint32_t,
+    0x6fa87e4fi32 as u32,
     0xfe2ce6e0u32,
     0xa3014314u32,
-    0x4e0811a1i32 as uint32_t,
+    0x4e0811a1i32 as u32,
     0xf7537e82u32,
     0xbd3af235u32,
-    0x2ad7d2bbi32 as uint32_t,
+    0x2ad7d2bbi32 as u32,
     0xeb86d391u32,
   ];
   static mut P_array: [libc::c_char; 48] = [
@@ -286,14 +286,14 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     2i32 as libc::c_char,
     9i32 as libc::c_char,
   ];
-  let mut words: *mut uint32_t = (*ctx).wbuffer.as_mut_ptr() as *mut libc::c_void as *mut uint32_t;
-  let mut A: uint32_t = (*ctx).hash[0];
-  let mut B: uint32_t = (*ctx).hash[1];
-  let mut C: uint32_t = (*ctx).hash[2];
-  let mut D: uint32_t = (*ctx).hash[3];
+  let mut words: *mut u32 = (*ctx).wbuffer.as_mut_ptr() as *mut libc::c_void as *mut u32;
+  let mut A: u32 = (*ctx).hash[0];
+  let mut B: u32 = (*ctx).hash[1];
+  let mut C: u32 = (*ctx).hash[2];
+  let mut D: u32 = (*ctx).hash[3];
   /* 2 or 3 */
   /* MD5_SMALL == 0 or 1 */
-  let mut pc: *const uint32_t = 0 as *const uint32_t;
+  let mut pc: *const u32 = 0 as *const u32;
   let mut pp: *const libc::c_char = 0 as *const libc::c_char;
   let mut i: libc::c_int = 0;
   /* First round: using the given function, the context and a constant
@@ -310,34 +310,34 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     pc = pc.offset(1);
     A = (A as libc::c_uint)
       .wrapping_add((D ^ B & (C ^ D)).wrapping_add(*words).wrapping_add(*fresh4))
-      as uint32_t as uint32_t;
+      as u32 as u32;
     words = words.offset(1);
     A = rotl32(A, 7i32 as libc::c_uint);
-    A = (A as libc::c_uint).wrapping_add(B) as uint32_t as uint32_t;
+    A = (A as libc::c_uint).wrapping_add(B) as u32 as u32;
     let fresh5 = pc;
     pc = pc.offset(1);
     D = (D as libc::c_uint)
       .wrapping_add((C ^ A & (B ^ C)).wrapping_add(*words).wrapping_add(*fresh5))
-      as uint32_t as uint32_t;
+      as u32 as u32;
     words = words.offset(1);
     D = rotl32(D, 12i32 as libc::c_uint);
-    D = (D as libc::c_uint).wrapping_add(A) as uint32_t as uint32_t;
+    D = (D as libc::c_uint).wrapping_add(A) as u32 as u32;
     let fresh6 = pc;
     pc = pc.offset(1);
     C = (C as libc::c_uint)
       .wrapping_add((B ^ D & (A ^ B)).wrapping_add(*words).wrapping_add(*fresh6))
-      as uint32_t as uint32_t;
+      as u32 as u32;
     words = words.offset(1);
     C = rotl32(C, 17i32 as libc::c_uint);
-    C = (C as libc::c_uint).wrapping_add(D) as uint32_t as uint32_t;
+    C = (C as libc::c_uint).wrapping_add(D) as u32 as u32;
     let fresh7 = pc;
     pc = pc.offset(1);
     B = (B as libc::c_uint)
       .wrapping_add((A ^ C & (D ^ A)).wrapping_add(*words).wrapping_add(*fresh7))
-      as uint32_t as uint32_t;
+      as u32 as u32;
     words = words.offset(1);
     B = rotl32(B, 22i32 as libc::c_uint);
-    B = (B as libc::c_uint).wrapping_add(C) as uint32_t as uint32_t;
+    B = (B as libc::c_uint).wrapping_add(C) as u32 as u32;
     i += 1
   }
   words = words.offset(-16);
@@ -356,9 +356,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (C ^ D & (B ^ C))
         .wrapping_add(*words.offset(*fresh8 as libc::c_int as isize))
         .wrapping_add(*fresh9),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     A = rotl32(A, 5i32 as libc::c_uint);
-    A = (A as libc::c_uint).wrapping_add(B) as uint32_t as uint32_t;
+    A = (A as libc::c_uint).wrapping_add(B) as u32 as u32;
     let fresh10 = pp;
     pp = pp.offset(1);
     let fresh11 = pc;
@@ -367,9 +367,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (B ^ C & (A ^ B))
         .wrapping_add(*words.offset(*fresh10 as libc::c_int as isize))
         .wrapping_add(*fresh11),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     D = rotl32(D, 9i32 as libc::c_uint);
-    D = (D as libc::c_uint).wrapping_add(A) as uint32_t as uint32_t;
+    D = (D as libc::c_uint).wrapping_add(A) as u32 as u32;
     let fresh12 = pp;
     pp = pp.offset(1);
     let fresh13 = pc;
@@ -378,9 +378,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (A ^ B & (D ^ A))
         .wrapping_add(*words.offset(*fresh12 as libc::c_int as isize))
         .wrapping_add(*fresh13),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     C = rotl32(C, 14i32 as libc::c_uint);
-    C = (C as libc::c_uint).wrapping_add(D) as uint32_t as uint32_t;
+    C = (C as libc::c_uint).wrapping_add(D) as u32 as u32;
     let fresh14 = pp;
     pp = pp.offset(1);
     let fresh15 = pc;
@@ -389,9 +389,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (D ^ A & (C ^ D))
         .wrapping_add(*words.offset(*fresh14 as libc::c_int as isize))
         .wrapping_add(*fresh15),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     B = rotl32(B, 20i32 as libc::c_uint);
-    B = (B as libc::c_uint).wrapping_add(C) as uint32_t as uint32_t;
+    B = (B as libc::c_uint).wrapping_add(C) as u32 as u32;
     i += 1
   }
   /* Round 3 */
@@ -405,9 +405,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (B ^ C ^ D)
         .wrapping_add(*words.offset(*fresh16 as libc::c_int as isize))
         .wrapping_add(*fresh17),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     A = rotl32(A, 4i32 as libc::c_uint);
-    A = (A as libc::c_uint).wrapping_add(B) as uint32_t as uint32_t;
+    A = (A as libc::c_uint).wrapping_add(B) as u32 as u32;
     let fresh18 = pp;
     pp = pp.offset(1);
     let fresh19 = pc;
@@ -416,9 +416,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (A ^ B ^ C)
         .wrapping_add(*words.offset(*fresh18 as libc::c_int as isize))
         .wrapping_add(*fresh19),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     D = rotl32(D, 11i32 as libc::c_uint);
-    D = (D as libc::c_uint).wrapping_add(A) as uint32_t as uint32_t;
+    D = (D as libc::c_uint).wrapping_add(A) as u32 as u32;
     let fresh20 = pp;
     pp = pp.offset(1);
     let fresh21 = pc;
@@ -427,9 +427,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (D ^ A ^ B)
         .wrapping_add(*words.offset(*fresh20 as libc::c_int as isize))
         .wrapping_add(*fresh21),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     C = rotl32(C, 16i32 as libc::c_uint);
-    C = (C as libc::c_uint).wrapping_add(D) as uint32_t as uint32_t;
+    C = (C as libc::c_uint).wrapping_add(D) as u32 as u32;
     let fresh22 = pp;
     pp = pp.offset(1);
     let fresh23 = pc;
@@ -438,9 +438,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (C ^ D ^ A)
         .wrapping_add(*words.offset(*fresh22 as libc::c_int as isize))
         .wrapping_add(*fresh23),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     B = rotl32(B, 23i32 as libc::c_uint);
-    B = (B as libc::c_uint).wrapping_add(C) as uint32_t as uint32_t;
+    B = (B as libc::c_uint).wrapping_add(C) as u32 as u32;
     i += 1
   }
   /* Round 4 */
@@ -454,9 +454,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (C ^ (B | !D))
         .wrapping_add(*words.offset(*fresh24 as libc::c_int as isize))
         .wrapping_add(*fresh25),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     A = rotl32(A, 6i32 as libc::c_uint);
-    A = (A as libc::c_uint).wrapping_add(B) as uint32_t as uint32_t;
+    A = (A as libc::c_uint).wrapping_add(B) as u32 as u32;
     let fresh26 = pp;
     pp = pp.offset(1);
     let fresh27 = pc;
@@ -465,9 +465,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (B ^ (A | !C))
         .wrapping_add(*words.offset(*fresh26 as libc::c_int as isize))
         .wrapping_add(*fresh27),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     D = rotl32(D, 10i32 as libc::c_uint);
-    D = (D as libc::c_uint).wrapping_add(A) as uint32_t as uint32_t;
+    D = (D as libc::c_uint).wrapping_add(A) as u32 as u32;
     let fresh28 = pp;
     pp = pp.offset(1);
     let fresh29 = pc;
@@ -476,9 +476,9 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (A ^ (D | !B))
         .wrapping_add(*words.offset(*fresh28 as libc::c_int as isize))
         .wrapping_add(*fresh29),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     C = rotl32(C, 15i32 as libc::c_uint);
-    C = (C as libc::c_uint).wrapping_add(D) as uint32_t as uint32_t;
+    C = (C as libc::c_uint).wrapping_add(D) as u32 as u32;
     let fresh30 = pp;
     pp = pp.offset(1);
     let fresh31 = pc;
@@ -487,26 +487,26 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
       (D ^ (C | !A))
         .wrapping_add(*words.offset(*fresh30 as libc::c_int as isize))
         .wrapping_add(*fresh31),
-    ) as uint32_t as uint32_t;
+    ) as u32 as u32;
     B = rotl32(B, 21i32 as libc::c_uint);
-    B = (B as libc::c_uint).wrapping_add(C) as uint32_t as uint32_t;
+    B = (B as libc::c_uint).wrapping_add(C) as u32 as u32;
     i += 1
   }
   /* Add checksum to the starting values */
-  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(A) as uint32_t as uint32_t;
-  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(B) as uint32_t as uint32_t;
-  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(C) as uint32_t as uint32_t;
-  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(D) as uint32_t as uint32_t;
+  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(A) as u32 as u32;
+  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(B) as u32 as u32;
+  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(C) as u32 as u32;
+  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(D) as u32 as u32;
 }
 /* Initialize structure containing state of computation.
  * (RFC 1321, 3.3: Step 3)
  */
 #[no_mangle]
 pub unsafe extern "C" fn md5_begin(mut ctx: *mut md5_ctx_t) {
-  (*ctx).hash[0] = 0x67452301i32 as uint32_t;
+  (*ctx).hash[0] = 0x67452301i32 as u32;
   (*ctx).hash[1] = 0xefcdab89u32;
   (*ctx).hash[2] = 0x98badcfeu32;
-  (*ctx).hash[3] = 0x10325476i32 as uint32_t;
+  (*ctx).hash[3] = 0x10325476i32 as u32;
   (*ctx).total64 = 0i32 as uint64_t;
   (*ctx).process_block = Some(md5_process_block64 as unsafe extern "C" fn(_: *mut md5_ctx_t) -> ());
 }
@@ -535,9 +535,9 @@ pub unsafe extern "C" fn md5_end(
   memcpy(
     resbuf,
     (*ctx).hash.as_mut_ptr() as *const libc::c_void,
-    (::std::mem::size_of::<uint32_t>() as libc::c_ulong).wrapping_mul(4i32 as libc::c_ulong),
+    (::std::mem::size_of::<u32>() as libc::c_ulong).wrapping_mul(4i32 as libc::c_ulong),
   );
-  return (::std::mem::size_of::<uint32_t>() as libc::c_ulong).wrapping_mul(4i32 as libc::c_ulong)
+  return (::std::mem::size_of::<u32>() as libc::c_ulong).wrapping_mul(4i32 as libc::c_ulong)
     as libc::c_uint;
 }
 /*
@@ -562,21 +562,21 @@ pub unsafe extern "C" fn md5_end(
  * then rebuild and compare "shaNNNsum bigfile" results.
  */
 unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
-  static mut rconsts: [uint32_t; 4] = [
-    0x5a827999i32 as uint32_t,
-    0x6ed9eba1i32 as uint32_t,
+  static mut rconsts: [u32; 4] = [
+    0x5a827999i32 as u32,
+    0x6ed9eba1i32 as u32,
     0x8f1bbcdcu32,
     0xca62c1d6u32,
   ];
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut cnt: libc::c_int = 0;
-  let mut W: [uint32_t; 32] = [0; 32];
-  let mut a: uint32_t = 0;
-  let mut b: uint32_t = 0;
-  let mut c: uint32_t = 0;
-  let mut d: uint32_t = 0;
-  let mut e: uint32_t = 0;
+  let mut W: [u32; 32] = [0; 32];
+  let mut a: u32 = 0;
+  let mut b: u32 = 0;
+  let mut c: u32 = 0;
+  let mut d: u32 = 0;
+  let mut e: u32 = 0;
   /* On-stack work buffer frees up one register in the main loop
    * which otherwise will be needed to hold ctx pointer */
   i = 0i32;
@@ -584,7 +584,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
     W[(i + 16i32) as usize] = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint =
-        *((*ctx).wbuffer.as_mut_ptr() as *mut uint32_t).offset(i as isize);
+        *((*ctx).wbuffer.as_mut_ptr() as *mut u32).offset(i as isize);
       if 0 != 0 {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -615,7 +615,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
   while i < 4i32 {
     j = 19i32;
     loop {
-      let mut work: uint32_t = 0;
+      let mut work: u32 = 0;
       work = c ^ d;
       let mut current_block_18: u64;
       if i == 0i32 {
@@ -625,7 +625,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
         } else {
           /* Used to do SWAP_BE32 here, but this
            * requires ctx (see comment above) */
-          work = (work as libc::c_uint).wrapping_add(W[cnt as usize]) as uint32_t as uint32_t;
+          work = (work as libc::c_uint).wrapping_add(W[cnt as usize]) as u32 as u32;
           current_block_18 = 16203760046146113240;
         }
       } else {
@@ -647,14 +647,14 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
             1i32 as libc::c_uint,
           );
           W[cnt as usize] = W[(cnt + 16i32) as usize];
-          work = (work as libc::c_uint).wrapping_add(W[cnt as usize]) as uint32_t as uint32_t
+          work = (work as libc::c_uint).wrapping_add(W[cnt as usize]) as u32 as u32
         }
         _ => {}
       }
       work = (work as libc::c_uint).wrapping_add(
         e.wrapping_add(rotl32(a, 5i32 as libc::c_uint))
           .wrapping_add(rconsts[i as usize]),
-      ) as uint32_t as uint32_t;
+      ) as u32 as u32;
       /* Rotate by one for next time */
       e = d;
       d = c;
@@ -669,11 +669,11 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
     }
     i += 1
   }
-  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(a) as uint32_t as uint32_t;
-  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(b) as uint32_t as uint32_t;
-  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(c) as uint32_t as uint32_t;
-  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(d) as uint32_t as uint32_t;
-  (*ctx).hash[4] = ((*ctx).hash[4] as libc::c_uint).wrapping_add(e) as uint32_t as uint32_t;
+  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(a) as u32 as u32;
+  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(b) as u32 as u32;
+  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(c) as u32 as u32;
+  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(d) as u32 as u32;
+  (*ctx).hash[4] = ((*ctx).hash[4] as libc::c_uint).wrapping_add(e) as u32 as u32;
 }
 static mut sha_K: [sha_K_int; 80] = [
   0x428a2f98d728ae22u64 as sha_K_int,
@@ -759,16 +759,16 @@ static mut sha_K: [sha_K_int; 80] = [
 ];
 unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   let mut t: libc::c_uint = 0;
-  let mut W: [uint32_t; 64] = [0; 64];
-  let mut a: uint32_t = 0;
-  let mut b: uint32_t = 0;
-  let mut c: uint32_t = 0;
-  let mut d: uint32_t = 0;
-  let mut e: uint32_t = 0;
-  let mut f: uint32_t = 0;
-  let mut g: uint32_t = 0;
-  let mut h: uint32_t = 0;
-  let mut words: *const uint32_t = (*ctx).wbuffer.as_mut_ptr() as *mut uint32_t;
+  let mut W: [u32; 64] = [0; 64];
+  let mut a: u32 = 0;
+  let mut b: u32 = 0;
+  let mut c: u32 = 0;
+  let mut d: u32 = 0;
+  let mut e: u32 = 0;
+  let mut f: u32 = 0;
+  let mut g: u32 = 0;
+  let mut h: u32 = 0;
+  let mut words: *const u32 = (*ctx).wbuffer.as_mut_ptr() as *mut u32;
   /* Operators defined in FIPS 180-2:4.1.2.  */
   /* Compute the message schedule according to FIPS 180-2:6.2.2 step 2.  */
   t = 0i32 as libc::c_uint;
@@ -830,12 +830,12 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
      * (I hope compiler is clever enough to just fetch
      * upper half)
      */
-    let mut K_t: uint32_t = if 1i32 != 0 || 1i32 != 0 {
+    let mut K_t: u32 = if 1i32 != 0 || 1i32 != 0 {
       (sha_K[t as usize]) >> 32i32
     } else {
       sha_K[t as usize]
-    } as uint32_t;
-    let mut T1: uint32_t = h
+    } as u32;
+    let mut T1: u32 = h
       .wrapping_add(
         rotr32(e, 6i32 as libc::c_uint)
           ^ rotr32(e, 11i32 as libc::c_uint)
@@ -844,7 +844,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
       .wrapping_add(e & f ^ !e & g)
       .wrapping_add(K_t)
       .wrapping_add(W[t as usize]);
-    let mut T2: uint32_t = (rotr32(a, 2i32 as libc::c_uint)
+    let mut T2: u32 = (rotr32(a, 2i32 as libc::c_uint)
       ^ rotr32(a, 13i32 as libc::c_uint)
       ^ rotr32(a, 22i32 as libc::c_uint))
     .wrapping_add(a & b ^ a & c ^ b & c);
@@ -860,14 +860,14 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   }
   /* Add the starting values of the context according to FIPS 180-2:6.2.2
   step 4.  */
-  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(a) as uint32_t as uint32_t;
-  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(b) as uint32_t as uint32_t;
-  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(c) as uint32_t as uint32_t;
-  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(d) as uint32_t as uint32_t;
-  (*ctx).hash[4] = ((*ctx).hash[4] as libc::c_uint).wrapping_add(e) as uint32_t as uint32_t;
-  (*ctx).hash[5] = ((*ctx).hash[5] as libc::c_uint).wrapping_add(f) as uint32_t as uint32_t;
-  (*ctx).hash[6] = ((*ctx).hash[6] as libc::c_uint).wrapping_add(g) as uint32_t as uint32_t;
-  (*ctx).hash[7] = ((*ctx).hash[7] as libc::c_uint).wrapping_add(h) as uint32_t as uint32_t;
+  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_uint).wrapping_add(a) as u32 as u32;
+  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_uint).wrapping_add(b) as u32 as u32;
+  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_uint).wrapping_add(c) as u32 as u32;
+  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_uint).wrapping_add(d) as u32 as u32;
+  (*ctx).hash[4] = ((*ctx).hash[4] as libc::c_uint).wrapping_add(e) as u32 as u32;
+  (*ctx).hash[5] = ((*ctx).hash[5] as libc::c_uint).wrapping_add(f) as u32 as u32;
+  (*ctx).hash[6] = ((*ctx).hash[6] as libc::c_uint).wrapping_add(g) as u32 as u32;
+  (*ctx).hash[7] = ((*ctx).hash[7] as libc::c_uint).wrapping_add(h) as u32 as u32;
 }
 unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   let mut t: libc::c_uint = 0;
@@ -974,38 +974,38 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
 /* NEED_SHA512 */
 #[no_mangle]
 pub unsafe extern "C" fn sha1_begin(mut ctx: *mut sha1_ctx_t) {
-  (*ctx).hash[0] = 0x67452301i32 as uint32_t;
+  (*ctx).hash[0] = 0x67452301i32 as u32;
   (*ctx).hash[1] = 0xefcdab89u32;
   (*ctx).hash[2] = 0x98badcfeu32;
-  (*ctx).hash[3] = 0x10325476i32 as uint32_t;
+  (*ctx).hash[3] = 0x10325476i32 as u32;
   (*ctx).hash[4] = 0xc3d2e1f0u32;
   (*ctx).total64 = 0i32 as uint64_t;
   (*ctx).process_block =
     Some(sha1_process_block64 as unsafe extern "C" fn(_: *mut sha1_ctx_t) -> ());
 }
-static mut init256: [uint32_t; 10] = [
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0x6a09e667i32 as uint32_t,
+static mut init256: [u32; 10] = [
+  0i32 as u32,
+  0i32 as u32,
+  0x6a09e667i32 as u32,
   0xbb67ae85u32,
-  0x3c6ef372i32 as uint32_t,
+  0x3c6ef372i32 as u32,
   0xa54ff53au32,
-  0x510e527fi32 as uint32_t,
+  0x510e527fi32 as u32,
   0x9b05688cu32,
-  0x1f83d9abi32 as uint32_t,
-  0x5be0cd19i32 as uint32_t,
+  0x1f83d9abi32 as u32,
+  0x5be0cd19i32 as u32,
 ];
-static mut init512_lo: [uint32_t; 10] = [
-  0i32 as uint32_t,
-  0i32 as uint32_t,
+static mut init512_lo: [u32; 10] = [
+  0i32 as u32,
+  0i32 as u32,
   0xf3bcc908u32,
   0x84caa73bu32,
   0xfe94f82bu32,
-  0x5f1d36f1i32 as uint32_t,
+  0x5f1d36f1i32 as u32,
   0xade682d1u32,
-  0x2b3e6c1fi32 as uint32_t,
+  0x2b3e6c1fi32 as u32,
   0xfb41bd6bu32,
-  0x137e2179i32 as uint32_t,
+  0x137e2179i32 as u32,
 ];
 /* NEED_SHA512 */
 // Note: SHA-384 is identical to SHA-512, except that initial hash values are
@@ -1019,7 +1019,7 @@ pub unsafe extern "C" fn sha256_begin(mut ctx: *mut sha256_ctx_t) {
   memcpy(
     &mut (*ctx).total64 as *mut uint64_t as *mut libc::c_void,
     init256.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint32_t; 10]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u32; 10]>() as libc::c_ulong,
   );
   /*ctx->total64 = 0; - done by prepending two 32-bit zeros to init256 */
   (*ctx).process_block =
@@ -1123,7 +1123,7 @@ pub unsafe extern "C" fn sha1_end(
     i = i.wrapping_add(1)
   }
   hash_size = (hash_size as libc::c_ulong)
-    .wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong) as libc::c_uint
+    .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong) as libc::c_uint
     as libc::c_uint;
   memcpy(
     resbuf,
@@ -1141,7 +1141,7 @@ pub unsafe extern "C" fn sha512_end(
   /* Pad the buffer to the next 128-byte boundary with 0x80,0,0,0... */
   let fresh44 = bufpos;
   bufpos = bufpos.wrapping_add(1);
-  (*ctx).wbuffer[fresh44 as usize] = 0x80i32 as uint8_t;
+  (*ctx).wbuffer[fresh44 as usize] = 0x80i32 as u8;
   loop {
     let mut remaining: libc::c_uint = (128i32 as libc::c_uint).wrapping_sub(bufpos);
     memset(
@@ -1176,7 +1176,7 @@ pub unsafe extern "C" fn sha512_end(
         }
         __v
       };
-      *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((128i32 - 8i32) as isize) as *mut uint8_t
+      *(&mut *(*ctx).wbuffer.as_mut_ptr().offset((128i32 - 8i32) as isize) as *mut u8
         as *mut bb__aliased_uint64_t) = t;
       t = (*ctx).total64[1] << 3i32 | (*ctx).total64[0] >> 61i32;
       t = {
@@ -1205,7 +1205,7 @@ pub unsafe extern "C" fn sha512_end(
       *(&mut *(*ctx)
         .wbuffer
         .as_mut_ptr()
-        .offset((128i32 - 16i32) as isize) as *mut uint8_t as *mut bb__aliased_uint64_t) = t
+        .offset((128i32 - 16i32) as isize) as *mut u8 as *mut bb__aliased_uint64_t) = t
     }
     sha512_process_block128(ctx);
     if remaining >= 16i32 as libc::c_uint {
@@ -1270,89 +1270,89 @@ pub unsafe extern "C" fn sha512_end(
  */
 unsafe extern "C" fn sha3_process_block72(mut state: *mut uint64_t) {
   /* Native 64-bit algorithm */
-  static mut IOTA_CONST: [uint16_t; 24] = [
-    0x1i32 as uint16_t,
-    0x8082i32 as uint16_t,
-    0x808ai32 as uint16_t,
-    0x8000i32 as uint16_t,
-    0x808bi32 as uint16_t,
-    0x1i32 as uint16_t,
-    0x8081i32 as uint16_t,
-    0x8009i32 as uint16_t,
-    0x8ai32 as uint16_t,
-    0x88i32 as uint16_t,
-    0x8009i32 as uint16_t,
-    0xai32 as uint16_t,
-    0x808bi32 as uint16_t,
-    0x8bi32 as uint16_t,
-    0x8089i32 as uint16_t,
-    0x8003i32 as uint16_t,
-    0x8002i32 as uint16_t,
-    0x80i32 as uint16_t,
-    0x800ai32 as uint16_t,
-    0xai32 as uint16_t,
-    0x8081i32 as uint16_t,
-    0x8080i32 as uint16_t,
-    0x1i32 as uint16_t,
-    0x8008i32 as uint16_t,
+  static mut IOTA_CONST: [u16; 24] = [
+    0x1i32 as u16,
+    0x8082i32 as u16,
+    0x808ai32 as u16,
+    0x8000i32 as u16,
+    0x808bi32 as u16,
+    0x1i32 as u16,
+    0x8081i32 as u16,
+    0x8009i32 as u16,
+    0x8ai32 as u16,
+    0x88i32 as u16,
+    0x8009i32 as u16,
+    0xai32 as u16,
+    0x808bi32 as u16,
+    0x8bi32 as u16,
+    0x8089i32 as u16,
+    0x8003i32 as u16,
+    0x8002i32 as u16,
+    0x80i32 as u16,
+    0x800ai32 as u16,
+    0xai32 as u16,
+    0x8081i32 as u16,
+    0x8080i32 as u16,
+    0x1i32 as u16,
+    0x8008i32 as u16,
   ];
   /* bit for CONST[0] is in msb: 0011 0011 0000 0111 1101 1101 */
-  let IOTA_CONST_bit63: uint32_t = 0x3307dd00i32 as uint32_t;
+  let IOTA_CONST_bit63: u32 = 0x3307dd00i32 as u32;
   /* bit for CONST[0] is in msb: 0001 0110 0011 1000 0001 1011 */
-  let IOTA_CONST_bit31: uint32_t = 0x16381b00i32 as uint32_t;
-  static mut ROT_CONST: [uint8_t; 24] = [
-    1i32 as uint8_t,
-    3i32 as uint8_t,
-    6i32 as uint8_t,
-    10i32 as uint8_t,
-    15i32 as uint8_t,
-    21i32 as uint8_t,
-    28i32 as uint8_t,
-    36i32 as uint8_t,
-    45i32 as uint8_t,
-    55i32 as uint8_t,
-    2i32 as uint8_t,
-    14i32 as uint8_t,
-    27i32 as uint8_t,
-    41i32 as uint8_t,
-    56i32 as uint8_t,
-    8i32 as uint8_t,
-    25i32 as uint8_t,
-    43i32 as uint8_t,
-    62i32 as uint8_t,
-    18i32 as uint8_t,
-    39i32 as uint8_t,
-    61i32 as uint8_t,
-    20i32 as uint8_t,
-    44i32 as uint8_t,
+  let IOTA_CONST_bit31: u32 = 0x16381b00i32 as u32;
+  static mut ROT_CONST: [u8; 24] = [
+    1i32 as u8,
+    3i32 as u8,
+    6i32 as u8,
+    10i32 as u8,
+    15i32 as u8,
+    21i32 as u8,
+    28i32 as u8,
+    36i32 as u8,
+    45i32 as u8,
+    55i32 as u8,
+    2i32 as u8,
+    14i32 as u8,
+    27i32 as u8,
+    41i32 as u8,
+    56i32 as u8,
+    8i32 as u8,
+    25i32 as u8,
+    43i32 as u8,
+    62i32 as u8,
+    18i32 as u8,
+    39i32 as u8,
+    61i32 as u8,
+    20i32 as u8,
+    44i32 as u8,
   ];
-  static mut PI_LANE: [uint8_t; 24] = [
-    10i32 as uint8_t,
-    7i32 as uint8_t,
-    11i32 as uint8_t,
-    17i32 as uint8_t,
-    18i32 as uint8_t,
-    3i32 as uint8_t,
-    5i32 as uint8_t,
-    16i32 as uint8_t,
-    8i32 as uint8_t,
-    21i32 as uint8_t,
-    24i32 as uint8_t,
-    4i32 as uint8_t,
-    15i32 as uint8_t,
-    23i32 as uint8_t,
-    19i32 as uint8_t,
-    13i32 as uint8_t,
-    12i32 as uint8_t,
-    2i32 as uint8_t,
-    20i32 as uint8_t,
-    14i32 as uint8_t,
-    22i32 as uint8_t,
-    9i32 as uint8_t,
-    6i32 as uint8_t,
-    1i32 as uint8_t,
+  static mut PI_LANE: [u8; 24] = [
+    10i32 as u8,
+    7i32 as u8,
+    11i32 as u8,
+    17i32 as u8,
+    18i32 as u8,
+    3i32 as u8,
+    5i32 as u8,
+    16i32 as u8,
+    8i32 as u8,
+    21i32 as u8,
+    24i32 as u8,
+    4i32 as u8,
+    15i32 as u8,
+    23i32 as u8,
+    19i32 as u8,
+    13i32 as u8,
+    12i32 as u8,
+    2i32 as u8,
+    20i32 as u8,
+    14i32 as u8,
+    22i32 as u8,
+    9i32 as u8,
+    6i32 as u8,
+    1i32 as u8,
   ];
-  /*static const uint8_t MOD5[10] = { 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, };*/
+  /*static const u8 MOD5[10] = { 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, };*/
   let mut x: libc::c_uint = 0;
   let mut round: libc::c_uint = 0;
   round = 0i32 as libc::c_uint;
@@ -1448,7 +1448,7 @@ pub unsafe extern "C" fn sha3_hash(
   mut buffer: *const libc::c_void,
   mut len: size_t,
 ) {
-  let mut data: *const uint8_t = buffer as *const uint8_t;
+  let mut data: *const u8 = buffer as *const u8;
   let mut bufpos: libc::c_uint = (*ctx).bytes_queued;
   loop {
     let mut remaining: libc::c_uint = (*ctx).input_block_bytes.wrapping_sub(bufpos);
@@ -1459,11 +1459,11 @@ pub unsafe extern "C" fn sha3_hash(
     /*bufpos = 0; - already is */
     /* XOR data into buffer */
     while remaining != 0i32 as libc::c_uint {
-      let mut buf: *mut uint8_t = (*ctx).state.as_mut_ptr() as *mut uint8_t;
+      let mut buf: *mut u8 = (*ctx).state.as_mut_ptr() as *mut u8;
       let fresh60 = data;
       data = data.offset(1);
       let ref mut fresh61 = *buf.offset(bufpos as isize);
-      *fresh61 = (*fresh61 as libc::c_int ^ *fresh60 as libc::c_int) as uint8_t;
+      *fresh61 = (*fresh61 as libc::c_int ^ *fresh60 as libc::c_int) as u8;
       bufpos = bufpos.wrapping_add(1);
       remaining = remaining.wrapping_sub(1)
     }
@@ -1688,7 +1688,7 @@ pub unsafe extern "C" fn sha3_hash(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -2032,7 +2032,7 @@ pub unsafe extern "C" fn sha3_end(
   mut resbuf: *mut libc::c_void,
 ) -> libc::c_uint {
   /* Padding */
-  let mut buf: *mut uint8_t = (*ctx).state.as_mut_ptr() as *mut uint8_t;
+  let mut buf: *mut u8 = (*ctx).state.as_mut_ptr() as *mut u8;
   /*
    * Keccak block padding is: add 1 bit after last bit of input,
    * then add zero bits until the end of block, and add the last 1 bit
@@ -2048,10 +2048,10 @@ pub unsafe extern "C" fn sha3_end(
    * The 6 below contains 01 "SHA3" bits and the first 1 "Keccak" bit:
    */
   let ref mut fresh62 = *buf.offset((*ctx).bytes_queued as isize); /* bit pattern 00000110 */
-  *fresh62 = (*fresh62 as libc::c_int ^ 6i32) as uint8_t;
+  *fresh62 = (*fresh62 as libc::c_int ^ 6i32) as u8;
   let ref mut fresh63 =
     *buf.offset((*ctx).input_block_bytes.wrapping_sub(1i32 as libc::c_uint) as isize);
-  *fresh63 = (*fresh63 as libc::c_int ^ 0x80i32) as uint8_t;
+  *fresh63 = (*fresh63 as libc::c_int ^ 0x80i32) as u8;
   sha3_process_block72((*ctx).state.as_mut_ptr());
   /* Output */
   memcpy(

@@ -38,9 +38,9 @@ extern "C" {
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -76,7 +76,7 @@ pub struct utsname {
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;

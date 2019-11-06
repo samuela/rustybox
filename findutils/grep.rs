@@ -62,18 +62,18 @@ extern "C" {
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -94,8 +94,8 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
@@ -766,7 +766,7 @@ pub unsafe extern "C" fn grep_main(
   let mut Copt: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   /* For grep, exitcode of 1 is "not found". Other errors are 2: */
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   /* do normal option parsing */
   /* -H unsets -h; -C unsets -A,-B */
   opts = getopt32long(

@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn ioctl_or_perror_and_die(
     fd: libc::c_int,
@@ -18,7 +18,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>

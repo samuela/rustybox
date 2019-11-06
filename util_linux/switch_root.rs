@@ -133,7 +133,7 @@ extern "C" {
   ) -> ssize_t;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -229,12 +229,12 @@ pub const MS_MOVE: C2RustUnnamed = 8192;
 // pub const MS_NOSUID: C2RustUnnamed = 2;
 // pub const MS_RDONLY: C2RustUnnamed = 1;
 
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
-  pub version: __u32,
+  pub version: u32,
   pub pid: libc::c_int,
 }
 
@@ -243,15 +243,15 @@ pub type cap_user_header_t = *mut __user_cap_header_struct;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
-  pub effective: __u32,
-  pub permitted: __u32,
-  pub inheritable: __u32,
+  pub effective: u32,
+  pub permitted: u32,
+  pub inheritable: u32,
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

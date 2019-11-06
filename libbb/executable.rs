@@ -21,7 +21,7 @@ extern "C" {
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn run_shell(
     shell: *const libc::c_char,
@@ -32,7 +32,7 @@ extern "C" {
 
 use libc::stat;
 
- use libc::uint8_t;
+
 
 /*
  * Utility routines.
@@ -123,7 +123,7 @@ pub unsafe extern "C" fn executable_exists(mut filename: *const libc::c_char) ->
 pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> ! {
   execvp(*argv.offset(0), argv as *const *mut libc::c_char);
   /* SUSv3-mandated exit codes */
-  xfunc_error_retval = if *bb_errno == 2i32 { 127i32 } else { 126i32 } as uint8_t;
+  xfunc_error_retval = if *bb_errno == 2i32 { 127i32 } else { 126i32 } as u8;
   bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
@@ -340,7 +340,7 @@ pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> !
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

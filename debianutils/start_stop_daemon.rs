@@ -85,14 +85,14 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn write_pidfile(path: *const libc::c_char);
   #[no_mangle]
@@ -127,7 +127,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

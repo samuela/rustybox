@@ -27,14 +27,14 @@ extern "C" {
   #[no_mangle]
   fn xgetgrnam(name: *const libc::c_char) -> *mut group;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -56,7 +56,7 @@ use crate::librb::__gid_t;
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::group;
-use libc::uint32_t;
+
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;
   /* Make sure gr_name is unused */

@@ -89,9 +89,9 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -115,9 +115,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -127,11 +127,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_0 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_0 = 255;
@@ -235,7 +235,7 @@ pub unsafe extern "C" fn d6_read_interface(
   mut interface: *const libc::c_char,
   mut ifindex: *mut libc::c_int,
   mut nip6: *mut in6_addr,
-  mut mac: *mut uint8_t,
+  mut mac: *mut u8,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 3i32;
   let mut ifap: *mut ifaddrs = 0 as *mut ifaddrs;
@@ -378,12 +378,12 @@ pub unsafe extern "C" fn d6_read_interface(
           *ifindex,
         );
       }
-      if *(mac as *mut uint32_t).offset(0) == 0i32 as libc::c_uint {
+      if *(mac as *mut u32).offset(0) == 0i32 as libc::c_uint {
         /* invent a fictitious MAC (once) */
-        *(mac as *mut uint32_t).offset(0) = rand() as uint32_t;
-        *(mac as *mut uint16_t).offset(2) = rand() as uint16_t;
+        *(mac as *mut u32).offset(0) = rand() as u32;
+        *(mac as *mut u16).offset(2) = rand() as u16;
         let ref mut fresh6 = *mac.offset(0);
-        *fresh6 = (*fresh6 as libc::c_int & 0xfci32) as uint8_t
+        *fresh6 = (*fresh6 as libc::c_int & 0xfci32) as u8
         /* make sure it's not bcast */
       }
       retval &= 3i32 - (1i32 << 0i32)

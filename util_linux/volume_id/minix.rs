@@ -5,10 +5,10 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -16,8 +16,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -27,19 +27,19 @@ pub struct volume_id {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct minix3_super_block {
-  pub s_ninodes: uint32_t,
-  pub s_pad0: uint16_t,
-  pub s_imap_blocks: uint16_t,
-  pub s_zmap_blocks: uint16_t,
-  pub s_firstdatazone: uint16_t,
-  pub s_log_zone_size: uint16_t,
-  pub s_pad1: uint16_t,
-  pub s_max_size: uint32_t,
-  pub s_zones: uint32_t,
-  pub s_magic: uint16_t,
-  pub s_pad2: uint16_t,
-  pub s_blocksize: uint16_t,
-  pub s_disk_version: uint8_t,
+  pub s_ninodes: u32,
+  pub s_pad0: u16,
+  pub s_imap_blocks: u16,
+  pub s_zmap_blocks: u16,
+  pub s_firstdatazone: u16,
+  pub s_log_zone_size: u16,
+  pub s_pad1: u16,
+  pub s_max_size: u32,
+  pub s_zones: u32,
+  pub s_magic: u16,
+  pub s_pad2: u16,
+  pub s_blocksize: u16,
+  pub s_disk_version: u8,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -68,16 +68,16 @@ pub struct minix3_super_block {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct minix_super_block {
-  pub s_ninodes: uint16_t,
-  pub s_nzones: uint16_t,
-  pub s_imap_blocks: uint16_t,
-  pub s_zmap_blocks: uint16_t,
-  pub s_firstdatazone: uint16_t,
-  pub s_log_zone_size: uint16_t,
-  pub s_max_size: uint32_t,
-  pub s_magic: uint16_t,
-  pub s_state: uint16_t,
-  pub s_zones: uint32_t,
+  pub s_ninodes: u16,
+  pub s_nzones: u16,
+  pub s_imap_blocks: u16,
+  pub s_zmap_blocks: u16,
+  pub s_firstdatazone: u16,
+  pub s_log_zone_size: u16,
+  pub s_max_size: u32,
+  pub s_magic: u16,
+  pub s_state: u16,
+  pub s_zones: u32,
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -101,9 +101,9 @@ pub struct minix_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -123,7 +123,7 @@ pub struct minix_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -164,12 +164,12 @@ pub unsafe extern "C" fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::
   if ms.is_null() {
     return -1i32;
   }
-  if !((*ms).s_magic as libc::c_int == 0x137fi32 as uint16_t as libc::c_int) {
-    if !((*ms).s_magic as libc::c_int == 0x138fi32 as uint16_t as libc::c_int) {
-      if !((*ms).s_magic as libc::c_int == 0x2468i32 as uint16_t as libc::c_int) {
-        if !((*ms).s_magic as libc::c_int == 0x2478i32 as uint16_t as libc::c_int) {
+  if !((*ms).s_magic as libc::c_int == 0x137fi32 as u16 as libc::c_int) {
+    if !((*ms).s_magic as libc::c_int == 0x138fi32 as u16 as libc::c_int) {
+      if !((*ms).s_magic as libc::c_int == 0x2468i32 as u16 as libc::c_int) {
+        if !((*ms).s_magic as libc::c_int == 0x2478i32 as u16 as libc::c_int) {
           ms3 = ms as *mut libc::c_void as *mut minix3_super_block;
-          if !((*ms3).s_magic as libc::c_int == 0x4d5ai32 as uint16_t as libc::c_int) {
+          if !((*ms3).s_magic as libc::c_int == 0x4d5ai32 as u16 as libc::c_int) {
             return -1i32;
           }
         }

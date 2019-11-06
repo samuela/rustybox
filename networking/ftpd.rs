@@ -189,7 +189,7 @@ extern "C" {
   #[no_mangle]
   fn xfork() -> pid_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -221,10 +221,10 @@ use crate::librb::__mode_t;
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u32 = u32;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
@@ -272,9 +272,9 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -284,11 +284,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -302,7 +302,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_0 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_0 = 255;
@@ -525,14 +525,14 @@ unsafe extern "C" fn verbose_log(mut str: *const libc::c_char) {
     str,
   );
 }
-/* NB: status_str is char[4] packed into uint32_t */
-unsafe extern "C" fn cmdio_write(mut status_str: uint32_t, mut str: *const libc::c_char) {
+/* NB: status_str is char[4] packed into u32 */
+unsafe extern "C" fn cmdio_write(mut status_str: u32, mut str: *const libc::c_char) {
   let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut len: libc::c_int = 0;
   /* FTP uses telnet protocol for command link.
    * In telnet, 0xff is an escape char, and needs to be escaped: */
   response = escape_text(
-    &mut status_str as *mut uint32_t as *mut libc::c_char,
+    &mut status_str as *mut u32 as *mut libc::c_char,
     str,
     ((0xffi32 << 8i32) + '\r' as i32) as libc::c_uint,
   );
@@ -552,7 +552,7 @@ unsafe extern "C" fn cmdio_write(mut status_str: uint32_t, mut str: *const libc:
   free(response as *mut libc::c_void);
 }
 unsafe extern "C" fn cmdio_write_ok(mut status: libc::c_uint) {
-  *((*ptr_to_globals).msg_ok.as_mut_ptr() as *mut bb__aliased_uint32_t) = status;
+  *((*ptr_to_globals).msg_ok.as_mut_ptr() as *mut bb__aliased_u32) = status;
   xwrite(
     1i32,
     (*ptr_to_globals).msg_ok.as_mut_ptr() as *const libc::c_void,
@@ -565,7 +565,7 @@ unsafe extern "C" fn cmdio_write_ok(mut status: libc::c_uint) {
 }
 /* TODO: output strerr(errno) if errno != 0? */
 unsafe extern "C" fn cmdio_write_error(mut status: libc::c_uint) {
-  *((*ptr_to_globals).msg_err.as_mut_ptr() as *mut bb__aliased_uint32_t) = status;
+  *((*ptr_to_globals).msg_err.as_mut_ptr() as *mut bb__aliased_u32) = status;
   xwrite(
     1i32,
     (*ptr_to_globals).msg_err.as_mut_ptr() as *const libc::c_void,
@@ -620,7 +620,7 @@ unsafe extern "C" fn handle_pwd() {
     (0i32
       | '0' as i32 + 257i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 257i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 257i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 257i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     response,
   );
   free(response as *mut libc::c_void);
@@ -632,7 +632,7 @@ unsafe extern "C" fn handle_cwd() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -641,7 +641,7 @@ unsafe extern "C" fn handle_cwd() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 250i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 250i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_cdup() {
@@ -720,7 +720,7 @@ unsafe extern "C" fn ftpdataio_get_pasv_fd() -> libc::c_int {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 425i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 425i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 425i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 425i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return remote_fd;
   }
@@ -750,7 +750,7 @@ unsafe extern "C" fn get_remote_transfer_fd(mut p_status_msg: *const libc::c_cha
     (0i32
       | '0' as i32 + 150i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 150i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 150i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 150i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     p_status_msg,
   );
   return remote_fd;
@@ -896,7 +896,7 @@ unsafe extern "C" fn handle_port() {
                 | '0' as i32 + 200i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
                 | '0' as i32 + 200i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
                 | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int)
-                as uint32_t,
+                as u32,
             );
             return;
           }
@@ -909,7 +909,7 @@ unsafe extern "C" fn handle_port() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 500i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 500i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 500i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 500i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_rest() {
@@ -928,7 +928,7 @@ unsafe extern "C" fn handle_rest() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 350i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 350i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 350i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 350i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_retr() {
@@ -954,7 +954,7 @@ unsafe extern "C" fn handle_retr() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -967,7 +967,7 @@ unsafe extern "C" fn handle_retr() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
   } else {
     (*ptr_to_globals).local_file_fd = local_file_fd;
@@ -995,7 +995,7 @@ unsafe extern "C" fn handle_retr() {
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 451i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 451i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 451i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 451i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else {
         cmdio_write_ok(
@@ -1003,7 +1003,7 @@ unsafe extern "C" fn handle_retr() {
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 226i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 226i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       }
     }
@@ -1091,7 +1091,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
       /* Hack: 0 results in no status at all */
       /* Note: it's ok that we don't prepend space,
        * ftp.kernel.org doesn't do that too */
-      cmdio_write(0i32 as uint32_t, line);
+      cmdio_write(0i32 as u32, line);
       free(line as *mut libc::c_void);
     }
     cmdio_write_ok(
@@ -1099,7 +1099,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 213i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 213i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 213i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 213i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
   } else {
     /* LIST/NLST [<filename>] */
@@ -1137,7 +1137,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 226i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 226i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
   }
   fclose(ls_fp);
@@ -1213,7 +1213,7 @@ unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -1248,7 +1248,7 @@ unsafe extern "C" fn handle_mkd() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -1257,7 +1257,7 @@ unsafe extern "C" fn handle_mkd() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 257i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 257i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 257i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 257i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_rmd() {
@@ -1267,7 +1267,7 @@ unsafe extern "C" fn handle_rmd() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -1276,7 +1276,7 @@ unsafe extern "C" fn handle_rmd() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 250i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 250i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_dele() {
@@ -1286,7 +1286,7 @@ unsafe extern "C" fn handle_dele() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -1295,7 +1295,7 @@ unsafe extern "C" fn handle_dele() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 250i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 250i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_rnfr() {
@@ -1306,7 +1306,7 @@ unsafe extern "C" fn handle_rnfr() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 350i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 350i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 350i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 350i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_rnto() {
@@ -1325,7 +1325,7 @@ unsafe extern "C" fn handle_rnto() {
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 550i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 550i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 550i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     return;
   }
@@ -1334,7 +1334,7 @@ unsafe extern "C" fn handle_rnto() {
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 250i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 250i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 250i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
 }
 unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_unique: libc::c_int) {
@@ -1374,7 +1374,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 553i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 553i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 553i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 553i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
     if !(local_file_fd >= 0i32) {
       return;
@@ -1399,7 +1399,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 451i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 451i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 451i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 451i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else {
         cmdio_write_ok(
@@ -1407,7 +1407,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 226i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 226i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 226i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       }
     }
@@ -1427,9 +1427,9 @@ unsafe extern "C" fn handle_stou() {
   handle_upload_common(0i32, 1i32);
 }
 /* ENABLE_FEATURE_FTPD_WRITE */
-unsafe extern "C" fn cmdio_get_cmd_and_arg() -> uint32_t {
+unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   let mut len: libc::c_int = 0;
-  let mut cmdval: uint32_t = 0;
+  let mut cmdval: u32 = 0;
   let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
   alarm((*ptr_to_globals).timeout);
   free((*ptr_to_globals).ftp_cmd as *mut libc::c_void);
@@ -1524,8 +1524,8 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> uint32_t {
     (*ptr_to_globals).ftp_arg = (*ptr_to_globals).ftp_arg.offset(1);
     *fresh9 = '\u{0}' as i32 as libc::c_char
   }
-  /* Uppercase and pack into uint32_t first word of the command */
-  cmdval = 0i32 as uint32_t;
+  /* Uppercase and pack into u32 first word of the command */
+  cmdval = 0i32 as u32;
   while *cmd != 0 {
     let fresh10 = cmd;
     cmd = cmd.offset(1);
@@ -1625,7 +1625,7 @@ pub unsafe extern "C" fn ftpd_main(
       | (' ' as i32) << SHIFTsp as libc::c_int
       | '0' as i32 + 220i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
       | '0' as i32 + 220i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-      | '0' as i32 + 220i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+      | '0' as i32 + 220i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
   );
   signal(
     14i32,
@@ -1633,7 +1633,7 @@ pub unsafe extern "C" fn ftpd_main(
   );
   if opts as libc::c_int & OPT_A as libc::c_int == 0 {
     loop {
-      let mut cmdval: uint32_t = cmdio_get_cmd_and_arg();
+      let mut cmdval: u32 = cmdio_get_cmd_and_arg();
       if cmdval == const_USER as libc::c_int as libc::c_uint {
         if !anon_opt.is_null()
           && strcmp(
@@ -1661,7 +1661,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 221i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 221i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
         return 0i32;
       } else {
@@ -1673,7 +1673,7 @@ pub unsafe extern "C" fn ftpd_main(
         | (' ' as i32) << SHIFTsp as libc::c_int
         | '0' as i32 + 230i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
         | '0' as i32 + 230i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-        | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+        | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
   }
   /* Do this after auth, else /etc/passwd is not accessible */
@@ -1734,14 +1734,14 @@ pub unsafe extern "C" fn ftpd_main(
    * respectively."
    */
   {
-    let mut cmdval_0: uint32_t = cmdio_get_cmd_and_arg();
+    let mut cmdval_0: u32 = cmdio_get_cmd_and_arg();
     if cmdval_0 == const_QUIT as libc::c_int as libc::c_uint {
       cmdio_write_ok(
         (0i32
           | (' ' as i32) << SHIFTsp as libc::c_int
           | '0' as i32 + 221i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
           | '0' as i32 + 221i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-          | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+          | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
       );
       return 0i32;
     } else {
@@ -1756,7 +1756,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 230i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 230i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_PASS as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1764,7 +1764,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 230i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 230i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 230i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_NOOP as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1772,7 +1772,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 200i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 200i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_TYPE as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1780,7 +1780,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 200i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 200i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_STRU as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1788,7 +1788,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 200i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 200i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_MODE as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1796,7 +1796,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 200i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 200i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 200i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_ALLO as libc::c_int as libc::c_uint {
         cmdio_write_ok(
@@ -1804,7 +1804,7 @@ pub unsafe extern "C" fn ftpd_main(
             | (' ' as i32) << SHIFTsp as libc::c_int
             | '0' as i32 + 202i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 202i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 202i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t,
+            | '0' as i32 + 202i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
       } else if cmdval_0 == const_SYST as libc::c_int as libc::c_uint {
         cmdio_write_raw(b"215 UNIX Type: L8\r\n\x00" as *const u8 as *const libc::c_char);
@@ -1824,12 +1824,12 @@ pub unsafe extern "C" fn ftpd_main(
           (0i32
             | '0' as i32 + 214i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 214i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 214i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t
+            | '0' as i32 + 214i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32
         } else {
           (0i32
             | '0' as i32 + 211i32 / 1i32 % 10i32 << SHIFT0 as libc::c_int
             | '0' as i32 + 211i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
-            | '0' as i32 + 211i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as uint32_t
+            | '0' as i32 + 211i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32
         });
       } else if cmdval_0 == const_LIST as libc::c_int as libc::c_uint {
         /* HELP is nearly useless, but we can reuse FEAT for it */

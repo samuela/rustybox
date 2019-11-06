@@ -40,7 +40,7 @@ extern "C" {
   #[no_mangle]
   fn xatou_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_uint;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -61,7 +61,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
-use libc::uint32_t;
+
 use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]

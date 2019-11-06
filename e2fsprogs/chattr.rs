@@ -57,7 +57,7 @@ extern "C" {
     set_flags: libc::c_ulong,
   ) -> libc::c_int;
   #[no_mangle]
-  static e2attr_flags_value: [uint32_t; 0];
+  static e2attr_flags_value: [u32; 0];
   #[no_mangle]
   static e2attr_flags_sname: [libc::c_char; 0];
 }
@@ -67,7 +67,7 @@ use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 
 use crate::librb::smallint;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -96,7 +96,7 @@ unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   let mut fp: *const libc::c_char =
     strchr(&*e2attr_flags_sname.as_ptr().offset(1), c as libc::c_int);
   if !fp.is_null() {
-    return *(&*e2attr_flags_value.as_ptr().offset(1) as *const uint32_t).offset(
+    return *(&*e2attr_flags_value.as_ptr().offset(1) as *const u32).offset(
       fp.wrapping_offset_from(&*e2attr_flags_sname.as_ptr().offset(1) as *const libc::c_char)
         as libc::c_long as isize,
     ) as libc::c_ulong;

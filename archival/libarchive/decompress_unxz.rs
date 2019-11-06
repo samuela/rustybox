@@ -140,16 +140,16 @@ extern "C" {
   /* always correctly aligned for uint64_t */
   /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
   #[no_mangle]
-  static mut global_crc32_table: *mut uint32_t;
+  static mut global_crc32_table: *mut u32;
   #[no_mangle]
   fn crc32_block_endian0(
-    val: uint32_t,
+    val: u32,
     buf: *const libc::c_void,
     len: libc::c_uint,
-    crc_table: *mut uint32_t,
-  ) -> uint32_t;
+    crc_table: *mut u32,
+  ) -> u32;
   #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut uint32_t;
+  fn global_crc32_new_table_le() -> *mut u32;
   #[no_mangle]
   fn xtransformer_write(
     xstate: *mut transformer_state_t,
@@ -158,11 +158,11 @@ extern "C" {
   ) -> ssize_t;
 }
 
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -191,26 +191,26 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct xz_dec {
   pub sequence: C2RustUnnamed_6,
-  pub pos: uint32_t,
+  pub pos: u32,
   pub vli: vli_type,
   pub in_start: size_t,
   pub out_start: size_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub check_type: xz_check,
   pub mode: xz_mode,
   pub allow_buf_error: bool,
@@ -232,42 +232,42 @@ pub struct xz_dec_lzma2 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_0 {
-  pub size: uint32_t,
-  pub buf: [uint8_t; 63],
+  pub size: u32,
+  pub buf: [u8; 63],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct lzma_dec {
-  pub rep0: uint32_t,
-  pub rep1: uint32_t,
-  pub rep2: uint32_t,
-  pub rep3: uint32_t,
+  pub rep0: u32,
+  pub rep1: u32,
+  pub rep2: u32,
+  pub rep3: u32,
   pub state: lzma_state,
-  pub len: uint32_t,
-  pub lc: uint32_t,
-  pub literal_pos_mask: uint32_t,
-  pub pos_mask: uint32_t,
-  pub is_match: [[uint16_t; 16]; 12],
-  pub is_rep: [uint16_t; 12],
-  pub is_rep0: [uint16_t; 12],
-  pub is_rep1: [uint16_t; 12],
-  pub is_rep2: [uint16_t; 12],
-  pub is_rep0_long: [[uint16_t; 16]; 12],
-  pub dist_slot: [[uint16_t; 64]; 4],
-  pub dist_special: [uint16_t; 114],
-  pub dist_align: [uint16_t; 16],
+  pub len: u32,
+  pub lc: u32,
+  pub literal_pos_mask: u32,
+  pub pos_mask: u32,
+  pub is_match: [[u16; 16]; 12],
+  pub is_rep: [u16; 12],
+  pub is_rep0: [u16; 12],
+  pub is_rep1: [u16; 12],
+  pub is_rep2: [u16; 12],
+  pub is_rep0_long: [[u16; 16]; 12],
+  pub dist_slot: [[u16; 64]; 4],
+  pub dist_special: [u16; 114],
+  pub dist_align: [u16; 16],
   pub match_len_dec: lzma_len_dec,
   pub rep_len_dec: lzma_len_dec,
-  pub literal: [[uint16_t; 768]; 16],
+  pub literal: [[u16; 768]; 16],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct lzma_len_dec {
-  pub choice: uint16_t,
-  pub choice2: uint16_t,
-  pub low: [[uint16_t; 8]; 16],
-  pub mid: [[uint16_t; 8]; 16],
-  pub high: [uint16_t; 256],
+  pub choice: u16,
+  pub choice2: u16,
+  pub low: [[u16; 8]; 16],
+  pub mid: [[u16; 8]; 16],
+  pub high: [u16; 256],
 }
 /*
  * Maximum number of position states. A position state is the lowest pb
@@ -305,8 +305,8 @@ pub const STATE_LIT_LIT: lzma_state = 0;
 pub struct lzma2_dec {
   pub sequence: lzma2_seq,
   pub next_sequence: lzma2_seq,
-  pub uncompressed: uint32_t,
-  pub compressed: uint32_t,
+  pub uncompressed: u32,
+  pub compressed: u32,
   pub need_dict_reset: bool,
   pub need_props: bool,
 }
@@ -323,15 +323,15 @@ pub const SEQ_CONTROL: lzma2_seq = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dictionary {
-  pub buf: *mut uint8_t,
+  pub buf: *mut u8,
   pub start: size_t,
   pub pos: size_t,
   pub full: size_t,
   pub limit: size_t,
   pub end: size_t,
-  pub size: uint32_t,
-  pub size_max: uint32_t,
-  pub allocated: uint32_t,
+  pub size: u32,
+  pub size_max: u32,
+  pub allocated: u32,
   pub mode: xz_mode,
 }
 /*
@@ -377,10 +377,10 @@ pub const XZ_SINGLE: xz_mode = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rc_dec {
-  pub range: uint32_t,
-  pub code: uint32_t,
-  pub init_bytes_left: uint32_t,
-  pub in_0: *const uint8_t,
+  pub range: u32,
+  pub code: u32,
+  pub init_bytes_left: u32,
+  pub in_0: *const u8,
   pub in_pos: size_t,
   pub in_limit: size_t,
 }
@@ -389,7 +389,7 @@ pub struct rc_dec {
 pub struct C2RustUnnamed_1 {
   pub pos: size_t,
   pub size: size_t,
-  pub buf: [uint8_t; 1024],
+  pub buf: [u8; 1024],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -404,7 +404,7 @@ pub struct C2RustUnnamed_2 {
 pub struct xz_dec_hash {
   pub unpadded: vli_type,
   pub uncompressed: vli_type,
-  pub crc32: uint32_t,
+  pub crc32: u32,
 }
 pub type vli_type = uint64_t;
 pub type C2RustUnnamed_3 = libc::c_uint;
@@ -424,7 +424,7 @@ pub struct C2RustUnnamed_4 {
 pub struct C2RustUnnamed_5 {
   pub compressed: vli_type,
   pub uncompressed: vli_type,
-  pub size: uint32_t,
+  pub size: u32,
 }
 pub type xz_check = libc::c_uint;
 pub const XZ_CHECK_SHA256: xz_check = 10;
@@ -455,10 +455,10 @@ pub const XZ_OK: xz_ret = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct xz_buf {
-  pub in_0: *const uint8_t,
+  pub in_0: *const u8,
   pub in_pos: size_t,
   pub in_size: size_t,
-  pub out: *mut uint8_t,
+  pub out: *mut u8,
   pub out_pos: size_t,
   pub out_size: size_t,
 }
@@ -476,10 +476,10 @@ pub struct xz_buf {
 /* Skip check (rather than fail) of unsupported hash functions */
 /* We use our own crc32 function */
 unsafe extern "C" fn xz_crc32(
-  mut buf: *const uint8_t,
+  mut buf: *const u8,
   mut size: size_t,
-  mut crc: uint32_t,
-) -> uint32_t {
+  mut crc: u32,
+) -> u32 {
   return !crc32_block_endian0(
     !crc,
     buf as *const libc::c_void,
@@ -539,7 +539,7 @@ unsafe extern "C" fn lzma_state_is_literal(mut state: lzma_state) -> bool {
  * the distance slot.
  */
 #[inline]
-unsafe extern "C" fn lzma_get_dist_state(mut len: uint32_t) -> uint32_t {
+unsafe extern "C" fn lzma_get_dist_state(mut len: u32) -> u32 {
   return if len < (4i32 + 2i32) as libc::c_uint {
     len.wrapping_sub(2i32 as libc::c_uint)
   } else {
@@ -620,11 +620,11 @@ unsafe extern "C" fn dict_reset(mut dict: *mut dictionary, mut _b: *mut xz_buf) 
  * LZMA *
  ********/
 /* Get pointer to literal coder probability array. */
-unsafe extern "C" fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut uint16_t {
-  let mut prev_byte: uint32_t = dict_get(&mut (*s).dict, 0i32 as uint32_t);
-  let mut low: uint32_t = prev_byte >> (8i32 as libc::c_uint).wrapping_sub((*s).lzma.lc);
-  let mut high: uint32_t =
-    (((*s).dict.pos & (*s).lzma.literal_pos_mask as libc::c_ulong) << (*s).lzma.lc) as uint32_t;
+unsafe extern "C" fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut u16 {
+  let mut prev_byte: u32 = dict_get(&mut (*s).dict, 0i32 as u32);
+  let mut low: u32 = prev_byte >> (8i32 as libc::c_uint).wrapping_sub((*s).lzma.lc);
+  let mut high: u32 =
+    (((*s).dict.pos & (*s).lzma.literal_pos_mask as libc::c_ulong) << (*s).lzma.lc) as u32;
   return (*s).lzma.literal[low.wrapping_add(high) as usize].as_mut_ptr();
 }
 #[inline]
@@ -633,11 +633,11 @@ unsafe extern "C" fn rc_is_finished(mut rc: *const rc_dec) -> bool {
 }
 unsafe extern "C" fn dict_repeat(
   mut dict: *mut dictionary,
-  mut len: *mut uint32_t,
-  mut dist: uint32_t,
+  mut len: *mut u32,
+  mut dist: u32,
 ) -> bool {
   let mut back: size_t = 0;
-  let mut left: uint32_t = 0;
+  let mut left: u32 = 0;
   if dist as libc::c_ulong >= (*dict).full || dist >= (*dict).size {
     return 0i32 != 0;
   }
@@ -645,8 +645,8 @@ unsafe extern "C" fn dict_repeat(
     (*dict).limit.wrapping_sub((*dict).pos)
   } else {
     *len as libc::c_ulong
-  } as uint32_t;
-  *len = (*len as libc::c_uint).wrapping_sub(left) as uint32_t as uint32_t;
+  } as u32;
+  *len = (*len as libc::c_uint).wrapping_sub(left) as u32 as u32;
   back = (*dict)
     .pos
     .wrapping_sub(dist as libc::c_ulong)
@@ -674,14 +674,14 @@ unsafe extern "C" fn dict_repeat(
   return 1i32 != 0;
 }
 unsafe extern "C" fn rc_reset(mut rc: *mut rc_dec) {
-  (*rc).range = -1i32 as uint32_t;
-  (*rc).code = 0i32 as uint32_t;
-  (*rc).init_bytes_left = 5i32 as uint32_t;
+  (*rc).range = -1i32 as u32;
+  (*rc).code = 0i32 as u32;
+  (*rc).init_bytes_left = 5i32 as u32;
 }
 unsafe extern "C" fn dict_uncompressed(
   mut dict: *mut dictionary,
   mut b: *mut xz_buf,
-  mut left: *mut uint32_t,
+  mut left: *mut u32,
 ) {
   let mut copy_size: size_t = 0;
   while *left > 0i32 as libc::c_uint && (*b).in_pos < (*b).in_size && (*b).out_pos < (*b).out_size {
@@ -697,7 +697,7 @@ unsafe extern "C" fn dict_uncompressed(
     if copy_size > *left as libc::c_ulong {
       copy_size = *left as size_t
     }
-    *left = (*left as libc::c_ulong).wrapping_sub(copy_size) as uint32_t as uint32_t;
+    *left = (*left as libc::c_ulong).wrapping_sub(copy_size) as u32 as u32;
     memcpy(
       (*dict).buf.offset((*dict).pos as isize) as *mut libc::c_void,
       (*b).in_0.offset((*b).in_pos as isize) as *const libc::c_void,
@@ -723,17 +723,17 @@ unsafe extern "C" fn dict_uncompressed(
 #[inline(always)]
 unsafe extern "C" fn rc_bittree_reverse(
   mut rc: *mut rc_dec,
-  mut probs: *mut uint16_t,
-  mut dest: *mut uint32_t,
-  mut limit: uint32_t,
+  mut probs: *mut u16,
+  mut dest: *mut u32,
+  mut limit: u32,
 ) {
-  let mut symbol: uint32_t = 1i32 as uint32_t;
-  let mut i: uint32_t = 0i32 as uint32_t;
+  let mut symbol: u32 = 1i32 as u32;
+  let mut i: u32 = 0i32 as u32;
   loop {
     if rc_bit(rc, &mut *probs.offset(symbol as isize)) != 0 {
       symbol = (symbol << 1i32).wrapping_add(1i32 as libc::c_uint);
       *dest =
-        (*dest as libc::c_uint).wrapping_add((1i32 << i) as libc::c_uint) as uint32_t as uint32_t
+        (*dest as libc::c_uint).wrapping_add((1i32 << i) as libc::c_uint) as u32 as u32
     } else {
       symbol <<= 1i32
     }
@@ -744,33 +744,33 @@ unsafe extern "C" fn rc_bittree_reverse(
   }
 }
 #[inline(always)]
-unsafe extern "C" fn rc_bit(mut rc: *mut rc_dec, mut prob: *mut uint16_t) -> libc::c_int {
-  let mut bound: uint32_t = 0;
+unsafe extern "C" fn rc_bit(mut rc: *mut rc_dec, mut prob: *mut u16) -> libc::c_int {
+  let mut bound: u32 = 0;
   let mut bit: libc::c_int = 0;
   rc_normalize(rc);
   bound = ((*rc).range >> 11i32).wrapping_mul(*prob as libc::c_uint);
   if (*rc).code < bound {
     (*rc).range = bound;
-    *prob = (*prob as libc::c_int + ((1i32 << 11i32) - *prob as libc::c_int >> 5i32)) as uint16_t;
+    *prob = (*prob as libc::c_int + ((1i32 << 11i32) - *prob as libc::c_int >> 5i32)) as u16;
     bit = 0i32
   } else {
-    (*rc).range = ((*rc).range as libc::c_uint).wrapping_sub(bound) as uint32_t as uint32_t;
-    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub(bound) as uint32_t as uint32_t;
-    *prob = (*prob as libc::c_int - (*prob as libc::c_int >> 5i32)) as uint16_t;
+    (*rc).range = ((*rc).range as libc::c_uint).wrapping_sub(bound) as u32 as u32;
+    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub(bound) as u32 as u32;
+    *prob = (*prob as libc::c_int - (*prob as libc::c_int >> 5i32)) as u16;
     bit = 1i32
   }
   return bit;
 }
 #[inline]
-unsafe extern "C" fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut uint32_t, mut limit: uint32_t) {
-  let mut mask: uint32_t = 0;
+unsafe extern "C" fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut u32, mut limit: u32) {
+  let mut mask: u32 = 0;
   loop {
     rc_normalize(rc);
     (*rc).range >>= 1i32;
-    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as uint32_t as uint32_t;
-    mask = (0i32 as uint32_t).wrapping_sub((*rc).code >> 31i32);
+    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as u32 as u32;
+    mask = (0i32 as u32).wrapping_sub((*rc).code >> 31i32);
     (*rc).code =
-      ((*rc).code as libc::c_uint).wrapping_add((*rc).range & mask) as uint32_t as uint32_t;
+      ((*rc).code as libc::c_uint).wrapping_add((*rc).range & mask) as u32 as u32;
     *dest = (*dest << 1i32).wrapping_add(mask.wrapping_add(1i32 as libc::c_uint));
     limit = limit.wrapping_sub(1);
     if !(limit > 0i32 as libc::c_uint) {
@@ -806,7 +806,7 @@ unsafe extern "C" fn rc_normalize(mut rc: *mut rc_dec) {
   };
 }
 #[inline]
-unsafe extern "C" fn dict_put(mut dict: *mut dictionary, mut byte: uint8_t) {
+unsafe extern "C" fn dict_put(mut dict: *mut dictionary, mut byte: u8) {
   let fresh4 = (*dict).pos;
   (*dict).pos = (*dict).pos.wrapping_add(1);
   *(*dict).buf.offset(fresh4 as isize) = byte;
@@ -815,7 +815,7 @@ unsafe extern "C" fn dict_put(mut dict: *mut dictionary, mut byte: uint8_t) {
   };
 }
 #[inline(always)]
-unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: uint32_t) -> uint32_t {
+unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: u32) -> u32 {
   let mut offset: size_t = (*dict)
     .pos
     .wrapping_sub(dist as libc::c_ulong)
@@ -827,15 +827,15 @@ unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: uint32_t) -
     *(*dict).buf.offset(offset as isize) as libc::c_int
   } else {
     0i32
-  } as uint32_t;
+  } as u32;
 }
 #[inline(always)]
 unsafe extern "C" fn rc_bittree(
   mut rc: *mut rc_dec,
-  mut probs: *mut uint16_t,
-  mut limit: uint32_t,
-) -> uint32_t {
-  let mut symbol: uint32_t = 1i32 as uint32_t;
+  mut probs: *mut u16,
+  mut limit: u32,
+) -> u32 {
+  let mut symbol: u32 = 1i32 as u32;
   loop {
     if rc_bit(rc, &mut *probs.offset(symbol as isize)) != 0 {
       symbol = (symbol << 1i32).wrapping_add(1i32 as libc::c_uint)
@@ -848,7 +848,7 @@ unsafe extern "C" fn rc_bittree(
   }
   return symbol;
 }
-unsafe extern "C" fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -> uint32_t {
+unsafe extern "C" fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -> u32 {
   let mut copy_size: size_t = (*dict).pos.wrapping_sub((*dict).start);
   if (*dict).pos == (*dict).end {
     (*dict).pos = 0i32 as size_t
@@ -860,7 +860,7 @@ unsafe extern "C" fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -
   );
   (*dict).start = (*dict).pos;
   (*b).out_pos = ((*b).out_pos as libc::c_ulong).wrapping_add(copy_size) as size_t as size_t;
-  return copy_size as uint32_t;
+  return copy_size as u32;
 }
 #[inline]
 unsafe extern "C" fn rc_limit_exceeded(mut rc: *const rc_dec) -> bool {
@@ -868,19 +868,19 @@ unsafe extern "C" fn rc_limit_exceeded(mut rc: *const rc_dec) -> bool {
 }
 /* Decode a literal (one 8-bit byte) */
 unsafe extern "C" fn lzma_literal(mut s: *mut xz_dec_lzma2) {
-  let mut probs: *mut uint16_t = 0 as *mut uint16_t;
-  let mut symbol: uint32_t = 0;
-  let mut match_byte: uint32_t = 0;
-  let mut match_bit: uint32_t = 0;
-  let mut offset: uint32_t = 0;
-  let mut i: uint32_t = 0;
+  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut symbol: u32 = 0;
+  let mut match_byte: u32 = 0;
+  let mut match_bit: u32 = 0;
+  let mut offset: u32 = 0;
+  let mut i: u32 = 0;
   probs = lzma_literal_probs(s);
   if lzma_state_is_literal((*s).lzma.state) {
-    symbol = rc_bittree(&mut (*s).rc, probs, 0x100i32 as uint32_t)
+    symbol = rc_bittree(&mut (*s).rc, probs, 0x100i32 as u32)
   } else {
-    symbol = 1i32 as uint32_t;
+    symbol = 1i32 as u32;
     match_byte = dict_get(&mut (*s).dict, (*s).lzma.rep0) << 1i32;
-    offset = 0x100i32 as uint32_t;
+    offset = 0x100i32 as u32;
     loop {
       match_bit = match_byte & offset;
       match_byte <<= 1i32;
@@ -897,46 +897,46 @@ unsafe extern "C" fn lzma_literal(mut s: *mut xz_dec_lzma2) {
       }
     }
   }
-  dict_put(&mut (*s).dict, symbol as uint8_t);
+  dict_put(&mut (*s).dict, symbol as u8);
   lzma_state_literal(&mut (*s).lzma.state);
 }
 /* Decode the length of the match into s->lzma.len. */
 unsafe extern "C" fn lzma_len(
   mut s: *mut xz_dec_lzma2,
   mut l: *mut lzma_len_dec,
-  mut pos_state: uint32_t,
+  mut pos_state: u32,
 ) {
-  let mut probs: *mut uint16_t = 0 as *mut uint16_t;
-  let mut limit: uint32_t = 0;
+  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut limit: u32 = 0;
   if rc_bit(&mut (*s).rc, &mut (*l).choice) == 0 {
     probs = (*l).low[pos_state as usize].as_mut_ptr();
-    limit = (1i32 << 3i32) as uint32_t;
-    (*s).lzma.len = 2i32 as uint32_t
+    limit = (1i32 << 3i32) as u32;
+    (*s).lzma.len = 2i32 as u32
   } else if rc_bit(&mut (*s).rc, &mut (*l).choice2) == 0 {
     probs = (*l).mid[pos_state as usize].as_mut_ptr();
-    limit = (1i32 << 3i32) as uint32_t;
-    (*s).lzma.len = (2i32 + (1i32 << 3i32)) as uint32_t
+    limit = (1i32 << 3i32) as u32;
+    (*s).lzma.len = (2i32 + (1i32 << 3i32)) as u32
   } else {
     probs = (*l).high.as_mut_ptr();
-    limit = (1i32 << 8i32) as uint32_t;
-    (*s).lzma.len = (2i32 + (1i32 << 3i32) + (1i32 << 3i32)) as uint32_t
+    limit = (1i32 << 8i32) as u32;
+    (*s).lzma.len = (2i32 + (1i32 << 3i32) + (1i32 << 3i32)) as u32
   }
   (*s).lzma.len = ((*s).lzma.len as libc::c_uint)
     .wrapping_add(rc_bittree(&mut (*s).rc, probs, limit).wrapping_sub(limit))
-    as uint32_t as uint32_t;
+    as u32 as u32;
 }
 /* Decode a match. The distance will be stored in s->lzma.rep0. */
-unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: uint32_t) {
-  let mut probs: *mut uint16_t = 0 as *mut uint16_t;
-  let mut dist_slot: uint32_t = 0;
-  let mut limit: uint32_t = 0;
+unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
+  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut dist_slot: u32 = 0;
+  let mut limit: u32 = 0;
   lzma_state_match(&mut (*s).lzma.state);
   (*s).lzma.rep3 = (*s).lzma.rep2;
   (*s).lzma.rep2 = (*s).lzma.rep1;
   (*s).lzma.rep1 = (*s).lzma.rep0;
   lzma_len(s, &mut (*s).lzma.match_len_dec, pos_state);
   probs = (*s).lzma.dist_slot[lzma_get_dist_state((*s).lzma.len) as usize].as_mut_ptr();
-  dist_slot = rc_bittree(&mut (*s).rc, probs, (1i32 << 6i32) as uint32_t)
+  dist_slot = rc_bittree(&mut (*s).rc, probs, (1i32 << 6i32) as u32)
     .wrapping_sub((1i32 << 6i32) as libc::c_uint);
   if dist_slot < 4i32 as libc::c_uint {
     (*s).lzma.rep0 = dist_slot
@@ -964,7 +964,7 @@ unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: uint32_
         &mut (*s).rc,
         (*s).lzma.dist_align.as_mut_ptr(),
         &mut (*s).lzma.rep0,
-        4i32 as uint32_t,
+        4i32 as u32,
       );
     }
   };
@@ -973,8 +973,8 @@ unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: uint32_
  * Decode a repeated match. The distance is one of the four most recently
  * seen matches. The distance will be stored in s->lzma.rep0.
  */
-unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: uint32_t) {
-  let mut tmp: uint32_t = 0;
+unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
+  let mut tmp: u32 = 0;
   if rc_bit(
     &mut (*s).rc,
     &mut *(*s)
@@ -996,7 +996,7 @@ unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: uin
     ) == 0
     {
       lzma_state_short_rep(&mut (*s).lzma.state);
-      (*s).lzma.len = 1i32 as uint32_t;
+      (*s).lzma.len = 1i32 as u32;
       return;
     }
   } else {
@@ -1035,7 +1035,7 @@ unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: uin
 }
 /* LZMA decoder core */
 unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
-  let mut pos_state: uint32_t = 0;
+  let mut pos_state: u32 = 0;
   /*
    * If the dictionary was reached during the previous call, try to
    * finish the possibly pending repeat in the dictionary.
@@ -1048,7 +1048,7 @@ unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
    * LZMA_IN_REQUIRED - 1 bytes.
    */
   while dict_has_space(&mut (*s).dict) as libc::c_int != 0 && !rc_limit_exceeded(&mut (*s).rc) {
-    pos_state = ((*s).dict.pos & (*s).lzma.pos_mask as libc::c_ulong) as uint32_t;
+    pos_state = ((*s).dict.pos & (*s).lzma.pos_mask as libc::c_ulong) as u32;
     if rc_bit(
       &mut (*s).rc,
       &mut *(*(*s)
@@ -1092,13 +1092,13 @@ unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
  * here, because LZMA state may be reset without resetting the dictionary.
  */
 unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
-  let mut probs: *mut uint16_t = 0 as *mut uint16_t;
+  let mut probs: *mut u16 = 0 as *mut u16;
   let mut i: size_t = 0;
   (*s).lzma.state = STATE_LIT_LIT;
-  (*s).lzma.rep0 = 0i32 as uint32_t;
-  (*s).lzma.rep1 = 0i32 as uint32_t;
-  (*s).lzma.rep2 = 0i32 as uint32_t;
-  (*s).lzma.rep3 = 0i32 as uint32_t;
+  (*s).lzma.rep0 = 0i32 as u32;
+  (*s).lzma.rep1 = 0i32 as u32;
+  (*s).lzma.rep2 = 0i32 as u32;
+  (*s).lzma.rep3 = 0i32 as u32;
   /*
    * All probabilities are initialized to the same value. This hack
    * makes the code smaller by avoiding a separate loop for each
@@ -1111,7 +1111,7 @@ unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
   probs = (*s).lzma.is_match[0].as_mut_ptr();
   i = 0i32 as size_t;
   while i < (1846i32 + (1i32 << 4i32) * 0x300i32) as libc::c_ulong {
-    *probs.offset(i as isize) = ((1i32 << 11i32) / 2i32) as uint16_t;
+    *probs.offset(i as isize) = ((1i32 << 11i32) / 2i32) as u16;
     i = i.wrapping_add(1)
   }
   rc_reset(&mut (*s).rc);
@@ -1121,26 +1121,26 @@ unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
  * from the decoded lp and pb values. On success, the LZMA decoder state is
  * reset and true is returned.
  */
-unsafe extern "C" fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: uint8_t) -> bool {
+unsafe extern "C" fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: u8) -> bool {
   if props as libc::c_int > (4i32 * 5i32 + 4i32) * 9i32 + 8i32 {
     return 0i32 != 0;
   }
-  (*s).lzma.pos_mask = 0i32 as uint32_t;
+  (*s).lzma.pos_mask = 0i32 as u32;
   while props as libc::c_int >= 9i32 * 5i32 {
-    props = (props as libc::c_int - 9i32 * 5i32) as uint8_t;
+    props = (props as libc::c_int - 9i32 * 5i32) as u8;
     (*s).lzma.pos_mask = (*s).lzma.pos_mask.wrapping_add(1)
   }
-  (*s).lzma.pos_mask = ((1i32 << (*s).lzma.pos_mask) - 1i32) as uint32_t;
-  (*s).lzma.literal_pos_mask = 0i32 as uint32_t;
+  (*s).lzma.pos_mask = ((1i32 << (*s).lzma.pos_mask) - 1i32) as u32;
+  (*s).lzma.literal_pos_mask = 0i32 as u32;
   while props as libc::c_int >= 9i32 {
-    props = (props as libc::c_int - 9i32) as uint8_t;
+    props = (props as libc::c_int - 9i32) as u8;
     (*s).lzma.literal_pos_mask = (*s).lzma.literal_pos_mask.wrapping_add(1)
   }
-  (*s).lzma.lc = props as uint32_t;
+  (*s).lzma.lc = props as u32;
   if (*s).lzma.lc.wrapping_add((*s).lzma.literal_pos_mask) > 4i32 as libc::c_uint {
     return 0i32 != 0;
   }
-  (*s).lzma.literal_pos_mask = ((1i32 << (*s).lzma.literal_pos_mask) - 1i32) as uint32_t;
+  (*s).lzma.literal_pos_mask = ((1i32 << (*s).lzma.literal_pos_mask) - 1i32) as u32;
   lzma_reset(s);
   return 1i32 != 0;
 }
@@ -1161,7 +1161,7 @@ unsafe extern "C" fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: uint8_t) ->
  */
 unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> bool {
   let mut in_avail: size_t = 0;
-  let mut tmp: uint32_t = 0;
+  let mut tmp: u32 = 0;
   in_avail = (*b).in_size.wrapping_sub((*b).in_pos);
   if (*s).temp.size > 0i32 as libc::c_uint || (*s).lzma2.compressed == 0i32 as libc::c_uint {
     tmp = ((2i32 * 21i32) as libc::c_uint).wrapping_sub((*s).temp.size);
@@ -1169,7 +1169,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
       tmp = (*s).lzma2.compressed.wrapping_sub((*s).temp.size)
     }
     if tmp as libc::c_ulong > in_avail {
-      tmp = in_avail as uint32_t
+      tmp = in_avail as u32
     }
     memcpy(
       (*s).temp.buf.as_mut_ptr().offset((*s).temp.size as isize) as *mut libc::c_void,
@@ -1185,13 +1185,13 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
           .offset((*s).temp.size as isize)
           .offset(tmp as isize) as *mut libc::c_void,
         0i32,
-        (::std::mem::size_of::<[uint8_t; 63]>() as libc::c_ulong)
+        (::std::mem::size_of::<[u8; 63]>() as libc::c_ulong)
           .wrapping_sub((*s).temp.size as libc::c_ulong)
           .wrapping_sub(tmp as libc::c_ulong),
       );
       (*s).rc.in_limit = (*s).temp.size.wrapping_add(tmp) as size_t
     } else if (*s).temp.size.wrapping_add(tmp) < 21i32 as libc::c_uint {
-      (*s).temp.size = ((*s).temp.size as libc::c_uint).wrapping_add(tmp) as uint32_t as uint32_t;
+      (*s).temp.size = ((*s).temp.size as libc::c_uint).wrapping_add(tmp) as u32 as u32;
       (*b).in_pos =
         ((*b).in_pos as libc::c_ulong).wrapping_add(tmp as libc::c_ulong) as size_t as size_t;
       return 1i32 != 0;
@@ -1208,10 +1208,10 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
       return 0i32 != 0;
     }
     (*s).lzma2.compressed =
-      ((*s).lzma2.compressed as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as uint32_t as uint32_t;
+      ((*s).lzma2.compressed as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as u32 as u32;
     if (*s).rc.in_pos < (*s).temp.size as libc::c_ulong {
       (*s).temp.size =
-        ((*s).temp.size as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as uint32_t as uint32_t;
+        ((*s).temp.size as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as u32 as u32;
       memmove(
         (*s).temp.buf.as_mut_ptr() as *mut libc::c_void,
         (*s).temp.buf.as_mut_ptr().offset((*s).rc.in_pos as isize) as *const libc::c_void,
@@ -1222,7 +1222,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
     (*b).in_pos = ((*b).in_pos as libc::c_ulong)
       .wrapping_add((*s).rc.in_pos.wrapping_sub((*s).temp.size as libc::c_ulong))
       as size_t as size_t;
-    (*s).temp.size = 0i32 as uint32_t
+    (*s).temp.size = 0i32 as u32
   }
   in_avail = (*b).in_size.wrapping_sub((*b).in_pos);
   if in_avail >= 21i32 as libc::c_ulong {
@@ -1243,7 +1243,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
       return 0i32 != 0;
     }
     (*s).lzma2.compressed =
-      ((*s).lzma2.compressed as libc::c_ulong).wrapping_sub(in_avail) as uint32_t as uint32_t;
+      ((*s).lzma2.compressed as libc::c_ulong).wrapping_sub(in_avail) as u32 as u32;
     (*b).in_pos = (*s).rc.in_pos
   }
   in_avail = (*b).in_size.wrapping_sub((*b).in_pos);
@@ -1256,7 +1256,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
       (*b).in_0.offset((*b).in_pos as isize) as *const libc::c_void,
       in_avail,
     );
-    (*s).temp.size = in_avail as uint32_t;
+    (*s).temp.size = in_avail as u32;
     (*b).in_pos = ((*b).in_pos as libc::c_ulong).wrapping_add(in_avail) as size_t as size_t
   }
   return 1i32 != 0;
@@ -1274,7 +1274,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
  */
 #[inline(never)]
 unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> xz_ret {
-  let mut tmp: uint32_t = 0;
+  let mut tmp: u32 = 0;
   while (*b).in_pos < (*b).in_size
     || (*s).lzma2.sequence as libc::c_uint == SEQ_LZMA_RUN as libc::c_int as libc::c_uint
   {
@@ -1314,7 +1314,7 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
          */
         let fresh5 = (*b).in_pos;
         (*b).in_pos = (*b).in_pos.wrapping_add(1);
-        tmp = *(*b).in_0.offset(fresh5 as isize) as uint32_t;
+        tmp = *(*b).in_0.offset(fresh5 as isize) as u32;
         if tmp == 0i32 as libc::c_uint {
           return XZ_STREAM_END;
         }
@@ -1357,8 +1357,8 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
         let fresh6 = (*b).in_pos;
         (*b).in_pos = (*b).in_pos.wrapping_add(1);
         (*s).lzma2.uncompressed = ((*s).lzma2.uncompressed as libc::c_uint)
-          .wrapping_add((*(*b).in_0.offset(fresh6 as isize) as uint32_t) << 8i32)
-          as uint32_t as uint32_t;
+          .wrapping_add((*(*b).in_0.offset(fresh6 as isize) as u32) << 8i32)
+          as u32 as u32;
         (*s).lzma2.sequence = SEQ_UNCOMPRESSED_2;
         current_block_64 = 5807581744382915773;
       }
@@ -1366,15 +1366,15 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
         let fresh7 = (*b).in_pos;
         (*b).in_pos = (*b).in_pos.wrapping_add(1);
         (*s).lzma2.uncompressed = ((*s).lzma2.uncompressed as libc::c_uint).wrapping_add(
-          (*(*b).in_0.offset(fresh7 as isize) as uint32_t).wrapping_add(1i32 as libc::c_uint),
-        ) as uint32_t as uint32_t;
+          (*(*b).in_0.offset(fresh7 as isize) as u32).wrapping_add(1i32 as libc::c_uint),
+        ) as u32 as u32;
         (*s).lzma2.sequence = SEQ_COMPRESSED_0;
         current_block_64 = 5807581744382915773;
       }
       3 => {
         let fresh8 = (*b).in_pos;
         (*b).in_pos = (*b).in_pos.wrapping_add(1);
-        (*s).lzma2.compressed = (*(*b).in_0.offset(fresh8 as isize) as uint32_t) << 8i32;
+        (*s).lzma2.compressed = (*(*b).in_0.offset(fresh8 as isize) as u32) << 8i32;
         (*s).lzma2.sequence = SEQ_COMPRESSED_1;
         current_block_64 = 5807581744382915773;
       }
@@ -1382,8 +1382,8 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
         let fresh9 = (*b).in_pos;
         (*b).in_pos = (*b).in_pos.wrapping_add(1);
         (*s).lzma2.compressed = ((*s).lzma2.compressed as libc::c_uint).wrapping_add(
-          (*(*b).in_0.offset(fresh9 as isize) as uint32_t).wrapping_add(1i32 as libc::c_uint),
-        ) as uint32_t as uint32_t;
+          (*(*b).in_0.offset(fresh9 as isize) as u32).wrapping_add(1i32 as libc::c_uint),
+        ) as u32 as u32;
         (*s).lzma2.sequence = (*s).lzma2.next_sequence;
         current_block_64 = 5807581744382915773;
       }
@@ -1423,8 +1423,8 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
           return XZ_OK;
         }
         (*s).lzma2.compressed = ((*s).lzma2.compressed as libc::c_uint)
-          .wrapping_sub(5i32 as libc::c_uint) as uint32_t
-          as uint32_t;
+          .wrapping_sub(5i32 as libc::c_uint) as u32
+          as u32;
         (*s).lzma2.sequence = SEQ_LZMA_RUN;
         current_block_64 = 14938516266808412833;
       }
@@ -1453,8 +1453,8 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
           return XZ_DATA_ERROR;
         }
         (*s).lzma2.uncompressed = ((*s).lzma2.uncompressed as libc::c_uint)
-          .wrapping_sub(dict_flush(&mut (*s).dict, b)) as uint32_t
-          as uint32_t;
+          .wrapping_sub(dict_flush(&mut (*s).dict, b)) as u32
+          as u32;
         if (*s).lzma2.uncompressed == 0i32 as libc::c_uint {
           if (*s).lzma2.compressed > 0i32 as libc::c_uint
             || (*s).lzma.len > 0i32 as libc::c_uint
@@ -1504,7 +1504,7 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
  */
 unsafe extern "C" fn xz_dec_lzma2_create(
   mut mode: xz_mode,
-  mut dict_max: uint32_t,
+  mut dict_max: u32,
 ) -> *mut xz_dec_lzma2 {
   let mut s: *mut xz_dec_lzma2 =
     malloc(::std::mem::size_of::<xz_dec_lzma2>() as libc::c_ulong) as *mut xz_dec_lzma2;
@@ -1514,17 +1514,17 @@ unsafe extern "C" fn xz_dec_lzma2_create(
   (*s).dict.mode = mode;
   (*s).dict.size_max = dict_max;
   if mode as libc::c_uint == XZ_DYNALLOC as libc::c_int as libc::c_uint {
-    (*s).dict.buf = 0 as *mut uint8_t;
-    (*s).dict.allocated = 0i32 as uint32_t
+    (*s).dict.buf = 0 as *mut u8;
+    (*s).dict.allocated = 0i32 as u32
   }
   return s;
 }
-unsafe extern "C" fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: uint8_t) -> xz_ret {
+unsafe extern "C" fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: u8) -> xz_ret {
   /* This limits dictionary size to 3 GiB to keep parsing simpler. */
   if props as libc::c_int > 39i32 {
     return XZ_OPTIONS_ERROR;
   }
-  (*s).dict.size = (2i32 + (props as libc::c_int & 1i32)) as uint32_t;
+  (*s).dict.size = (2i32 + (props as libc::c_int & 1i32)) as u32;
   (*s).dict.size <<= (props as libc::c_int >> 1i32) + 11i32;
   if (*s).dict.size > (*s).dict.size_max {
     return XZ_MEMLIMIT_ERROR;
@@ -1533,17 +1533,17 @@ unsafe extern "C" fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: uin
   if (*s).dict.mode as libc::c_uint == XZ_DYNALLOC as libc::c_int as libc::c_uint {
     if (*s).dict.allocated < (*s).dict.size {
       free((*s).dict.buf as *mut libc::c_void);
-      (*s).dict.buf = malloc((*s).dict.size as libc::c_ulong) as *mut uint8_t;
+      (*s).dict.buf = malloc((*s).dict.size as libc::c_ulong) as *mut u8;
       if (*s).dict.buf.is_null() {
-        (*s).dict.allocated = 0i32 as uint32_t;
+        (*s).dict.allocated = 0i32 as u32;
         return XZ_MEM_ERROR;
       }
     }
   }
-  (*s).lzma.len = 0i32 as uint32_t;
+  (*s).lzma.len = 0i32 as u32;
   (*s).lzma2.sequence = SEQ_CONTROL;
   (*s).lzma2.need_dict_reset = 1i32 != 0;
-  (*s).temp.size = 0i32 as uint32_t;
+  (*s).temp.size = 0i32 as u32;
   return XZ_OK;
 }
 /* Free the memory allocated for the LZMA2 decoder. */
@@ -1754,7 +1754,7 @@ unsafe extern "C" fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret
         (*s).index.hash.uncompressed = ((*s).index.hash.uncompressed as libc::c_ulong)
           .wrapping_add((*s).vli) as vli_type as vli_type;
         (*s).index.hash.crc32 = xz_crc32(
-          &mut (*s).index.hash as *mut xz_dec_hash as *const uint8_t,
+          &mut (*s).index.hash as *mut xz_dec_hash as *const u8,
           ::std::mem::size_of::<xz_dec_hash>() as libc::c_ulong,
           (*s).index.hash.crc32,
         );
@@ -1792,23 +1792,23 @@ unsafe extern "C" fn crc32_validate(mut s: *mut xz_dec, mut b: *mut xz_buf) -> x
       return XZ_DATA_ERROR;
     }
     (*s).pos =
-      ((*s).pos as libc::c_uint).wrapping_add(8i32 as libc::c_uint) as uint32_t as uint32_t;
+      ((*s).pos as libc::c_uint).wrapping_add(8i32 as libc::c_uint) as u32 as u32;
     if !((*s).pos < 32i32 as libc::c_uint) {
       break;
     }
   }
-  (*s).crc32 = 0i32 as uint32_t;
-  (*s).pos = 0i32 as uint32_t;
+  (*s).crc32 = 0i32 as u32;
+  (*s).pos = 0i32 as u32;
   return XZ_STREAM_END;
 }
 unsafe extern "C" fn dec_block_header(mut s: *mut xz_dec) -> xz_ret {
   let mut ret: xz_ret = XZ_OK;
   (*s).temp.size =
     ((*s).temp.size as libc::c_ulong).wrapping_sub(4i32 as libc::c_ulong) as size_t as size_t;
-  if xz_crc32((*s).temp.buf.as_mut_ptr(), (*s).temp.size, 0i32 as uint32_t)
+  if xz_crc32((*s).temp.buf.as_mut_ptr(), (*s).temp.size, 0i32 as u32)
     != ({
-      let mut v: uint32_t =
-        *((*s).temp.buf.as_mut_ptr().offset((*s).temp.size as isize) as *mut bb__aliased_uint32_t);
+      let mut v: u32 =
+        *((*s).temp.buf.as_mut_ptr().offset((*s).temp.size as isize) as *mut bb__aliased_u32);
       v
     })
   {
@@ -1894,10 +1894,10 @@ unsafe extern "C" fn dec_stream_header(mut s: *mut xz_dec) -> xz_ret {
   if xz_crc32(
     (*s).temp.buf.as_mut_ptr().offset(6),
     2i32 as size_t,
-    0i32 as uint32_t,
+    0i32 as u32,
   ) != ({
-    let mut v: uint32_t =
-      *((*s).temp.buf.as_mut_ptr().offset(6).offset(2) as *mut bb__aliased_uint32_t);
+    let mut v: u32 =
+      *((*s).temp.buf.as_mut_ptr().offset(6).offset(2) as *mut bb__aliased_u32);
     v
   }) {
     return XZ_DATA_ERROR;
@@ -1946,16 +1946,16 @@ unsafe extern "C" fn dec_stream_footer(mut s: *mut xz_dec) -> xz_ret {
   if xz_crc32(
     (*s).temp.buf.as_mut_ptr().offset(4),
     6i32 as size_t,
-    0i32 as uint32_t,
+    0i32 as u32,
   ) != ({
-    let mut v: uint32_t = *((*s).temp.buf.as_mut_ptr() as *mut bb__aliased_uint32_t);
+    let mut v: u32 = *((*s).temp.buf.as_mut_ptr() as *mut bb__aliased_u32);
     v
   }) {
     return XZ_DATA_ERROR;
   }
   if (*s).index.size >> 2i32
     != ({
-      let mut v: uint32_t = *((*s).temp.buf.as_mut_ptr().offset(4) as *mut bb__aliased_uint32_t);
+      let mut v: u32 = *((*s).temp.buf.as_mut_ptr().offset(4) as *mut bb__aliased_u32);
       v
     }) as libc::c_ulong
   {
@@ -2063,7 +2063,7 @@ unsafe extern "C" fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret 
           (*s).sequence = SEQ_INDEX;
           current_block_65 = 15594603006322722090;
         } else {
-          (*s).block_header.size = (*(*b).in_0.offset((*b).in_pos as isize) as uint32_t)
+          (*s).block_header.size = (*(*b).in_0.offset((*b).in_pos as isize) as u32)
             .wrapping_add(1i32 as libc::c_uint)
             .wrapping_mul(4i32 as libc::c_uint);
           (*s).temp.size = (*s).block_header.size as size_t;
@@ -2192,7 +2192,7 @@ unsafe extern "C" fn dec_block(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret
       .wrapping_add((*s).block.uncompressed) as vli_type
       as vli_type;
     (*s).block.hash.crc32 = xz_crc32(
-      &mut (*s).block.hash as *mut xz_dec_hash as *const uint8_t,
+      &mut (*s).block.hash as *mut xz_dec_hash as *const u8,
       ::std::mem::size_of::<xz_dec_hash>() as libc::c_ulong,
       (*s).block.hash.crc32,
     );
@@ -2200,31 +2200,31 @@ unsafe extern "C" fn dec_block(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret
   }
   return ret;
 }
-static mut check_sizes: [uint8_t; 16] = [
-  0i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  8i32 as uint8_t,
-  8i32 as uint8_t,
-  8i32 as uint8_t,
-  16i32 as uint8_t,
-  16i32 as uint8_t,
-  16i32 as uint8_t,
-  32i32 as uint8_t,
-  32i32 as uint8_t,
-  32i32 as uint8_t,
-  64i32 as uint8_t,
-  64i32 as uint8_t,
-  64i32 as uint8_t,
+static mut check_sizes: [u8; 16] = [
+  0i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  8i32 as u8,
+  8i32 as u8,
+  8i32 as u8,
+  16i32 as u8,
+  16i32 as u8,
+  16i32 as u8,
+  32i32 as u8,
+  32i32 as u8,
+  32i32 as u8,
+  64i32 as u8,
+  64i32 as u8,
+  64i32 as u8,
 ];
 unsafe extern "C" fn dec_vli(
   mut s: *mut xz_dec,
-  mut in_0: *const uint8_t,
+  mut in_0: *const u8,
   mut in_pos: *mut size_t,
   mut in_size: size_t,
 ) -> xz_ret {
-  let mut byte: uint8_t = 0;
+  let mut byte: u8 = 0;
   if (*s).pos == 0i32 as libc::c_uint {
     (*s).vli = 0i32 as vli_type
   }
@@ -2236,11 +2236,11 @@ unsafe extern "C" fn dec_vli(
       if byte as libc::c_int == 0i32 && (*s).pos != 0i32 as libc::c_uint {
         return XZ_DATA_ERROR;
       }
-      (*s).pos = 0i32 as uint32_t;
+      (*s).pos = 0i32 as u32;
       return XZ_STREAM_END;
     }
     (*s).pos =
-      ((*s).pos as libc::c_uint).wrapping_add(7i32 as libc::c_uint) as uint32_t as uint32_t;
+      ((*s).pos as libc::c_uint).wrapping_add(7i32 as libc::c_uint) as u32 as u32;
     if (*s).pos as libc::c_ulong
       == (7i32 as libc::c_ulong).wrapping_mul(
         (::std::mem::size_of::<vli_type>() as libc::c_ulong)
@@ -2261,7 +2261,7 @@ unsafe extern "C" fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool 
     (*b).in_pos = (*b).in_pos.wrapping_add(1);
     (*s).pos = (*s).pos.wrapping_add(1)
   }
-  (*s).pos = 0i32 as uint32_t;
+  (*s).pos = 0i32 as u32;
   return 1i32 != 0;
 }
 /* *
@@ -2376,7 +2376,7 @@ unsafe extern "C" fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool 
  * ready to be used with xz_dec_run(). If memory allocation fails,
  * xz_dec_init() returns NULL.
  */
-unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: uint32_t) -> *mut xz_dec {
+unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: u32) -> *mut xz_dec {
   let mut s: *mut xz_dec = malloc(::std::mem::size_of::<xz_dec>() as libc::c_ulong) as *mut xz_dec;
   if s.is_null() {
     return 0 as *mut xz_dec;
@@ -2405,8 +2405,8 @@ unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: uint32_t) -> *
 unsafe extern "C" fn xz_dec_reset(mut s: *mut xz_dec) {
   (*s).sequence = SEQ_STREAM_HEADER;
   (*s).allow_buf_error = 0i32 != 0;
-  (*s).pos = 0i32 as uint32_t;
-  (*s).crc32 = 0i32 as uint32_t;
+  (*s).pos = 0i32 as u32;
+  (*s).crc32 = 0i32 as u32;
   memset(
     &mut (*s).block as *mut C2RustUnnamed_4 as *mut libc::c_void,
     0i32,
@@ -2441,10 +2441,10 @@ pub unsafe extern "C" fn unpack_xz_stream(
 ) -> libc::c_longlong {
   let mut xz_result: xz_ret = XZ_OK; /* else: let xz code read & check it */
   let mut iobuf: xz_buf = xz_buf {
-    in_0: 0 as *const uint8_t,
+    in_0: 0 as *const u8,
     in_pos: 0,
     in_size: 0,
-    out: 0 as *mut uint8_t,
+    out: 0 as *mut u8,
     out_pos: 0,
     out_size: 0,
   };
@@ -2472,7 +2472,7 @@ pub unsafe extern "C" fn unpack_xz_stream(
     iobuf.in_size = 6i32 as size_t
   }
   /* Limit memory usage to about 64 MiB. */
-  state = xz_dec_init(XZ_DYNALLOC, (64i32 * 1024i32 * 1024i32) as uint32_t);
+  state = xz_dec_init(XZ_DYNALLOC, (64i32 * 1024i32 * 1024i32) as u32);
   xz_result = XZ_STREAM_END;
   's_75: loop
   /*

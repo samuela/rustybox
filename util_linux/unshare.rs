@@ -66,7 +66,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
@@ -116,7 +116,7 @@ pub const MS_NODEV: C2RustUnnamed = 4;
 pub const MS_NOSUID: C2RustUnnamed = 2;
 // pub const MS_RDONLY: C2RustUnnamed = 1;
 
-use libc::uint32_t;
+
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::gid_t;
 use crate::librb::ssize_t;

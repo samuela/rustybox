@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -57,7 +57,7 @@ pub type __cpu_mask = libc::c_ulong;
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-use libc::uint32_t;
+
 
 /*
  * taskset - retrieve or set a processes' CPU affinity

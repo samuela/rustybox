@@ -212,7 +212,7 @@ extern "C" {
   #[no_mangle]
   fn bb_sanitize_stdio();
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
   #[no_mangle]
@@ -257,7 +257,7 @@ use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__clock_t;
-use crate::librb::__uint32_t;
+
 pub type __rlim64_t = libc::c_ulong;
 
 pub type __socklen_t = libc::c_uint;
@@ -288,7 +288,7 @@ pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
- use libc::timeval;
+use libc::timeval;
 pub type __rlimit_resource_t = __rlimit_resource;
 use crate::librb::gid_t;
 use crate::librb::int8_t;
@@ -374,11 +374,11 @@ pub struct sockaddr_un {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -387,13 +387,13 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-use libc::uint16_t;
- use libc::uint8_t;
-pub type in_port_t = uint16_t;
+
+
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -407,7 +407,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -508,7 +508,7 @@ pub struct C2RustUnnamed_5 {
 #[repr(C)]
 pub union C2RustUnnamed_6 {
   pub _addr_bnd: C2RustUnnamed_7,
-  pub _pkey: __uint32_t,
+  pub _pkey: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -689,7 +689,7 @@ pub struct servtab_t {
 #[repr(C)]
 pub struct builtin {
   pub bi_service7: [libc::c_char; 7],
-  pub bi_fork: uint8_t,
+  pub bi_fork: u8,
   pub bi_stream_fn: Option<unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> ()>,
   pub bi_dgram_fn: Option<unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> ()>,
 }
@@ -705,7 +705,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [101, 99, 104, 111, 0, 0, 0],
-      bi_fork: 1i32 as uint8_t,
+      bi_fork: 1i32 as u8,
       bi_stream_fn: Some(
         echo_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -716,7 +716,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [100, 105, 115, 99, 97, 114, 100],
-      bi_fork: 1i32 as uint8_t,
+      bi_fork: 1i32 as u8,
       bi_stream_fn: Some(
         discard_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -729,7 +729,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [99, 104, 97, 114, 103, 101, 110],
-      bi_fork: 1i32 as uint8_t,
+      bi_fork: 1i32 as u8,
       bi_stream_fn: Some(
         chargen_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -742,7 +742,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [116, 105, 109, 101, 0, 0, 0],
-      bi_fork: 0i32 as uint8_t,
+      bi_fork: 0i32 as u8,
       bi_stream_fn: Some(
         machtime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -755,7 +755,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [100, 97, 121, 116, 105, 109, 101],
-      bi_fork: 0i32 as uint8_t,
+      bi_fork: 0i32 as u8,
       bi_stream_fn: Some(
         daytime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -1354,7 +1354,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut omask: sigset_t = sigset_t { __val: [0; 16] };
   let mut n: libc::c_uint = 0;
-  let mut port: uint16_t = 0;
+  let mut port: u16 = 0;
   let mut save_errno: libc::c_int = *bb_errno;
   if !(reopen_config_file() == 0) {
     sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list;
@@ -1471,7 +1471,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
                 );
                 current_block = 15695848964033577090;
               } else {
-                port = (*sp).s_port as uint16_t;
+                port = (*sp).s_port as u16;
                 current_block = 2706659501864706830;
               }
             } else {
@@ -2445,7 +2445,7 @@ unsafe extern "C" fn chargen_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
  * we must add 2208988800 seconds to this figure to make up for
  * some seventy years Bell Labs was asleep.
  */
-unsafe extern "C" fn machtime() -> uint32_t {
+unsafe extern "C" fn machtime() -> u32 {
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,
@@ -2453,7 +2453,7 @@ unsafe extern "C" fn machtime() -> uint32_t {
   gettimeofday(&mut tv, 0 as *mut timezone);
   return {
     let mut __v: libc::c_uint = 0;
-    let mut __x: libc::c_uint = (tv.tv_sec + 2208988800u32 as libc::c_long) as uint32_t;
+    let mut __x: libc::c_uint = (tv.tv_sec + 2208988800u32 as libc::c_long) as u32;
     if 0 != 0 {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -2473,16 +2473,16 @@ unsafe extern "C" fn machtime() -> uint32_t {
 }
 /* ARGSUSED */
 unsafe extern "C" fn machtime_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
-  let mut result: uint32_t = 0;
+  let mut result: u32 = 0;
   result = machtime();
   full_write(
     s,
-    &mut result as *mut uint32_t as *const libc::c_void,
-    ::std::mem::size_of::<uint32_t>() as libc::c_ulong,
+    &mut result as *mut u32 as *const libc::c_void,
+    ::std::mem::size_of::<u32>() as libc::c_ulong,
   );
 }
 unsafe extern "C" fn machtime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
-  let mut result: uint32_t = 0;
+  let mut result: u32 = 0;
   let mut fresh32 = ::std::vec::from_elem(
     0,
     (LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add((*(*sep).se_lsa).len)
@@ -2508,8 +2508,8 @@ unsafe extern "C" fn machtime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
   result = machtime();
   sendto(
     s,
-    &mut result as *mut uint32_t as *const libc::c_void,
-    ::std::mem::size_of::<uint32_t>() as libc::c_ulong,
+    &mut result as *mut u32 as *const libc::c_void,
+    ::std::mem::size_of::<u32>() as libc::c_ulong,
     0i32,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: &mut (*lsa).u.sa,

@@ -10,15 +10,15 @@ extern "C" {
   static ptr_to_globals: *mut globals;
   #[no_mangle]
   fn crc32_block_endian0(
-    val: uint32_t,
+    val: u32,
     buf: *const libc::c_void,
     len: libc::c_uint,
-    crc_table: *mut uint32_t,
-  ) -> uint32_t;
+    crc_table: *mut u32,
+  ) -> u32;
   #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut uint32_t;
+  fn global_crc32_new_table_le() -> *mut u32;
   #[no_mangle]
-  static mut global_crc32_table: *mut uint32_t;
+  static mut global_crc32_table: *mut u32;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -26,14 +26,14 @@ extern "C" {
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn gunzip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -58,9 +58,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -79,7 +79,7 @@ pub struct globals {
   pub outbuf: *mut uch,
   pub window: *mut uch,
   pub prev: *mut ush,
-  pub crc: uint32_t,
+  pub crc: u32,
   pub block_start: lng,
   pub ins_h: libc::c_uint,
   pub prev_length: libc::c_uint,
@@ -92,10 +92,10 @@ pub struct globals {
   pub bi_buf: libc::c_uint,
   pub bi_valid: libc::c_uint,
 }
-pub type ulg = uint32_t;
+pub type ulg = u32;
 pub type lng = int32_t;
-pub type ush = uint16_t;
-pub type uch = uint8_t;
+pub type ush = u16;
+pub type uch = u8;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {
@@ -108,16 +108,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
@@ -163,7 +163,7 @@ pub union C2RustUnnamed_3 {
 pub struct tree_desc {
   pub dyn_tree: *mut ct_data,
   pub static_tree: *mut ct_data,
-  pub extra_bits: *const uint8_t,
+  pub extra_bits: *const u8,
   pub extra_base: libc::c_int,
   pub elems: libc::c_int,
   pub max_length: libc::c_int,
@@ -401,7 +401,7 @@ unsafe extern "C" fn copy_block(
 ) {
   bi_windup(); /* align on byte boundary */
   if header != 0 {
-    let mut v: libc::c_uint = len as uint16_t as libc::c_uint | !len << 16i32;
+    let mut v: libc::c_uint = len as u16 as libc::c_uint | !len << 16i32;
     put_32bit(v);
   }
   loop {
@@ -665,113 +665,113 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
 }
 /* number of codes used to transfer the bit lengths */
 /* extra bits for each length code */
-static mut extra_lbits: [uint8_t; 29] = [
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  3i32 as uint8_t,
-  3i32 as uint8_t,
-  3i32 as uint8_t,
-  3i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  5i32 as uint8_t,
-  5i32 as uint8_t,
-  5i32 as uint8_t,
-  5i32 as uint8_t,
-  0i32 as uint8_t,
+static mut extra_lbits: [u8; 29] = [
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  3i32 as u8,
+  3i32 as u8,
+  3i32 as u8,
+  3i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  5i32 as u8,
+  5i32 as u8,
+  5i32 as u8,
+  5i32 as u8,
+  0i32 as u8,
 ];
 /* extra bits for each distance code */
-static mut extra_dbits: [uint8_t; 30] = [
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  3i32 as uint8_t,
-  3i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
-  5i32 as uint8_t,
-  5i32 as uint8_t,
-  6i32 as uint8_t,
-  6i32 as uint8_t,
-  7i32 as uint8_t,
-  7i32 as uint8_t,
-  8i32 as uint8_t,
-  8i32 as uint8_t,
-  9i32 as uint8_t,
-  9i32 as uint8_t,
-  10i32 as uint8_t,
-  10i32 as uint8_t,
-  11i32 as uint8_t,
-  11i32 as uint8_t,
-  12i32 as uint8_t,
-  12i32 as uint8_t,
-  13i32 as uint8_t,
-  13i32 as uint8_t,
+static mut extra_dbits: [u8; 30] = [
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  3i32 as u8,
+  3i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
+  5i32 as u8,
+  5i32 as u8,
+  6i32 as u8,
+  6i32 as u8,
+  7i32 as u8,
+  7i32 as u8,
+  8i32 as u8,
+  8i32 as u8,
+  9i32 as u8,
+  9i32 as u8,
+  10i32 as u8,
+  10i32 as u8,
+  11i32 as u8,
+  11i32 as u8,
+  12i32 as u8,
+  12i32 as u8,
+  13i32 as u8,
+  13i32 as u8,
 ];
 /* extra bits for each bit length code */
-static mut extra_blbits: [uint8_t; 19] = [
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  0i32 as uint8_t,
-  2i32 as uint8_t,
-  3i32 as uint8_t,
-  7i32 as uint8_t,
+static mut extra_blbits: [u8; 19] = [
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  0i32 as u8,
+  2i32 as u8,
+  3i32 as u8,
+  7i32 as u8,
 ];
 /* number of codes at each bit length for an optimal tree */
-static mut bl_order: [uint8_t; 19] = [
-  16i32 as uint8_t,
-  17i32 as uint8_t,
-  18i32 as uint8_t,
-  0i32 as uint8_t,
-  8i32 as uint8_t,
-  7i32 as uint8_t,
-  9i32 as uint8_t,
-  6i32 as uint8_t,
-  10i32 as uint8_t,
-  5i32 as uint8_t,
-  11i32 as uint8_t,
-  4i32 as uint8_t,
-  12i32 as uint8_t,
-  3i32 as uint8_t,
-  13i32 as uint8_t,
-  2i32 as uint8_t,
-  14i32 as uint8_t,
-  1i32 as uint8_t,
-  15i32 as uint8_t,
+static mut bl_order: [u8; 19] = [
+  16i32 as u8,
+  17i32 as u8,
+  18i32 as u8,
+  0i32 as u8,
+  8i32 as u8,
+  7i32 as u8,
+  9i32 as u8,
+  6i32 as u8,
+  10i32 as u8,
+  5i32 as u8,
+  11i32 as u8,
+  4i32 as u8,
+  12i32 as u8,
+  3i32 as u8,
+  13i32 as u8,
+  2i32 as u8,
+  14i32 as u8,
+  1i32 as u8,
+  15i32 as u8,
 ];
 /* ===========================================================================
  */
@@ -2109,7 +2109,7 @@ unsafe extern "C" fn zip() {
   put_32bit(0x88b1fi32 as ulg); /* Unix timestamp */
   put_32bit(0i32 as ulg);
   /* Write deflated file to zip file */
-  (*ptr_to_globals.offset(-1)).crc = !0i32 as uint32_t; /* extra flags. OS id = 3 (Unix) */
+  (*ptr_to_globals.offset(-1)).crc = !0i32 as u32; /* extra flags. OS id = 3 (Unix) */
   bi_init();
   ct_init();
   lm_init();
@@ -2127,7 +2127,7 @@ unsafe extern "C" fn zip() {
 unsafe extern "C" fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   /* Reinit G1.xxx except pointers to allocated buffers, and entire G2 */
   memset(
-    &mut (*ptr_to_globals.offset(-1)).crc as *mut uint32_t as *mut libc::c_void,
+    &mut (*ptr_to_globals.offset(-1)).crc as *mut u32 as *mut libc::c_void,
     0i32,
     (::std::mem::size_of::<globals>() as libc::c_ulong)
       .wrapping_sub(40u64)

@@ -118,7 +118,7 @@ extern "C" {
   #[no_mangle]
   fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
   #[no_mangle]
-  fn inet_cksum(addr: *mut uint16_t, len: libc::c_int) -> uint16_t;
+  fn inet_cksum(addr: *mut u16, len: libc::c_int) -> u16;
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
   #[no_mangle]
@@ -129,13 +129,13 @@ extern "C" {
     u: libc::c_uint,
   ) -> libc::c_uint;
   #[no_mangle]
-  fn xatou16(numstr: *const libc::c_char) -> uint16_t;
+  fn xatou16(numstr: *const libc::c_char) -> u16;
   #[no_mangle]
   fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -162,7 +162,7 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
- use libc::timeval;
+use libc::timeval;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct iovec {
@@ -228,11 +228,11 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -241,13 +241,12 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-use libc::uint16_t;
- use libc::uint8_t;
-pub type in_port_t = uint16_t;
+
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -261,7 +260,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_0 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_0 = 255;
@@ -303,15 +302,15 @@ pub struct iphdr {
   #[bitfield(name = "ihl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "version", ty = "libc::c_uint", bits = "4..=7")]
   pub ihl_version: [u8; 1],
-  pub tos: uint8_t,
-  pub tot_len: uint16_t,
-  pub id: uint16_t,
-  pub frag_off: uint16_t,
-  pub ttl: uint8_t,
-  pub protocol: uint8_t,
-  pub check: uint16_t,
-  pub saddr: uint32_t,
-  pub daddr: uint32_t,
+  pub tos: u8,
+  pub tot_len: u16,
+  pub id: u16,
+  pub frag_off: u16,
+  pub ttl: u8,
+  pub protocol: u8,
+  pub check: u16,
+  pub saddr: u32,
+  pub daddr: u32,
 }
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
@@ -319,12 +318,12 @@ pub struct ip {
   #[bitfield(name = "ip_hl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "ip_v", ty = "libc::c_uint", bits = "4..=7")]
   pub ip_hl_ip_v: [u8; 1],
-  pub ip_tos: uint8_t,
+  pub ip_tos: u8,
   pub ip_len: libc::c_ushort,
   pub ip_id: libc::c_ushort,
   pub ip_off: libc::c_ushort,
-  pub ip_ttl: uint8_t,
-  pub ip_p: uint8_t,
+  pub ip_ttl: u8,
+  pub ip_p: u8,
   pub ip_sum: libc::c_ushort,
   pub ip_src: in_addr,
   pub ip_dst: in_addr,
@@ -332,15 +331,15 @@ pub struct ip {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct icmp_ra_addr {
-  pub ira_addr: uint32_t,
-  pub ira_preference: uint32_t,
+  pub ira_addr: u32,
+  pub ira_preference: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct icmp {
-  pub icmp_type: uint8_t,
-  pub icmp_code: uint8_t,
-  pub icmp_cksum: uint16_t,
+  pub icmp_type: u8,
+  pub icmp_code: u8,
+  pub icmp_cksum: u16,
   pub icmp_hun: C2RustUnnamed_5,
   pub icmp_dun: C2RustUnnamed_2,
 }
@@ -350,8 +349,8 @@ pub union C2RustUnnamed_2 {
   pub id_ts: C2RustUnnamed_4,
   pub id_ip: C2RustUnnamed_3,
   pub id_radv: icmp_ra_addr,
-  pub id_mask: uint32_t,
-  pub id_data: [uint8_t; 1],
+  pub id_mask: u32,
+  pub id_data: [u8; 1],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -361,9 +360,9 @@ pub struct C2RustUnnamed_3 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
-  pub its_otime: uint32_t,
-  pub its_rtime: uint32_t,
-  pub its_ttime: uint32_t,
+  pub its_otime: u32,
+  pub its_rtime: u32,
+  pub its_ttime: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -371,31 +370,31 @@ pub union C2RustUnnamed_5 {
   pub ih_pptr: libc::c_uchar,
   pub ih_gwaddr: in_addr,
   pub ih_idseq: ih_idseq,
-  pub ih_void: uint32_t,
+  pub ih_void: u32,
   pub ih_pmtu: ih_pmtu,
   pub ih_rtradv: ih_rtradv,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ih_rtradv {
-  pub irt_num_addrs: uint8_t,
-  pub irt_wpa: uint8_t,
-  pub irt_lifetime: uint16_t,
+  pub irt_num_addrs: u8,
+  pub irt_wpa: u8,
+  pub irt_lifetime: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ih_pmtu {
-  pub ipm_void: uint16_t,
-  pub ipm_nextmtu: uint16_t,
+  pub ipm_void: u16,
+  pub ipm_nextmtu: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ih_idseq {
-  pub icd_id: uint16_t,
-  pub icd_seq: uint16_t,
+  pub icd_id: u16,
+  pub icd_seq: u16,
 }
 pub type bb__aliased_int = libc::c_int;
-pub type bb__aliased_uint32_t = uint32_t;
+pub type bb__aliased_u32 = u32;
 use crate::librb::signal::__sighandler_t;
 pub type __itimer_which = libc::c_uint;
 pub const ITIMER_PROF: __itimer_which = 2;
@@ -437,8 +436,8 @@ pub struct globals {
   pub ntransmitted: libc::c_ulong,
   pub nreceived: libc::c_ulong,
   pub nrepeats: libc::c_ulong,
-  pub myid: uint16_t,
-  pub pattern: uint8_t,
+  pub myid: u16,
+  pub pattern: u8,
   pub tmin: libc::c_uint,
   pub tmax: libc::c_uint,
   pub tsum: libc::c_ulonglong,
@@ -464,22 +463,22 @@ pub union C2RustUnnamed_7 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct icmp6_filter {
-  pub icmp6_filt: [uint32_t; 8],
+  pub icmp6_filt: [u32; 8],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct icmp6_hdr {
-  pub icmp6_type: uint8_t,
-  pub icmp6_code: uint8_t,
-  pub icmp6_cksum: uint16_t,
+  pub icmp6_type: u8,
+  pub icmp6_code: u8,
+  pub icmp6_cksum: u16,
   pub icmp6_dataun: C2RustUnnamed_8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_8 {
-  pub icmp6_un_data32: [uint32_t; 1],
-  pub icmp6_un_data16: [uint16_t; 2],
-  pub icmp6_un_data8: [uint8_t; 4],
+  pub icmp6_un_data32: [u32; 1],
+  pub icmp6_un_data16: [u16; 2],
+  pub icmp6_un_data8: [u8; 4],
 }
 pub type C2RustUnnamed_9 = libc::c_uint;
 pub const pingsock: C2RustUnnamed_9 = 0;
@@ -598,13 +597,12 @@ unsafe extern "C" fn sendping_tail(
 ) {
   let mut sz: libc::c_int = 0;
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rcvd_tbl
-    [((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as uint16_t as libc::c_int
+    [((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as u16 as libc::c_int
       % MAX_DUP_CHK as libc::c_int
       >> 3i32) as usize];
   *fresh0 = (*fresh0 as libc::c_int
     & !(1i32
-      << ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as uint16_t
-        as libc::c_int
+      << ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as u16 as libc::c_int
         % MAX_DUP_CHK as libc::c_int
         & 7i32))) as libc::c_uchar;
   let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted;
@@ -695,9 +693,9 @@ unsafe extern "C" fn sendping4(mut _junk: libc::c_int) {
       .wrapping_add(8i32 as libc::c_uint)
       .wrapping_add(4i32 as libc::c_uint) as libc::c_ulong,
   );
-  (*pkt).icmp_type = 8i32 as uint8_t;
+  (*pkt).icmp_type = 8i32 as u8;
   /*pkt->icmp_code = 0;*/
-  (*pkt).icmp_cksum = 0i32 as uint16_t; /* cksum is calculated with this field set to 0 */
+  (*pkt).icmp_cksum = 0i32 as u16; /* cksum is calculated with this field set to 0 */
   (*pkt).icmp_hun.ih_idseq.icd_seq = {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
@@ -724,9 +722,9 @@ unsafe extern "C" fn sendping4(mut _junk: libc::c_int) {
   /* No hton: we'll read it back on the same machine */
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_us;
   *fresh5 = monotonic_us() as libc::c_uint;
-  *(&mut (*pkt).icmp_dun as *mut C2RustUnnamed_2 as *mut uint32_t) = *fresh5;
+  *(&mut (*pkt).icmp_dun as *mut C2RustUnnamed_2 as *mut u32) = *fresh5;
   (*pkt).icmp_cksum = inet_cksum(
-    pkt as *mut uint16_t,
+    pkt as *mut u16,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .datalen
       .wrapping_add(8i32 as libc::c_uint) as libc::c_int,
@@ -746,7 +744,7 @@ unsafe extern "C" fn sendping6(mut _junk: libc::c_int) {
       .wrapping_add(::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
       .wrapping_add(4i32 as libc::c_ulong),
   );
-  (*pkt).icmp6_type = 128i32 as uint8_t;
+  (*pkt).icmp6_type = 128i32 as u8;
   /*pkt->icmp6_code = 0;*/
   /*pkt->icmp6_cksum = 0;*/
   (*pkt).icmp6_dataun.icmp6_un_data16[1] = {
@@ -771,8 +769,8 @@ unsafe extern "C" fn sendping6(mut _junk: libc::c_int) {
   /*if (datalen >= 4)*/
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_us;
   *fresh9 = monotonic_us() as libc::c_uint;
-  *(&mut *(*pkt).icmp6_dataun.icmp6_un_data8.as_mut_ptr().offset(4) as *mut uint8_t
-    as *mut bb__aliased_uint32_t) = *fresh9;
+  *(&mut *(*pkt).icmp6_dataun.icmp6_un_data8.as_mut_ptr().offset(4) as *mut u8
+    as *mut bb__aliased_u32) = *fresh9;
   //TODO? pkt->icmp_cksum = inet_cksum(...);
   sendping_tail(
     Some(sendping6 as unsafe extern "C" fn(_: libc::c_int) -> ()),
@@ -815,9 +813,9 @@ unsafe extern "C" fn icmp6_type_name(mut id: libc::c_int) -> *const libc::c_char
 }
 unsafe extern "C" fn unpack_tail(
   mut sz: libc::c_int,
-  mut tp: *mut uint32_t,
+  mut tp: *mut u32,
   mut from_str: *const libc::c_char,
-  mut recv_seq: uint16_t,
+  mut recv_seq: u16,
   mut ttl: libc::c_int,
 ) {
   let mut b: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
@@ -828,7 +826,7 @@ unsafe extern "C" fn unpack_tail(
   if !tp.is_null() {
     /* (int32_t) cast is for hypothetical 64-bit unsigned */
     /* (doesn't hurt 32-bit real-world anyway) */
-    triptime = (monotonic_us() as uint32_t).wrapping_sub(*tp) as int32_t as libc::c_uint;
+    triptime = (monotonic_us() as u32).wrapping_sub(*tp) as int32_t as libc::c_uint;
     let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tsum;
     *fresh10 = (*fresh10).wrapping_add(triptime as libc::c_ulonglong);
     if triptime < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tmin {
@@ -902,7 +900,7 @@ unsafe extern "C" fn unpack4(
     return 0i32;
   }
   if (*icmppkt).icmp_type as libc::c_int == 0i32 {
-    let mut recv_seq: uint16_t = {
+    let mut recv_seq: u16 = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp_hun.ih_idseq.icd_seq;
       if 0 != 0 {
@@ -919,11 +917,11 @@ unsafe extern "C" fn unpack4(
       }
       __v
     };
-    let mut tp: *mut uint32_t = 0 as *mut uint32_t;
+    let mut tp: *mut u32 = 0 as *mut u32;
     if sz as libc::c_ulong
-      >= (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
+      >= (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
     {
-      tp = (*icmppkt).icmp_dun.id_data.as_mut_ptr() as *mut uint32_t
+      tp = (*icmppkt).icmp_dun.id_data.as_mut_ptr() as *mut u32
     }
     unpack_tail(
       sz,
@@ -965,7 +963,7 @@ unsafe extern "C" fn unpack6(
     return 0i32;
   }
   if (*icmppkt).icmp6_type as libc::c_int == 129i32 {
-    let mut recv_seq: uint16_t = {
+    let mut recv_seq: u16 = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp6_dataun.icmp6_un_data16[1];
       if 0 != 0 {
@@ -982,16 +980,16 @@ unsafe extern "C" fn unpack6(
       }
       __v
     };
-    let mut tp: *mut uint32_t = 0 as *mut uint32_t;
+    let mut tp: *mut u32 = 0 as *mut u32;
     if sz as libc::c_ulong
       >= (::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
-        .wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
+        .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
     {
       tp = &mut *(*icmppkt)
         .icmp6_dataun
         .icmp6_un_data8
         .as_mut_ptr()
-        .offset(4) as *mut uint8_t as *mut uint32_t
+        .offset(4) as *mut u8 as *mut u32
     }
     unpack_tail(
       sz,
@@ -1214,7 +1212,7 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .pingaddr
       .sin6
-      .sin6_scope_id = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).if_index as uint32_t
+      .sin6_scope_id = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).if_index as u32
   }
   signal(
     2i32,
@@ -1395,7 +1393,7 @@ unsafe extern "C" fn common_ping_main(
   }
   if opt & OPT_p as libc::c_int != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern =
-      xstrtou_range(str_p, 16i32, 0i32 as libc::c_uint, 255i32 as libc::c_uint) as uint8_t
+      xstrtou_range(str_p, 16i32, 0i32 as libc::c_uint, 255i32 as libc::c_uint) as u8
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us != 0 {
     let mut d: libc::c_uint = if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us
@@ -1416,7 +1414,7 @@ unsafe extern "C" fn common_ping_main(
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).interval_us =
     (interval * 1000000i32 as libc::c_double) as libc::c_uint;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid = getpid() as uint16_t;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid = getpid() as u16;
   let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hostname;
   *fresh24 = *argv.offset(optind as isize);
   let mut af: sa_family_t = 0i32 as sa_family_t;

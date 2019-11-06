@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
-  fn crc32_filltable(tbl256: *mut uint32_t, endian: libc::c_int) -> *mut uint32_t;
+  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
   #[no_mangle]
   fn transformer_write(
     xstate: *mut transformer_state_t,
@@ -43,9 +43,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 
 pub type __jmp_buf = [libc::c_long; 8];
 
@@ -83,20 +83,20 @@ pub struct bunzip_data {
   pub out_fd: libc::c_int,
   pub inbufCount: libc::c_int,
   pub inbufPos: libc::c_int,
-  pub inbuf: *mut uint8_t,
+  pub inbuf: *mut u8,
   pub writeCopies: libc::c_int,
   pub writePos: libc::c_int,
   pub writeRunCountdown: libc::c_int,
   pub writeCount: libc::c_int,
   pub writeCurrent: libc::c_int,
-  pub headerCRC: uint32_t,
-  pub totalCRC: uint32_t,
-  pub writeCRC: uint32_t,
-  pub dbuf: *mut uint32_t,
+  pub headerCRC: u32,
+  pub totalCRC: u32,
+  pub writeCRC: u32,
+  pub dbuf: *mut u32,
   pub dbufSize: libc::c_uint,
   pub jmpbuf: *mut jmp_buf,
-  pub crc32Table: [uint32_t; 256],
-  pub selectors: [uint8_t; 32768],
+  pub crc32Table: [u32; 256],
+  pub selectors: [u8; 32768],
   pub groups: [group_data; 6],
   /* Huffman coding tables */
 }
@@ -125,16 +125,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed_1,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_1 {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 /* Return the next nnn bits of input.  All reads from the compressed input
 are done through this function.  All reads are big endian */
@@ -192,11 +192,11 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   let mut symTotal: libc::c_int = 0;
   let mut nSelectors: libc::c_int = 0;
   let mut byteCount: [libc::c_int; 256] = [0; 256];
-  let mut uc: uint8_t = 0;
-  let mut symToByte: [uint8_t; 256] = [0; 256];
-  let mut mtfSymbol: [uint8_t; 256] = [0; 256];
-  let mut selectors: *mut uint8_t = 0 as *mut uint8_t;
-  let mut dbuf: *mut uint32_t = 0 as *mut uint32_t;
+  let mut uc: u8 = 0;
+  let mut symToByte: [u8; 256] = [0; 256];
+  let mut mtfSymbol: [u8; 256] = [0; 256];
+  let mut selectors: *mut u8 = 0 as *mut u8;
+  let mut dbuf: *mut u32 = 0 as *mut u32;
   let mut origPtr: libc::c_uint = 0;
   let mut t: libc::c_uint = 0;
   let mut dbufCount: libc::c_uint = 0;
@@ -242,7 +242,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
         if inner_map & (1i32 << 15i32) as libc::c_uint != 0 {
           let fresh1 = symTotal;
           symTotal = symTotal + 1;
-          symToByte[fresh1 as usize] = i as uint8_t
+          symToByte[fresh1 as usize] = i as u8
         }
         inner_map <<= 1i32;
         i += 1;
@@ -269,7 +269,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   start of the list.) */
   i = 0i32;
   while i < groupCount {
-    mtfSymbol[i as usize] = i as uint8_t;
+    mtfSymbol[i as usize] = i as u8;
     i += 1
   }
   nSelectors = get_bits(bd, 15i32) as libc::c_int;
@@ -278,7 +278,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   }
   i = 0i32;
   while i < nSelectors {
-    let mut tmp_byte: uint8_t = 0;
+    let mut tmp_byte: u8 = 0;
     /* Get next value */
     let mut n: libc::c_int = 0i32;
     while get_bits(bd, 1i32) != 0 {
@@ -313,7 +313,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   symCount = symTotal + 2i32;
   j = 0i32;
   while j < groupCount {
-    let mut length: [uint8_t; 258] = [0; 258];
+    let mut length: [u8; 258] = [0; 258];
     /* 8 bits is ALMOST enough for temp[], see below */
     let mut temp: [libc::c_uint; 21] = [0; 21];
     let mut hufGroup: *mut group_data = 0 as *mut group_data;
@@ -350,7 +350,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
         }
       }
       /* Correct for the initial -1, to get the final symbol length */
-      length[i as usize] = (len_m1 + 1i32) as uint8_t;
+      length[i as usize] = (len_m1 + 1i32) as u8;
       i += 1
     }
     /* Find largest and smallest lengths in this group */
@@ -404,7 +404,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
     }
     /* Count symbols coded for at each bit length */
     /* NB: in pathological cases, temp[8] can end ip being 256.
-     * That's why uint8_t is too small for temp[]. */
+     * That's why u8 is too small for temp[]. */
     i = 0i32;
     while i < symCount {
       temp[length[i as usize] as usize] = temp[length[i as usize] as usize].wrapping_add(1);
@@ -447,7 +447,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   i = 0i32;
   while i < 256i32 {
     byteCount[i as usize] = 0i32;
-    mtfSymbol[i as usize] = i as uint8_t;
+    mtfSymbol[i as usize] = i as u8;
     i += 1
   }
   /* Loop through compressed symbols. */
@@ -459,7 +459,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
     let mut base_0: *mut libc::c_int = 0 as *mut libc::c_int;
     let mut limit_0: *mut libc::c_int = 0 as *mut libc::c_int;
     let mut nextSym: libc::c_int = 0;
-    let mut ngrp: uint8_t = 0;
+    let mut ngrp: u8 = 0;
     /* Fetch next Huffman coding group from list. */
     symCount = 50i32 - 1i32;
     if selector >= nSelectors {
@@ -571,7 +571,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
         copies to our buffer of decoded symbols (dbuf) now.  (The last
         literal used is the one at the head of the mtfSymbol array.) */
         if runPos != 0i32 as libc::c_uint {
-          let mut tmp_byte_0: uint8_t = 0;
+          let mut tmp_byte_0: u8 = 0;
           if dbufCount.wrapping_add(runCnt) > (*bd).dbufSize {
             return -5i32;
           }
@@ -586,7 +586,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
             }
             let fresh7 = dbufCount;
             dbufCount = dbufCount.wrapping_add(1);
-            *dbuf.offset(fresh7 as isize) = tmp_byte_0 as uint32_t
+            *dbuf.offset(fresh7 as isize) = tmp_byte_0 as u32
           }
           runPos = 0i32 as libc::c_uint
         }
@@ -624,7 +624,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
         byteCount[uc as usize] += 1;
         let fresh8 = dbufCount;
         dbufCount = dbufCount.wrapping_add(1);
-        *dbuf.offset(fresh8 as isize) = uc as uint32_t
+        *dbuf.offset(fresh8 as isize) = uc as u32
       }
       /* Skip group initialization if we're not done with this group.  Done
        * this way to avoid compiler warning. */
@@ -652,7 +652,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   /* Figure out what order dbuf would be in if we sorted it. */
   i = 0i32;
   while (i as libc::c_uint) < dbufCount {
-    let mut tmp_byte_1: uint8_t = *dbuf.offset(i as isize) as uint8_t;
+    let mut tmp_byte_1: u8 = *dbuf.offset(i as isize) as u8;
     let mut tmp_count_0: libc::c_int = byteCount[tmp_byte_1 as usize];
     let ref mut fresh9 = *dbuf.offset(tmp_count_0 as isize);
     *fresh9 |= (i << 8i32) as libc::c_uint;
@@ -663,12 +663,12 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   doesn't get output, and if the first three characters are identical
   it doesn't qualify as a run (hence writeRunCountdown=5). */
   if dbufCount != 0 {
-    let mut tmp: uint32_t = 0;
+    let mut tmp: u32 = 0;
     if origPtr as libc::c_int as libc::c_uint >= dbufCount {
       return -5i32;
     }
     tmp = *dbuf.offset(origPtr as isize);
-    (*bd).writeCurrent = tmp as uint8_t as libc::c_int;
+    (*bd).writeCurrent = tmp as u8 as libc::c_int;
     (*bd).writePos = (tmp >> 8i32) as libc::c_int;
     (*bd).writeRunCountdown = 5i32
   }
@@ -691,11 +691,11 @@ unsafe extern "C" fn read_bunzip(
   mut len: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut dbuf: *const uint32_t = 0 as *const uint32_t;
+  let mut dbuf: *const u32 = 0 as *const u32;
   let mut pos: libc::c_int = 0;
   let mut current: libc::c_int = 0;
   let mut previous: libc::c_int = 0;
-  let mut CRC: uint32_t = 0;
+  let mut CRC: u32 = 0;
   /* If we already have error/end indicator, return it */
   if (*bd).writeCount < 0i32 {
     return (*bd).writeCount;
@@ -723,7 +723,7 @@ unsafe extern "C" fn read_bunzip(
           (*bd).writeCount = r;
           return if r != -1i32 { r } else { len };
         }
-        CRC = !0i32 as uint32_t;
+        CRC = !0i32 as u32;
         pos = (*bd).writePos;
         current = (*bd).writeCurrent;
         current_block = 7525104114255620856;
@@ -771,7 +771,7 @@ unsafe extern "C" fn read_bunzip(
           /* Follow sequence vector to undo Burrows-Wheeler transform */
           previous = current;
           pos = *dbuf.offset(pos as isize) as libc::c_int;
-          current = pos as uint8_t as libc::c_int;
+          current = pos as u8 as libc::c_int;
           pos >>= 8i32;
           /* After 3 consecutive copies of the same byte, the 4th
            * is a repeat count.  We count down from 4 instead
@@ -849,10 +849,10 @@ unsafe extern "C" fn start_bunzip(
   (*bd).in_fd = in_fd;
   if -1i32 == in_fd {
     /* in this case, bd->inbuf is read-only */
-    (*bd).inbuf = inbuf as *mut libc::c_void as *mut uint8_t
+    (*bd).inbuf = inbuf as *mut libc::c_void as *mut u8
   /* cast away const-ness */
   } else {
-    (*bd).inbuf = bd.offset(1) as *mut uint8_t;
+    (*bd).inbuf = bd.offset(1) as *mut u8;
     memcpy(
       (*bd).inbuf as *mut libc::c_void,
       inbuf,
@@ -884,8 +884,8 @@ unsafe extern "C" fn start_bunzip(
   /* Cannot use xmalloc - may leak bd in NOFORK case! */
   (*bd).dbuf = malloc_or_warn(
     ((*bd).dbufSize as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
-  ) as *mut uint32_t;
+      .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+  ) as *mut u32;
   if (*bd).dbuf.is_null() {
     free(bd as *mut libc::c_void);
     xfunc_die();
@@ -972,7 +972,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
       len = ((*bd).inbufCount - (*bd).inbufPos) as libc::c_uint;
       memcpy(
         outbuf as *mut libc::c_void,
-        &mut *(*bd).inbuf.offset((*bd).inbufPos as isize) as *mut uint8_t as *const libc::c_void,
+        &mut *(*bd).inbuf.offset((*bd).inbufPos as isize) as *mut u8 as *const libc::c_void,
         len as libc::c_ulong,
       );
       if len < 2i32 as libc::c_uint {
@@ -986,7 +986,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
         }
         len = 2i32 as libc::c_uint
       }
-      if *(outbuf as *mut uint16_t) as libc::c_int != BZIP2_MAGIC as libc::c_int {
+      if *(outbuf as *mut u16) as libc::c_int != BZIP2_MAGIC as libc::c_int {
         break;
       }
       dealloc_bunzip(bd);

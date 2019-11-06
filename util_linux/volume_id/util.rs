@@ -25,7 +25,7 @@ use crate::librb::__off64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -33,8 +33,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -74,7 +74,7 @@ pub const LE: endian = 0;
 pub unsafe extern "C" fn volume_id_set_unicode16(
   mut str: *mut libc::c_char,
   mut len: size_t,
-  mut buf: *const uint8_t,
+  mut buf: *const u8,
   mut endianess: endian,
   mut count: size_t,
 ) {
@@ -99,7 +99,7 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
       break;
     }
     if !(c < 0x80i32 as libc::c_uint) {
-      let mut topbits: uint8_t = 0xc0i32 as uint8_t;
+      let mut topbits: u8 = 0xc0i32 as u8;
       if j.wrapping_add(2i32 as libc::c_uint) as libc::c_ulong >= len {
         break;
       }
@@ -111,20 +111,20 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
         let fresh0 = j;
         j = j.wrapping_add(1);
         *str.offset(fresh0 as isize) =
-          (0xe0i32 as libc::c_uint | c >> 12i32) as uint8_t as libc::c_char;
-        topbits = 0x80i32 as uint8_t
+          (0xe0i32 as libc::c_uint | c >> 12i32) as u8 as libc::c_char;
+        topbits = 0x80i32 as u8
       }
       /* 110yyyxx 10xxxxxx */
       let fresh1 = j;
       j = j.wrapping_add(1);
       *str.offset(fresh1 as isize) =
-        (topbits as libc::c_uint | c >> 6i32 & 0x3fi32 as libc::c_uint) as uint8_t as libc::c_char;
+        (topbits as libc::c_uint | c >> 6i32 & 0x3fi32 as libc::c_uint) as u8 as libc::c_char;
       c = 0x80i32 as libc::c_uint | c & 0x3fi32 as libc::c_uint
     }
     /* 0xxxxxxx */
     let fresh2 = j;
     j = j.wrapping_add(1);
-    *str.offset(fresh2 as isize) = c as uint8_t as libc::c_char;
+    *str.offset(fresh2 as isize) = c as u8 as libc::c_char;
     i = i.wrapping_add(2i32 as libc::c_uint)
   }
   *str.offset(j as isize) = '\u{0}' as i32 as libc::c_char;
@@ -132,7 +132,7 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_set_label_string(
   mut id: *mut volume_id,
-  mut buf: *const uint8_t,
+  mut buf: *const u8,
   mut count: size_t,
 ) {
   let mut i: libc::c_uint = 0;
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn volume_id_set_label_string(
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_set_label_unicode16(
   mut id: *mut volume_id,
-  mut buf: *const uint8_t,
+  mut buf: *const u8,
   mut endianess: endian,
   mut count: size_t,
 ) {
@@ -179,7 +179,7 @@ pub unsafe extern "C" fn volume_id_set_label_unicode16(
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_set_uuid(
   mut id: *mut volume_id,
-  mut buf: *const uint8_t,
+  mut buf: *const u8,
   mut format: uuid_format,
 ) {
   let mut current_block: u64;
@@ -280,14 +280,14 @@ pub unsafe extern "C" fn volume_id_get_buffer(
   mut len: size_t,
 ) -> *mut libc::c_void {
   let mut current_block: u64;
-  let mut dst: *mut uint8_t = 0 as *mut uint8_t;
+  let mut dst: *mut u8 = 0 as *mut u8;
   let mut small_off: libc::c_uint = 0;
   let mut read_len: ssize_t = 0;
   /* check if requested area fits in superblock buffer */
   if off.wrapping_add(len) <= 0x11000i32 as libc::c_ulong {
     /* && off <= SB_BUFFER_SIZE - want this paranoid overflow check? */
     if (*id).sbbuf.is_null() {
-      (*id).sbbuf = xmalloc(0x11000i32 as size_t) as *mut uint8_t
+      (*id).sbbuf = xmalloc(0x11000i32 as size_t) as *mut u8
     }
     small_off = off as libc::c_uint;
     dst = (*id).sbbuf;
@@ -315,7 +315,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
     } else {
       (*id).seekbuf_off = off;
       (*id).seekbuf_len = len;
-      (*id).seekbuf = xrealloc((*id).seekbuf as *mut libc::c_void, len) as *mut uint8_t;
+      (*id).seekbuf = xrealloc((*id).seekbuf as *mut libc::c_void, len) as *mut u8;
       small_off = 0i32 as libc::c_uint;
       dst = (*id).seekbuf;
       current_block = 16164644963279819311;
@@ -377,9 +377,9 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -399,14 +399,14 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_free_buffer(mut id: *mut volume_id) {
   free((*id).sbbuf as *mut libc::c_void);
-  (*id).sbbuf = 0 as *mut uint8_t;
+  (*id).sbbuf = 0 as *mut u8;
   (*id).sbbuf_len = 0i32 as size_t;
   free((*id).seekbuf as *mut libc::c_void);
-  (*id).seekbuf = 0 as *mut uint8_t;
+  (*id).seekbuf = 0 as *mut u8;
   (*id).seekbuf_len = 0i32 as size_t;
   (*id).seekbuf_off = 0i32 as uint64_t;
   /* paranoia */

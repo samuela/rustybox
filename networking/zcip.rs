@@ -61,7 +61,7 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -95,10 +95,10 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -135,7 +135,7 @@ pub struct sockaddr {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -154,19 +154,19 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 pub struct globals {
   pub iface_sockaddr: sockaddr,
   pub our_ethaddr: ether_addr,
-  pub localnet_ip: uint32_t,
+  pub localnet_ip: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ether_addr {
-  pub ether_addr_octet: [uint8_t; 6],
+  pub ether_addr_octet: [u8; 6],
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ether_header {
-  pub ether_dhost: [uint8_t; 6],
-  pub ether_shost: [uint8_t; 6],
-  pub ether_type: uint16_t,
+  pub ether_dhost: [u8; 6],
+  pub ether_shost: [u8; 6],
+  pub ether_type: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -181,10 +181,10 @@ pub struct arphdr {
 #[repr(C)]
 pub struct ether_arp {
   pub ea_hdr: arphdr,
-  pub arp_sha: [uint8_t; 6],
-  pub arp_spa: [uint8_t; 4],
-  pub arp_tha: [uint8_t; 6],
-  pub arp_tpa: [uint8_t; 4],
+  pub arp_sha: [u8; 6],
+  pub arp_spa: [u8; 4],
+  pub arp_tha: [u8; 6],
+  pub arp_tpa: [u8; 4],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -252,7 +252,7 @@ pub type C2RustUnnamed_5 = libc::c_uint;
 pub struct C2RustUnnamed_6 {
   pub null_ethaddr: ether_addr,
   pub ifr: ifreq,
-  pub chosen_nip: uint32_t,
+  pub chosen_nip: u32,
   pub conflicts: libc::c_int,
   pub timeout_ms: libc::c_int,
   pub verbose: libc::c_int,
@@ -261,7 +261,7 @@ pub struct C2RustUnnamed_6 {
  * Pick a random link local IP address on 169.254/16, except that
  * the first and last 256 addresses are reserved.
  */
-unsafe extern "C" fn pick_nip() -> uint32_t {
+unsafe extern "C" fn pick_nip() -> u32 {
   let mut tmp: libc::c_uint = 0;
   loop {
     tmp = rand() as libc::c_uint & (0xffffffffu32 & !0xffff0000u32);
@@ -292,7 +292,7 @@ unsafe extern "C" fn pick_nip() -> uint32_t {
     __v
   };
 }
-unsafe extern "C" fn nip_to_a(mut nip: uint32_t) -> *const libc::c_char {
+unsafe extern "C" fn nip_to_a(mut nip: u32) -> *const libc::c_char {
   let mut in_0: in_addr = in_addr { s_addr: 0 };
   in_0.s_addr = nip;
   return inet_ntoa(in_0);
@@ -301,9 +301,9 @@ unsafe extern "C" fn nip_to_a(mut nip: uint32_t) -> *const libc::c_char {
  * Broadcast an ARP packet.
  */
 unsafe extern "C" fn send_arp_request(
-  mut source_nip: uint32_t,
+  mut source_nip: u32,
   mut target_eth: *const ether_addr,
-  mut target_nip: uint32_t,
+  mut target_nip: u32,
 ) {
   let mut p: arp_packet = arp_packet {
     eth: ether_header {
@@ -414,24 +414,24 @@ unsafe extern "C" fn send_arp_request(
     __v
   };
   memcpy(
-    &mut p.arp.arp_sha as *mut [uint8_t; 6] as *mut libc::c_void,
+    &mut p.arp.arp_sha as *mut [u8; 6] as *mut libc::c_void,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).our_ethaddr as *mut ether_addr
       as *const libc::c_void,
     6i32 as libc::c_ulong,
   );
   memcpy(
-    &mut p.arp.arp_spa as *mut [uint8_t; 4] as *mut libc::c_void,
-    &mut source_nip as *mut uint32_t as *const libc::c_void,
+    &mut p.arp.arp_spa as *mut [u8; 4] as *mut libc::c_void,
+    &mut source_nip as *mut u32 as *const libc::c_void,
     4i32 as libc::c_ulong,
   );
   memcpy(
-    &mut p.arp.arp_tha as *mut [uint8_t; 6] as *mut libc::c_void,
+    &mut p.arp.arp_tha as *mut [u8; 6] as *mut libc::c_void,
     target_eth as *const libc::c_void,
     6i32 as libc::c_ulong,
   );
   memcpy(
-    &mut p.arp.arp_tpa as *mut [uint8_t; 4] as *mut libc::c_void,
-    &mut target_nip as *mut uint32_t as *const libc::c_void,
+    &mut p.arp.arp_tpa as *mut [u8; 4] as *mut libc::c_void,
+    &mut target_nip as *mut u32 as *const libc::c_void,
     4i32 as libc::c_ulong,
   );
   // send it
@@ -456,7 +456,7 @@ unsafe extern "C" fn send_arp_request(
 unsafe extern "C" fn run(
   mut argv: *mut *mut libc::c_char,
   mut param: *const libc::c_char,
-  mut nip: uint32_t,
+  mut nip: u32,
 ) -> libc::c_int {
   let mut status: libc::c_int = 0; /* for gcc */
   let mut addr: *const libc::c_char = 0 as *const libc::c_char;
@@ -675,7 +675,7 @@ pub unsafe extern "C" fn zcip_main(
   if run(
     argv,
     b"init\x00" as *const u8 as *const libc::c_char,
-    0i32 as uint32_t,
+    0i32 as u32,
   ) != 0
   {
     return 1i32;
@@ -719,10 +719,10 @@ pub unsafe extern "C" fn zcip_main(
   // aren't random enough.
   // NOTE: the sequence of addresses we try changes only
   // depending on when we detect conflicts.
-  let mut t: uint32_t = 0;
+  let mut t: u32 = 0;
   t = *((&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).our_ethaddr as *mut ether_addr
     as *mut libc::c_char)
-    .offset(2) as *mut bb__aliased_uint32_t);
+    .offset(2) as *mut bb__aliased_u32);
   srand(t);
   // FIXME cases to handle:
   //  - zcip already running!
@@ -833,7 +833,7 @@ pub unsafe extern "C" fn zcip_main(
                   L.timeout_ms = (L.timeout_ms as libc::c_uint).wrapping_add(random_delay_ms(
                     (PROBE_MAX as libc::c_int - PROBE_MIN as libc::c_int) as libc::c_uint,
                   )) as libc::c_int as libc::c_int;
-                  send_arp_request(0i32 as uint32_t, &L.null_ethaddr, L.chosen_nip);
+                  send_arp_request(0i32 as u32, &L.null_ethaddr, L.chosen_nip);
                   continue;
                 } else {
                   // Switch to announce state
@@ -996,7 +996,7 @@ pub unsafe extern "C" fn zcip_main(
               }
               ip_conflict = 0i32;
               if memcmp(
-                &mut p.arp.arp_sha as *mut [uint8_t; 6] as *const libc::c_void,
+                &mut p.arp.arp_sha as *mut [u8; 6] as *const libc::c_void,
                 &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).our_ethaddr
                   as *mut ether_addr as *const libc::c_void,
                 6i32 as libc::c_ulong,
@@ -1004,7 +1004,7 @@ pub unsafe extern "C" fn zcip_main(
               {
                 if memcmp(
                   p.arp.arp_spa.as_mut_ptr() as *const libc::c_void,
-                  &mut L.chosen_nip as *mut uint32_t as *const libc::c_void,
+                  &mut L.chosen_nip as *mut u32 as *const libc::c_void,
                   4i32 as libc::c_ulong,
                 ) == 0i32
                 {
@@ -1038,7 +1038,7 @@ pub unsafe extern "C" fn zcip_main(
                   ) == 0i32
                   && memcmp(
                     p.arp.arp_tpa.as_mut_ptr() as *const libc::c_void,
-                    &mut L.chosen_nip as *mut uint32_t as *const libc::c_void,
+                    &mut L.chosen_nip as *mut u32 as *const libc::c_void,
                     4i32 as libc::c_ulong,
                   ) == 0i32
                 {

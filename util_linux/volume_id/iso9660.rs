@@ -8,13 +8,13 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
   fn volume_id_set_unicode16(
     str: *mut libc::c_char,
     len: size_t,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
@@ -22,7 +22,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -31,8 +31,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -46,24 +46,24 @@ pub const BE: endian = 1;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct high_sierra_volume_descriptor {
-  pub foo: [uint8_t; 8],
-  pub type_0: uint8_t,
-  pub id: [uint8_t; 4],
-  pub version: uint8_t,
+  pub foo: [u8; 8],
+  pub type_0: u8,
+  pub id: [u8; 4],
+  pub version: u8,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct iso_volume_descriptor {
-  pub vd_type: uint8_t,
-  pub vd_id: [uint8_t; 5],
-  pub vd_version: uint8_t,
-  pub flags: uint8_t,
-  pub system_id: [uint8_t; 32],
-  pub volume_id: [uint8_t; 32],
-  pub unused: [uint8_t; 8],
-  pub space_size: [uint8_t; 8],
-  pub escape_sequences: [uint8_t; 8],
+  pub vd_type: u8,
+  pub vd_id: [u8; 5],
+  pub vd_version: u8,
+  pub flags: u8,
+  pub system_id: [u8; 32],
+  pub volume_id: [u8; 32],
+  pub unused: [u8; 8],
+  pub space_size: [u8; 8],
+  pub escape_sequences: [u8; 8],
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -87,9 +87,9 @@ pub struct iso_volume_descriptor {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -109,7 +109,7 @@ pub struct iso_volume_descriptor {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -134,14 +134,14 @@ pub struct iso_volume_descriptor {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
 /*,uint64_t off*/ {
-  let mut buf: *mut uint8_t = 0 as *mut uint8_t;
+  let mut buf: *mut u8 = 0 as *mut u8;
   let mut is: *mut iso_volume_descriptor = 0 as *mut iso_volume_descriptor;
   let mut hs: *mut high_sierra_volume_descriptor = 0 as *mut high_sierra_volume_descriptor;
   buf = volume_id_get_buffer(
     id,
     (0i32 as uint64_t).wrapping_add(0x8000i32 as libc::c_ulong),
     0x200i32 as size_t,
-  ) as *mut uint8_t;
+  ) as *mut u8;
   if buf.is_null() {
     return -1i32;
   }
@@ -159,7 +159,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
     vd_offset = 0x8000i32 + 0x800i32;
     i = 0i32;
     while i < 16i32 {
-      let mut svd_label: [uint8_t; 64] = [0; 64];
+      let mut svd_label: [u8; 64] = [0; 64];
       is = volume_id_get_buffer(
         id,
         (0i32 as uint64_t).wrapping_add(vd_offset as libc::c_ulong),
@@ -187,7 +187,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
         {
           volume_id_set_unicode16(
             svd_label.as_mut_ptr() as *mut libc::c_char,
-            ::std::mem::size_of::<[uint8_t; 64]>() as libc::c_ulong,
+            ::std::mem::size_of::<[u8; 64]>() as libc::c_ulong,
             (*is).volume_id.as_mut_ptr(),
             BE,
             32i32 as size_t,

@@ -137,9 +137,9 @@ extern "C" {
   ) -> libc::c_ulonglong;
   /* { "-", NULL } */
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -164,9 +164,9 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
@@ -245,9 +245,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -257,11 +257,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -275,7 +275,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct servent {
@@ -595,10 +595,10 @@ unsafe extern "C" fn build_ipv6_addr(
   sscanf(
     local_addr,
     b"%08X%08X%08X%08X\x00" as *const u8 as *const libc::c_char,
-    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(0) as *mut uint32_t,
-    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(1) as *mut uint32_t,
-    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(2) as *mut uint32_t,
-    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(3) as *mut uint32_t,
+    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(0) as *mut u32,
+    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(1) as *mut u32,
+    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(2) as *mut u32,
+    &mut *in6.__in6_u.__u6_addr32.as_mut_ptr().offset(3) as *mut u32,
   );
   inet_ntop(
     10i32,

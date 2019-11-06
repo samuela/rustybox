@@ -13,14 +13,14 @@ extern "C" {
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 pub const OPT_r: C2RustUnnamed = 8;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_s: C2RustUnnamed = 2;

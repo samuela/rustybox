@@ -25,7 +25,7 @@ extern "C" {
   #[no_mangle]
   fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -56,8 +56,8 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -90,7 +90,7 @@ pub struct sockaddr_ll {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ether_addr {
-  pub ether_addr_octet: [uint8_t; 6],
+  pub ether_addr_octet: [u8; 6],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

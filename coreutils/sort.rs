@@ -63,20 +63,18 @@ extern "C" {
   #[no_mangle]
   fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
- use libc::uint8_t;
 
 use crate::librb::__compar_fn_t;
 use libc::FILE;
@@ -598,20 +596,20 @@ unsafe extern "C" fn compare_keys(
       /* "Stable sort": later line is "greater than",
        * IOW: do not allow qsort() to swap equal lines.
        */
-      let mut p32: *mut uint32_t = 0 as *mut uint32_t;
-      let mut x32: uint32_t = 0;
-      let mut y32: uint32_t = 0;
+      let mut p32: *mut u32 = 0 as *mut u32;
+      let mut x32: u32 = 0;
+      let mut y32: u32 = 0;
       let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
       let mut len: libc::c_uint = 0;
       line = *(xarg as *mut *mut libc::c_char);
       len =
         (strlen(line).wrapping_add(4i32 as libc::c_ulong) & !3u32 as libc::c_ulong) as libc::c_uint;
-      p32 = line.offset(len as isize) as *mut libc::c_void as *mut uint32_t;
+      p32 = line.offset(len as isize) as *mut libc::c_void as *mut u32;
       x32 = *p32;
       line = *(yarg as *mut *mut libc::c_char);
       len =
         (strlen(line).wrapping_add(4i32 as libc::c_ulong) & !3u32 as libc::c_ulong) as libc::c_uint;
-      p32 = line.offset(len as isize) as *mut libc::c_void as *mut uint32_t;
+      p32 = line.offset(len as isize) as *mut libc::c_void as *mut u32;
       y32 = *p32;
       /* If x > y, 1, else -1 */
       retval = (x32 > y32) as libc::c_int * 2i32 - 1i32
@@ -657,7 +655,7 @@ pub unsafe extern "C" fn sort_main(
   let mut i: libc::c_int = 0;
   let mut linecount: libc::c_int = 0;
   let mut opts: libc::c_uint = 0;
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   /* Parse command line options */
   opts = getopt32(
     argv,
@@ -800,7 +798,7 @@ pub unsafe extern "C" fn sort_main(
   if option_mask32 & FLAG_s as libc::c_int as libc::c_uint != 0 {
     i = 0i32;
     while i < linecount {
-      let mut p32: *mut uint32_t = 0 as *mut uint32_t;
+      let mut p32: *mut u32 = 0 as *mut u32;
       let mut line_0: *mut libc::c_char = 0 as *mut libc::c_char;
       let mut len: libc::c_uint = 0;
       line_0 = *lines.offset(i as isize);
@@ -812,8 +810,8 @@ pub unsafe extern "C" fn sort_main(
       ) as *mut libc::c_char;
       let ref mut fresh5 = *lines.offset(i as isize);
       *fresh5 = line_0;
-      p32 = line_0.offset(len as isize) as *mut libc::c_void as *mut uint32_t;
-      *p32 = i as uint32_t;
+      p32 = line_0.offset(len as isize) as *mut libc::c_void as *mut u32;
+      *p32 = i as u32;
       i += 1
     }
     /*option_mask32 |= FLAG_no_tie_break;*/

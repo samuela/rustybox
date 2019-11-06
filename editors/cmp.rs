@@ -25,16 +25,16 @@ extern "C" {
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 }
 
 use crate::librb::smallint;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 use crate::librb::off_t;
 
@@ -135,7 +135,7 @@ pub unsafe extern "C" fn cmp_main(
       }
     }
   }
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   if opt & (1i32 << 0i32) as libc::c_uint != 0 {
     logmode = 0i32 as smallint
   }

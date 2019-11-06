@@ -166,9 +166,9 @@ extern "C" {
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   /* { "-", NULL } */
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
@@ -246,9 +246,9 @@ pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -319,9 +319,9 @@ pub struct sockaddr_un {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -331,11 +331,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -349,7 +349,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -512,7 +512,7 @@ pub struct shbuf_ds {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct logRule_t {
-  pub enabled_facility_priomap: [uint8_t; 24],
+  pub enabled_facility_priomap: [u8; 24],
   pub file: *mut logFile_t,
   pub next: *mut logRule_t,
 }
@@ -523,7 +523,7 @@ pub struct logFile_t {
   pub fd: libc::c_int,
   pub last_log_time: time_t,
   pub size: libc::c_uint,
-  pub isRegular: uint8_t,
+  pub isRegular: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1015,10 +1015,10 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
     {
       let mut code: *const CODE = 0 as *const CODE; /* "kern.!err" */
       let mut next_selector: *mut libc::c_char = 0 as *mut libc::c_char; /* "kern.=err" */
-      let mut negated_prio: uint8_t = 0; /* bitmap of enabled facilities */
-      let mut single_prio: uint8_t = 0; /* bitmap of enabled priorities */
-      let mut facmap: uint32_t = 0; /* separate facility from priority */
-      let mut primap: uint8_t = 0;
+      let mut negated_prio: u8 = 0; /* bitmap of enabled facilities */
+      let mut single_prio: u8 = 0; /* bitmap of enabled priorities */
+      let mut facmap: u32 = 0; /* separate facility from priority */
+      let mut primap: u8 = 0;
       let mut i: libc::c_uint = 0;
       next_selector = strchr(cur_selector, ';' as i32);
       if !next_selector.is_null() {
@@ -1034,54 +1034,54 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       let fresh1 = t;
       t = t.offset(1);
       *fresh1 = '\u{0}' as i32 as libc::c_char;
-      negated_prio = 0i32 as uint8_t;
-      single_prio = 0i32 as uint8_t;
+      negated_prio = 0i32 as u8;
+      single_prio = 0i32 as u8;
       if *t as libc::c_int == '!' as i32 {
-        negated_prio = 1i32 as uint8_t;
+        negated_prio = 1i32 as u8;
         t = t.offset(1)
       }
       if *t as libc::c_int == '=' as i32 {
-        single_prio = 1i32 as uint8_t;
+        single_prio = 1i32 as u8;
         t = t.offset(1)
       }
       /* parse priority */
       if *t as libc::c_int == '*' as i32 {
-        primap = 0xffi32 as uint8_t
+        primap = 0xffi32 as u8
       } else {
-        let mut priority: uint8_t = 0; /* all 8 log levels enabled */
+        let mut priority: u8 = 0; /* all 8 log levels enabled */
         code = find_by_name(t, bb_prioritynames);
         if code.is_null() {
           current_block = 12846980873243673022;
           break 's_30;
         }
-        primap = 0i32 as uint8_t;
-        priority = (*code).c_val as uint8_t;
+        primap = 0i32 as u8;
+        priority = (*code).c_val as u8;
         if priority as libc::c_int == 0x10i32 {
           /* ensure we take "enabled_facility_priomap[fac] &= 0" branch below */
-          negated_prio = 1i32 as uint8_t
+          negated_prio = 1i32 as u8
         } else {
-          priority = (1i32 << priority as libc::c_int) as uint8_t;
+          priority = (1i32 << priority as libc::c_int) as u8;
           loop {
-            primap = (primap as libc::c_int | priority as libc::c_int) as uint8_t;
+            primap = (primap as libc::c_int | priority as libc::c_int) as u8;
             if single_prio != 0 {
               break;
             }
-            priority = (priority as libc::c_int >> 1i32) as uint8_t;
+            priority = (priority as libc::c_int >> 1i32) as u8;
             if !(priority != 0) {
               break;
             }
           }
           if negated_prio != 0 {
-            primap = !(primap as libc::c_int) as uint8_t
+            primap = !(primap as libc::c_int) as u8
           }
         }
       }
       /* parse facility */
       if *cur_selector as libc::c_int == '*' as i32 {
-        facmap = ((1i32 << 24i32) - 1i32) as uint32_t
+        facmap = ((1i32 << 24i32) - 1i32) as u32
       } else {
         let mut next_facility: *mut libc::c_char = 0 as *mut libc::c_char;
-        facmap = 0i32 as uint32_t;
+        facmap = 0i32 as u32;
         t = cur_selector;
         loop
         /* iterate through facilities: "kern,daemon.<priospec>" */
@@ -1114,11 +1114,11 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
           if negated_prio != 0 {
             (*cur_rule).enabled_facility_priomap[i as usize] =
               ((*cur_rule).enabled_facility_priomap[i as usize] as libc::c_int
-                & primap as libc::c_int) as uint8_t
+                & primap as libc::c_int) as u8
           } else {
             (*cur_rule).enabled_facility_priomap[i as usize] =
               ((*cur_rule).enabled_facility_priomap[i as usize] as libc::c_int
-                | primap as libc::c_int) as uint8_t
+                | primap as libc::c_int) as u8
           }
         }
         i = i.wrapping_add(1)
@@ -1447,7 +1447,7 @@ unsafe extern "C" fn log_locally(
         let mut statf: stat = std::mem::zeroed();
         (*log_file).isRegular = (fstat((*log_file).fd, &mut statf) == 0i32
           && statf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
-          as libc::c_int as uint8_t;
+          as libc::c_int as u8;
         /* bug (mostly harmless): can wrap around if file > 4gb */
         (*log_file).size = statf.st_size as libc::c_uint;
         current_block = 15768484401365413375;
@@ -1601,8 +1601,8 @@ unsafe extern "C" fn timestamp_and_log(
   /* Log message locally (to file or shared mem) */
   let mut match_0: bool = 0i32 != 0;
   let mut rule: *mut logRule_t = 0 as *mut logRule_t;
-  let mut facility: uint8_t = ((pri & 0x3f8i32) >> 3i32) as uint8_t;
-  let mut prio_bit: uint8_t = (1i32 << (pri & 0x7i32)) as uint8_t;
+  let mut facility: u8 = ((pri & 0x3f8i32) >> 3i32) as u8;
+  let mut prio_bit: u8 = (1i32 << (pri & 0x7i32)) as u8;
   rule = (*ptr_to_globals).log_rules;
   while !rule.is_null() {
     if (*rule).enabled_facility_priomap[facility as usize] as libc::c_int & prio_bit as libc::c_int

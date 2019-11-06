@@ -44,7 +44,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
@@ -74,7 +74,7 @@ use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
 use libc::time_t;
  use libc::timeval;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {

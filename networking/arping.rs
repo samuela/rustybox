@@ -106,11 +106,11 @@ extern "C" {
   #[no_mangle]
   fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -146,9 +146,9 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -190,9 +190,9 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -202,11 +202,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -220,7 +220,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -312,7 +312,7 @@ pub struct sockaddr_ll {
   pub sll_halen: libc::c_uchar,
   pub sll_addr: [libc::c_uchar; 8],
 }
-pub type bb__aliased_uint32_t = uint32_t;
+pub type bb__aliased_u32 = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -666,11 +666,11 @@ unsafe extern "C" fn recv_pack(
   {
     return;
   }
-  src_ip.s_addr = *(p.offset((*ah).ar_hln as libc::c_int as isize) as *mut bb__aliased_uint32_t);
+  src_ip.s_addr = *(p.offset((*ah).ar_hln as libc::c_int as isize) as *mut bb__aliased_u32);
   dst_ip.s_addr = *(p
     .offset((*ah).ar_hln as libc::c_int as isize)
     .offset(4)
-    .offset((*ah).ar_hln as libc::c_int as isize) as *mut bb__aliased_uint32_t);
+    .offset((*ah).ar_hln as libc::c_int as isize) as *mut bb__aliased_u32);
   if (*ptr_to_globals).dst.s_addr != src_ip.s_addr {
     return;
   }
@@ -868,7 +868,7 @@ pub unsafe extern "C" fn arping_main(
     b"interface %s %%s\x00" as *const u8 as *const libc::c_char,
     device,
   );
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   /*memset(&G.ifr, 0, sizeof(G.ifr)); - zeroed by INIT_G */
   strncpy_IFNAMSIZ(
     (*ptr_to_globals).ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),

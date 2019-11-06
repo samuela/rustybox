@@ -19,9 +19,9 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const FL_SCALE512: C2RustUnnamed = 16;
 /* argument is provided by user */
@@ -86,7 +86,7 @@ static mut bdcmd_names: [libc::c_char; 82] = [
   115, 122, 0, 103, 101, 116, 115, 105, 122, 101, 0, 103, 101, 116, 115, 105, 122, 101, 54, 52, 0,
   102, 108, 117, 115, 104, 98, 117, 102, 115, 0, 114, 101, 114, 101, 97, 100, 112, 116, 0, 0,
 ];
-static mut bdcmd_ioctl: [uint32_t; 11] = [
+static mut bdcmd_ioctl: [u32; 11] = [
   0u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (93i32 << 0i32) as libc::c_uint
@@ -106,15 +106,15 @@ static mut bdcmd_ioctl: [uint32_t; 11] = [
   ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (112i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as uint32_t,
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
   ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (113i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as uint32_t,
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
   ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as uint32_t,
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
   0u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (96i32 << 0i32) as libc::c_uint
@@ -122,7 +122,7 @@ static mut bdcmd_ioctl: [uint32_t; 11] = [
   ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as uint32_t,
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
   0u32 << 0i32 + 8i32 + 8i32 + 14i32
     | (0x12i32 << 0i32 + 8i32) as libc::c_uint
     | (97i32 << 0i32) as libc::c_uint
@@ -132,18 +132,18 @@ static mut bdcmd_ioctl: [uint32_t; 11] = [
     | (95i32 << 0i32) as libc::c_uint
     | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
 ];
-static mut bdcmd_flags: [uint8_t; 11] = [
-  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int) as uint8_t,
-  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int) as uint8_t,
-  ARG_INT as libc::c_int as uint8_t,
-  ARG_INT as libc::c_int as uint8_t,
-  ARG_INT as libc::c_int as uint8_t,
-  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int + FL_USRARG as libc::c_int) as uint8_t,
-  (ARG_U64 as libc::c_int + FL_SCALE512 as libc::c_int) as uint8_t,
-  ARG_ULONG as libc::c_int as uint8_t,
-  ARG_U64 as libc::c_int as uint8_t,
-  (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as uint8_t,
-  (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as uint8_t,
+static mut bdcmd_flags: [u8; 11] = [
+  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int) as u8,
+  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int) as u8,
+  ARG_INT as libc::c_int as u8,
+  ARG_INT as libc::c_int as u8,
+  ARG_INT as libc::c_int as u8,
+  (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int + FL_USRARG as libc::c_int) as u8,
+  (ARG_U64 as libc::c_int + FL_SCALE512 as libc::c_int) as u8,
+  ARG_ULONG as libc::c_int as u8,
+  ARG_U64 as libc::c_int as u8,
+  (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as u8,
+  (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as u8,
 ];
 unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
   if *s.offset(0) as libc::c_int == '-' as i32 && *s.offset(1) as libc::c_int == '-' as i32 {

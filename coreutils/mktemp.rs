@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
   #[no_mangle]
@@ -25,7 +25,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::uint32_t;
+
 pub const OPT_q: C2RustUnnamed = 2;
 pub const OPT_d: C2RustUnnamed = 1;
 pub const OPT_u: C2RustUnnamed = 16;

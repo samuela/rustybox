@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn ioctl_or_perror_and_die(
     fd: libc::c_int,
@@ -32,7 +32,7 @@ extern "C" {
 
 use crate::librb::__uid_t;
 pub type __caddr_t = *mut libc::c_char;
-use libc::uint32_t;
+
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]

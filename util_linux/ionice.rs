@@ -17,7 +17,7 @@ extern "C" {
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
@@ -29,7 +29,7 @@ extern "C" {
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
 
-use libc::uint32_t;
+
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const IOPRIO_WHO_USER: C2RustUnnamed = 3;

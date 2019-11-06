@@ -17,13 +17,13 @@ extern "C" {
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 pub const OPT_w: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_s: C2RustUnnamed = 2;

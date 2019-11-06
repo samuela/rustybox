@@ -5,8 +5,8 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 /*
  * CRC32 table fill function
@@ -25,24 +25,24 @@ use libc::uint32_t;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 #[no_mangle]
-pub static mut global_crc32_table: *mut uint32_t = 0 as *const uint32_t as *mut uint32_t;
+pub static mut global_crc32_table: *mut u32 = 0 as *const u32 as *mut u32;
 #[no_mangle]
 pub unsafe extern "C" fn crc32_filltable(
-  mut crc_table: *mut uint32_t,
+  mut crc_table: *mut u32,
   mut endian: libc::c_int,
-) -> *mut uint32_t {
-  let mut polynomial: uint32_t = if endian != 0 {
+) -> *mut u32 {
+  let mut polynomial: u32 = if endian != 0 {
     0x4c11db7i32 as libc::c_uint
   } else {
     0xedb88320u32
   };
-  let mut c: uint32_t = 0;
+  let mut c: u32 = 0;
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   if crc_table.is_null() {
     crc_table = xmalloc(
-      (256i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
-    ) as *mut uint32_t
+      (256i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+    ) as *mut u32
   }
   i = 0i32 as libc::c_uint;
   while i < 256i32 as libc::c_uint {
@@ -73,27 +73,27 @@ pub unsafe extern "C" fn crc32_filltable(
 }
 /* Common uses: */
 #[no_mangle]
-pub unsafe extern "C" fn crc32_new_table_le() -> *mut uint32_t {
-  return crc32_filltable(0 as *mut uint32_t, 0i32);
+pub unsafe extern "C" fn crc32_new_table_le() -> *mut u32 {
+  return crc32_filltable(0 as *mut u32, 0i32);
 }
 #[no_mangle]
-pub unsafe extern "C" fn global_crc32_new_table_le() -> *mut uint32_t {
+pub unsafe extern "C" fn global_crc32_new_table_le() -> *mut u32 {
   global_crc32_table = crc32_new_table_le();
   return global_crc32_table;
 }
 #[no_mangle]
 pub unsafe extern "C" fn crc32_block_endian1(
-  mut val: uint32_t,
+  mut val: u32,
   mut buf: *const libc::c_void,
   mut len: libc::c_uint,
-  mut crc_table: *mut uint32_t,
-) -> uint32_t {
+  mut crc_table: *mut u32,
+) -> u32 {
   let mut end: *const libc::c_void =
-    (buf as *mut uint8_t).offset(len as isize) as *const libc::c_void;
+    (buf as *mut u8).offset(len as isize) as *const libc::c_void;
   while buf != end {
     val = val << 8i32
-      ^ *crc_table.offset((val >> 24i32 ^ *(buf as *mut uint8_t) as libc::c_uint) as isize);
-    buf = (buf as *mut uint8_t).offset(1) as *const libc::c_void
+      ^ *crc_table.offset((val >> 24i32 ^ *(buf as *mut u8) as libc::c_uint) as isize);
+    buf = (buf as *mut u8).offset(1) as *const libc::c_void
   }
   return val;
 }
@@ -308,7 +308,7 @@ pub unsafe extern "C" fn crc32_block_endian1(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -649,18 +649,18 @@ pub unsafe extern "C" fn crc32_block_endian1(
 /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
 #[no_mangle]
 pub unsafe extern "C" fn crc32_block_endian0(
-  mut val: uint32_t,
+  mut val: u32,
   mut buf: *const libc::c_void,
   mut len: libc::c_uint,
-  mut crc_table: *mut uint32_t,
-) -> uint32_t {
+  mut crc_table: *mut u32,
+) -> u32 {
   let mut end: *const libc::c_void =
-    (buf as *mut uint8_t).offset(len as isize) as *const libc::c_void;
+    (buf as *mut u8).offset(len as isize) as *const libc::c_void;
   while buf != end {
     val = *crc_table
-      .offset((val as uint8_t as libc::c_int ^ *(buf as *mut uint8_t) as libc::c_int) as isize)
+      .offset((val as u8 as libc::c_int ^ *(buf as *mut u8) as libc::c_int) as isize)
       ^ val >> 8i32;
-    buf = (buf as *mut uint8_t).offset(1) as *const libc::c_void
+    buf = (buf as *mut u8).offset(1) as *const libc::c_void
   }
   return val;
 }

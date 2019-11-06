@@ -139,7 +139,7 @@ extern "C" {
   #[no_mangle]
   fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -176,7 +176,7 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::stat;
 
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -465,7 +465,7 @@ unsafe extern "C" fn fmt_time_human_30nul(mut s: *mut libc::c_char, mut dt_delim
 }
 /* NOT terminated! */
 unsafe extern "C" fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
-  let mut pack: [uint32_t; 3] = [0; 3];
+  let mut pack: [u32; 3] = [0; 3];
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,

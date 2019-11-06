@@ -14,7 +14,7 @@ extern "C" {
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -26,7 +26,7 @@ extern "C" {
   fn personality(__persona: libc::c_ulong) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const PER_MASK: C2RustUnnamed = 255;

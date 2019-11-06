@@ -72,7 +72,7 @@ extern "C" {
   #[no_mangle]
   fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
   #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> uint32_t;
+  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
   #[no_mangle]
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
   #[no_mangle]
@@ -83,37 +83,37 @@ extern "C" {
   fn ll_proto_a2n(id: *mut libc::c_ushort, buf: *mut libc::c_char) -> libc::c_int;
 }
 
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
   pub filter_ifindex: libc::c_int,
-  pub filter_qdisc: uint32_t,
-  pub filter_parent: uint32_t,
-  pub filter_prio: uint32_t,
-  pub filter_proto: uint32_t,
+  pub filter_qdisc: u32,
+  pub filter_parent: u32,
+  pub filter_prio: u32,
+  pub filter_proto: u32,
 }
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed = 97;
@@ -183,9 +183,9 @@ pub struct tcmsg {
   pub tcm__pad1: libc::c_uchar,
   pub tcm__pad2: libc::c_ushort,
   pub tcm_ifindex: libc::c_int,
-  pub tcm_handle: __u32,
-  pub tcm_parent: __u32,
-  pub tcm_info: __u32,
+  pub tcm_handle: u32,
+  pub tcm_parent: u32,
+  pub tcm_info: u32,
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const __TCA_MAX: C2RustUnnamed_0 = 13;
@@ -203,7 +203,7 @@ pub const TCA_OPTIONS: C2RustUnnamed_0 = 2;
 pub const TCA_KIND: C2RustUnnamed_0 = 1;
 pub const TCA_UNSPEC: C2RustUnnamed_0 = 0;
 
-/* We need linux/types.h because older kernels use __u32 etc
+/* We need linux/types.h because older kernels use u32 etc
  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -211,8 +211,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -222,7 +222,7 @@ pub struct tc_ratespec {
   pub overhead: libc::c_ushort,
   pub cell_align: libc::c_short,
   pub mpu: libc::c_ushort,
-  pub rate: __u32,
+  pub rate: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -237,10 +237,10 @@ pub struct tc_cbq_lssopt {
   pub flags: libc::c_uchar,
   pub ewma_log: libc::c_uchar,
   pub level: libc::c_uchar,
-  pub maxidle: __u32,
-  pub minidle: __u32,
-  pub offtime: __u32,
-  pub avpkt: __u32,
+  pub maxidle: u32,
+  pub minidle: u32,
+  pub offtime: u32,
+  pub avpkt: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -249,8 +249,8 @@ pub struct tc_cbq_wrropt {
   pub priority: libc::c_uchar,
   pub cpriority: libc::c_uchar,
   pub __reserved: libc::c_uchar,
-  pub allot: __u32,
-  pub weight: __u32,
+  pub allot: u32,
+  pub weight: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -258,14 +258,14 @@ pub struct tc_cbq_ovl {
   pub strategy: libc::c_uchar,
   pub priority2: libc::c_uchar,
   pub pad: __u16,
-  pub penalty: __u32,
+  pub penalty: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tc_cbq_fopt {
-  pub split: __u32,
-  pub defmap: __u32,
-  pub defchange: __u32,
+  pub split: u32,
+  pub defmap: u32,
+  pub defchange: u32,
 }
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const __TCA_CBQ_MAX: C2RustUnnamed_1 = 8;
@@ -304,7 +304,7 @@ pub const CMD_add: C2RustUnnamed_4 = 0;
 pub type C2RustUnnamed_5 = libc::c_uint;
 /* Allocates a buffer containing the name of a class id.
  * The caller must free the returned memory.  */
-unsafe extern "C" fn print_tc_classid(mut cid: uint32_t) -> *mut libc::c_char {
+unsafe extern "C" fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
   /* IMPOSSIBLE */
   if cid == 0u32 {
     return xasprintf(b"none\x00" as *const u8 as *const libc::c_char);
@@ -328,14 +328,14 @@ unsafe extern "C" fn print_tc_classid(mut cid: uint32_t) -> *mut libc::c_char {
 }
 /* Get a qdisc handle.  Return 0 on success, !0 otherwise.  */
 unsafe extern "C" fn get_qdisc_handle(
-  mut h: *mut uint32_t,
+  mut h: *mut u32,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
-  let mut maj: uint32_t = 0;
+  let mut maj: u32 = 0;
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
   maj = 0u32;
   if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0i32) {
-    maj = strtoul(str, &mut p, 16i32) as uint32_t;
+    maj = strtoul(str, &mut p, 16i32) as u32;
     if p == str as *mut libc::c_char {
       return 1i32;
     }
@@ -349,22 +349,22 @@ unsafe extern "C" fn get_qdisc_handle(
 }
 /* Get class ID.  Return 0 on success, !0 otherwise.  */
 unsafe extern "C" fn get_tc_classid(
-  mut h: *mut uint32_t,
+  mut h: *mut u32,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
-  let mut maj: uint32_t = 0;
-  let mut min: uint32_t = 0;
+  let mut maj: u32 = 0;
+  let mut min: u32 = 0;
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
   maj = 0xffffffffu32;
   if !(strcmp(str, b"root\x00" as *const u8 as *const libc::c_char) == 0i32) {
     maj = 0u32;
     if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0i32) {
-      maj = strtoul(str, &mut p, 16i32) as uint32_t;
+      maj = strtoul(str, &mut p, 16i32) as u32;
       if p == str as *mut libc::c_char {
         if *p as libc::c_int != ':' as i32 {
           return 1i32;
         }
-        maj = 0i32 as uint32_t
+        maj = 0i32 as u32
       }
       if *p as libc::c_int == ':' as i32 {
         if maj >= (1i32 << 16i32) as libc::c_uint {
@@ -372,7 +372,7 @@ unsafe extern "C" fn get_tc_classid(
         }
         maj <<= 16i32;
         str = p.offset(1);
-        min = strtoul(str, &mut p, 16i32) as uint32_t;
+        min = strtoul(str, &mut p, 16i32) as u32;
         //FIXME: check for "" too?
         if *p as libc::c_int != '\u{0}' as i32 || min >= (1i32 << 16i32) as libc::c_uint {
           return 1i32;
@@ -389,7 +389,7 @@ unsafe extern "C" fn get_tc_classid(
 unsafe extern "C" fn print_rate(
   mut buf: *mut libc::c_char,
   mut len: libc::c_int,
-  mut rate: uint32_t,
+  mut rate: u32,
 ) {
   let mut tmp: libc::c_double = rate as libc::c_double * 8i32 as libc::c_double;
   if tmp >= (1000i32 * 1000000i32) as libc::c_double {
@@ -1031,7 +1031,7 @@ pub unsafe extern "C" fn tc_main(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_parent = 0xffffffffu32
       }
     } else if arg == ARG_parent as libc::c_int {
-      let mut handle: uint32_t = 0;
+      let mut handle: u32 = 0;
       if msg.tcm_parent != 0 {
         duparg(*argv, b"parent\x00" as *const u8 as *const libc::c_char);
       }
@@ -1047,7 +1047,7 @@ pub unsafe extern "C" fn tc_main(
       if msg.tcm_handle != 0 {
         duparg(*argv, b"handle\x00" as *const u8 as *const libc::c_char);
       }
-      /* if (slash) {if (get_u32(uint32_t &mask, slash+1, NULL)) inv mask; addattr32(n, MAX_MSG, TCA_FW_MASK, mask); */
+      /* if (slash) {if (get_u32(u32 &mask, slash+1, NULL)) inv mask; addattr32(n, MAX_MSG, TCA_FW_MASK, mask); */
       msg.tcm_handle = get_u32(*argv, b"handle\x00" as *const u8 as *const libc::c_char)
     } else if !(arg == ARG_classid as libc::c_int
       && obj == OBJ_class as libc::c_int
@@ -1068,14 +1068,14 @@ pub unsafe extern "C" fn tc_main(
           get_u32(*argv, b"priority\x00" as *const u8 as *const libc::c_char)
       } else if arg == ARG_proto as libc::c_int {
         /* filter::list */
-        let mut tmp: uint16_t = 0;
+        let mut tmp: u16 = 0;
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto != 0 {
           duparg(*argv, b"protocol\x00" as *const u8 as *const libc::c_char);
         }
         if ll_proto_a2n(&mut tmp, *argv) != 0 {
           invarg_1_to_2(*argv, b"protocol\x00" as *const u8 as *const libc::c_char);
         }
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto = tmp as uint32_t
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto = tmp as u32
       }
     }
   }

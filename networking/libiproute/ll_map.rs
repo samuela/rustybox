@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
   //TODO: pass rth->fd instead of full rth?
@@ -51,26 +51,26 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed = 50;
@@ -201,8 +201,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 
 /*

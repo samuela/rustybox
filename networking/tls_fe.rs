@@ -6,14 +6,14 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 /*
  * Copyright (C) 2018 Denys Vlasenko
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-pub type byte = uint8_t;
+pub type byte = u8;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
@@ -24,7 +24,7 @@ pub struct C2RustUnnamed {
   pub zm1: [byte; 32],
   // = {0};
 }
-pub type word32 = uint32_t;
+pub type word32 = u32;
 /* The code below is taken from wolfssl-3.15.3/wolfcrypt/src/fe_low_mem.c
  * Header comment is kept intact:
  */

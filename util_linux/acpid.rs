@@ -97,7 +97,7 @@ extern "C" {
 
   /* Useful for reading port numbers */
   #[no_mangle]
-  fn xatou16(numstr: *const libc::c_char) -> uint16_t;
+  fn xatou16(numstr: *const libc::c_char) -> u16;
 
   /* NOMMU friendy fork+exec: */
   #[no_mangle]
@@ -108,10 +108,10 @@ extern "C" {
 
   /* { "-", NULL } */
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   /* BTW, surprisingly, changing API to
    *   llist_t *llist_add_to(llist_t *old_head, void *data)
@@ -172,8 +172,8 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 
 use libc::stat;
 
@@ -290,10 +290,10 @@ pub struct globals {
 #[repr(C)]
 pub struct acpi_event {
   pub s_type: *const libc::c_char,
-  pub n_type: uint16_t,
+  pub n_type: u16,
   pub s_code: *const libc::c_char,
-  pub n_code: uint16_t,
-  pub value: uint32_t,
+  pub n_code: u16,
+  pub value: u32,
   pub desc: *const libc::c_char,
 }
 
@@ -334,10 +334,10 @@ static mut f_evt_tab: [acpi_event; 3] = [
   {
     let mut init = acpi_event {
       s_type: b"EV_KEY\x00" as *const u8 as *const libc::c_char,
-      n_type: 0x1i32 as uint16_t,
+      n_type: 0x1i32 as u16,
       s_code: b"KEY_POWER\x00" as *const u8 as *const libc::c_char,
-      n_code: 116i32 as uint16_t,
-      value: 1i32 as uint32_t,
+      n_code: 116i32 as u16,
+      value: 1i32 as u32,
       desc: b"button/power PWRF 00000080\x00" as *const u8 as *const libc::c_char,
     };
     init
@@ -345,10 +345,10 @@ static mut f_evt_tab: [acpi_event; 3] = [
   {
     let mut init = acpi_event {
       s_type: b"EV_KEY\x00" as *const u8 as *const libc::c_char,
-      n_type: 0x1i32 as uint16_t,
+      n_type: 0x1i32 as u16,
       s_code: b"KEY_POWER\x00" as *const u8 as *const libc::c_char,
-      n_code: 116i32 as uint16_t,
-      value: 1i32 as uint32_t,
+      n_code: 116i32 as u16,
+      value: 1i32 as u32,
       desc: b"button/power PWRB 00000080\x00" as *const u8 as *const libc::c_char,
     };
     init
@@ -356,10 +356,10 @@ static mut f_evt_tab: [acpi_event; 3] = [
   {
     let mut init = acpi_event {
       s_type: b"EV_SW\x00" as *const u8 as *const libc::c_char,
-      n_type: 0x5i32 as uint16_t,
+      n_type: 0x5i32 as u16,
       s_code: b"SW_LID\x00" as *const u8 as *const libc::c_char,
-      n_code: 0i32 as uint16_t,
-      value: 1i32 as uint32_t,
+      n_code: 0i32 as u16,
+      value: 1i32 as u32,
       desc: b"button/lid LID0 00000080\x00" as *const u8 as *const libc::c_char,
     };
     init
@@ -528,7 +528,7 @@ unsafe extern "C" fn parse_map_file(mut filename: *const libc::c_char) {
       (*(*ptr_to_globals)
         .evt_tab
         .offset((*ptr_to_globals).n_evt as isize))
-      .n_type = xstrtou(tokens[1], 16i32) as uint16_t;
+      .n_type = xstrtou(tokens[1], 16i32) as u16;
       let ref mut fresh3 = (*(*ptr_to_globals)
         .evt_tab
         .offset((*ptr_to_globals).n_evt as isize))
@@ -541,7 +541,7 @@ unsafe extern "C" fn parse_map_file(mut filename: *const libc::c_char) {
       (*(*ptr_to_globals)
         .evt_tab
         .offset((*ptr_to_globals).n_evt as isize))
-      .value = xatoi_positive(tokens[4]) as uint32_t;
+      .value = xatoi_positive(tokens[4]) as u32;
       let ref mut fresh4 = (*(*ptr_to_globals)
         .evt_tab
         .offset((*ptr_to_globals).n_evt as isize))

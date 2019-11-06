@@ -28,7 +28,7 @@ extern "C" {
   #[no_mangle]
   fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -37,7 +37,7 @@ use crate::librb::int32_t;
 use crate::librb::size_t;
 use libc::time_t;
  use libc::timeval;
-use libc::uint32_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]

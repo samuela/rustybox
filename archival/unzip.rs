@@ -147,9 +147,9 @@ use crate::librb::ssize_t;
 use libc::stat;
 use libc::time_t;
 
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 use libc::FILE;
 
 pub type C2RustUnnamed = libc::c_int;
@@ -226,16 +226,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed_0,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 
 /*
@@ -312,64 +312,64 @@ pub const ZIP_FILEHEADER_MAGIC: C2RustUnnamed_1 = 67324752;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union zip_header_t {
-  pub raw: [uint8_t; 26],
+  pub raw: [u8; 26],
   pub fmt: C2RustUnnamed_2,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
-  pub version: uint16_t,
-  pub zip_flags: uint16_t,
-  pub method: uint16_t,
-  pub modtime: uint16_t,
-  pub moddate: uint16_t,
-  pub crc32: uint32_t,
-  pub cmpsize: uint32_t,
-  pub ucmpsize: uint32_t,
-  pub filename_len: uint16_t,
-  pub extra_len: uint16_t,
+  pub version: u16,
+  pub zip_flags: u16,
+  pub method: u16,
+  pub modtime: u16,
+  pub moddate: u16,
+  pub crc32: u32,
+  pub cmpsize: u32,
+  pub ucmpsize: u32,
+  pub filename_len: u16,
+  pub extra_len: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union cdf_header_t {
-  pub raw: [uint8_t; 42],
+  pub raw: [u8; 42],
   pub fmt: C2RustUnnamed_3,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_3 {
-  pub version_made_by: uint16_t,
-  pub version_needed: uint16_t,
-  pub cdf_flags: uint16_t,
-  pub method: uint16_t,
-  pub modtime: uint16_t,
-  pub moddate: uint16_t,
-  pub crc32: uint32_t,
-  pub cmpsize: uint32_t,
-  pub ucmpsize: uint32_t,
-  pub filename_len: uint16_t,
-  pub extra_len: uint16_t,
-  pub file_comment_length: uint16_t,
-  pub disk_number_start: uint16_t,
-  pub internal_attributes: uint16_t,
-  pub external_attributes: uint32_t,
-  pub relative_offset_of_local_header: uint32_t,
+  pub version_made_by: u16,
+  pub version_needed: u16,
+  pub cdf_flags: u16,
+  pub method: u16,
+  pub modtime: u16,
+  pub moddate: u16,
+  pub crc32: u32,
+  pub cmpsize: u32,
+  pub ucmpsize: u32,
+  pub filename_len: u16,
+  pub extra_len: u16,
+  pub file_comment_length: u16,
+  pub disk_number_start: u16,
+  pub internal_attributes: u16,
+  pub external_attributes: u32,
+  pub relative_offset_of_local_header: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union cde_t {
-  pub raw: [uint8_t; 16],
+  pub raw: [u8; 16],
   pub fmt: C2RustUnnamed_4,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
-  pub this_disk_no: uint16_t,
-  pub disk_with_cdf_no: uint16_t,
-  pub cdf_entries_on_this_disk: uint16_t,
-  pub cdf_entries_total: uint16_t,
-  pub cdf_size: uint32_t,
-  pub cdf_offset: uint32_t,
+  pub this_disk_no: u16,
+  pub disk_with_cdf_no: u16,
+  pub cdf_entries_on_this_disk: u16,
+  pub cdf_entries_total: u16,
+  pub cdf_size: u32,
+  pub cdf_offset: u32,
 }
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const zip_fd: C2RustUnnamed_5 = 3;
@@ -382,12 +382,12 @@ pub const OPT_x: C2RustUnnamed_7 = 2;
 pub type C2RustUnnamed_6 = libc::c_uint;
 pub type C2RustUnnamed_7 = libc::c_uint;
 /* NB: does not preserve file position! */
-unsafe extern "C" fn find_cdf_offset() -> uint32_t {
+unsafe extern "C" fn find_cdf_offset() -> u32 {
   let mut cde: cde_t = cde_t { raw: [0; 16] };
   let mut buf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut end: off_t = 0;
-  let mut found: uint32_t = 0;
+  let mut found: u32 = 0;
   end = lseek(zip_fd as libc::c_int, 0i32 as __off64_t, 2i32);
   if end == -1i32 as off_t {
     return 0xffffffffu32;
@@ -452,24 +452,24 @@ unsafe extern "C" fn find_cdf_offset() -> uint32_t {
   return found;
 }
 unsafe extern "C" fn read_next_cdf(
-  mut cdf_offset: uint32_t,
+  mut cdf_offset: u32,
   mut cdf: *mut cdf_header_t,
-) -> uint32_t {
-  let mut magic: uint32_t = 0;
+) -> u32 {
+  let mut magic: u32 = 0;
   if cdf_offset == 0xffffffffu32 {
     return cdf_offset;
   }
   xlseek(zip_fd as libc::c_int, cdf_offset as off_t, 0i32);
   xread(
     zip_fd as libc::c_int,
-    &mut magic as *mut uint32_t as *mut libc::c_void,
+    &mut magic as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
   );
   /* Central Directory End? Assume CDF has ended.
    * (more correct method is to use cde.cdf_entries_total counter)
    */
   if magic == ZIP_CDE_MAGIC as libc::c_int as libc::c_uint {
-    return 0i32 as uint32_t;
+    return 0i32 as u32;
     /* EOF */
   }
   xread(
@@ -483,7 +483,7 @@ unsafe extern "C" fn read_next_cdf(
       + (*cdf).fmt.filename_len as libc::c_int
       + (*cdf).fmt.extra_len as libc::c_int
       + (*cdf).fmt.file_comment_length as libc::c_int) as libc::c_uint,
-  ) as uint32_t as uint32_t;
+  ) as u32 as u32;
   return cdf_offset;
 }
 unsafe extern "C" fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
@@ -640,7 +640,7 @@ pub unsafe extern "C" fn unzip_main(
   let mut quiet: smallint = 0i32 as smallint;
   let mut verbose: smallint = 0i32 as smallint;
   let mut overwrite: smallint = O_PROMPT as libc::c_int as smallint;
-  let mut cdf_offset: uint32_t = 0;
+  let mut cdf_offset: u32 = 0;
   let mut total_usize: libc::c_ulong = 0;
   let mut total_size: libc::c_ulong = 0;
   let mut total_entries: libc::c_uint = 0;
@@ -873,11 +873,11 @@ pub unsafe extern "C" fn unzip_main(
        * We try to do the above, and resort to "linear" reading
        * of ZIP file only if seek failed or CDE wasn't found.
        */
-      let mut magic: uint32_t = 0;
+      let mut magic: u32 = 0;
       /* Check magic number */
       xread(
         zip_fd as libc::c_int,
-        &mut magic as *mut uint32_t as *mut libc::c_void,
+        &mut magic as *mut u32 as *mut libc::c_void,
         4i32 as size_t,
       );
       /* CDF item? Assume there are no more files, exit */

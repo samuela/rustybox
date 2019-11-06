@@ -29,16 +29,16 @@ extern "C" {
   #[no_mangle]
   fn rtnl_rttable_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
-  fn rtnl_dsfield_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_dsfield_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn rtnl_rttable_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rttable_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   fn rtnl_rtntype_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
   fn rtnl_rtntype_a2n(id: *mut libc::c_int, arg: *mut libc::c_char) -> libc::c_int;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
   //TODO: pass rth->fd instead of full rth?
@@ -62,13 +62,13 @@ extern "C" {
   #[no_mangle]
   fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
   #[no_mangle]
-  fn get_addr32(name: *mut libc::c_char) -> uint32_t;
+  fn get_addr32(name: *mut libc::c_char) -> u32;
   #[no_mangle]
   fn addattr32(
     n: *mut nlmsghdr,
     maxlen: libc::c_int,
     type_0: libc::c_int,
-    data: uint32_t,
+    data: u32,
   ) -> libc::c_int;
   #[no_mangle]
   fn addattr_l(
@@ -79,9 +79,9 @@ extern "C" {
     alen: libc::c_int,
   ) -> libc::c_int;
   #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> uint32_t;
+  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
   #[no_mangle]
-  fn get_rt_realms(realms: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn get_rt_realms(realms: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
   #[no_mangle]
@@ -107,31 +107,31 @@ extern "C" {
 use crate::librb::int16_t;
 use crate::librb::int8_t;
 use crate::librb::size_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type smalluint = libc::c_uchar;
 
 use libc::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed = 97;
@@ -269,8 +269,8 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -298,10 +298,10 @@ pub const ARG_preference: C2RustUnnamed_2 = 3;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 pub const ARG_to: C2RustUnnamed_2 = 2;
 pub const ARG_from: C2RustUnnamed_2 = 1;
@@ -477,7 +477,7 @@ unsafe extern "C" fn print_rule(
           .wrapping_sub(1i32 as libc::c_ulong)
           & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
           .wrapping_add(0i32 as libc::c_ulong) as isize,
-      ) as *mut libc::c_void as *mut uint32_t),
+      ) as *mut libc::c_void as *mut u32),
     );
   }
   if !tb[RTA_IIF as libc::c_int as usize].is_null() {
@@ -502,7 +502,7 @@ unsafe extern "C" fn print_rule(
             .wrapping_sub(1i32 as libc::c_ulong)
             & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
             .wrapping_add(0i32 as libc::c_ulong) as isize,
-        ) as *mut libc::c_void as *mut uint32_t) as libc::c_int,
+        ) as *mut libc::c_void as *mut u32) as libc::c_int,
       ),
     );
   } else if (*r).rtm_table != 0 {
@@ -518,7 +518,7 @@ unsafe extern "C" fn print_rule(
         .wrapping_sub(1i32 as libc::c_ulong)
         & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
         .wrapping_add(0i32 as libc::c_ulong) as isize,
-    ) as *mut libc::c_void as *mut uint32_t) as libc::c_int;
+    ) as *mut libc::c_void as *mut u32) as libc::c_int;
     if pl != -1i32 {
       printf(
         b"%s %d \x00" as *const u8 as *const libc::c_char,
@@ -545,7 +545,7 @@ unsafe extern "C" fn print_rule(
         .wrapping_sub(1i32 as libc::c_ulong)
         & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
         .wrapping_add(0i32 as libc::c_ulong) as isize,
-    ) as *mut libc::c_void as *mut uint32_t) as libc::c_int;
+    ) as *mut libc::c_void as *mut u32) as libc::c_int;
     if grp != -1i32 {
       printf(
         b"%s %d \x00" as *const u8 as *const libc::c_char,
@@ -567,14 +567,14 @@ unsafe extern "C" fn print_rule(
     }
   }
   if !tb[RTA_FLOW as libc::c_int as usize].is_null() {
-    let mut to: uint32_t = *((tb[RTA_FLOW as libc::c_int as usize] as *mut libc::c_char).offset(
+    let mut to: u32 = *((tb[RTA_FLOW as libc::c_int as usize] as *mut libc::c_char).offset(
       ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
         .wrapping_add(4u32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong)
         & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
         .wrapping_add(0i32 as libc::c_ulong) as isize,
-    ) as *mut libc::c_void as *mut uint32_t);
-    let mut from: uint32_t = to >> 16i32;
+    ) as *mut libc::c_void as *mut u32);
+    let mut from: u32 = to >> 16i32;
     to &= 0xffffi32 as libc::c_uint;
     if from != 0 {
       printf(
@@ -713,7 +713,7 @@ unsafe extern "C" fn iprule_modify(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = 0x1i32 as __u16;
   req.r.rtm_family = preferred_family as libc::c_uchar;
   req.r.rtm_protocol = 3i32 as libc::c_uchar;
@@ -748,7 +748,7 @@ unsafe extern "C" fn iprule_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_SRC as libc::c_int,
-        &mut dst.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut dst.data as *mut [u32; 4] as *mut libc::c_void,
         dst.bytelen as libc::c_int,
       );
     } else if key as libc::c_int == ARG_to as libc::c_int {
@@ -765,14 +765,14 @@ unsafe extern "C" fn iprule_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_DST as libc::c_int,
-        &mut dst_0.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut dst_0.data as *mut [u32; 4] as *mut libc::c_void,
         dst_0.bytelen as libc::c_int,
       );
     } else if key as libc::c_int == ARG_preference as libc::c_int
       || key as libc::c_int == ARG_order as libc::c_int
       || key as libc::c_int == ARG_priority as libc::c_int
     {
-      let mut pref: uint32_t = 0;
+      let mut pref: u32 = 0;
       argv = next_arg(argv);
       pref = get_u32(
         *argv,
@@ -788,14 +788,14 @@ unsafe extern "C" fn iprule_modify(
         pref,
       );
     } else if key as libc::c_int == ARG_tos as libc::c_int {
-      let mut tos: uint32_t = 0;
+      let mut tos: u32 = 0;
       argv = next_arg(argv);
       if rtnl_dsfield_a2n(&mut tos, *argv) != 0 {
         invarg_1_to_2(*argv, b"TOS\x00" as *const u8 as *const libc::c_char);
       }
       req.r.rtm_tos = tos as libc::c_uchar
     } else if key as libc::c_int == ARG_fwmark as libc::c_int {
-      let mut fwmark: uint32_t = 0;
+      let mut fwmark: u32 = 0;
       argv = next_arg(argv);
       fwmark = get_u32(
         *argv,
@@ -815,7 +815,7 @@ unsafe extern "C" fn iprule_modify(
         fwmark,
       );
     } else if key as libc::c_int == ARG_realms as libc::c_int {
-      let mut realm: uint32_t = 0;
+      let mut realm: u32 = 0;
       argv = next_arg(argv);
       if get_rt_realms(&mut realm, *argv) != 0 {
         invarg_1_to_2(
@@ -840,7 +840,7 @@ unsafe extern "C" fn iprule_modify(
     } else if key as libc::c_int == ARG_table as libc::c_int
       || key as libc::c_int == ARG_lookup as libc::c_int
     {
-      let mut tid: uint32_t = 0;
+      let mut tid: u32 = 0;
       argv = next_arg(argv);
       if rtnl_rttable_a2n(&mut tid, *argv) != 0 {
         invarg_1_to_2(*argv, b"table ID\x00" as *const u8 as *const libc::c_char);
@@ -879,7 +879,7 @@ unsafe extern "C" fn iprule_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         14i32,
-        prefix_length as uint32_t,
+        prefix_length as u32,
       );
     } else if key as libc::c_int == ARG_suppress_ifgroup as libc::c_int {
       let mut grp: libc::c_int = 0;
@@ -904,7 +904,7 @@ unsafe extern "C" fn iprule_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         13i32,
-        grp as uint32_t,
+        grp as u32,
       );
     } else if key as libc::c_int == ARG_dev as libc::c_int
       || key as libc::c_int == ARG_iif as libc::c_int

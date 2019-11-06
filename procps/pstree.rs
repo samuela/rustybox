@@ -26,9 +26,9 @@ extern "C" {
   #[no_mangle]
   fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
@@ -41,9 +41,9 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -67,9 +67,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,
@@ -124,7 +124,7 @@ pub struct globals {
   pub output_width: libc::c_uint,
   pub capacity: libc::c_uint,
   pub width: *mut libc::c_uint,
-  pub more: *mut uint8_t,
+  pub more: *mut u8,
   pub list: *mut PROC,
   pub dumped: smallint,
 }
@@ -170,8 +170,8 @@ unsafe extern "C" fn ensure_buffer_capacity(mut bufindex: libc::c_int) {
     (*ptr_to_globals).more = xrealloc(
       (*ptr_to_globals).more as *mut libc::c_void,
       ((*ptr_to_globals).capacity as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<uint8_t>() as libc::c_ulong),
-    ) as *mut uint8_t
+        .wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong),
+    ) as *mut u8
   };
 }
 /* NB: this function is never called with "bad" chars
@@ -406,7 +406,7 @@ unsafe extern "C" fn dump_tree(
     out_newline();
   }
   ensure_buffer_capacity(level);
-  *(*ptr_to_globals).more.offset(level as isize) = (last == 0) as libc::c_int as uint8_t;
+  *(*ptr_to_globals).more.offset(level as isize) = (last == 0) as libc::c_int as u8;
   *(*ptr_to_globals).width.offset(level as isize) = (comm_len as libc::c_uint)
     .wrapping_add((*ptr_to_globals).cur_x)
     .wrapping_sub(offset as libc::c_uint)

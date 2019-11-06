@@ -106,9 +106,9 @@ use crate::librb::__off64_t;
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -181,13 +181,13 @@ pub union C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fdb_entry {
-  pub mac_addr: [uint8_t; 6],
-  pub port_no: uint8_t,
-  pub is_local: uint8_t,
-  pub ageing_timer_value: uint32_t,
-  pub port_hi: uint8_t,
-  pub pad0: uint8_t,
-  pub unused: uint16_t,
+  pub mac_addr: [u8; 6],
+  pub port_no: u8,
+  pub is_local: u8,
+  pub ageing_timer_value: u32,
+  pub port_hi: u8,
+  pub pad0: u8,
+  pub unused: u16,
 }
 pub const ARG_addif: C2RustUnnamed_2 = 2;
 pub const ARG_setpathcost: C2RustUnnamed_2 = 10;

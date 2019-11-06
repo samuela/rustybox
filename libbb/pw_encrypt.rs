@@ -57,27 +57,27 @@ extern "C" {
 }
 
 use crate::librb::__pid_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 use crate::librb::size_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct des_ctx {
   pub const_ctx: *const const_des_ctx,
-  pub saltbits: uint32_t,
-  pub un_pbox: [uint8_t; 32],
-  pub inv_comp_perm: [uint8_t; 56],
-  pub inv_key_perm: [uint8_t; 64],
-  pub en_keysl: [uint32_t; 16],
-  pub en_keysr: [uint32_t; 16],
-  pub fp_maskl: [[uint32_t; 256]; 8],
-  pub fp_maskr: [[uint32_t; 256]; 8],
-  pub key_perm_maskl: [[uint32_t; 128]; 8],
-  pub key_perm_maskr: [[uint32_t; 128]; 8],
-  pub comp_maskl: [[uint32_t; 128]; 8],
-  pub comp_maskr: [[uint32_t; 128]; 8],
-  pub psbox: [[uint32_t; 256]; 4],
+  pub saltbits: u32,
+  pub un_pbox: [u8; 32],
+  pub inv_comp_perm: [u8; 56],
+  pub inv_key_perm: [u8; 64],
+  pub en_keysl: [u32; 16],
+  pub en_keysr: [u32; 16],
+  pub fp_maskl: [[u32; 256]; 8],
+  pub fp_maskr: [[u32; 256]; 8],
+  pub key_perm_maskl: [[u32; 128]; 8],
+  pub key_perm_maskr: [[u32; 128]; 8],
+  pub comp_maskl: [[u32; 128]; 8],
+  pub comp_maskr: [[u32; 128]; 8],
+  pub psbox: [[u32; 256]; 4],
   /* 5 times */
 }
 /* Static stuff that stays resident and doesn't change after
@@ -86,8 +86,8 @@ pub struct des_ctx {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct const_des_ctx {
-  pub final_perm: [uint8_t; 64],
-  pub m_sbox: [[uint8_t; 4096]; 4],
+  pub final_perm: [u8; 64],
+  pub m_sbox: [[u8; 4096]; 4],
   /* 5 times */
 }
 #[derive(Copy, Clone)]
@@ -122,7 +122,7 @@ use crate::librb::sha1_ctx_t;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-/* static const uint8_t ascii64[] ALIGN1 =
+/* static const u8 ascii64[] ALIGN1 =
  * "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
  */
 unsafe extern "C" fn i64c(mut i: libc::c_int) -> libc::c_int {
@@ -291,558 +291,558 @@ unsafe extern "C" fn to64(
  *
  * ARCHITECTURE ASSUMPTIONS:
  *	It is assumed that the 8-byte arrays passed by reference can be
- *	addressed as arrays of uint32_t's (ie. the CPU is not picky about
+ *	addressed as arrays of u32's (ie. the CPU is not picky about
  *	alignment).
  */
 /* Parts busybox doesn't need or had optimized */
 /* A pile of data */
-static mut IP: [uint8_t; 64] = [
-  58i32 as uint8_t,
-  50i32 as uint8_t,
-  42i32 as uint8_t,
-  34i32 as uint8_t,
-  26i32 as uint8_t,
-  18i32 as uint8_t,
-  10i32 as uint8_t,
-  2i32 as uint8_t,
-  60i32 as uint8_t,
-  52i32 as uint8_t,
-  44i32 as uint8_t,
-  36i32 as uint8_t,
-  28i32 as uint8_t,
-  20i32 as uint8_t,
-  12i32 as uint8_t,
-  4i32 as uint8_t,
-  62i32 as uint8_t,
-  54i32 as uint8_t,
-  46i32 as uint8_t,
-  38i32 as uint8_t,
-  30i32 as uint8_t,
-  22i32 as uint8_t,
-  14i32 as uint8_t,
-  6i32 as uint8_t,
-  64i32 as uint8_t,
-  56i32 as uint8_t,
-  48i32 as uint8_t,
-  40i32 as uint8_t,
-  32i32 as uint8_t,
-  24i32 as uint8_t,
-  16i32 as uint8_t,
-  8i32 as uint8_t,
-  57i32 as uint8_t,
-  49i32 as uint8_t,
-  41i32 as uint8_t,
-  33i32 as uint8_t,
-  25i32 as uint8_t,
-  17i32 as uint8_t,
-  9i32 as uint8_t,
-  1i32 as uint8_t,
-  59i32 as uint8_t,
-  51i32 as uint8_t,
-  43i32 as uint8_t,
-  35i32 as uint8_t,
-  27i32 as uint8_t,
-  19i32 as uint8_t,
-  11i32 as uint8_t,
-  3i32 as uint8_t,
-  61i32 as uint8_t,
-  53i32 as uint8_t,
-  45i32 as uint8_t,
-  37i32 as uint8_t,
-  29i32 as uint8_t,
-  21i32 as uint8_t,
-  13i32 as uint8_t,
-  5i32 as uint8_t,
-  63i32 as uint8_t,
-  55i32 as uint8_t,
-  47i32 as uint8_t,
-  39i32 as uint8_t,
-  31i32 as uint8_t,
-  23i32 as uint8_t,
-  15i32 as uint8_t,
-  7i32 as uint8_t,
+static mut IP: [u8; 64] = [
+  58i32 as u8,
+  50i32 as u8,
+  42i32 as u8,
+  34i32 as u8,
+  26i32 as u8,
+  18i32 as u8,
+  10i32 as u8,
+  2i32 as u8,
+  60i32 as u8,
+  52i32 as u8,
+  44i32 as u8,
+  36i32 as u8,
+  28i32 as u8,
+  20i32 as u8,
+  12i32 as u8,
+  4i32 as u8,
+  62i32 as u8,
+  54i32 as u8,
+  46i32 as u8,
+  38i32 as u8,
+  30i32 as u8,
+  22i32 as u8,
+  14i32 as u8,
+  6i32 as u8,
+  64i32 as u8,
+  56i32 as u8,
+  48i32 as u8,
+  40i32 as u8,
+  32i32 as u8,
+  24i32 as u8,
+  16i32 as u8,
+  8i32 as u8,
+  57i32 as u8,
+  49i32 as u8,
+  41i32 as u8,
+  33i32 as u8,
+  25i32 as u8,
+  17i32 as u8,
+  9i32 as u8,
+  1i32 as u8,
+  59i32 as u8,
+  51i32 as u8,
+  43i32 as u8,
+  35i32 as u8,
+  27i32 as u8,
+  19i32 as u8,
+  11i32 as u8,
+  3i32 as u8,
+  61i32 as u8,
+  53i32 as u8,
+  45i32 as u8,
+  37i32 as u8,
+  29i32 as u8,
+  21i32 as u8,
+  13i32 as u8,
+  5i32 as u8,
+  63i32 as u8,
+  55i32 as u8,
+  47i32 as u8,
+  39i32 as u8,
+  31i32 as u8,
+  23i32 as u8,
+  15i32 as u8,
+  7i32 as u8,
 ];
-static mut key_perm: [uint8_t; 56] = [
-  57i32 as uint8_t,
-  49i32 as uint8_t,
-  41i32 as uint8_t,
-  33i32 as uint8_t,
-  25i32 as uint8_t,
-  17i32 as uint8_t,
-  9i32 as uint8_t,
-  1i32 as uint8_t,
-  58i32 as uint8_t,
-  50i32 as uint8_t,
-  42i32 as uint8_t,
-  34i32 as uint8_t,
-  26i32 as uint8_t,
-  18i32 as uint8_t,
-  10i32 as uint8_t,
-  2i32 as uint8_t,
-  59i32 as uint8_t,
-  51i32 as uint8_t,
-  43i32 as uint8_t,
-  35i32 as uint8_t,
-  27i32 as uint8_t,
-  19i32 as uint8_t,
-  11i32 as uint8_t,
-  3i32 as uint8_t,
-  60i32 as uint8_t,
-  52i32 as uint8_t,
-  44i32 as uint8_t,
-  36i32 as uint8_t,
-  63i32 as uint8_t,
-  55i32 as uint8_t,
-  47i32 as uint8_t,
-  39i32 as uint8_t,
-  31i32 as uint8_t,
-  23i32 as uint8_t,
-  15i32 as uint8_t,
-  7i32 as uint8_t,
-  62i32 as uint8_t,
-  54i32 as uint8_t,
-  46i32 as uint8_t,
-  38i32 as uint8_t,
-  30i32 as uint8_t,
-  22i32 as uint8_t,
-  14i32 as uint8_t,
-  6i32 as uint8_t,
-  61i32 as uint8_t,
-  53i32 as uint8_t,
-  45i32 as uint8_t,
-  37i32 as uint8_t,
-  29i32 as uint8_t,
-  21i32 as uint8_t,
-  13i32 as uint8_t,
-  5i32 as uint8_t,
-  28i32 as uint8_t,
-  20i32 as uint8_t,
-  12i32 as uint8_t,
-  4i32 as uint8_t,
+static mut key_perm: [u8; 56] = [
+  57i32 as u8,
+  49i32 as u8,
+  41i32 as u8,
+  33i32 as u8,
+  25i32 as u8,
+  17i32 as u8,
+  9i32 as u8,
+  1i32 as u8,
+  58i32 as u8,
+  50i32 as u8,
+  42i32 as u8,
+  34i32 as u8,
+  26i32 as u8,
+  18i32 as u8,
+  10i32 as u8,
+  2i32 as u8,
+  59i32 as u8,
+  51i32 as u8,
+  43i32 as u8,
+  35i32 as u8,
+  27i32 as u8,
+  19i32 as u8,
+  11i32 as u8,
+  3i32 as u8,
+  60i32 as u8,
+  52i32 as u8,
+  44i32 as u8,
+  36i32 as u8,
+  63i32 as u8,
+  55i32 as u8,
+  47i32 as u8,
+  39i32 as u8,
+  31i32 as u8,
+  23i32 as u8,
+  15i32 as u8,
+  7i32 as u8,
+  62i32 as u8,
+  54i32 as u8,
+  46i32 as u8,
+  38i32 as u8,
+  30i32 as u8,
+  22i32 as u8,
+  14i32 as u8,
+  6i32 as u8,
+  61i32 as u8,
+  53i32 as u8,
+  45i32 as u8,
+  37i32 as u8,
+  29i32 as u8,
+  21i32 as u8,
+  13i32 as u8,
+  5i32 as u8,
+  28i32 as u8,
+  20i32 as u8,
+  12i32 as u8,
+  4i32 as u8,
 ];
-static mut key_shifts: [uint8_t; 16] = [
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  1i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  2i32 as uint8_t,
-  1i32 as uint8_t,
+static mut key_shifts: [u8; 16] = [
+  1i32 as u8,
+  1i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  1i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  2i32 as u8,
+  1i32 as u8,
 ];
-static mut comp_perm: [uint8_t; 48] = [
-  14i32 as uint8_t,
-  17i32 as uint8_t,
-  11i32 as uint8_t,
-  24i32 as uint8_t,
-  1i32 as uint8_t,
-  5i32 as uint8_t,
-  3i32 as uint8_t,
-  28i32 as uint8_t,
-  15i32 as uint8_t,
-  6i32 as uint8_t,
-  21i32 as uint8_t,
-  10i32 as uint8_t,
-  23i32 as uint8_t,
-  19i32 as uint8_t,
-  12i32 as uint8_t,
-  4i32 as uint8_t,
-  26i32 as uint8_t,
-  8i32 as uint8_t,
-  16i32 as uint8_t,
-  7i32 as uint8_t,
-  27i32 as uint8_t,
-  20i32 as uint8_t,
-  13i32 as uint8_t,
-  2i32 as uint8_t,
-  41i32 as uint8_t,
-  52i32 as uint8_t,
-  31i32 as uint8_t,
-  37i32 as uint8_t,
-  47i32 as uint8_t,
-  55i32 as uint8_t,
-  30i32 as uint8_t,
-  40i32 as uint8_t,
-  51i32 as uint8_t,
-  45i32 as uint8_t,
-  33i32 as uint8_t,
-  48i32 as uint8_t,
-  44i32 as uint8_t,
-  49i32 as uint8_t,
-  39i32 as uint8_t,
-  56i32 as uint8_t,
-  34i32 as uint8_t,
-  53i32 as uint8_t,
-  46i32 as uint8_t,
-  42i32 as uint8_t,
-  50i32 as uint8_t,
-  36i32 as uint8_t,
-  29i32 as uint8_t,
-  32i32 as uint8_t,
+static mut comp_perm: [u8; 48] = [
+  14i32 as u8,
+  17i32 as u8,
+  11i32 as u8,
+  24i32 as u8,
+  1i32 as u8,
+  5i32 as u8,
+  3i32 as u8,
+  28i32 as u8,
+  15i32 as u8,
+  6i32 as u8,
+  21i32 as u8,
+  10i32 as u8,
+  23i32 as u8,
+  19i32 as u8,
+  12i32 as u8,
+  4i32 as u8,
+  26i32 as u8,
+  8i32 as u8,
+  16i32 as u8,
+  7i32 as u8,
+  27i32 as u8,
+  20i32 as u8,
+  13i32 as u8,
+  2i32 as u8,
+  41i32 as u8,
+  52i32 as u8,
+  31i32 as u8,
+  37i32 as u8,
+  47i32 as u8,
+  55i32 as u8,
+  30i32 as u8,
+  40i32 as u8,
+  51i32 as u8,
+  45i32 as u8,
+  33i32 as u8,
+  48i32 as u8,
+  44i32 as u8,
+  49i32 as u8,
+  39i32 as u8,
+  56i32 as u8,
+  34i32 as u8,
+  53i32 as u8,
+  46i32 as u8,
+  42i32 as u8,
+  50i32 as u8,
+  36i32 as u8,
+  29i32 as u8,
+  32i32 as u8,
 ];
 /*
  * No E box is used, as it's replaced by some ANDs, shifts, and ORs.
  */
 /* precomputed, with half-bytes packed into one byte */
-static mut u_sbox: [[uint8_t; 32]; 8] = [
+static mut u_sbox: [[u8; 32]; 8] = [
   [
-    0xei32 as uint8_t,
-    0xf4i32 as uint8_t,
-    0x7di32 as uint8_t,
-    0x41i32 as uint8_t,
-    0xe2i32 as uint8_t,
-    0x2fi32 as uint8_t,
-    0xdbi32 as uint8_t,
-    0x18i32 as uint8_t,
-    0xa3i32 as uint8_t,
-    0x6ai32 as uint8_t,
-    0xc6i32 as uint8_t,
-    0xbci32 as uint8_t,
-    0x95i32 as uint8_t,
-    0x59i32 as uint8_t,
-    0x30i32 as uint8_t,
-    0x87i32 as uint8_t,
-    0xf4i32 as uint8_t,
-    0xc1i32 as uint8_t,
-    0x8ei32 as uint8_t,
-    0x28i32 as uint8_t,
-    0x4di32 as uint8_t,
-    0x96i32 as uint8_t,
-    0x12i32 as uint8_t,
-    0x7bi32 as uint8_t,
-    0x5fi32 as uint8_t,
-    0xbci32 as uint8_t,
-    0x39i32 as uint8_t,
-    0xe7i32 as uint8_t,
-    0xa3i32 as uint8_t,
-    0xai32 as uint8_t,
-    0x65i32 as uint8_t,
-    0xd0i32 as uint8_t,
+    0xei32 as u8,
+    0xf4i32 as u8,
+    0x7di32 as u8,
+    0x41i32 as u8,
+    0xe2i32 as u8,
+    0x2fi32 as u8,
+    0xdbi32 as u8,
+    0x18i32 as u8,
+    0xa3i32 as u8,
+    0x6ai32 as u8,
+    0xc6i32 as u8,
+    0xbci32 as u8,
+    0x95i32 as u8,
+    0x59i32 as u8,
+    0x30i32 as u8,
+    0x87i32 as u8,
+    0xf4i32 as u8,
+    0xc1i32 as u8,
+    0x8ei32 as u8,
+    0x28i32 as u8,
+    0x4di32 as u8,
+    0x96i32 as u8,
+    0x12i32 as u8,
+    0x7bi32 as u8,
+    0x5fi32 as u8,
+    0xbci32 as u8,
+    0x39i32 as u8,
+    0xe7i32 as u8,
+    0xa3i32 as u8,
+    0xai32 as u8,
+    0x65i32 as u8,
+    0xd0i32 as u8,
   ],
   [
-    0x3fi32 as uint8_t,
-    0xd1i32 as uint8_t,
-    0x48i32 as uint8_t,
-    0x7ei32 as uint8_t,
-    0xf6i32 as uint8_t,
-    0x2bi32 as uint8_t,
-    0x83i32 as uint8_t,
-    0xe4i32 as uint8_t,
-    0xc9i32 as uint8_t,
-    0x7i32 as uint8_t,
-    0x12i32 as uint8_t,
-    0xadi32 as uint8_t,
-    0x6ci32 as uint8_t,
-    0x90i32 as uint8_t,
-    0xb5i32 as uint8_t,
-    0x5ai32 as uint8_t,
-    0xd0i32 as uint8_t,
-    0x8ei32 as uint8_t,
-    0xa7i32 as uint8_t,
-    0x1bi32 as uint8_t,
-    0x3ai32 as uint8_t,
-    0xf4i32 as uint8_t,
-    0x4di32 as uint8_t,
-    0x21i32 as uint8_t,
-    0xb5i32 as uint8_t,
-    0x68i32 as uint8_t,
-    0x7ci32 as uint8_t,
-    0xc6i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x53i32 as uint8_t,
-    0xe2i32 as uint8_t,
-    0x9fi32 as uint8_t,
+    0x3fi32 as u8,
+    0xd1i32 as u8,
+    0x48i32 as u8,
+    0x7ei32 as u8,
+    0xf6i32 as u8,
+    0x2bi32 as u8,
+    0x83i32 as u8,
+    0xe4i32 as u8,
+    0xc9i32 as u8,
+    0x7i32 as u8,
+    0x12i32 as u8,
+    0xadi32 as u8,
+    0x6ci32 as u8,
+    0x90i32 as u8,
+    0xb5i32 as u8,
+    0x5ai32 as u8,
+    0xd0i32 as u8,
+    0x8ei32 as u8,
+    0xa7i32 as u8,
+    0x1bi32 as u8,
+    0x3ai32 as u8,
+    0xf4i32 as u8,
+    0x4di32 as u8,
+    0x21i32 as u8,
+    0xb5i32 as u8,
+    0x68i32 as u8,
+    0x7ci32 as u8,
+    0xc6i32 as u8,
+    0x9i32 as u8,
+    0x53i32 as u8,
+    0xe2i32 as u8,
+    0x9fi32 as u8,
   ],
   [
-    0xdai32 as uint8_t,
-    0x70i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x9ei32 as uint8_t,
-    0x36i32 as uint8_t,
-    0x43i32 as uint8_t,
-    0x6fi32 as uint8_t,
-    0xa5i32 as uint8_t,
-    0x21i32 as uint8_t,
-    0x8di32 as uint8_t,
-    0x5ci32 as uint8_t,
-    0xe7i32 as uint8_t,
-    0xcbi32 as uint8_t,
-    0xb4i32 as uint8_t,
-    0xf2i32 as uint8_t,
-    0x18i32 as uint8_t,
-    0x1di32 as uint8_t,
-    0xa6i32 as uint8_t,
-    0xd4i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x68i32 as uint8_t,
-    0x9fi32 as uint8_t,
-    0x83i32 as uint8_t,
-    0x70i32 as uint8_t,
-    0x4bi32 as uint8_t,
-    0xf1i32 as uint8_t,
-    0xe2i32 as uint8_t,
-    0x3ci32 as uint8_t,
-    0xb5i32 as uint8_t,
-    0x5ai32 as uint8_t,
-    0x2ei32 as uint8_t,
-    0xc7i32 as uint8_t,
+    0xdai32 as u8,
+    0x70i32 as u8,
+    0x9i32 as u8,
+    0x9ei32 as u8,
+    0x36i32 as u8,
+    0x43i32 as u8,
+    0x6fi32 as u8,
+    0xa5i32 as u8,
+    0x21i32 as u8,
+    0x8di32 as u8,
+    0x5ci32 as u8,
+    0xe7i32 as u8,
+    0xcbi32 as u8,
+    0xb4i32 as u8,
+    0xf2i32 as u8,
+    0x18i32 as u8,
+    0x1di32 as u8,
+    0xa6i32 as u8,
+    0xd4i32 as u8,
+    0x9i32 as u8,
+    0x68i32 as u8,
+    0x9fi32 as u8,
+    0x83i32 as u8,
+    0x70i32 as u8,
+    0x4bi32 as u8,
+    0xf1i32 as u8,
+    0xe2i32 as u8,
+    0x3ci32 as u8,
+    0xb5i32 as u8,
+    0x5ai32 as u8,
+    0x2ei32 as u8,
+    0xc7i32 as u8,
   ],
   [
-    0xd7i32 as uint8_t,
-    0x8di32 as uint8_t,
-    0xbei32 as uint8_t,
-    0x53i32 as uint8_t,
-    0x60i32 as uint8_t,
-    0xf6i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x3ai32 as uint8_t,
-    0x41i32 as uint8_t,
-    0x72i32 as uint8_t,
-    0x28i32 as uint8_t,
-    0xc5i32 as uint8_t,
-    0x1bi32 as uint8_t,
-    0xaci32 as uint8_t,
-    0xe4i32 as uint8_t,
-    0x9fi32 as uint8_t,
-    0x3ai32 as uint8_t,
-    0xf6i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x60i32 as uint8_t,
-    0xaci32 as uint8_t,
-    0x1bi32 as uint8_t,
-    0xd7i32 as uint8_t,
-    0x8di32 as uint8_t,
-    0x9fi32 as uint8_t,
-    0x41i32 as uint8_t,
-    0x53i32 as uint8_t,
-    0xbei32 as uint8_t,
-    0xc5i32 as uint8_t,
-    0x72i32 as uint8_t,
-    0x28i32 as uint8_t,
-    0xe4i32 as uint8_t,
+    0xd7i32 as u8,
+    0x8di32 as u8,
+    0xbei32 as u8,
+    0x53i32 as u8,
+    0x60i32 as u8,
+    0xf6i32 as u8,
+    0x9i32 as u8,
+    0x3ai32 as u8,
+    0x41i32 as u8,
+    0x72i32 as u8,
+    0x28i32 as u8,
+    0xc5i32 as u8,
+    0x1bi32 as u8,
+    0xaci32 as u8,
+    0xe4i32 as u8,
+    0x9fi32 as u8,
+    0x3ai32 as u8,
+    0xf6i32 as u8,
+    0x9i32 as u8,
+    0x60i32 as u8,
+    0xaci32 as u8,
+    0x1bi32 as u8,
+    0xd7i32 as u8,
+    0x8di32 as u8,
+    0x9fi32 as u8,
+    0x41i32 as u8,
+    0x53i32 as u8,
+    0xbei32 as u8,
+    0xc5i32 as u8,
+    0x72i32 as u8,
+    0x28i32 as u8,
+    0xe4i32 as u8,
   ],
   [
-    0xe2i32 as uint8_t,
-    0xbci32 as uint8_t,
-    0x24i32 as uint8_t,
-    0xc1i32 as uint8_t,
-    0x47i32 as uint8_t,
-    0x7ai32 as uint8_t,
-    0xdbi32 as uint8_t,
-    0x16i32 as uint8_t,
-    0x58i32 as uint8_t,
-    0x5i32 as uint8_t,
-    0xf3i32 as uint8_t,
-    0xafi32 as uint8_t,
-    0x3di32 as uint8_t,
-    0x90i32 as uint8_t,
-    0x8ei32 as uint8_t,
-    0x69i32 as uint8_t,
-    0xb4i32 as uint8_t,
-    0x82i32 as uint8_t,
-    0xc1i32 as uint8_t,
-    0x7bi32 as uint8_t,
-    0x1ai32 as uint8_t,
-    0xedi32 as uint8_t,
-    0x27i32 as uint8_t,
-    0xd8i32 as uint8_t,
-    0x6fi32 as uint8_t,
-    0xf9i32 as uint8_t,
-    0xci32 as uint8_t,
-    0x95i32 as uint8_t,
-    0xa6i32 as uint8_t,
-    0x43i32 as uint8_t,
-    0x50i32 as uint8_t,
-    0x3ei32 as uint8_t,
+    0xe2i32 as u8,
+    0xbci32 as u8,
+    0x24i32 as u8,
+    0xc1i32 as u8,
+    0x47i32 as u8,
+    0x7ai32 as u8,
+    0xdbi32 as u8,
+    0x16i32 as u8,
+    0x58i32 as u8,
+    0x5i32 as u8,
+    0xf3i32 as u8,
+    0xafi32 as u8,
+    0x3di32 as u8,
+    0x90i32 as u8,
+    0x8ei32 as u8,
+    0x69i32 as u8,
+    0xb4i32 as u8,
+    0x82i32 as u8,
+    0xc1i32 as u8,
+    0x7bi32 as u8,
+    0x1ai32 as u8,
+    0xedi32 as u8,
+    0x27i32 as u8,
+    0xd8i32 as u8,
+    0x6fi32 as u8,
+    0xf9i32 as u8,
+    0xci32 as u8,
+    0x95i32 as u8,
+    0xa6i32 as u8,
+    0x43i32 as u8,
+    0x50i32 as u8,
+    0x3ei32 as u8,
   ],
   [
-    0xaci32 as uint8_t,
-    0xf1i32 as uint8_t,
-    0x4ai32 as uint8_t,
-    0x2fi32 as uint8_t,
-    0x79i32 as uint8_t,
-    0xc2i32 as uint8_t,
-    0x96i32 as uint8_t,
-    0x58i32 as uint8_t,
-    0x60i32 as uint8_t,
-    0x1di32 as uint8_t,
-    0xd3i32 as uint8_t,
-    0xe4i32 as uint8_t,
-    0xei32 as uint8_t,
-    0xb7i32 as uint8_t,
-    0x35i32 as uint8_t,
-    0x8bi32 as uint8_t,
-    0x49i32 as uint8_t,
-    0x3ei32 as uint8_t,
-    0x2fi32 as uint8_t,
-    0xc5i32 as uint8_t,
-    0x92i32 as uint8_t,
-    0x58i32 as uint8_t,
-    0xfci32 as uint8_t,
-    0xa3i32 as uint8_t,
-    0xb7i32 as uint8_t,
-    0xe0i32 as uint8_t,
-    0x14i32 as uint8_t,
-    0x7ai32 as uint8_t,
-    0x61i32 as uint8_t,
-    0xdi32 as uint8_t,
-    0x8bi32 as uint8_t,
-    0xd6i32 as uint8_t,
+    0xaci32 as u8,
+    0xf1i32 as u8,
+    0x4ai32 as u8,
+    0x2fi32 as u8,
+    0x79i32 as u8,
+    0xc2i32 as u8,
+    0x96i32 as u8,
+    0x58i32 as u8,
+    0x60i32 as u8,
+    0x1di32 as u8,
+    0xd3i32 as u8,
+    0xe4i32 as u8,
+    0xei32 as u8,
+    0xb7i32 as u8,
+    0x35i32 as u8,
+    0x8bi32 as u8,
+    0x49i32 as u8,
+    0x3ei32 as u8,
+    0x2fi32 as u8,
+    0xc5i32 as u8,
+    0x92i32 as u8,
+    0x58i32 as u8,
+    0xfci32 as u8,
+    0xa3i32 as u8,
+    0xb7i32 as u8,
+    0xe0i32 as u8,
+    0x14i32 as u8,
+    0x7ai32 as u8,
+    0x61i32 as u8,
+    0xdi32 as u8,
+    0x8bi32 as u8,
+    0xd6i32 as u8,
   ],
   [
-    0xd4i32 as uint8_t,
-    0xbi32 as uint8_t,
-    0xb2i32 as uint8_t,
-    0x7ei32 as uint8_t,
-    0x4fi32 as uint8_t,
-    0x90i32 as uint8_t,
-    0x18i32 as uint8_t,
-    0xadi32 as uint8_t,
-    0xe3i32 as uint8_t,
-    0x3ci32 as uint8_t,
-    0x59i32 as uint8_t,
-    0xc7i32 as uint8_t,
-    0x25i32 as uint8_t,
-    0xfai32 as uint8_t,
-    0x86i32 as uint8_t,
-    0x61i32 as uint8_t,
-    0x61i32 as uint8_t,
-    0xb4i32 as uint8_t,
-    0xdbi32 as uint8_t,
-    0x8di32 as uint8_t,
-    0x1ci32 as uint8_t,
-    0x43i32 as uint8_t,
-    0xa7i32 as uint8_t,
-    0x7ei32 as uint8_t,
-    0x9ai32 as uint8_t,
-    0x5fi32 as uint8_t,
-    0x6i32 as uint8_t,
-    0xf8i32 as uint8_t,
-    0xe0i32 as uint8_t,
-    0x25i32 as uint8_t,
-    0x39i32 as uint8_t,
-    0xc2i32 as uint8_t,
+    0xd4i32 as u8,
+    0xbi32 as u8,
+    0xb2i32 as u8,
+    0x7ei32 as u8,
+    0x4fi32 as u8,
+    0x90i32 as u8,
+    0x18i32 as u8,
+    0xadi32 as u8,
+    0xe3i32 as u8,
+    0x3ci32 as u8,
+    0x59i32 as u8,
+    0xc7i32 as u8,
+    0x25i32 as u8,
+    0xfai32 as u8,
+    0x86i32 as u8,
+    0x61i32 as u8,
+    0x61i32 as u8,
+    0xb4i32 as u8,
+    0xdbi32 as u8,
+    0x8di32 as u8,
+    0x1ci32 as u8,
+    0x43i32 as u8,
+    0xa7i32 as u8,
+    0x7ei32 as u8,
+    0x9ai32 as u8,
+    0x5fi32 as u8,
+    0x6i32 as u8,
+    0xf8i32 as u8,
+    0xe0i32 as u8,
+    0x25i32 as u8,
+    0x39i32 as u8,
+    0xc2i32 as u8,
   ],
   [
-    0x1di32 as uint8_t,
-    0xf2i32 as uint8_t,
-    0xd8i32 as uint8_t,
-    0x84i32 as uint8_t,
-    0xa6i32 as uint8_t,
-    0x3fi32 as uint8_t,
-    0x7bi32 as uint8_t,
-    0x41i32 as uint8_t,
-    0xcai32 as uint8_t,
-    0x59i32 as uint8_t,
-    0x63i32 as uint8_t,
-    0xbei32 as uint8_t,
-    0x5i32 as uint8_t,
-    0xe0i32 as uint8_t,
-    0x9ci32 as uint8_t,
-    0x27i32 as uint8_t,
-    0x27i32 as uint8_t,
-    0x1bi32 as uint8_t,
-    0xe4i32 as uint8_t,
-    0x71i32 as uint8_t,
-    0x49i32 as uint8_t,
-    0xaci32 as uint8_t,
-    0x8ei32 as uint8_t,
-    0xd2i32 as uint8_t,
-    0xf0i32 as uint8_t,
-    0xc6i32 as uint8_t,
-    0x9ai32 as uint8_t,
-    0xdi32 as uint8_t,
-    0x3fi32 as uint8_t,
-    0x53i32 as uint8_t,
-    0x65i32 as uint8_t,
-    0xb8i32 as uint8_t,
+    0x1di32 as u8,
+    0xf2i32 as u8,
+    0xd8i32 as u8,
+    0x84i32 as u8,
+    0xa6i32 as u8,
+    0x3fi32 as u8,
+    0x7bi32 as u8,
+    0x41i32 as u8,
+    0xcai32 as u8,
+    0x59i32 as u8,
+    0x63i32 as u8,
+    0xbei32 as u8,
+    0x5i32 as u8,
+    0xe0i32 as u8,
+    0x9ci32 as u8,
+    0x27i32 as u8,
+    0x27i32 as u8,
+    0x1bi32 as u8,
+    0xe4i32 as u8,
+    0x71i32 as u8,
+    0x49i32 as u8,
+    0xaci32 as u8,
+    0x8ei32 as u8,
+    0xd2i32 as u8,
+    0xf0i32 as u8,
+    0xc6i32 as u8,
+    0x9ai32 as u8,
+    0xdi32 as u8,
+    0x3fi32 as u8,
+    0x53i32 as u8,
+    0x65i32 as u8,
+    0xb8i32 as u8,
   ],
 ];
-static mut pbox: [uint8_t; 32] = [
-  16i32 as uint8_t,
-  7i32 as uint8_t,
-  20i32 as uint8_t,
-  21i32 as uint8_t,
-  29i32 as uint8_t,
-  12i32 as uint8_t,
-  28i32 as uint8_t,
-  17i32 as uint8_t,
-  1i32 as uint8_t,
-  15i32 as uint8_t,
-  23i32 as uint8_t,
-  26i32 as uint8_t,
-  5i32 as uint8_t,
-  18i32 as uint8_t,
-  31i32 as uint8_t,
-  10i32 as uint8_t,
-  2i32 as uint8_t,
-  8i32 as uint8_t,
-  24i32 as uint8_t,
-  14i32 as uint8_t,
-  32i32 as uint8_t,
-  27i32 as uint8_t,
-  3i32 as uint8_t,
-  9i32 as uint8_t,
-  19i32 as uint8_t,
-  13i32 as uint8_t,
-  30i32 as uint8_t,
-  6i32 as uint8_t,
-  22i32 as uint8_t,
-  11i32 as uint8_t,
-  4i32 as uint8_t,
-  25i32 as uint8_t,
+static mut pbox: [u8; 32] = [
+  16i32 as u8,
+  7i32 as u8,
+  20i32 as u8,
+  21i32 as u8,
+  29i32 as u8,
+  12i32 as u8,
+  28i32 as u8,
+  17i32 as u8,
+  1i32 as u8,
+  15i32 as u8,
+  23i32 as u8,
+  26i32 as u8,
+  5i32 as u8,
+  18i32 as u8,
+  31i32 as u8,
+  10i32 as u8,
+  2i32 as u8,
+  8i32 as u8,
+  24i32 as u8,
+  14i32 as u8,
+  32i32 as u8,
+  27i32 as u8,
+  3i32 as u8,
+  9i32 as u8,
+  19i32 as u8,
+  13i32 as u8,
+  30i32 as u8,
+  6i32 as u8,
+  22i32 as u8,
+  11i32 as u8,
+  4i32 as u8,
+  25i32 as u8,
 ];
-static mut bits32: [uint32_t; 32] = [
+static mut bits32: [u32; 32] = [
   0x80000000u32,
-  0x40000000i32 as uint32_t,
-  0x20000000i32 as uint32_t,
-  0x10000000i32 as uint32_t,
-  0x8000000i32 as uint32_t,
-  0x4000000i32 as uint32_t,
-  0x2000000i32 as uint32_t,
-  0x1000000i32 as uint32_t,
-  0x800000i32 as uint32_t,
-  0x400000i32 as uint32_t,
-  0x200000i32 as uint32_t,
-  0x100000i32 as uint32_t,
-  0x80000i32 as uint32_t,
-  0x40000i32 as uint32_t,
-  0x20000i32 as uint32_t,
-  0x10000i32 as uint32_t,
-  0x8000i32 as uint32_t,
-  0x4000i32 as uint32_t,
-  0x2000i32 as uint32_t,
-  0x1000i32 as uint32_t,
-  0x800i32 as uint32_t,
-  0x400i32 as uint32_t,
-  0x200i32 as uint32_t,
-  0x100i32 as uint32_t,
-  0x80i32 as uint32_t,
-  0x40i32 as uint32_t,
-  0x20i32 as uint32_t,
-  0x10i32 as uint32_t,
-  0x8i32 as uint32_t,
-  0x4i32 as uint32_t,
-  0x2i32 as uint32_t,
-  0x1i32 as uint32_t,
+  0x40000000i32 as u32,
+  0x20000000i32 as u32,
+  0x10000000i32 as u32,
+  0x8000000i32 as u32,
+  0x4000000i32 as u32,
+  0x2000000i32 as u32,
+  0x1000000i32 as u32,
+  0x800000i32 as u32,
+  0x400000i32 as u32,
+  0x200000i32 as u32,
+  0x100000i32 as u32,
+  0x80000i32 as u32,
+  0x40000i32 as u32,
+  0x20000i32 as u32,
+  0x10000i32 as u32,
+  0x8000i32 as u32,
+  0x4000i32 as u32,
+  0x2000i32 as u32,
+  0x1000i32 as u32,
+  0x800i32 as u32,
+  0x400i32 as u32,
+  0x200i32 as u32,
+  0x100i32 as u32,
+  0x80i32 as u32,
+  0x40i32 as u32,
+  0x20i32 as u32,
+  0x10i32 as u32,
+  0x8i32 as u32,
+  0x4i32 as u32,
+  0x2i32 as u32,
+  0x1i32 as u32,
 ];
-static mut bits8: [uint8_t; 8] = [
-  0x80i32 as uint8_t,
-  0x40i32 as uint8_t,
-  0x20i32 as uint8_t,
-  0x10i32 as uint8_t,
-  0x8i32 as uint8_t,
-  0x4i32 as uint8_t,
-  0x2i32 as uint8_t,
-  0x1i32 as uint8_t,
+static mut bits8: [u8; 8] = [
+  0x80i32 as u8,
+  0x40i32 as u8,
+  0x20i32 as u8,
+  0x10i32 as u8,
+  0x8i32 as u8,
+  0x4i32 as u8,
+  0x2i32 as u8,
+  0x1i32 as u8,
 ];
 unsafe extern "C" fn ascii_to_bin(mut ch: libc::c_char) -> libc::c_int {
   if ch as libc::c_int > 'z' as i32 {
@@ -881,19 +881,19 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
     while i < 64i32 as libc::c_uint {
       j = 0i32 as libc::c_uint;
       while j < 64i32 as libc::c_uint {
-        let mut lo: uint8_t = 0;
-        let mut hi: uint8_t = 0;
+        let mut lo: u8 = 0;
+        let mut hi: u8 = 0;
         hi = u_sbox[(b << 1i32) as usize][i.wrapping_div(2i32 as libc::c_uint) as usize];
         if i & 1i32 as libc::c_uint == 0 {
-          hi = ((hi as libc::c_int) << 4i32) as uint8_t
+          hi = ((hi as libc::c_int) << 4i32) as u8
         }
         lo = u_sbox[(b << 1i32).wrapping_add(1i32 as libc::c_uint) as usize]
           [j.wrapping_div(2i32 as libc::c_uint) as usize];
         if j & 1i32 as libc::c_uint != 0 {
-          lo = (lo as libc::c_int >> 4i32) as uint8_t
+          lo = (lo as libc::c_int >> 4i32) as u8
         }
         (*cctx).m_sbox[b as usize][(i << 6i32 | j) as usize] =
-          (hi as libc::c_int & 0xf0i32 | lo as libc::c_int & 0xfi32) as uint8_t;
+          (hi as libc::c_int & 0xf0i32 | lo as libc::c_int & 0xfi32) as u8;
         j = j.wrapping_add(1)
       }
       i = i.wrapping_add(1)
@@ -905,7 +905,7 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
    */
   i = 0i32 as libc::c_uint;
   while i < 64i32 as libc::c_uint {
-    (*cctx).final_perm[i as usize] = (IP[i as usize] as libc::c_int - 1i32) as uint8_t;
+    (*cctx).final_perm[i as usize] = (IP[i as usize] as libc::c_int - 1i32) as u8;
     i = i.wrapping_add(1)
   }
   return cctx;
@@ -920,20 +920,20 @@ unsafe extern "C" fn des_init(
   let mut k: libc::c_int = 0;
   let mut inbit: libc::c_int = 0;
   let mut obit: libc::c_int = 0;
-  let mut p: uint32_t = 0;
-  let mut bits28: *const uint32_t = 0 as *const uint32_t;
-  let mut bits24: *const uint32_t = 0 as *const uint32_t;
+  let mut p: u32 = 0;
+  let mut bits28: *const u32 = 0 as *const u32;
+  let mut bits24: *const u32 = 0 as *const u32;
   if ctx.is_null() {
     ctx = xmalloc(::std::mem::size_of::<des_ctx>() as libc::c_ulong) as *mut des_ctx
   }
   (*ctx).const_ctx = cctx;
-  (*ctx).saltbits = 0i32 as uint32_t;
+  (*ctx).saltbits = 0i32 as u32;
   bits28 = bits32.as_ptr().offset(4);
   bits24 = bits28.offset(4);
   /* Initialise the inverted key permutation. */
   i = 0i32;
   while i < 64i32 {
-    (*ctx).inv_key_perm[i as usize] = 255i32 as uint8_t;
+    (*ctx).inv_key_perm[i as usize] = 255i32 as u8;
     i += 1
   }
   /*
@@ -942,14 +942,14 @@ unsafe extern "C" fn des_init(
    */
   i = 0i32;
   while i < 56i32 {
-    (*ctx).inv_key_perm[(key_perm[i as usize] as libc::c_int - 1i32) as usize] = i as uint8_t;
-    (*ctx).inv_comp_perm[i as usize] = 255i32 as uint8_t;
+    (*ctx).inv_key_perm[(key_perm[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
+    (*ctx).inv_comp_perm[i as usize] = 255i32 as u8;
     i += 1
   }
   /* Invert the key compression permutation. */
   i = 0i32;
   while i < 48i32 {
-    (*ctx).inv_comp_perm[(comp_perm[i as usize] as libc::c_int - 1i32) as usize] = i as uint8_t;
+    (*ctx).inv_comp_perm[(comp_perm[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
     i += 1
   }
   /*
@@ -958,14 +958,14 @@ unsafe extern "C" fn des_init(
    */
   k = 0i32;
   while k < 8i32 {
-    let mut il: uint32_t = 0;
-    let mut ir: uint32_t = 0;
-    let mut fl: uint32_t = 0;
-    let mut fr: uint32_t = 0;
+    let mut il: u32 = 0;
+    let mut ir: u32 = 0;
+    let mut fl: u32 = 0;
+    let mut fr: u32 = 0;
     i = 0i32;
     while i < 256i32 {
-      fl = 0i32 as uint32_t;
-      fr = 0i32 as uint32_t;
+      fl = 0i32 as u32;
+      fr = 0i32 as u32;
       j = 0i32;
       while j < 8i32 {
         inbit = 8i32 * k + j;
@@ -985,8 +985,8 @@ unsafe extern "C" fn des_init(
     }
     i = 0i32;
     while i < 128i32 {
-      il = 0i32 as uint32_t;
-      ir = 0i32 as uint32_t;
+      il = 0i32 as u32;
+      ir = 0i32 as u32;
       j = 0i32;
       while j < 7i32 {
         inbit = 8i32 * k + j;
@@ -1004,8 +1004,8 @@ unsafe extern "C" fn des_init(
       }
       (*ctx).key_perm_maskl[k as usize][i as usize] = il;
       (*ctx).key_perm_maskr[k as usize][i as usize] = ir;
-      il = 0i32 as uint32_t;
-      ir = 0i32 as uint32_t;
+      il = 0i32 as u32;
+      ir = 0i32 as u32;
       j = 0i32;
       while j < 7i32 {
         inbit = 7i32 * k + j;
@@ -1033,14 +1033,14 @@ unsafe extern "C" fn des_init(
    */
   i = 0i32;
   while i < 32i32 {
-    (*ctx).un_pbox[(pbox[i as usize] as libc::c_int - 1i32) as usize] = i as uint8_t;
+    (*ctx).un_pbox[(pbox[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
     i += 1
   }
   b = 0i32;
   while b < 4i32 {
     i = 0i32;
     while i < 256i32 {
-      p = 0i32 as uint32_t;
+      p = 0i32 as u32;
       j = 0i32;
       while j < 8i32 {
         if i & bits8[j as usize] as libc::c_int != 0 {
@@ -1055,13 +1055,13 @@ unsafe extern "C" fn des_init(
   }
   return ctx;
 }
-unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: uint32_t) {
-  let mut obit: uint32_t = 0;
-  let mut saltbit: uint32_t = 0;
+unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: u32) {
+  let mut obit: u32 = 0;
+  let mut saltbit: u32 = 0;
   let mut i: libc::c_int = 0;
-  (*ctx).saltbits = 0i32 as uint32_t;
-  saltbit = 1i32 as uint32_t;
-  obit = 0x800000i32 as uint32_t;
+  (*ctx).saltbits = 0i32 as u32;
+  saltbit = 1i32 as u32;
+  obit = 0x800000i32 as u32;
   i = 0i32;
   while i < 24i32 {
     if salt & saltbit != 0 {
@@ -1073,15 +1073,15 @@ unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: uint32_t) {
   }
 }
 unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_char) {
-  let mut k0: uint32_t = 0;
-  let mut k1: uint32_t = 0;
-  let mut rawkey0: uint32_t = 0;
-  let mut rawkey1: uint32_t = 0;
+  let mut k0: u32 = 0;
+  let mut k1: u32 = 0;
+  let mut rawkey0: u32 = 0;
+  let mut rawkey1: u32 = 0;
   let mut shifts: libc::c_int = 0;
   let mut round: libc::c_int = 0;
   rawkey0 = {
     let mut __v: libc::c_uint = 0;
-    let mut __x: libc::c_uint = *(key as *const uint32_t);
+    let mut __x: libc::c_uint = *(key as *const u32);
     if 0 != 0 {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -1099,7 +1099,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   };
   rawkey1 = {
     let mut __v: libc::c_uint = 0;
-    let mut __x: libc::c_uint = *(key.offset(4) as *const uint32_t);
+    let mut __x: libc::c_uint = *(key.offset(4) as *const u32);
     if 0 != 0 {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -1141,8 +1141,8 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   shifts = 0i32;
   round = 0i32;
   while round < 16i32 {
-    let mut t0: uint32_t = 0;
-    let mut t1: uint32_t = 0;
+    let mut t0: u32 = 0;
+    let mut t1: u32 = 0;
     shifts += key_shifts[round as usize] as libc::c_int;
     t0 = k0 << shifts | k0 >> 28i32 - shifts;
     t1 = k1 << shifts | k1 >> 28i32 - shifts;
@@ -1169,27 +1169,27 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
 }
 unsafe extern "C" fn do_des(
   mut ctx: *mut des_ctx,
-  mut l_out: *mut uint32_t,
-  mut r_out: *mut uint32_t,
+  mut l_out: *mut u32,
+  mut r_out: *mut u32,
   mut count: libc::c_int,
 ) {
   let mut cctx: *const const_des_ctx = (*ctx).const_ctx;
   /*
    * l_in, r_in, l_out, and r_out are in pseudo-"big-endian" format.
    */
-  let mut l: uint32_t = 0; /* silence gcc */
-  let mut r: uint32_t = 0;
-  let mut kl: *mut uint32_t = 0 as *mut uint32_t;
-  let mut kr: *mut uint32_t = 0 as *mut uint32_t;
-  let mut f: uint32_t = 0;
+  let mut l: u32 = 0; /* silence gcc */
+  let mut r: u32 = 0;
+  let mut kl: *mut u32 = 0 as *mut u32;
+  let mut kr: *mut u32 = 0 as *mut u32;
+  let mut f: u32 = 0;
   f = f;
-  let mut r48l: uint32_t = 0;
-  let mut r48r: uint32_t = 0;
+  let mut r48l: u32 = 0;
+  let mut r48r: u32 = 0;
   let mut round: libc::c_int = 0;
   /* Do initial permutation (IP). */
   /* -65 bytes (using the fact that l_in == r_in == 0) */
   /* using the fact that ip_maskX[] is constant (written to by des_init) */
-  r = 0i32 as uint32_t;
+  r = 0i32 as u32;
   l = r;
   loop {
     /* Do each round. */
@@ -1281,20 +1281,20 @@ unsafe extern "C" fn des_crypt(
   mut key: *const libc::c_uchar,
   mut setting: *const libc::c_uchar,
 ) -> *mut libc::c_char {
-  let mut salt: uint32_t = 0;
-  let mut r0: uint32_t = 0;
-  let mut r1: uint32_t = 0;
-  let mut keybuf: [uint32_t; 2] = [0; 2];
-  let mut q: *mut uint8_t = 0 as *mut uint8_t;
+  let mut salt: u32 = 0;
+  let mut r0: u32 = 0;
+  let mut r1: u32 = 0;
+  let mut keybuf: [u32; 2] = [0; 2];
+  let mut q: *mut u8 = 0 as *mut u8;
   /*
    * Copy the key, shifting each character up by one bit
    * and padding with zeros.
    */
-  q = keybuf.as_mut_ptr() as *mut uint8_t;
-  while q.wrapping_offset_from(keybuf.as_mut_ptr() as *mut uint8_t) as libc::c_long
+  q = keybuf.as_mut_ptr() as *mut u8;
+  while q.wrapping_offset_from(keybuf.as_mut_ptr() as *mut u8) as libc::c_long
     != 8i32 as libc::c_long
   {
-    *q = ((*key as libc::c_int) << 1i32) as uint8_t;
+    *q = ((*key as libc::c_int) << 1i32) as u8;
     if *q != 0 {
       key = key.offset(1)
     }
@@ -1306,7 +1306,7 @@ unsafe extern "C" fn des_crypt(
    * key - up to 8 characters
    */
   salt = (ascii_to_bin(*setting.offset(1) as libc::c_char) << 6i32
-    | ascii_to_bin(*setting.offset(0) as libc::c_char)) as uint32_t;
+    | ascii_to_bin(*setting.offset(0) as libc::c_char)) as u32;
   *output.offset(0) = *setting.offset(0) as libc::c_char;
   /*
    * If the encrypted password that the salt was extracted from
@@ -1493,7 +1493,7 @@ unsafe extern "C" fn sha_crypt(
   let mut _32or64: libc::c_int = 0;
   let mut result: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut resptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  /* btw, sha256 needs [32] and uint32_t only */
+  /* btw, sha256 needs [32] and u32 only */
   let mut L: C2RustUnnamed = C2RustUnnamed {
     alt_result: [0; 64],
     temp_result: [0; 64],
@@ -2204,7 +2204,7 @@ unsafe extern "C" fn my_crypt_cleanup() {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

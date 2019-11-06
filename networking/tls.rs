@@ -78,11 +78,11 @@ extern "C" {
    */
   #[no_mangle]
   fn aesgcm_GHASH(
-    h: *mut uint8_t,
-    a: *const uint8_t,
-    c: *const uint8_t,
+    h: *mut u8,
+    a: *const u8,
+    c: *const u8,
     cSz: libc::c_uint,
-    s: *mut uint8_t,
+    s: *mut u8,
   );
   #[no_mangle]
   fn aes_cbc_encrypt(
@@ -105,7 +105,7 @@ extern "C" {
   #[no_mangle]
   fn aes_setkey(aes: *mut tls_aes, key: *const libc::c_void, key_len: libc::c_uint);
   #[no_mangle]
-  fn curve25519(result: *mut uint8_t, e: *const uint8_t, q: *const uint8_t);
+  fn curve25519(result: *mut u8, e: *const u8, q: *const u8);
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -140,11 +140,11 @@ pub struct __va_list_tag {
 use crate::librb::__uint64_t;
 
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+pub type bb__aliased_u32 = u32;
 pub type bb__aliased_uint64_t = uint64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -162,17 +162,17 @@ pub struct pollfd {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tls_aes {
-  pub key: [uint32_t; 60],
+  pub key: [u32; 60],
   pub rounds: libc::c_uint,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tls_handshake_data {
   pub handshake_hash_ctx: md5sha_ctx_t,
-  pub client_and_server_rand32: [uint8_t; 64],
-  pub master_secret: [uint8_t; 48],
+  pub client_and_server_rand32: [u8; 64],
+  pub master_secret: [u8; 48],
   pub server_rsa_pub_key: psRsaKey_t,
-  pub ecc_pub_key32: [uint8_t; 32],
+  pub ecc_pub_key32: [u8; 32],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -189,7 +189,7 @@ pub struct psRsaKey_t {
   pub optimized: int32,
 }
 pub type int32 = int32_t;
-pub type uint32 = uint32_t;
+pub type uint32 = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pstm_int {
@@ -545,42 +545,42 @@ pub struct tls_state {
   pub ofd: libc::c_int,
   pub ifd: libc::c_int,
   pub min_encrypted_len_on_read: libc::c_uint,
-  pub cipher_id: uint16_t,
+  pub cipher_id: u16,
   pub MAC_size: libc::c_uint,
   pub key_size: libc::c_uint,
   pub IV_size: libc::c_uint,
-  pub outbuf: *mut uint8_t,
+  pub outbuf: *mut u8,
   pub outbuf_size: libc::c_int,
   pub inbuf_size: libc::c_int,
   pub ofs_to_buffered: libc::c_int,
   pub buffered_size: libc::c_int,
-  pub inbuf: *mut uint8_t,
+  pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
   pub write_seq64_be: uint64_t,
-  pub client_write_key: *mut uint8_t,
-  pub server_write_key: *mut uint8_t,
-  pub client_write_IV: *mut uint8_t,
-  pub server_write_IV: *mut uint8_t,
-  pub client_write_MAC_key: [uint8_t; 32],
-  pub server_write_MAC_k__: [uint8_t; 32],
-  pub client_write_k__: [uint8_t; 32],
-  pub server_write_k__: [uint8_t; 32],
-  pub client_write_I_: [uint8_t; 4],
-  pub server_write_I_: [uint8_t; 4],
+  pub client_write_key: *mut u8,
+  pub server_write_key: *mut u8,
+  pub client_write_IV: *mut u8,
+  pub server_write_IV: *mut u8,
+  pub client_write_MAC_key: [u8; 32],
+  pub server_write_MAC_k__: [u8; 32],
+  pub client_write_k__: [u8; 32],
+  pub server_write_k__: [u8; 32],
+  pub client_write_I_: [u8; 4],
+  pub server_write_I_: [u8; 4],
   pub aes_encrypt: tls_aes,
   pub aes_decrypt: tls_aes,
-  pub H: [uint8_t; 16],
+  pub H: [u8; 16],
 }
 pub type tls_state_t = tls_state;
 pub const RECHDR_LEN: C2RustUnnamed = 5;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct record_hdr {
-  pub type_0: uint8_t,
-  pub proto_maj: uint8_t,
-  pub proto_min: uint8_t,
-  pub len16_hi: uint8_t,
-  pub len16_lo: uint8_t,
+  pub type_0: u8,
+  pub proto_maj: u8,
+  pub proto_min: u8,
+  pub len16_hi: u8,
+  pub len16_lo: u8,
 }
 pub const SHA256_OUTSIZE: C2RustUnnamed = 32;
 pub const ENCRYPTION_AESGCM: C2RustUnnamed = 16;
@@ -588,11 +588,11 @@ pub const MAX_INBUF: C2RustUnnamed = 18437;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct finished {
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
-  pub prf_result: [uint8_t; 12],
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
+  pub prf_result: [u8; 12],
 }
 pub const OUTBUF_PFX: C2RustUnnamed = 24;
 pub const OUTBUF_SFX: C2RustUnnamed = 48;
@@ -619,20 +619,20 @@ use crate::librb::sha256_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct handshake_hdr {
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
 }
 pub const ENCRYPT_ON_WRITE: C2RustUnnamed = 32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct client_key_exchange {
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
-  pub key: [uint8_t; 4098],
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
+  pub key: [u8; 4098],
   // size??
 }
 pub const GOT_EC_KEY: C2RustUnnamed = 8;
@@ -641,13 +641,13 @@ pub const NEED_EC_KEY: C2RustUnnamed = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct client_empty_cert {
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
-  pub cert_chain_len24_hi: uint8_t,
-  pub cert_chain_len24_mid: uint8_t,
-  pub cert_chain_len24_lo: uint8_t,
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
+  pub cert_chain_len24_hi: u8,
+  pub cert_chain_len24_mid: u8,
+  pub cert_chain_len24_lo: u8,
 }
 pub const SHA1_OUTSIZE: C2RustUnnamed = 20;
 pub const AES128_KEYSIZE: C2RustUnnamed = 16;
@@ -656,36 +656,36 @@ pub const AES256_KEYSIZE: C2RustUnnamed = 32;
 #[repr(C)]
 pub struct server_hello {
   pub xhdr: record_hdr,
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
-  pub proto_maj: uint8_t,
-  pub proto_min: uint8_t,
-  pub rand32: [uint8_t; 32],
-  pub session_id_len: uint8_t,
-  pub session_id: [uint8_t; 32],
-  pub cipherid_hi: uint8_t,
-  pub cipherid_lo: uint8_t,
-  pub comprtype: uint8_t,
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
+  pub proto_maj: u8,
+  pub proto_min: u8,
+  pub rand32: [u8; 32],
+  pub session_id_len: u8,
+  pub session_id: [u8; 32],
+  pub cipherid_hi: u8,
+  pub cipherid_lo: u8,
+  pub comprtype: u8,
   /* extensions may follow, but only those which client offered in its Hello */
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct client_hello {
-  pub type_0: uint8_t,
-  pub len24_hi: uint8_t,
-  pub len24_mid: uint8_t,
-  pub len24_lo: uint8_t,
-  pub proto_maj: uint8_t,
-  pub proto_min: uint8_t,
-  pub rand32: [uint8_t; 32],
-  pub session_id_len: uint8_t,
-  pub cipherid_len16_hi: uint8_t,
-  pub cipherid_len16_lo: uint8_t,
-  pub cipherid: [uint8_t; 16],
-  pub comprtypes_len: uint8_t,
-  pub comprtypes: [uint8_t; 1],
+  pub type_0: u8,
+  pub len24_hi: u8,
+  pub len24_mid: u8,
+  pub len24_lo: u8,
+  pub proto_maj: u8,
+  pub proto_min: u8,
+  pub rand32: [u8; 32],
+  pub session_id_len: u8,
+  pub cipherid_len16_hi: u8,
+  pub cipherid_len16_lo: u8,
+  pub cipherid: [u8; 16],
+  pub comprtypes_len: u8,
+  pub comprtypes: [u8; 1],
   /* actually variable */
   /* Extensions (SNI shown):
    * hi,lo // len of all extensions
@@ -724,8 +724,8 @@ unsafe extern "C" fn psRsaKey_clear(mut key: *mut psRsaKey_t) {
 }
 /* HANDSHAKE HASH: */
 //unsigned saved_client_hello_size;
-//uint8_t saved_client_hello[1];
-unsafe extern "C" fn get24be(mut p: *const uint8_t) -> libc::c_uint {
+//u8 saved_client_hello[1];
+unsafe extern "C" fn get24be(mut p: *const u8) -> libc::c_uint {
   return (0x100i32 * (0x100i32 * *p.offset(0) as libc::c_int + *p.offset(1) as libc::c_int)
     + *p.offset(2) as libc::c_int) as libc::c_uint;
 }
@@ -747,9 +747,9 @@ unsafe extern "C" fn xorbuf3(
   mut src2: *const libc::c_void,
   mut count: libc::c_uint,
 ) {
-  let mut d: *mut uint8_t = dst as *mut uint8_t;
-  let mut s1: *const uint8_t = src1 as *const uint8_t;
-  let mut s2: *const uint8_t = src2 as *const uint8_t;
+  let mut d: *mut u8 = dst as *mut u8;
+  let mut s1: *const u8 = src1 as *const u8;
+  let mut s2: *const u8 = src2 as *const u8;
   loop {
     let fresh0 = count;
     count = count.wrapping_sub(1);
@@ -762,7 +762,7 @@ unsafe extern "C" fn xorbuf3(
     s2 = s2.offset(1);
     let fresh3 = d;
     d = d.offset(1);
-    *fresh3 = (*fresh1 as libc::c_int ^ *fresh2 as libc::c_int) as uint8_t
+    *fresh3 = (*fresh1 as libc::c_int ^ *fresh2 as libc::c_int) as u8
   }
 }
 #[no_mangle]
@@ -820,12 +820,12 @@ unsafe extern "C" fn hash_handshake(
 }
 unsafe extern "C" fn hmac_begin(
   mut pre: *mut hmac_precomputed_t,
-  mut key: *mut uint8_t,
+  mut key: *mut u8,
   mut key_size: libc::c_uint,
 ) {
-  let mut key_xor_ipad: [uint8_t; 64] = [0; 64];
-  let mut key_xor_opad: [uint8_t; 64] = [0; 64];
-  //	uint8_t tempkey[SHA1_OUTSIZE < SHA256_OUTSIZE ? SHA256_OUTSIZE : SHA1_OUTSIZE];
+  let mut key_xor_ipad: [u8; 64] = [0; 64];
+  let mut key_xor_opad: [u8; 64] = [0; 64];
+  //	u8 tempkey[SHA1_OUTSIZE < SHA256_OUTSIZE ? SHA256_OUTSIZE : SHA1_OUTSIZE];
   let mut i: libc::c_uint = 0;
   // "The authentication key can be of any length up to INSIZE, the
   // block length of the hash function.  Applications that use keys longer
@@ -848,13 +848,13 @@ unsafe extern "C" fn hmac_begin(
   }
   i = 0i32 as libc::c_uint;
   while i < key_size {
-    key_xor_ipad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x36i32) as uint8_t;
-    key_xor_opad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x5ci32) as uint8_t;
+    key_xor_ipad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x36i32) as u8;
+    key_xor_opad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x5ci32) as u8;
     i = i.wrapping_add(1)
   }
   while i < SHA_INSIZE as libc::c_int as libc::c_uint {
-    key_xor_ipad[i as usize] = 0x36i32 as uint8_t;
-    key_xor_opad[i as usize] = 0x5ci32 as uint8_t;
+    key_xor_ipad[i as usize] = 0x36i32 as u8;
+    key_xor_opad[i as usize] = 0x5ci32 as u8;
     i = i.wrapping_add(1)
   }
   sha256_begin(&mut (*pre).hashed_key_xor_ipad);
@@ -872,17 +872,17 @@ unsafe extern "C" fn hmac_begin(
 }
 unsafe extern "C" fn hmac_sha_precomputed_v(
   mut pre: *mut hmac_precomputed_t,
-  mut out: *mut uint8_t,
+  mut out: *mut u8,
   mut va: ::std::ffi::VaList,
 ) -> libc::c_uint {
-  let mut text: *mut uint8_t = 0 as *mut uint8_t;
+  let mut text: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = 0;
   loop
   /* pre->hashed_key_xor_ipad contains unclosed "H((key XOR ipad) +" state */
   /* pre->hashed_key_xor_opad contains unclosed "H((key XOR opad) +" state */
   /* calculate out = H((key XOR ipad) + text) */
   {
-    text = va.arg::<*mut uint8_t>();
+    text = va.arg::<*mut u8>();
     if text.is_null() {
       break;
     }
@@ -904,7 +904,7 @@ unsafe extern "C" fn hmac_sha_precomputed_v(
 }
 unsafe extern "C" fn hmac_sha_precomputed(
   mut pre_init: *mut hmac_precomputed_t,
-  mut out: *mut uint8_t,
+  mut out: *mut u8,
   mut args: ...
 ) -> libc::c_uint {
   let mut pre: hmac_precomputed_t = hmac_precomputed_t {
@@ -929,8 +929,8 @@ unsafe extern "C" fn hmac_sha_precomputed(
   return len;
 }
 unsafe extern "C" fn hmac(
-  mut out: *mut uint8_t,
-  mut key: *mut uint8_t,
+  mut out: *mut u8,
+  mut key: *mut u8,
   mut key_size: libc::c_uint,
   mut args: ...
 ) -> libc::c_uint {
@@ -994,12 +994,12 @@ unsafe extern "C" fn hmac(
 // For cipher suites ending with _SHA384, the PRF is the TLS PRF
 // with SHA-384 as the hash function.
 unsafe extern "C" fn prf_hmac_sha256(
-  mut outbuf: *mut uint8_t,
+  mut outbuf: *mut u8,
   mut outbuf_size: libc::c_uint,
-  mut secret: *mut uint8_t,
+  mut secret: *mut u8,
   mut secret_size: libc::c_uint,
   mut label: *const libc::c_char,
-  mut seed: *mut uint8_t,
+  mut seed: *mut u8,
   mut seed_size: libc::c_uint,
 ) {
   let mut pre: hmac_precomputed_t = hmac_precomputed_t {
@@ -1016,8 +1016,8 @@ unsafe extern "C" fn prf_hmac_sha256(
       hash: [0; 8],
     },
   };
-  let mut a: [uint8_t; 32] = [0; 32];
-  let mut out_p: *mut uint8_t = outbuf;
+  let mut a: [u8; 32] = [0; 32];
+  let mut out_p: *mut u8 = outbuf;
   let mut label_size: libc::c_uint = strlen(label) as libc::c_uint;
   let mut MAC_size: libc::c_uint = SHA256_OUTSIZE as libc::c_int as libc::c_uint;
   /* In P_hash() calculation, "seed" is "label + seed": */
@@ -1090,7 +1090,7 @@ unsafe extern "C" fn bad_record_die(
     expected,
   );
   if len > 0i32 {
-    let mut p: *mut uint8_t = (*tls).inbuf;
+    let mut p: *mut u8 = (*tls).inbuf;
     if len > 99i32 {
       len = 99i32
     }
@@ -1122,7 +1122,7 @@ unsafe extern "C" fn tls_error_die(mut tls: *mut tls_state_t, mut line: libc::c_
 unsafe extern "C" fn tls_free_outbuf(mut tls: *mut tls_state_t) {
   free((*tls).outbuf as *mut libc::c_void);
   (*tls).outbuf_size = 0i32;
-  (*tls).outbuf = 0 as *mut uint8_t;
+  (*tls).outbuf = 0 as *mut u8;
 }
 unsafe extern "C" fn tls_get_outbuf(
   mut tls: *mut tls_state_t,
@@ -1134,7 +1134,7 @@ unsafe extern "C" fn tls_get_outbuf(
   len += OUTBUF_PFX as libc::c_int + OUTBUF_SFX as libc::c_int;
   if (*tls).outbuf_size < len {
     (*tls).outbuf_size = len;
-    (*tls).outbuf = xrealloc((*tls).outbuf as *mut libc::c_void, len as size_t) as *mut uint8_t
+    (*tls).outbuf = xrealloc((*tls).outbuf as *mut libc::c_void, len as size_t) as *mut u8
   }
   return (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize) as *mut libc::c_void;
 }
@@ -1151,9 +1151,9 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   mut size: libc::c_uint,
   mut type_0: libc::c_uint,
 ) {
-  let mut buf: *mut uint8_t = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
+  let mut buf: *mut u8 = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
   let mut xhdr: *mut record_hdr = 0 as *mut record_hdr;
-  let mut padding_length: uint8_t = 0;
+  let mut padding_length: u8 = 0;
   xhdr = buf.offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void as *mut record_hdr;
   if 0i32 == 0 || (*tls).cipher_id as libc::c_int != 0x3bi32 {
     /* or if it wasn't selected */
@@ -1162,12 +1162,12 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
       .offset(-16) as *mut libc::c_void as *mut record_hdr
     /* place for IV */
   }
-  (*xhdr).type_0 = type_0 as uint8_t;
-  (*xhdr).proto_maj = 3i32 as uint8_t;
-  (*xhdr).proto_min = 3i32 as uint8_t;
+  (*xhdr).type_0 = type_0 as u8;
+  (*xhdr).proto_maj = 3i32 as u8;
+  (*xhdr).proto_min = 3i32 as u8;
   /* fake unencrypted record len for MAC calculation */
-  (*xhdr).len16_hi = (size >> 8i32) as uint8_t;
-  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as uint8_t;
+  (*xhdr).len16_hi = (size >> 8i32) as u8;
+  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
   /* Calculate MAC signature */
   hmac(
     buf.offset(size as isize),
@@ -1318,8 +1318,8 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   // SHA256    HMAC-SHA256     32            32
   if 0i32 != 0 && (*tls).cipher_id as libc::c_int == 0x3bi32 {
     /* No encryption, only signing */
-    (*xhdr).len16_hi = (size >> 8i32) as uint8_t;
-    (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as uint8_t;
+    (*xhdr).len16_hi = (size >> 8i32) as u8;
+    (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
     xwrite(
       (*tls).ofd,
       xhdr as *const libc::c_void,
@@ -1379,7 +1379,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   // If you need no bytes to reach BLOCKSIZE, you have to pad a full
   // BLOCKSIZE with bytes of value (BLOCKSIZE-1).
   // It's ok to have more than minimum padding, but we do minimum.
-  padding_length = (!size & (16i32 - 1i32) as libc::c_uint) as uint8_t;
+  padding_length = (!size & (16i32 - 1i32) as libc::c_uint) as u8;
   loop {
     let fresh11 = size;
     size = size.wrapping_add(1);
@@ -1399,8 +1399,8 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   );
   /* Write out */
   size = size.wrapping_add(16i32 as libc::c_uint); /* + IV */
-  (*xhdr).len16_hi = (size >> 8i32) as uint8_t;
-  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as uint8_t;
+  (*xhdr).len16_hi = (size >> 8i32) as u8;
+  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
   xwrite(
     (*tls).ofd,
     xhdr as *const libc::c_void,
@@ -1422,11 +1422,11 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   mut size: libc::c_uint,
   mut type_0: libc::c_uint,
 ) {
-  let mut aad: [uint8_t; 16] = [0; 16]; /* +3 creates [16] buffer, simplifying GHASH() */
-  let mut nonce: [uint8_t; 16] = [0; 16]; /* +4 creates space for AES block counter */
-  let mut scratch: [uint8_t; 16] = [0; 16]; //[16]
-  let mut authtag: [uint8_t; 16] = [0; 16]; //[16]
-  let mut buf: *mut uint8_t = 0 as *mut uint8_t; /* see above for the byte it points to */
+  let mut aad: [u8; 16] = [0; 16]; /* +3 creates [16] buffer, simplifying GHASH() */
+  let mut nonce: [u8; 16] = [0; 16]; /* +4 creates space for AES block counter */
+  let mut scratch: [u8; 16] = [0; 16]; //[16]
+  let mut authtag: [u8; 16] = [0; 16]; //[16]
+  let mut buf: *mut u8 = 0 as *mut u8; /* see above for the byte it points to */
   let mut xhdr: *mut record_hdr = 0 as *mut record_hdr; /* do it here so that "type" param no longer used */
   let mut remaining: libc::c_uint = 0;
   let mut cnt: libc::c_uint = 0;
@@ -1434,13 +1434,13 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   buf = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
   xhdr = buf.offset(-8).offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void
     as *mut record_hdr;
-  (*xhdr).type_0 = type_0 as uint8_t;
-  aad[8] = type_0 as uint8_t;
-  aad[9] = 3i32 as uint8_t;
-  aad[10] = 3i32 as uint8_t;
-  aad[11] = (size >> 8i32) as uint8_t;
+  (*xhdr).type_0 = type_0 as u8;
+  aad[8] = type_0 as u8;
+  aad[9] = 3i32 as u8;
+  aad[10] = 3i32 as u8;
+  aad[11] = (size >> 8i32) as u8;
   /* set aad[12], and clear aad[13..15] */
-  *(aad.as_mut_ptr().offset(12) as *mut uint32_t) = size & 0xffi32 as libc::c_uint;
+  *(aad.as_mut_ptr().offset(12) as *mut u32) = size & 0xffi32 as libc::c_uint;
   memcpy(
     nonce.as_mut_ptr() as *mut libc::c_void,
     (*tls).client_write_IV as *const libc::c_void,
@@ -1559,7 +1559,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   while remaining != 0i32 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
-    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
+    *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
       if 0 != 0 {
@@ -1603,7 +1603,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
     size,
     authtag.as_mut_ptr(),
   );
-  *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
+  *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = 1i32 as libc::c_uint;
     if 0 != 0 {
@@ -1634,7 +1634,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   memcpy(
     buf as *mut libc::c_void,
     authtag.as_mut_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 16]>() as libc::c_ulong,
   );
   /* Write out */
   xhdr = (*tls)
@@ -1643,13 +1643,13 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
     .offset(-8)
     .offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void as *mut record_hdr;
   size = (size as libc::c_ulong).wrapping_add(
-    (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong),
+    (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<[u8; 16]>() as libc::c_ulong),
   ) as libc::c_uint as libc::c_uint;
   /*xhdr->type = type; - already is */
-  (*xhdr).proto_maj = 3i32 as uint8_t;
-  (*xhdr).proto_min = 3i32 as uint8_t;
-  (*xhdr).len16_hi = (size >> 8i32) as uint8_t;
-  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as uint8_t;
+  (*xhdr).proto_maj = 3i32 as u8;
+  (*xhdr).proto_min = 3i32 as u8;
+  (*xhdr).len16_hi = (size >> 8i32) as u8;
+  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
   size = size.wrapping_add(RECHDR_LEN as libc::c_int as libc::c_uint);
   xwrite((*tls).ofd, xhdr as *const libc::c_void, size as size_t);
 }
@@ -1665,14 +1665,14 @@ unsafe extern "C" fn xwrite_encrypted(
   xwrite_encrypted_aesgcm(tls, size, type_0);
 }
 unsafe extern "C" fn xwrite_handshake_record(mut tls: *mut tls_state_t, mut size: libc::c_uint) {
-  let mut buf: *mut uint8_t = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
+  let mut buf: *mut u8 = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
   let mut xhdr: *mut record_hdr =
     buf.offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void as *mut record_hdr;
-  (*xhdr).type_0 = 22i32 as uint8_t;
-  (*xhdr).proto_maj = 3i32 as uint8_t;
-  (*xhdr).proto_min = 3i32 as uint8_t;
-  (*xhdr).len16_hi = (size >> 8i32) as uint8_t;
-  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as uint8_t;
+  (*xhdr).type_0 = 22i32 as u8;
+  (*xhdr).proto_maj = 3i32 as u8;
+  (*xhdr).proto_min = 3i32 as u8;
+  (*xhdr).len16_hi = (size >> 8i32) as u8;
+  (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
   xwrite(
     (*tls).ofd,
     xhdr as *const libc::c_void,
@@ -1684,7 +1684,7 @@ unsafe extern "C" fn xwrite_and_update_handshake_hash(
   mut size: libc::c_uint,
 ) {
   if (*tls).flags & ENCRYPT_ON_WRITE as libc::c_int as libc::c_uint == 0 {
-    let mut buf: *mut uint8_t = 0 as *mut uint8_t;
+    let mut buf: *mut u8 = 0 as *mut u8;
     xwrite_handshake_record(tls, size);
     /* Handshake hash does not include record headers */
     buf = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
@@ -1722,13 +1722,13 @@ unsafe extern "C" fn alert_text(mut code: libc::c_int) -> *const libc::c_char {
 }
 unsafe extern "C" fn tls_aesgcm_decrypt(
   mut tls: *mut tls_state_t,
-  mut buf: *mut uint8_t,
+  mut buf: *mut u8,
   mut size: libc::c_int,
 ) {
-  //uint8_t aad[13 + 3] ALIGNED_long; /* +3 creates [16] buffer, simplifying GHASH() */
-  let mut nonce: [uint8_t; 16] = [0; 16]; /* +4 creates space for AES block counter */
-  let mut scratch: [uint8_t; 16] = [0; 16]; //[16]
-                                            //uint8_t authtag[AES_BLOCK_SIZE] ALIGNED_long; //[16]
+  //u8 aad[13 + 3] ALIGNED_long; /* +3 creates [16] buffer, simplifying GHASH() */
+  let mut nonce: [u8; 16] = [0; 16]; /* +4 creates space for AES block counter */
+  let mut scratch: [u8; 16] = [0; 16]; //[16]
+                                            //u8 authtag[AES_BLOCK_SIZE] ALIGNED_long; //[16]
   let mut remaining: libc::c_uint = 0;
   let mut cnt: libc::c_uint = 0;
   //memcpy(aad, buf, 8);
@@ -1753,7 +1753,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
   while remaining != 0i32 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
-    *(nonce.as_mut_ptr().offset(12) as *mut uint32_t) = {
+    *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
       if 0 != 0 {
@@ -1859,13 +1859,13 @@ unsafe extern "C" fn tls_xread_record(
           }
           if (*tls).flags & ENCRYPTION_AESGCM as libc::c_int as libc::c_uint != 0 {
             /* AESGCM */
-            let mut p: *mut uint8_t = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize); /* we will overwrite nonce, drop hash */
+            let mut p: *mut u8 = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize); /* we will overwrite nonce, drop hash */
             sz -= 8i32 + 16i32;
             tls_aesgcm_decrypt(tls, p, sz);
           } else if (*tls).min_encrypted_len_on_read > SHA256_OUTSIZE as libc::c_int as libc::c_uint
           {
             /* AES+SHA */
-            let mut p_0: *mut uint8_t = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize);
+            let mut p_0: *mut u8 = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize);
             let mut padding_len: libc::c_int = 0;
             if sz & 16i32 - 1i32 != 0 {
               bb_error_msg_and_die(
@@ -1918,7 +1918,7 @@ unsafe extern "C" fn tls_xread_record(
           (*tls).inbuf = xrealloc(
             (*tls).inbuf as *mut libc::c_void,
             (*tls).inbuf_size as size_t,
-          ) as *mut uint8_t
+          ) as *mut u8
         }
         sz = safe_read(
           (*tls).ifd,
@@ -1956,7 +1956,7 @@ unsafe extern "C" fn tls_xread_record(
         break;
       }
       _ => {
-        let mut p_1: *mut uint8_t = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize);
+        let mut p_1: *mut u8 = (*tls).inbuf.offset(RECHDR_LEN as libc::c_int as isize);
         if *p_1.offset(0) as libc::c_int == 2i32 {
           /* fatal */
           bb_error_msg_and_die(
@@ -2002,7 +2002,7 @@ unsafe extern "C" fn tls_xread_record(
 }
 unsafe extern "C" fn binary_to_pstm(
   mut pstm_n: *mut pstm_int,
-  mut bin_ptr: *mut uint8_t,
+  mut bin_ptr: *mut u8,
   mut len: libc::c_uint,
 ) {
   pstm_init_for_read_unsigned_bin(pstm_n, len);
@@ -2013,9 +2013,9 @@ unsafe extern "C" fn binary_to_pstm(
  * DER parsing routines
  */
 unsafe extern "C" fn get_der_len(
-  mut bodyp: *mut *mut uint8_t,
-  mut der: *mut uint8_t,
-  mut end: *mut uint8_t,
+  mut bodyp: *mut *mut u8,
+  mut der: *mut u8,
+  mut end: *mut u8,
 ) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
   let mut len1: libc::c_uint = 0;
@@ -2061,17 +2061,17 @@ unsafe extern "C" fn get_der_len(
   return len;
 }
 unsafe extern "C" fn enter_der_item(
-  mut der: *mut uint8_t,
-  mut endp: *mut *mut uint8_t,
-) -> *mut uint8_t {
-  let mut new_der: *mut uint8_t = 0 as *mut uint8_t;
+  mut der: *mut u8,
+  mut endp: *mut *mut u8,
+) -> *mut u8 {
+  let mut new_der: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = get_der_len(&mut new_der, der, *endp);
   /* Move "end" position to cover only this item */
   *endp = new_der.offset(len as isize);
   return new_der;
 }
-unsafe extern "C" fn skip_der_item(mut der: *mut uint8_t, mut end: *mut uint8_t) -> *mut uint8_t {
-  let mut new_der: *mut uint8_t = 0 as *mut uint8_t;
+unsafe extern "C" fn skip_der_item(mut der: *mut u8, mut end: *mut u8) -> *mut u8 {
+  let mut new_der: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = get_der_len(&mut new_der, der, end);
   /* Skip body */
   new_der = new_der.offset(len as isize);
@@ -2079,16 +2079,16 @@ unsafe extern "C" fn skip_der_item(mut der: *mut uint8_t, mut end: *mut uint8_t)
 }
 unsafe extern "C" fn der_binary_to_pstm(
   mut pstm_n: *mut pstm_int,
-  mut der: *mut uint8_t,
-  mut end: *mut uint8_t,
+  mut der: *mut u8,
+  mut end: *mut u8,
 ) {
-  let mut bin_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut bin_ptr: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = get_der_len(&mut bin_ptr, der, end);
   binary_to_pstm(pstm_n, bin_ptr, len);
 }
 unsafe extern "C" fn find_key_in_der_cert(
   mut tls: *mut tls_state_t,
-  mut der: *mut uint8_t,
+  mut der: *mut u8,
   mut len: libc::c_int,
 ) {
   /* Certificate is a DER-encoded data structure. Each DER element has a length,
@@ -2182,7 +2182,7 @@ unsafe extern "C" fn find_key_in_der_cert(
    *          f3ab d561 2f4c d845 9ad3 7252 e3de bd3b
    *          9012
    */
-  let mut end: *mut uint8_t = der.offset(len as isize);
+  let mut end: *mut u8 = der.offset(len as isize);
   /* enter "Certificate" item: [der, end) will be only Cert */
   der = enter_der_item(der, &mut end);
   /* enter "tbsCertificate" item: [der, end) will be only tbsCert */
@@ -2211,45 +2211,45 @@ unsafe extern "C" fn find_key_in_der_cert(
   /* enter subjectPublicKeyInfo */
   der = enter_der_item(der, &mut end);
   /* check subjectPublicKeyInfo.algorithm */
-  static mut OID_RSA_KEY_ALG: [uint8_t; 13] = [
-    0x30i32 as uint8_t,
-    0xdi32 as uint8_t,
-    0x6i32 as uint8_t,
-    0x9i32 as uint8_t,
-    0x2ai32 as uint8_t,
-    0x86i32 as uint8_t,
-    0x48i32 as uint8_t,
-    0x86i32 as uint8_t,
-    0xf7i32 as uint8_t,
-    0xdi32 as uint8_t,
-    0x1i32 as uint8_t,
-    0x1i32 as uint8_t,
-    0x1i32 as uint8_t,
+  static mut OID_RSA_KEY_ALG: [u8; 13] = [
+    0x30i32 as u8,
+    0xdi32 as u8,
+    0x6i32 as u8,
+    0x9i32 as u8,
+    0x2ai32 as u8,
+    0x86i32 as u8,
+    0x48i32 as u8,
+    0x86i32 as u8,
+    0xf7i32 as u8,
+    0xdi32 as u8,
+    0x1i32 as u8,
+    0x1i32 as u8,
+    0x1i32 as u8,
   ];
-  static mut OID_ECDSA_KEY_ALG: [uint8_t; 11] = [
-    0x30i32 as uint8_t,
-    0x13i32 as uint8_t,
-    0x6i32 as uint8_t,
-    0x7i32 as uint8_t,
-    0x2ai32 as uint8_t,
-    0x86i32 as uint8_t,
-    0x48i32 as uint8_t,
-    0xcei32 as uint8_t,
-    0x3di32 as uint8_t,
-    0x2i32 as uint8_t,
-    0x1i32 as uint8_t,
+  static mut OID_ECDSA_KEY_ALG: [u8; 11] = [
+    0x30i32 as u8,
+    0x13i32 as u8,
+    0x6i32 as u8,
+    0x7i32 as u8,
+    0x2ai32 as u8,
+    0x86i32 as u8,
+    0x48i32 as u8,
+    0xcei32 as u8,
+    0x3di32 as u8,
+    0x2i32 as u8,
+    0x1i32 as u8,
   ];
   if memcmp(
     der as *const libc::c_void,
     OID_RSA_KEY_ALG.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 13]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 13]>() as libc::c_ulong,
   ) == 0i32
   {
     (*tls).flags |= GOT_CERT_RSA_KEY_ALG as libc::c_int as libc::c_uint
   } else if memcmp(
     der as *const libc::c_void,
     OID_ECDSA_KEY_ALG.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 11]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 11]>() as libc::c_ulong,
   ) == 0i32
   {
   } else {
@@ -2321,55 +2321,55 @@ unsafe extern "C" fn fill_handshake_record_hdr(
 ) {
   let mut h: *mut handshake_hdr = buf as *mut handshake_hdr;
   len = len.wrapping_sub(4i32 as libc::c_uint);
-  (*h).type_0 = type_0 as uint8_t;
-  (*h).len24_hi = (len >> 16i32) as uint8_t;
-  (*h).len24_mid = (len >> 8i32) as uint8_t;
-  (*h).len24_lo = (len & 0xffi32 as libc::c_uint) as uint8_t;
+  (*h).type_0 = type_0 as u8;
+  (*h).len24_hi = (len >> 16i32) as u8;
+  (*h).len24_mid = (len >> 8i32) as u8;
+  (*h).len24_lo = (len & 0xffi32 as libc::c_uint) as u8;
 }
 unsafe extern "C" fn send_client_hello_and_alloc_hsd(
   mut tls: *mut tls_state_t,
   mut sni: *const libc::c_char,
 ) {
-  static mut ciphers: [uint8_t; 20] = [
-    0i32 as uint8_t,
-    (2i32 + (7i32 + 6i32 * 0i32 + 0i32) * 2i32) as uint8_t,
-    0i32 as uint8_t,
-    0xffi32 as uint8_t,
-    0xc0i32 as uint8_t,
-    0x23i32 as uint8_t,
-    0xc0i32 as uint8_t,
-    0x27i32 as uint8_t,
-    0xc0i32 as uint8_t,
-    0x2bi32 as uint8_t,
-    0xc0i32 as uint8_t,
-    0x2fi32 as uint8_t,
-    0i32 as uint8_t,
-    0x3ci32 as uint8_t,
-    0i32 as uint8_t,
-    0x3di32 as uint8_t,
-    0i32 as uint8_t,
-    0x9ci32 as uint8_t,
-    0x1i32 as uint8_t,
-    0i32 as uint8_t,
+  static mut ciphers: [u8; 20] = [
+    0i32 as u8,
+    (2i32 + (7i32 + 6i32 * 0i32 + 0i32) * 2i32) as u8,
+    0i32 as u8,
+    0xffi32 as u8,
+    0xc0i32 as u8,
+    0x23i32 as u8,
+    0xc0i32 as u8,
+    0x27i32 as u8,
+    0xc0i32 as u8,
+    0x2bi32 as u8,
+    0xc0i32 as u8,
+    0x2fi32 as u8,
+    0i32 as u8,
+    0x3ci32 as u8,
+    0i32 as u8,
+    0x3di32 as u8,
+    0i32 as u8,
+    0x9ci32 as u8,
+    0x1i32 as u8,
+    0i32 as u8,
   ];
-  static mut supported_groups: [uint8_t; 8] = [
-    0i32 as uint8_t,
-    0xai32 as uint8_t,
-    0i32 as uint8_t,
-    0x4i32 as uint8_t,
-    0i32 as uint8_t,
-    0x2i32 as uint8_t,
-    0i32 as uint8_t,
-    0x1di32 as uint8_t,
+  static mut supported_groups: [u8; 8] = [
+    0i32 as u8,
+    0xai32 as u8,
+    0i32 as u8,
+    0x4i32 as u8,
+    0i32 as u8,
+    0x2i32 as u8,
+    0i32 as u8,
+    0x1di32 as u8,
   ];
-  //static const uint8_t signature_algorithms[] = {
+  //static const u8 signature_algorithms[] = {
   //	000d
   //	0020
   //	001e
   //	0601 0602 0603 0501 0502 0503 0401 0402 0403 0301 0302 0303 0201 0202 0203
   //};
   let mut record: *mut client_hello = 0 as *mut client_hello;
-  let mut ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut ptr: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_int = 0;
   let mut ext_len: libc::c_int = 0;
   let mut sni_len: libc::c_int = if !sni.is_null() {
@@ -2380,7 +2380,7 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
   ext_len = 0i32;
   /* is.gd responds with "handshake failure" to our hello if there's no supported_groups element */
   ext_len = (ext_len as libc::c_ulong)
-    .wrapping_add(::std::mem::size_of::<[uint8_t; 8]>() as libc::c_ulong) as libc::c_int
+    .wrapping_add(::std::mem::size_of::<[u8; 8]>() as libc::c_ulong) as libc::c_int
     as libc::c_int;
   if sni_len != 0 {
     ext_len += 9i32 + sni_len
@@ -2395,45 +2395,45 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
     1i32 as libc::c_uint,
     len as libc::c_uint,
   );
-  (*record).proto_maj = 3i32 as uint8_t;
-  (*record).proto_min = 3i32 as uint8_t;
+  (*record).proto_maj = 3i32 as u8;
+  (*record).proto_min = 3i32 as u8;
   tls_get_random(
     (*record).rand32.as_mut_ptr() as *mut libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 32]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 32]>() as libc::c_ulong as libc::c_uint,
   );
   /* record->session_id_len = 0; - already is */
   memcpy(
-    &mut (*record).cipherid_len16_hi as *mut uint8_t as *mut libc::c_void,
+    &mut (*record).cipherid_len16_hi as *mut u8 as *mut libc::c_void,
     ciphers.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 20]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 20]>() as libc::c_ulong,
   );
-  ptr = record.offset(1) as *mut libc::c_void as *mut uint8_t;
+  ptr = record.offset(1) as *mut libc::c_void as *mut u8;
   let fresh27 = ptr;
   ptr = ptr.offset(1);
-  *fresh27 = (ext_len >> 8i32) as uint8_t;
+  *fresh27 = (ext_len >> 8i32) as u8;
   let fresh28 = ptr;
   ptr = ptr.offset(1);
-  *fresh28 = ext_len as uint8_t;
+  *fresh28 = ext_len as u8;
   if sni_len != 0 {
     //ptr[0] = 0;             //
     //ptr[1] = 0;             //extension_type
     //ptr[2] = 0;         //
-    *ptr.offset(3) = (sni_len + 5i32) as uint8_t; //list len
+    *ptr.offset(3) = (sni_len + 5i32) as u8; //list len
                                                   //ptr[4] = 0;             //
-    *ptr.offset(5) = (sni_len + 3i32) as uint8_t; //len of 1st SNI
+    *ptr.offset(5) = (sni_len + 3i32) as u8; //len of 1st SNI
                                                   //ptr[6] = 0;         //name type
                                                   //ptr[7] = 0;             //
-    *ptr.offset(8) = sni_len as uint8_t; //name len
+    *ptr.offset(8) = sni_len as u8; //name len
     ptr = mempcpy(
-      &mut *ptr.offset(9) as *mut uint8_t as *mut libc::c_void,
+      &mut *ptr.offset(9) as *mut u8 as *mut libc::c_void,
       sni as *const libc::c_void,
       sni_len as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   memcpy(
     ptr as *mut libc::c_void,
     supported_groups.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 8]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 8]>() as libc::c_ulong,
   );
   (*tls).hsd = xzalloc(::std::mem::size_of::<tls_handshake_data>() as libc::c_ulong)
     as *mut tls_handshake_data;
@@ -2441,7 +2441,7 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
   memcpy(
     (*(*tls).hsd).client_and_server_rand32.as_mut_ptr() as *mut libc::c_void,
     (*record).rand32.as_mut_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 32]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 32]>() as libc::c_ulong,
   );
   /* HANDSHAKE HASH:
    tls->hsd->saved_client_hello_size = len;
@@ -2459,8 +2459,8 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
 }
 unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
   let mut hp: *mut server_hello = 0 as *mut server_hello;
-  let mut cipherid: *mut uint8_t = 0 as *mut uint8_t;
-  let mut cipherid1: uint8_t = 0;
+  let mut cipherid: *mut u8 = 0 as *mut u8;
+  let mut cipherid1: u8 = 0;
   let mut len: libc::c_int = 0;
   let mut len24: libc::c_int = 0;
   len = tls_xread_handshake_block(tls, 74i32 - 32i32);
@@ -2507,7 +2507,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
       .as_mut_ptr()
       .offset(32) as *mut libc::c_void,
     (*hp).rand32.as_mut_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 32]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 32]>() as libc::c_ulong,
   );
   // session_id_len == 0: no session id
   // "The server
@@ -2516,7 +2516,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
   /* Set up encryption params based on selected cipher */
   cipherid1 = *cipherid.offset(1);
   (*tls).cipher_id =
-    (0x100i32 * *cipherid.offset(0) as libc::c_int + cipherid1 as libc::c_int) as uint16_t;
+    (0x100i32 * *cipherid.offset(0) as libc::c_int + cipherid1 as libc::c_int) as u16;
   (*tls).key_size = AES256_KEYSIZE as libc::c_int as libc::c_uint;
   (*tls).MAC_size = SHA256_OUTSIZE as libc::c_int as libc::c_uint;
   /*tls->IV_size = 0; - already is */
@@ -2570,12 +2570,12 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
 }
 unsafe extern "C" fn get_server_cert(mut tls: *mut tls_state_t) {
   let mut xhdr: *mut record_hdr = 0 as *mut record_hdr;
-  let mut certbuf: *mut uint8_t = 0 as *mut uint8_t;
+  let mut certbuf: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_int = 0;
   let mut len1: libc::c_int = 0;
   len = tls_xread_handshake_block(tls, 10i32);
   xhdr = (*tls).inbuf as *mut libc::c_void as *mut record_hdr;
-  certbuf = xhdr.offset(1) as *mut libc::c_void as *mut uint8_t;
+  certbuf = xhdr.offset(1) as *mut libc::c_void as *mut u8;
   if *certbuf.offset(0) as libc::c_int != 11i32 {
     bad_record_die(
       tls,
@@ -2610,11 +2610,11 @@ unsafe extern "C" fn get_server_cert(mut tls: *mut tls_state_t) {
  */
 unsafe extern "C" fn process_server_key(mut tls: *mut tls_state_t, mut len: libc::c_int) {
   let mut xhdr: *mut record_hdr = 0 as *mut record_hdr;
-  let mut keybuf: *mut uint8_t = 0 as *mut uint8_t;
+  let mut keybuf: *mut u8 = 0 as *mut u8;
   let mut len1: libc::c_int = 0;
-  let mut t32: uint32_t = 0;
+  let mut t32: u32 = 0;
   xhdr = (*tls).inbuf as *mut libc::c_void as *mut record_hdr;
-  keybuf = xhdr.offset(1) as *mut libc::c_void as *mut uint8_t;
+  keybuf = xhdr.offset(1) as *mut libc::c_void as *mut u8;
   //seen from is.gd: it selects curve_x25519:
   //  0c 00006e //SERVER_KEY_EXCHANGE, len
   //    03 //curve_type: named curve
@@ -2657,7 +2657,7 @@ unsafe extern "C" fn process_server_key(mut tls: *mut tls_state_t, mut len: libc
   }
   keybuf = keybuf.offset(4);
   /* So far we only support curve_x25519 */
-  t32 = *(keybuf as *mut bb__aliased_uint32_t);
+  t32 = *(keybuf as *mut bb__aliased_u32);
   if t32
     != ({
       let mut __v: libc::c_uint = 0;
@@ -2701,8 +2701,8 @@ unsafe extern "C" fn send_empty_client_cert(mut tls: *mut tls_state_t) {
   //record->cert_chain_len24_mid = 0;
   //record->cert_chain_len24_lo = 0;
   // same as above:
-  (*record).type_0 = 11i32 as uint8_t;
-  (*record).len24_lo = 3i32 as uint8_t;
+  (*record).type_0 = 11i32 as u8;
+  (*record).len24_lo = 3i32 as u8;
   xwrite_and_update_handshake_hash(
     tls,
     ::std::mem::size_of::<client_empty_cert>() as libc::c_ulong as libc::c_uint,
@@ -2714,9 +2714,9 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
     tls,
     ::std::mem::size_of::<client_key_exchange>() as libc::c_ulong as libc::c_int,
   ) as *mut client_key_exchange;
-  let mut rsa_premaster: [uint8_t; 48] = [0; 48];
-  let mut x25519_premaster: [uint8_t; 32] = [0; 32];
-  let mut premaster: *mut uint8_t = 0 as *mut uint8_t;
+  let mut rsa_premaster: [u8; 48] = [0; 48];
+  let mut x25519_premaster: [u8; 32] = [0; 32];
+  let mut premaster: *mut u8 = 0 as *mut u8;
   let mut premaster_size: libc::c_int = 0;
   let mut len: libc::c_int = 0;
   if (*tls).flags & NEED_EC_KEY as libc::c_int as libc::c_uint == 0 {
@@ -2726,32 +2726,32 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
     }
     tls_get_random(
       rsa_premaster.as_mut_ptr() as *mut libc::c_void,
-      ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as libc::c_uint,
+      ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as libc::c_uint,
     );
     // RFC 5246
     // "Note: The version number in the PreMasterSecret is the version
     // offered by the client in the ClientHello.client_version, not the
     // version negotiated for the connection."
-    rsa_premaster[0] = 3i32 as uint8_t;
-    rsa_premaster[1] = 3i32 as uint8_t;
+    rsa_premaster[0] = 3i32 as u8;
+    rsa_premaster[1] = 3i32 as u8;
     len = psRsaEncryptPub(
       &mut (*(*tls).hsd).server_rsa_pub_key,
       rsa_premaster.as_mut_ptr(),
-      ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as uint32,
+      ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as uint32,
       (*record).key.as_mut_ptr().offset(2),
-      (::std::mem::size_of::<[uint8_t; 4098]>() as libc::c_ulong)
+      (::std::mem::size_of::<[u8; 4098]>() as libc::c_ulong)
         .wrapping_sub(2i32 as libc::c_ulong) as uint32,
     );
     /* keylen16 exists for RSA (in TLS, not in SSL), but not for some other key types */
-    (*record).key[0] = (len >> 8i32) as uint8_t;
-    (*record).key[1] = (len & 0xffi32) as uint8_t;
+    (*record).key[0] = (len >> 8i32) as u8;
+    (*record).key[1] = (len & 0xffi32) as u8;
     len += 2i32;
     premaster = rsa_premaster.as_mut_ptr();
-    premaster_size = ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as libc::c_int
+    premaster_size = ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as libc::c_int
   } else {
     /* ECDHE */
-    static mut basepoint9: [uint8_t; 32] = [
-      9i32 as uint8_t,
+    static mut basepoint9: [u8; 32] = [
+      9i32 as u8,
       0,
       0,
       0,
@@ -2784,18 +2784,18 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
       0,
       0,
     ]; //[32]
-    let mut privkey: [uint8_t; 32] = [0; 32];
+    let mut privkey: [u8; 32] = [0; 32];
     if (*tls).flags & GOT_EC_KEY as libc::c_int as libc::c_uint == 0 {
       bb_simple_error_msg(b"server did not provide EC key\x00" as *const u8 as *const libc::c_char);
     }
     /* Generate random private key, see RFC 7748 */
     tls_get_random(
       privkey.as_mut_ptr() as *mut libc::c_void,
-      ::std::mem::size_of::<[uint8_t; 32]>() as libc::c_ulong as libc::c_uint,
+      ::std::mem::size_of::<[u8; 32]>() as libc::c_ulong as libc::c_uint,
     );
-    privkey[0] = (privkey[0] as libc::c_int & 0xf8i32) as uint8_t;
+    privkey[0] = (privkey[0] as libc::c_int & 0xf8i32) as u8;
     privkey[(32i32 - 1i32) as usize] =
-      (privkey[(32i32 - 1i32) as usize] as libc::c_int & 0x7fi32 | 0x40i32) as uint8_t;
+      (privkey[(32i32 - 1i32) as usize] as libc::c_int & 0x7fi32 | 0x40i32) as u8;
     /* Compute public key */
     curve25519(
       (*record).key.as_mut_ptr().offset(1),
@@ -2809,15 +2809,15 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
       (*(*tls).hsd).ecc_pub_key32.as_mut_ptr(),
     );
     len = 32i32;
-    (*record).key[0] = len as uint8_t;
+    (*record).key[0] = len as u8;
     len += 1;
     premaster = x25519_premaster.as_mut_ptr();
-    premaster_size = ::std::mem::size_of::<[uint8_t; 32]>() as libc::c_ulong as libc::c_int
+    premaster_size = ::std::mem::size_of::<[u8; 32]>() as libc::c_ulong as libc::c_int
   }
-  (*record).type_0 = 16i32 as uint8_t;
+  (*record).type_0 = 16i32 as u8;
   /* record->len24_hi = 0; - already is */
-  (*record).len24_mid = (len >> 8i32) as uint8_t;
-  (*record).len24_lo = (len & 0xffi32) as uint8_t;
+  (*record).len24_mid = (len >> 8i32) as u8;
+  (*record).len24_lo = (len & 0xffi32) as u8;
   len += 4i32;
   xwrite_and_update_handshake_hash(tls, len as libc::c_uint);
   // RFC 5246
@@ -2832,12 +2832,12 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
   // of the premaster secret will vary depending on key exchange method.
   prf_hmac_sha256(
     (*(*tls).hsd).master_secret.as_mut_ptr(),
-    ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as libc::c_uint,
     premaster,
     premaster_size as libc::c_uint,
     b"master secret\x00" as *const u8 as *const libc::c_char,
     (*(*tls).hsd).client_and_server_rand32.as_mut_ptr(),
-    ::std::mem::size_of::<[uint8_t; 64]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 64]>() as libc::c_ulong as libc::c_uint,
   );
   // RFC 5246
   // 6.3.  Key Calculation
@@ -2872,22 +2872,22 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
   //    server_write_key[SecurityParameters.enc_key_length]
   //    client_write_IV[SecurityParameters.fixed_iv_length]
   //    server_write_IV[SecurityParameters.fixed_iv_length]
-  let mut tmp64: [uint8_t; 64] = [0; 64];
+  let mut tmp64: [u8; 64] = [0; 64];
   /* make "server_rand32 + client_rand32" */
   memcpy(
-    &mut *tmp64.as_mut_ptr().offset(0) as *mut uint8_t as *mut libc::c_void,
+    &mut *tmp64.as_mut_ptr().offset(0) as *mut u8 as *mut libc::c_void,
     &mut *(*(*tls).hsd)
       .client_and_server_rand32
       .as_mut_ptr()
-      .offset(32) as *mut uint8_t as *const libc::c_void,
+      .offset(32) as *mut u8 as *const libc::c_void,
     32i32 as libc::c_ulong,
   );
   memcpy(
-    &mut *tmp64.as_mut_ptr().offset(32) as *mut uint8_t as *mut libc::c_void,
+    &mut *tmp64.as_mut_ptr().offset(32) as *mut u8 as *mut libc::c_void,
     &mut *(*(*tls).hsd)
       .client_and_server_rand32
       .as_mut_ptr()
-      .offset(0) as *mut uint8_t as *const libc::c_void,
+      .offset(0) as *mut u8 as *const libc::c_void,
     32i32 as libc::c_ulong,
   );
   prf_hmac_sha256(
@@ -2899,7 +2899,7 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
         .wrapping_add((*tls).IV_size),
     ),
     (*(*tls).hsd).master_secret.as_mut_ptr(),
-    ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as libc::c_uint,
     b"key expansion\x00" as *const u8 as *const libc::c_char,
     tmp64.as_mut_ptr(),
     64i32 as libc::c_uint,
@@ -2921,7 +2921,7 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
     (*tls).client_write_key as *const libc::c_void,
     (*tls).key_size,
   );
-  let mut iv: [uint8_t; 16] = [0; 16];
+  let mut iv: [u8; 16] = [0; 16];
   memset(
     iv.as_mut_ptr() as *mut libc::c_void,
     0i32,
@@ -2933,19 +2933,19 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
     (*tls).H.as_mut_ptr() as *mut libc::c_void,
   );
 }
-static mut rec_CHANGE_CIPHER_SPEC: [uint8_t; 6] = [
-  20i32 as uint8_t,
-  3i32 as uint8_t,
-  3i32 as uint8_t,
-  0i32 as uint8_t,
-  0o1i32 as uint8_t,
-  0o1i32 as uint8_t,
+static mut rec_CHANGE_CIPHER_SPEC: [u8; 6] = [
+  20i32 as u8,
+  3i32 as u8,
+  3i32 as u8,
+  0i32 as u8,
+  0o1i32 as u8,
+  0o1i32 as u8,
 ];
 unsafe extern "C" fn send_change_cipher_spec(mut tls: *mut tls_state_t) {
   xwrite(
     (*tls).ofd,
     rec_CHANGE_CIPHER_SPEC.as_ptr() as *const libc::c_void,
-    ::std::mem::size_of::<[uint8_t; 6]>() as libc::c_ulong,
+    ::std::mem::size_of::<[u8; 6]>() as libc::c_ulong,
   );
 }
 // 7.4.9.  Finished
@@ -2990,7 +2990,7 @@ unsafe extern "C" fn send_client_finished(mut tls: *mut tls_state_t) {
     tls,
     ::std::mem::size_of::<finished>() as libc::c_ulong as libc::c_int,
   ) as *mut finished;
-  let mut handshake_hash: [uint8_t; 32] = [0; 32];
+  let mut handshake_hash: [u8; 32] = [0; 32];
   let mut len: libc::c_uint = 0;
   fill_handshake_record_hdr(
     record as *mut libc::c_void,
@@ -3003,9 +3003,9 @@ unsafe extern "C" fn send_client_finished(mut tls: *mut tls_state_t) {
   );
   prf_hmac_sha256(
     (*record).prf_result.as_mut_ptr(),
-    ::std::mem::size_of::<[uint8_t; 12]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 12]>() as libc::c_ulong as libc::c_uint,
     (*(*tls).hsd).master_secret.as_mut_ptr(),
-    ::std::mem::size_of::<[uint8_t; 48]>() as libc::c_ulong as libc::c_uint,
+    ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as libc::c_uint,
     b"client finished\x00" as *const u8 as *const libc::c_char,
     handshake_hash.as_mut_ptr(),
     len,
@@ -3367,7 +3367,7 @@ unsafe extern "C" fn tls_xwrite(mut tls: *mut tls_state_t, mut len: libc::c_int)
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 // To run a test server using openssl:
 // openssl req -x509 -newkey rsa:$((4096/4*3)) -keyout key.pem -out server.pem -nodes -days 99999 -subj '/CN=localhost'

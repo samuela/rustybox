@@ -27,9 +27,9 @@ extern "C" {
     display_unit: libc::c_ulong,
   ) -> *const libc::c_char;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -52,7 +52,7 @@ use crate::librb::__off64_t;
 use crate::librb::dev_t;
 use libc::stat;
 
-use libc::uint32_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

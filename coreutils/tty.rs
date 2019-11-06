@@ -7,17 +7,14 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_warn_ignoring_args(arg: *mut libc::c_char);
   #[no_mangle]
   fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
 }
-
-use libc::uint32_t;
- use libc::uint8_t;
 
 /*
  * tty implementation for busybox
@@ -55,7 +52,7 @@ pub unsafe extern "C" fn tty_main(
   let mut s: *const libc::c_char = 0 as *const libc::c_char; /* Note: No longer relevant in SUSv3. */
   let mut silent: libc::c_int = 0; /* SUSv3 requires > 1 for error. */
   let mut retval: libc::c_int = 0;
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   silent = getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   argv = argv.offset(optind as isize);
   /* gnu tty outputs a warning that it is ignoring all args. */

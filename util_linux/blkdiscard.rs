@@ -17,7 +17,7 @@ extern "C" {
   fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn ioctl_or_perror_and_die(
@@ -38,7 +38,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
 
 #[derive(Copy, Clone)]

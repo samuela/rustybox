@@ -48,7 +48,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn xfunc_die() -> !;
@@ -106,10 +106,8 @@ extern "C" {
 }
 
 use crate::librb::ssize_t;
-use libc::uint32_t;
 
 use crate::librb::size_t;
- use libc::uint8_t;
 
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
@@ -159,7 +157,7 @@ unsafe extern "C" fn hash_bin_to_hex(
 unsafe extern "C" fn hash_file(
   mut filename: *const libc::c_char,
   mut sha3_width: libc::c_uint,
-) -> *mut uint8_t {
+) -> *mut u8 {
   let mut src_fd: libc::c_int = 0;
   let mut hash_len: libc::c_int = 0;
   let mut count: libc::c_int = 0;
@@ -170,7 +168,7 @@ unsafe extern "C" fn hash_file(
       input_block_bytes: 0,
     },
   };
-  let mut hash_value: *mut uint8_t = 0 as *mut uint8_t;
+  let mut hash_value: *mut u8 = 0 as *mut u8;
   let mut update: Option<
     unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
   > = None;
@@ -180,7 +178,7 @@ unsafe extern "C" fn hash_file(
   let mut hash_algo: libc::c_char = 0;
   src_fd = open_or_warn_stdin(filename);
   if src_fd < 0i32 {
-    return 0 as *mut uint8_t;
+    return 0 as *mut u8;
   }
   hash_algo = *applet_name.offset(3);
   /* figure specific hash algorithms */
@@ -325,7 +323,7 @@ unsafe extern "C" fn hash_file(
       count as size_t,
     );
   }
-  hash_value = 0 as *mut uint8_t;
+  hash_value = 0 as *mut u8;
   if count < 0i32 {
     bb_perror_msg(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -386,7 +384,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
         if line.is_null() {
           break;
         }
-        let mut hash_value: *mut uint8_t = 0 as *mut uint8_t;
+        let mut hash_value: *mut u8 = 0 as *mut u8;
         let mut filename_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
         count_total += 1;
         filename_ptr = strstr(line, b"  \x00" as *const u8 as *const libc::c_char);
@@ -448,7 +446,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
       }
       fclose_if_not_stdin(pre_computed_stream);
     } else {
-      let mut hash_value_0: *mut uint8_t = hash_file(*argv, sha3_width);
+      let mut hash_value_0: *mut u8 = hash_file(*argv, sha3_width);
       if hash_value_0.is_null() {
         return_value = 1i32
       } else {

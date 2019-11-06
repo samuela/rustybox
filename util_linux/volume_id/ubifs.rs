@@ -5,14 +5,14 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -21,8 +21,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -68,32 +68,32 @@ pub const UUID_DCE: uuid_format = 2;
 #[repr(C, packed)]
 pub struct ubifs_sb_node {
   pub ch: ubifs_ch,
-  pub padding: [uint8_t; 2],
-  pub key_hash: uint8_t,
-  pub key_fmt: uint8_t,
-  pub flags: uint32_t,
-  pub min_io_size: uint32_t,
-  pub leb_size: uint32_t,
-  pub leb_cnt: uint32_t,
-  pub max_leb_cnt: uint32_t,
+  pub padding: [u8; 2],
+  pub key_hash: u8,
+  pub key_fmt: u8,
+  pub flags: u32,
+  pub min_io_size: u32,
+  pub leb_size: u32,
+  pub leb_cnt: u32,
+  pub max_leb_cnt: u32,
   pub max_bud_bytes: uint64_t,
-  pub log_lebs: uint32_t,
-  pub lpt_lebs: uint32_t,
-  pub orph_lebs: uint32_t,
-  pub jhead_cnt: uint32_t,
-  pub fanout: uint32_t,
-  pub lsave_cnt: uint32_t,
-  pub fmt_version: uint32_t,
-  pub default_compr: uint16_t,
-  pub padding1: [uint8_t; 2],
-  pub rp_uid: uint32_t,
-  pub rp_gid: uint32_t,
+  pub log_lebs: u32,
+  pub lpt_lebs: u32,
+  pub orph_lebs: u32,
+  pub jhead_cnt: u32,
+  pub fanout: u32,
+  pub lsave_cnt: u32,
+  pub fmt_version: u32,
+  pub default_compr: u16,
+  pub padding1: [u8; 2],
+  pub rp_uid: u32,
+  pub rp_gid: u32,
   pub rp_size: uint64_t,
-  pub time_gran: uint32_t,
-  pub uuid: [uint8_t; 16],
-  pub ro_compat_version: uint32_t,
+  pub time_gran: u32,
+  pub uuid: [u8; 16],
+  pub ro_compat_version: u32,
   /*
-    uint8_t padding2[3968];
+    u8 padding2[3968];
   */
 }
 /*
@@ -112,13 +112,13 @@ pub struct ubifs_sb_node {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ubifs_ch {
-  pub magic: uint32_t,
-  pub crc: uint32_t,
+  pub magic: u32,
+  pub crc: u32,
   pub sqnum: uint64_t,
-  pub len: uint32_t,
-  pub node_type: uint8_t,
-  pub group_type: uint8_t,
-  pub padding: [uint8_t; 2],
+  pub len: u32,
+  pub node_type: u8,
+  pub group_type: u8,
+  pub padding: [u8; 2],
 }
 /*
  * volume_id - reads filesystem label and uuid
@@ -142,9 +142,9 @@ pub struct ubifs_ch {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -164,7 +164,7 @@ pub struct ubifs_ch {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

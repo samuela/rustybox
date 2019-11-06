@@ -32,9 +32,9 @@ extern "C" {
     count: libc::c_int,
   ) -> *mut libc::c_char;
   #[no_mangle]
-  fn generate_uuid(buf: *mut uint8_t);
+  fn generate_uuid(buf: *mut u8);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -45,8 +45,8 @@ extern "C" {
 
 use crate::librb::off_t;
 use crate::librb::size_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
 use crate::librb::uoff_t;
 
 /*
@@ -90,13 +90,13 @@ use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct swap_header_v1 {
-  pub version: uint32_t,
-  pub last_page: uint32_t,
-  pub nr_badpages: uint32_t,
+  pub version: u32,
+  pub last_page: u32,
+  pub nr_badpages: u32,
   pub sws_uuid: [libc::c_char; 16],
   pub sws_volume: [libc::c_char; 16],
-  pub padding: [uint32_t; 117],
-  pub badpages: [uint32_t; 1],
+  pub padding: [u32; 117],
+  pub badpages: [u32; 1],
   /* 128 */
   /* total 129 32-bit words in 2nd kilobyte */
 }
@@ -140,14 +140,14 @@ pub unsafe extern "C" fn mkswap_main(
     1024i32 as size_t,
   );
   /* Fill the header. */
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1)).version = 1i32 as uint32_t;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1)).version = 1i32 as u32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1)).last_page =
-    (len as uoff_t).wrapping_div(pagesize as libc::c_ulong) as uint32_t;
+    (len as uoff_t).wrapping_div(pagesize as libc::c_ulong) as u32;
   let mut uuid_string: [libc::c_char; 32] = [0; 32];
   generate_uuid(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1))
       .sws_uuid
-      .as_mut_ptr() as *mut libc::c_void as *mut uint8_t,
+      .as_mut_ptr() as *mut libc::c_void as *mut u8,
   );
   bin2hex(
     uuid_string.as_mut_ptr(),

@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -36,7 +36,6 @@ extern "C" {
 
 use crate::librb::pid_t;
 use crate::librb::size_t;
-use libc::uint32_t;
 
 use crate::libbb::llist::llist_t;
 

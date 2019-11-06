@@ -35,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -78,9 +78,9 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -179,7 +179,7 @@ pub union C2RustUnnamed_2 {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct ether_addr {
-  pub ether_addr_octet: [uint8_t; 6],
+  pub ether_addr_octet: [u8; 6],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -198,36 +198,36 @@ pub type ethtable_t = ethtable_s;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ethtool_drvinfo {
-  pub cmd: uint32_t,
+  pub cmd: u32,
   pub driver: [libc::c_char; 32],
   pub version: [libc::c_char; 32],
   pub fw_version: [libc::c_char; 32],
   pub bus_info: [libc::c_char; 32],
   pub reserved1: [libc::c_char; 32],
   pub reserved2: [libc::c_char; 16],
-  pub n_stats: uint32_t,
-  pub testinfo_len: uint32_t,
-  pub eedump_len: uint32_t,
-  pub regdump_len: uint32_t,
+  pub n_stats: u32,
+  pub testinfo_len: u32,
+  pub eedump_len: u32,
+  pub regdump_len: u32,
   /* Size of data from ETHTOOL_GREGS (bytes) */
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ethtool_cmd {
-  pub cmd: uint32_t,
-  pub supported: uint32_t,
-  pub advertising: uint32_t,
-  pub speed: uint16_t,
-  pub duplex: uint8_t,
-  pub port: uint8_t,
-  pub phy_address: uint8_t,
-  pub transceiver: uint8_t,
-  pub autoneg: uint8_t,
-  pub maxtxpkt: uint32_t,
-  pub maxrxpkt: uint32_t,
-  pub speed_hi: uint16_t,
-  pub reserved2: uint16_t,
-  pub reserved: [uint32_t; 3],
+  pub cmd: u32,
+  pub supported: u32,
+  pub advertising: u32,
+  pub speed: u16,
+  pub duplex: u8,
+  pub port: u8,
+  pub phy_address: u8,
+  pub transceiver: u8,
+  pub autoneg: u8,
+  pub maxtxpkt: u32,
+  pub maxrxpkt: u32,
+  pub speed_hi: u16,
+  pub reserved2: u16,
+  pub reserved: [u32; 3],
 }
 /* Get driver info. */
 unsafe extern "C" fn nameif_parse_selector(
@@ -435,7 +435,7 @@ pub unsafe extern "C" fn nameif_main(
       0i32,
       ::std::mem::size_of::<ethtool_cmd>() as libc::c_ulong,
     );
-    eth_settings.cmd = 0x1i32 as uint32_t;
+    eth_settings.cmd = 0x1i32 as u32;
     ifr.ifr_ifru.ifru_data = &mut eth_settings as *mut ethtool_cmd as caddr_t;
     ioctl(ctl_sk, 0x8946i32 as libc::c_ulong, &mut ifr as *mut ifreq);
     /* Check for driver etc. */
@@ -444,7 +444,7 @@ pub unsafe extern "C" fn nameif_main(
       0i32,
       ::std::mem::size_of::<ethtool_drvinfo>() as libc::c_ulong,
     );
-    drvinfo.cmd = 0x3i32 as uint32_t;
+    drvinfo.cmd = 0x3i32 as u32;
     ifr.ifr_ifru.ifru_data = &mut drvinfo as *mut ethtool_drvinfo as caddr_t;
     /* Get driver and businfo first, so we have it in drvinfo */
     ioctl(ctl_sk, 0x8946i32 as libc::c_ulong, &mut ifr as *mut ifreq);

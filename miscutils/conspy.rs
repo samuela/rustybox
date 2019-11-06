@@ -71,14 +71,14 @@ extern "C" {
   #[no_mangle]
   fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
@@ -112,9 +112,9 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -274,13 +274,13 @@ unsafe extern "C" fn screen_read_close() {
       let mut x: libc::c_uint = j.wrapping_sub((*ptr_to_globals).x as libc::c_uint);
       let mut y: libc::c_uint = i.wrapping_sub((*ptr_to_globals).y as libc::c_uint);
       if y >= (*ptr_to_globals).height || x >= (*ptr_to_globals).width {
-        *(data as *mut uint16_t) = 0i32 as uint16_t
+        *(data as *mut u16) = 0i32 as u16
       } else {
-        let mut ch: uint8_t = *(data as *mut uint8_t);
+        let mut ch: u8 = *(data as *mut u8);
         if (ch as libc::c_int) < ' ' as i32 {
-          *(data as *mut uint8_t) = (ch as libc::c_int | 0x40i32) as uint8_t
+          *(data as *mut u8) = (ch as libc::c_int | 0x40i32) as u8
         } else if ch as libc::c_int > 0x7ei32 {
-          *(data as *mut uint8_t) = '?' as i32 as uint8_t
+          *(data as *mut u8) = '?' as i32 as u8
         }
       }
       j = j.wrapping_add(1);
@@ -291,12 +291,12 @@ unsafe extern "C" fn screen_read_close() {
 }
 unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
   if option_mask32 & (1i32 << FLAG_n as libc::c_int) as libc::c_uint == 0 {
-    let mut attr_diff: uint8_t = 0;
-    let mut attr: uint8_t = *(data as *mut uint8_t).offset(1);
+    let mut attr_diff: u8 = 0;
+    let mut attr: u8 = *(data as *mut u8).offset(1);
     if option_mask32 & (1i32 << FLAG_F as libc::c_int) as libc::c_uint != 0 {
-      attr = (attr as libc::c_int >> 1i32) as uint8_t
+      attr = (attr as libc::c_int >> 1i32) as u8
     }
-    attr_diff = ((*ptr_to_globals).last_attr ^ attr as libc::c_int) as uint8_t;
+    attr_diff = ((*ptr_to_globals).last_attr ^ attr as libc::c_int) as u8;
     if attr_diff != 0 {
       // Attribute layout for VGA compatible text videobuffer:
       // blinking text
@@ -323,10 +323,10 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
       //        text 8th bit
       // converting RGB color bit triad to BGR:
       static mut color: [libc::c_char; 8] = [48, 52, 50, 54, 49, 53, 51, 55];
-      let fg_mask: uint8_t = 0x7i32 as uint8_t;
-      let bold_mask: uint8_t = 0x8i32 as uint8_t;
-      let bg_mask: uint8_t = 0x70i32 as uint8_t;
-      let blink_mask: uint8_t = 0x80i32 as uint8_t;
+      let fg_mask: u8 = 0x7i32 as u8;
+      let bold_mask: u8 = 0x8i32 as u8;
+      let bg_mask: u8 = 0x70i32 as u8;
+      let blink_mask: u8 = 0x80i32 as u8;
       let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
       ptr = (*ptr_to_globals).attrbuf.as_mut_ptr();
       // (G.last_attr & ~attr) has 1 only where
@@ -347,7 +347,7 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
         *fresh1 = ';' as i32 as libc::c_char;
         // must set fg & bg, maybe need to set bold or blink:
         attr_diff =
-          (attr as libc::c_int | !(bold_mask as libc::c_int | blink_mask as libc::c_int)) as uint8_t
+          (attr as libc::c_int | !(bold_mask as libc::c_int | blink_mask as libc::c_int)) as u8
       }
       (*ptr_to_globals).last_attr = attr as libc::c_int;
       if attr_diff as libc::c_int & bold_mask as libc::c_int != 0 {
@@ -394,7 +394,7 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
       }
     }
   }
-  putchar_unlocked(*(data as *mut uint8_t) as libc::c_int);
+  putchar_unlocked(*(data as *mut u8) as libc::c_int);
   (*ptr_to_globals).col = (*ptr_to_globals).col.wrapping_add(1);
 }
 unsafe extern "C" fn screen_dump() {
@@ -417,7 +417,7 @@ unsafe extern "C" fn screen_dump() {
       if !(tty_col >= (*ptr_to_globals).width) {
         space_cnt += 1;
         if !(option_mask32 & (1i32 << FLAG_n as libc::c_int) as libc::c_uint != 0
-          && *(data as *mut uint8_t) as libc::c_int == ' ' as i32)
+          && *(data as *mut u8) as libc::c_int == ' ' as i32)
         {
           while linefeed_cnt != 0i32 {
             //bb_putchar('\r'); - tty driver does it for us
@@ -688,7 +688,7 @@ pub unsafe extern "C" fn conspy_main(
         while j < (*ptr_to_globals).remote.cols as libc::c_int {
           let mut jx: libc::c_uint = (j - (*ptr_to_globals).x) as libc::c_uint;
           if jx < (*ptr_to_globals).width
-            && *(data as *mut uint16_t) as libc::c_int != *(old as *mut uint16_t) as libc::c_int
+            && *(data as *mut u16) as libc::c_int != *(old as *mut u16) as libc::c_int
           {
             last = data;
             if first.is_null() {

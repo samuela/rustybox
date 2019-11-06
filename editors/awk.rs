@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn itoa(n: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -186,8 +186,8 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -310,7 +310,7 @@ pub struct chain_s {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct node_s {
-  pub info: uint32_t,
+  pub info: u32,
   pub lineno: libc::c_uint,
   pub l: C2RustUnnamed_3,
   pub r: C2RustUnnamed_2,
@@ -502,15 +502,15 @@ pub const CONVFMT: C2RustUnnamed_8 = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals2 {
-  pub t_info: uint32_t,
-  pub t_tclass: uint32_t,
+  pub t_info: u32,
+  pub t_tclass: u32,
   pub t_string: *mut libc::c_char,
   pub t_lineno: libc::c_int,
   pub intvar: [*mut var; 19],
   pub split_f0__fstrings: *mut libc::c_char,
-  pub next_token__save_tclass: uint32_t,
-  pub next_token__save_info: uint32_t,
-  pub next_token__ltclass: uint32_t,
+  pub next_token__save_tclass: u32,
+  pub next_token__save_info: u32,
+  pub next_token__ltclass: u32,
   pub next_token__concat_inserted: smallint,
   pub next_input_file__files_happen: smallint,
   pub next_input_file__rsm: rstream,
@@ -586,137 +586,137 @@ static mut tokenlist: [libc::c_char; 448] = [
   110, 99, 8, 102, 117, 110, 99, 116, 105, 111, 110, -1, 5, 66, 69, 71, 73, 78, -1, 3, 69, 78, 68,
   0,
 ];
-static mut tokeninfo: [uint32_t; 100] = [
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  OC_REGEXP as libc::c_int as uint32_t,
-  (0x20000i32 | 0x80000i32 | 'a' as i32) as uint32_t,
-  (0x20000i32 | 0x80000i32 | 'w' as i32) as uint32_t,
-  (0x20000i32 | 0x80000i32 | '|' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'p' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'm' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'P' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'M' as i32) as uint32_t,
-  (OC_FIELD as libc::c_int | 0x20000i32 | 5i32 << 24i32) as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 5i32) as uint32_t,
-  (OC_MOVE as libc::c_int | (0x10000i32 | 0x20000i32) | 74i32 << 24i32) as uint32_t,
+static mut tokeninfo: [u32; 100] = [
+  0i32 as u32,
+  0i32 as u32,
+  OC_REGEXP as libc::c_int as u32,
+  (0x20000i32 | 0x80000i32 | 'a' as i32) as u32,
+  (0x20000i32 | 0x80000i32 | 'w' as i32) as u32,
+  (0x20000i32 | 0x80000i32 | '|' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'p' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'm' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'P' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 9i32 << 24i32 | 'M' as i32) as u32,
+  (OC_FIELD as libc::c_int | 0x20000i32 | 5i32 << 24i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 5i32) as u32,
+  (OC_MOVE as libc::c_int | (0x10000i32 | 0x20000i32) | 74i32 << 24i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '+' as i32) as uint32_t,
+    | '+' as i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '-' as i32) as uint32_t,
+    | '-' as i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '*' as i32) as uint32_t,
+    | '*' as i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '/' as i32) as uint32_t,
+    | '/' as i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '%' as i32) as uint32_t,
+    | '%' as i32) as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '&' as i32) as uint32_t,
+    | '&' as i32) as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 29i32 << 24i32 | '+' as i32)
-    as uint32_t,
+    as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 29i32 << 24i32 | '-' as i32)
-    as uint32_t,
+    as u32,
   (OC_REPLACE as libc::c_int
     | (0x10000i32 | 0x100000i32 | 0x20000i32)
     | 74i32 << 24i32
-    | '&' as i32) as uint32_t,
+    | '&' as i32) as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 15i32 << 24i32 | '&' as i32)
-    as uint32_t,
+    as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 25i32 << 24i32 | '/' as i32)
-    as uint32_t,
+    as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 25i32 << 24i32 | '%' as i32)
-    as uint32_t,
+    as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 15i32 << 24i32 | '&' as i32)
-    as uint32_t,
+    as u32,
   (OC_BINARY as libc::c_int | (0x10000i32 | 0x100000i32 | 0x20000i32) | 25i32 << 24i32 | '*' as i32)
-    as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 4i32) as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 3i32) as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 0i32) as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 1i32) as uint32_t,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 2i32) as uint32_t,
-  (OC_MATCH as libc::c_int | (0x10000i32 | 0x40000i32) | 45i32 << 24i32 | '!' as i32) as uint32_t,
-  (OC_MATCH as libc::c_int | (0x10000i32 | 0x40000i32) | 45i32 << 24i32 | '~' as i32) as uint32_t,
-  (OC_LAND as libc::c_int | 0x10000i32 | 55i32 << 24i32) as uint32_t,
-  (OC_LOR as libc::c_int | 0x10000i32 | 59i32 << 24i32) as uint32_t,
-  (OC_TERNARY as libc::c_int | 0x10000i32 | 64i32 << 24i32 | '?' as i32) as uint32_t,
-  (OC_COLON as libc::c_int | 0i32 | 67i32 << 24i32 | ':' as i32) as uint32_t,
-  (OC_IN as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 49i32 << 24i32) as uint32_t,
+    as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 4i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 3i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 0i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 1i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 2i32) as u32,
+  (OC_MATCH as libc::c_int | (0x10000i32 | 0x40000i32) | 45i32 << 24i32 | '!' as i32) as u32,
+  (OC_MATCH as libc::c_int | (0x10000i32 | 0x40000i32) | 45i32 << 24i32 | '~' as i32) as u32,
+  (OC_LAND as libc::c_int | 0x10000i32 | 55i32 << 24i32) as u32,
+  (OC_LOR as libc::c_int | 0x10000i32 | 59i32 << 24i32) as u32,
+  (OC_TERNARY as libc::c_int | 0x10000i32 | 64i32 << 24i32 | '?' as i32) as u32,
+  (OC_COLON as libc::c_int | 0i32 | 67i32 << 24i32 | ':' as i32) as u32,
+  (OC_IN as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 49i32 << 24i32) as u32,
   (OC_COMMA as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32 | 0x80000i32) | 80i32 << 24i32)
-    as uint32_t,
+    as u32,
   (OC_PGETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 37i32 << 24i32)
-    as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '+' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '-' as i32) as uint32_t,
-  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '!' as i32) as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  ST_IF as libc::c_int as uint32_t,
-  ST_DO as libc::c_int as uint32_t,
-  ST_FOR as libc::c_int as uint32_t,
-  OC_BREAK as libc::c_int as uint32_t,
-  OC_CONTINUE as libc::c_int as uint32_t,
-  (OC_DELETE as libc::c_int | (0x10000i32 | 0x100000i32 | 0x400000i32)) as uint32_t,
-  OC_PRINT as libc::c_int as uint32_t,
-  OC_PRINTF as libc::c_int as uint32_t,
-  OC_NEXT as libc::c_int as uint32_t,
-  OC_NEXTFILE as libc::c_int as uint32_t,
-  (OC_RETURN as libc::c_int | 0x10000i32) as uint32_t,
-  (OC_EXIT as libc::c_int | (0x10000i32 | 0x100000i32)) as uint32_t,
-  ST_WHILE as libc::c_int as uint32_t,
-  0i32 as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_an as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_co as libc::c_int | 0x41i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ls as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_or as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_rs as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_xo as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_cl as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_sy as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_ff as libc::c_int) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_a2 as libc::c_int | 0x83i32 << 24i32) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_co as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_ex as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_in as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_lg as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | F_rn as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_si as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_sq as libc::c_int) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_sr as libc::c_int) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ge as libc::c_int | 0xd6i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_gs as libc::c_int | 0xb6i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ix as libc::c_int | 0x9bi32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ma as libc::c_int | 0x89i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_sp as libc::c_int | 0x8bi32 << 24i32) as uint32_t,
-  OC_SPRINTF as libc::c_int as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_su as libc::c_int | 0xb6i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ss as libc::c_int | 0x8fi32 << 24i32) as uint32_t,
-  (OC_FBLTIN as libc::c_int | F_ti as libc::c_int) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_ti as libc::c_int | 0xbi32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_mt as libc::c_int | 0xbi32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_lo as libc::c_int | 0x49i32 << 24i32) as uint32_t,
-  (OC_BUILTIN as libc::c_int | B_up as libc::c_int | 0x49i32 << 24i32) as uint32_t,
-  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_le as libc::c_int) as uint32_t,
-  (OC_GETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 0i32 << 24i32) as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
-  0i32 as uint32_t,
+    as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '+' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '-' as i32) as u32,
+  (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '!' as i32) as u32,
+  0i32 as u32,
+  0i32 as u32,
+  0i32 as u32,
+  0i32 as u32,
+  0i32 as u32,
+  ST_IF as libc::c_int as u32,
+  ST_DO as libc::c_int as u32,
+  ST_FOR as libc::c_int as u32,
+  OC_BREAK as libc::c_int as u32,
+  OC_CONTINUE as libc::c_int as u32,
+  (OC_DELETE as libc::c_int | (0x10000i32 | 0x100000i32 | 0x400000i32)) as u32,
+  OC_PRINT as libc::c_int as u32,
+  OC_PRINTF as libc::c_int as u32,
+  OC_NEXT as libc::c_int as u32,
+  OC_NEXTFILE as libc::c_int as u32,
+  (OC_RETURN as libc::c_int | 0x10000i32) as u32,
+  (OC_EXIT as libc::c_int | (0x10000i32 | 0x100000i32)) as u32,
+  ST_WHILE as libc::c_int as u32,
+  0i32 as u32,
+  (OC_BUILTIN as libc::c_int | B_an as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_co as libc::c_int | 0x41i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_ls as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_or as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_rs as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_xo as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_cl as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_sy as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_ff as libc::c_int) as u32,
+  (OC_BUILTIN as libc::c_int | B_a2 as libc::c_int | 0x83i32 << 24i32) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_co as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_ex as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_in as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_lg as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | F_rn as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_si as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_sq as libc::c_int) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x100000i32) | F_sr as libc::c_int) as u32,
+  (OC_BUILTIN as libc::c_int | B_ge as libc::c_int | 0xd6i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_gs as libc::c_int | 0xb6i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_ix as libc::c_int | 0x9bi32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_ma as libc::c_int | 0x89i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_sp as libc::c_int | 0x8bi32 << 24i32) as u32,
+  OC_SPRINTF as libc::c_int as u32,
+  (OC_BUILTIN as libc::c_int | B_su as libc::c_int | 0xb6i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_ss as libc::c_int | 0x8fi32 << 24i32) as u32,
+  (OC_FBLTIN as libc::c_int | F_ti as libc::c_int) as u32,
+  (OC_BUILTIN as libc::c_int | B_ti as libc::c_int | 0xbi32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_mt as libc::c_int | 0xbi32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_lo as libc::c_int | 0x49i32 << 24i32) as u32,
+  (OC_BUILTIN as libc::c_int | B_up as libc::c_int | 0x49i32 << 24i32) as u32,
+  (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_le as libc::c_int) as u32,
+  (OC_GETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 0i32 << 24i32) as u32,
+  0i32 as u32,
+  0i32 as u32,
+  0i32 as u32,
+  0i32 as u32,
 ];
 static mut vNames: [libc::c_char; 107] = [
   67, 79, 78, 86, 70, 77, 84, 0, 79, 70, 77, 84, 0, 70, 83, 0, 42, 79, 70, 83, 0, 79, 82, 83, 0,
@@ -728,12 +728,12 @@ static mut vNames: [libc::c_char; 107] = [
 static mut vValues: [libc::c_char; 25] = [
   37, 46, 54, 103, 0, 37, 46, 54, 103, 0, 32, 0, 32, 0, 10, 0, 10, 0, 0, 0, 28, 0, 0, -1, 0,
 ];
-static mut PRIMES: [uint16_t; 5] = [
-  251i32 as uint16_t,
-  1021i32 as uint16_t,
-  4093i32 as uint16_t,
-  16381i32 as uint16_t,
-  65521i32 as uint16_t,
+static mut PRIMES: [u16; 5] = [
+  251i32 as u16,
+  1021i32 as u16,
+  4093i32 as u16,
+  16381i32 as u16,
+  65521i32 as u16,
 ];
 /* ---- error handling ---- */
 static mut EMSG_INTERNAL_ERROR: [libc::c_char; 15] = [
@@ -834,8 +834,8 @@ unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
   let mut hi: *mut hash_item = 0 as *mut hash_item;
   let mut thi: *mut hash_item = 0 as *mut hash_item;
   if (*hash).nprime
-    == (::std::mem::size_of::<[uint16_t; 5]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint
+    == (::std::mem::size_of::<[u16; 5]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
   {
     return;
   }
@@ -1267,13 +1267,13 @@ unsafe extern "C" fn nvfree(mut v: *mut var) {
 /* Parse next token pointed by global pos, place results into global ttt.
  * If token isn't expected, give away. Return token class
  */
-unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
+unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
   /* Initialized to TC_OPTERM: */
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut tl: *const libc::c_char = 0 as *const libc::c_char;
-  let mut tc: uint32_t = 0;
-  let mut ti: *const uint32_t = 0 as *const uint32_t;
+  let mut tc: u32 = 0;
+  let mut ti: *const u32 = 0 as *const u32;
   if (*ptr_to_globals.offset(-1i32 as isize)).t_rollback != 0 {
     (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 0i32 as smallint
   } else if (*(ptr_to_globals as *mut globals2)).next_token__concat_inserted != 0 {
@@ -1299,7 +1299,7 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
         *fresh15 += 1
       }
       if *p as libc::c_int == '\u{0}' as i32 {
-        tc = (1i32 << 25i32) as uint32_t
+        tc = (1i32 << 25i32) as u32
       } else if *p as libc::c_int == '\"' as i32 {
         /* it's a string */
         p = p.offset(1);
@@ -1319,7 +1319,7 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
         }
         p = p.offset(1);
         *s = '\u{0}' as i32 as libc::c_char;
-        tc = (1i32 << 29i32) as uint32_t
+        tc = (1i32 << 29i32) as u32
       } else if expected & (1i32 << 2i32) as libc::c_uint != 0 && *p as libc::c_int == '/' as i32 {
         /* it's regexp */
         p = p.offset(1);
@@ -1358,7 +1358,7 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
         }
         p = p.offset(1);
         *s = '\u{0}' as i32 as libc::c_char;
-        tc = (1i32 << 2i32) as uint32_t
+        tc = (1i32 << 2i32) as u32
       } else if *p as libc::c_int == '.' as i32
         || (*p as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32
       {
@@ -1369,11 +1369,11 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
         if *p as libc::c_int == '.' as i32 {
           syntax_error(EMSG_UNEXP_TOKEN.as_ptr());
         }
-        tc = (1i32 << 30i32) as uint32_t
+        tc = (1i32 << 30i32) as u32
       } else {
         /* search for something known */
         tl = tokenlist.as_ptr();
-        tc = 0x1i32 as uint32_t;
+        tc = 0x1i32 as u32;
         ti = tokeninfo.as_ptr();
         loop {
           if !(*tl != 0) {
@@ -1446,7 +1446,7 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
               *p.offset(-1i32 as isize) = *p
             }
             *p.offset(-1i32 as isize) = '\u{0}' as i32 as libc::c_char;
-            tc = (1i32 << 26i32) as uint32_t;
+            tc = (1i32 << 26i32) as u32;
             /* also consume whitespace between functionname and bracket */
             if expected & (1i32 << 26i32) as libc::c_uint == 0
               || expected & (1i32 << 27i32) as libc::c_uint != 0
@@ -1454,10 +1454,10 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
               p = skip_spaces(p)
             }
             if *p as libc::c_int == '(' as i32 {
-              tc = (1i32 << 28i32) as uint32_t
+              tc = (1i32 << 28i32) as u32
             } else if *p as libc::c_int == '[' as i32 {
               p = p.offset(1);
-              tc = (1i32 << 27i32) as uint32_t
+              tc = (1i32 << 27i32) as u32
             }
           }
         }
@@ -1504,10 +1504,10 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
       (*(ptr_to_globals as *mut globals2)).next_token__save_tclass = tc;
       (*(ptr_to_globals as *mut globals2)).next_token__save_info =
         (*(ptr_to_globals as *mut globals2)).t_info;
-      tc = (1i32 << 6i32 | 1i32 << 8i32 | 1i32 << 9i32 | 1i32 << 7i32) as uint32_t;
+      tc = (1i32 << 6i32 | 1i32 << 8i32 | 1i32 << 9i32 | 1i32 << 7i32) as u32;
       (*(ptr_to_globals as *mut globals2)).t_info = (OC_CONCAT as libc::c_int
         | (0x10000i32 | 0x40000i32 | 0x20000i32 | 0x80000i32)
-        | 35i32 << 24i32) as uint32_t
+        | 35i32 << 24i32) as u32
     }
     (*(ptr_to_globals as *mut globals2)).t_tclass = tc
   }
@@ -1531,7 +1531,7 @@ unsafe extern "C" fn next_token(mut expected: uint32_t) -> uint32_t {
 unsafe extern "C" fn rollback_token() {
   (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 1i32 as smallint;
 }
-unsafe extern "C" fn new_node(mut info: uint32_t) -> *mut node {
+unsafe extern "C" fn new_node(mut info: u32) -> *mut node {
   let mut n: *mut node = 0 as *mut node;
   n = xzalloc(::std::mem::size_of::<node>() as libc::c_ulong) as *mut node;
   (*n).info = info;
@@ -1543,19 +1543,19 @@ unsafe extern "C" fn mk_re_node(
   mut n: *mut node,
   mut re: *mut regex_t,
 ) {
-  (*n).info = OC_REGEXP as libc::c_int as uint32_t;
+  (*n).info = OC_REGEXP as libc::c_int as u32;
   (*n).l.re = re;
   (*n).r.ire = re.offset(1);
   xregcomp(re, s, 1i32);
   xregcomp(re.offset(1), s, 1i32 | 1i32 << 1i32);
 }
 unsafe extern "C" fn condition() -> *mut node {
-  next_token((1i32 << 0i32) as uint32_t);
-  return parse_expr((1i32 << 1i32) as uint32_t);
+  next_token((1i32 << 0i32) as u32);
+  return parse_expr((1i32 << 1i32) as u32);
 }
 /* parse expression terminated by given argument, return ptr
  * to built subtree. Terminator is eaten by parse_expr */
-unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
+unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
   let mut sn: node = node {
     info: 0,
     lineno: 0,
@@ -1572,10 +1572,10 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
   let mut cn: *mut node = &mut sn;
   let mut vn: *mut node = 0 as *mut node;
   let mut glptr: *mut node = 0 as *mut node;
-  let mut tc: uint32_t = 0;
-  let mut xtc: uint32_t = 0;
+  let mut tc: u32 = 0;
+  let mut xtc: u32 = 0;
   let mut v: *mut var = 0 as *mut var;
-  sn.info = 0x7f000000i32 as uint32_t;
+  sn.info = 0x7f000000i32 as u32;
   glptr = 0 as *mut node;
   sn.a.n = glptr;
   sn.r.n = sn.a.n;
@@ -1605,7 +1605,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
       (*glptr).l.n = new_node(
         (OC_CONCAT as libc::c_int
           | (0x10000i32 | 0x40000i32 | 0x20000i32 | 0x80000i32)
-          | 37i32 << 24i32) as uint32_t,
+          | 37i32 << 24i32) as u32,
       );
       cn = (*glptr).l.n;
       (*cn).a.n = glptr;
@@ -1618,7 +1618,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
         | 1i32 << 0i32
         | 1i32 << 29i32
         | 1i32 << 30i32
-        | (1i32 << 5i32 | 1i32 << 10i32)) as uint32_t;
+        | (1i32 << 5i32 | 1i32 << 10i32)) as u32;
       glptr = 0 as *mut node
     } else if tc
       & (1i32 << 6i32 | 1i32 << 8i32 | 1i32 << 9i32 | 1i32 << 7i32 | 1i32 << 4i32) as libc::c_uint
@@ -1643,7 +1643,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
       {
         let ref mut fresh27 = (*(ptr_to_globals as *mut globals2)).t_info;
         *fresh27 = (*fresh27 as libc::c_uint).wrapping_add((6i32 << 24i32) as libc::c_uint)
-          as uint32_t as uint32_t
+          as u32 as u32
       }
       (*(*vn).a.n).r.n = new_node((*(ptr_to_globals as *mut globals2)).t_info);
       cn = (*(*vn).a.n).r.n;
@@ -1660,12 +1660,12 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
           | 1i32 << 29i32
           | 1i32 << 30i32
           | (1i32 << 5i32 | 1i32 << 10i32)
-          | 1i32 << 2i32) as uint32_t;
+          | 1i32 << 2i32) as u32;
         if (*(ptr_to_globals as *mut globals2)).t_info & 0xff00i32 as libc::c_uint
           == OC_PGETLINE as libc::c_int as libc::c_uint
         {
           /* it's a pipe */
-          next_token((1i32 << 21i32) as uint32_t);
+          next_token((1i32 << 21i32) as u32);
           /* give maximum priority to this pipe */
           (*cn).info &= !0x7f000000i32 as libc::c_uint;
           xtc = (1i32 << 26i32
@@ -1716,7 +1716,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)
-        | 1i32 << 2i32) as uint32_t;
+        | 1i32 << 2i32) as u32;
       if tc
         & (1i32 << 26i32
           | 1i32 << 27i32
@@ -1748,13 +1748,13 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
          * only simple tclasses should be used! */
         match tc {
           67108864 | 134217728 => {
-            (*cn).info = OC_VAR as libc::c_int as uint32_t;
+            (*cn).info = OC_VAR as libc::c_int as u32;
             v = hash_search(
               (*ptr_to_globals.offset(-1i32 as isize)).ahash,
               (*(ptr_to_globals as *mut globals2)).t_string,
             ) as *mut var;
             if !v.is_null() {
-              (*cn).info = OC_FNARG as libc::c_int as uint32_t;
+              (*cn).info = OC_FNARG as libc::c_int as u32;
               (*cn).l.aidx = (*v).x.aidx
             } else {
               (*cn).l.v = hash_find(
@@ -1764,11 +1764,11 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
             }
             if tc & (1i32 << 27i32) as libc::c_uint != 0 {
               (*cn).info |= (0x20000i32 | 0x80000i32) as libc::c_uint;
-              (*cn).r.n = parse_expr((1i32 << 11i32) as uint32_t)
+              (*cn).r.n = parse_expr((1i32 << 11i32) as u32)
             }
           }
           1073741824 | 536870912 => {
-            (*cn).info = OC_VAR as libc::c_int as uint32_t;
+            (*cn).info = OC_VAR as libc::c_int as u32;
             (*cn).l.v = xzalloc(::std::mem::size_of::<var>() as libc::c_ulong) as *mut var;
             v = (*cn).l.v;
             if tc & (1i32 << 30i32) as libc::c_uint != 0 {
@@ -1788,7 +1788,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
             );
           }
           268435456 => {
-            (*cn).info = OC_FUNC as libc::c_int as uint32_t;
+            (*cn).info = OC_FUNC as libc::c_int as u32;
             (*cn).r.f = hash_find(
               (*ptr_to_globals.offset(-1i32 as isize)).fnhash,
               (*(ptr_to_globals as *mut globals2)).t_string,
@@ -1796,7 +1796,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
             (*cn).l.n = condition()
           }
           1 => {
-            (*vn).r.n = parse_expr((1i32 << 1i32) as uint32_t);
+            (*vn).r.n = parse_expr((1i32 << 1i32) as u32);
             cn = (*vn).r.n;
             if cn.is_null() {
               syntax_error(b"Empty sequence\x00" as *const u8 as *const libc::c_char);
@@ -1822,7 +1822,7 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
           524288 => (*cn).l.n = condition(),
           1048576 => {
             next_token(
-              (1i32 << 0i32 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as uint32_t,
+              (1i32 << 0i32 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as u32,
             );
             rollback_token();
             if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 0i32) as libc::c_uint != 0 {
@@ -1838,14 +1838,14 @@ unsafe extern "C" fn parse_expr(mut iexp: uint32_t) -> *mut node {
   return sn.r.n;
 }
 /* add node to chain. Return ptr to alloc'd node */
-unsafe extern "C" fn chain_node(mut info: uint32_t) -> *mut node {
+unsafe extern "C" fn chain_node(mut info: u32) -> *mut node {
   let mut n: *mut node = 0 as *mut node;
   if (*(*ptr_to_globals.offset(-1i32 as isize)).seq)
     .first
     .is_null()
   {
     let ref mut fresh28 = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).last;
-    *fresh28 = new_node(0i32 as uint32_t);
+    *fresh28 = new_node(0i32 as u32);
     let ref mut fresh29 = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).first;
     *fresh29 = *fresh28
   }
@@ -1854,20 +1854,20 @@ unsafe extern "C" fn chain_node(mut info: uint32_t) -> *mut node {
   {
     let ref mut fresh30 = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).programname;
     *fresh30 = (*ptr_to_globals.offset(-1i32 as isize)).g_progname;
-    n = chain_node(OC_NEWSOURCE as libc::c_int as uint32_t);
+    n = chain_node(OC_NEWSOURCE as libc::c_int as u32);
     (*n).l.new_progname = xstrdup((*ptr_to_globals.offset(-1i32 as isize)).g_progname)
   }
   n = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).last;
   (*n).info = info;
-  (*n).a.n = new_node(OC_DONE as libc::c_int as uint32_t);
+  (*n).a.n = new_node(OC_DONE as libc::c_int as u32);
   let ref mut fresh31 = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).last;
   *fresh31 = (*n).a.n;
   return n;
 }
-unsafe extern "C" fn chain_expr(mut info: uint32_t) {
+unsafe extern "C" fn chain_expr(mut info: u32) {
   let mut n: *mut node = 0 as *mut node;
   n = chain_node(info);
-  (*n).l.n = parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 13i32) as uint32_t);
+  (*n).l.n = parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 13i32) as u32);
   if info & 0x400000i32 as libc::c_uint != 0 && (*n).l.n.is_null() {
     syntax_error(EMSG_TOO_FEW_ARGS.as_ptr());
   }
@@ -1882,13 +1882,13 @@ unsafe extern "C" fn chain_loop(mut nn: *mut node) -> *mut node {
   let mut save_cont: *mut node = 0 as *mut node;
   save_brk = (*ptr_to_globals.offset(-1i32 as isize)).break_ptr;
   save_cont = (*ptr_to_globals.offset(-1i32 as isize)).continue_ptr;
-  n = chain_node((OC_BR as libc::c_int | 0x10000i32) as uint32_t);
+  n = chain_node((OC_BR as libc::c_int | 0x10000i32) as u32);
   let ref mut fresh32 = (*ptr_to_globals.offset(-1i32 as isize)).continue_ptr;
-  *fresh32 = new_node(OC_EXEC as libc::c_int as uint32_t);
+  *fresh32 = new_node(OC_EXEC as libc::c_int as u32);
   let ref mut fresh33 = (*ptr_to_globals.offset(-1i32 as isize)).break_ptr;
-  *fresh33 = new_node(OC_EXEC as libc::c_int as uint32_t);
+  *fresh33 = new_node(OC_EXEC as libc::c_int as u32);
   chain_group();
-  n2 = chain_node((OC_EXEC as libc::c_int | 0x10000i32) as uint32_t);
+  n2 = chain_node((OC_EXEC as libc::c_int | 0x10000i32) as u32);
   (*n2).l.n = nn;
   (*n2).a.n = n;
   let ref mut fresh34 = (*(*ptr_to_globals.offset(-1i32 as isize)).continue_ptr).a.n;
@@ -1904,7 +1904,7 @@ unsafe extern "C" fn chain_loop(mut nn: *mut node) -> *mut node {
 }
 /* parse group and attach it to chain */
 unsafe extern "C" fn chain_group() {
-  let mut c: uint32_t = 0;
+  let mut c: u32 = 0;
   let mut n: *mut node = 0 as *mut node;
   let mut n2: *mut node = 0 as *mut node;
   let mut n3: *mut node = 0 as *mut node;
@@ -1923,7 +1923,7 @@ unsafe extern "C" fn chain_group() {
         | 1i32 << 2i32
         | (1i32 << 14i32 | 1i32 << 15i32)
         | (1i32 << 16i32 | 1i32 << 17i32)
-        | 1i32 << 12i32) as uint32_t,
+        | 1i32 << 12i32) as u32,
     );
     if !(c & (1i32 << 15i32) as libc::c_uint != 0) {
       break;
@@ -1945,7 +1945,7 @@ unsafe extern "C" fn chain_group() {
         | (1i32 << 14i32 | 1i32 << 15i32)
         | (1i32 << 16i32 | 1i32 << 17i32)
         | 1i32 << 12i32
-        | 1i32 << 13i32) as uint32_t,
+        | 1i32 << 13i32) as u32,
     ) != (1i32 << 13i32) as libc::c_uint
     {
       if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 15i32) as libc::c_uint != 0 {
@@ -1970,15 +1970,15 @@ unsafe extern "C" fn chain_group() {
     != 0
   {
     rollback_token();
-    chain_expr((OC_EXEC as libc::c_int | 0x10000i32) as uint32_t);
+    chain_expr((OC_EXEC as libc::c_int | 0x10000i32) as u32);
   } else {
     /* TC_STATEMNT */
     match (*(ptr_to_globals as *mut globals2)).t_info & 0xff00i32 as libc::c_uint {
       12288 => {
-        n = chain_node((OC_BR as libc::c_int | 0x10000i32) as uint32_t); /* for (;;) */
+        n = chain_node((OC_BR as libc::c_int | 0x10000i32) as u32); /* for (;;) */
         (*n).l.n = condition();
         chain_group();
-        n2 = chain_node(OC_EXEC as libc::c_int as uint32_t);
+        n2 = chain_node(OC_EXEC as libc::c_int as u32);
         (*n).r.n = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).last;
         if next_token(
           (1i32 << 26i32
@@ -1996,7 +1996,7 @@ unsafe extern "C" fn chain_group() {
             | (1i32 << 16i32 | 1i32 << 17i32)
             | 1i32 << 12i32
             | 1i32 << 13i32
-            | 1i32 << 18i32) as uint32_t,
+            | 1i32 << 18i32) as u32,
         ) == (1i32 << 18i32) as libc::c_uint
         {
           chain_group();
@@ -2011,15 +2011,15 @@ unsafe extern "C" fn chain_group() {
         (*n).l.n = n2
       }
       12544 => {
-        n2 = chain_node(OC_EXEC as libc::c_int as uint32_t);
+        n2 = chain_node(OC_EXEC as libc::c_int as u32);
         n = chain_loop(0 as *mut node);
         (*n2).a.n = (*n).a.n;
-        next_token((1i32 << 17i32) as uint32_t);
+        next_token((1i32 << 17i32) as u32);
         (*n).l.n = condition()
       }
       12800 => {
-        next_token((1i32 << 0i32) as uint32_t);
-        n2 = parse_expr((1i32 << 14i32 | 1i32 << 1i32) as uint32_t);
+        next_token((1i32 << 0i32) as u32);
+        n2 = parse_expr((1i32 << 14i32 | 1i32 << 1i32) as u32);
         if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 1i32) as libc::c_uint != 0 {
           /* for-in */
           if n2.is_null()
@@ -2027,43 +2027,43 @@ unsafe extern "C" fn chain_group() {
           {
             syntax_error(EMSG_UNEXP_TOKEN.as_ptr());
           }
-          n = chain_node((OC_WALKINIT as libc::c_int | (0x10000i32 | 0x20000i32)) as uint32_t);
+          n = chain_node((OC_WALKINIT as libc::c_int | (0x10000i32 | 0x20000i32)) as u32);
           (*n).l.n = (*n2).l.n;
           (*n).r.n = (*n2).r.n;
           n = chain_loop(0 as *mut node);
-          (*n).info = (OC_WALKNEXT as libc::c_int | 0x10000i32) as uint32_t;
+          (*n).info = (OC_WALKNEXT as libc::c_int | 0x10000i32) as u32;
           (*n).l.n = (*n2).l.n
         } else {
-          n = chain_node((OC_EXEC as libc::c_int | 0x10000i32) as uint32_t);
+          n = chain_node((OC_EXEC as libc::c_int | 0x10000i32) as u32);
           (*n).l.n = n2;
-          n2 = parse_expr((1i32 << 14i32) as uint32_t);
-          n3 = parse_expr((1i32 << 1i32) as uint32_t);
+          n2 = parse_expr((1i32 << 14i32) as u32);
+          n3 = parse_expr((1i32 << 1i32) as u32);
           n = chain_loop(n3);
           (*n).l.n = n2;
           if n2.is_null() {
-            (*n).info = OC_EXEC as libc::c_int as uint32_t
+            (*n).info = OC_EXEC as libc::c_int as u32
           }
         }
       }
       1024 | 1280 => {
         n = chain_node((*(ptr_to_globals as *mut globals2)).t_info);
         (*n).l.n =
-          parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 13i32) as uint32_t);
+          parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 13i32) as u32);
         if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 3i32) as libc::c_uint != 0 {
           (*n).info |= (*(ptr_to_globals as *mut globals2)).t_info;
-          (*n).r.n = parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 13i32) as uint32_t)
+          (*n).r.n = parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 13i32) as u32)
         }
         if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 13i32) as libc::c_uint != 0 {
           rollback_token();
         }
       }
       2048 => {
-        n = chain_node(OC_EXEC as libc::c_int as uint32_t);
+        n = chain_node(OC_EXEC as libc::c_int as u32);
         (*n).a.n = (*ptr_to_globals.offset(-1i32 as isize)).break_ptr;
         chain_expr((*(ptr_to_globals as *mut globals2)).t_info);
       }
       2304 => {
-        n = chain_node(OC_EXEC as libc::c_int as uint32_t);
+        n = chain_node(OC_EXEC as libc::c_int as u32);
         (*n).a.n = (*ptr_to_globals.offset(-1i32 as isize)).continue_ptr;
         chain_expr((*(ptr_to_globals as *mut globals2)).t_info);
       }
@@ -2075,7 +2075,7 @@ unsafe extern "C" fn chain_group() {
   };
 }
 unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
-  let mut tclass: uint32_t = 0;
+  let mut tclass: u32 = 0;
   let mut cn: *mut node = 0 as *mut node;
   let mut f: *mut func = 0 as *mut func;
   let mut v: *mut var = 0 as *mut var;
@@ -2100,7 +2100,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
         | (1i32 << 14i32 | 1i32 << 15i32)
         | 1i32 << 23i32
         | 1i32 << 24i32
-        | 1i32 << 22i32) as uint32_t,
+        | 1i32 << 22i32) as u32,
     );
     if !(tclass != (1i32 << 25i32) as libc::c_uint) {
       break;
@@ -2119,7 +2119,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
       *fresh41 = &mut (*ptr_to_globals.offset(-1i32 as isize)).endseq;
       chain_group();
     } else if tclass & (1i32 << 22i32) as libc::c_uint != 0 {
-      next_token((1i32 << 28i32) as uint32_t);
+      next_token((1i32 << 28i32) as u32);
       let ref mut fresh42 = (*ptr_to_globals.offset(-1i32 as isize)).g_pos;
       *fresh42 = (*fresh42).offset(1);
       f = hash_find(
@@ -2129,7 +2129,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
       (*f).body.first = 0 as *mut node_s;
       (*f).nargs = 0i32 as libc::c_uint;
       /* Match func arg list: a comma sep list of >= 0 args, and a close paren */
-      while next_token((1i32 << 26i32 | 1i32 << 1i32 | 1i32 << 8i32) as uint32_t) != 0 {
+      while next_token((1i32 << 26i32 | 1i32 << 1i32 | 1i32 << 8i32) as u32) != 0 {
         /* Either an empty arg list, or trailing comma from prev iter
          * must be followed by an arg */
         if (*f).nargs == 0i32 as libc::c_uint
@@ -2149,7 +2149,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
         (*f).nargs = (*f).nargs.wrapping_add(1);
         (*v).x.aidx = fresh43 as libc::c_int;
         /* Arg followed either by end of arg list or 1 comma */
-        if next_token((1i32 << 8i32 | 1i32 << 1i32) as uint32_t) & (1i32 << 1i32) as libc::c_uint
+        if next_token((1i32 << 8i32 | 1i32 << 1i32) as u32) & (1i32 << 1i32) as libc::c_uint
           != 0
         {
           break;
@@ -2177,14 +2177,14 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
       != 0
     {
       rollback_token();
-      cn = chain_node(OC_TEST as libc::c_int as uint32_t);
+      cn = chain_node(OC_TEST as libc::c_int as u32);
       (*cn).l.n =
-        parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 25i32 | 1i32 << 12i32) as uint32_t);
+        parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 25i32 | 1i32 << 12i32) as u32);
       if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 12i32) as libc::c_uint != 0 {
         rollback_token();
         chain_group();
       } else {
-        chain_node(OC_PRINT as libc::c_int as uint32_t);
+        chain_node(OC_PRINT as libc::c_int as u32);
       }
       (*cn).r.n = (*ptr_to_globals.offset(-1i32 as isize)).mainseq.last
     } else {
@@ -2211,7 +2211,7 @@ unsafe extern "C" fn mk_splitter(mut s: *const libc::c_char, mut spl: *mut tspli
     /* strlen(s) > 1 */
     mk_re_node(s, n, re);
   } else {
-    (*n).info = *s.offset(0) as uint32_t
+    (*n).info = *s.offset(0) as u32
   }
   return n;
 }
@@ -3157,8 +3157,8 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
   };
   let mut re: *mut regex_t = 0 as *mut regex_t;
   let mut spl: *mut node = 0 as *mut node;
-  let mut isr: uint32_t = 0;
-  let mut info: uint32_t = 0;
+  let mut isr: u32 = 0;
+  let mut info: u32 = 0;
   let mut nargs: libc::c_int = 0;
   let mut tt: time_t = 0;
   let mut i: libc::c_int = 0;
@@ -3184,7 +3184,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
     i += 1
   }
   nargs = i;
-  if (nargs as uint32_t) < info >> 30i32 {
+  if (nargs as u32) < info >> 30i32 {
     syntax_error(EMSG_TOO_FEW_ARGS.as_ptr());
   }
   info &= 0x7fi32 as libc::c_uint;
@@ -3430,7 +3430,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
     R = R;
     let mut L_d: libc::c_double = 0.;
     L_d = L_d;
-    let mut opinfo: uint32_t = 0;
+    let mut opinfo: u32 = 0;
     let mut opn: libc::c_int = 0;
     let mut op1: *mut node = 0 as *mut node;
     opinfo = (*op).info;
@@ -3444,7 +3444,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
     if (opinfo & 0xff00i32 as libc::c_uint) >> 8i32
       == (OC_DELETE as libc::c_int >> 8i32) as libc::c_uint
     {
-      let mut info: uint32_t = (*op1).info & 0xff00i32 as libc::c_uint;
+      let mut info: u32 = (*op1).info & 0xff00i32 as libc::c_uint;
       let mut v: *mut var = 0 as *mut var;
       if info == OC_VAR as libc::c_int as libc::c_uint {
         v = (*op1).l.v
@@ -21407,7 +21407,7 @@ pub unsafe extern "C" fn awk_main(
     as *mut libc::c_void as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*(ptr_to_globals as *mut globals2)).next_token__ltclass =
-    (1i32 << 14i32 | 1i32 << 15i32) as uint32_t;
+    (1i32 << 14i32 | 1i32 << 15i32) as u32;
   (*(ptr_to_globals as *mut globals2)).evaluate__seed = 1i32 as libc::c_uint;
   /* Undo busybox.c, or else strtod may eat ','! This breaks parsing:
    * $1,$2 == '$1,' '$2', NOT '$1' ',' '$2' */

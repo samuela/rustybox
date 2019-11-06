@@ -62,9 +62,9 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -88,9 +88,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -100,11 +100,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -118,7 +118,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -154,22 +154,22 @@ pub struct pollfd {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct arpMsg {
-  pub h_dest: [uint8_t; 6],
-  pub h_source: [uint8_t; 6],
-  pub h_proto: uint16_t,
-  pub htype: uint16_t,
-  pub ptype: uint16_t,
-  pub hlen: uint8_t,
-  pub plen: uint8_t,
-  pub operation: uint16_t,
-  pub sHaddr: [uint8_t; 6],
-  pub sInaddr: [uint8_t; 4],
-  pub tHaddr: [uint8_t; 6],
-  pub tInaddr: [uint8_t; 4],
-  pub pad: [uint8_t; 18],
+  pub h_dest: [u8; 6],
+  pub h_source: [u8; 6],
+  pub h_proto: u16,
+  pub htype: u16,
+  pub ptype: u16,
+  pub hlen: u8,
+  pub plen: u8,
+  pub operation: u16,
+  pub sHaddr: [u8; 6],
+  pub sInaddr: [u8; 4],
+  pub tHaddr: [u8; 6],
+  pub tInaddr: [u8; 4],
+  pub pad: [u8; 18],
   /* 2a pad for min. ethernet payload (60 bytes) */
 }
-pub type aliased_uint32_t = uint32_t;
+pub type aliased_u32 = u32;
 pub const ARP_MSG_SIZE: C2RustUnnamed_0 = 42;
 pub type C2RustUnnamed_0 = libc::c_uint;
 
@@ -316,17 +316,17 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
 /* ** Logging ***/
 /* ** Other shared functions ***/
-/* 2nd param is "uint32_t*" */
+/* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
-/*uint32_t ip,*/
+/*u32 ip,*/
 /* Returns 1 if no reply received */
 /* Returns 1 if no reply received */
 #[no_mangle]
 pub unsafe extern "C" fn arpping(
-  mut test_nip: uint32_t,
-  mut safe_mac: *const uint8_t,
-  mut from_ip: uint32_t,
-  mut from_mac: *mut uint8_t,
+  mut test_nip: u32,
+  mut safe_mac: *const u8,
+  mut from_ip: u32,
+  mut from_mac: *mut u8,
   mut interface: *const libc::c_char,
   mut timeo: libc::c_uint,
 ) -> libc::c_int {
@@ -457,8 +457,8 @@ pub unsafe extern "C" fn arpping(
       }
       __v
     };
-    arp.hlen = 6i32 as uint8_t;
-    arp.plen = 4i32 as uint8_t;
+    arp.hlen = 6i32 as u8;
+    arp.plen = 4i32 as u8;
     arp.operation = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
@@ -483,15 +483,15 @@ pub unsafe extern "C" fn arpping(
     );
     memcpy(
       arp.sInaddr.as_mut_ptr() as *mut libc::c_void,
-      &mut from_ip as *mut uint32_t as *const libc::c_void,
-      ::std::mem::size_of::<uint32_t>() as libc::c_ulong,
+      &mut from_ip as *mut u32 as *const libc::c_void,
+      ::std::mem::size_of::<u32>() as libc::c_ulong,
     );
     /* tHaddr is zero-filled */
     /* target hardware address */
     memcpy(
       arp.tInaddr.as_mut_ptr() as *mut libc::c_void,
-      &mut test_nip as *mut uint32_t as *const libc::c_void,
-      ::std::mem::size_of::<uint32_t>() as libc::c_ulong,
+      &mut test_nip as *mut u32 as *const libc::c_void,
+      ::std::mem::size_of::<u32>() as libc::c_ulong,
     ); /* target IP address */
     memset(
       &mut addr as *mut sockaddr as *mut libc::c_void,
@@ -557,7 +557,7 @@ pub unsafe extern "C" fn arpping(
                 }
                 __v
               }) as libc::c_int
-            && *(arp.sInaddr.as_mut_ptr() as *mut aliased_uint32_t) == test_nip
+            && *(arp.sInaddr.as_mut_ptr() as *mut aliased_u32) == test_nip
           {
             /* if ARP source MAC matches safe_mac
              * (which is client's MAC), then it's not a conflict

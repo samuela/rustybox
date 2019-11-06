@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn getutxent() -> *mut utmpx;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
@@ -18,7 +18,7 @@ use crate::librb::__int32_t;
 use crate::librb::__pid_t;
 
 use libc::time_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -62,7 +62,7 @@ pub struct C2RustUnnamed {
   pub tv_usec: __int32_t,
 }
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -80,7 +80,7 @@ pub struct sysinfo {
   pub pad: __u16,
   pub totalhigh: __kernel_ulong_t,
   pub freehigh: __kernel_ulong_t,
-  pub mem_unit: __u32,
+  pub mem_unit: u32,
   pub _f: [libc::c_char; 0],
 }
 /* nr of bits of precision */

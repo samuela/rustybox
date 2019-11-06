@@ -29,7 +29,7 @@ extern "C" {
   #[no_mangle]
   static bb_argv_dash: [*const libc::c_char; 0];
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_mbstowcs(dest: *mut wchar_t, src: *const libc::c_char, n: size_t) -> size_t;
   #[no_mangle]
@@ -37,7 +37,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 pub type wchar_t = libc::c_int;

@@ -118,8 +118,8 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::uid_t;
-use libc::uint16_t;
- use libc::uint8_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -168,9 +168,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,
@@ -316,7 +316,7 @@ unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
     }
     (*sp).shift_pages_to_bytes = (*sp).shift_pages_to_bytes.wrapping_add(1)
   }
-  (*sp).shift_pages_to_kb = ((*sp).shift_pages_to_bytes as libc::c_int - 10i32) as uint8_t;
+  (*sp).shift_pages_to_kb = ((*sp).shift_pages_to_bytes as libc::c_int - 10i32) as u8;
   return sp;
 }
 #[no_mangle]
@@ -838,12 +838,12 @@ pub unsafe extern "C" fn procps_scan(
         break;
       }
       if flags & PSSCAN_ARGVN as libc::c_int != 0 {
-        (*sp).argv_len = n as uint16_t;
+        (*sp).argv_len = n as u16;
         (*sp).argv0 =
           xmemdup(buf.as_mut_ptr() as *const libc::c_void, n + 1i32) as *mut libc::c_char
       /* sp->argv0[n] = '\0'; - buf has it */
       } else {
-        (*sp).argv_len = 0i32 as uint16_t;
+        (*sp).argv_len = 0i32 as u16;
         (*sp).argv0 = xstrdup(buf.as_mut_ptr())
       }
       break;
@@ -1062,7 +1062,7 @@ pub unsafe extern "C" fn procps_scan(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

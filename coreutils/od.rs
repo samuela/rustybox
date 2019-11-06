@@ -113,7 +113,7 @@ extern "C" {
   static bb_argv_dash: [*const libc::c_char; 0];
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
   fn getopt32long(
@@ -121,7 +121,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
@@ -152,8 +152,8 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::stat;
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -231,81 +231,81 @@ pub const OPT_N: C2RustUnnamed = 2;
 pub const OPT_A: C2RustUnnamed = 1;
 pub type longdouble_t = f128::f128;
 pub type ulonglong_t = libc::c_ulonglong;
-static mut bytes_to_oct_digits: [uint8_t; 17] = [
-  0i32 as uint8_t,
-  3i32 as uint8_t,
-  6i32 as uint8_t,
-  8i32 as uint8_t,
-  11i32 as uint8_t,
-  14i32 as uint8_t,
-  16i32 as uint8_t,
-  19i32 as uint8_t,
-  22i32 as uint8_t,
-  25i32 as uint8_t,
-  27i32 as uint8_t,
-  30i32 as uint8_t,
-  32i32 as uint8_t,
-  35i32 as uint8_t,
-  38i32 as uint8_t,
-  41i32 as uint8_t,
-  43i32 as uint8_t,
+static mut bytes_to_oct_digits: [u8; 17] = [
+  0i32 as u8,
+  3i32 as u8,
+  6i32 as u8,
+  8i32 as u8,
+  11i32 as u8,
+  14i32 as u8,
+  16i32 as u8,
+  19i32 as u8,
+  22i32 as u8,
+  25i32 as u8,
+  27i32 as u8,
+  30i32 as u8,
+  32i32 as u8,
+  35i32 as u8,
+  38i32 as u8,
+  41i32 as u8,
+  43i32 as u8,
 ];
-static mut bytes_to_signed_dec_digits: [uint8_t; 17] = [
-  1i32 as uint8_t,
-  4i32 as uint8_t,
-  6i32 as uint8_t,
-  8i32 as uint8_t,
-  11i32 as uint8_t,
-  13i32 as uint8_t,
-  16i32 as uint8_t,
-  18i32 as uint8_t,
-  20i32 as uint8_t,
-  23i32 as uint8_t,
-  25i32 as uint8_t,
-  28i32 as uint8_t,
-  30i32 as uint8_t,
-  33i32 as uint8_t,
-  35i32 as uint8_t,
-  37i32 as uint8_t,
-  40i32 as uint8_t,
+static mut bytes_to_signed_dec_digits: [u8; 17] = [
+  1i32 as u8,
+  4i32 as u8,
+  6i32 as u8,
+  8i32 as u8,
+  11i32 as u8,
+  13i32 as u8,
+  16i32 as u8,
+  18i32 as u8,
+  20i32 as u8,
+  23i32 as u8,
+  25i32 as u8,
+  28i32 as u8,
+  30i32 as u8,
+  33i32 as u8,
+  35i32 as u8,
+  37i32 as u8,
+  40i32 as u8,
 ];
-static mut bytes_to_unsigned_dec_digits: [uint8_t; 17] = [
-  0i32 as uint8_t,
-  3i32 as uint8_t,
-  5i32 as uint8_t,
-  8i32 as uint8_t,
-  10i32 as uint8_t,
-  13i32 as uint8_t,
-  15i32 as uint8_t,
-  17i32 as uint8_t,
-  20i32 as uint8_t,
-  22i32 as uint8_t,
-  25i32 as uint8_t,
-  27i32 as uint8_t,
-  29i32 as uint8_t,
-  32i32 as uint8_t,
-  34i32 as uint8_t,
-  37i32 as uint8_t,
-  39i32 as uint8_t,
+static mut bytes_to_unsigned_dec_digits: [u8; 17] = [
+  0i32 as u8,
+  3i32 as u8,
+  5i32 as u8,
+  8i32 as u8,
+  10i32 as u8,
+  13i32 as u8,
+  15i32 as u8,
+  17i32 as u8,
+  20i32 as u8,
+  22i32 as u8,
+  25i32 as u8,
+  27i32 as u8,
+  29i32 as u8,
+  32i32 as u8,
+  34i32 as u8,
+  37i32 as u8,
+  39i32 as u8,
 ];
-static mut bytes_to_hex_digits: [uint8_t; 17] = [
-  0i32 as uint8_t,
-  2i32 as uint8_t,
-  4i32 as uint8_t,
-  6i32 as uint8_t,
-  8i32 as uint8_t,
-  10i32 as uint8_t,
-  12i32 as uint8_t,
-  14i32 as uint8_t,
-  16i32 as uint8_t,
-  18i32 as uint8_t,
-  20i32 as uint8_t,
-  22i32 as uint8_t,
-  24i32 as uint8_t,
-  26i32 as uint8_t,
-  28i32 as uint8_t,
-  30i32 as uint8_t,
-  32i32 as uint8_t,
+static mut bytes_to_hex_digits: [u8; 17] = [
+  0i32 as u8,
+  2i32 as u8,
+  4i32 as u8,
+  6i32 as u8,
+  8i32 as u8,
+  10i32 as u8,
+  12i32 as u8,
+  14i32 as u8,
+  16i32 as u8,
+  18i32 as u8,
+  20i32 as u8,
+  22i32 as u8,
+  24i32 as u8,
+  26i32 as u8,
+  28i32 as u8,
+  30i32 as u8,
+  32i32 as u8,
 ];
 static mut width_bytes: [libc::c_schar; 9] = [
   -1i32 as libc::c_schar,
@@ -774,11 +774,11 @@ unsafe extern "C" fn decode_one_format(
           s = end
         }
       } else {
-        static mut CSIL_sizeof: [uint8_t; 4] = [
-          ::std::mem::size_of::<libc::c_char>() as libc::c_ulong as uint8_t,
-          ::std::mem::size_of::<libc::c_short>() as libc::c_ulong as uint8_t,
-          ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as uint8_t,
-          ::std::mem::size_of::<libc::c_long>() as libc::c_ulong as uint8_t,
+        static mut CSIL_sizeof: [u8; 4] = [
+          ::std::mem::size_of::<libc::c_char>() as libc::c_ulong as u8,
+          ::std::mem::size_of::<libc::c_short>() as libc::c_ulong as u8,
+          ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as u8,
+          ::std::mem::size_of::<libc::c_long>() as libc::c_ulong as u8,
         ];
         size = CSIL_sizeof[p.wrapping_offset_from(CSIL.as_ptr()) as libc::c_long as usize]
           as libc::c_uint;
@@ -795,7 +795,7 @@ unsafe extern "C" fn decode_one_format(
       ];
       static mut doux_fmt: [output_format; 4] =
         [SIGNED_DECIMAL, OCTAL, UNSIGNED_DECIMAL, HEXADECIMAL];
-      static mut doux_bytes_to_XXX: [*const uint8_t; 4] = unsafe {
+      static mut doux_bytes_to_XXX: [*const u8; 4] = unsafe {
         [
           bytes_to_signed_dec_digits.as_ptr(),
           bytes_to_oct_digits.as_ptr(),
@@ -921,10 +921,10 @@ unsafe extern "C" fn decode_one_format(
           s = end
         }
       } else {
-        static mut FDL_sizeof: [uint8_t; 3] = [
-          ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as uint8_t,
-          ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as uint8_t,
-          ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as uint8_t,
+        static mut FDL_sizeof: [u8; 3] = [
+          ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as u8,
+          ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as u8,
+          ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as u8,
         ];
         size =
           FDL_sizeof[p.wrapping_offset_from(FDL.as_ptr()) as libc::c_long as usize] as libc::c_uint;
@@ -1709,10 +1709,10 @@ pub unsafe extern "C" fn od_main(
       'o' as i32 as libc::c_char,
       'x' as i32 as libc::c_char,
     ];
-    static mut doxn_address_pad_len_char: [uint8_t; 3] = [
-      '7' as i32 as uint8_t,
-      '7' as i32 as uint8_t,
-      '6' as i32 as uint8_t,
+    static mut doxn_address_pad_len_char: [u8; 3] = [
+      '7' as i32 as u8,
+      '7' as i32 as u8,
+      '6' as i32 as u8,
     ];
     let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut pos: libc::c_int = 0;

@@ -207,9 +207,9 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type DIR = __dirstream;
 
@@ -226,9 +226,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -238,11 +238,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -256,7 +256,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -1120,7 +1120,7 @@ pub unsafe extern "C" fn xmalloc_ttyname(mut fd: libc::c_int) -> *mut libc::c_ch
   return xstrdup(buf.as_mut_ptr());
 }
 #[no_mangle]
-pub unsafe extern "C" fn generate_uuid(mut buf: *mut uint8_t) {
+pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
   /* http://www.ietf.org/rfc/rfc4122.txt
    *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1133,22 +1133,22 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut uint8_t) {
    * |                         node (2-5)                            |
    * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    * IOW, uuid has this layout:
-   * uint32_t time_low (big endian)
-   * uint16_t time_mid (big endian)
-   * uint16_t time_hi_and_version (big endian)
+   * u32 time_low (big endian)
+   * u16 time_mid (big endian)
+   * u16 time_hi_and_version (big endian)
    *  version is a 4-bit field:
    *   1 Time-based
    *   2 DCE Security, with embedded POSIX UIDs
    *   3 Name-based (MD5)
    *   4 Randomly generated
    *   5 Name-based (SHA-1)
-   * uint16_t clk_seq_and_variant (big endian)
+   * u16 clk_seq_and_variant (big endian)
    *  variant is a 3-bit field:
    *   0xx Reserved, NCS backward compatibility
    *   10x The variant specified in rfc4122
    *   110 Reserved, Microsoft backward compatibility
    *   111 Reserved for future definition
-   * uint8_t node[6]
+   * u8 node[6]
    *
    * For version 4, these bits are set/cleared:
    * time_hi_and_version & 0x0fff | 0x4000
@@ -1173,7 +1173,7 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut uint8_t) {
     i = 0i32;
     while i < 16i32 {
       let ref mut fresh0 = *buf.offset(i as isize);
-      *fresh0 = (*fresh0 as libc::c_int ^ rand() >> 5i32) as uint8_t;
+      *fresh0 = (*fresh0 as libc::c_int ^ rand() >> 5i32) as u8;
       i += 1
     }
     if pid == 0i32 {
@@ -1184,10 +1184,10 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut uint8_t) {
   }
   /* version = 4 */
   *buf.offset((4i32 + 2i32) as isize) =
-    (*buf.offset((4i32 + 2i32) as isize) as libc::c_int & 0xfi32 | 0x40i32) as uint8_t;
+    (*buf.offset((4i32 + 2i32) as isize) as libc::c_int & 0xfi32 | 0x40i32) as u8;
   /* variant = 10x */
   *buf.offset((4i32 + 2i32 + 2i32) as isize) =
-    (*buf.offset((4i32 + 2i32 + 2i32) as isize) as libc::c_int & 0x3fi32 | 0x80i32) as uint8_t;
+    (*buf.offset((4i32 + 2i32 + 2i32) as isize) as libc::c_int & 0x3fi32 | 0x80i32) as u8;
 }
 #[no_mangle]
 pub unsafe extern "C" fn xfork() -> pid_t {
@@ -1410,7 +1410,7 @@ pub unsafe extern "C" fn xfork() -> pid_t {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

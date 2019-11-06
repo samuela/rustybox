@@ -14,14 +14,14 @@ extern "C" {
 
 use crate::librb::__uint64_t;
 use crate::librb::int32_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 /*
  * Copyright (C) 2018 Denys Vlasenko
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-pub type byte = uint8_t;
+pub type byte = u8;
 /* from wolfssl-3.15.3/wolfcrypt/src/aes.c */
 unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   /* LITTLE_ENDIAN */
@@ -140,7 +140,7 @@ unsafe extern "C" fn GMULT(mut X: *mut byte, mut Y: *mut byte) {
   //XMEMCPY(V, X, AES_BLOCK_SIZE);
   i = 0i32;
   while i < 16i32 {
-    let mut y: uint32_t = (0x800000i32 | *Y.offset(i as isize) as libc::c_int) as uint32_t;
+    let mut y: u32 = (0x800000i32 | *Y.offset(i as isize) as libc::c_int) as u32;
     loop {
       // for every bit in Y[i], from msb to lsb
       if y & 0x80i32 as libc::c_uint != 0 {
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
   //xorbuf_aligned_AES_BLOCK_SIZE(x, scratch);
   // simpler:
   //P32(x)[0] ^= 0;
-  let ref mut fresh16 = *(x.as_mut_ptr() as *mut uint32_t).offset(1);
+  let ref mut fresh16 = *(x.as_mut_ptr() as *mut u32).offset(1);
   *fresh16 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (13i32 * 8i32) as libc::c_uint;
@@ -264,7 +264,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
     __v
   };
   //P32(x)[2] ^= 0;
-  let ref mut fresh20 = *(x.as_mut_ptr() as *mut uint32_t).offset(3);
+  let ref mut fresh20 = *(x.as_mut_ptr() as *mut u32).offset(3);
   *fresh20 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = cSz.wrapping_mul(8i32 as libc::c_uint);

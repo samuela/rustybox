@@ -47,7 +47,7 @@ extern "C" {
   #[no_mangle]
   fn get_cached_groupname(gid: gid_t) -> *const libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -72,9 +72,9 @@ extern "C" {
 use crate::librb::gid_t;
 use crate::librb::size_t;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type DIR = __dirstream;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
@@ -99,9 +99,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,
@@ -163,7 +163,7 @@ pub struct globals {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ps_out_t {
-  pub width: uint16_t,
+  pub width: u16,
   pub name6: [libc::c_char; 6],
   pub header: *const libc::c_char,
   pub f: Option<
@@ -172,7 +172,7 @@ pub struct ps_out_t {
   pub ps_flags: libc::c_int,
 }
 pub type __u16 = libc::c_ushort;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -190,7 +190,7 @@ pub struct sysinfo {
   pub pad: __u16,
   pub totalhigh: __kernel_ulong_t,
   pub freehigh: __kernel_ulong_t,
-  pub mem_unit: __u32,
+  pub mem_unit: u32,
   pub _f: [libc::c_char; 0],
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -578,7 +578,7 @@ unsafe extern "C" fn parse_o(mut opt: *mut libc::c_char) {
     // the field width shall be at least as wide as the
     // default header text
     if *(*new).header.offset(0) != 0 {
-      (*new).width = strlen((*new).header) as uint16_t; /* "FIELD " */
+      (*new).width = strlen((*new).header) as u16; /* "FIELD " */
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_header = 1i32
     }
   } else {
@@ -795,7 +795,7 @@ unsafe extern "C" fn run_static_initializers() {
   out_spec = [
     {
       let mut init = ps_out_t {
-        width: 8i32 as uint16_t,
+        width: 8i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"user\x00\x00"),
         header: b"USER\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -812,7 +812,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 8i32 as uint16_t,
+        width: 8i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"group\x00"),
         header: b"GROUP\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -829,7 +829,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 16i32 as uint16_t,
+        width: 16i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"comm\x00\x00"),
         header: b"COMMAND\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -846,7 +846,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: MAX_WIDTH as libc::c_int as uint16_t,
+        width: MAX_WIDTH as libc::c_int as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"args\x00\x00"),
         header: b"COMMAND\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -863,7 +863,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"pid\x00\x00\x00"),
         header: b"PID\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -880,7 +880,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"ppid\x00\x00"),
         header: b"PPID\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -897,7 +897,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"pgid\x00\x00"),
         header: b"PGID\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -915,7 +915,7 @@ unsafe extern "C" fn run_static_initializers() {
     {
       let mut init = ps_out_t {
         width: (::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong)
-          .wrapping_sub(1i32 as libc::c_ulong) as uint16_t,
+          .wrapping_sub(1i32 as libc::c_ulong) as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"etime\x00"),
         header: b"ELAPSED\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -932,7 +932,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"nice\x00\x00"),
         header: b"NI\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -949,7 +949,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 8i32 as uint16_t,
+        width: 8i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"rgroup"),
         header: b"RGROUP\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -966,7 +966,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 8i32 as uint16_t,
+        width: 8i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"ruser\x00"),
         header: b"RUSER\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -983,7 +983,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"time\x00\x00"),
         header: b"TIME\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -1000,7 +1000,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 6i32 as uint16_t,
+        width: 6i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"tty\x00\x00\x00"),
         header: b"TT\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -1017,7 +1017,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 4i32 as uint16_t,
+        width: 4i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"vsz\x00\x00\x00"),
         header: b"VSZ\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -1034,7 +1034,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 5i32 as uint16_t,
+        width: 5i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"sid\x00\x00\x00"),
         header: b"SID\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -1051,7 +1051,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 4i32 as uint16_t,
+        width: 4i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"stat\x00\x00"),
         header: b"STAT\x00" as *const u8 as *const libc::c_char,
         f: Some(
@@ -1068,7 +1068,7 @@ unsafe extern "C" fn run_static_initializers() {
     },
     {
       let mut init = ps_out_t {
-        width: 4i32 as uint16_t,
+        width: 4i32 as u16,
         name6: *::std::mem::transmute::<&[u8; 6], &mut [libc::c_char; 6]>(b"rss\x00\x00\x00"),
         header: b"RSS\x00" as *const u8 as *const libc::c_char,
         f: Some(

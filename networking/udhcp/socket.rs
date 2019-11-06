@@ -51,9 +51,9 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -72,7 +72,7 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -86,7 +86,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
 pub const IPPROTO_RAW: C2RustUnnamed = 255;
@@ -179,8 +179,8 @@ pub union C2RustUnnamed_1 {
 pub unsafe extern "C" fn udhcp_read_interface(
   mut interface: *const libc::c_char,
   mut ifindex: *mut libc::c_int,
-  mut nip: *mut uint32_t,
-  mut mac: *mut uint8_t,
+  mut nip: *mut u32,
+  mut mac: *mut u8,
 ) -> libc::c_int {
   /* char buffer instead of bona-fide struct avoids aliasing warning */
   let mut ifr_buf: [libc::c_char; 40] = [0; 40];
@@ -410,7 +410,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
 // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
 /* ** Logging ***/
 /* ** Other shared functions ***/
-/* 2nd param is "uint32_t*" */
+/* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
 /* 1. None of the callers expects it to ever fail */
 /* 2. ip was always INADDR_ANY */

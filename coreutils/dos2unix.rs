@@ -35,7 +35,7 @@ extern "C" {
   #[no_mangle]
   fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
@@ -50,7 +50,7 @@ use crate::librb::__gid_t;
 use crate::librb::__mode_t;
 use crate::librb::__uid_t;
 
-use libc::uint32_t;
+
 use libc::stat;
 use libc::FILE;
 

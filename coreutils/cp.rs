@@ -27,7 +27,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -52,7 +52,7 @@ extern "C" {
 }
 
 
-use libc::uint32_t;
+
 use libc::stat;
 
 pub type C2RustUnnamed = libc::c_int;

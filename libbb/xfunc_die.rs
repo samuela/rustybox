@@ -2,10 +2,10 @@ use libc;
 
 extern "C" {
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 }
 
- use libc::uint8_t;
+
 
 /* Keeping it separate allows to NOT pull in stdio for VERY small applets.
  * Try building busybox with only "true" enabled... */

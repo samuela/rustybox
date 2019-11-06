@@ -68,7 +68,7 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
@@ -97,8 +97,8 @@ pub type __int64_t = libc::c_long;
 use crate::librb::__off64_t;
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::off_t;
 use crate::librb::size_t;
@@ -152,9 +152,9 @@ pub struct globals {
   pub height: libc::c_uint,
   pub row: libc::c_uint,
   pub pagesize: libc::c_uint,
-  pub baseaddr: *mut uint8_t,
-  pub current_byte: *mut uint8_t,
-  pub eof_byte: *mut uint8_t,
+  pub baseaddr: *mut u8,
+  pub current_byte: *mut u8,
+  pub eof_byte: *mut u8,
   pub size: off_t,
   pub offset: off_t,
   pub read_key_buffer: [libc::c_char; 16],
@@ -180,13 +180,13 @@ unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
 }
 unsafe extern "C" fn format_line(
   mut hex: *mut libc::c_char,
-  mut data: *mut uint8_t,
+  mut data: *mut u8,
   mut offset: off_t,
 ) -> libc::c_int {
   let mut ofs_pos: libc::c_int = 0;
   let mut text: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut end: *mut uint8_t = 0 as *mut uint8_t;
-  let mut end1: *mut uint8_t = 0 as *mut uint8_t;
+  let mut end: *mut u8 = 0 as *mut u8;
+  let mut end1: *mut u8 = 0 as *mut u8;
   /* Can be more than 4Gb, thus >8 chars, thus use a variable - don't assume 8! */
   ofs_pos = sprintf(
     hex,
@@ -206,7 +206,7 @@ unsafe extern "C" fn format_line(
     while data <= end {
       let fresh0 = data;
       data = data.offset(1);
-      let mut c: uint8_t = *fresh0;
+      let mut c: u8 = *fresh0;
       let fresh1 = hex;
       hex = hex.offset(1);
       *fresh1 = *bb_hexdigits_upcase
@@ -221,7 +221,7 @@ unsafe extern "C" fn format_line(
       hex = hex.offset(1);
       *fresh3 = ' ' as i32 as libc::c_char;
       if (c as libc::c_int) < ' ' as i32 || c as libc::c_int > 0x7ei32 {
-        c = '.' as i32 as uint8_t
+        c = '.' as i32 as u8
       }
       let fresh4 = text;
       text = text.offset(1);
@@ -247,7 +247,7 @@ unsafe extern "C" fn format_line(
   return ofs_pos;
 }
 unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
-  let mut data: *mut uint8_t = 0 as *mut uint8_t;
+  let mut data: *mut u8 = 0 as *mut u8;
   let mut offset: off_t = 0;
   let mut i: libc::c_uint = 0;
   let mut pos: libc::c_uint = 0;
@@ -290,7 +290,7 @@ unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
 }
 unsafe extern "C" fn redraw_cur_line() {
   let mut buf: [libc::c_char; 88] = [0; 88];
-  let mut data: *mut uint8_t = 0 as *mut uint8_t;
+  let mut data: *mut u8 = 0 as *mut u8;
   let mut offset: off_t = 0;
   let mut column: libc::c_int = 0;
   column = (0xfi32 as libc::c_ulong & (*ptr_to_globals).current_byte as uintptr_t) as libc::c_int;
@@ -321,8 +321,8 @@ unsafe extern "C" fn remap(mut cur_pos: libc::c_uint) -> libc::c_int {
     0x1i32,
     (*ptr_to_globals).fd,
     (*ptr_to_globals).offset,
-  ) as *mut uint8_t;
-  if (*ptr_to_globals).baseaddr == -1i32 as *mut libc::c_void as *mut uint8_t {
+  ) as *mut u8;
+  if (*ptr_to_globals).baseaddr == -1i32 as *mut libc::c_void as *mut u8 {
     restore_term();
     bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
   }
@@ -443,7 +443,7 @@ pub unsafe extern "C" fn hexedit_main(
     /* switch */
     let mut key: int32_t = 0; /* for compiler */
     key = key; /* convert A-Z to a-z */
-    let mut byte: uint8_t = 0;
+    let mut byte: u8 = 0;
     fflush_all();
     (*ptr_to_globals).in_read_key = 1i32 as smallint;
     if bb_got_signal == 0 {
@@ -451,7 +451,7 @@ pub unsafe extern "C" fn hexedit_main(
     }
     (*ptr_to_globals).in_read_key = 0i32 as smallint;
     if bb_got_signal != 0 {
-      key = 'X' as i32 & !0x60i32 as uint8_t as libc::c_int
+      key = 'X' as i32 & !0x60i32 as u8 as libc::c_int
     }
     cnt = 1i32 as libc::c_uint;
     if (key - 'A' as i32) as libc::c_uint <= ('Z' as i32 - 'A' as i32) as libc::c_uint {
@@ -597,12 +597,12 @@ pub unsafe extern "C" fn hexedit_main(
             1966075811433896587 => {}
             _ => {
               key -= '0' as i32;
-              byte = (*(*ptr_to_globals).current_byte as libc::c_int & 0xf0i32) as uint8_t;
+              byte = (*(*ptr_to_globals).current_byte as libc::c_int & 0xf0i32) as u8;
               if (*ptr_to_globals).half == 0 {
-                byte = (*(*ptr_to_globals).current_byte as libc::c_int & 0xfi32) as uint8_t;
+                byte = (*(*ptr_to_globals).current_byte as libc::c_int & 0xfi32) as u8;
                 key <<= 4i32
               }
-              *(*ptr_to_globals).current_byte = (byte as libc::c_int + key) as uint8_t;
+              *(*ptr_to_globals).current_byte = (byte as libc::c_int + key) as u8;
               /* can't just print one updated hex char: need to update right-hand ASCII too */
               redraw_cur_line();
               current_block_97 = 8845539310339867835;

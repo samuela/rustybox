@@ -25,7 +25,7 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_longlong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -37,8 +37,8 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct serial_struct {
@@ -133,23 +133,23 @@ unsafe extern "C" fn cmd_is_flag(mut cmd: libc::c_int) -> bool {
 unsafe extern "C" fn cmd_needs_arg(mut cmd: libc::c_int) -> bool {
   return cmd >= CMD_PORT as libc::c_int && cmd <= CMD_WAIT as libc::c_int;
 }
-static mut setbits: [uint16_t; 16] = [
-  0i32 as uint16_t,
-  (1u32 << 4i32) as uint16_t,
-  (1u32 << 5i32) as uint16_t,
-  (1u32 << 12i32) as uint16_t,
-  (1u32 << 4i32 | 1u32 << 12i32) as uint16_t,
-  (1u32 << 4i32 | 1u32 << 5i32) as uint16_t,
-  (1u32 << 2i32) as uint16_t,
-  (1u32 << 1i32) as uint16_t,
-  (1u32 << 0i32) as uint16_t,
-  (1u32 << 6i32) as uint16_t,
-  (1u32 << 7i32) as uint16_t,
-  (1u32 << 3i32) as uint16_t,
-  (1u32 << 8i32) as uint16_t,
-  (1u32 << 9i32) as uint16_t,
-  (1u32 << 10i32) as uint16_t,
-  (1u32 << 13i32) as uint16_t,
+static mut setbits: [u16; 16] = [
+  0i32 as u16,
+  (1u32 << 4i32) as u16,
+  (1u32 << 5i32) as u16,
+  (1u32 << 12i32) as u16,
+  (1u32 << 4i32 | 1u32 << 12i32) as u16,
+  (1u32 << 4i32 | 1u32 << 5i32) as u16,
+  (1u32 << 2i32) as u16,
+  (1u32 << 1i32) as u16,
+  (1u32 << 0i32) as u16,
+  (1u32 << 6i32) as u16,
+  (1u32 << 7i32) as u16,
+  (1u32 << 3i32) as u16,
+  (1u32 << 8i32) as u16,
+  (1u32 << 9i32) as u16,
+  (1u32 << 10i32) as u16,
+  (1u32 << 13i32) as u16,
 ];
 unsafe extern "C" fn uart_type(mut type_0: libc::c_int) -> *const libc::c_char {
   if type_0 > 19i32 {

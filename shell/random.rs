@@ -9,14 +9,14 @@ extern "C" {
 use crate::librb::__pid_t;
 
 use crate::librb::int32_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct random_t {
   pub galois_LFSR: int32_t,
-  pub LCG: uint32_t,
-  pub xs64_x: uint32_t,
-  pub xs64_y: uint32_t,
+  pub LCG: u32,
+  pub xs64_x: u32,
+  pub xs64_y: u32,
 }
 pub const a: C2RustUnnamed = 2;
 pub const b: C2RustUnnamed = 7;
@@ -25,7 +25,7 @@ pub const MASK: C2RustUnnamed_0 = 2147483659;
 pub type C2RustUnnamed = libc::c_uint;
 pub type C2RustUnnamed_0 = libc::c_uint;
 #[no_mangle]
-pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> uint32_t {
+pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
   /* Galois LFSR parameter:
    * Taps at 32 31 29 1:
    */
@@ -35,14 +35,14 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> uint32_t {
    * Choices for a,b,c: 10,13,10; 8,9,22; 2,7,3; 23,3,24
    * (given by algorithm author)
    */
-  let mut t: uint32_t = 0;
+  let mut t: u32 = 0;
   if (*rnd).galois_LFSR == 0i32 {
     /* Can use monotonic_ns() for better randomness but for now
      * it is not used anywhere else in busybox... so avoid bloat
      */
-    (*rnd).xs64_x = getpid() as uint32_t;
+    (*rnd).xs64_x = getpid() as u32;
     (*rnd).galois_LFSR = (*rnd).xs64_x as int32_t;
-    (*rnd).xs64_y = monotonic_us() as uint32_t;
+    (*rnd).xs64_y = monotonic_us() as u32;
     (*rnd).LCG = (*rnd).xs64_y
   }
   /* LCG: period of 2^32, but quite weak:
@@ -59,7 +59,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> uint32_t {
    * Successive values are right-shifted one bit
    * and possibly xored with a sparse constant.
    */
-  t = ((*rnd).galois_LFSR << 1i32) as uint32_t;
+  t = ((*rnd).galois_LFSR << 1i32) as u32;
   if (*rnd).galois_LFSR < 0i32 {
     /* if we just shifted 1 out of msb... */
     t ^= MASK as libc::c_uint

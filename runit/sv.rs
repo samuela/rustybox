@@ -57,9 +57,9 @@ extern "C" {
   #[no_mangle]
   fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -81,9 +81,9 @@ use crate::librb::ssize_t;
 use libc::stat;
 use libc::time_t;
 
-use libc::uint32_t;
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
@@ -102,12 +102,12 @@ pub struct globals {
 #[repr(C)]
 pub struct svstatus_t {
   pub time_be64: uint64_t,
-  pub time_nsec_be32: uint32_t,
-  pub pid_le32: uint32_t,
-  pub paused: uint8_t,
-  pub want: uint8_t,
-  pub got_term: uint8_t,
-  pub run_or_finish: uint8_t,
+  pub time_nsec_be32: u32,
+  pub pid_le32: u32,
+  pub paused: u8,
+  pub want: u8,
+  pub got_term: u8,
+  pub run_or_finish: u8,
 }
 /* need to zero out, svc calls sv() repeatedly */
 unsafe extern "C" fn fatal_cannot(mut m1: *const libc::c_char) -> ! {
@@ -608,7 +608,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     0i32,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
-  xfunc_error_retval = 100i32 as uint8_t;
+  xfunc_error_retval = 100i32 as u8;
   x = getenv(b"SVDIR\x00" as *const u8 as *const libc::c_char);
   if !x.is_null() {
     varservice = x
@@ -1027,7 +1027,7 @@ pub unsafe extern "C" fn svok_main(
   if dir.is_null() {
     bb_show_usage();
   }
-  xfunc_error_retval = 111i32 as uint8_t;
+  xfunc_error_retval = 111i32 as u8;
   /*
    * daemontools has no concept of "default service dir", runit does.
    * Let's act as runit.

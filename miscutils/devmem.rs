@@ -53,12 +53,12 @@ extern "C" {
 use crate::librb::__off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 // Initialized in run_static_initializers
-static mut sizes: [uint8_t; 5] = [0; 5];
+static mut sizes: [u8; 5] = [0; 5];
 /*
  * Copyright (C) 2000, Jan-Derk Bakker (J.D.Bakker@its.tudelft.nl)
  * Copyright (C) 2008, BusyBox Team. -solar 4/26/08
@@ -171,9 +171,9 @@ pub unsafe extern "C" fn devmem_main(
   virt_addr = (map_base as *mut libc::c_char).offset(offset_in_page as isize) as *mut libc::c_void;
   if (*argv.offset(3)).is_null() {
     match width {
-      8 => read_result = *(virt_addr as *mut uint8_t) as uint64_t,
-      16 => read_result = *(virt_addr as *mut uint16_t) as uint64_t,
-      32 => read_result = *(virt_addr as *mut uint32_t) as uint64_t,
+      8 => read_result = *(virt_addr as *mut u8) as uint64_t,
+      16 => read_result = *(virt_addr as *mut u16) as uint64_t,
+      32 => read_result = *(virt_addr as *mut u32) as uint64_t,
       64 => read_result = *(virt_addr as *mut uint64_t),
       _ => {
         bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
@@ -190,9 +190,9 @@ pub unsafe extern "C" fn devmem_main(
     );
   } else {
     match width {
-      8 => ::std::ptr::write_volatile(virt_addr as *mut uint8_t, writeval as uint8_t),
-      16 => ::std::ptr::write_volatile(virt_addr as *mut uint16_t, writeval as uint16_t),
-      32 => ::std::ptr::write_volatile(virt_addr as *mut uint32_t, writeval as uint32_t),
+      8 => ::std::ptr::write_volatile(virt_addr as *mut u8, writeval as u8),
+      16 => ::std::ptr::write_volatile(virt_addr as *mut u16, writeval as u16),
+      32 => ::std::ptr::write_volatile(virt_addr as *mut u32, writeval as u32),
       64 => ::std::ptr::write_volatile(virt_addr as *mut uint64_t, writeval),
       _ => {
         bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
@@ -207,14 +207,14 @@ pub unsafe extern "C" fn devmem_main(
 unsafe extern "C" fn run_static_initializers() {
   sizes = [
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_char>() as libc::c_ulong)
-      as uint8_t,
+      as u8,
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_short>() as libc::c_ulong)
-      as uint8_t,
+      as u8,
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-      as uint8_t,
+      as u8,
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
-      as uint8_t,
-    0i32 as uint8_t,
+      as u8,
+    0i32 as u8,
   ]
 }
 #[used]

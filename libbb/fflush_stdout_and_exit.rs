@@ -314,10 +314,10 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 }
 
- use libc::uint8_t;
+
 
 use libc::FILE;
 
@@ -333,7 +333,7 @@ use libc::FILE;
  */
 #[no_mangle]
 pub unsafe extern "C" fn fflush_stdout_and_exit(mut retval: libc::c_int) -> ! {
-  xfunc_error_retval = retval as uint8_t;
+  xfunc_error_retval = retval as u8;
   if fflush(stdout) != 0 {
     bb_simple_perror_msg_and_die(bb_msg_standard_output.as_ptr());
   }

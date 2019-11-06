@@ -150,7 +150,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
   fn getopt32long(
@@ -158,7 +158,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
@@ -241,7 +241,7 @@ use libc::time_t;
 
 use crate::librb::uoff_t;
 use libc::uid_t;
-use libc::uint32_t;
+
 use libc::FILE;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -2663,7 +2663,7 @@ pub unsafe extern "C" fn dpkg_main(
     } else {
       bb_show_usage();
     }
-    option_mask32 = opt as uint32_t
+    option_mask32 = opt as u32
   }
   //if (opt & OPT_install) ... // -i
   //if (opt & OPT_list_installed) ... // -l

@@ -143,7 +143,7 @@ use libc::stat;
 use libc::time_t;
 
 use libc::uid_t;
-use libc::uint32_t;
+
 use crate::librb::uoff_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -225,10 +225,10 @@ pub struct globals {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rpm_index {
-  pub tag: uint32_t,
-  pub type_0: uint32_t,
-  pub offset: uint32_t,
-  pub count: uint32_t,
+  pub tag: u32,
+  pub type_0: u32,
+  pub offset: u32,
+  pub count: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -278,10 +278,10 @@ pub struct archive_handle_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rpm_header {
-  pub magic_and_ver: uint32_t,
-  pub reserved: uint32_t,
-  pub entries: uint32_t,
-  pub size: uint32_t,
+  pub magic_and_ver: u32,
+  pub reserved: u32,
+  pub entries: u32,
+  pub size: u32,
   /* Size of store (4 bytes) */
 }
 pub type rpm_functions_e = libc::c_uint;
@@ -506,7 +506,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
                                        });
       if pass == 0i32 as libc::c_uint {
         (*tag).tag =
-          ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as uint32_t as uint32_t
+          ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as u32 as u32
       }
       idx = idx.wrapping_add(1)
     }

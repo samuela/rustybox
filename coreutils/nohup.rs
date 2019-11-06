@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -32,7 +32,6 @@ extern "C" {
 }
 
 use crate::librb::signal::__sighandler_t;
- use libc::uint8_t;
 
 /*
  * nohup - invoke a utility immune to hangups.
@@ -84,7 +83,7 @@ pub unsafe extern "C" fn nohup_main(
 ) -> libc::c_int {
   let mut nohupout: *const libc::c_char = 0 as *const libc::c_char;
   let mut home: *mut libc::c_char = 0 as *mut libc::c_char;
-  xfunc_error_retval = 127i32 as uint8_t;
+  xfunc_error_retval = 127i32 as u8;
   if (*argv.offset(1)).is_null() {
     bb_show_usage();
   }

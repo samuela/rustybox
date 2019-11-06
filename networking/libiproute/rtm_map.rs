@@ -13,10 +13,10 @@ extern "C" {
   #[no_mangle]
   fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn rtnl_rtrealm_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rtrealm_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 pub type smalluint = libc::c_uchar;
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTN_MAX: C2RustUnnamed = 12;
@@ -123,12 +123,12 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
 
 #[no_mangle]
 pub unsafe extern "C" fn get_rt_realms(
-  mut realms: *mut uint32_t,
+  mut realms: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut realm: uint32_t = 0i32 as uint32_t;
+  let mut realm: u32 = 0i32 as u32;
   let mut p: *mut libc::c_char = strchr(arg, '/' as i32);
-  *realms = 0i32 as uint32_t;
+  *realms = 0i32 as u32;
   if !p.is_null() {
     *p = 0i32 as libc::c_char;
     if rtnl_rtrealm_a2n(realms, arg) != 0 {

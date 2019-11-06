@@ -316,7 +316,7 @@ extern "C" {
   #[no_mangle]
   fn arith(state: *mut arith_state_t, expr: *const libc::c_char) -> arith_t;
   #[no_mangle]
-  fn next_random(rnd: *mut random_t) -> uint32_t;
+  fn next_random(rnd: *mut random_t) -> u32;
   #[no_mangle]
   static ash_ptr_to_globals_misc: *mut globals_misc;
   #[no_mangle]
@@ -343,9 +343,9 @@ use crate::librb::__pid_t;
 
 
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type DIR = __dirstream;
 use crate::librb::mode_t;
 use crate::librb::signal::__sigset_t;
@@ -503,8 +503,8 @@ pub struct jmploc {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals_misc {
-  pub exitstatus: uint8_t,
-  pub back_exitstatus: uint8_t,
+  pub exitstatus: u8,
+  pub back_exitstatus: u8,
   pub job_warning: smallint,
   pub rootpid: libc::c_int,
   pub shlvl: libc::c_int,
@@ -522,8 +522,8 @@ pub struct globals_misc {
   pub nullstr: [libc::c_char; 1],
   pub optlist: [libc::c_char; 16],
   pub sigmode: [libc::c_char; 64],
-  pub gotsig: [uint8_t; 64],
-  pub may_have_traps: uint8_t,
+  pub gotsig: [u8; 64],
+  pub may_have_traps: u8,
   pub trap: [*mut libc::c_char; 65],
   pub trap_ptr: *mut *mut libc::c_char,
   pub random_gen: random_t,
@@ -534,9 +534,9 @@ pub struct globals_misc {
 #[repr(C)]
 pub struct random_t {
   pub galois_LFSR: int32_t,
-  pub LCG: uint32_t,
-  pub xs64_x: uint32_t,
-  pub xs64_y: uint32_t,
+  pub LCG: u32,
+  pub xs64_x: u32,
+  pub xs64_y: u32,
 }
 /*
  * Structure specifying which parts of the string should be searched
@@ -951,9 +951,9 @@ pub const TNL: C2RustUnnamed_17 = 1;
 #[repr(C)]
 pub struct synstack_t {
   pub syntax: smalluint,
-  #[bitfield(name = "innerdq", ty = "uint8_t", bits = "0..=0")]
-  #[bitfield(name = "varpushed", ty = "uint8_t", bits = "1..=1")]
-  #[bitfield(name = "dblquote", ty = "uint8_t", bits = "2..=2")]
+  #[bitfield(name = "innerdq", ty = "u8", bits = "0..=0")]
+  #[bitfield(name = "varpushed", ty = "u8", bits = "1..=1")]
+  #[bitfield(name = "dblquote", ty = "u8", bits = "2..=2")]
   pub innerdq_varpushed_dblquote: [u8; 1],
   #[bitfield(padding)]
   pub c2rust_padding: [u8; 2],
@@ -1220,7 +1220,7 @@ unsafe extern "C" fn raise_interrupt() -> ! {
     raise(2i32);
   }
   /* bash: ^C even on empty command line sets $? */
-  (*ash_ptr_to_globals_misc).exitstatus = (2i32 + 128i32) as uint8_t;
+  (*ash_ptr_to_globals_misc).exitstatus = (2i32 + 128i32) as u8;
   raise_exception(0i32);
   /* NOTREACHED */
 }
@@ -1410,7 +1410,7 @@ unsafe extern "C" fn ash_vmsg_and_raise(
 }
 unsafe extern "C" fn ash_msg_and_raise_error(mut msg: *const libc::c_char, mut args: ...) -> ! {
   let mut ap: ::std::ffi::VaListImpl;
-  (*ash_ptr_to_globals_misc).exitstatus = 2i32 as uint8_t;
+  (*ash_ptr_to_globals_misc).exitstatus = 2i32 as u8;
   ap = args.clone();
   ash_vmsg_and_raise(1i32, msg, ap.as_va_list());
 }
@@ -2113,7 +2113,7 @@ unsafe extern "C" fn setvareq(mut s: *mut libc::c_char, mut flags: libc::c_int) 
         free(s as *mut libc::c_void);
       }
       n = (*vp).var_text;
-      (*ash_ptr_to_globals_misc).exitstatus = 1i32 as uint8_t;
+      (*ash_ptr_to_globals_misc).exitstatus = 1i32 as u8;
       ash_msg_and_raise_error(
         b"%.*s: is read only\x00" as *const u8 as *const libc::c_char,
         strchrnul(n, '=' as i32).wrapping_offset_from(n) as libc::c_long,
@@ -2665,51 +2665,51 @@ unsafe extern "C" fn pwdcmd(
   out1fmt(b"%s\n\x00" as *const u8 as *const libc::c_char, dir);
   return 0i32;
 }
-static mut S_I_T: [uint16_t; 12] = [
-  (13i32 | 14i32 << 4i32 | 14i32 << 8i32 | 14i32 << 12i32) as uint16_t,
-  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 0i32 << 12i32) as uint16_t,
-  (1i32 | 1i32 << 4i32 | 1i32 << 8i32 | 1i32 << 12i32) as uint16_t,
-  (0i32 | 12i32 << 4i32 | 12i32 << 8i32 | 0i32 << 12i32) as uint16_t,
-  (4i32 | 5i32 << 4i32 | 0i32 << 8i32 | 0i32 << 12i32) as uint16_t,
-  (7i32 | 7i32 << 4i32 | 0i32 << 8i32 | 7i32 << 12i32) as uint16_t,
-  (3i32 | 0i32 << 4i32 | 5i32 << 8i32 | 0i32 << 12i32) as uint16_t,
-  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 9i32 << 12i32) as uint16_t,
-  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 10i32 << 12i32) as uint16_t,
-  (2i32 | 2i32 << 4i32 | 12i32 << 8i32 | 2i32 << 12i32) as uint16_t,
-  (6i32 | 6i32 << 4i32 | 0i32 << 8i32 | 6i32 << 12i32) as uint16_t,
-  (8i32 | 8i32 << 4i32 | 0i32 << 8i32 | 8i32 << 12i32) as uint16_t,
+static mut S_I_T: [u16; 12] = [
+  (13i32 | 14i32 << 4i32 | 14i32 << 8i32 | 14i32 << 12i32) as u16,
+  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 0i32 << 12i32) as u16,
+  (1i32 | 1i32 << 4i32 | 1i32 << 8i32 | 1i32 << 12i32) as u16,
+  (0i32 | 12i32 << 4i32 | 12i32 << 8i32 | 0i32 << 12i32) as u16,
+  (4i32 | 5i32 << 4i32 | 0i32 << 8i32 | 0i32 << 12i32) as u16,
+  (7i32 | 7i32 << 4i32 | 0i32 << 8i32 | 7i32 << 12i32) as u16,
+  (3i32 | 0i32 << 4i32 | 5i32 << 8i32 | 0i32 << 12i32) as u16,
+  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 9i32 << 12i32) as u16,
+  (13i32 | 0i32 << 4i32 | 0i32 << 8i32 | 10i32 << 12i32) as u16,
+  (2i32 | 2i32 << 4i32 | 12i32 << 8i32 | 2i32 << 12i32) as u16,
+  (6i32 | 6i32 << 4i32 | 0i32 << 8i32 | 6i32 << 12i32) as u16,
+  (8i32 | 8i32 << 4i32 | 0i32 << 8i32 | 8i32 << 12i32) as u16,
 ];
 unsafe extern "C" fn SIT(mut c: libc::c_int, mut syntax: libc::c_int) -> libc::c_int {
   static mut spec_symbls: [libc::c_char; 26] = [
     9, 10, 32, 33, 34, 36, 38, 39, 40, 41, 42, 45, 58, 59, 60, 61, 62, 63, 91, 92, 93, 96, 124,
     125, 126, 0,
   ];
-  static mut syntax_index_table: [uint8_t; 25] = [
-    1i32 as uint8_t,
-    2i32 as uint8_t,
-    1i32 as uint8_t,
-    3i32 as uint8_t,
-    4i32 as uint8_t,
-    5i32 as uint8_t,
-    1i32 as uint8_t,
-    6i32 as uint8_t,
-    7i32 as uint8_t,
-    8i32 as uint8_t,
-    3i32 as uint8_t,
-    3i32 as uint8_t,
-    3i32 as uint8_t,
-    1i32 as uint8_t,
-    1i32 as uint8_t,
-    3i32 as uint8_t,
-    1i32 as uint8_t,
-    3i32 as uint8_t,
-    3i32 as uint8_t,
-    9i32 as uint8_t,
-    3i32 as uint8_t,
-    10i32 as uint8_t,
-    1i32 as uint8_t,
-    11i32 as uint8_t,
-    3i32 as uint8_t,
+  static mut syntax_index_table: [u8; 25] = [
+    1i32 as u8,
+    2i32 as u8,
+    1i32 as u8,
+    3i32 as u8,
+    4i32 as u8,
+    5i32 as u8,
+    1i32 as u8,
+    6i32 as u8,
+    7i32 as u8,
+    8i32 as u8,
+    3i32 as u8,
+    3i32 as u8,
+    3i32 as u8,
+    1i32 as u8,
+    1i32 as u8,
+    3i32 as u8,
+    1i32 as u8,
+    3i32 as u8,
+    3i32 as u8,
+    9i32 as u8,
+    3i32 as u8,
+    10i32 as u8,
+    1i32 as u8,
+    11i32 as u8,
+    3i32 as u8,
   ];
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
   let mut indx: libc::c_int = 0;
@@ -2950,7 +2950,7 @@ unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
       return;
     }
   }
-  (*ash_ptr_to_globals_misc).gotsig[(signo - 1i32) as usize] = 1i32 as uint8_t;
+  (*ash_ptr_to_globals_misc).gotsig[(signo - 1i32) as usize] = 1i32 as u8;
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).pending_sig as *mut smallint,
     signo as smallint,
@@ -4495,7 +4495,7 @@ unsafe extern "C" fn clear_traps() {
     }
     tp = tp.offset(1)
   }
-  (*ash_ptr_to_globals_misc).may_have_traps = 0i32 as uint8_t;
+  (*ash_ptr_to_globals_misc).may_have_traps = 0i32 as u8;
   int_on();
 }
 #[inline(never)]
@@ -5944,7 +5944,7 @@ unsafe extern "C" fn expbackq(mut cmd: *mut node, mut flag: libc::c_int) {
   free(in_0.buf as *mut libc::c_void);
   if in_0.fd >= 0i32 {
     close(in_0.fd);
-    (*ash_ptr_to_globals_misc).back_exitstatus = waitforjob(in_0.jp) as uint8_t
+    (*ash_ptr_to_globals_misc).back_exitstatus = waitforjob(in_0.jp) as u8
   }
   int_on();
   /* Eat all trailing newlines */
@@ -7700,7 +7700,7 @@ unsafe extern "C" fn shellexec(
     40 | 36 | 2 | 20 => exerrno = 127i32,
     _ => exerrno = 126i32,
   }
-  (*ash_ptr_to_globals_misc).exitstatus = exerrno as uint8_t;
+  (*ash_ptr_to_globals_misc).exitstatus = exerrno as u8;
   ash_msg_and_raise(
     4i32,
     b"%s: %s\x00" as *const u8 as *const libc::c_char,
@@ -8264,7 +8264,7 @@ static mut funcblock: *mut libc::c_void = 0 as *const libc::c_void as *mut libc:
 static mut funcstring_end: *mut libc::c_char = 0 as *const libc::c_char as *mut libc::c_char;
 /* end of block to allocate strings from */
 // Initialized in run_static_initializers
-static mut nodesize: [uint8_t; 27] = [0; 27];
+static mut nodesize: [u8; 27] = [0; 27];
 unsafe extern "C" fn sizenodelist(
   mut funcblocksize: libc::c_int,
   mut lp: *mut nodelist,
@@ -8519,9 +8519,9 @@ static mut funcline: libc::c_int = 0;
  * while we are executing a trap handler. [is it a TODO?]
  */
 unsafe extern "C" fn dotrap() {
-  let mut g: *mut uint8_t = 0 as *mut uint8_t;
+  let mut g: *mut u8 = 0 as *mut u8;
   let mut sig: libc::c_int = 0;
-  let mut last_status: uint8_t = 0;
+  let mut last_status: u8 = 0;
   if (*ash_ptr_to_globals_misc).pending_sig == 0 {
     return;
   }
@@ -8547,7 +8547,7 @@ unsafe extern "C" fn dotrap() {
         /* non-trapped SIGINT is handled separately by raise_interrupt,
          * don't upset it by resetting gotsig[SIGINT-1] */
         if !(sig == 2i32 && p.is_null()) {
-          *g = 0i32 as uint8_t;
+          *g = 0i32 as u8;
           if !p.is_null() {
             evalstring(p, 0i32);
           }
@@ -8688,7 +8688,7 @@ unsafe extern "C" fn evaltree(mut n: *mut node, mut flags: libc::c_int) -> libc:
          * "false; f() { qwerty; }; echo $?" should print 0.
          */
         /* status = 0; */
-        (*ash_ptr_to_globals_misc).exitstatus = status as uint8_t
+        (*ash_ptr_to_globals_misc).exitstatus = status as u8
       }
     }
   }
@@ -9876,7 +9876,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
   /* First expand the arguments. */
   localvar_stop = pushlocalvars();
   file_stop = g_parsefile;
-  (*ash_ptr_to_globals_misc).back_exitstatus = 0i32 as uint8_t;
+  (*ash_ptr_to_globals_misc).back_exitstatus = 0i32 as u8;
   cmdentry.cmdtype = 2i32 as smallint;
   cmdentry.u.cmd = &null_bltin;
   varlist.lastp = &mut varlist.list;
@@ -10185,7 +10185,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
   }
   match current_block {
     9509359022306583830 => {
-      (*ash_ptr_to_globals_misc).exitstatus = status as uint8_t;
+      (*ash_ptr_to_globals_misc).exitstatus = status as u8;
       /* We have a redirection error. */
       if spclbltin > 0i32 {
         raise_exception(1i32);
@@ -10257,7 +10257,7 @@ unsafe extern "C" fn evalbltin(
     }
     flush_stdout_stderr();
     status |= ferror_unlocked(stdout);
-    (*ash_ptr_to_globals_misc).exitstatus = status as uint8_t
+    (*ash_ptr_to_globals_misc).exitstatus = status as u8
   }
   clearerr(stdout);
   commandname = savecmdname;
@@ -10461,7 +10461,7 @@ unsafe extern "C" fn preadfd() -> libc::c_int {
           raise(2i32);
           return 1i32;
         }
-        (*ash_ptr_to_globals_misc).exitstatus = (128i32 + 2i32) as uint8_t;
+        (*ash_ptr_to_globals_misc).exitstatus = (128i32 + 2i32) as u8;
         bb_putchar('\n' as i32);
       } else {
         if nr < 0i32 {
@@ -10774,7 +10774,7 @@ unsafe extern "C" fn setinputfile(
   fd = open(fname, 0i32 | 0o2000000i32);
   if fd < 0i32 {
     if !(flags & INPUT_NOFILE_OK as libc::c_int != 0) {
-      (*ash_ptr_to_globals_misc).exitstatus = 127i32 as uint8_t;
+      (*ash_ptr_to_globals_misc).exitstatus = 127i32 as u8;
       ash_msg_and_raise_error(
         b"can\'t open \'%s\': %m\x00" as *const u8 as *const libc::c_char,
         fname,
@@ -11232,7 +11232,7 @@ unsafe extern "C" fn setcmd(
   return retval;
 }
 unsafe extern "C" fn change_random(mut value: *const libc::c_char) {
-  let mut t: uint32_t = 0;
+  let mut t: u32 = 0;
   if value.is_null() {
     /* "get", generate */
     t = next_random(&mut (*ash_ptr_to_globals_misc).random_gen);
@@ -11245,7 +11245,7 @@ unsafe extern "C" fn change_random(mut value: *const libc::c_char) {
     (*ash_ptr_to_globals_var).varinit[(1i32 * 2i32 + 1i32 + 6i32) as usize].flags &= !0x40i32
   } else {
     /* set/reset */
-    t = strtoul(value, 0 as *mut *mut libc::c_char, 10i32) as uint32_t;
+    t = strtoul(value, 0 as *mut *mut libc::c_char, 10i32) as u32;
     (*ash_ptr_to_globals_misc).random_gen.xs64_x = if t != 0 { t } else { 1i32 as libc::c_uint };
     (*ash_ptr_to_globals_misc).random_gen.galois_LFSR =
       (*ash_ptr_to_globals_misc).random_gen.xs64_x as int32_t;
@@ -12332,7 +12332,7 @@ unsafe extern "C" fn readtoken1(
   }
   (*synstack).syntax = syntax as smalluint;
   if syntax == 1i32 {
-    (*synstack).set_dblquote(1i32 as uint8_t)
+    (*synstack).set_dblquote(1i32 as u8)
   }
   quotef = 0i32 as smallint;
   bqlist = 0 as *mut nodelist;
@@ -12554,7 +12554,7 @@ unsafe extern "C" fn readtoken1(
         }
         4 => {
           (*synstack).syntax = 1i32 as smalluint;
-          (*synstack).set_dblquote(1i32 as uint8_t);
+          (*synstack).set_dblquote(1i32 as u8);
           current_block = 17595510130556652878;
         }
         5 => {
@@ -12567,7 +12567,7 @@ unsafe extern "C" fn readtoken1(
           } else {
             if (*synstack).dqvarnest == 0i32 {
               (*synstack).syntax = 0i32 as smalluint;
-              (*synstack).set_dblquote(0i32 as uint8_t)
+              (*synstack).set_dblquote(0i32 as u8)
             }
             quotef = 1i32 as smallint;
             if c == '\"' as i32 {
@@ -12639,7 +12639,7 @@ unsafe extern "C" fn readtoken1(
                 } as *mut synstack_t,
                 3i32,
               );
-              (*synstack).set_dblquote(1i32 as uint8_t);
+              (*synstack).set_dblquote(1i32 as u8);
               let fresh107 = out;
               out = out.offset(1);
               *fresh107 = '\u{86}' as i32 as libc::c_uchar as libc::c_char;
@@ -12863,8 +12863,8 @@ unsafe extern "C" fn readtoken1(
                 } as *mut synstack_t,
                 newsyn as libc::c_int,
               );
-              (*synstack).set_varpushed(1i32 as uint8_t);
-              (*synstack).set_dblquote((newsyn as libc::c_int != 0i32) as libc::c_int as uint8_t)
+              (*synstack).set_varpushed(1i32 as u8);
+              (*synstack).set_dblquote((newsyn as libc::c_int != 0i32) as libc::c_int as u8)
             }
             *((*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void
               as *mut libc::c_uchar)
@@ -13112,7 +13112,7 @@ unsafe extern "C" fn readtoken1(
         }
         17595510130556652878 => {
           if (*synstack).varnest != 0 {
-            (*synstack).set_innerdq((*synstack).innerdq() ^ 1i32 as uint8_t)
+            (*synstack).set_innerdq((*synstack).innerdq() ^ 1i32 as u8)
           }
           current_block = 5634654558795828693;
         }
@@ -13797,7 +13797,7 @@ unsafe extern "C" fn exitcmd(
     return 0i32;
   }
   if !(*argv.offset(1)).is_null() {
-    (*ash_ptr_to_globals_misc).exitstatus = number(*argv.offset(1)) as uint8_t
+    (*ash_ptr_to_globals_misc).exitstatus = number(*argv.offset(1)) as u8
   }
   raise_exception(4i32);
   /* NOTREACHED */
@@ -14132,7 +14132,7 @@ unsafe extern "C" fn trapcmd(
         } else {
           if *action.offset(0) != 0 {
             /* not NULL and not "" and not "-" */
-            (*ash_ptr_to_globals_misc).may_have_traps = 1i32 as uint8_t
+            (*ash_ptr_to_globals_misc).may_have_traps = 1i32 as u8
           }
           action = xstrdup(action)
         }
@@ -14940,7 +14940,7 @@ unsafe extern "C" fn reset() {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -15340,85 +15340,85 @@ unsafe extern "C" fn run_static_initializers() {
   nodesize = [
     ((::std::mem::size_of::<ncmd>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<npipe>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nredir>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nredir>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nredir>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nbinary>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nbinary>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nbinary>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nif>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nbinary>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nbinary>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfor>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<ncase>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nclist>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<narg>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<narg>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nfile>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<ndup>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<ndup>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nhere>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nhere>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
     ((::std::mem::size_of::<nnot>() as libc::c_ulong)
       .wrapping_add(SHELL_SIZE as libc::c_int as libc::c_ulong)
-      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as uint8_t,
+      & !(SHELL_SIZE as libc::c_int) as libc::c_ulong) as u8,
   ]
 }
 #[used]

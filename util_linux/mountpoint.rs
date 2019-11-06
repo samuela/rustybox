@@ -27,7 +27,7 @@ extern "C" {
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
@@ -37,7 +37,7 @@ use crate::librb::__dev_t;
 use crate::librb::dev_t;
 use libc::ino_t;
 
-use libc::uint32_t;
+
 
 /*
  * mountpoint implementation for busybox

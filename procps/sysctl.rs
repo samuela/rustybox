@@ -49,9 +49,9 @@ extern "C" {
   #[no_mangle]
   fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -79,7 +79,7 @@ use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -495,7 +495,7 @@ pub unsafe extern "C" fn sysctl_main(
   opt = getopt32(argv, b"+neAapwq\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   argv = argv.offset(optind as isize);
   opt ^= FLAG_SHOW_KEYS as libc::c_int | FLAG_SHOW_KEY_ERRORS as libc::c_int;
-  option_mask32 = opt as uint32_t;
+  option_mask32 = opt as u32;
   if opt & FLAG_PRELOAD_FILE as libc::c_int != 0 {
     let mut cur_dir_fd: libc::c_int = 0;
     option_mask32 |= FLAG_WRITE as libc::c_int as libc::c_uint;

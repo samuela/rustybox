@@ -25,7 +25,7 @@ extern "C" {
   #[no_mangle]
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -33,7 +33,7 @@ extern "C" {
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;

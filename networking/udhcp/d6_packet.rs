@@ -42,7 +42,7 @@ extern "C" {
   #[no_mangle]
   fn setsockopt_reuseaddr(fd: libc::c_int);
   #[no_mangle]
-  fn inet_cksum(addr: *mut uint16_t, len: libc::c_int) -> uint16_t;
+  fn inet_cksum(addr: *mut u16, len: libc::c_int) -> u16;
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]
@@ -99,9 +99,9 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -125,9 +125,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -137,11 +137,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -155,7 +155,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -214,18 +214,18 @@ pub union C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
-  pub source: uint16_t,
-  pub dest: uint16_t,
-  pub len: uint16_t,
-  pub check: uint16_t,
+  pub source: u16,
+  pub dest: u16,
+  pub len: u16,
+  pub check: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_3 {
-  pub uh_sport: uint16_t,
-  pub uh_dport: uint16_t,
-  pub uh_ulen: uint16_t,
-  pub uh_sum: uint16_t,
+  pub uh_sport: u16,
+  pub uh_dport: u16,
+  pub uh_ulen: u16,
+  pub uh_sum: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -238,15 +238,15 @@ pub struct ip6_hdr {
 #[repr(C)]
 pub union C2RustUnnamed_4 {
   pub ip6_un1: ip6_hdrctl,
-  pub ip6_un2_vfc: uint8_t,
+  pub ip6_un2_vfc: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ip6_hdrctl {
-  pub ip6_un1_flow: uint32_t,
-  pub ip6_un1_plen: uint16_t,
-  pub ip6_un1_nxt: uint8_t,
-  pub ip6_un1_hlim: uint8_t,
+  pub ip6_un1_flow: u32,
+  pub ip6_un1_plen: u16,
+  pub ip6_un1_nxt: u8,
+  pub ip6_un1_hlim: u8,
 }
 
 /*
@@ -260,13 +260,13 @@ pub struct ip6_hdrctl {
 #[repr(C, packed)]
 pub struct d6_packet {
   pub d6_u: C2RustUnnamed_5,
-  pub d6_options: [uint8_t; 604],
+  pub d6_options: [u8; 604],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_5 {
-  pub d6_msg_type: uint8_t,
-  pub d6_xid32: uint32_t,
+  pub d6_msg_type: u8,
+  pub d6_xid32: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -350,7 +350,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
   mut source_port: libc::c_int,
   mut dst_ipv6: *mut in6_addr,
   mut dest_port: libc::c_int,
-  mut dest_arp: *const uint8_t,
+  mut dest_arp: *const u8,
   mut ifindex: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64; /* struct copy */
@@ -475,7 +475,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
     {
       msg = b"bind(%s)\x00" as *const u8 as *const libc::c_char
     } else {
-      packet.ip6.ip6_ctlun.ip6_un2_vfc = (6i32 << 4i32) as uint8_t; /* struct copy */
+      packet.ip6.ip6_ctlun.ip6_un2_vfc = (6i32 << 4i32) as u8; /* struct copy */
       if !src_ipv6.is_null() {
         packet.ip6.ip6_src = *src_ipv6
       }
@@ -542,16 +542,16 @@ pub unsafe extern "C" fn d6_send_raw_packet(
        * to the right, therefore we write its value (IPPROTO_UDP)
        * into ip6_hlim, and its 'real' location remains zero-filled for now.
        */
-      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = IPPROTO_UDP as libc::c_int as uint8_t;
+      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = IPPROTO_UDP as libc::c_int as u8;
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = inet_cksum(
-        (&mut packet as *mut ip6_udp_d6_packet as *mut uint16_t).offset(2),
+        (&mut packet as *mut ip6_udp_d6_packet as *mut u16).offset(2),
         48u64
           .wrapping_sub(4i32 as libc::c_ulong)
           .wrapping_add(d6_pkt_size as libc::c_ulong) as libc::c_int,
       );
       /* fix 'hop limit' and 'next header' after UDP checksumming */
-      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = 1i32 as uint8_t; /* observed Windows machines to use hlim=1 */
-      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_nxt = IPPROTO_UDP as libc::c_int as uint8_t;
+      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = 1i32 as u8; /* observed Windows machines to use hlim=1 */
+      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_nxt = IPPROTO_UDP as libc::c_int as u8;
       d6_dump_packet(d6_pkt);
       result = sendto(
         fd,
@@ -670,7 +670,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
         __v
       };
       sa.sin6_addr = *dst_ipv6;
-      sa.sin6_scope_id = ifindex as uint32_t;
+      sa.sin6_scope_id = ifindex as u32;
       if connect(
         fd,
         __CONST_SOCKADDR_ARG {

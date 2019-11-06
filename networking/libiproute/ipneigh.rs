@@ -44,7 +44,7 @@ extern "C" {
   #[no_mangle]
   static mut preferred_family: family_t;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
   //TODO: pass rth->fd instead of full rth?
@@ -120,30 +120,30 @@ extern "C" {
 
 use crate::librb::int16_t;
 use crate::librb::int8_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type family_t = int8_t;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -173,10 +173,10 @@ pub const NDA_UNSPEC: C2RustUnnamed = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nda_cacheinfo {
-  pub ndm_confirmed: __u32,
-  pub ndm_used: __u32,
-  pub ndm_updated: __u32,
-  pub ndm_refcnt: __u32,
+  pub ndm_confirmed: u32,
+  pub ndm_used: u32,
+  pub ndm_updated: u32,
+  pub ndm_refcnt: u32,
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed_0 = 97;
@@ -260,16 +260,16 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 pub const KW_to: C2RustUnnamed_1 = 0;
 pub const KW_nud: C2RustUnnamed_1 = 2;
@@ -286,14 +286,14 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 //static int xshow_stats = 3;
 pub type C2RustUnnamed_2 = libc::c_uint;
 #[inline]
-unsafe extern "C" fn rta_getattr_u32(mut rta: *const rtattr) -> uint32_t {
+unsafe extern "C" fn rta_getattr_u32(mut rta: *const rtattr) -> u32 {
   return *((rta as *mut libc::c_char).offset(
     ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
       .wrapping_add(4u32 as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
       .wrapping_add(0i32 as libc::c_ulong) as isize,
-  ) as *mut libc::c_void as *mut uint32_t);
+  ) as *mut libc::c_void as *mut u32);
 }
 unsafe extern "C" fn flush_update() -> libc::c_int {
   if rtnl_send_check(
@@ -315,16 +315,16 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
     112, 108, 101, 116, 101, 0, 100, 101, 108, 97, 121, 0, 112, 114, 111, 98, 101, 0, 102, 97, 105,
     108, 101, 100, 0, 0,
   ];
-  static mut nuds: [uint8_t; 9] = [
-    0x80i32 as uint8_t,
-    0x2i32 as uint8_t,
-    0x40i32 as uint8_t,
-    0i32 as uint8_t,
-    0x4i32 as uint8_t,
-    0x1i32 as uint8_t,
-    0x8i32 as uint8_t,
-    0x10i32 as uint8_t,
-    0x20i32 as uint8_t,
+  static mut nuds: [u8; 9] = [
+    0x80i32 as u8,
+    0x2i32 as u8,
+    0x40i32 as u8,
+    0i32 as u8,
+    0x4i32 as u8,
+    0x1i32 as u8,
+    0x8i32 as u8,
+    0x10i32 as u8,
+    0x20i32 as u8,
   ];
   let mut id: libc::c_int = 0;
   id = index_in_substrings(keywords.as_ptr(), arg);
@@ -439,7 +439,7 @@ unsafe extern "C" fn print_neigh(
       );
       dst.family = (*r).ndm_family;
       memcpy(
-        &mut dst.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut dst.data as *mut [u32; 4] as *mut libc::c_void,
         (tb[NDA_DST as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
@@ -605,7 +605,7 @@ unsafe extern "C" fn print_neigh(
     );
   }
   if !tb[NDA_PROBES as libc::c_int as usize].is_null() && xshow_stats as libc::c_int != 0 {
-    let mut p: uint32_t = rta_getattr_u32(tb[NDA_PROBES as libc::c_int as usize]);
+    let mut p: u32 = rta_getattr_u32(tb[NDA_PROBES as libc::c_int as usize]);
     printf(b" probes %u\x00" as *const u8 as *const libc::c_char, p);
   }
   /*if (r->ndm_state)*/

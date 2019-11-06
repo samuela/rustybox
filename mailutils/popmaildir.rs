@@ -64,7 +64,7 @@ extern "C" {
     count: libc::c_int,
   ) -> *mut libc::c_char;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -86,7 +86,7 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use libc::uint32_t;
+
 
 use crate::librb::pid_t;
 use crate::librb::size_t;
@@ -304,7 +304,7 @@ pub unsafe extern "C" fn popmaildir_main(
           hash: [0; 8],
         },
       };
-      let mut res: [uint32_t; 4] = [0; 4];
+      let mut res: [u32; 4] = [0; 4];
       let mut s: *mut libc::c_char = strchr(buf, '>' as i32);
       if !s.is_null() {
         *s.offset(1) = '\u{0}' as i32 as libc::c_char

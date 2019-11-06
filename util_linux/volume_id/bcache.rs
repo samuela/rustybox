@@ -5,20 +5,20 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -27,8 +27,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -47,26 +47,25 @@ pub struct bcache_super_block {
   pub csum: uint64_t,
   pub offset: uint64_t,
   pub version: uint64_t,
-  pub magic: [uint8_t; 16],
-  pub uuid: [uint8_t; 16],
+  pub magic: [u8; 16],
+  pub uuid: [u8; 16],
   pub c2rust_unnamed: C2RustUnnamed_3,
-  pub label: [uint8_t; 32],
+  pub label: [u8; 32],
   pub flags: uint64_t,
   pub seq: uint64_t,
   pub pad: [uint64_t; 8],
   pub c2rust_unnamed_0: C2RustUnnamed_0,
-  pub last_mount: uint32_t,
-  pub first_bucket: uint16_t,
+  pub last_mount: u32, /* time_t */
+  pub first_bucket: u16,
   pub c2rust_unnamed_1: C2RustUnnamed,
-  pub d: [uint64_t; 256],
-  /* journal buckets */
+  pub d: [uint64_t; 256], /* journal buckets */
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub njournal_buckets: uint16_t,
-  pub keys: uint16_t,
+  pub njournal_buckets: u16,
+  pub keys: u16,
 }
 
 #[derive(Copy, Clone)]
@@ -91,16 +90,16 @@ pub struct C2RustUnnamed_1 {
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
   pub nbuckets: uint64_t,
-  pub block_size: uint16_t,
-  pub bucket_size: uint16_t,
-  pub nr_in_set: uint16_t,
-  pub nr_this_dev: uint16_t,
+  pub block_size: u16,
+  pub bucket_size: u16,
+  pub nr_in_set: u16,
+  pub nr_this_dev: u16,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_3 {
-  pub set_uuid: [uint8_t; 16],
+  pub set_uuid: [u8; 16],
   pub set_magic: uint64_t,
 }
 static mut bcache_magic: [libc::c_char; 16] = [
@@ -143,9 +142,9 @@ static mut bcache_magic: [libc::c_char; 16] = [
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -165,7 +164,7 @@ static mut bcache_magic: [libc::c_char; 16] = [
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

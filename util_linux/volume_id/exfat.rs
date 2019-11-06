@@ -7,23 +7,23 @@ extern "C" {
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -32,8 +32,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -52,11 +52,11 @@ pub const LE: endian = 0;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct volume_guid {
-  pub sec_count: uint8_t,
-  pub set_checksum: uint16_t,
-  pub flags: uint16_t,
-  pub vol_guid: [uint8_t; 16],
-  pub reserved: [uint8_t; 10],
+  pub sec_count: u8,
+  pub set_checksum: u16,
+  pub flags: u16,
+  pub vol_guid: [u8; 16],
+  pub reserved: [u8; 10],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -67,35 +67,35 @@ pub union C2RustUnnamed {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct volume_label {
-  pub char_count: uint8_t,
-  pub vol_label: [uint16_t; 11],
-  pub reserved: [uint8_t; 8],
+  pub char_count: u8,
+  pub vol_label: [u16; 11],
+  pub reserved: [u8; 8],
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct exfat_dir_entry {
-  pub entry_type: uint8_t,
+  pub entry_type: u8,
   pub type_0: C2RustUnnamed,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct exfat_super_block {
-  pub boot_jump: [uint8_t; 3],
-  pub fs_name: [uint8_t; 8],
-  pub must_be_zero: [uint8_t; 53],
+  pub boot_jump: [u8; 3],
+  pub fs_name: [u8; 8],
+  pub must_be_zero: [u8; 53],
   pub partition_offset: uint64_t,
   pub volume_length: uint64_t,
-  pub fat_offset: uint32_t,
-  pub fat_size: uint32_t,
-  pub cluster_heap_offset: uint32_t,
-  pub cluster_count: uint32_t,
-  pub root_dir: uint32_t,
-  pub vol_serial_nr: [uint8_t; 4],
-  pub fs_revision: uint16_t,
-  pub vol_flags: uint16_t,
-  pub bytes_per_sector: uint8_t,
-  pub sectors_per_cluster: uint8_t,
-  pub nr_of_fats: uint8_t,
+  pub fat_offset: u32,
+  pub fat_size: u32,
+  pub cluster_heap_offset: u32,
+  pub cluster_count: u32,
+  pub root_dir: u32,
+  pub vol_serial_nr: [u8; 4],
+  pub fs_revision: u16,
+  pub vol_flags: u16,
+  pub bytes_per_sector: u8,
+  pub sectors_per_cluster: u8,
+  pub nr_of_fats: u8,
   // 2 for TexFAT
   /* 0x6F */
   // ...
@@ -122,9 +122,9 @@ pub struct exfat_super_block {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -144,7 +144,7 @@ pub struct exfat_super_block {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
       // Volume Label Directory Entry
       volume_id_set_label_unicode16(
         id,
-        (*de).type_0.label.vol_label.as_mut_ptr() as *mut uint8_t,
+        (*de).type_0.label.vol_label.as_mut_ptr() as *mut u8,
         LE,
         (2i32 * (*de).type_0.label.char_count as libc::c_int) as size_t,
       );

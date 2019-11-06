@@ -63,7 +63,7 @@ extern "C" {
 
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 
@@ -97,42 +97,42 @@ pub const FBIOGET_VSCREENINFO: C2RustUnnamed_0 = 17920;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_bitfield {
-  pub offset: uint32_t,
-  pub length: uint32_t,
-  pub msb_right: uint32_t,
+  pub offset: u32,
+  pub length: u32,
+  pub msb_right: u32,
   /* !=0: Most significant bit is right */
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct fb_var_screeninfo {
-  pub xres: uint32_t,
-  pub yres: uint32_t,
-  pub xres_virtual: uint32_t,
-  pub yres_virtual: uint32_t,
-  pub xoffset: uint32_t,
-  pub yoffset: uint32_t,
-  pub bits_per_pixel: uint32_t,
-  pub grayscale: uint32_t,
+  pub xres: u32,
+  pub yres: u32,
+  pub xres_virtual: u32,
+  pub yres_virtual: u32,
+  pub xoffset: u32,
+  pub yoffset: u32,
+  pub bits_per_pixel: u32,
+  pub grayscale: u32,
   pub red: fb_bitfield,
   pub green: fb_bitfield,
   pub blue: fb_bitfield,
   pub transp: fb_bitfield,
-  pub nonstd: uint32_t,
-  pub activate: uint32_t,
-  pub height: uint32_t,
-  pub width: uint32_t,
-  pub accel_flags: uint32_t,
-  pub pixclock: uint32_t,
-  pub left_margin: uint32_t,
-  pub right_margin: uint32_t,
-  pub upper_margin: uint32_t,
-  pub lower_margin: uint32_t,
-  pub hsync_len: uint32_t,
-  pub vsync_len: uint32_t,
-  pub sync: uint32_t,
-  pub vmode: uint32_t,
-  pub reserved: [uint32_t; 6],
+  pub nonstd: u32,
+  pub activate: u32,
+  pub height: u32,
+  pub width: u32,
+  pub accel_flags: u32,
+  pub pixclock: u32,
+  pub left_margin: u32,
+  pub right_margin: u32,
+  pub upper_margin: u32,
+  pub lower_margin: u32,
+  pub hsync_len: u32,
+  pub vsync_len: u32,
+  pub sync: u32,
+  pub vmode: u32,
+  pub reserved: [u32; 6],
   /* Reserved for future compatibility */
 }
 
@@ -200,7 +200,7 @@ pub const OPT_CHANGE: C2RustUnnamed_3 = 1;
 pub const OPT_READMODE: C2RustUnnamed_3 = 4;
 pub type C2RustUnnamed_3 = libc::c_uint;
 
-fn BUG_xatou32_unimplemented() -> uint32_t {
+fn BUG_xatou32_unimplemented() -> u32 {
   panic!("BUG_xatou32_unimplemented")
 }
 
@@ -210,7 +210,7 @@ unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
 }
 
 #[inline(always)]
-unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> uint32_t {
+unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
   if (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
     .wrapping_add(1u32)
@@ -223,14 +223,14 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> uint32_t {
     .wrapping_add(1u64)
     == 0xffffffffu32 as libc::c_ulong
   {
-    return xatoul(numstr) as uint32_t;
+    return xatoul(numstr) as u32;
   }
   return BUG_xatou32_unimplemented();
 }
 
 unsafe extern "C" fn copy_if_gt0(
-  mut src: *mut uint32_t,
-  mut dst: *mut uint32_t,
+  mut src: *mut u32,
+  mut dst: *mut u32,
   mut cnt: libc::c_uint,
 ) {
   loop {
@@ -567,8 +567,8 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
 ];
 
 unsafe extern "C" fn ss(
-  mut x: *mut uint32_t,
-  mut flag: uint32_t,
+  mut x: *mut u32,
+  mut flag: u32,
   mut buf: *mut libc::c_char,
   mut what: *const libc::c_char,
 ) {
@@ -656,16 +656,16 @@ unsafe extern "C" fn read_mode_db(
     match i {
       0 => {
         if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-          == ::std::mem::size_of::<uint32_t>() as libc::c_ulong
+          == ::std::mem::size_of::<u32>() as libc::c_ulong
         {
           sscanf(
             p,
             b"%d %d %d %d %d\x00" as *const u8 as *const libc::c_char,
-            &mut (*base).xres as *mut uint32_t,
-            &mut (*base).yres as *mut uint32_t,
-            &mut (*base).xres_virtual as *mut uint32_t,
-            &mut (*base).yres_virtual as *mut uint32_t,
-            &mut (*base).bits_per_pixel as *mut uint32_t,
+            &mut (*base).xres as *mut u32,
+            &mut (*base).yres as *mut u32,
+            &mut (*base).xres_virtual as *mut u32,
+            &mut (*base).yres_virtual as *mut u32,
+            &mut (*base).bits_per_pixel as *mut u32,
           );
         } else {
           let mut base_xres: libc::c_int = 0;
@@ -682,27 +682,27 @@ unsafe extern "C" fn read_mode_db(
             &mut base_yres_virtual as *mut libc::c_int,
             &mut base_bits_per_pixel as *mut libc::c_int,
           );
-          (*base).xres = base_xres as uint32_t;
-          (*base).yres = base_yres as uint32_t;
-          (*base).xres_virtual = base_xres_virtual as uint32_t;
-          (*base).yres_virtual = base_yres_virtual as uint32_t;
-          (*base).bits_per_pixel = base_bits_per_pixel as uint32_t
+          (*base).xres = base_xres as u32;
+          (*base).yres = base_yres as u32;
+          (*base).xres_virtual = base_xres_virtual as u32;
+          (*base).yres_virtual = base_yres_virtual as u32;
+          (*base).bits_per_pixel = base_bits_per_pixel as u32
         }
       }
       1 => {
         if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-          == ::std::mem::size_of::<uint32_t>() as libc::c_ulong
+          == ::std::mem::size_of::<u32>() as libc::c_ulong
         {
           sscanf(
             p,
             b"%d %d %d %d %d %d %d\x00" as *const u8 as *const libc::c_char,
-            &mut (*base).pixclock as *mut uint32_t,
-            &mut (*base).left_margin as *mut uint32_t,
-            &mut (*base).right_margin as *mut uint32_t,
-            &mut (*base).upper_margin as *mut uint32_t,
-            &mut (*base).lower_margin as *mut uint32_t,
-            &mut (*base).hsync_len as *mut uint32_t,
-            &mut (*base).vsync_len as *mut uint32_t,
+            &mut (*base).pixclock as *mut u32,
+            &mut (*base).left_margin as *mut u32,
+            &mut (*base).right_margin as *mut u32,
+            &mut (*base).upper_margin as *mut u32,
+            &mut (*base).lower_margin as *mut u32,
+            &mut (*base).hsync_len as *mut u32,
+            &mut (*base).vsync_len as *mut u32,
           );
         } else {
           let mut base_pixclock: libc::c_int = 0;
@@ -723,19 +723,19 @@ unsafe extern "C" fn read_mode_db(
             &mut base_hsync_len as *mut libc::c_int,
             &mut base_vsync_len as *mut libc::c_int,
           );
-          (*base).pixclock = base_pixclock as uint32_t;
-          (*base).left_margin = base_left_margin as uint32_t;
-          (*base).right_margin = base_right_margin as uint32_t;
-          (*base).upper_margin = base_upper_margin as uint32_t;
-          (*base).lower_margin = base_lower_margin as uint32_t;
-          (*base).hsync_len = base_hsync_len as uint32_t;
-          (*base).vsync_len = base_vsync_len as uint32_t
+          (*base).pixclock = base_pixclock as u32;
+          (*base).left_margin = base_left_margin as u32;
+          (*base).right_margin = base_right_margin as u32;
+          (*base).upper_margin = base_upper_margin as u32;
+          (*base).lower_margin = base_lower_margin as u32;
+          (*base).hsync_len = base_hsync_len as u32;
+          (*base).vsync_len = base_vsync_len as u32
         }
       }
       2 | 3 => {
-        static mut syncs: [uint32_t; 2] = [
-          FB_VMODE_INTERLACED as libc::c_int as uint32_t,
-          FB_VMODE_DOUBLE as libc::c_int as uint32_t,
+        static mut syncs: [u32; 2] = [
+          FB_VMODE_INTERLACED as libc::c_int as u32,
+          FB_VMODE_DOUBLE as libc::c_int as u32,
         ];
         ss(
           &mut (*base).vmode,
@@ -745,10 +745,10 @@ unsafe extern "C" fn read_mode_db(
         );
       }
       4 | 5 | 6 => {
-        static mut syncs_0: [uint32_t; 3] = [
-          FB_SYNC_VERT_HIGH_ACT as libc::c_int as uint32_t,
-          FB_SYNC_HOR_HIGH_ACT as libc::c_int as uint32_t,
-          FB_SYNC_COMP_HIGH_ACT as libc::c_int as uint32_t,
+        static mut syncs_0: [u32; 3] = [
+          FB_SYNC_VERT_HIGH_ACT as libc::c_int as u32,
+          FB_SYNC_HOR_HIGH_ACT as libc::c_int as u32,
+          FB_SYNC_COMP_HIGH_ACT as libc::c_int as u32,
         ];
         ss(
           &mut (*base).sync,
@@ -760,7 +760,7 @@ unsafe extern "C" fn read_mode_db(
       7 => {
         ss(
           &mut (*base).sync,
-          FB_SYNC_EXT as libc::c_int as uint32_t,
+          FB_SYNC_EXT as libc::c_int as u32,
           p,
           b"false\x00" as *const u8 as *const libc::c_char,
         );
@@ -786,18 +786,18 @@ unsafe extern "C" fn read_mode_db(
           &mut transp_length as *mut libc::c_int,
           &mut transp_offset as *mut libc::c_int,
         );
-        (*base).red.offset = red_offset as uint32_t;
-        (*base).red.length = red_length as uint32_t;
-        (*base).red.msb_right = 0i32 as uint32_t;
-        (*base).green.offset = green_offset as uint32_t;
-        (*base).green.length = green_length as uint32_t;
-        (*base).green.msb_right = 0i32 as uint32_t;
-        (*base).blue.offset = blue_offset as uint32_t;
-        (*base).blue.length = blue_length as uint32_t;
-        (*base).blue.msb_right = 0i32 as uint32_t;
-        (*base).transp.offset = transp_offset as uint32_t;
-        (*base).transp.length = transp_length as uint32_t;
-        (*base).transp.msb_right = 0i32 as uint32_t
+        (*base).red.offset = red_offset as u32;
+        (*base).red.length = red_length as u32;
+        (*base).red.msb_right = 0i32 as u32;
+        (*base).green.offset = green_offset as u32;
+        (*base).green.length = green_length as u32;
+        (*base).green.msb_right = 0i32 as u32;
+        (*base).blue.offset = blue_offset as u32;
+        (*base).blue.length = blue_length as u32;
+        (*base).blue.msb_right = 0i32 as u32;
+        (*base).transp.offset = transp_offset as u32;
+        (*base).transp.length = transp_length as u32;
+        (*base).transp.msb_right = 0i32 as u32
       }
       _ => {}
     }
@@ -1049,7 +1049,7 @@ pub unsafe extern "C" fn fbset_main(
   if options & OPT_CHANGE as libc::c_int as libc::c_uint != 0 {
     copy_changed_values(&mut var_old, &mut var_set);
     if options & OPT_ALL as libc::c_int as libc::c_uint != 0 {
-      var_old.activate = 64i32 as uint32_t
+      var_old.activate = 64i32 as u32
     }
     bb_xioctl(
       fh,

@@ -57,7 +57,7 @@ extern "C" {
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
@@ -76,9 +76,9 @@ extern "C" {
 
 use crate::librb::off_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 
 use libc::stat;
 
@@ -147,17 +147,17 @@ pub const info_sector_number: C2RustUnnamed = 1;
 #[repr(C, packed)]
 pub struct msdos_dir_entry {
   pub name: [libc::c_char; 11],
-  pub attr: uint8_t,
-  pub lcase: uint8_t,
-  pub ctime_cs: uint8_t,
-  pub ctime: uint16_t,
-  pub cdate: uint16_t,
-  pub adate: uint16_t,
-  pub starthi: uint16_t,
-  pub time: uint16_t,
-  pub date: uint16_t,
-  pub start: uint16_t,
-  pub size: uint32_t,
+  pub attr: u8,
+  pub lcase: u8,
+  pub ctime_cs: u8,
+  pub ctime: u16,
+  pub cdate: u16,
+  pub adate: u16,
+  pub starthi: u16,
+  pub time: u16,
+  pub date: u16,
+  pub start: u16,
+  pub size: u32,
   /* 01c file size in bytes */
 }
 /* Example of boot sector's beginning:
@@ -171,10 +171,10 @@ pub struct msdos_dir_entry {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct msdos_volume_info {
-  pub drive_number: uint8_t,
-  pub reserved: uint8_t,
-  pub ext_boot_sign: uint8_t,
-  pub volume_id32: uint32_t,
+  pub drive_number: u8,
+  pub reserved: u8,
+  pub ext_boot_sign: u8,
+  pub volume_id32: u32,
   pub volume_label: [libc::c_char; 11],
   pub fs_type: [libc::c_char; 8],
   /* 052 typically "FATnn" */
@@ -185,42 +185,42 @@ pub struct msdos_volume_info {
 #[repr(C, packed)]
 pub struct msdos_boot_sector {
   pub boot_jump_and_sys_id: [libc::c_char; 11],
-  pub bytes_per_sect: uint16_t,
-  pub sect_per_clust: uint8_t,
-  pub reserved_sect: uint16_t,
-  pub fats: uint8_t,
-  pub dir_entries: uint16_t,
-  pub volume_size_sect: uint16_t,
-  pub media_byte: uint8_t,
-  pub sect_per_fat: uint16_t,
-  pub sect_per_track: uint16_t,
-  pub heads: uint16_t,
-  pub hidden: uint32_t,
-  pub fat32_volume_size_sect: uint32_t,
-  pub fat32_sect_per_fat: uint32_t,
-  pub fat32_flags: uint16_t,
-  pub fat32_version: [uint8_t; 2],
-  pub fat32_root_cluster: uint32_t,
-  pub fat32_info_sector: uint16_t,
-  pub fat32_backup_boot: uint16_t,
-  pub reserved2: [uint32_t; 3],
+  pub bytes_per_sect: u16,
+  pub sect_per_clust: u8,
+  pub reserved_sect: u16,
+  pub fats: u8,
+  pub dir_entries: u16,
+  pub volume_size_sect: u16,
+  pub media_byte: u8,
+  pub sect_per_fat: u16,
+  pub sect_per_track: u16,
+  pub heads: u16,
+  pub hidden: u32,
+  pub fat32_volume_size_sect: u32,
+  pub fat32_sect_per_fat: u32,
+  pub fat32_flags: u16,
+  pub fat32_version: [u8; 2],
+  pub fat32_root_cluster: u32,
+  pub fat32_info_sector: u16,
+  pub fat32_backup_boot: u16,
+  pub reserved2: [u32; 3],
   pub vi: msdos_volume_info,
   pub boot_code: [libc::c_char; 420],
-  pub boot_sign: uint16_t,
+  pub boot_sign: u16,
   /* 1fe */
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct fat32_fsinfo {
-  pub signature1: uint32_t,
-  pub reserved1: [uint32_t; 120],
-  pub signature2: uint32_t,
-  pub free_clusters: uint32_t,
-  pub next_cluster: uint32_t,
-  pub reserved2: [uint32_t; 3],
-  pub reserved3: uint16_t,
-  pub boot_sign: uint16_t,
+  pub signature1: u32,
+  pub reserved1: [u32; 120],
+  pub signature2: u32,
+  pub free_clusters: u32,
+  pub next_cluster: u32,
+  pub reserved2: [u32; 3],
+  pub reserved3: u16,
+  pub boot_sign: u16,
   /* 1fe */
 }
 
@@ -287,16 +287,16 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   let mut device_name: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut volume_size_bytes: uoff_t = 0;
   let mut volume_size_sect: uoff_t = 0;
-  let mut total_clust: uint32_t = 0;
-  let mut volume_id: uint32_t = 0;
+  let mut total_clust: u32 = 0;
+  let mut volume_id: u32 = 0;
   let mut dev: libc::c_int = 0;
   let mut bytes_per_sect: libc::c_uint = 0;
   let mut sect_per_fat: libc::c_uint = 0;
   let mut opts: libc::c_uint = 0;
-  let mut sect_per_track: uint16_t = 0;
-  let mut media_byte: uint8_t = 0;
-  let mut sect_per_clust: uint8_t = 0;
-  let mut heads: uint8_t = 0;
+  let mut sect_per_track: u16 = 0;
+  let mut media_byte: u8 = 0;
+  let mut sect_per_clust: u8 = 0;
+  let mut heads: u8 = 0;
   opts = getopt32(
     argv,
     b"^Ab:cCf:F:h:Ii:l:m:n:r:R:s:S:v\x00-1\x00" as *const u8 as *const libc::c_char,
@@ -317,7 +317,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   // cache device name
   device_name = *argv.offset(0);
   // default volume ID = creation time
-  volume_id = time(0 as *mut time_t) as uint32_t;
+  volume_id = time(0 as *mut time_t) as u32;
   dev = xopen(device_name, 0o2i32);
   xfstat(dev, &mut st, device_name);
   //
@@ -360,10 +360,10 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   //
   // Find out or guess media parameters
   //
-  media_byte = 0xf8i32 as uint8_t;
-  heads = 255i32 as uint8_t;
-  sect_per_track = 63i32 as uint16_t;
-  sect_per_clust = 1i32 as uint8_t;
+  media_byte = 0xf8i32 as u8;
+  heads = 255i32 as u8;
+  sect_per_track = 63i32 as u16;
+  sect_per_clust = 1i32 as u8;
   let mut geometry: hd_geometry = hd_geometry {
     heads: 0,
     sectors: 0,
@@ -394,7 +394,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     && geometry.heads as libc::c_int != 0
   {
     // hard drive
-    sect_per_track = geometry.sectors as uint16_t;
+    sect_per_track = geometry.sectors as u16;
     heads = geometry.heads;
     current_block_50 = 3603352160459597315;
   } else {
@@ -409,8 +409,8 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     );
     if not_floppy == 0i32 {
       // floppy disk
-      sect_per_track = param.sect as uint16_t;
-      heads = param.head as uint8_t;
+      sect_per_track = param.sect as u16;
+      heads = param.head as u8;
       volume_size_sect = param.size as uoff_t;
       volume_size_bytes = param.size.wrapping_mul(512i32 as libc::c_uint) as uoff_t
     }
@@ -418,13 +418,13 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     match volume_size_sect {
       720 => {
         // 5.25", 2, 9, 40 - 360K
-        media_byte = 0xfdi32 as uint8_t;
+        media_byte = 0xfdi32 as u8;
         current_block_50 = 3392087639489470149;
       }
       1440 | 2400 => {
         // 3.5", 2, 9, 80 - 720K
         // 5.25", 2, 15, 80 - 1200K
-        media_byte = 0xf9i32 as uint8_t;
+        media_byte = 0xf9i32 as u8;
         current_block_50 = 3392087639489470149;
       }
       2880 | 5760 => {
@@ -447,7 +447,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
           // 3.5", 2, 18, 80 - 1440K
           // 3.5", 2, 36, 80 - 2880K
           {
-            media_byte = 0xf0i32 as uint8_t
+            media_byte = 0xf0i32 as u8
           }
           _ => {}
         }
@@ -455,11 +455,11 @@ pub unsafe extern "C" fn mkfs_vfat_main(
         // perhaps it is a floppy image.
         // we already set media_byte as if it is a floppy,
         // now set sect_per_track and heads.
-        heads = 2i32 as uint8_t;
+        heads = 2i32 as u8;
         sect_per_track =
-          (volume_size_sect as libc::c_uint).wrapping_div(160i32 as libc::c_uint) as uint16_t;
+          (volume_size_sect as libc::c_uint).wrapping_div(160i32 as libc::c_uint) as u16;
         if (sect_per_track as libc::c_int) < 9i32 {
-          sect_per_track = 9i32 as uint16_t
+          sect_per_track = 9i32 as u16
         }
         current_block_50 = 5372832139739605200;
       }
@@ -474,19 +474,19 @@ pub unsafe extern "C" fn mkfs_vfat_main(
        * fs size <=  16G: 8k clusters
        * fs size >   16G: 16k clusters
        */
-      sect_per_clust = 1i32 as uint8_t;
+      sect_per_clust = 1i32 as u8;
       if volume_size_bytes >= (260i32 * 1024i32 * 1024i32) as libc::c_ulong {
-        sect_per_clust = 8i32 as uint8_t;
+        sect_per_clust = 8i32 as u8;
         /* fight gcc: */
         /* "error: integer overflow in expression" */
         /* "error: right shift count >= width of type" */
         if ::std::mem::size_of::<off_t>() as libc::c_ulong > 4i32 as libc::c_ulong {
           let mut t: libc::c_uint = (volume_size_bytes >> 31i32 >> 1i32) as libc::c_uint;
           if t >= (8i32 / 4i32) as libc::c_uint {
-            sect_per_clust = 16i32 as uint8_t
+            sect_per_clust = 16i32 as u8
           }
           if t >= (16i32 / 4i32) as libc::c_uint {
-            sect_per_clust = 32i32 as uint8_t
+            sect_per_clust = 32i32 as u8
           }
         }
       }
@@ -519,7 +519,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     // <= MAX_CLUST_32. Therefore, we do not check
     // against MAX_CLUST_32, but against a bigger const:
     if !(tcl > 0x80ffffffu32 as libc::c_ulong) {
-      total_clust = tcl as uint32_t; // fits in uint32_t
+      total_clust = tcl as u32; // fits in u32
                                      // Every cluster needs 4 bytes in FAT. +2 entries since
                                      // FAT has space for non-existent clusters 0 and 1.
                                      // Let's see how many sectors that needs.
@@ -553,7 +553,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
         b"can\'t make FAT32 with >128 sectors/cluster\x00" as *const u8 as *const libc::c_char,
       );
     }
-    sect_per_clust = (sect_per_clust as libc::c_int * 2i32) as uint8_t;
+    sect_per_clust = (sect_per_clust as libc::c_int * 2i32) as u8;
     sect_per_fat = sect_per_fat.wrapping_div(2i32 as libc::c_uint) | 1i32 as libc::c_uint
   }
   //
@@ -586,60 +586,60 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     (*boot_blk).boot_jump_and_sys_id.as_mut_ptr(),
     b"\xebX\x90mkdosfs\x00" as *const u8 as *const libc::c_char,
   );
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).bytes_per_sect = bytes_per_sect as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).bytes_per_sect = bytes_per_sect as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).bytes_per_sect = bytes_per_sect as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).bytes_per_sect = bytes_per_sect as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).bytes_per_sect = bytes_per_sect as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).bytes_per_sect = bytes_per_sect as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).sect_per_clust = sect_per_clust as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).sect_per_clust = sect_per_clust as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).sect_per_clust = sect_per_clust as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).sect_per_clust = sect_per_clust as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*boot_blk).sect_per_clust = sect_per_clust
   } else {
     BUG_wrong_field_size();
   }
   // cast in needed on big endian to suppress a warning
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as uint16_t as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as uint16_t as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as u16 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).reserved_sect = reserved_sect as libc::c_int as u16 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).fats = 2i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fats = 2i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fats = 2i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).fats = 2i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fats = 2i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fats = 2i32 as u8
   } else {
     BUG_wrong_field_size();
   }
   //STORE_LE(boot_blk->dir_entries, 0); // for FAT32, stays 0
   if volume_size_sect <= 0xffffi32 as libc::c_ulong {
-    if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*boot_blk).volume_size_sect = volume_size_sect as uint32_t as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*boot_blk).volume_size_sect = volume_size_sect as uint16_t
-    } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*boot_blk).volume_size_sect = volume_size_sect as uint8_t as uint16_t
+    if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (*boot_blk).volume_size_sect = volume_size_sect as u32 as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*boot_blk).volume_size_sect = volume_size_sect as u16
+    } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*boot_blk).volume_size_sect = volume_size_sect as u8 as u16
     } else {
       BUG_wrong_field_size();
     }
   }
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).media_byte = media_byte as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).media_byte = media_byte as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).media_byte = media_byte as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).media_byte = media_byte as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
     (*boot_blk).media_byte = media_byte
   } else {
     BUG_wrong_field_size();
@@ -649,88 +649,88 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   //	STORE_LE(boot_blk->sect_per_fat, sect_per_fat);
   // works:
   //STORE_LE(boot_blk->sect_per_fat, 0);
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).sect_per_track = sect_per_track as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).sect_per_track = sect_per_track as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*boot_blk).sect_per_track = sect_per_track
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).sect_per_track = sect_per_track as uint8_t as uint16_t
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).sect_per_track = sect_per_track as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).heads = heads as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).heads = heads as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).heads = heads as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).heads = heads as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).heads = heads as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).heads = heads as u16
   } else {
     BUG_wrong_field_size();
   }
   //STORE_LE(boot_blk->hidden, 0);
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).fat32_volume_size_sect = volume_size_sect as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fat32_volume_size_sect = volume_size_sect as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_volume_size_sect = volume_size_sect as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).fat32_volume_size_sect = volume_size_sect as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fat32_volume_size_sect = volume_size_sect as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fat32_volume_size_sect = volume_size_sect as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*boot_blk).fat32_sect_per_fat = sect_per_fat
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fat32_sect_per_fat = sect_per_fat as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_sect_per_fat = sect_per_fat as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fat32_sect_per_fat = sect_per_fat as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fat32_sect_per_fat = sect_per_fat as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   //STORE_LE(boot_blk->fat32_flags, 0);
   //STORE_LE(boot_blk->fat32_version[2], 0,0);
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).fat32_root_cluster = 2i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fat32_root_cluster = 2i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_root_cluster = 2i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).fat32_root_cluster = 2i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fat32_root_cluster = 2i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fat32_root_cluster = 2i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fat32_info_sector = info_sector_number as libc::c_int as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).fat32_backup_boot = backup_boot_sector as libc::c_int as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
   //STORE_LE(boot_blk->reserved2[3], 0,0,0);
-  if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as uint32_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as uint16_t as uint8_t
-  } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as uint8_t
+  if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u32 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u16 as u8
+  } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u8
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*boot_blk).vi.volume_id32 = volume_id
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).vi.volume_id32 = volume_id as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).vi.volume_id32 = volume_id as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).vi.volume_id32 = volume_id as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).vi.volume_id32 = volume_id as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -749,58 +749,58 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     boot_code.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 59]>() as libc::c_ulong,
   );
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*boot_blk).boot_sign = 0xaa55i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*boot_blk).boot_sign = 0xaa55i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*boot_blk).boot_sign = 0xaa55i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*info).signature1 = 0x41615252i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*info).signature1 = 0x41615252i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*info).signature1 = 0x41615252i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*info).signature2 = 0x61417272i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*info).signature2 = 0x61417272i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*info).signature2 = 0x61417272i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   // we've allocated cluster 2 for the root dir
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*info).free_clusters = total_clust.wrapping_sub(1i32 as libc::c_uint)
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).free_clusters = total_clust.wrapping_sub(1i32 as libc::c_uint) as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).free_clusters = total_clust.wrapping_sub(1i32 as libc::c_uint) as uint8_t as uint32_t
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*info).free_clusters = total_clust.wrapping_sub(1i32 as libc::c_uint) as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*info).free_clusters = total_clust.wrapping_sub(1i32 as libc::c_uint) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as uint16_t as uint32_t
-  } else if ::std::mem::size_of::<uint32_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as uint8_t as uint32_t
+  if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*info).next_cluster = 2i32 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*info).next_cluster = 2i32 as u16 as u32
+  } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*info).next_cluster = 2i32 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
-  if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as uint32_t as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as uint16_t
-  } else if ::std::mem::size_of::<uint16_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as uint8_t as uint16_t
+  if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
+    (*info).boot_sign = 0xaa55i32 as u32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
+    (*info).boot_sign = 0xaa55i32 as u16
+  } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
+    (*info).boot_sign = 0xaa55i32 as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
@@ -828,10 +828,10 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     bytes_per_sect.wrapping_mul(2i32 as libc::c_uint) as libc::c_ulong,
   );
   // initial FAT entries
-  *(fat as *mut uint32_t).offset(0) = (0xfffff00i32 | media_byte as libc::c_int) as uint32_t;
-  *(fat as *mut uint32_t).offset(1) = 0xffffffffu32;
+  *(fat as *mut u32).offset(0) = (0xfffff00i32 | media_byte as libc::c_int) as u32;
+  *(fat as *mut u32).offset(1) = 0xffffffffu32;
   // mark cluster 2 as EOF (used for root dir)
-  *(fat as *mut uint32_t).offset(2) = 0xffffff8i32 as uint32_t;
+  *(fat as *mut u32).offset(2) = 0xffffff8i32 as u32;
   i = 0i32 as libc::c_uint;
   while i < 2i32 as libc::c_uint {
     xwrite(dev, buf as *const libc::c_void, bytes_per_sect as size_t);
@@ -862,12 +862,12 @@ pub unsafe extern "C" fn mkfs_vfat_main(
       volume_label,
       ::std::mem::size_of::<[libc::c_char; 11]>() as libc::c_ulong,
     );
-    if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*de).attr = 8i32 as uint32_t as uint8_t
-    } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*de).attr = 8i32 as uint16_t as uint8_t
-    } else if ::std::mem::size_of::<uint8_t>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*de).attr = 8i32 as uint8_t
+    if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
+      (*de).attr = 8i32 as u32 as u8
+    } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
+      (*de).attr = 8i32 as u16 as u8
+    } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
+      (*de).attr = 8i32 as u8
     } else {
       BUG_wrong_field_size();
     }

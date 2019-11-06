@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -25,7 +25,7 @@ extern "C" {
 }
 
 use crate::librb::smallint;
-use libc::uint32_t;
+
 
 use libc::FILE;
 

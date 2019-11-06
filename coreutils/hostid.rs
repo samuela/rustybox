@@ -10,7 +10,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use libc::uint32_t;
+
 
 /*
  * Mini hostid implementation for busybox
@@ -44,7 +44,7 @@ pub unsafe extern "C" fn hostid_main(
   /* POSIX says gethostid returns a "32-bit identifier" */
   printf(
     b"%08x\n\x00" as *const u8 as *const libc::c_char,
-    gethostid() as uint32_t,
+    gethostid() as u32,
   );
   return fflush_all();
 }

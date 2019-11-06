@@ -63,7 +63,7 @@ extern "C" {
 }
 
 use crate::librb::__gid_t;
- use libc::uint8_t;
+
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::gid_t;
@@ -78,9 +78,9 @@ use libc::FILE;
 pub struct passdb {
   pub filename: *const libc::c_char,
   pub def: [libc::c_char; 9],
-  pub off: [uint8_t; 9],
-  pub numfields: uint8_t,
-  pub size_of: uint8_t,
+  pub off: [u8; 9],
+  pub numfields: u8,
+  pub size_of: u8,
   pub fp: *mut FILE,
   pub malloced: *mut libc::c_char,
 }
@@ -129,9 +129,9 @@ pub struct statics {
 pub struct const_passdb {
   pub filename: *const libc::c_char,
   pub def: [libc::c_char; 9],
-  pub off: [uint8_t; 9],
-  pub numfields: uint8_t,
-  pub size_of: uint8_t,
+  pub off: [u8; 9],
+  pub numfields: u8,
+  pub size_of: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -361,7 +361,7 @@ unsafe extern "C" fn convert_to_struct(
   mut result: *mut libc::c_void,
 ) -> *mut libc::c_void {
   let mut def: *const libc::c_char = (*db).def.as_mut_ptr();
-  let mut off: *const uint8_t = (*db).off.as_mut_ptr();
+  let mut off: *const u8 = (*db).off.as_mut_ptr();
   /* For consistency, zero out all fields */
   memset(result, 0i32, (*db).size_of as libc::c_ulong);
   loop {
@@ -820,19 +820,19 @@ unsafe extern "C" fn run_static_initializers() {
       filename: b"/etc/passwd\x00" as *const u8 as *const libc::c_char,
       def: *::std::mem::transmute::<&[u8; 9], &mut [libc::c_char; 9]>(b"SsIIsss\x00\x00"),
       off: [
-        0u64 as uint8_t,
-        8u64 as uint8_t,
-        16u64 as uint8_t,
-        20u64 as uint8_t,
-        24u64 as uint8_t,
-        32u64 as uint8_t,
-        40u64 as uint8_t,
+        0u64 as u8,
+        8u64 as u8,
+        16u64 as u8,
+        20u64 as u8,
+        24u64 as u8,
+        32u64 as u8,
+        40u64 as u8,
         0,
         0,
       ],
       numfields: (::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong)
-        .wrapping_sub(1i32 as libc::c_ulong) as uint8_t,
-      size_of: ::std::mem::size_of::<passwd>() as libc::c_ulong as uint8_t,
+        .wrapping_sub(1i32 as libc::c_ulong) as u8,
+      size_of: ::std::mem::size_of::<passwd>() as libc::c_ulong as u8,
     };
     init
   };
@@ -841,10 +841,10 @@ unsafe extern "C" fn run_static_initializers() {
       filename: b"/etc/group\x00" as *const u8 as *const libc::c_char,
       def: *::std::mem::transmute::<&[u8; 9], &mut [libc::c_char; 9]>(b"SsIm\x00\x00\x00\x00\x00"),
       off: [
-        0u64 as uint8_t,
-        8u64 as uint8_t,
-        16u64 as uint8_t,
-        24u64 as uint8_t,
+        0u64 as u8,
+        8u64 as u8,
+        16u64 as u8,
+        24u64 as u8,
         0,
         0,
         0,
@@ -852,8 +852,8 @@ unsafe extern "C" fn run_static_initializers() {
         0,
       ],
       numfields: (::std::mem::size_of::<[libc::c_char; 5]>() as libc::c_ulong)
-        .wrapping_sub(1i32 as libc::c_ulong) as uint8_t,
-      size_of: ::std::mem::size_of::<group>() as libc::c_ulong as uint8_t,
+        .wrapping_sub(1i32 as libc::c_ulong) as u8,
+      size_of: ::std::mem::size_of::<group>() as libc::c_ulong as u8,
     };
     init
   };
@@ -862,19 +862,19 @@ unsafe extern "C" fn run_static_initializers() {
       filename: b"/etc/shadow\x00" as *const u8 as *const libc::c_char,
       def: *::std::mem::transmute::<&[u8; 9], &mut [libc::c_char; 9]>(b"Ssllllllr"),
       off: [
-        0u64 as uint8_t,
-        8u64 as uint8_t,
-        16u64 as uint8_t,
-        24u64 as uint8_t,
-        32u64 as uint8_t,
-        40u64 as uint8_t,
-        48u64 as uint8_t,
-        56u64 as uint8_t,
-        64u64 as uint8_t,
+        0u64 as u8,
+        8u64 as u8,
+        16u64 as u8,
+        24u64 as u8,
+        32u64 as u8,
+        40u64 as u8,
+        48u64 as u8,
+        56u64 as u8,
+        64u64 as u8,
       ],
       numfields: (::std::mem::size_of::<[libc::c_char; 10]>() as libc::c_ulong)
-        .wrapping_sub(1i32 as libc::c_ulong) as uint8_t,
-      size_of: ::std::mem::size_of::<spwd>() as libc::c_ulong as uint8_t,
+        .wrapping_sub(1i32 as libc::c_ulong) as u8,
+      size_of: ::std::mem::size_of::<spwd>() as libc::c_ulong as u8,
     };
     init
   }

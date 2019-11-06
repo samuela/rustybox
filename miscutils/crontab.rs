@@ -54,7 +54,7 @@ extern "C" {
   #[no_mangle]
   fn sanitize_env_if_suid() -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -87,7 +87,7 @@ use crate::librb::pid_t;
 use libc::stat;
 
 use libc::uid_t;
-use libc::uint32_t;
+
 pub const OPT_e: C2RustUnnamed = 8;
 pub const OPT_l: C2RustUnnamed = 4;
 pub const OPT_ler: C2RustUnnamed = 28;

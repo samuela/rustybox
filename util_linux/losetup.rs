@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -44,7 +44,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::uint32_t;
+
 pub const OPT_r: C2RustUnnamed = 64;
 pub const OPT_P: C2RustUnnamed = 4;
 pub const OPT_f: C2RustUnnamed = 16;

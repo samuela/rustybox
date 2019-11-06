@@ -119,7 +119,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -149,12 +149,12 @@ extern "C" {
   fn getcaps(caps: *mut libc::c_void);
 }
 
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_header_struct {
-  pub version: __u32,
+  pub version: u32,
   pub pid: libc::c_int,
 }
 
@@ -163,9 +163,9 @@ pub type cap_user_header_t = *mut __user_cap_header_struct;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __user_cap_data_struct {
-  pub effective: __u32,
-  pub permitted: __u32,
-  pub inheritable: __u32,
+  pub effective: u32,
+  pub permitted: u32,
+  pub inheritable: u32,
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
@@ -174,7 +174,6 @@ use crate::librb::__gid_t;
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use libc::uid_t;
-use libc::uint32_t;
 
 // so for bbox, let's just repeat the declarations.
 // This way, libcap needs not be installed in build environment.

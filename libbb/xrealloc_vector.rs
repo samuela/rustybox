@@ -7,7 +7,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
- use libc::uint8_t;
+
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
  * at least v[idx] and v[idx+1], for all idx values.
  * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn xrealloc_vector_helper(
   mut sizeof_and_shift: libc::c_uint,
   mut idx: libc::c_int,
 ) -> *mut libc::c_void {
-  let mut mask: libc::c_int = 1i32 << sizeof_and_shift as uint8_t as libc::c_int; /* sizeof(vector[0]) */
+  let mut mask: libc::c_int = 1i32 << sizeof_and_shift as u8 as libc::c_int; /* sizeof(vector[0]) */
   if idx & mask - 1i32 == 0 {
     sizeof_and_shift >>= 8i32;
     vector = xrealloc(

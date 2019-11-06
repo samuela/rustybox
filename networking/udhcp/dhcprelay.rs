@@ -46,13 +46,13 @@ extern "C" {
   fn udhcp_read_interface(
     interface: *const libc::c_char,
     ifindex: *mut libc::c_int,
-    nip: *mut uint32_t,
-    mac: *mut uint8_t,
+    nip: *mut u32,
+    mac: *mut u8,
   ) -> libc::c_int;
   #[no_mangle]
   fn udhcp_recv_kernel_packet(packet: *mut dhcp_packet, fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn udhcp_get_option(packet: *mut dhcp_packet, code: libc::c_int) -> *mut uint8_t;
+  fn udhcp_get_option(packet: *mut dhcp_packet, code: libc::c_int) -> *mut u8;
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
   /* Some useful definitions */
@@ -86,9 +86,9 @@ use crate::librb::__time_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
  use libc::timeval;
 pub type __fd_mask = libc::c_long;
@@ -126,9 +126,9 @@ pub union __SOCKADDR_ARG {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -138,11 +138,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -156,7 +156,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -177,22 +177,22 @@ pub union __CONST_SOCKADDR_ARG {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dhcp_packet {
-  pub op: uint8_t,
-  pub htype: uint8_t,
-  pub hlen: uint8_t,
-  pub hops: uint8_t,
-  pub xid: uint32_t,
-  pub secs: uint16_t,
-  pub flags: uint16_t,
-  pub ciaddr: uint32_t,
-  pub yiaddr: uint32_t,
-  pub siaddr_nip: uint32_t,
-  pub gateway_nip: uint32_t,
-  pub chaddr: [uint8_t; 16],
-  pub sname: [uint8_t; 64],
-  pub file: [uint8_t; 128],
-  pub cookie: uint32_t,
-  pub options: [uint8_t; 388],
+  pub op: u8,
+  pub htype: u8,
+  pub hlen: u8,
+  pub hops: u8,
+  pub xid: u32,
+  pub secs: u16,
+  pub flags: u16,
+  pub ciaddr: u32,
+  pub yiaddr: u32,
+  pub siaddr_nip: u32,
+  pub gateway_nip: u32,
+  pub chaddr: [u8; 16],
+  pub sname: [u8; 64],
+  pub file: [u8; 128],
+  pub cookie: u32,
+  pub options: [u8; 388],
 }
 /* This list holds information about clients. The xid_* functions manipulate this list. */
 #[derive(Copy, Clone)]
@@ -200,12 +200,12 @@ pub struct dhcp_packet {
 pub struct xid_item {
   pub timestamp: libc::c_uint,
   pub client: libc::c_int,
-  pub xid: uint32_t,
+  pub xid: u32,
   pub ip: sockaddr_in,
   pub next: *mut xid_item,
 }
 unsafe extern "C" fn xid_add(
-  mut xid: uint32_t,
+  mut xid: u32,
   mut ip: *mut sockaddr_in,
   mut client: libc::c_int,
 ) -> *mut xid_item {
@@ -237,7 +237,7 @@ unsafe extern "C" fn xid_expire() {
     }
   }
 }
-unsafe extern "C" fn xid_find(mut xid: uint32_t) -> *mut xid_item {
+unsafe extern "C" fn xid_find(mut xid: u32) -> *mut xid_item {
   let mut item: *mut xid_item = (*(bb_common_bufsiz1.as_mut_ptr() as *mut xid_item)).next;
   while !item.is_null() {
     if (*item).xid == xid {
@@ -247,7 +247,7 @@ unsafe extern "C" fn xid_find(mut xid: uint32_t) -> *mut xid_item {
   }
   return item;
 }
-unsafe extern "C" fn xid_del(mut xid: uint32_t) {
+unsafe extern "C" fn xid_del(mut xid: u32) {
   let mut item: *mut xid_item = (*(bb_common_bufsiz1.as_mut_ptr() as *mut xid_item)).next;
   let mut last: *mut xid_item = bb_common_bufsiz1.as_mut_ptr() as *mut xid_item;
   while !item.is_null() {
@@ -267,7 +267,7 @@ unsafe extern "C" fn xid_del(mut xid: uint32_t) {
  * returns the message type on success, -1 otherwise
  */
 unsafe extern "C" fn get_dhcp_packet_type(mut p: *mut dhcp_packet) -> libc::c_int {
-  let mut op: *mut uint8_t = 0 as *mut uint8_t;
+  let mut op: *mut u8 = 0 as *mut u8;
   /* it must be either a BOOTREQUEST or a BOOTREPLY */
   if (*p).op as libc::c_int != 1i32 && (*p).op as libc::c_int != 2i32 {
     return -1i32;
@@ -497,7 +497,7 @@ pub unsafe extern "C" fn dhcprelay_main(
   let mut fds: *mut libc::c_int = 0 as *mut libc::c_int;
   let mut num_sockets: libc::c_int = 0;
   let mut max_socket: libc::c_int = 0;
-  let mut our_nip: uint32_t = 0;
+  let mut our_nip: u32 = 0;
   server_addr.sin_family = 2i32 as sa_family_t;
   server_addr.sin_addr.s_addr = {
     let mut __v: libc::c_uint = 0;
@@ -556,7 +556,7 @@ pub unsafe extern "C" fn dhcprelay_main(
     *argv.offset(2),
     0 as *mut libc::c_int,
     &mut our_nip,
-    0 as *mut uint8_t,
+    0 as *mut u8,
   ) != 0
   {
     return 1i32;
@@ -713,7 +713,7 @@ pub unsafe extern "C" fn dhcprelay_main(
               *iface_list.offset(i as isize),
               0 as *mut libc::c_int,
               &mut dhcp_msg.gateway_nip,
-              0 as *mut uint8_t,
+              0 as *mut u8,
             ) != 0
             {
               /* Fall back to our IP on server iface */

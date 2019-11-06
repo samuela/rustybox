@@ -3,9 +3,7 @@ use libc::stat;
 use libc::timeval;
 use libc::FILE;
 
-use crate::librb::{
-  __suseconds_t, off_t, size_t, smallint, time_t, uint16_t, uint32_t, uint8_t, uoff_t,
-};
+use crate::librb::{__suseconds_t, off_t, size_t, smallint, time_t, uoff_t};
 
 extern "C" {
   #[no_mangle]
@@ -70,10 +68,10 @@ extern "C" {
   fn xclose(fd: libc::c_int);
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn getopt32long(
@@ -81,7 +79,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn xfunc_die() -> !;
@@ -131,7 +129,7 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
@@ -139,9 +137,9 @@ pub struct transformer_state_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 
 pub type C2RustUnnamed_0 = libc::c_int;
@@ -830,7 +828,7 @@ pub unsafe extern "C" fn gunzip_main(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

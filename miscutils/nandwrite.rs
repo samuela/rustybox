@@ -29,14 +29,14 @@ extern "C" {
   #[no_mangle]
   fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -56,28 +56,28 @@ pub type __loff_t = __off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 pub type loff_t = __loff_t;
 pub type __u8 = libc::c_uchar;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __u64 = libc::c_ulonglong;
 pub type __kernel_loff_t = libc::c_longlong;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mtd_oob_buf {
-  pub start: __u32,
-  pub length: __u32,
+  pub start: u32,
+  pub length: u32,
   pub ptr: *mut libc::c_uchar,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mtd_info_user {
   pub type_0: __u8,
-  pub flags: __u32,
-  pub size: __u32,
-  pub erasesize: __u32,
-  pub writesize: __u32,
-  pub oobsize: __u32,
+  pub flags: u32,
+  pub size: u32,
+  pub erasesize: u32,
+  pub writesize: u32,
+  pub oobsize: u32,
   pub padding: __u64,
 }
 /* helper for writing out 0xff for bad blocks pad */
@@ -292,7 +292,7 @@ pub unsafe extern "C" fn nandwrite_main(
   }
   filebuf = xmalloc(meminfo_writesize as size_t) as *mut libc::c_uchar;
   oobbuf = xmalloc(meminfo.oobsize as size_t) as *mut libc::c_uchar;
-  oob.start = 0i32 as __u32;
+  oob.start = 0i32 as u32;
   oob.length = meminfo.oobsize;
   oob.ptr = oobbuf;
   blockstart = mtdoffset & !meminfo.erasesize.wrapping_sub(1i32 as libc::c_uint);

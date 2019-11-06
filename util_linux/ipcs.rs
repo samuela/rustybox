@@ -26,7 +26,7 @@ extern "C" {
   #[no_mangle]
   fn xatoi(str: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -155,7 +155,7 @@ pub struct shm_info {
 }
 use crate::librb::group;
 use crate::librb::passwd;
-use libc::uint32_t;
+
 
 /*
  * ipcs.c -- provides information on allocated ipc resources.

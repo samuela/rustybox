@@ -5,20 +5,20 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -27,8 +27,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -44,11 +44,11 @@ pub const UUID_DCE: uuid_format = 2;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct btrfs_super_block {
-  pub csum: [uint8_t; 32],
-  pub fsid: [uint8_t; 16],
+  pub csum: [u8; 32],
+  pub fsid: [u8; 16],
   pub bytenr: uint64_t,
   pub flags: uint64_t,
-  pub magic: [uint8_t; 8],
+  pub magic: [u8; 8],
   pub generation: uint64_t,
   pub root: uint64_t,
   pub chunk_root: uint64_t,
@@ -58,21 +58,21 @@ pub struct btrfs_super_block {
   pub bytes_used: uint64_t,
   pub root_dir_objectid: uint64_t,
   pub num_devices: uint64_t,
-  pub sectorsize: uint32_t,
-  pub nodesize: uint32_t,
-  pub leafsize: uint32_t,
-  pub stripesize: uint32_t,
-  pub sys_chunk_array_size: uint32_t,
+  pub sectorsize: u32,
+  pub nodesize: u32,
+  pub leafsize: u32,
+  pub stripesize: u32,
+  pub sys_chunk_array_size: u32,
   pub chunk_root_generation: uint64_t,
   pub compat_flags: uint64_t,
   pub compat_ro_flags: uint64_t,
   pub incompat_flags: uint64_t,
-  pub csum_type: uint16_t,
-  pub root_level: uint8_t,
-  pub chunk_root_level: uint8_t,
-  pub log_root_level: uint8_t,
+  pub csum_type: u16,
+  pub root_level: u8,
+  pub chunk_root_level: u8,
+  pub log_root_level: u8,
   pub dev_item: btrfs_dev_item,
-  pub label: [uint8_t; 256],
+  pub label: [u8; 256],
   // LABEL
   // ...
 }
@@ -83,17 +83,17 @@ pub struct btrfs_dev_item {
   pub devid: uint64_t,
   pub total_bytes: uint64_t,
   pub bytes_used: uint64_t,
-  pub io_align: uint32_t,
-  pub io_width: uint32_t,
-  pub sector_size: uint32_t,
+  pub io_align: u32,
+  pub io_width: u32,
+  pub sector_size: u32,
   pub type_0: uint64_t,
   pub generation: uint64_t,
   pub start_offset: uint64_t,
-  pub dev_group: uint32_t,
-  pub seek_speed: uint8_t,
-  pub bandwidth: uint8_t,
-  pub uuid: [uint8_t; 16],
-  pub fsid: [uint8_t; 16],
+  pub dev_group: u32,
+  pub seek_speed: u8,
+  pub bandwidth: u8,
+  pub uuid: [u8; 16],
+  pub fsid: [u8; 16],
 }
 
 /*
@@ -118,9 +118,9 @@ pub struct btrfs_dev_item {
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -140,7 +140,7 @@ pub struct btrfs_dev_item {
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);

@@ -116,7 +116,7 @@ extern "C" {
   fn get_cached_groupname(gid: gid_t) -> *const libc::c_char;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
   fn getopt32long(
@@ -124,7 +124,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
 
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
@@ -163,7 +163,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::uid_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -1280,7 +1280,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

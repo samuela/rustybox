@@ -20,7 +20,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -50,7 +50,7 @@ extern "C" {
 
 use crate::librb::__uid_t;
 use crate::librb::smallint;
-use libc::uint32_t;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;

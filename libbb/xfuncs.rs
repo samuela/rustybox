@@ -150,7 +150,7 @@ use crate::librb::__pid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
- use libc::uint8_t;
+
 
 use crate::librb::winsize;
 
@@ -339,25 +339,25 @@ pub unsafe extern "C" fn hex2bin(
 ) -> *mut libc::c_char {
   *bb_errno = 22i32;
   while *str as libc::c_int != 0 && count != 0 {
-    let mut val: uint8_t = 0;
+    let mut val: u8 = 0;
     let fresh5 = str;
     str = str.offset(1);
-    let mut c: uint8_t = *fresh5 as uint8_t;
+    let mut c: u8 = *fresh5 as u8;
     if (c as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-      val = (c as libc::c_int - '0' as i32) as uint8_t
+      val = (c as libc::c_int - '0' as i32) as u8
     } else if c as libc::c_int | 0x20i32 >= 'a' as i32 && c as libc::c_int | 0x20i32 <= 'f' as i32 {
-      val = ((c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as uint8_t
+      val = ((c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as u8
     } else {
       return 0 as *mut libc::c_char;
     }
-    val = ((val as libc::c_int) << 4i32) as uint8_t;
-    c = *str as uint8_t;
+    val = ((val as libc::c_int) << 4i32) as u8;
+    c = *str as u8;
     if (c as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-      val = (val as libc::c_int | c as libc::c_int - '0' as i32) as uint8_t
+      val = (val as libc::c_int | c as libc::c_int - '0' as i32) as u8
     } else if c as libc::c_int | 0x20i32 >= 'a' as i32 && c as libc::c_int | 0x20i32 <= 'f' as i32 {
-      val = (val as libc::c_int | (c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as uint8_t
+      val = (val as libc::c_int | (c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as u8
     } else if c as libc::c_int == ':' as i32 || c as libc::c_int == '\u{0}' as i32 {
-      val = (val as libc::c_int >> 4i32) as uint8_t
+      val = (val as libc::c_int >> 4i32) as u8
     } else {
       return 0 as *mut libc::c_char;
     }
@@ -861,7 +861,7 @@ pub unsafe extern "C" fn wait4pid(mut pid: pid_t) -> libc::c_int {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
@@ -51,7 +51,7 @@ extern "C" {
 pub type __key_t = libc::c_int;
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use libc::uint32_t;
+
 pub type key_t = __key_t;
 
 use libc::FILE;

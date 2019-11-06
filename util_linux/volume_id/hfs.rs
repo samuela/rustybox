@@ -16,35 +16,35 @@ extern "C" {
   fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
 
   #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const uint8_t, count: size_t);
+  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
   fn volume_id_set_label_unicode16(
     id: *mut volume_id,
-    buf: *const uint8_t,
+    buf: *const u8,
     endianess: endian,
     count: size_t,
   );
 
   #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const uint8_t, format: uuid_format);
+  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct md5_ctx_t {
-  pub wbuffer: [uint8_t; 64],
+  pub wbuffer: [u8; 64],
   pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
   pub total64: uint64_t,
-  pub hash: [uint32_t; 8],
+  pub hash: [u32; 8],
   /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 }
 
@@ -55,8 +55,8 @@ pub struct volume_id {
   pub error: libc::c_int,
   pub sbbuf_len: size_t,
   pub seekbuf_len: size_t,
-  pub sbbuf: *mut uint8_t,
-  pub seekbuf: *mut uint8_t,
+  pub sbbuf: *mut u8,
+  pub seekbuf: *mut u8,
   pub seekbuf_off: uint64_t,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
@@ -76,72 +76,72 @@ pub const BE: endian = 1;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_catalog_key {
-  pub key_len: uint16_t,
-  pub parent_id: uint32_t,
-  pub unicode_len: uint16_t,
-  pub unicode: [uint8_t; 510],
+  pub key_len: u16,
+  pub parent_id: u32,
+  pub unicode_len: u16,
+  pub unicode: [u8; 510],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_bnode_descriptor {
-  pub next: uint32_t,
-  pub prev: uint32_t,
-  pub type_0: uint8_t,
-  pub height: uint8_t,
-  pub num_recs: uint16_t,
-  pub reserved: uint16_t,
+  pub next: u32,
+  pub prev: u32,
+  pub type_0: u8,
+  pub height: u8,
+  pub num_recs: u16,
+  pub reserved: u16,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_extent {
-  pub start_block: uint32_t,
-  pub block_count: uint32_t,
+  pub start_block: u32,
+  pub block_count: u32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_bheader_record {
-  pub depth: uint16_t,
-  pub root: uint32_t,
-  pub leaf_count: uint32_t,
-  pub leaf_head: uint32_t,
-  pub leaf_tail: uint32_t,
-  pub node_size: uint16_t,
+  pub depth: u16,
+  pub root: u32,
+  pub leaf_count: u32,
+  pub leaf_head: u32,
+  pub leaf_tail: u32,
+  pub node_size: u16,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_fork {
   pub total_size: uint64_t,
-  pub clump_size: uint32_t,
-  pub total_blocks: uint32_t,
+  pub clump_size: u32,
+  pub total_blocks: u32,
   pub extents: [hfsplus_extent; 8],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_vol_header {
-  pub signature: [uint8_t; 2],
-  pub version: uint16_t,
-  pub attributes: uint32_t,
-  pub last_mount_vers: uint32_t,
-  pub reserved: uint32_t,
-  pub create_date: uint32_t,
-  pub modify_date: uint32_t,
-  pub backup_date: uint32_t,
-  pub checked_date: uint32_t,
-  pub file_count: uint32_t,
-  pub folder_count: uint32_t,
-  pub blocksize: uint32_t,
-  pub total_blocks: uint32_t,
-  pub free_blocks: uint32_t,
-  pub next_alloc: uint32_t,
-  pub rsrc_clump_sz: uint32_t,
-  pub data_clump_sz: uint32_t,
-  pub next_cnid: uint32_t,
-  pub write_count: uint32_t,
+  pub signature: [u8; 2],
+  pub version: u16,
+  pub attributes: u32,
+  pub last_mount_vers: u32,
+  pub reserved: u32,
+  pub create_date: u32,
+  pub modify_date: u32,
+  pub backup_date: u32,
+  pub checked_date: u32,
+  pub file_count: u32,
+  pub folder_count: u32,
+  pub blocksize: u32,
+  pub total_blocks: u32,
+  pub free_blocks: u32,
+  pub next_alloc: u32,
+  pub rsrc_clump_sz: u32,
+  pub data_clump_sz: u32,
+  pub next_cnid: u32,
+  pub write_count: u32,
   pub encodings_bmp: uint64_t,
   pub finder_info: hfs_finder_info,
   pub alloc_file: hfsplus_fork,
@@ -177,46 +177,46 @@ pub struct hfsplus_vol_header {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfs_finder_info {
-  pub boot_folder: uint32_t,
-  pub start_app: uint32_t,
-  pub open_folder: uint32_t,
-  pub os9_folder: uint32_t,
-  pub reserved: uint32_t,
-  pub osx_folder: uint32_t,
-  pub id: [uint8_t; 8],
+  pub boot_folder: u32,
+  pub start_app: u32,
+  pub open_folder: u32,
+  pub os9_folder: u32,
+  pub reserved: u32,
+  pub osx_folder: u32,
+  pub id: [u8; 8],
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfs_mdb {
-  pub signature: [uint8_t; 2],
-  pub cr_date: uint32_t,
-  pub ls_Mod: uint32_t,
-  pub atrb: uint16_t,
-  pub nm_fls: uint16_t,
-  pub vbm_st: uint16_t,
-  pub alloc_ptr: uint16_t,
-  pub nm_al_blks: uint16_t,
-  pub al_blk_size: uint32_t,
-  pub clp_size: uint32_t,
-  pub al_bl_st: uint16_t,
-  pub nxt_cnid: uint32_t,
-  pub free_bks: uint16_t,
-  pub label_len: uint8_t,
-  pub label: [uint8_t; 27],
-  pub vol_bkup: uint32_t,
-  pub vol_seq_num: uint16_t,
-  pub wr_cnt: uint32_t,
-  pub xt_clump_size: uint32_t,
-  pub ct_clump_size: uint32_t,
-  pub num_root_dirs: uint16_t,
-  pub file_count: uint32_t,
-  pub dir_count: uint32_t,
+  pub signature: [u8; 2],
+  pub cr_date: u32,
+  pub ls_Mod: u32,
+  pub atrb: u16,
+  pub nm_fls: u16,
+  pub vbm_st: u16,
+  pub alloc_ptr: u16,
+  pub nm_al_blks: u16,
+  pub al_blk_size: u32,
+  pub clp_size: u32,
+  pub al_bl_st: u16,
+  pub nxt_cnid: u32,
+  pub free_bks: u16,
+  pub label_len: u8,
+  pub label: [u8; 27],
+  pub vol_bkup: u32,
+  pub vol_seq_num: u16,
+  pub wr_cnt: u32,
+  pub xt_clump_size: u32,
+  pub ct_clump_size: u32,
+  pub num_root_dirs: u16,
+  pub file_count: u32,
+  pub dir_count: u32,
   pub finder_info: hfs_finder_info,
-  pub embed_sig: [uint8_t; 2],
-  pub embed_startblock: uint16_t,
-  pub embed_blockcount: uint16_t,
+  pub embed_sig: [u8; 2],
+  pub embed_startblock: u16,
+  pub embed_blockcount: u16,
 }
-unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const uint8_t) {
+unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8) {
   let mut current_block: u64;
   let mut md5c: md5_ctx_t = md5_ctx_t {
     wbuffer: [0; 64],
@@ -224,7 +224,7 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const uin
     total64: 0,
     hash: [0; 8],
   };
-  let mut uuid: [uint8_t; 16] = [0; 16];
+  let mut uuid: [u8; 16] = [0; 16];
   let mut i: libc::c_uint = 0;
   i = 0i32 as libc::c_uint;
   loop {
@@ -250,8 +250,8 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const uin
       );
       md5_hash(&mut md5c, hfs_id as *const libc::c_void, 8i32 as size_t);
       md5_end(&mut md5c, uuid.as_mut_ptr() as *mut libc::c_void);
-      uuid[6] = (0x30i32 | uuid[6] as libc::c_int & 0xfi32) as uint8_t;
-      uuid[8] = (0x80i32 | uuid[8] as libc::c_int & 0x3fi32) as uint8_t;
+      uuid[6] = (0x30i32 | uuid[6] as libc::c_int & 0xfi32) as u8;
+      uuid[8] = (0x80i32 | uuid[8] as libc::c_int & 0x3fi32) as u8;
       volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);
       return;
     }
@@ -279,9 +279,9 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const uin
 /* #define dbg(...) bb_error_msg(__VA_ARGS__) */
 /* volume_id.h */
 //	int		fd_close:1;
-//	uint8_t		label_raw[VOLUME_ID_LABEL_SIZE];
+//	u8		label_raw[VOLUME_ID_LABEL_SIZE];
 //	size_t		label_raw_len;
-//	uint8_t		uuid_raw[VOLUME_ID_UUID_SIZE];
+//	u8		uuid_raw[VOLUME_ID_UUID_SIZE];
 //	size_t		uuid_raw_len;
 /* uuid is stored in ASCII (not binary) form here: */
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
@@ -301,7 +301,7 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const uin
 /* 36 bytes (VOLUME_ID_UUID_SIZE) */
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
-//void volume_id_set_label_raw(struct volume_id *id, const uint8_t *buf, size_t count);
+//void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
@@ -350,12 +350,12 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
     block_count: 0,
   }; 8];
   let mut hfs: *mut hfs_mdb = 0 as *mut hfs_mdb;
-  let mut buf: *const uint8_t = 0 as *const uint8_t;
+  let mut buf: *const u8 = 0 as *const u8;
   buf = volume_id_get_buffer(
     id,
     off.wrapping_add(0x400i32 as libc::c_ulong),
     0x200i32 as size_t,
-  ) as *const uint8_t;
+  ) as *const u8;
   if buf.is_null() {
     return -1i32;
   }
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         id,
         off.wrapping_add(0x400i32 as libc::c_ulong),
         0x200i32 as size_t,
-      ) as *const uint8_t;
+      ) as *const u8;
       if buf.is_null() {
         return -1i32;
       }
@@ -497,11 +497,11 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         id,
         off.wrapping_add(cat_block.wrapping_mul(blocksize) as libc::c_ulong),
         0x2000i32 as size_t,
-      ) as *const uint8_t;
+      ) as *const u8;
       if !buf.is_null() {
         bnode = &*buf
           .offset(::std::mem::size_of::<hfsplus_bnode_descriptor>() as libc::c_ulong as isize)
-          as *const uint8_t as *mut hfsplus_bheader_record;
+          as *const u8 as *mut hfsplus_bheader_record;
         leaf_node_head = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = (*bnode).leaf_head;
@@ -626,7 +626,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                   .wrapping_add(leaf_block)
                   .wrapping_mul(blocksize) as uint64_t;
                 buf = volume_id_get_buffer(id, off.wrapping_add(leaf_off), leaf_node_size as size_t)
-                  as *const uint8_t;
+                  as *const u8;
                 if !buf.is_null() {
                   descr = buf as *mut hfsplus_bnode_descriptor;
                   record_count = ({
@@ -652,7 +652,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                     if !((*descr).type_0 as libc::c_int != 0xffi32) {
                       key =
                         &*buf.offset(::std::mem::size_of::<hfsplus_bnode_descriptor>()
-                          as libc::c_ulong as isize) as *const uint8_t
+                          as libc::c_ulong as isize) as *const u8
                           as *mut hfsplus_catalog_key;
                       if !((*key).parent_id
                         != ({

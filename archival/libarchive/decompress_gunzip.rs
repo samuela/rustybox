@@ -23,14 +23,14 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
-  fn crc32_new_table_le() -> *mut uint32_t;
+  fn crc32_new_table_le() -> *mut u32;
   #[no_mangle]
   fn crc32_block_endian0(
-    val: uint32_t,
+    val: u32,
     buf: *const libc::c_void,
     len: libc::c_uint,
-    crc_table: *mut uint32_t,
-  ) -> uint32_t;
+    crc_table: *mut u32,
+  ) -> u32;
   #[no_mangle]
   fn transformer_write(
     xstate: *mut transformer_state_t,
@@ -41,12 +41,12 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type uintptr_t = libc::c_ulong;
-pub type bb__aliased_uint16_t = uint16_t;
-pub type bb__aliased_uint32_t = uint32_t;
+pub type bb__aliased_u16 = u16;
+pub type bb__aliased_u32 = u32;
 use crate::librb::off_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
@@ -84,26 +84,26 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed_0,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct state_t {
   pub gunzip_bytes_out: off_t,
-  pub gunzip_crc: uint32_t,
+  pub gunzip_crc: u32,
   pub gunzip_src_fd: libc::c_int,
   pub gunzip_outbuf_count: libc::c_uint,
   pub gunzip_window: *mut libc::c_uchar,
-  pub gunzip_crc_table: *mut uint32_t,
+  pub gunzip_crc_table: *mut u32,
   pub gunzip_bb: libc::c_uint,
   pub gunzip_bk: libc::c_uchar,
   pub bytebuffer: *mut libc::c_uchar,
@@ -151,8 +151,8 @@ pub union C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cp_ext {
-  pub cp: [uint16_t; 31],
-  pub ext: [uint8_t; 31],
+  pub cp: [u16; 31],
+  pub ext: [u8; 31],
 }
 /* gunzip_window size--must be a power of two, and
  * at least 32K for zip's deflate method */
@@ -166,11 +166,11 @@ pub type C2RustUnnamed_3 = libc::c_uint;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct C2RustUnnamed_4 {
-  pub gz_method: uint8_t,
-  pub flags: uint8_t,
-  pub mtime: uint32_t,
-  pub xtra_flags_UNUSED: uint8_t,
-  pub os_flags_UNUSED: uint8_t,
+  pub gz_method: u8,
+  pub flags: u8,
+  pub mtime: u32,
+  pub xtra_flags_UNUSED: u8,
+  pub os_flags_UNUSED: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -185,94 +185,94 @@ pub const N_MAX: C2RustUnnamed_6 = 288;
 /* This is a generic part */
 /* Use global data segment */
 /* Use malloc space */
-static mut mask_bits: [uint16_t; 17] = [
-  0i32 as uint16_t,
-  0x1i32 as uint16_t,
-  0x3i32 as uint16_t,
-  0x7i32 as uint16_t,
-  0xfi32 as uint16_t,
-  0x1fi32 as uint16_t,
-  0x3fi32 as uint16_t,
-  0x7fi32 as uint16_t,
-  0xffi32 as uint16_t,
-  0x1ffi32 as uint16_t,
-  0x3ffi32 as uint16_t,
-  0x7ffi32 as uint16_t,
-  0xfffi32 as uint16_t,
-  0x1fffi32 as uint16_t,
-  0x3fffi32 as uint16_t,
-  0x7fffi32 as uint16_t,
-  0xffffi32 as uint16_t,
+static mut mask_bits: [u16; 17] = [
+  0i32 as u16,
+  0x1i32 as u16,
+  0x3i32 as u16,
+  0x7i32 as u16,
+  0xfi32 as u16,
+  0x1fi32 as u16,
+  0x3fi32 as u16,
+  0x7fi32 as u16,
+  0xffi32 as u16,
+  0x1ffi32 as u16,
+  0x3ffi32 as u16,
+  0x7ffi32 as u16,
+  0xfffi32 as u16,
+  0x1fffi32 as u16,
+  0x3fffi32 as u16,
+  0x7fffi32 as u16,
+  0xffffi32 as u16,
 ];
 /* Copy lengths and extra bits for literal codes 257..285 */
 /* note: see note #13 above about the 258 in this list. */
 static mut lit: cp_ext = {
   let mut init = cp_ext {
     cp: [
-      3i32 as uint16_t,
-      4i32 as uint16_t,
-      5i32 as uint16_t,
-      6i32 as uint16_t,
-      7i32 as uint16_t,
-      8i32 as uint16_t,
-      9i32 as uint16_t,
-      10i32 as uint16_t,
-      11i32 as uint16_t,
-      13i32 as uint16_t,
-      15i32 as uint16_t,
-      17i32 as uint16_t,
-      19i32 as uint16_t,
-      23i32 as uint16_t,
-      27i32 as uint16_t,
-      31i32 as uint16_t,
-      35i32 as uint16_t,
-      43i32 as uint16_t,
-      51i32 as uint16_t,
-      59i32 as uint16_t,
-      67i32 as uint16_t,
-      83i32 as uint16_t,
-      99i32 as uint16_t,
-      115i32 as uint16_t,
-      131i32 as uint16_t,
-      163i32 as uint16_t,
-      195i32 as uint16_t,
-      227i32 as uint16_t,
-      258i32 as uint16_t,
-      0i32 as uint16_t,
-      0i32 as uint16_t,
+      3i32 as u16,
+      4i32 as u16,
+      5i32 as u16,
+      6i32 as u16,
+      7i32 as u16,
+      8i32 as u16,
+      9i32 as u16,
+      10i32 as u16,
+      11i32 as u16,
+      13i32 as u16,
+      15i32 as u16,
+      17i32 as u16,
+      19i32 as u16,
+      23i32 as u16,
+      27i32 as u16,
+      31i32 as u16,
+      35i32 as u16,
+      43i32 as u16,
+      51i32 as u16,
+      59i32 as u16,
+      67i32 as u16,
+      83i32 as u16,
+      99i32 as u16,
+      115i32 as u16,
+      131i32 as u16,
+      163i32 as u16,
+      195i32 as u16,
+      227i32 as u16,
+      258i32 as u16,
+      0i32 as u16,
+      0i32 as u16,
     ],
     ext: [
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      1i32 as uint8_t,
-      1i32 as uint8_t,
-      1i32 as uint8_t,
-      1i32 as uint8_t,
-      2i32 as uint8_t,
-      2i32 as uint8_t,
-      2i32 as uint8_t,
-      2i32 as uint8_t,
-      3i32 as uint8_t,
-      3i32 as uint8_t,
-      3i32 as uint8_t,
-      3i32 as uint8_t,
-      4i32 as uint8_t,
-      4i32 as uint8_t,
-      4i32 as uint8_t,
-      4i32 as uint8_t,
-      5i32 as uint8_t,
-      5i32 as uint8_t,
-      5i32 as uint8_t,
-      5i32 as uint8_t,
-      0i32 as uint8_t,
-      99i32 as uint8_t,
-      99i32 as uint8_t,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      1i32 as u8,
+      1i32 as u8,
+      1i32 as u8,
+      1i32 as u8,
+      2i32 as u8,
+      2i32 as u8,
+      2i32 as u8,
+      2i32 as u8,
+      3i32 as u8,
+      3i32 as u8,
+      3i32 as u8,
+      3i32 as u8,
+      4i32 as u8,
+      4i32 as u8,
+      4i32 as u8,
+      4i32 as u8,
+      5i32 as u8,
+      5i32 as u8,
+      5i32 as u8,
+      5i32 as u8,
+      0i32 as u8,
+      99i32 as u8,
+      99i32 as u8,
     ],
   };
   init
@@ -281,69 +281,69 @@ static mut lit: cp_ext = {
 static mut dist: cp_ext = {
   let mut init = cp_ext {
     cp: [
-      1i32 as uint16_t,
-      2i32 as uint16_t,
-      3i32 as uint16_t,
-      4i32 as uint16_t,
-      5i32 as uint16_t,
-      7i32 as uint16_t,
-      9i32 as uint16_t,
-      13i32 as uint16_t,
-      17i32 as uint16_t,
-      25i32 as uint16_t,
-      33i32 as uint16_t,
-      49i32 as uint16_t,
-      65i32 as uint16_t,
-      97i32 as uint16_t,
-      129i32 as uint16_t,
-      193i32 as uint16_t,
-      257i32 as uint16_t,
-      385i32 as uint16_t,
-      513i32 as uint16_t,
-      769i32 as uint16_t,
-      1025i32 as uint16_t,
-      1537i32 as uint16_t,
-      2049i32 as uint16_t,
-      3073i32 as uint16_t,
-      4097i32 as uint16_t,
-      6145i32 as uint16_t,
-      8193i32 as uint16_t,
-      12289i32 as uint16_t,
-      16385i32 as uint16_t,
-      24577i32 as uint16_t,
+      1i32 as u16,
+      2i32 as u16,
+      3i32 as u16,
+      4i32 as u16,
+      5i32 as u16,
+      7i32 as u16,
+      9i32 as u16,
+      13i32 as u16,
+      17i32 as u16,
+      25i32 as u16,
+      33i32 as u16,
+      49i32 as u16,
+      65i32 as u16,
+      97i32 as u16,
+      129i32 as u16,
+      193i32 as u16,
+      257i32 as u16,
+      385i32 as u16,
+      513i32 as u16,
+      769i32 as u16,
+      1025i32 as u16,
+      1537i32 as u16,
+      2049i32 as u16,
+      3073i32 as u16,
+      4097i32 as u16,
+      6145i32 as u16,
+      8193i32 as u16,
+      12289i32 as u16,
+      16385i32 as u16,
+      24577i32 as u16,
       0,
     ],
     ext: [
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      0i32 as uint8_t,
-      1i32 as uint8_t,
-      1i32 as uint8_t,
-      2i32 as uint8_t,
-      2i32 as uint8_t,
-      3i32 as uint8_t,
-      3i32 as uint8_t,
-      4i32 as uint8_t,
-      4i32 as uint8_t,
-      5i32 as uint8_t,
-      5i32 as uint8_t,
-      6i32 as uint8_t,
-      6i32 as uint8_t,
-      7i32 as uint8_t,
-      7i32 as uint8_t,
-      8i32 as uint8_t,
-      8i32 as uint8_t,
-      9i32 as uint8_t,
-      9i32 as uint8_t,
-      10i32 as uint8_t,
-      10i32 as uint8_t,
-      11i32 as uint8_t,
-      11i32 as uint8_t,
-      12i32 as uint8_t,
-      12i32 as uint8_t,
-      13i32 as uint8_t,
-      13i32 as uint8_t,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      0i32 as u8,
+      1i32 as u8,
+      1i32 as u8,
+      2i32 as u8,
+      2i32 as u8,
+      3i32 as u8,
+      3i32 as u8,
+      4i32 as u8,
+      4i32 as u8,
+      5i32 as u8,
+      5i32 as u8,
+      6i32 as u8,
+      6i32 as u8,
+      7i32 as u8,
+      7i32 as u8,
+      8i32 as u8,
+      8i32 as u8,
+      9i32 as u8,
+      9i32 as u8,
+      10i32 as u8,
+      10i32 as u8,
+      11i32 as u8,
+      11i32 as u8,
+      12i32 as u8,
+      12i32 as u8,
+      13i32 as u8,
+      13i32 as u8,
       0,
     ],
   };
@@ -351,26 +351,26 @@ static mut dist: cp_ext = {
 };
 /* Tables for deflate from PKZIP's appnote.txt. */
 /* Order of the bit length code lengths */
-static mut border: [uint8_t; 19] = [
-  16i32 as uint8_t,
-  17i32 as uint8_t,
-  18i32 as uint8_t,
-  0i32 as uint8_t,
-  8i32 as uint8_t,
-  7i32 as uint8_t,
-  9i32 as uint8_t,
-  6i32 as uint8_t,
-  10i32 as uint8_t,
-  5i32 as uint8_t,
-  11i32 as uint8_t,
-  4i32 as uint8_t,
-  12i32 as uint8_t,
-  3i32 as uint8_t,
-  13i32 as uint8_t,
-  2i32 as uint8_t,
-  14i32 as uint8_t,
-  1i32 as uint8_t,
-  15i32 as uint8_t,
+static mut border: [u8; 19] = [
+  16i32 as u8,
+  17i32 as u8,
+  18i32 as u8,
+  0i32 as u8,
+  8i32 as u8,
+  7i32 as u8,
+  9i32 as u8,
+  6i32 as u8,
+  10i32 as u8,
+  5i32 as u8,
+  11i32 as u8,
+  4i32 as u8,
+  12i32 as u8,
+  3i32 as u8,
+  13i32 as u8,
+  2i32 as u8,
+  14i32 as u8,
+  1i32 as u8,
+  15i32 as u8,
 ];
 /*
  * Free the malloc'ed tables built by huft_build(), which makes a linked
@@ -1396,7 +1396,7 @@ unsafe extern "C" fn inflate_unzip_internal(
   (*state).gunzip_bb = 0i32 as libc::c_uint;
   /* Create the crc table */
   (*state).gunzip_crc_table = crc32_new_table_le();
-  (*state).gunzip_crc = !0i32 as uint32_t;
+  (*state).gunzip_crc = !0i32 as u32;
   (*state).error_msg = b"corrupted data\x00" as *const u8 as *const libc::c_char;
   if _setjmp((*state).error_jmp.as_mut_ptr()) != 0 {
     /* Error from deep inside zip machinery */
@@ -1496,23 +1496,23 @@ unsafe extern "C" fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> lib
   }
   return 1i32;
 }
-unsafe extern "C" fn buffer_read_le_u16(mut state: *mut state_t) -> uint16_t {
-  let mut res: uint16_t = 0;
+unsafe extern "C" fn buffer_read_le_u16(mut state: *mut state_t) -> u16 {
+  let mut res: u16 = 0;
   res = *(&mut *(*state)
     .bytebuffer
     .offset((*state).bytebuffer_offset as isize) as *mut libc::c_uchar
-    as *mut bb__aliased_uint16_t);
+    as *mut bb__aliased_u16);
   (*state).bytebuffer_offset = (*state)
     .bytebuffer_offset
     .wrapping_add(2i32 as libc::c_uint);
   return res;
 }
-unsafe extern "C" fn buffer_read_le_u32(mut state: *mut state_t) -> uint32_t {
-  let mut res: uint32_t = 0;
+unsafe extern "C" fn buffer_read_le_u32(mut state: *mut state_t) -> u32 {
+  let mut res: u32 = 0;
   res = *(&mut *(*state)
     .bytebuffer
     .offset((*state).bytebuffer_offset as isize) as *mut libc::c_uchar
-    as *mut bb__aliased_uint32_t);
+    as *mut bb__aliased_u32);
   (*state).bytebuffer_offset = (*state)
     .bytebuffer_offset
     .wrapping_add(4i32 as libc::c_uint);
@@ -1586,7 +1586,7 @@ unsafe extern "C" fn check_header_gzip(
       if header.formatted.flags as libc::c_int & 0x18i32 != 0x18i32 {
         break;
       }
-      header.formatted.flags = (header.formatted.flags as libc::c_int & !0x18i32) as uint8_t
+      header.formatted.flags = (header.formatted.flags as libc::c_int & !0x18i32) as u8
     }
   }
   (*xstate).mtime = header.formatted.mtime as time_t;
@@ -1605,7 +1605,7 @@ unsafe extern "C" fn check_header_gzip(
 pub unsafe extern "C" fn unpack_gz_stream(
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
-  let mut v32: uint32_t = 0;
+  let mut v32: u32 = 0;
   let mut total: libc::c_longlong = 0;
   let mut n: libc::c_longlong = 0;
   let mut state: *mut state_t = 0 as *mut state_t;
@@ -1644,7 +1644,7 @@ pub unsafe extern "C" fn unpack_gz_stream(
           } else {
             /* Validate decompression - size */
             v32 = buffer_read_le_u32(state); /* EOF */
-            if (*state).gunzip_bytes_out as uint32_t != v32 {
+            if (*state).gunzip_bytes_out as u32 != v32 {
               bb_simple_error_msg(b"incorrect length\x00" as *const u8 as *const libc::c_char);
               total = -1i32 as libc::c_longlong
             }

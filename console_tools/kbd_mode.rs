@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn xopen_nonblocking(pathname: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_xioctl(
     fd: libc::c_int,
@@ -20,7 +20,7 @@ extern "C" {
 }
 
 use crate::librb::ptrdiff_t;
-use libc::uint32_t;
+
 
 pub const UNICODE: C2RustUnnamed = 8;
 pub type C2RustUnnamed = libc::c_uint;

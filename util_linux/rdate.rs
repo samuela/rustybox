@@ -27,7 +27,7 @@ extern "C" {
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
@@ -43,7 +43,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint32_t;
+
 
 /*
  * The Rdate command will ask a time server for the RFC 868 time
@@ -77,7 +77,7 @@ unsafe extern "C" fn socket_timeout(mut _sig: libc::c_int) {
   );
 }
 unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
-  let mut nett: uint32_t = 0;
+  let mut nett: u32 = 0;
   let mut fd: libc::c_int = 0;
   /* Timeout for dead or inaccessible servers */
   alarm(10i32 as libc::c_uint);
@@ -88,7 +88,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
   fd = create_and_connect_stream_or_die(host, 37i32);
   if safe_read(
     fd,
-    &mut nett as *mut uint32_t as *mut libc::c_void,
+    &mut nett as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
   ) != 4i32 as libc::c_long
   {
@@ -132,7 +132,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
      * Need to adjust our time by (int32_t)(nett - cur).
      */
     let mut cur: time_t = time(0 as *mut time_t);
-    let mut adjust: int32_t = nett.wrapping_sub(cur as uint32_t) as int32_t;
+    let mut adjust: int32_t = nett.wrapping_sub(cur as u32) as int32_t;
     return cur + adjust as libc::c_long;
   }
   /* This is not going to work, but what can we do */

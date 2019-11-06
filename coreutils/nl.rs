@@ -14,14 +14,14 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
 }
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct number_state {

@@ -216,7 +216,7 @@ extern "C" {
   static lineedit_ptr_to_statics: *mut lineedit_statics;
 }
 
-use crate::librb::__uint32_t;
+
 pub type __int64_t = libc::c_long;
 
 use crate::librb::__ino64_t;
@@ -230,7 +230,7 @@ use crate::librb::__uid_t;
 use crate::librb::int16_t;
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
- use libc::uint8_t;
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -298,7 +298,7 @@ pub struct C2RustUnnamed_2 {
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
-  pub _pkey: __uint32_t,
+  pub _pkey: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -3264,7 +3264,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> int32_t {
           if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
             while match_buf_len != 0i32 as libc::c_uint {
               match_buf_len = match_buf_len.wrapping_sub(1);
-              let mut c: uint8_t = match_buf[match_buf_len as usize] as uint8_t;
+              let mut c: u8 = match_buf[match_buf_len as usize] as u8;
               if c as libc::c_int & 0xc0i32 != 0x80i32 {
                 break;
               }
@@ -3577,7 +3577,7 @@ unsafe extern "C" fn sigaction2(mut sig: libc::c_int, mut act: *mut sigaction) {
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

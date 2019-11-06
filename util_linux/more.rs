@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -60,7 +60,7 @@ use crate::librb::__off64_t;
 use crate::librb::__off_t;
 
 use libc::stat;
-use libc::uint32_t;
+
 
 use crate::librb::termios;
 use crate::librb::uoff_t;

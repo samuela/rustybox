@@ -26,14 +26,14 @@ extern "C" {
   #[no_mangle]
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use libc::uint32_t;
+
 
 use libc::FILE;
 

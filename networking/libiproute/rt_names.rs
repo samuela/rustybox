@@ -39,7 +39,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -110,7 +110,7 @@ unsafe extern "C" fn rtnl_tab_initialize(
 }
 unsafe extern "C" fn rtnl_a2n(
   mut tab: *mut rtnl_tab_t,
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *const libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_int {
@@ -171,7 +171,7 @@ unsafe extern "C" fn rtnl_rtprot_initialize() {
 /* UNUSED */
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rtprot_a2n(
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtprot_initialize();
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn rtnl_rtscope_n2a(mut id: libc::c_int) -> *const libc::c
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rtscope_a2n(
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtscope_initialize();
@@ -228,7 +228,7 @@ unsafe extern "C" fn rtnl_rtrealm_initialize() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rtrealm_a2n(
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtrealm_initialize();
@@ -271,7 +271,7 @@ pub unsafe extern "C" fn rtnl_dsfield_n2a(mut id: libc::c_int) -> *const libc::c
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_dsfield_a2n(
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtdsfield_initialize();
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn rtnl_rttable_n2a(mut id: libc::c_int) -> *const libc::c
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rttable_a2n(
-  mut id: *mut uint32_t,
+  mut id: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rttable_initialize();

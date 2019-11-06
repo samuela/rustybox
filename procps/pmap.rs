@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn procps_read_smaps(
     pid: pid_t,
@@ -28,7 +28,7 @@ extern "C" {
   );
 }
 
-use libc::uint32_t;
+
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::pid_t;
 #[derive(Copy, Clone)]

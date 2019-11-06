@@ -91,7 +91,7 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_int;
   // #[no_mangle]
-  // fn BUG_bb_strtou32_unimplemented() -> uint32_t;
+  // fn BUG_bb_strtou32_unimplemented() -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -104,21 +104,21 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn dname_enc(
-    cstr: *const uint8_t,
+    cstr: *const u8,
     clen: libc::c_int,
     src: *const libc::c_char,
     retlen: *mut libc::c_int,
-  ) -> *mut uint8_t;
+  ) -> *mut u8;
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u32 = u32;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
@@ -133,9 +133,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -145,11 +145,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -163,7 +163,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -180,22 +180,22 @@ pub union C2RustUnnamed_0 {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dhcp_packet {
-  pub op: uint8_t,
-  pub htype: uint8_t,
-  pub hlen: uint8_t,
-  pub hops: uint8_t,
-  pub xid: uint32_t,
-  pub secs: uint16_t,
-  pub flags: uint16_t,
-  pub ciaddr: uint32_t,
-  pub yiaddr: uint32_t,
-  pub siaddr_nip: uint32_t,
-  pub gateway_nip: uint32_t,
-  pub chaddr: [uint8_t; 16],
-  pub sname: [uint8_t; 64],
-  pub file: [uint8_t; 128],
-  pub cookie: uint32_t,
-  pub options: [uint8_t; 388],
+  pub op: u8,
+  pub htype: u8,
+  pub hlen: u8,
+  pub hops: u8,
+  pub xid: u32,
+  pub secs: u16,
+  pub flags: u16,
+  pub ciaddr: u32,
+  pub yiaddr: u32,
+  pub siaddr_nip: u32,
+  pub gateway_nip: u32,
+  pub chaddr: [u8; 16],
+  pub sname: [u8; 64],
+  pub file: [u8; 128],
+  pub cookie: u32,
+  pub options: [u8; 388],
 }
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const OPTION_LIST: C2RustUnnamed_1 = 32;
@@ -217,20 +217,20 @@ pub const OPTION_IP: C2RustUnnamed_1 = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dhcp_optflag {
-  pub flags: uint8_t,
-  pub code: uint8_t,
+  pub flags: u8,
+  pub code: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct option_set {
-  pub data: *mut uint8_t,
+  pub data: *mut u8,
   pub next: *mut option_set,
 }
 pub const SNAME_FIELD101: C2RustUnnamed_2 = 514;
 pub const FILE_FIELD101: C2RustUnnamed_2 = 257;
 pub type C2RustUnnamed_2 = libc::c_uint;
 
-pub fn BUG_bb_strtou32_unimplemented() -> uint32_t {
+pub fn BUG_bb_strtou32_unimplemented() -> u32 {
   panic!("BUG_bb_strtou32_unimplemented")
 }
 
@@ -255,16 +255,16 @@ unsafe extern "C" fn bb_strtou32(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
-) -> uint32_t {
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong
+) -> u32 {
+  if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong
   {
     return bb_strtou(arg, endp, base);
   }
-  if ::std::mem::size_of::<uint32_t>() as libc::c_ulong
+  if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong
   {
-    return bb_strtoul(arg, endp, base) as uint32_t;
+    return bb_strtoul(arg, endp, base) as u32;
   }
   return BUG_bb_strtou32_unimplemented();
 }
@@ -295,13 +295,13 @@ unsafe extern "C" fn bb_strtoi32(
 #[no_mangle]
 pub static mut dhcp_verbose: libc::c_uint = 0;
 #[no_mangle]
-pub static mut MAC_BCAST_ADDR: [uint8_t; 6] = [
-  0xffi32 as uint8_t,
-  0xffi32 as uint8_t,
-  0xffi32 as uint8_t,
-  0xffi32 as uint8_t,
-  0xffi32 as uint8_t,
-  0xffi32 as uint8_t,
+pub static mut MAC_BCAST_ADDR: [u8; 6] = [
+  0xffi32 as u8,
+  0xffi32 as u8,
+  0xffi32 as u8,
+  0xffi32 as u8,
+  0xffi32 as u8,
+  0xffi32 as u8,
 ];
 /* Supported options are easily added here.
  * See RFC2132 for more options.
@@ -311,284 +311,284 @@ pub static mut MAC_BCAST_ADDR: [uint8_t; 6] = [
 pub static mut dhcp_optflags: [dhcp_optflag; 40] = [
   {
     let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_REQ as libc::c_int) as uint8_t,
-      code: 0x1i32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_REQ as libc::c_int) as u8,
+      code: 0x1i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_S32 as libc::c_int as uint8_t,
-      code: 0x2i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int | OPTION_REQ as libc::c_int)
-        as uint8_t,
-      code: 0x3i32 as uint8_t,
+      flags: OPTION_S32 as libc::c_int as u8,
+      code: 0x2i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
       flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int | OPTION_REQ as libc::c_int)
-        as uint8_t,
-      code: 0x6i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x9i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_STRING_HOST as libc::c_int | OPTION_REQ as libc::c_int) as uint8_t,
-      code: 0xci32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_U16 as libc::c_int as uint8_t,
-      code: 0xdi32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_STRING_HOST as libc::c_int | OPTION_REQ as libc::c_int) as uint8_t,
-      code: 0xfi32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_IP as libc::c_int as uint8_t,
-      code: 0x10i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0x11i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_U8 as libc::c_int as uint8_t,
-      code: 0x17i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_U16 as libc::c_int as uint8_t,
-      code: 0x1ai32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_REQ as libc::c_int) as uint8_t,
-      code: 0x1ci32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_IP_PAIR as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x21i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: OPTION_STRING_HOST as libc::c_int as uint8_t,
-      code: 0x28i32 as uint8_t,
-    };
-    init
-  },
-  {
-    let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x29i32 as uint8_t,
+        as u8,
+      code: 0x3i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
       flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int | OPTION_REQ as libc::c_int)
-        as uint8_t,
-      code: 0x2ai32 as uint8_t,
+        as u8,
+      code: 0x6i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x2ci32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x9i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U32 as libc::c_int as uint8_t,
-      code: 0x33i32 as uint8_t,
+      flags: (OPTION_STRING_HOST as libc::c_int | OPTION_REQ as libc::c_int) as u8,
+      code: 0xci32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_IP as libc::c_int as uint8_t,
-      code: 0x36i32 as uint8_t,
+      flags: OPTION_U16 as libc::c_int as u8,
+      code: 0xdi32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0x38i32 as uint8_t,
+      flags: (OPTION_STRING_HOST as libc::c_int | OPTION_REQ as libc::c_int) as u8,
+      code: 0xfi32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING_HOST as libc::c_int as uint8_t,
-      code: 0x42i32 as uint8_t,
+      flags: OPTION_IP as libc::c_int as u8,
+      code: 0x10i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0x43i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0x11i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0x64i32 as uint8_t,
+      flags: OPTION_U8 as libc::c_int as u8,
+      code: 0x17i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0x65i32 as uint8_t,
+      flags: OPTION_U16 as libc::c_int as u8,
+      code: 0x1ai32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: (OPTION_DNS_STRING as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x77i32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_REQ as libc::c_int) as u8,
+      code: 0x1ci32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_SIP_SERVERS as libc::c_int as uint8_t,
-      code: 0x78i32 as uint8_t,
+      flags: (OPTION_IP_PAIR as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x21i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: (OPTION_STATIC_ROUTES as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0x79i32 as uint8_t,
+      flags: OPTION_STRING_HOST as libc::c_int as u8,
+      code: 0x28i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U16 as libc::c_int as uint8_t,
-      code: 0x84i32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x29i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U8 as libc::c_int as uint8_t,
-      code: 0x85i32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int | OPTION_REQ as libc::c_int)
+        as u8,
+      code: 0x2ai32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0xd1i32 as uint8_t,
+      flags: (OPTION_IP as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x2ci32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0xd2i32 as uint8_t,
+      flags: OPTION_U32 as libc::c_int as u8,
+      code: 0x33i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U32 as libc::c_int as uint8_t,
-      code: 0xd3i32 as uint8_t,
+      flags: OPTION_IP as libc::c_int as u8,
+      code: 0x36i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_6RD as libc::c_int as uint8_t,
-      code: 0xd4i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0x38i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: (OPTION_STATIC_ROUTES as libc::c_int | OPTION_LIST as libc::c_int) as uint8_t,
-      code: 0xf9i32 as uint8_t,
+      flags: OPTION_STRING_HOST as libc::c_int as u8,
+      code: 0x42i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0xfci32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0x43i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_IP as libc::c_int as uint8_t,
-      code: 0x32i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0x64i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U8 as libc::c_int as uint8_t,
-      code: 0x35i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0x65i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_U16 as libc::c_int as uint8_t,
-      code: 0x39i32 as uint8_t,
+      flags: (OPTION_DNS_STRING as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x77i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: 0i32 as uint8_t,
-      code: 0i32 as uint8_t,
+      flags: OPTION_SIP_SERVERS as libc::c_int as u8,
+      code: 0x78i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: (OPTION_STATIC_ROUTES as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0x79i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_U16 as libc::c_int as u8,
+      code: 0x84i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_U8 as libc::c_int as u8,
+      code: 0x85i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0xd1i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0xd2i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_U32 as libc::c_int as u8,
+      code: 0xd3i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_6RD as libc::c_int as u8,
+      code: 0xd4i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: (OPTION_STATIC_ROUTES as libc::c_int | OPTION_LIST as libc::c_int) as u8,
+      code: 0xf9i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0xfci32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_IP as libc::c_int as u8,
+      code: 0x32i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_U8 as libc::c_int as u8,
+      code: 0x35i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: OPTION_U16 as libc::c_int as u8,
+      code: 0x39i32 as u8,
+    };
+    init
+  },
+  {
+    let mut init = dhcp_optflag {
+      flags: 0i32 as u8,
+      code: 0i32 as u8,
     };
     init
   },
@@ -626,23 +626,23 @@ pub static mut dhcp_option_strings: [libc::c_char; 294] = [
  * (len_of_option_as_string[opt_type]) and you know how wide string you need.
  */
 #[no_mangle]
-pub static mut dhcp_option_lengths: [uint8_t; 14] = [
+pub static mut dhcp_option_lengths: [u8; 14] = [
   0,
-  4i32 as uint8_t,
-  8i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
-  2i32 as uint8_t,
-  4i32 as uint8_t,
-  4i32 as uint8_t,
+  4i32 as u8,
+  8i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
+  2i32 as u8,
+  4i32 as u8,
+  4i32 as u8,
   0,
-  5i32 as uint8_t,
-  12i32 as uint8_t,
-  1i32 as uint8_t,
-  1i32 as uint8_t,
+  5i32 as u8,
+  12i32 as u8,
+  1i32 as u8,
+  1i32 as u8,
 ];
-unsafe extern "C" fn log_option(mut pfx: *const libc::c_char, mut opt: *const uint8_t) {
+unsafe extern "C" fn log_option(mut pfx: *const libc::c_char, mut opt: *const u8) {
   if dhcp_verbose >= 2i32 as libc::c_uint {
     let mut buf: [libc::c_char; 514] = [0; 514];
     *bin2hex(
@@ -699,14 +699,14 @@ pub unsafe extern "C" fn udhcp_option_idx(
 pub unsafe extern "C" fn udhcp_get_option(
   mut packet: *mut dhcp_packet,
   mut code: libc::c_int,
-) -> *mut uint8_t {
-  let mut optionptr: *mut uint8_t = 0 as *mut uint8_t;
+) -> *mut u8 {
+  let mut optionptr: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_int = 0;
   let mut rem: libc::c_int = 0;
   let mut overload: libc::c_int = 0i32;
   /* option bytes: [code][len][data1][data2]..[dataLEN] */
   optionptr = (*packet).options.as_mut_ptr();
-  rem = ::std::mem::size_of::<[uint8_t; 388]>() as libc::c_ulong as libc::c_int;
+  rem = ::std::mem::size_of::<[u8; 388]>() as libc::c_ulong as libc::c_int;
   loop {
     if !(rem <= 0i32) {
       /* DHCP_PADDING and DHCP_END have no [len] byte */
@@ -719,7 +719,7 @@ pub unsafe extern "C" fn udhcp_get_option(
           /* can use packet->file, and didn't look at it yet */
           overload |= FILE_FIELD101 as libc::c_int; /* "we looked at it" */
           optionptr = (*packet).file.as_mut_ptr();
-          rem = ::std::mem::size_of::<[uint8_t; 128]>() as libc::c_ulong as libc::c_int;
+          rem = ::std::mem::size_of::<[u8; 128]>() as libc::c_ulong as libc::c_int;
           continue;
         } else {
           if !(overload & SNAME_FIELD101 as libc::c_int == 2i32) {
@@ -728,7 +728,7 @@ pub unsafe extern "C" fn udhcp_get_option(
           /* can use packet->sname, and didn't look at it yet */
           overload |= SNAME_FIELD101 as libc::c_int; /* "we looked at it" */
           optionptr = (*packet).sname.as_mut_ptr(); /* complain and return NULL */
-          rem = ::std::mem::size_of::<[uint8_t; 64]>() as libc::c_ulong as libc::c_int; /* complain and return NULL */
+          rem = ::std::mem::size_of::<[u8; 64]>() as libc::c_ulong as libc::c_int; /* complain and return NULL */
           continue;
         }
       } else if !(rem <= 1i32) {
@@ -765,27 +765,27 @@ pub unsafe extern "C" fn udhcp_get_option(
     bb_simple_error_msg(
       b"bad packet, malformed option field\x00" as *const u8 as *const libc::c_char,
     );
-    return 0 as *mut uint8_t;
+    return 0 as *mut u8;
   }
   /* log3 because udhcpc uses it a lot - very noisy */
-  return 0 as *mut uint8_t;
+  return 0 as *mut u8;
 }
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_get_option32(
   mut packet: *mut dhcp_packet,
   mut code: libc::c_int,
-) -> *mut uint8_t {
-  let mut r: *mut uint8_t = udhcp_get_option(packet, code);
+) -> *mut u8 {
+  let mut r: *mut u8 = udhcp_get_option(packet, code);
   if !r.is_null() {
     if *r.offset((-2i32 + 1i32) as isize) as libc::c_int != 4i32 {
-      r = 0 as *mut uint8_t
+      r = 0 as *mut u8
     }
   }
   return r;
 }
 /* Return the position of the 'end' option (no bounds checking) */
 #[no_mangle]
-pub unsafe extern "C" fn udhcp_end_option(mut optionptr: *mut uint8_t) -> libc::c_int {
+pub unsafe extern "C" fn udhcp_end_option(mut optionptr: *mut u8) -> libc::c_int {
   let mut i: libc::c_int = 0i32;
   while *optionptr.offset(i as isize) as libc::c_int != 0xffi32 {
     if *optionptr.offset(i as isize) as libc::c_int != 0i32 {
@@ -801,10 +801,10 @@ pub unsafe extern "C" fn udhcp_end_option(mut optionptr: *mut uint8_t) -> libc::
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_add_binary_option(
   mut packet: *mut dhcp_packet,
-  mut addopt: *mut uint8_t,
+  mut addopt: *mut u8,
 ) {
   let mut len: libc::c_uint = 0;
-  let mut optionptr: *mut uint8_t = (*packet).options.as_mut_ptr();
+  let mut optionptr: *mut u8 = (*packet).options.as_mut_ptr();
   let mut end: libc::c_uint = udhcp_end_option(optionptr) as libc::c_uint;
   len = (2i32 + *addopt.offset(1) as libc::c_int) as libc::c_uint;
   /* end position + (option code/length + addopt length) + end option */
@@ -825,27 +825,27 @@ pub unsafe extern "C" fn udhcp_add_binary_option(
     addopt as *const libc::c_void,
     len as libc::c_ulong,
   );
-  *optionptr.offset(end.wrapping_add(len) as isize) = 0xffi32 as uint8_t;
+  *optionptr.offset(end.wrapping_add(len) as isize) = 0xffi32 as u8;
 }
 /* Add an one to four byte option to a packet */
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_add_simple_option(
   mut packet: *mut dhcp_packet,
-  mut code: uint8_t,
-  mut data: uint32_t,
+  mut code: u8,
+  mut data: u32,
 ) {
   let mut dh: *const dhcp_optflag = 0 as *const dhcp_optflag;
   dh = dhcp_optflags.as_ptr();
   while (*dh).code != 0 {
     if (*dh).code as libc::c_int == code as libc::c_int {
-      let mut option: [uint8_t; 6] = [0; 6];
-      let mut len: uint8_t = 0;
+      let mut option: [u8; 6] = [0; 6];
+      let mut len: u8 = 0;
       option[0] = code;
       len = dhcp_option_lengths
         [((*dh).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int) as usize];
       option[1] = len;
       /* Assignment is unaligned! */
-      *(&mut *option.as_mut_ptr().offset(2) as *mut uint8_t as *mut bb__aliased_uint32_t) = data;
+      *(&mut *option.as_mut_ptr().offset(2) as *mut u8 as *mut bb__aliased_u32) = data;
       udhcp_add_binary_option(packet, option.as_mut_ptr());
       return;
     }
@@ -860,7 +860,7 @@ pub unsafe extern "C" fn udhcp_add_simple_option(
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_find_option(
   mut opt_list: *mut option_set,
-  mut code: uint8_t,
+  mut code: u8,
 ) -> *mut option_set {
   while !opt_list.is_null() && (*(*opt_list).data.offset(0) as libc::c_int) < code as libc::c_int {
     opt_list = (*opt_list).next
@@ -882,7 +882,7 @@ pub unsafe extern "C" fn udhcp_str2nip(
     return 0i32;
   }
   /* arg maybe unaligned */
-  *(arg as *mut uint32_t as *mut bb__aliased_uint32_t) = (*lsa).u.sin.sin_addr.s_addr;
+  *(arg as *mut u32 as *mut bb__aliased_u32) = (*lsa).u.sin.sin_addr.s_addr;
   free(lsa as *mut libc::c_void);
   return 1i32;
 }
@@ -920,7 +920,7 @@ unsafe extern "C" fn attach_option(
     == OPTION_DNS_STRING as libc::c_int
   {
     /* reuse buffer and length for RFC1035-formatted string */
-    buffer = dname_enc(0 as *const uint8_t, 0i32, buffer, &mut length) as *mut libc::c_char;
+    buffer = dname_enc(0 as *const u8, 0i32, buffer, &mut length) as *mut libc::c_char;
     allocated = buffer
   }
   existing = udhcp_find_option(*opt_list, (*optflag).code);
@@ -936,21 +936,21 @@ unsafe extern "C" fn attach_option(
     }
     new = xmalloc(::std::mem::size_of::<option_set>() as libc::c_ulong) as *mut option_set;
     if !dhcpv6 {
-      (*new).data = xmalloc((length + 2i32) as size_t) as *mut uint8_t;
+      (*new).data = xmalloc((length + 2i32) as size_t) as *mut u8;
       *(*new).data.offset(0) = (*optflag).code;
-      *(*new).data.offset(1) = length as uint8_t;
+      *(*new).data.offset(1) = length as u8;
       memcpy(
         (*new).data.offset(2) as *mut libc::c_void,
         buffer as *const libc::c_void,
         length as libc::c_ulong,
       );
     } else {
-      (*new).data = xmalloc((length + 4i32) as size_t) as *mut uint8_t;
-      *(*new).data.offset(0) = ((*optflag).code as libc::c_int >> 8i32) as uint8_t;
+      (*new).data = xmalloc((length + 4i32) as size_t) as *mut u8;
+      *(*new).data.offset(0) = ((*optflag).code as libc::c_int >> 8i32) as u8;
       *(*new).data.offset((0i32 + 1i32) as isize) =
-        ((*optflag).code as libc::c_int & 0xffi32) as uint8_t;
-      *(*new).data.offset(2) = (length >> 8i32) as uint8_t;
-      *(*new).data.offset((2i32 + 1i32) as isize) = (length & 0xffi32) as uint8_t;
+        ((*optflag).code as libc::c_int & 0xffi32) as u8;
+      *(*new).data.offset(2) = (length >> 8i32) as u8;
+      *(*new).data.offset((2i32 + 1i32) as isize) = (length & 0xffi32) as u8;
       memcpy(
         (*new).data.offset(4) as *mut libc::c_void,
         buffer as *const libc::c_void,
@@ -983,14 +983,14 @@ unsafe extern "C" fn attach_option(
         ((2i32 + 1i32) as libc::c_uint)
           .wrapping_add(old_len)
           .wrapping_add(length as libc::c_uint) as size_t,
-      ) as *mut uint8_t;
+      ) as *mut u8;
       // So far dhcp_optflags[] has no OPTION_STRING[_HOST] | OPTION_LIST items
       memcpy(
         (*existing).data.offset(2).offset(old_len as isize) as *mut libc::c_void,
         buffer as *const libc::c_void,
         length as libc::c_ulong,
       );
-      *(*existing).data.offset(1) = old_len.wrapping_add(length as libc::c_uint) as uint8_t
+      *(*existing).data.offset(1) = old_len.wrapping_add(length as libc::c_uint) as u8
     }
   }
   free(allocated as *mut libc::c_void);
@@ -1012,8 +1012,8 @@ pub unsafe extern "C" fn udhcp_str2optset(
   let mut retval: libc::c_int = 0;
   /* IP_PAIR needs 8 bytes, STATIC_ROUTES needs 9 max */
   let mut buffer: [libc::c_char; 9] = [0; 9];
-  let mut result_u16: *mut uint16_t = buffer.as_mut_ptr() as *mut uint16_t;
-  let mut result_u32: *mut uint32_t = buffer.as_mut_ptr() as *mut uint32_t;
+  let mut result_u16: *mut u16 = buffer.as_mut_ptr() as *mut u16;
+  let mut result_u32: *mut u32 = buffer.as_mut_ptr() as *mut u32;
   /* Cheat, the only *const* str possible is "" */
   str = const_str as *mut libc::c_char;
   opt = strtok(str, b" \t=:\x00" as *const u8 as *const libc::c_char);
@@ -1026,8 +1026,8 @@ pub unsafe extern "C" fn udhcp_str2optset(
      * Initially assume binary (hex-str), but if "str" or 'str'
      * is seen later, switch to STRING.
      */
-    userdef_optflag.flags = OPTION_BIN as libc::c_int as uint8_t;
-    userdef_optflag.code = optcode as uint8_t;
+    userdef_optflag.flags = OPTION_BIN as libc::c_int as u8;
+    userdef_optflag.code = optcode as u8;
     optflag = &mut userdef_optflag
   } else {
     optflag = &*optflags.offset((udhcp_option_idx
@@ -1101,7 +1101,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         /* htonX are macros in older libc's, using temp var
          * in code below for safety */
         /* TODO: use bb_strtoX? */
-        let mut tmp: uint32_t = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
+        let mut tmp: u32 = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
         *result_u16 = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = tmp as libc::c_ushort;
@@ -1129,7 +1129,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         //			retval = (errno == 0);
         //			break;
         //		}
-        let mut tmp_0: uint32_t = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
+        let mut tmp_0: u32 = bb_strtou32(val, 0 as *mut *mut libc::c_char, 0i32);
         *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_0;
@@ -1214,7 +1214,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
           if !end.is_null() {
             *end = '\u{0}' as i32 as libc::c_char;
             val = val.offset(1);
-            userdef_optflag.flags = OPTION_STRING as libc::c_int as uint8_t;
+            userdef_optflag.flags = OPTION_STRING as libc::c_int as u8;
             current_block_58 = 17106587497971209820;
           } else {
             current_block_58 = 919954187481050311;
@@ -1399,16 +1399,16 @@ pub unsafe extern "C" fn udhcp_str2optset(
 // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
 /* ** Logging ***/
 /* ** Other shared functions ***/
-/* 2nd param is "uint32_t*" */
+/* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
-/*uint32_t ip,*/
+/*u32 ip,*/
 /* Returns 1 if no reply received */
 /* note: ip is a pointer to an IPv6 in network order, possibly misaliged */
 /* note: ip is a pointer to an IPv6 in network order, possibly misaliged */
 #[no_mangle]
 pub unsafe extern "C" fn sprint_nip6(
   mut dest: *mut libc::c_char,
-  mut ip: *const uint8_t,
+  mut ip: *const u8,
 ) -> libc::c_int {
   let mut hexstrbuf: [libc::c_char; 32] = [0; 32];
   bin2hex(

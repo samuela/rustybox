@@ -11,12 +11,12 @@ extern "C" {
   #[no_mangle]
   fn xfork() -> pid_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 use crate::librb::__pid_t;
 
 use crate::librb::pid_t;
-use libc::uint32_t;
+
 
 /*
  * setsid.c -- execute a command in a new session

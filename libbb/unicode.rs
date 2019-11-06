@@ -20,8 +20,8 @@ extern "C" {
 
 use crate::librb::int32_t;
 use crate::librb::size_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type wchar_t = libc::c_int;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -72,7 +72,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
 unsafe extern "C" fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t) -> size_t {
   let mut n: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  let mut v: uint32_t = wc as uint32_t;
+  let mut v: u32 = wc as u32;
   if v <= 0x7fi32 as libc::c_uint {
     *s = v as libc::c_char;
     return 1i32 as size_t;
@@ -102,7 +102,7 @@ unsafe extern "C" fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t)
     wc >>= 6i32
   }
   /* Fill byte 0 */
-  *s.offset(0) = (wc | (0x3f00i32 >> n) as uint8_t as libc::c_int) as libc::c_char;
+  *s.offset(0) = (wc | (0x3f00i32 >> n) as u8 as libc::c_int) as libc::c_char;
   return n as size_t;
 }
 #[no_mangle]
@@ -202,7 +202,7 @@ unsafe extern "C" fn mbstowc_internal(
     *res = !0i32;
     return src;
   }
-  c = (c as uint8_t as libc::c_int >> bytes) as libc::c_uint;
+  c = (c as u8 as libc::c_int >> bytes) as libc::c_uint;
   loop {
     bytes -= 1;
     if !(bytes != 0) {

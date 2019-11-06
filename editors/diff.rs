@@ -102,18 +102,18 @@ extern "C" {
   #[no_mangle]
   fn qsort_string_vector(sv: *mut *mut libc::c_char, count: libc::c_uint);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
@@ -135,8 +135,8 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 use libc::stat;
 
 use crate::librb::__compar_fn_t;
@@ -1430,7 +1430,7 @@ pub unsafe extern "C" fn diff_main(
       llist_pop(&mut L_arg) as *mut libc::c_char
   }
   /* Compat: "diff file name_which_doesnt_exist" exits with 2 */
-  xfunc_error_retval = 2i32 as uint8_t;
+  xfunc_error_retval = 2i32 as u8;
   i = 0i32;
   while i < 2i32 {
     file[i as usize] = *argv.offset(i as isize);
@@ -1460,7 +1460,7 @@ pub unsafe extern "C" fn diff_main(
     }
     i += 1
   }
-  xfunc_error_retval = 1i32 as uint8_t;
+  xfunc_error_retval = 1i32 as u8;
   if gotstdin != 0
     && ((*ptr_to_globals).stb[0].st_mode & 0o170000i32 as libc::c_uint
       == 0o40000i32 as libc::c_uint

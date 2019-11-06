@@ -65,13 +65,13 @@ extern "C" {
   fn fflush_all() -> libc::c_int;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
@@ -108,15 +108,15 @@ pub struct mntent {
   pub mnt_passno: libc::c_int,
 }
 
-use libc::uint16_t;
-use libc::uint8_t;
+
+
 
 use crate::librb::off_t;
 use crate::librb::smallint;
 
 use crate::librb::ssize_t;
 
-use libc::uint32_t;
+
 
 use crate::librb::termios;
 
@@ -166,16 +166,16 @@ pub union C2RustUnnamed {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix_superblock {
-  pub s_ninodes: uint16_t,
-  pub s_nzones: uint16_t,
-  pub s_imap_blocks: uint16_t,
-  pub s_zmap_blocks: uint16_t,
-  pub s_firstdatazone: uint16_t,
-  pub s_log_zone_size: uint16_t,
-  pub s_max_size: uint32_t,
-  pub s_magic: uint16_t,
-  pub s_state: uint16_t,
-  pub s_zones: uint32_t,
+  pub s_ninodes: u16,
+  pub s_nzones: u16,
+  pub s_imap_blocks: u16,
+  pub s_zmap_blocks: u16,
+  pub s_firstdatazone: u16,
+  pub s_log_zone_size: u16,
+  pub s_max_size: u32,
+  pub s_magic: u16,
+  pub s_state: u16,
+  pub s_zones: u32,
 }
 
 /*
@@ -185,13 +185,13 @@ pub struct minix_superblock {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix1_inode {
-  pub i_mode: uint16_t,
-  pub i_uid: uint16_t,
-  pub i_size: uint32_t,
-  pub i_time: uint32_t,
-  pub i_gid: uint8_t,
-  pub i_nlinks: uint8_t,
-  pub i_zone: [uint16_t; 9],
+  pub i_mode: u16,
+  pub i_uid: u16,
+  pub i_size: u32,
+  pub i_time: u32,
+  pub i_gid: u8,
+  pub i_nlinks: u8,
+  pub i_zone: [u16; 9],
 }
 
 /*
@@ -203,15 +203,15 @@ pub struct minix1_inode {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct minix2_inode {
-  pub i_mode: uint16_t,
-  pub i_nlinks: uint16_t,
-  pub i_uid: uint16_t,
-  pub i_gid: uint16_t,
-  pub i_size: uint32_t,
-  pub i_atime: uint32_t,
-  pub i_mtime: uint32_t,
-  pub i_ctime: uint32_t,
-  pub i_zone: [uint32_t; 10],
+  pub i_mode: u16,
+  pub i_nlinks: u16,
+  pub i_uid: u16,
+  pub i_gid: u16,
+  pub i_size: u32,
+  pub i_atime: u32,
+  pub i_mtime: u32,
+  pub i_ctime: u32,
+  pub i_zone: [u32; 10],
 }
 
 /* Believe it or not, but mount.h has this one #defined */
@@ -418,7 +418,7 @@ unsafe extern "C" fn check_mount() {
  * or a bad zone-number).
  */
 unsafe extern "C" fn check_zone_nr2(
-  mut nr: *mut uint32_t,
+  mut nr: *mut u32,
   mut corrected: *mut smallint,
 ) -> libc::c_int {
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
@@ -448,19 +448,19 @@ unsafe extern "C" fn check_zone_nr2(
     1i32,
   ) != 0
   {
-    *nr = 0i32 as uint32_t;
+    *nr = 0i32 as u32;
     *corrected = 1i32 as smallint
   }
   return 0i32;
 }
 
 unsafe extern "C" fn check_zone_nr(
-  mut nr: *mut uint16_t,
+  mut nr: *mut u16,
   mut corrected: *mut smallint,
 ) -> libc::c_int {
-  let mut nr32: uint32_t = *nr as uint32_t;
+  let mut nr32: u32 = *nr as u32;
   let mut r: libc::c_int = check_zone_nr2(&mut nr32, corrected);
-  *nr = nr32 as uint16_t;
+  *nr = nr32 as u16;
   return r;
 }
 /*
@@ -547,7 +547,7 @@ unsafe extern "C" fn map_block(
   mut inode: *mut minix1_inode,
   mut blknr: libc::c_uint,
 ) -> libc::c_int {
-  let mut ind: [uint16_t; 512] = [0; 512]; /* double indirect */
+  let mut ind: [u16; 512] = [0; 512]; /* double indirect */
   let mut block: libc::c_int = 0; /* triple indirect */
   let mut result: libc::c_int = 0; /* double indirect */
   let mut blk_chg: smallint = 0;
@@ -600,7 +600,7 @@ unsafe extern "C" fn map_block2(
   mut inode: *mut minix2_inode,
   mut blknr: libc::c_uint,
 ) -> libc::c_int {
-  let mut ind: [uint32_t; 256] = [0; 256];
+  let mut ind: [u32; 256] = [0; 256];
   let mut block: libc::c_int = 0;
   let mut result: libc::c_int = 0;
   let mut blk_chg: smallint = 0;
@@ -679,10 +679,10 @@ unsafe extern "C" fn write_superblock() {
    */
   (*ptr_to_globals).u.Super.s_state = ((*ptr_to_globals).u.Super.s_state as libc::c_int
     | (MINIX_VALID_FS as libc::c_int | MINIX_ERROR_FS as libc::c_int))
-    as uint16_t;
+    as u16;
   if (*ptr_to_globals).errors_uncorrected == 0 {
     (*ptr_to_globals).u.Super.s_state = ((*ptr_to_globals).u.Super.s_state as libc::c_int
-      & !(MINIX_ERROR_FS as libc::c_int)) as uint16_t
+      & !(MINIX_ERROR_FS as libc::c_int)) as u16
   }
   xlseek(
     dev_fd as libc::c_int,
@@ -979,7 +979,7 @@ unsafe extern "C" fn read_tables() {
   };
 }
 
-unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: uint16_t) {
+unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: u16) {
   (*ptr_to_globals).total += 1;
   if *(*ptr_to_globals).inode_count.offset(nr as isize) == 0 {
     if minix_bit((*ptr_to_globals).inode_map, nr) == 0 {
@@ -1122,30 +1122,30 @@ unsafe extern "C" fn add_zone_common(
   }
   return block;
 }
-unsafe extern "C" fn add_zone(mut znr: *mut uint16_t, mut corrected: *mut smallint) -> libc::c_int {
+unsafe extern "C" fn add_zone(mut znr: *mut u16, mut corrected: *mut smallint) -> libc::c_int {
   let mut block: libc::c_int = 0;
   block = check_zone_nr(znr, corrected);
   block = add_zone_common(block, corrected);
   if block == -1i32 {
-    *znr = 0i32 as uint16_t;
+    *znr = 0i32 as u16;
     block = 0i32
   }
   return block;
 }
 unsafe extern "C" fn add_zone2(
-  mut znr: *mut uint32_t,
+  mut znr: *mut u32,
   mut corrected: *mut smallint,
 ) -> libc::c_int {
   let mut block: libc::c_int = 0;
   block = check_zone_nr2(znr, corrected);
   block = add_zone_common(block, corrected);
   if block == -1i32 {
-    *znr = 0i32 as uint32_t;
+    *znr = 0i32 as u32;
     block = 0i32
   }
   return block;
 }
-unsafe extern "C" fn add_zone_ind(mut znr: *mut uint16_t, mut corrected: *mut smallint) {
+unsafe extern "C" fn add_zone_ind(mut znr: *mut u16, mut corrected: *mut smallint) {
   let mut i: libc::c_int = 0;
   let mut block: libc::c_int = 0;
   let mut chg_blk: smallint = 0i32 as smallint;
@@ -1160,7 +1160,7 @@ unsafe extern "C" fn add_zone_ind(mut znr: *mut uint16_t, mut corrected: *mut sm
   i = 0i32;
   while i < BLOCK_SIZE as libc::c_int >> 1i32 {
     add_zone(
-      ((*ptr_to_globals).add_zone_ind_blk.as_mut_ptr() as *mut uint16_t).offset(i as isize),
+      ((*ptr_to_globals).add_zone_ind_blk.as_mut_ptr() as *mut u16).offset(i as isize),
       &mut chg_blk,
     );
     i += 1
@@ -1172,7 +1172,7 @@ unsafe extern "C" fn add_zone_ind(mut znr: *mut uint16_t, mut corrected: *mut sm
     );
   };
 }
-unsafe extern "C" fn add_zone_ind2(mut znr: *mut uint32_t, mut corrected: *mut smallint) {
+unsafe extern "C" fn add_zone_ind2(mut znr: *mut u32, mut corrected: *mut smallint) {
   let mut i: libc::c_int = 0;
   let mut block: libc::c_int = 0;
   let mut chg_blk: smallint = 0i32 as smallint;
@@ -1187,7 +1187,7 @@ unsafe extern "C" fn add_zone_ind2(mut znr: *mut uint32_t, mut corrected: *mut s
   i = 0i32;
   while i < BLOCK_SIZE as libc::c_int >> 2i32 {
     add_zone2(
-      ((*ptr_to_globals).add_zone_ind_blk.as_mut_ptr() as *mut uint32_t).offset(i as isize),
+      ((*ptr_to_globals).add_zone_ind_blk.as_mut_ptr() as *mut u32).offset(i as isize),
       &mut chg_blk,
     );
     i += 1
@@ -1199,7 +1199,7 @@ unsafe extern "C" fn add_zone_ind2(mut znr: *mut uint32_t, mut corrected: *mut s
     );
   };
 }
-unsafe extern "C" fn add_zone_dind(mut znr: *mut uint16_t, mut corrected: *mut smallint) {
+unsafe extern "C" fn add_zone_dind(mut znr: *mut u16, mut corrected: *mut smallint) {
   let mut i: libc::c_int = 0;
   let mut block: libc::c_int = 0;
   let mut chg_blk: smallint = 0i32 as smallint;
@@ -1214,7 +1214,7 @@ unsafe extern "C" fn add_zone_dind(mut znr: *mut uint16_t, mut corrected: *mut s
   i = 0i32;
   while i < BLOCK_SIZE as libc::c_int >> 1i32 {
     add_zone_ind(
-      ((*ptr_to_globals).add_zone_dind_blk.as_mut_ptr() as *mut uint16_t).offset(i as isize),
+      ((*ptr_to_globals).add_zone_dind_blk.as_mut_ptr() as *mut u16).offset(i as isize),
       &mut chg_blk,
     );
     i += 1
@@ -1226,7 +1226,7 @@ unsafe extern "C" fn add_zone_dind(mut znr: *mut uint16_t, mut corrected: *mut s
     );
   };
 }
-unsafe extern "C" fn add_zone_dind2(mut znr: *mut uint32_t, mut corrected: *mut smallint) {
+unsafe extern "C" fn add_zone_dind2(mut znr: *mut u32, mut corrected: *mut smallint) {
   let mut i: libc::c_int = 0;
   let mut block: libc::c_int = 0;
   let mut chg_blk: smallint = 0i32 as smallint;
@@ -1241,7 +1241,7 @@ unsafe extern "C" fn add_zone_dind2(mut znr: *mut uint32_t, mut corrected: *mut 
   i = 0i32;
   while i < BLOCK_SIZE as libc::c_int >> 2i32 {
     add_zone_ind2(
-      ((*ptr_to_globals).add_zone_dind_blk.as_mut_ptr() as *mut uint32_t).offset(i as isize),
+      ((*ptr_to_globals).add_zone_dind_blk.as_mut_ptr() as *mut u32).offset(i as isize),
       &mut chg_blk,
     );
     i += 1
@@ -1253,7 +1253,7 @@ unsafe extern "C" fn add_zone_dind2(mut znr: *mut uint32_t, mut corrected: *mut 
     );
   };
 }
-unsafe extern "C" fn add_zone_tind2(mut znr: *mut uint32_t, mut corrected: *mut smallint) {
+unsafe extern "C" fn add_zone_tind2(mut znr: *mut u32, mut corrected: *mut smallint) {
   let mut i: libc::c_int = 0;
   let mut block: libc::c_int = 0;
   let mut chg_blk: smallint = 0i32 as smallint;
@@ -1268,7 +1268,7 @@ unsafe extern "C" fn add_zone_tind2(mut znr: *mut uint32_t, mut corrected: *mut 
   i = 0i32;
   while i < BLOCK_SIZE as libc::c_int >> 2i32 {
     add_zone_dind2(
-      ((*ptr_to_globals).add_zone_tind_blk.as_mut_ptr() as *mut uint32_t).offset(i as isize),
+      ((*ptr_to_globals).add_zone_tind_blk.as_mut_ptr() as *mut u32).offset(i as isize),
       &mut chg_blk,
     );
     i += 1
@@ -1372,7 +1372,7 @@ unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_
     .as_mut_ptr()
     .offset(offset.wrapping_rem(BLOCK_SIZE as libc::c_int as libc::c_uint) as isize)
     .offset(2);
-  ino = *(name.offset(-2) as *mut uint16_t) as libc::c_int;
+  ino = *(name.offset(-2) as *mut u16) as libc::c_int;
   if ino as libc::c_uint > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     printf(
       b"%s contains a bad inode number for file \'%.*s\'. \x00" as *const u8 as *const libc::c_char,
@@ -1381,7 +1381,7 @@ unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_
       name,
     );
     if ask(b"Remove\x00" as *const u8 as *const libc::c_char, 1i32) != 0 {
-      *(name.offset(-2) as *mut uint16_t) = 0i32 as uint16_t;
+      *(name.offset(-2) as *mut u16) = 0i32 as u16;
       write_block(
         block as libc::c_uint,
         (*ptr_to_globals).check_file_blk.as_mut_ptr() as *mut libc::c_void,
@@ -1459,7 +1459,7 @@ unsafe extern "C" fn check_file2(mut dir: *mut minix2_inode, mut offset: libc::c
     .as_mut_ptr()
     .offset(offset.wrapping_rem(BLOCK_SIZE as libc::c_int as libc::c_uint) as isize)
     .offset(2);
-  ino = *(name.offset(-2) as *mut uint16_t) as libc::c_int;
+  ino = *(name.offset(-2) as *mut u16) as libc::c_int;
   if ino as libc::c_uint > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     printf(
       b"%s contains a bad inode number for file \'%.*s\'. \x00" as *const u8 as *const libc::c_char,
@@ -1468,7 +1468,7 @@ unsafe extern "C" fn check_file2(mut dir: *mut minix2_inode, mut offset: libc::c
       name,
     );
     if ask(b"Remove\x00" as *const u8 as *const libc::c_char, 1i32) != 0 {
-      *(name.offset(-2) as *mut uint16_t) = 0i32 as uint16_t;
+      *(name.offset(-2) as *mut u16) = 0i32 as u16;
       write_block(
         block as libc::c_uint,
         (*ptr_to_globals).check_file_blk.as_mut_ptr() as *mut libc::c_void,
@@ -1607,7 +1607,7 @@ unsafe extern "C" fn check_counts() {
         (*((*ptr_to_globals).inode_buffer as *mut minix1_inode)
           .offset(-1)
           .offset(i as isize))
-        .i_mode = 0i32 as uint16_t;
+        .i_mode = 0i32 as u16;
         (*ptr_to_globals).changed = 1i32 as smallint
       }
     }
@@ -1742,7 +1742,7 @@ unsafe extern "C" fn check_counts2() {
         (*((*ptr_to_globals).inode_buffer as *mut minix2_inode)
           .offset(-1)
           .offset(i as isize))
-        .i_mode = 0i32 as uint16_t;
+        .i_mode = 0i32 as u16;
         (*ptr_to_globals).changed = 1i32 as smallint
       }
     }
@@ -1796,7 +1796,7 @@ unsafe extern "C" fn check_counts2() {
           (*((*ptr_to_globals).inode_buffer as *mut minix2_inode)
             .offset(-1)
             .offset(i as isize))
-          .i_nlinks = *(*ptr_to_globals).inode_count.offset(i as isize) as uint16_t;
+          .i_nlinks = *(*ptr_to_globals).inode_count.offset(i as isize) as u16;
           (*ptr_to_globals).changed = 1i32 as smallint
         }
       }
@@ -1907,7 +1907,7 @@ pub unsafe extern "C" fn fsck_minix_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retcode: libc::c_int = 0i32;
-  xfunc_error_retval = 8i32 as uint8_t;
+  xfunc_error_retval = 8i32 as u8;
   let ref mut fresh7 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh7 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;

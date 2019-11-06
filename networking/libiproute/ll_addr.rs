@@ -29,15 +29,15 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
 pub type socklen_t = __socklen_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 
 /*

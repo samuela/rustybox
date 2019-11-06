@@ -57,9 +57,9 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type intptr_t = libc::c_long;
 pub type smalluint = libc::c_uchar;
 pub type socklen_t = __socklen_t;
@@ -86,9 +86,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -98,11 +98,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -116,7 +116,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -285,7 +285,7 @@ pub union C2RustUnnamed_3 {
 #[repr(C)]
 pub struct in6_ifreq {
   pub ifr6_addr: in6_addr,
-  pub ifr6_prefixlen: uint32_t,
+  pub ifr6_prefixlen: u32,
   pub ifr6_ifindex: libc::c_int,
 }
 #[derive(Copy, Clone)]
@@ -651,7 +651,7 @@ pub unsafe extern "C" fn ifconfig_main(
                   b"SIOCGIFINDEX\x00" as *const u8 as *const libc::c_char,
                 );
                 ifr6.ifr6_ifindex = ifr.ifr_ifru.ifru_ivalue;
-                ifr6.ifr6_prefixlen = prefix_len as uint32_t;
+                ifr6.ifr6_prefixlen = prefix_len as u32;
                 memcpy(
                   &mut ifr6.ifr6_addr as *mut in6_addr as *mut libc::c_void,
                   &mut (*lsa).u.sin6.sin6_addr as *mut in6_addr as *const libc::c_void,

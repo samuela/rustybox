@@ -3,14 +3,14 @@ extern "C" {
   #[no_mangle]
   fn umask(__mask: __mode_t) -> __mode_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
 }
 
 use crate::librb::__mode_t;
 use crate::librb::mode_t;
-use libc::uint32_t;
+
 
 /*
  * coreutils utility routine

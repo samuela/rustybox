@@ -32,7 +32,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
   #[no_mangle]
   fn unicode_conv_to_printable_fixedwidth(
@@ -48,26 +48,26 @@ pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 
 use libc::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */
-pub type leasetime_t = uint32_t;
+pub type leasetime_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dyn_lease {
   pub expires: leasetime_t,
-  pub lease_nip: uint32_t,
-  pub lease_mac: [uint8_t; 6],
+  pub lease_nip: u32,
+  pub lease_mac: [u8; 6],
   pub hostname: [libc::c_char; 20],
-  pub pad: [uint8_t; 2],
+  pub pad: [u8; 2],
   /* total size is a multiply of 4 */
 }
 pub const OPT_a: C2RustUnnamed = 1;

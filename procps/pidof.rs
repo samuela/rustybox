@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_free(
     elm: *mut llist_t,
@@ -32,7 +32,7 @@ extern "C" {
 use crate::libbb::llist::llist_t;
 use crate::librb::__pid_t;
 use crate::librb::pid_t;
-use libc::uint32_t;
+
 
 /*
  * pidof implementation for busybox

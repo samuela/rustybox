@@ -50,10 +50,10 @@ extern "C" {
   ) -> libc::c_uint;
 
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn bb_show_usage() -> !;
@@ -83,7 +83,7 @@ extern "C" {
 }
 
 use crate::librb::off_t;
-use libc::uint32_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

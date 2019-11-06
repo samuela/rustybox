@@ -36,7 +36,7 @@ extern "C" {
     sfx: *const suffix_mult,
   ) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -85,7 +85,7 @@ pub struct statvfs {
   pub f_namemax: libc::c_ulong,
   pub __f_spare: [libc::c_int; 6],
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct uni_stat_t {

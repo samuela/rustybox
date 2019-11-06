@@ -58,7 +58,7 @@ extern "C" {
   #[no_mangle]
   fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -102,7 +102,7 @@ extern "C" {
   fn INET_rresolve(
     s_in: *mut sockaddr_in,
     numeric: libc::c_int,
-    netmask: uint32_t,
+    netmask: u32,
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
@@ -131,11 +131,11 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in6_addr {
@@ -144,13 +144,13 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-use libc::uint16_t;
- use libc::uint8_t;
-pub type in_port_t = uint16_t;
+
+
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -164,7 +164,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rtentry {
@@ -190,12 +190,12 @@ pub struct in6_rtmsg {
   pub rtmsg_dst: in6_addr,
   pub rtmsg_src: in6_addr,
   pub rtmsg_gateway: in6_addr,
-  pub rtmsg_type: uint32_t,
-  pub rtmsg_dst_len: uint16_t,
-  pub rtmsg_src_len: uint16_t,
-  pub rtmsg_metric: uint32_t,
+  pub rtmsg_type: u32,
+  pub rtmsg_dst_len: u16,
+  pub rtmsg_src_len: u16,
+  pub rtmsg_metric: u32,
   pub rtmsg_info: libc::c_ulong,
-  pub rtmsg_flags: uint32_t,
+  pub rtmsg_flags: u32,
   pub rtmsg_ifindex: libc::c_int,
 }
 #[derive(Copy, Clone)]
@@ -260,11 +260,11 @@ static mut tbl_ipvx: [libc::c_char; 104] = [
   121, 110, 0, 11, 35, 114, 101, 105, 110, 115, 116, 97, 116, 101, 0,
 ];
 /* Since last, we can save a byte. */
-static mut flags_ipvx: [uint16_t; 4] = [
-  0x200i32 as uint16_t,
-  0x20i32 as uint16_t,
-  0x10i32 as uint16_t,
-  0x8i32 as uint16_t,
+static mut flags_ipvx: [u16; 4] = [
+  0x200i32 as u16,
+  0x20i32 as u16,
+  0x10i32 as u16,
+  0x8i32 as u16,
 ];
 unsafe extern "C" fn kw_lookup(
   mut kwtbl: *const libc::c_char,
@@ -480,7 +480,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     .s_addr
     != 0
   {
-    let mut mask_0: uint32_t = (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
+    let mut mask_0: u32 = (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
       .sin_addr
       .s_addr;
     mask_0 = !({
@@ -632,13 +632,13 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     ::std::mem::size_of::<in6_addr>() as libc::c_ulong,
   );
   /* Fill in the other fields. */
-  rt.rtmsg_dst_len = prefix_len as uint16_t;
+  rt.rtmsg_dst_len = prefix_len as u16;
   rt.rtmsg_flags = if prefix_len == 128i32 {
     (0x1i32) | 0x4i32
   } else {
     0x1i32
-  } as uint32_t;
-  rt.rtmsg_metric = 1i32 as uint32_t;
+  } as u32;
+  rt.rtmsg_metric = 1i32 as u32;
   devname = 0 as *const libc::c_char;
   while !(*args).is_null() {
     let mut k: libc::c_int = kw_lookup(tbl_ipvx.as_ptr(), &mut args);
@@ -646,7 +646,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     if k == 0o41i32 || k == 0o42i32 {
       rt.rtmsg_flags |= flags_ipvx[(k & 3i32) as usize] as libc::c_uint
     } else if k == 0o20i32 {
-      rt.rtmsg_metric = xatoul(args_m1) as uint32_t
+      rt.rtmsg_metric = xatoul(args_m1) as u32
     } else if k == 0o22i32 {
       if rt.rtmsg_flags & 0x2i32 as libc::c_uint != 0 {
         bb_show_usage();
@@ -844,9 +844,9 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
         );
         s_addr.sin_family = 2i32 as sa_family_t;
         s_addr.sin_addr.s_addr = d as in_addr_t;
-        sdest = INET_rresolve(&mut s_addr, noresolve | 0x8000i32, m as uint32_t);
+        sdest = INET_rresolve(&mut s_addr, noresolve | 0x8000i32, m as u32);
         s_addr.sin_addr.s_addr = g as in_addr_t;
-        sgw = INET_rresolve(&mut s_addr, noresolve | 0x4000i32, m as uint32_t);
+        sgw = INET_rresolve(&mut s_addr, noresolve | 0x4000i32, m as u32);
         mask.s_addr = m as in_addr_t;
         /* "%15.15s" truncates hostnames, do we really want that? */
         printf(

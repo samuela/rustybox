@@ -134,7 +134,7 @@ extern "C" {
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
@@ -221,9 +221,9 @@ use libc::ino_t;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
-use libc::uint8_t;
+
+
+
 use libc::FILE;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -320,16 +320,16 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed_0,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -895,7 +895,7 @@ unsafe extern "C" fn writeTarHeader(
         .offset(::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong as isize);
       loop {
         p8 = p8.offset(-1);
-        *p8 = filesize as uint8_t as libc::c_char;
+        *p8 = filesize as u8 as libc::c_char;
         filesize >>= 8i32;
         if !(p8 != header.size.as_mut_ptr()) {
           break;

@@ -43,7 +43,7 @@ extern "C" {
   #[no_mangle]
   fn xatou(str: *const libc::c_char) -> libc::c_uint;
   #[no_mangle]
-  fn xatou16(numstr: *const libc::c_char) -> uint16_t;
+  fn xatou16(numstr: *const libc::c_char) -> u16;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -65,8 +65,8 @@ extern "C" {
 use crate::librb::__pid_t;
 use crate::librb::__uint64_t;
 use crate::librb::size_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
@@ -107,21 +107,21 @@ pub struct option {
 #[repr(C)]
 pub struct new_nbd_header_t {
   pub devsize: uint64_t,
-  pub transmission_flags: uint16_t,
+  pub transmission_flags: u16,
   pub data: [libc::c_char; 124],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nbd_opt_t {
   pub magic: uint64_t,
-  pub opt: uint32_t,
-  pub len: uint32_t,
+  pub opt: u32,
+  pub len: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct old_nbd_header_t {
   pub devsize: uint64_t,
-  pub flags: uint32_t,
+  pub flags: u32,
   pub data: [libc::c_char; 124],
 }
 #[derive(Copy, Clone)]
@@ -373,7 +373,7 @@ pub unsafe extern "C" fn nbdclient_main(
         sock,
         &mut old_nbd_header as *mut old_nbd_header_t as *mut libc::c_void,
         (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
-          .wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
+          .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<[libc::c_char; 124]>() as libc::c_ulong),
       );
       size_blocks = ({
@@ -445,11 +445,11 @@ pub unsafe extern "C" fn nbdclient_main(
       data = old_nbd_header.data.as_mut_ptr()
     } else {
       let mut namelen: libc::c_uint = 0;
-      let mut handshake_flags: uint16_t = 0;
+      let mut handshake_flags: u16 = 0;
       xread(
         sock,
-        &mut handshake_flags as *mut uint16_t as *mut libc::c_void,
-        ::std::mem::size_of::<uint16_t>() as libc::c_ulong,
+        &mut handshake_flags as *mut u16 as *mut libc::c_void,
+        ::std::mem::size_of::<u16>() as libc::c_ulong,
       );
       xwrite(
         sock,
@@ -504,15 +504,15 @@ pub unsafe extern "C" fn nbdclient_main(
         sock,
         &mut nbd_opts as *mut nbd_opt_t as *const libc::c_void,
         (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
-          .wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
-          .wrapping_add(::std::mem::size_of::<uint32_t>() as libc::c_ulong),
+          .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
+          .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong),
       );
       xwrite(sock, name as *const libc::c_void, namelen as size_t);
       xread(
         sock,
         &mut new_nbd_header as *mut new_nbd_header_t as *mut libc::c_void,
         (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
-          .wrapping_add(::std::mem::size_of::<uint16_t>() as libc::c_ulong)
+          .wrapping_add(::std::mem::size_of::<u16>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<[libc::c_char; 124]>() as libc::c_ulong),
       );
       size_blocks = ({

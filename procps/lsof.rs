@@ -31,8 +31,8 @@ use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::size_t;
-use libc::uint16_t;
- use libc::uint8_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -65,9 +65,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,

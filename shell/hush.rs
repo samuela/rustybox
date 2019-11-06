@@ -249,9 +249,9 @@ extern "C" {
   #[no_mangle]
   fn find_applet_by_name(name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
   #[no_mangle]
@@ -373,7 +373,7 @@ extern "C" {
     flags: libc::c_uint,
   ) -> *mut libc::c_char;
   #[no_mangle]
-  fn next_random(rnd: *mut random_t) -> uint32_t;
+  fn next_random(rnd: *mut random_t) -> u32;
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
@@ -396,9 +396,9 @@ use crate::librb::size_t;
 use libc::FILE;
 pub type va_list = __builtin_va_list;
 use crate::librb::int32_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
@@ -665,7 +665,7 @@ pub struct variable {
   pub next: *mut variable,
   pub varstr: *mut libc::c_char,
   pub max_len: libc::c_int,
-  pub var_nest_level: uint16_t,
+  pub var_nest_level: u16,
   pub flg_export: smallint,
   pub flg_read_only: smallint,
 }
@@ -673,9 +673,9 @@ pub struct variable {
 #[repr(C)]
 pub struct random_t {
   pub galois_LFSR: int32_t,
-  pub LCG: uint32_t,
-  pub xs64_x: uint32_t,
-  pub xs64_y: uint32_t,
+  pub LCG: u32,
+  pub xs64_x: u32,
+  pub xs64_y: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -2278,7 +2278,7 @@ unsafe extern "C" fn set_local_var(
     /* Not found or shadowed - create new variable struct */
     {
       cur = xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong) as *mut variable;
-      (*cur).var_nest_level = local_lvl as uint16_t;
+      (*cur).var_nest_level = local_lvl as u16;
       (*cur).next = *cur_pp;
       *cur_pp = cur;
       current_block = 11779985319611290286;
@@ -9242,7 +9242,7 @@ unsafe extern "C" fn remove_nested_vars() {
 unsafe extern "C" fn enter_var_nest_level() {
   (*ptr_to_globals).var_nest_level = (*ptr_to_globals).var_nest_level.wrapping_add(1);
   /* Try:	f() { echo -n .; f; }; f
-   * struct variable::var_nest_level is uint16_t,
+   * struct variable::var_nest_level is u16,
    * thus limiting recursion to < 2^16.
    * In any case, with 8 Mbyte stack SEGV happens
    * not too long after 2^16 recursions anyway.
@@ -11336,12 +11336,12 @@ pub unsafe extern "C" fn hush_main(
          */
         (*ptr_to_globals).global_argc -= 1; /* for "hush /does/not/exist" case */
         (*ptr_to_globals).global_argv = (*ptr_to_globals).global_argv.offset(1);
-        xfunc_error_retval = 127i32 as uint8_t;
+        xfunc_error_retval = 127i32 as u8;
         input_0 = hfopen(*(*ptr_to_globals).global_argv.offset(0));
         if input_0.is_null() {
           bb_simple_perror_msg_and_die(*(*ptr_to_globals).global_argv.offset(0));
         }
-        xfunc_error_retval = 1i32 as uint8_t;
+        xfunc_error_retval = 1i32 as u8;
         install_special_sighandlers();
         parse_and_run_file(input_0);
       } else {
@@ -11680,7 +11680,7 @@ unsafe extern "C" fn builtin_exit(mut argv: *mut *mut libc::c_char) -> libc::c_i
     hush_exit((*ptr_to_globals).last_exitcode as libc::c_int);
   }
   /* mimic bash: exit 123abc == exit 255 + error msg */
-  xfunc_error_retval = 255i32 as uint8_t;
+  xfunc_error_retval = 255i32 as u8;
   /* bash: exit -2 == exit 254, no error msg */
   hush_exit(xatoi(*argv.offset(0)) & 0xffi32);
 }
@@ -11777,7 +11777,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
     &mut params.opt_u as *mut *const libc::c_char,
     &mut params.opt_d as *mut *const libc::c_char,
   ) as libc::c_int; /* can be NULL */
-  if params.read_flags as uint32_t == -1i32 as uint32_t {
+  if params.read_flags as u32 == -1i32 as u32 {
     return 1i32;
   }
   argv = argv.offset(optind as isize);
@@ -12019,7 +12019,7 @@ unsafe extern "C" fn builtin_export(mut argv: *mut *mut libc::c_char) -> libc::c
   let mut opt_unexport: libc::c_uint = 0;
   /* "!": do not abort on errors */
   opt_unexport = getopt32(argv, b"!n\x00" as *const u8 as *const libc::c_char);
-  if opt_unexport == -1i32 as uint32_t {
+  if opt_unexport == -1i32 as u32 {
     return 1i32;
   }
   argv = argv.offset(optind as isize);
@@ -13086,18 +13086,18 @@ unsafe extern "C" fn builtin_return(mut argv: *mut *mut libc::c_char) -> libc::c
   return rc;
 }
 unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
-  static mut times_tbl: [uint8_t; 9] = [
-    ' ' as i32 as uint8_t,
-    0u64 as uint8_t,
-    '\n' as i32 as uint8_t,
-    8u64 as uint8_t,
-    ' ' as i32 as uint8_t,
-    16u64 as uint8_t,
-    '\n' as i32 as uint8_t,
-    24u64 as uint8_t,
-    0i32 as uint8_t,
+  static mut times_tbl: [u8; 9] = [
+    ' ' as i32 as u8,
+    0u64 as u8,
+    '\n' as i32 as u8,
+    8u64 as u8,
+    ' ' as i32 as u8,
+    16u64 as u8,
+    '\n' as i32 as u8,
+    24u64 as u8,
+    0i32 as u8,
   ];
-  let mut p: *const uint8_t = 0 as *const uint8_t;
+  let mut p: *const u8 = 0 as *const u8;
   let mut clk_tck: libc::c_uint = 0;
   let mut buf: tms = tms {
     tms_utime: 0,

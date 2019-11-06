@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -19,10 +19,10 @@ extern "C" {
   #[no_mangle]
   fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
 }
 
-use libc::uint32_t;
+
 use libc::FILE;
 
 /* writeline outputs the input given, appropriately aligned according to class */

@@ -33,7 +33,7 @@ extern "C" {
   ) -> libc::c_uint;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 
   #[no_mangle]
   fn alloc_dumper() -> *mut dumper_t;
@@ -48,7 +48,7 @@ extern "C" {
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::uint32_t;
+
 
 /* %_A */
 /* rep count set, not default */

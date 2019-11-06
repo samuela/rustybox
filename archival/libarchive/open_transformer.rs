@@ -73,10 +73,10 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u32 = u32;
 use crate::librb::fd_pair;
 use crate::librb::off_t;
 use crate::librb::pid_t;
@@ -97,7 +97,7 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
@@ -105,9 +105,9 @@ pub struct transformer_state_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 pub const XZ_MAGIC2: C2RustUnnamed_0 = 5920890;
 pub const XZ_MAGIC1: C2RustUnnamed_0 = 14333;
@@ -136,10 +136,10 @@ pub unsafe extern "C" fn check_signature16(
   mut magic16: libc::c_uint,
 ) -> libc::c_int {
   if (*xstate).signature_skipped == 0 {
-    let mut magic2: uint16_t = 0;
+    let mut magic2: u16 = 0;
     if full_read(
       (*xstate).src_fd,
-      &mut magic2 as *mut uint16_t as *mut libc::c_void,
+      &mut magic2 as *mut u16 as *mut libc::c_void,
       2i32 as size_t,
     ) != 2i32 as libc::c_long
       || magic2 as libc::c_uint != magic16
@@ -340,15 +340,15 @@ unsafe extern "C" fn setup_transformer_on_fd(
     )
   } else {
     if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == XZ_MAGIC1 as libc::c_int {
-      let mut v32: uint32_t = 0;
+      let mut v32: u32 = 0;
       (*xstate).signature_skipped = 6i32 as smallint;
       xread(
         fd,
-        &mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut uint16_t as *mut libc::c_void,
+        &mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16 as *mut libc::c_void,
         4i32 as size_t,
       );
-      v32 = *(&mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut uint16_t
-        as *mut bb__aliased_uint32_t);
+      v32 = *(&mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16
+        as *mut bb__aliased_u32);
       if v32 == XZ_MAGIC2 as libc::c_int as libc::c_uint {
         (*xstate).xformer = Some(
           unpack_xz_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
@@ -673,7 +673,7 @@ pub unsafe extern "C" fn open_zipped(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

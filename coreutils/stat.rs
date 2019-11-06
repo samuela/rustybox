@@ -61,9 +61,9 @@ extern "C" {
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
@@ -91,7 +91,7 @@ use libc::time_t;
 
 use libc::stat;
 use libc::uid_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -308,43 +308,43 @@ unsafe fn human_time(ts: &libc::timespec) -> *const libc::c_char {
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
  * Still others have neither and have to get by with f_type (Linux).
  */
-unsafe extern "C" fn human_fstype(mut f_type: uint32_t) -> *const libc::c_char {
-  static mut fstype: [uint32_t; 35] = [
-    0xadffi32 as uint32_t,
-    0x1cd1i32 as uint32_t,
-    0x137di32 as uint32_t,
-    0xef51i32 as uint32_t,
-    0xef53i32 as uint32_t,
-    0x3153464ai32 as uint32_t,
-    0x58465342i32 as uint32_t,
+unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
+  static mut fstype: [u32; 35] = [
+    0xadffi32 as u32,
+    0x1cd1i32 as u32,
+    0x137di32 as u32,
+    0xef51i32 as u32,
+    0xef53i32 as u32,
+    0x3153464ai32 as u32,
+    0x58465342i32 as u32,
     0xf995e849u32,
-    0x9660i32 as uint32_t,
-    0x4000i32 as uint32_t,
-    0x4004i32 as uint32_t,
-    0x137fi32 as uint32_t,
-    0x138fi32 as uint32_t,
-    0x2468i32 as uint32_t,
-    0x2478i32 as uint32_t,
-    0x4d44i32 as uint32_t,
-    0x4006i32 as uint32_t,
-    0x564ci32 as uint32_t,
-    0x6969i32 as uint32_t,
-    0x9fa0i32 as uint32_t,
-    0x517bi32 as uint32_t,
-    0x12ff7b4i32 as uint32_t,
-    0x12ff7b5i32 as uint32_t,
-    0x12ff7b6i32 as uint32_t,
-    0x12ff7b7i32 as uint32_t,
-    0x11954i32 as uint32_t,
-    0x12fd16di32 as uint32_t,
-    0x5346544ei32 as uint32_t,
-    0x1021994i32 as uint32_t,
-    0x52654973i32 as uint32_t,
-    0x28cd3d45i32 as uint32_t,
-    0x7275i32 as uint32_t,
+    0x9660i32 as u32,
+    0x4000i32 as u32,
+    0x4004i32 as u32,
+    0x137fi32 as u32,
+    0x138fi32 as u32,
+    0x2468i32 as u32,
+    0x2478i32 as u32,
+    0x4d44i32 as u32,
+    0x4006i32 as u32,
+    0x564ci32 as u32,
+    0x6969i32 as u32,
+    0x9fa0i32 as u32,
+    0x517bi32 as u32,
+    0x12ff7b4i32 as u32,
+    0x12ff7b5i32 as u32,
+    0x12ff7b6i32 as u32,
+    0x12ff7b7i32 as u32,
+    0x11954i32 as u32,
+    0x12fd16di32 as u32,
+    0x5346544ei32 as u32,
+    0x1021994i32 as u32,
+    0x52654973i32 as u32,
+    0x28cd3d45i32 as u32,
+    0x7275i32 as u32,
     0x858458f6u32,
-    0x73717368i32 as uint32_t,
-    0x62656572i32 as uint32_t,
+    0x73717368i32 as u32,
+    0x62656572i32 as u32,
   ];
   static mut humanname: [libc::c_char; 236] = [
     97, 102, 102, 115, 0, 100, 101, 118, 112, 116, 115, 0, 101, 120, 116, 0, 101, 120, 116, 50, 0,
@@ -363,8 +363,8 @@ unsafe extern "C" fn human_fstype(mut f_type: uint32_t) -> *const libc::c_char {
   let mut i: libc::c_int = 0;
   i = 0i32;
   while (i as libc::c_uint)
-    < (::std::mem::size_of::<[uint32_t; 35]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint32_t>() as libc::c_ulong) as libc::c_uint
+    < (::std::mem::size_of::<[u32; 35]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u32>() as libc::c_ulong) as libc::c_uint
   {
     if fstype[i as usize] == f_type {
       break;
@@ -429,7 +429,7 @@ unsafe extern "C" fn print_statfs(
     printf(pformat, (*statfsbuf).f_type as libc::c_ulong);
   /* no equiv */
   } else if m as libc::c_int == 'T' as i32 {
-    printfs(pformat, human_fstype((*statfsbuf).f_type as uint32_t));
+    printfs(pformat, human_fstype((*statfsbuf).f_type as u32));
   } else if m as libc::c_int == 'b' as i32 {
     strcat(pformat, b"llu\x00" as *const u8 as *const libc::c_char);
     printf(pformat, (*statfsbuf).f_blocks as libc::c_ulonglong);

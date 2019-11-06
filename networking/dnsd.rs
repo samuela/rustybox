@@ -55,9 +55,9 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -86,11 +86,11 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint16_t = uint16_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u16 = u16;
+pub type bb__aliased_u32 = u32;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -117,9 +117,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -129,11 +129,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -147,7 +147,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -250,30 +250,30 @@ pub const DEFAULT_TTL: C2RustUnnamed_5 = 120;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dns_head {
-  pub id: uint16_t,
-  pub flags: uint16_t,
-  pub nquer: uint16_t,
-  pub nansw: uint16_t,
-  pub nauth: uint16_t,
-  pub nadd: uint16_t,
+  pub id: u16,
+  pub flags: u16,
+  pub nquer: u16,
+  pub nansw: u16,
+  pub nauth: u16,
+  pub nadd: u16,
 }
 /* Structure used to access type and class fields.
- * They are totally unaligned, but gcc 4.3.4 thinks that pointer of type uint16_t*
+ * They are totally unaligned, but gcc 4.3.4 thinks that pointer of type u16*
  * is 16-bit aligned and replaces 16-bit memcpy (in move_from_unaligned16 macro)
  * with aligned halfword access on arm920t!
  * Oh well. Slapping PACKED everywhere seems to help: */
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct type_and_class {
-  pub type_0: uint16_t,
-  pub class: uint16_t,
+  pub type_0: u16,
+  pub class: u16,
 }
 /* element of known name, ip address and reversed ip address */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dns_entry {
   pub next: *mut dns_entry,
-  pub ip: uint32_t,
+  pub ip: u32,
   pub rip: [libc::c_char; 17],
   pub name: [libc::c_char; 1],
 }
@@ -317,7 +317,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
   ) != 0
   {
     let mut ip: in_addr = in_addr { s_addr: 0 };
-    let mut v32: uint32_t = 0;
+    let mut v32: u32 = 0;
     if inet_aton(token[1], &mut ip) == 0i32 {
       bb_error_msg(
         b"error at line %u, skipping\x00" as *const u8 as *const libc::c_char,
@@ -367,9 +367,9 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
       sprintf(
         (*m).rip.as_mut_ptr(),
         b".%u.%u.%u.%u\x00" as *const u8 as *const libc::c_char,
-        v32 as uint8_t as libc::c_int,
-        (v32 >> 8i32) as uint8_t as libc::c_int,
-        (v32 >> 16i32) as uint8_t as libc::c_int,
+        v32 as u8 as libc::c_int,
+        (v32 >> 8i32) as u8 as libc::c_int,
+        (v32 >> 16i32) as u8 as libc::c_int,
         v32 >> 24i32,
       );
       undot((*m).rip.as_mut_ptr());
@@ -383,7 +383,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
  */
 unsafe extern "C" fn table_lookup(
   mut d: *mut dns_entry,
-  mut type_0: uint16_t,
+  mut type_0: u16,
   mut query_string: *mut libc::c_char,
 ) -> *mut libc::c_char {
   while !d.is_null() {
@@ -432,7 +432,7 @@ unsafe extern "C" fn table_lookup(
       }
       match current_block_5 {
         137226434401907431 => {}
-        _ => return &mut (*d).ip as *mut uint32_t as *mut libc::c_char,
+        _ => return &mut (*d).ip as *mut u32 as *mut libc::c_char,
       }
     } else if (len != 1i32 as libc::c_uint
       || *(*d).name.as_mut_ptr().offset(1) as libc::c_int != '*' as i32)
@@ -607,19 +607,19 @@ Domain name in a message can be represented as either:
  */
 unsafe extern "C" fn process_packet(
   mut conf_data: *mut dns_entry,
-  mut conf_ttl: uint32_t,
-  mut buf: *mut uint8_t,
+  mut conf_ttl: u32,
+  mut buf: *mut u8,
 ) -> libc::c_int {
   let mut head: *mut dns_head = 0 as *mut dns_head;
   let mut unaligned_type_class: *mut type_and_class = 0 as *mut type_and_class;
   let mut err_msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut query_string: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut answstr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut answb: *mut uint8_t = 0 as *mut uint8_t;
-  let mut outr_rlen: uint16_t = 0;
-  let mut outr_flags: uint16_t = 0;
-  let mut type_0: uint16_t = 0;
-  let mut class: uint16_t = 0;
+  let mut answb: *mut u8 = 0 as *mut u8;
+  let mut outr_rlen: u16 = 0;
+  let mut outr_flags: u16 = 0;
+  let mut type_0: u16 = 0;
+  let mut class: u16 = 0;
   let mut query_len: libc::c_int = 0;
   head = buf as *mut dns_head;
   if (*head).nquer as libc::c_int == 0i32 {
@@ -682,7 +682,7 @@ unsafe extern "C" fn process_packet(
     .wrapping_add(::std::mem::size_of::<type_and_class>() as libc::c_ulong)
     as libc::c_int as libc::c_int;
   /* where to append answer block */
-  answb = unaligned_type_class.offset(1) as *mut libc::c_void as *mut uint8_t;
+  answb = unaligned_type_class.offset(1) as *mut libc::c_void as *mut u8;
   /* OPCODE != 0 "standard query"? */
   if (*head).flags as libc::c_int
     & ({
@@ -706,7 +706,7 @@ unsafe extern "C" fn process_packet(
   {
     err_msg = b"opcode != 0\x00" as *const u8 as *const libc::c_char
   } else {
-    class = *(&mut (*unaligned_type_class).class as *mut uint16_t as *mut bb__aliased_uint16_t);
+    class = *(&mut (*unaligned_type_class).class as *mut u16 as *mut bb__aliased_u16);
     if class as libc::c_int
       != ({
         let mut __v: libc::c_ushort = 0;
@@ -729,7 +729,7 @@ unsafe extern "C" fn process_packet(
       /* not class INET? */
       err_msg = b"class != 1\x00" as *const u8 as *const libc::c_char
     } else {
-      type_0 = *(&mut (*unaligned_type_class).type_0 as *mut uint16_t as *mut bb__aliased_uint16_t);
+      type_0 = *(&mut (*unaligned_type_class).type_0 as *mut u16 as *mut bb__aliased_u16);
       if type_0 as libc::c_int
         != ({
           let mut __v: libc::c_ushort = 0;
@@ -773,7 +773,7 @@ unsafe extern "C" fn process_packet(
       } else {
         /* look up the name */
         answstr = table_lookup(conf_data, type_0, query_string);
-        outr_rlen = 4i32 as uint16_t;
+        outr_rlen = 4i32 as u16;
         if !answstr.is_null()
           && type_0 as libc::c_int
             == ({
@@ -796,7 +796,7 @@ unsafe extern "C" fn process_packet(
             }) as libc::c_int
         {
           /* returning a host name */
-          outr_rlen = strlen(answstr).wrapping_add(1i32 as libc::c_ulong) as uint16_t
+          outr_rlen = strlen(answstr).wrapping_add(1i32 as libc::c_ulong) as u16
         }
         if answstr.is_null()
           || (answb.wrapping_offset_from(buf) as libc::c_long as libc::c_uint)
@@ -836,7 +836,7 @@ unsafe extern "C" fn process_packet(
             query_len as libc::c_ulong,
           ); /* name, type, class */
           answb = answb.offset(query_len as isize);
-          *(answb as *mut uint32_t as *mut bb__aliased_uint32_t) = {
+          *(answb as *mut u32 as *mut bb__aliased_u32) = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = conf_ttl;
             if 0 != 0 {
@@ -856,7 +856,7 @@ unsafe extern "C" fn process_packet(
             __v
           };
           answb = answb.offset(4);
-          *(answb as *mut uint16_t as *mut bb__aliased_uint16_t) = {
+          *(answb as *mut u16 as *mut bb__aliased_u16) = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = outr_rlen;
             if 0 != 0 {
@@ -968,8 +968,8 @@ unsafe extern "C" fn process_packet(
       return 0i32;
     }
   }
-  (*head).flags = ((*head).flags as libc::c_int | outr_flags as libc::c_int) as uint16_t;
-  (*head).nadd = 0i32 as uint16_t;
+  (*head).flags = ((*head).flags as libc::c_int | outr_flags as libc::c_int) as u16;
+  (*head).nadd = 0i32 as u16;
   (*head).nauth = (*head).nadd;
   (*head).nquer = {
     let mut __v: libc::c_ushort = 0;
@@ -999,7 +999,7 @@ pub unsafe extern "C" fn dnsd_main(
     b"0.0.0.0\x00" as *const u8 as *const libc::c_char;
   let mut fileconf: *const libc::c_char = b"/etc/dnsd.conf\x00" as *const u8 as *const libc::c_char;
   let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
-  let mut conf_ttl: uint32_t = DEFAULT_TTL as libc::c_int as uint32_t;
+  let mut conf_ttl: u32 = DEFAULT_TTL as libc::c_int as u32;
   let mut sttl: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut sport: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
@@ -1008,9 +1008,9 @@ pub unsafe extern "C" fn dnsd_main(
   let mut lsa_size: libc::c_uint = 0;
   let mut udps: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
-  let mut port: uint16_t = 53i32 as uint16_t;
+  let mut port: u16 = 53i32 as u16;
   /* Ensure buf is 32bit aligned (we need 16bit, but 32bit can't hurt) */
-  let mut buf: [uint8_t; 513] = [0; 513];
+  let mut buf: [u8; 513] = [0; 513];
   opts = getopt32(
     argv,
     b"vsi:c:t:p:d\x00" as *const u8 as *const libc::c_char,
@@ -1029,7 +1029,7 @@ pub unsafe extern "C" fn dnsd_main(
   }
   if opts & 1i32 << 5i32 != 0 {
     // -p
-    port = xatou_range(sport, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as uint16_t
+    port = xatou_range(sport, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16
   }
   if opts & 1i32 << 6i32 != 0 {
     // -d
@@ -1085,7 +1085,7 @@ pub unsafe extern "C" fn dnsd_main(
       if option_mask32 & 1i32 as libc::c_uint != 0 {
         bb_simple_info_msg(b"got UDP packet\x00" as *const u8 as *const libc::c_char);
       }
-      buf[r as usize] = '\u{0}' as i32 as uint8_t;
+      buf[r as usize] = '\u{0}' as i32 as u8;
       r = process_packet(conf_data, conf_ttl, buf.as_mut_ptr());
       if r <= 0i32 {
         continue;

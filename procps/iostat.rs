@@ -58,9 +58,9 @@ extern "C" {
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
@@ -83,7 +83,7 @@ extern "C" {
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::time_t;
-use libc::uint32_t;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]

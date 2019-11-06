@@ -23,13 +23,13 @@ extern "C" {
   #[no_mangle]
   fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
 }
 
 use libc::time_t;
-use libc::uint32_t;
+
 pub type duration_t = libc::c_double;
 
 /*

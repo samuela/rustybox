@@ -28,10 +28,10 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::time_t;
-use libc::uint16_t;
-use libc::uint32_t;
+
+
 use crate::librb::uint64_t;
- use libc::uint8_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -45,7 +45,7 @@ pub struct transformer_state_t {
   pub mem_output_buf: *mut libc::c_char,
   pub bytes_out: off_t,
   pub bytes_in: off_t,
-  pub crc32: uint32_t,
+  pub crc32: u32,
   pub mtime: time_t,
   pub magic: C2RustUnnamed,
 }
@@ -53,27 +53,27 @@ pub struct transformer_state_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub b: [uint8_t; 8],
-  pub b16: [uint16_t; 4],
-  pub b32: [uint32_t; 2],
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rc_t {
   pub fd: libc::c_int,
-  pub ptr: *mut uint8_t,
-  pub buffer_end: *mut uint8_t,
-  pub code: uint32_t,
-  pub range: uint32_t,
-  pub bound: uint32_t,
+  pub ptr: *mut u8,
+  pub buffer_end: *mut u8,
+  pub code: u32,
+  pub range: u32,
+  pub bound: u32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct lzma_header_t {
-  pub pos: uint8_t,
-  pub dict_size: uint32_t,
+  pub pos: u8,
+  pub dict_size: u32,
   pub dst_size: uint64_t,
 }
 pub const LZMA_MATCH_MIN_LEN: C2RustUnnamed_0 = 2;
@@ -116,7 +116,7 @@ pub const LZMA_NUM_LEN_PROBS: C2RustUnnamed_0 = 514;
 unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
   let mut buffer_size: libc::c_int = safe_read(
     (*rc).fd,
-    rc.offset(1) as *mut uint8_t as *mut libc::c_void,
+    rc.offset(1) as *mut u8 as *mut libc::c_void,
     0x10000i32 as size_t,
   ) as libc::c_int;
   //TODO: return -1 instead
@@ -124,8 +124,8 @@ unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
   if buffer_size <= 0i32 {
     bb_simple_error_msg_and_die(b"unexpected EOF\x00" as *const u8 as *const libc::c_char);
   }
-  (*rc).buffer_end = (rc.offset(1) as *mut uint8_t).offset(buffer_size as isize);
-  (*rc).ptr = rc.offset(1) as *mut uint8_t;
+  (*rc).buffer_end = (rc.offset(1) as *mut u8).offset(buffer_size as isize);
+  (*rc).ptr = rc.offset(1) as *mut u8;
 }
 /* Called twice, but one callsite is in speed_inline'd rc_is_bit_1() */
 unsafe extern "C" fn rc_do_normalize(mut rc: *mut rc_t) {
@@ -168,24 +168,24 @@ unsafe extern "C" fn rc_free(mut rc: *mut rc_t) {
   free(rc as *mut libc::c_void);
 }
 /* rc_is_bit_1 is called 9 times */
-unsafe extern "C" fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut uint16_t) -> libc::c_int {
+unsafe extern "C" fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut u16) -> libc::c_int {
   rc_normalize(rc);
   (*rc).bound = (*p as libc::c_uint).wrapping_mul((*rc).range >> 11i32);
   if (*rc).code < (*rc).bound {
     (*rc).range = (*rc).bound;
-    *p = (*p as libc::c_int + ((1i32 << 11i32) - *p as libc::c_int >> 5i32)) as uint16_t;
+    *p = (*p as libc::c_int + ((1i32 << 11i32) - *p as libc::c_int >> 5i32)) as u16;
     return 0i32;
   }
-  (*rc).range = ((*rc).range as libc::c_uint).wrapping_sub((*rc).bound) as uint32_t as uint32_t;
-  (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).bound) as uint32_t as uint32_t;
-  *p = (*p as libc::c_int - (*p as libc::c_int >> 5i32)) as uint16_t;
+  (*rc).range = ((*rc).range as libc::c_uint).wrapping_sub((*rc).bound) as u32 as u32;
+  (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).bound) as u32 as u32;
+  *p = (*p as libc::c_int - (*p as libc::c_int >> 5i32)) as u16;
   return 1i32;
 }
 /* Called 4 times in unlzma loop */
 #[inline(always)]
 unsafe extern "C" fn rc_get_bit(
   mut rc: *mut rc_t,
-  mut p: *mut uint16_t,
+  mut p: *mut u16,
   mut symbol: *mut libc::c_int,
 ) -> libc::c_int {
   let mut ret: libc::c_int = rc_is_bit_1(rc, p);
@@ -198,7 +198,7 @@ unsafe extern "C" fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
   rc_normalize(rc);
   (*rc).range >>= 1i32;
   if (*rc).code >= (*rc).range {
-    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as uint32_t as uint32_t;
+    (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as u32 as u32;
     return 1i32;
   }
   return 0i32;
@@ -206,7 +206,7 @@ unsafe extern "C" fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
 /* Called twice */
 unsafe extern "C" fn rc_bit_tree_decode(
   mut rc: *mut rc_t,
-  mut p: *mut uint16_t,
+  mut p: *mut u16,
   mut num_levels: libc::c_int,
   mut symbol: *mut libc::c_int,
 ) {
@@ -228,8 +228,8 @@ pub unsafe extern "C" fn unpack_lzma_stream(
 ) -> libc::c_longlong {
   let mut num_bits: libc::c_int = 0;
   let mut offset: libc::c_int = 0;
-  let mut prob2: *mut uint16_t = 0 as *mut uint16_t;
-  let mut pos_0: uint32_t = 0;
+  let mut prob2: *mut u16 = 0 as *mut u16;
+  let mut pos_0: u32 = 0;
   let mut current_block: u64;
   let mut total_written: libc::c_longlong = 0i32 as libc::c_longlong;
   let mut header: lzma_header_t = lzma_header_t {
@@ -240,22 +240,22 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   let mut lc: libc::c_int = 0;
   let mut pb: libc::c_int = 0;
   let mut lp: libc::c_int = 0;
-  let mut pos_state_mask: uint32_t = 0;
-  let mut literal_pos_mask: uint32_t = 0;
-  let mut p: *mut uint16_t = 0 as *mut uint16_t;
+  let mut pos_state_mask: u32 = 0;
+  let mut literal_pos_mask: u32 = 0;
+  let mut p: *mut u16 = 0 as *mut u16;
   let mut rc: *mut rc_t = 0 as *mut rc_t;
   let mut i: libc::c_int = 0;
-  let mut buffer: *mut uint8_t = 0 as *mut uint8_t;
-  let mut buffer_size: uint32_t = 0;
-  let mut previous_byte: uint8_t = 0i32 as uint8_t;
+  let mut buffer: *mut u8 = 0 as *mut u8;
+  let mut buffer_size: u32 = 0;
+  let mut previous_byte: u8 = 0i32 as u8;
   let mut buffer_pos: size_t = 0i32 as size_t;
   let mut global_pos: size_t = 0i32 as size_t;
   let mut len: libc::c_int = 0i32;
   let mut state: libc::c_int = 0i32;
-  let mut rep0: uint32_t = 1i32 as uint32_t;
-  let mut rep1: uint32_t = 1i32 as uint32_t;
-  let mut rep2: uint32_t = 1i32 as uint32_t;
-  let mut rep3: uint32_t = 1i32 as uint32_t;
+  let mut rep0: u32 = 1i32 as u32;
+  let mut rep1: u32 = 1i32 as u32;
+  let mut rep2: u32 = 1i32 as u32;
+  let mut rep3: u32 = 1i32 as u32;
   if full_read(
     (*xstate).src_fd,
     &mut header as *mut lzma_header_t as *mut libc::c_void,
@@ -271,8 +271,8 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   lc = header.pos as libc::c_int % 9i32;
   pb = i / 5i32;
   lp = i % 5i32;
-  pos_state_mask = ((1i32 << pb) - 1i32) as uint32_t;
-  literal_pos_mask = ((1i32 << lp) - 1i32) as uint32_t;
+  pos_state_mask = ((1i32 << pb) - 1i32) as u32;
+  literal_pos_mask = ((1i32 << lp) - 1i32) as u32;
   /* Example values from linux-3.3.4.tar.lzma:
    * dict_size: 64M, dst_size: 2^64-1
    */
@@ -285,17 +285,17 @@ pub unsafe extern "C" fn unpack_lzma_stream(
     header.dst_size
   } else {
     header.dict_size as libc::c_ulong
-  } as uint32_t;
-  buffer = xmalloc(buffer_size as size_t) as *mut uint8_t;
+  } as u32;
+  buffer = xmalloc(buffer_size as size_t) as *mut u8;
   let mut num_probs: libc::c_int = 0;
   num_probs = LZMA_BASE_SIZE as libc::c_int + ((LZMA_LIT_SIZE as libc::c_int) << lc + lp);
   p = xmalloc(
-    (num_probs as libc::c_ulong).wrapping_mul(::std::mem::size_of::<uint16_t>() as libc::c_ulong),
-  ) as *mut uint16_t;
+    (num_probs as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u16>() as libc::c_ulong),
+  ) as *mut u16;
   num_probs += LZMA_LITERAL as libc::c_int - LZMA_BASE_SIZE as libc::c_int;
   i = 0i32;
   while i < num_probs {
-    *p.offset(i as isize) = (1i32 << 11i32 >> 1i32) as uint16_t;
+    *p.offset(i as isize) = (1i32 << 11i32 >> 1i32) as u16;
     i += 1
   }
   rc = rc_init((*xstate).src_fd);
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
     }
     let mut pos_state: libc::c_int =
       (buffer_pos.wrapping_add(global_pos) & pos_state_mask as libc::c_ulong) as libc::c_int;
-    let mut prob: *mut uint16_t = p
+    let mut prob: *mut u16 = p
       .offset(LZMA_IS_MATCH as libc::c_int as isize)
       .offset((state << LZMA_NUM_POS_BITS_MAX as libc::c_int) as isize)
       .offset(pos_state as isize);
@@ -334,10 +334,10 @@ pub unsafe extern "C" fn unpack_lzma_stream(
       );
       if state >= LZMA_NUM_LIT_STATES as libc::c_int {
         let mut match_byte: libc::c_int = 0;
-        let mut pos: uint32_t = 0;
-        pos = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as uint32_t;
+        let mut pos: u32 = 0;
+        pos = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
         if (pos as int32_t) < 0i32 {
-          pos = (pos as libc::c_uint).wrapping_add(header.dict_size) as uint32_t as uint32_t
+          pos = (pos as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32
         }
         match_byte = *buffer.offset(pos as isize) as libc::c_int;
         loop {
@@ -364,13 +364,13 @@ pub unsafe extern "C" fn unpack_lzma_stream(
         rc_get_bit(rc, prob.offset(mi as isize), &mut mi);
       }
       state = next_state[state as usize] as libc::c_int;
-      previous_byte = mi as uint8_t;
+      previous_byte = mi as u8;
       len = 1i32;
       current_block = 8572389853916933330;
     } else {
       num_bits = 0;
       offset = 0;
-      prob2 = 0 as *mut uint16_t;
+      prob2 = 0 as *mut u16;
       prob2 = p
         .offset(LZMA_IS_REP as libc::c_int as isize)
         .offset(state as isize);
@@ -404,7 +404,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
             current_block = 576355610076403033;
           }
         } else {
-          let mut distance: uint32_t = 0;
+          let mut distance: u32 = 0;
           prob2 =
             prob2.offset((LZMA_IS_REP_G1 as libc::c_int - LZMA_IS_REP_G0 as libc::c_int) as isize);
           distance = rep1;
@@ -470,7 +470,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
           len += offset;
           if state < 4i32 {
             let mut pos_slot: libc::c_int = 0;
-            let mut prob3: *mut uint16_t = 0 as *mut uint16_t;
+            let mut prob3: *mut u16 = 0 as *mut u16;
             state += LZMA_NUM_LIT_STATES as libc::c_int;
             prob3 = p.offset(LZMA_POS_SLOT as libc::c_int as isize).offset(
               ((if len < LZMA_NUM_LEN_TO_POS_STATES as libc::c_int {
@@ -485,12 +485,12 @@ pub unsafe extern "C" fn unpack_lzma_stream(
               LZMA_NUM_POS_SLOT_BITS as libc::c_int,
               &mut pos_slot,
             );
-            rep0 = pos_slot as uint32_t;
+            rep0 = pos_slot as u32;
             if pos_slot >= LZMA_START_POS_MODEL_INDEX as libc::c_int {
               let mut i2: libc::c_int = 0;
               let mut mi2: libc::c_int = 0;
               let mut num_bits2: libc::c_int = (pos_slot >> 1i32) - 1i32;
-              rep0 = (2i32 | pos_slot & 1i32) as uint32_t;
+              rep0 = (2i32 | pos_slot & 1i32) as u32;
               if pos_slot < LZMA_END_POS_MODEL_INDEX as libc::c_int {
                 rep0 <<= num_bits2;
                 prob3 = p
@@ -591,9 +591,9 @@ pub unsafe extern "C" fn unpack_lzma_stream(
          * Our code is slower (more checks per byte copy):
          */
         {
-          pos_0 = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as uint32_t;
+          pos_0 = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
           if (pos_0 as int32_t) < 0i32 {
-            pos_0 = (pos_0 as libc::c_uint).wrapping_add(header.dict_size) as uint32_t as uint32_t;
+            pos_0 = (pos_0 as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32;
             /* bug 10436 has an example file where this triggers: */
             //if ((int32_t)pos < 0)
             //	goto bad;

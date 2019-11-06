@@ -101,9 +101,9 @@ extern "C" {
   #[no_mangle]
   fn make_all_argv_opts(argv: *mut *mut libc::c_char);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
   #[no_mangle]
@@ -148,9 +148,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::uid_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type DIR = __dirstream;
 
 use libc::FILE;
@@ -209,9 +209,9 @@ pub struct smaprec {
 pub struct procps_status_t {
   pub dir: *mut DIR,
   pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: uint8_t,
-  pub shift_pages_to_kb: uint8_t,
-  pub argv_len: uint16_t,
+  pub shift_pages_to_bytes: u8,
+  pub shift_pages_to_kb: u8,
+  pub argv_len: u16,
   pub argv0: *mut libc::c_char,
   pub exe: *mut libc::c_char,
   pub main_thread_pid: libc::c_uint,
@@ -890,7 +890,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
    * we assume that unsigned is at least 32-bit.
    */
   pcpu_shift = 6i32 as libc::c_uint;
-  pcpu_scale = (1000i32 * 64i32 * busy_jifs as uint16_t as libc::c_int) as libc::c_uint;
+  pcpu_scale = (1000i32 * 64i32 * busy_jifs as u16 as libc::c_int) as libc::c_uint;
   if pcpu_scale == 0i32 as libc::c_uint {
     pcpu_scale = 1i32 as libc::c_uint
   }
@@ -901,7 +901,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
   tmp_unsigned = ((*ptr_to_globals)
     .cur_jif
     .total
-    .wrapping_sub((*ptr_to_globals).prev_jif.total) as uint16_t as libc::c_uint)
+    .wrapping_sub((*ptr_to_globals).prev_jif.total) as u16 as libc::c_uint)
     .wrapping_mul((*ptr_to_globals).total_pcpu);
   if tmp_unsigned != 0i32 as libc::c_uint {
     pcpu_scale = pcpu_scale.wrapping_div(tmp_unsigned)

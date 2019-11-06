@@ -23,7 +23,7 @@ pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn read_key(
             col |= row << 16i32;
             /* Return it in high-order word */
             return (col as int64_t) << 32i32
-              | KEYCODE_CURSOR_POS as libc::c_int as uint32_t as libc::c_long;
+              | KEYCODE_CURSOR_POS as libc::c_int as u32 as libc::c_long;
           }
         }
       }
@@ -600,7 +600,7 @@ pub unsafe extern "C" fn read_key(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

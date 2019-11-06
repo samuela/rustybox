@@ -73,13 +73,13 @@ extern "C" {
   // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
   /* ** Logging ***/
   /* ** Other shared functions ***/
-  /* 2nd param is "uint32_t*" */
+  /* 2nd param is "u32*" */
   /* 2nd param is "struct option_set**" */
-  /*uint32_t ip,*/
+  /*u32 ip,*/
   /* Returns 1 if no reply received */
   /* note: ip is a pointer to an IPv6 in network order, possibly misaliged */
   #[no_mangle]
-  fn sprint_nip6(dest: *mut libc::c_char, ip: *const uint8_t) -> libc::c_int;
+  fn sprint_nip6(dest: *mut libc::c_char, ip: *const u8) -> libc::c_int;
   #[no_mangle]
   fn udhcp_listen_socket(port: libc::c_int, inf: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -147,14 +147,14 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -180,7 +180,7 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
-  static MAC_BCAST_ADDR: [uint8_t; 6];
+  static MAC_BCAST_ADDR: [u8; 6];
   #[no_mangle]
   fn udhcp_option_idx(
     name: *const libc::c_char,
@@ -188,7 +188,7 @@ extern "C" {
   ) -> libc::c_uint;
   #[no_mangle]
   fn dname_dec(
-    cstr: *const uint8_t,
+    cstr: *const u8,
     clen: libc::c_int,
     pre: *const libc::c_char,
   ) -> *mut libc::c_char;
@@ -207,7 +207,7 @@ extern "C" {
     interface: *const libc::c_char,
     ifindex: *mut libc::c_int,
     nip6: *mut in6_addr,
-    mac: *mut uint8_t,
+    mac: *mut u8,
   ) -> libc::c_int;
   #[no_mangle]
   fn d6_recv_kernel_packet(
@@ -223,7 +223,7 @@ extern "C" {
     source_port: libc::c_int,
     dst_ipv6: *mut in6_addr,
     dest_port: libc::c_int,
-    dest_arp: *const uint8_t,
+    dest_arp: *const u8,
     ifindex: libc::c_int,
   ) -> libc::c_int;
   #[no_mangle]
@@ -241,10 +241,10 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
-pub type bb__aliased_uint32_t = uint32_t;
+
+
+
+pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -284,9 +284,9 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_0 = 256;
@@ -345,18 +345,18 @@ pub union C2RustUnnamed_3 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_4 {
-  pub source: uint16_t,
-  pub dest: uint16_t,
-  pub len: uint16_t,
-  pub check: uint16_t,
+  pub source: u16,
+  pub dest: u16,
+  pub len: u16,
+  pub check: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
-  pub uh_sport: uint16_t,
-  pub uh_dport: uint16_t,
-  pub uh_ulen: uint16_t,
-  pub uh_sum: uint16_t,
+  pub uh_sport: u16,
+  pub uh_dport: u16,
+  pub uh_ulen: u16,
+  pub uh_sum: u16,
 }
 pub type C2RustUnnamed_6 = libc::c_uint;
 pub const OPTION_LIST: C2RustUnnamed_6 = 32;
@@ -378,13 +378,13 @@ pub const OPTION_IP: C2RustUnnamed_6 = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dhcp_optflag {
-  pub flags: uint8_t,
-  pub code: uint8_t,
+  pub flags: u8,
+  pub code: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct option_set {
-  pub data: *mut uint8_t,
+  pub data: *mut u8,
   pub next: *mut option_set,
 }
 
@@ -394,17 +394,17 @@ pub struct option_set {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct client_data_t {
-  pub client_mac: [uint8_t; 6],
+  pub client_mac: [u8; 6],
   pub ifindex: libc::c_int,
-  pub opt_mask: [uint8_t; 32],
+  pub opt_mask: [u8; 32],
   pub interface: *const libc::c_char,
   pub pidfile: *mut libc::c_char,
   pub script: *const libc::c_char,
   pub options: *mut option_set,
-  pub clientid: *mut uint8_t,
-  pub vendorclass: *mut uint8_t,
-  pub hostname: *mut uint8_t,
-  pub fqdn: *mut uint8_t,
+  pub clientid: *mut u8,
+  pub vendorclass: *mut u8,
+  pub hostname: *mut u8,
+  pub fqdn: *mut u8,
   pub first_secs: libc::c_uint,
   pub last_secs: libc::c_uint,
   pub sockfd: libc::c_int,
@@ -422,27 +422,27 @@ pub struct ip6_hdr {
 #[repr(C)]
 pub union C2RustUnnamed_7 {
   pub ip6_un1: ip6_hdrctl,
-  pub ip6_un2_vfc: uint8_t,
+  pub ip6_un2_vfc: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ip6_hdrctl {
-  pub ip6_un1_flow: uint32_t,
-  pub ip6_un1_plen: uint16_t,
-  pub ip6_un1_nxt: uint8_t,
-  pub ip6_un1_hlim: uint8_t,
+  pub ip6_un1_flow: u32,
+  pub ip6_un1_plen: u16,
+  pub ip6_un1_nxt: u8,
+  pub ip6_un1_hlim: u8,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct d6_packet {
   pub d6_u: C2RustUnnamed_8,
-  pub d6_options: [uint8_t; 604],
+  pub d6_options: [u8; 604],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_8 {
-  pub d6_msg_type: uint8_t,
-  pub d6_xid32: uint32_t,
+  pub d6_msg_type: u8,
+  pub d6_xid32: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -455,11 +455,11 @@ pub struct ip6_udp_d6_packet {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct d6_option {
-  pub code_hi: uint8_t,
-  pub code: uint8_t,
-  pub len_hi: uint8_t,
-  pub len: uint8_t,
-  pub data: [uint8_t; 1],
+  pub code_hi: u8,
+  pub code: u8,
+  pub len_hi: u8,
+  pub len: u8,
+  pub data: [u8; 1],
 }
 /* ** Other shared functions ***/
 #[derive(Copy, Clone)]
@@ -565,8 +565,8 @@ static mut d6_optflags: [dhcp_optflag; 10] = [
   {
     let mut init = dhcp_optflag {
       flags: (OPTION_6RD as libc::c_int | OPTION_LIST as libc::c_int | OPTION_REQ as libc::c_int)
-        as uint8_t,
-      code: 23i32 as uint8_t,
+        as u8,
+      code: 23i32 as u8,
     };
     init
   },
@@ -574,64 +574,64 @@ static mut d6_optflags: [dhcp_optflag; 10] = [
     let mut init = dhcp_optflag {
       flags: (OPTION_DNS_STRING as libc::c_int
         | OPTION_LIST as libc::c_int
-        | OPTION_REQ as libc::c_int) as uint8_t,
-      code: 24i32 as uint8_t,
+        | OPTION_REQ as libc::c_int) as u8,
+      code: 24i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_DNS_STRING as libc::c_int as uint8_t,
-      code: 39i32 as uint8_t,
+      flags: OPTION_DNS_STRING as libc::c_int as u8,
+      code: 39i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 41i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 41i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 42i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 42i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 59i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 59i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 60i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 60i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0xd1i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0xd1i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: OPTION_STRING as libc::c_int as uint8_t,
-      code: 0xd2i32 as uint8_t,
+      flags: OPTION_STRING as libc::c_int as u8,
+      code: 0xd2i32 as u8,
     };
     init
   },
   {
     let mut init = dhcp_optflag {
-      flags: 0i32 as uint8_t,
-      code: 0i32 as uint8_t,
+      flags: 0i32 as u8,
+      code: 0i32 as u8,
     };
     init
   },
@@ -666,8 +666,8 @@ static mut opt_fqdn_req: [libc::c_char; 6] = [
 ];
 /* ** Utility functions ***/
 unsafe extern "C" fn d6_find_option(
-  mut option: *mut uint8_t,
-  mut option_end: *mut uint8_t,
+  mut option: *mut u8,
+  mut option_end: *mut u8,
   mut code: libc::c_uint,
 ) -> *mut libc::c_void {
   /* "length minus 4" */
@@ -696,11 +696,11 @@ unsafe extern "C" fn d6_find_option(
   return 0 as *mut libc::c_void;
 }
 unsafe extern "C" fn d6_copy_option(
-  mut option: *mut uint8_t,
-  mut option_end: *mut uint8_t,
+  mut option: *mut u8,
+  mut option_end: *mut u8,
   mut code: libc::c_uint,
 ) -> *mut libc::c_void {
-  let mut opt: *mut uint8_t = d6_find_option(option, option_end, code) as *mut uint8_t;
+  let mut opt: *mut u8 = d6_find_option(option, option_end, code) as *mut u8;
   if opt.is_null() {
     return opt as *mut libc::c_void;
   }
@@ -745,8 +745,8 @@ unsafe extern "C" fn new_env() -> *mut *mut libc::c_char {
     .offset(fresh2 as isize) as *mut *mut libc::c_char;
 }
 unsafe extern "C" fn string_option_to_env(
-  mut option: *const uint8_t,
-  mut option_end: *const uint8_t,
+  mut option: *const u8,
+  mut option_end: *const u8,
 ) -> *mut libc::c_char {
   let mut current_block: u64;
   let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
@@ -773,7 +773,7 @@ unsafe extern "C" fn string_option_to_env(
     9732342458255933827 => {
       val_len = ((*option.offset(2) as libc::c_int) << 8i32 | *option.offset(3) as libc::c_int)
         as libc::c_uint;
-      if (&*option.offset(4) as *const uint8_t).offset(val_len as isize) > option_end {
+      if (&*option.offset(4) as *const u8).offset(val_len as isize) > option_end {
         bb_simple_error_msg(
           b"option data exceeds option length\x00" as *const u8 as *const libc::c_char,
         );
@@ -796,14 +796,14 @@ unsafe extern "C" fn string_option_to_env(
   };
 }
 /* put all the parameters into the environment */
-unsafe extern "C" fn option_to_env(mut option: *const uint8_t, mut option_end: *const uint8_t) {
+unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const u8) {
   let mut addrs: libc::c_int = 0;
   let mut option_offset: libc::c_int = 0;
   /* "length minus 4" */
   let mut len_m4: libc::c_int =
     (option_end.wrapping_offset_from(option) as libc::c_long - 4i32 as libc::c_long) as libc::c_int;
   while len_m4 >= 0i32 {
-    let mut v32: uint32_t = 0;
+    let mut v32: u32 = 0;
     let mut ipv6str: [libc::c_char; 40] = [0; 40];
     if *option.offset(0) as libc::c_int != 0i32 || *option.offset(2) as libc::c_int != 0i32 {
       break;
@@ -851,7 +851,7 @@ unsafe extern "C" fn option_to_env(mut option: *const uint8_t, mut option_end: *
             b"ipv6=%s\x00" as *const u8 as *const libc::c_char,
             ipv6str.as_mut_ptr(),
           );
-          v32 = *(option.offset(4).offset(16).offset(4) as *mut bb__aliased_uint32_t);
+          v32 = *(option.offset(4).offset(16).offset(4) as *mut bb__aliased_u32);
           let ref mut fresh4 = *new_env();
           *fresh4 = xasprintf(b"lease=%u\x00" as *const u8 as *const libc::c_char, v32);
           current_block_28 = 5141539773904409130;
@@ -889,7 +889,7 @@ unsafe extern "C" fn option_to_env(mut option: *const uint8_t, mut option_end: *
          * |               |
          * +-+-+-+-+-+-+-+-+
          */
-        v32 = *(option.offset(4).offset(4) as *mut bb__aliased_uint32_t);
+        v32 = *(option.offset(4).offset(4) as *mut bb__aliased_u32);
         let ref mut fresh5 = *new_env();
         *fresh5 = xasprintf(
           b"ipv6prefix_lease=%u\x00" as *const u8 as *const libc::c_char,
@@ -1034,8 +1034,8 @@ unsafe extern "C" fn option_to_env(mut option: *const uint8_t, mut option_end: *
   }
 }
 unsafe extern "C" fn fill_envp(
-  mut option: *const uint8_t,
-  mut option_end: *const uint8_t,
+  mut option: *const u8,
+  mut option_end: *const u8,
 ) -> *mut *mut libc::c_char {
   let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut curr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
@@ -1077,8 +1077,8 @@ unsafe extern "C" fn fill_envp(
 }
 /* Call a script with a par file and env vars */
 unsafe extern "C" fn d6_run_script(
-  mut option: *const uint8_t,
-  mut option_end: *const uint8_t,
+  mut option: *const u8,
+  mut option_end: *const u8,
   mut name: *const libc::c_char,
 ) {
   let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
@@ -1117,12 +1117,12 @@ unsafe extern "C" fn d6_run_script(
 }
 /* Call a script with a par file and no env var */
 unsafe extern "C" fn d6_run_script_no_option(mut name: *const libc::c_char) {
-  d6_run_script(0 as *const uint8_t, 0 as *const uint8_t, name);
+  d6_run_script(0 as *const u8, 0 as *const u8, name);
 }
 /* ** Sending/receiving packets ***/
 #[inline(always)]
-unsafe extern "C" fn random_xid() -> uint32_t {
-  let mut t: uint32_t = rand() as libc::c_uint
+unsafe extern "C" fn random_xid() -> u32 {
+  let mut t: u32 = rand() as libc::c_uint
     & ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffffffi32 as libc::c_uint;
@@ -1148,9 +1148,9 @@ unsafe extern "C" fn random_xid() -> uint32_t {
 unsafe extern "C" fn init_d6_packet(
   mut packet: *mut d6_packet,
   mut type_0: libc::c_char,
-  mut xid: uint32_t,
-) -> *mut uint8_t {
-  let mut ptr: *mut uint8_t = 0 as *mut uint8_t;
+  mut xid: u32,
+) -> *mut u8 {
+  let mut ptr: *mut u8 = 0 as *mut u8;
   let mut clientid: *mut d6_option = 0 as *mut d6_option;
   let mut secs: libc::c_uint = 0;
   memset(
@@ -1159,12 +1159,12 @@ unsafe extern "C" fn init_d6_packet(
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   );
   (*packet).d6_u.d6_xid32 = xid;
-  (*packet).d6_u.d6_msg_type = type_0 as uint8_t;
+  (*packet).d6_u.d6_msg_type = type_0 as u8;
   /* ELAPSED_TIME option is required to be present by the RFC,
    * and some servers do check for its presense. [which?]
    */
   ptr = (*packet).d6_options.as_mut_ptr(); /* NB: it is 32-bit aligned */
-  *(ptr as *mut uint32_t) = {
+  *(ptr as *mut u32) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ((8i32 << 16i32) + 2i32) as libc::c_uint;
     if 0 != 0 {
@@ -1218,7 +1218,7 @@ unsafe extern "C" fn init_d6_packet(
         as *mut client_data_t))
         .first_secs,
     );
-  *(ptr as *mut uint16_t) = if secs < 0xffffi32 as libc::c_uint {
+  *(ptr as *mut u16) = if secs < 0xffffi32 as libc::c_uint {
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = secs as libc::c_ushort;
@@ -1238,7 +1238,7 @@ unsafe extern "C" fn init_d6_packet(
     }) as libc::c_int
   } else {
     0xffffi32
-  } as uint16_t;
+  } as u16;
   ptr = ptr.offset(2);
   /* add CLIENTID option */
   clientid = (*(&mut *bb_common_bufsiz1
@@ -1250,13 +1250,13 @@ unsafe extern "C" fn init_d6_packet(
     ptr as *mut libc::c_void,
     clientid as *const libc::c_void,
     ((*clientid).len as libc::c_int + 2i32 + 2i32) as size_t,
-  ) as *mut uint8_t;
+  ) as *mut u8;
 }
-unsafe extern "C" fn add_d6_client_options(mut ptr: *mut uint8_t) -> *mut uint8_t {
+unsafe extern "C" fn add_d6_client_options(mut ptr: *mut u8) -> *mut u8 {
   let mut curr: *mut option_set = 0 as *mut option_set;
-  let mut start: *mut uint8_t = ptr;
+  let mut start: *mut u8 = ptr;
   let mut option: libc::c_uint = 0;
-  let mut len: uint16_t = 0;
+  let mut len: u16 = 0;
   ptr = ptr.offset(4);
   option = 1i32 as libc::c_uint;
   while option < 256i32 as libc::c_uint {
@@ -1268,20 +1268,20 @@ unsafe extern "C" fn add_d6_client_options(mut ptr: *mut uint8_t) -> *mut uint8_
       & 1i32 << (option & 7i32 as libc::c_uint)
       != 0
     {
-      *ptr.offset(0) = (option >> 8i32) as uint8_t;
-      *ptr.offset(1) = option as uint8_t;
+      *ptr.offset(0) = (option >> 8i32) as u8;
+      *ptr.offset(1) = option as u8;
       ptr = ptr.offset(2)
     }
     option = option.wrapping_add(1)
   }
   if ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long != 0i32 as libc::c_long
   {
-    *start.offset(0) = (6i32 >> 8i32) as uint8_t;
-    *start.offset(1) = 6i32 as uint8_t;
+    *start.offset(0) = (6i32 >> 8i32) as u8;
+    *start.offset(1) = 6i32 as u8;
     *start.offset(2) =
-      (ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long >> 8i32) as uint8_t;
+      (ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long >> 8i32) as u8;
     *start.offset(3) =
-      (ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long) as uint8_t
+      (ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long) as u8
   } else {
     ptr = start
   }
@@ -1289,7 +1289,7 @@ unsafe extern "C" fn add_d6_client_options(mut ptr: *mut uint8_t) -> *mut uint8_
     ptr as *mut libc::c_void,
     &opt_fqdn_req as *const [libc::c_char; 6] as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong,
-  ) as *mut uint8_t;
+  ) as *mut u8;
   /* Add -x options if any */
   curr = (*(&mut *bb_common_bufsiz1
     .as_mut_ptr()
@@ -1298,42 +1298,42 @@ unsafe extern "C" fn add_d6_client_options(mut ptr: *mut uint8_t) -> *mut uint8_
     .options;
   while !curr.is_null() {
     len = ((*(*curr).data.offset(2) as libc::c_int) << 8i32
-      | *(*curr).data.offset((2i32 + 1i32) as isize) as libc::c_int) as uint16_t;
+      | *(*curr).data.offset((2i32 + 1i32) as isize) as libc::c_int) as u16;
     ptr = mempcpy(
       ptr as *mut libc::c_void,
       (*curr).data as *const libc::c_void,
       (4i32 + len as libc::c_int) as size_t,
-    ) as *mut uint8_t;
+    ) as *mut u8;
     curr = (*curr).next
   }
   return ptr;
 }
 unsafe extern "C" fn d6_mcast_from_client_data_ifindex(
   mut packet: *mut d6_packet,
-  mut end: *mut uint8_t,
+  mut end: *mut u8,
 ) -> libc::c_int {
   /* FF02::1:2 is "All_DHCP_Relay_Agents_and_Servers" address */
-  static mut FF02__1_2: [uint8_t; 16] = [
-    0xffi32 as uint8_t,
-    0x2i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0i32 as uint8_t,
-    0x1i32 as uint8_t,
-    0i32 as uint8_t,
-    0x2i32 as uint8_t,
+  static mut FF02__1_2: [u8; 16] = [
+    0xffi32 as u8,
+    0x2i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0i32 as u8,
+    0x1i32 as u8,
+    0i32 as u8,
+    0x2i32 as u8,
   ];
   return d6_send_raw_packet(
     packet,
-    end.wrapping_offset_from(packet as *mut uint8_t) as libc::c_long as libc::c_uint,
+    end.wrapping_offset_from(packet as *mut u8) as libc::c_long as libc::c_uint,
     &mut (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
       (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
@@ -1374,12 +1374,12 @@ unsafe extern "C" fn d6_mcast_from_client_data_ifindex(
  */
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
-unsafe extern "C" fn send_d6_info_request(mut xid: uint32_t) -> libc::c_int {
+unsafe extern "C" fn send_d6_info_request(mut xid: u32) -> libc::c_int {
   let mut packet: d6_packet = d6_packet {
     d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
     d6_options: [0; 604],
   };
-  let mut opt_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut opt_ptr: *mut u8 = 0 as *mut u8;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 11i32 as libc::c_char, xid);
   /* Add options:
@@ -1476,14 +1476,14 @@ unsafe extern "C" fn send_d6_info_request(mut xid: uint32_t) -> libc::c_int {
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
 unsafe extern "C" fn send_d6_discover(
-  mut xid: uint32_t,
+  mut xid: u32,
   mut requested_ipv6: *mut in6_addr,
 ) -> libc::c_int {
   let mut packet: d6_packet = d6_packet {
     d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
     d6_options: [0; 604],
   };
-  let mut opt_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut opt_ptr: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = 0;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 1i32 as libc::c_char, xid);
@@ -1518,20 +1518,20 @@ unsafe extern "C" fn send_d6_discover(
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_na)
-      .code = 3i32 as uint8_t;
+      .code = 3i32 as u8;
     (*(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
       (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_na)
-      .len = len.wrapping_sub(4i32 as libc::c_uint) as uint8_t;
+      .len = len.wrapping_sub(4i32 as libc::c_uint) as u8;
     *((*(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
       (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_na)
       .data
-      .as_mut_ptr() as *mut bb__aliased_uint32_t) = rand() as bb__aliased_uint32_t;
+      .as_mut_ptr() as *mut bb__aliased_u32) = rand() as bb__aliased_u32;
     if !requested_ipv6.is_null() {
       let mut iaaddr: *mut d6_option = (*(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
         (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
@@ -1543,8 +1543,8 @@ unsafe extern "C" fn send_d6_discover(
         .offset(4)
         .offset(4)
         .offset(4) as *mut libc::c_void as *mut d6_option;
-      (*iaaddr).code = 5i32 as uint8_t;
-      (*iaaddr).len = (16i32 + 4i32 + 4i32) as uint8_t;
+      (*iaaddr).code = 5i32 as u8;
+      (*iaaddr).len = (16i32 + 4i32 + 4i32) as u8;
       memcpy(
         (*iaaddr).data.as_mut_ptr() as *mut libc::c_void,
         requested_ipv6 as *const libc::c_void,
@@ -1559,7 +1559,7 @@ unsafe extern "C" fn send_d6_discover(
       ) as *mut libc::c_char as *mut client6_data_t))
         .ia_na as *const libc::c_void,
       len as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* IA_PD */
   free(
@@ -1588,20 +1588,20 @@ unsafe extern "C" fn send_d6_discover(
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_pd)
-      .code = 25i32 as uint8_t;
+      .code = 25i32 as u8;
     (*(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
       (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_pd)
-      .len = len.wrapping_sub(4i32 as libc::c_uint) as uint8_t;
+      .len = len.wrapping_sub(4i32 as libc::c_uint) as u8;
     *((*(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
       (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
         .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
     ) as *mut libc::c_char as *mut client6_data_t))
       .ia_pd)
       .data
-      .as_mut_ptr() as *mut bb__aliased_uint32_t) = rand() as bb__aliased_uint32_t;
+      .as_mut_ptr() as *mut bb__aliased_u32) = rand() as bb__aliased_u32;
     opt_ptr = mempcpy(
       opt_ptr as *mut libc::c_void,
       (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
@@ -1610,7 +1610,7 @@ unsafe extern "C" fn send_d6_discover(
       ) as *mut libc::c_char as *mut client6_data_t))
         .ia_pd as *const libc::c_void,
       len as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* Add options:
    * "param req" option according to -O, options specified with -x
@@ -1654,12 +1654,12 @@ unsafe extern "C" fn send_d6_discover(
  */
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
-unsafe extern "C" fn send_d6_select(mut xid: uint32_t) -> libc::c_int {
+unsafe extern "C" fn send_d6_select(mut xid: u32) -> libc::c_int {
   let mut packet: d6_packet = d6_packet {
     d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
     d6_options: [0; 604],
   };
-  let mut opt_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut opt_ptr: *mut u8 = 0 as *mut u8;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 3i32 as libc::c_char, xid);
   /* server id */
@@ -1678,7 +1678,7 @@ unsafe extern "C" fn send_d6_select(mut xid: uint32_t) -> libc::c_int {
       .len as libc::c_int
       + 2i32
       + 2i32) as size_t,
-  ) as *mut uint8_t;
+  ) as *mut u8;
   /* IA NA (contains requested IP) */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
@@ -1702,7 +1702,7 @@ unsafe extern "C" fn send_d6_select(mut xid: uint32_t) -> libc::c_int {
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* IA PD */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
@@ -1727,7 +1727,7 @@ unsafe extern "C" fn send_d6_select(mut xid: uint32_t) -> libc::c_int {
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* Add options:
    * "param req" option according to -O, options specified with -x
@@ -1788,7 +1788,7 @@ unsafe extern "C" fn send_d6_select(mut xid: uint32_t) -> libc::c_int {
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
 unsafe extern "C" fn send_d6_renew(
-  mut xid: uint32_t,
+  mut xid: u32,
   mut server_ipv6: *mut in6_addr,
   mut our_cur_ipv6: *mut in6_addr,
 ) -> libc::c_int {
@@ -1796,7 +1796,7 @@ unsafe extern "C" fn send_d6_renew(
     d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
     d6_options: [0; 604],
   };
-  let mut opt_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut opt_ptr: *mut u8 = 0 as *mut u8;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 3i32 as libc::c_char, xid);
   /* server id */
@@ -1815,7 +1815,7 @@ unsafe extern "C" fn send_d6_renew(
       .len as libc::c_int
       + 2i32
       + 2i32) as size_t,
-  ) as *mut uint8_t;
+  ) as *mut u8;
   /* IA NA (contains requested IP) */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
@@ -1839,7 +1839,7 @@ unsafe extern "C" fn send_d6_renew(
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* IA PD */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
@@ -1864,7 +1864,7 @@ unsafe extern "C" fn send_d6_renew(
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* Add options:
    * "param req" option according to -O, options specified with -x
@@ -1877,7 +1877,7 @@ unsafe extern "C" fn send_d6_renew(
   if !server_ipv6.is_null() {
     return d6_send_kernel_packet(
       &mut packet,
-      opt_ptr.wrapping_offset_from(&mut packet as *mut d6_packet as *mut uint8_t) as libc::c_long
+      opt_ptr.wrapping_offset_from(&mut packet as *mut d6_packet as *mut u8) as libc::c_long
         as libc::c_uint,
       our_cur_ipv6,
       546i32,
@@ -1902,7 +1902,7 @@ unsafe extern "C" fn send_d6_release(
     d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
     d6_options: [0; 604],
   };
-  let mut opt_ptr: *mut uint8_t = 0 as *mut uint8_t;
+  let mut opt_ptr: *mut u8 = 0 as *mut u8;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 8i32 as libc::c_char, random_xid());
   /* server id */
@@ -1921,7 +1921,7 @@ unsafe extern "C" fn send_d6_release(
       .len as libc::c_int
       + 2i32
       + 2i32) as size_t,
-  ) as *mut uint8_t;
+  ) as *mut u8;
   /* IA NA (contains our current IP) */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
@@ -1945,7 +1945,7 @@ unsafe extern "C" fn send_d6_release(
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   /* IA PD */
   if !(*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
@@ -1970,7 +1970,7 @@ unsafe extern "C" fn send_d6_release(
         .len as libc::c_int
         + 2i32
         + 2i32) as size_t,
-    ) as *mut uint8_t
+    ) as *mut u8
   }
   bb_info_msg(
     b"sending %s\x00" as *const u8 as *const libc::c_char,
@@ -1978,7 +1978,7 @@ unsafe extern "C" fn send_d6_release(
   );
   return d6_send_kernel_packet(
     &mut packet,
-    opt_ptr.wrapping_offset_from(&mut packet as *mut d6_packet as *mut uint8_t) as libc::c_long
+    opt_ptr.wrapping_offset_from(&mut packet as *mut d6_packet as *mut u8) as libc::c_long
       as libc::c_uint,
     our_cur_ipv6,
     546i32,
@@ -2163,7 +2163,7 @@ unsafe extern "C" fn d6_recv_raw_packet(
   //	packet.ip.tot_len = packet.udp.len; /* yes, this is needed */
   //	check = packet.udp.check;
   //	packet.udp.check = 0;
-  //	if (check && check != inet_cksum((uint16_t *)&packet, bytes)) {
+  //	if (check && check != inet_cksum((u16 *)&packet, bytes)) {
   //		log1("packet with bad UDP checksum received, ignoring");
   //		return -2;
   //	}
@@ -2450,9 +2450,9 @@ unsafe extern "C" fn perform_d6_release(
     as *mut client_data_t))
     .state = 6i32 as smallint;
 }
-// /static uint8_t* alloc_dhcp_option(int code, const char *str, int extra)
+// /static u8* alloc_dhcp_option(int code, const char *str, int extra)
 // /{
-// /	uint8_t *storage;
+// /	u8 *storage;
 // /	int len = strnlen(str, 255);
 // /	storage = xzalloc(len + extra + OPT_DATA);
 // /	storage[OPT_CODE] = code;
@@ -2525,7 +2525,7 @@ pub unsafe extern "C" fn udhcpc6_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut lease_seconds: uint32_t = 0; /* must be signed */
+  let mut lease_seconds: u32 = 0; /* must be signed */
   let mut option: *mut d6_option = 0 as *mut d6_option;
   let mut address_timeout: libc::c_uint = 0;
   let mut prefix_timeout: libc::c_uint = 0;
@@ -2548,7 +2548,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     },
   };
   let mut requested_ipv6: *mut in6_addr = 0 as *mut in6_addr;
-  let mut xid: uint32_t = 0i32 as uint32_t;
+  let mut xid: u32 = 0i32 as u32;
   let mut packet_num: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
   let mut already_waited_sec: libc::c_uint = 0;
@@ -2641,7 +2641,7 @@ pub unsafe extern "C" fn udhcpc6_main(
       .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
       as *mut libc::c_char as *mut client_data_t))
       .opt_mask[(n >> 3i32) as usize];
-    *fresh49 = (*fresh49 as libc::c_int | 1i32 << (n & 7i32 as libc::c_uint)) as uint8_t
+    *fresh49 = (*fresh49 as libc::c_int | 1i32 << (n & 7i32 as libc::c_uint)) as u8
   }
   if opt & OPT_o as libc::c_int as libc::c_uint == 0 {
     let mut i: libc::c_uint = 0;
@@ -2658,7 +2658,7 @@ pub unsafe extern "C" fn udhcpc6_main(
           .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
           as *mut libc::c_char as *mut client_data_t))
           .opt_mask[(n_0 >> 3i32) as usize];
-        *fresh50 = (*fresh50 as libc::c_int | 1i32 << (n_0 & 7i32 as libc::c_uint)) as uint8_t
+        *fresh50 = (*fresh50 as libc::c_int | 1i32 << (n_0 & 7i32 as libc::c_uint)) as u8
       }
       i = i.wrapping_add(1)
     }
@@ -2707,10 +2707,10 @@ pub unsafe extern "C" fn udhcpc6_main(
   /* Create client ID based on mac, set clientid_mac_ptr */
   let mut clientid: *mut d6_option = 0 as *mut d6_option; /* DUID-LL */
   clientid = xzalloc((2i32 + 2i32 + 2i32 + 2i32 + 6i32) as size_t) as *mut d6_option; /* ethernet */
-  (*clientid).code = 1i32 as uint8_t;
-  (*clientid).len = (2i32 + 2i32 + 6i32) as uint8_t;
-  *(*clientid).data.as_mut_ptr().offset(1) = 3i32 as uint8_t;
-  *(*clientid).data.as_mut_ptr().offset(3) = 1i32 as uint8_t;
+  (*clientid).code = 1i32 as u8;
+  (*clientid).len = (2i32 + 2i32 + 6i32) as u8;
+  *(*clientid).data.as_mut_ptr().offset(1) = 3i32 as u8;
+  *(*clientid).data.as_mut_ptr().offset(3) = 1i32 as u8;
   clientid_mac_ptr = (*clientid).data.as_mut_ptr().offset(2).offset(2) as *mut libc::c_void;
   memcpy(
     clientid_mac_ptr,
@@ -2727,7 +2727,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
     as *mut libc::c_char as *mut client_data_t))
     .clientid;
-  *fresh51 = clientid as *mut libc::c_void as *mut uint8_t;
+  *fresh51 = clientid as *mut libc::c_void as *mut u8;
   if opt & OPT_S as libc::c_int as libc::c_uint != 0 {
     openlog(applet_name, 0x1i32, 3i32 << 3i32);
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
@@ -2767,7 +2767,7 @@ pub unsafe extern "C" fn udhcpc6_main(
       d6_u: C2RustUnnamed_8 { d6_msg_type: 0 },
       d6_options: [0; 604],
     };
-    let mut packet_end: *mut uint8_t = 0 as *mut uint8_t;
+    let mut packet_end: *mut u8 = 0 as *mut u8;
     /* back to main loop */
     /* silence "uninitialized!" warning */
     let mut timestamp_before_wait: libc::c_uint = 0;
@@ -3346,7 +3346,7 @@ pub unsafe extern "C" fn udhcpc6_main(
           if len < 0i32 {
             continue;
           }
-          packet_end = (&mut packet as *mut d6_packet as *mut uint8_t).offset(len as isize);
+          packet_end = (&mut packet as *mut d6_packet as *mut u8).offset(len as isize);
           if packet.d6_u.d6_xid32
             & ({
               let mut __v: libc::c_uint = 0;
@@ -3729,7 +3729,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                          */
                         requested_ipv6 = (*iaaddr).data.as_mut_ptr() as *mut in6_addr;
                         lease_seconds = *((*iaaddr).data.as_mut_ptr().offset(16).offset(4)
-                          as *mut bb__aliased_uint32_t);
+                          as *mut bb__aliased_u32);
                         lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;
@@ -3871,7 +3871,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                         continue;
                       } else {
                         lease_seconds =
-                          *((*iaprefix).data.as_mut_ptr().offset(4) as *mut bb__aliased_uint32_t);
+                          *((*iaprefix).data.as_mut_ptr().offset(4) as *mut bb__aliased_u32);
                         lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;

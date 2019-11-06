@@ -128,7 +128,7 @@ extern "C" {
   #[no_mangle]
   fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -166,8 +166,8 @@ use crate::librb::__ino64_t;
 
 use crate::librb::__off64_t;
 
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -207,7 +207,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-pub type recurse_flags_t = uint8_t;
+pub type recurse_flags_t = u8;
 /* Last element is marked by mult == 0 */
 #[derive(Copy, Clone)]
 #[repr(C)]

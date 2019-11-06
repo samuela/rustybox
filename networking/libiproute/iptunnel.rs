@@ -79,7 +79,7 @@ extern "C" {
   #[no_mangle]
   fn rtnl_dsfield_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
-  fn rtnl_dsfield_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_dsfield_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
   #[no_mangle]
@@ -89,7 +89,7 @@ extern "C" {
   #[no_mangle]
   fn get_unsigned(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> libc::c_uint;
   #[no_mangle]
-  fn get_addr32(name: *mut libc::c_char) -> uint32_t;
+  fn get_addr32(name: *mut libc::c_char) -> u32;
   #[no_mangle]
   fn rt_addr_n2a(af: libc::c_int, addr: *mut libc::c_void) -> *const libc::c_char;
   #[no_mangle]
@@ -99,9 +99,9 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -120,7 +120,7 @@ pub struct sockaddr {
   pub sa_family: sa_family_t,
   pub sa_data: [libc::c_char; 14],
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
 pub const IPPROTO_RAW: C2RustUnnamed = 255;
@@ -154,15 +154,15 @@ pub struct iphdr {
   #[bitfield(name = "ihl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "version", ty = "libc::c_uint", bits = "4..=7")]
   pub ihl_version: [u8; 1],
-  pub tos: uint8_t,
-  pub tot_len: uint16_t,
-  pub id: uint16_t,
-  pub frag_off: uint16_t,
-  pub ttl: uint8_t,
-  pub protocol: uint8_t,
-  pub check: uint16_t,
-  pub saddr: uint32_t,
-  pub daddr: uint32_t,
+  pub tos: u8,
+  pub tot_len: u16,
+  pub id: u16,
+  pub frag_off: u16,
+  pub ttl: u8,
+  pub protocol: u8,
+  pub check: u16,
+  pub saddr: u32,
+  pub daddr: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -215,10 +215,10 @@ pub union C2RustUnnamed_1 {
 pub struct ip_tunnel_parm {
   pub name: [libc::c_char; 16],
   pub link: libc::c_int,
-  pub i_flags: uint16_t,
-  pub o_flags: uint16_t,
-  pub i_key: uint32_t,
-  pub o_key: uint32_t,
+  pub i_flags: u16,
+  pub o_flags: u16,
+  pub i_key: u32,
+  pub o_key: u32,
   pub iph: iphdr,
 }
 
@@ -261,11 +261,11 @@ pub const ARG_show: C2RustUnnamed_3 = 3;
 /* SIT-mode i_flags */
 //#define SIT_ISATAP 0x0001
 //struct ip_tunnel_prl {
-//	uint32_t          addr;
-//	uint16_t          flags;
-//	uint16_t          __reserved;
-//	uint32_t          datalen;
-//	uint32_t          __reserved2;
+//	u32          addr;
+//	u16          flags;
+//	u16          __reserved;
+//	u32          datalen;
+//	u32          __reserved2;
 //	/* data follows */
 //};
 // /* PRL flags */
@@ -508,7 +508,7 @@ unsafe extern "C" fn parse_args(
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
         }
-        (*p).iph.protocol = IPPROTO_IPIP as libc::c_int as uint8_t
+        (*p).iph.protocol = IPPROTO_IPIP as libc::c_int as u8
       } else if key == ARG_gre as libc::c_int || key == ARG_gre_ip as libc::c_int {
         if (*p).iph.protocol as libc::c_int != 0
           && (*p).iph.protocol as libc::c_int != IPPROTO_GRE as libc::c_int
@@ -518,7 +518,7 @@ unsafe extern "C" fn parse_args(
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
         }
-        (*p).iph.protocol = IPPROTO_GRE as libc::c_int as uint8_t
+        (*p).iph.protocol = IPPROTO_GRE as libc::c_int as u8
       } else if key == ARG_sit as libc::c_int || key == ARG_ip6_ip as libc::c_int {
         if (*p).iph.protocol as libc::c_int != 0
           && (*p).iph.protocol as libc::c_int != IPPROTO_IPV6 as libc::c_int
@@ -528,7 +528,7 @@ unsafe extern "C" fn parse_args(
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
         }
-        (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as uint8_t
+        (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as u8
       } else {
         bb_error_msg_and_die(
           b"%s tunnel mode\x00" as *const u8 as *const libc::c_char,
@@ -555,7 +555,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -573,7 +573,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
         (*p).o_key = get_addr32(*argv);
         (*p).i_key = (*p).o_key
@@ -620,7 +620,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
         (*p).o_key = get_addr32(*argv)
       } else {
@@ -665,7 +665,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
         (*p).o_key = get_addr32(*argv)
       } else {
@@ -708,7 +708,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -726,7 +726,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_iseq as libc::c_int {
       (*p).i_flags = ((*p).i_flags as libc::c_int
         | ({
@@ -745,7 +745,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_oseq as libc::c_int {
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
@@ -764,7 +764,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_csum as libc::c_int {
       (*p).i_flags = ((*p).i_flags as libc::c_int
         | ({
@@ -783,7 +783,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
           }
           __v
-        }) as libc::c_int) as uint16_t;
+        }) as libc::c_int) as u16;
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -801,7 +801,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_icsum as libc::c_int {
       (*p).i_flags = ((*p).i_flags as libc::c_int
         | ({
@@ -820,7 +820,7 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh42, fresh44, fresh43);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_ocsum as libc::c_int {
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
@@ -839,9 +839,9 @@ unsafe extern "C" fn parse_args(
             c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
           }
           __v
-        }) as libc::c_int) as uint16_t
+        }) as libc::c_int) as u16
     } else if key == ARG_nopmtudisc as libc::c_int {
-      (*p).iph.frag_off = 0i32 as uint16_t
+      (*p).iph.frag_off = 0i32 as u16
     } else if key == ARG_pmtudisc as libc::c_int {
       (*p).iph.frag_off = {
         let mut __v: libc::c_ushort = 0;
@@ -884,19 +884,19 @@ unsafe extern "C" fn parse_args(
         if uval_2 > 255i32 as libc::c_uint {
           invarg_1_to_2(*argv, b"TTL\x00" as *const u8 as *const libc::c_char);
         }
-        (*p).iph.ttl = uval_2 as uint8_t
+        (*p).iph.ttl = uval_2 as u8
       }
     } else if key == ARG_tos as libc::c_int || key == ARG_dsfield as libc::c_int {
-      let mut uval_3: uint32_t = 0;
+      let mut uval_3: u32 = 0;
       argv = next_arg(argv);
       key = index_in_strings(keywords.as_ptr(), *argv);
       if key != ARG_inherit as libc::c_int {
         if rtnl_dsfield_a2n(&mut uval_3, *argv) != 0 {
           invarg_1_to_2(*argv, b"TOS\x00" as *const u8 as *const libc::c_char);
         }
-        (*p).iph.tos = uval_3 as uint8_t
+        (*p).iph.tos = uval_3 as u8
       } else {
-        (*p).iph.tos = 1i32 as uint8_t
+        (*p).iph.tos = 1i32 as u8
       }
     } else {
       if key == ARG_name as libc::c_int {
@@ -948,21 +948,21 @@ unsafe extern "C" fn parse_args(
       3i32 as libc::c_ulong,
     ) == 0i32
     {
-      (*p).iph.protocol = IPPROTO_GRE as libc::c_int as uint8_t
+      (*p).iph.protocol = IPPROTO_GRE as libc::c_int as u8
     } else if memcmp(
       (*p).name.as_mut_ptr() as *const libc::c_void,
       b"ipip\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       4i32 as libc::c_ulong,
     ) == 0i32
     {
-      (*p).iph.protocol = IPPROTO_IPIP as libc::c_int as uint8_t
+      (*p).iph.protocol = IPPROTO_IPIP as libc::c_int as u8
     } else if memcmp(
       (*p).name.as_mut_ptr() as *const libc::c_void,
       b"sit\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       3i32 as libc::c_ulong,
     ) == 0i32
     {
-      (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as uint8_t
+      (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as u8
     }
   }
   if (*p).iph.protocol as libc::c_int == IPPROTO_IPIP as libc::c_int
@@ -1055,7 +1055,7 @@ unsafe extern "C" fn parse_args(
           c2rust_asm_casts::AsmCast::cast_out(fresh60, fresh62, fresh61);
         }
         __v
-      }) as libc::c_int) as uint16_t
+      }) as libc::c_int) as u16
   }
   if (*p).o_key == 0i32 as libc::c_uint
     && ({
@@ -1097,7 +1097,7 @@ unsafe extern "C" fn parse_args(
           c2rust_asm_casts::AsmCast::cast_out(fresh66, fresh68, fresh67);
         }
         __v
-      }) as libc::c_int) as uint16_t
+      }) as libc::c_int) as u16
   }
   if ({
     let mut __v: libc::c_uint = 0;
@@ -1219,7 +1219,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     if (*p).iph.daddr != 0 {
       rt_addr_n2a(
         2i32,
-        &mut (*p).iph.daddr as *mut uint32_t as *mut libc::c_void,
+        &mut (*p).iph.daddr as *mut u32 as *mut libc::c_void,
       )
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
@@ -1227,7 +1227,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     if (*p).iph.saddr != 0 {
       rt_addr_n2a(
         2i32,
-        &mut (*p).iph.saddr as *mut uint32_t as *mut libc::c_void,
+        &mut (*p).iph.saddr as *mut u32 as *mut libc::c_void,
       )
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
@@ -1289,13 +1289,13 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
   }
   inet_ntop(
     2i32,
-    &mut (*p).i_key as *mut uint32_t as *const libc::c_void,
+    &mut (*p).i_key as *mut u32 as *const libc::c_void,
     s3.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong as socklen_t,
   );
   inet_ntop(
     2i32,
-    &mut (*p).o_key as *mut uint32_t as *const libc::c_void,
+    &mut (*p).o_key as *mut u32 as *const libc::c_void,
     s4.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong as socklen_t,
   );

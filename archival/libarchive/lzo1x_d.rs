@@ -1,6 +1,6 @@
 use libc;
 
- use libc::uint8_t;
+
 
 /* implementation of the LZO1X decompression algorithm
 
@@ -33,19 +33,19 @@ use libc;
 /* safe decompression with overrun testing */
 #[no_mangle]
 pub unsafe extern "C" fn lzo1x_decompress_safe(
-  mut in_0: *const uint8_t,
+  mut in_0: *const u8,
   mut in_len: libc::c_uint,
-  mut out: *mut uint8_t,
+  mut out: *mut u8,
   mut out_len: *mut libc::c_uint,
 ) -> libc::c_int
 /*, void* wrkmem */ {
   let mut current_block: u64; /* possibly not needed */
-  let mut op: *mut uint8_t = 0 as *mut uint8_t;
-  let mut ip: *const uint8_t = 0 as *const uint8_t;
+  let mut op: *mut u8 = 0 as *mut u8;
+  let mut ip: *const u8 = 0 as *const u8;
   let mut t: libc::c_uint = 0;
-  let mut m_pos: *const uint8_t = 0 as *const uint8_t;
-  let ip_end: *const uint8_t = in_0.offset(in_len as isize);
-  let op_end: *mut uint8_t = out.offset(*out_len as isize);
+  let mut m_pos: *const u8 = 0 as *const u8;
+  let ip_end: *const u8 = in_0.offset(in_len as isize);
+  let op_end: *mut u8 = out.offset(*out_len as isize);
   //	LZO_UNUSED(wrkmem);
   /* COPY_DICT */
   *out_len = 0i32 as libc::c_uint;

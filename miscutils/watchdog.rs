@@ -21,7 +21,7 @@ extern "C" {
   #[no_mangle]
   fn bb_daemonize_or_rexec(flags: libc::c_int);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
   #[no_mangle]
@@ -39,7 +39,7 @@ use crate::librb::__useconds_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint32_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

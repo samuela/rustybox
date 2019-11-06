@@ -42,7 +42,7 @@ extern "C" {
   #[no_mangle]
   fn setsockopt_reuseaddr(fd: libc::c_int);
   #[no_mangle]
-  fn inet_cksum(addr: *mut uint16_t, len: libc::c_int) -> uint16_t;
+  fn inet_cksum(addr: *mut u16, len: libc::c_int) -> u16;
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]
@@ -58,17 +58,17 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_info_msg(s: *const libc::c_char);
   #[no_mangle]
-  fn udhcp_end_option(optionptr: *mut uint8_t) -> libc::c_int;
+  fn udhcp_end_option(optionptr: *mut u8) -> libc::c_int;
   #[no_mangle]
-  fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: uint8_t, data: uint32_t);
+  fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: u8, data: u32);
 }
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use libc::uint16_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
+
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -92,9 +92,9 @@ pub struct sockaddr {
 pub struct sockaddr_in6 {
   pub sin6_family: sa_family_t,
   pub sin6_port: in_port_t,
-  pub sin6_flowinfo: uint32_t,
+  pub sin6_flowinfo: u32,
   pub sin6_addr: in6_addr,
-  pub sin6_scope_id: uint32_t,
+  pub sin6_scope_id: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -104,11 +104,11 @@ pub struct in6_addr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
-  pub __u6_addr8: [uint8_t; 16],
-  pub __u6_addr16: [uint16_t; 8],
-  pub __u6_addr32: [uint32_t; 4],
+  pub __u6_addr8: [u8; 16],
+  pub __u6_addr16: [u16; 8],
+  pub __u6_addr32: [u32; 4],
 }
-pub type in_port_t = uint16_t;
+pub type in_port_t = u16;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in {
@@ -122,7 +122,7 @@ pub struct sockaddr_in {
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
-pub type in_addr_t = uint32_t;
+pub type in_addr_t = u32;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __CONST_SOCKADDR_ARG {
@@ -181,18 +181,18 @@ pub union C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
-  pub source: uint16_t,
-  pub dest: uint16_t,
-  pub len: uint16_t,
-  pub check: uint16_t,
+  pub source: u16,
+  pub dest: u16,
+  pub len: u16,
+  pub check: u16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_3 {
-  pub uh_sport: uint16_t,
-  pub uh_dport: uint16_t,
-  pub uh_ulen: uint16_t,
-  pub uh_sum: uint16_t,
+  pub uh_sport: u16,
+  pub uh_dport: u16,
+  pub uh_ulen: u16,
+  pub uh_sum: u16,
 }
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
@@ -200,35 +200,35 @@ pub struct iphdr {
   #[bitfield(name = "ihl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "version", ty = "libc::c_uint", bits = "4..=7")]
   pub ihl_version: [u8; 1],
-  pub tos: uint8_t,
-  pub tot_len: uint16_t,
-  pub id: uint16_t,
-  pub frag_off: uint16_t,
-  pub ttl: uint8_t,
-  pub protocol: uint8_t,
-  pub check: uint16_t,
-  pub saddr: uint32_t,
-  pub daddr: uint32_t,
+  pub tos: u8,
+  pub tot_len: u16,
+  pub id: u16,
+  pub frag_off: u16,
+  pub ttl: u8,
+  pub protocol: u8,
+  pub check: u16,
+  pub saddr: u32,
+  pub daddr: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct dhcp_packet {
-  pub op: uint8_t,
-  pub htype: uint8_t,
-  pub hlen: uint8_t,
-  pub hops: uint8_t,
-  pub xid: uint32_t,
-  pub secs: uint16_t,
-  pub flags: uint16_t,
-  pub ciaddr: uint32_t,
-  pub yiaddr: uint32_t,
-  pub siaddr_nip: uint32_t,
-  pub gateway_nip: uint32_t,
-  pub chaddr: [uint8_t; 16],
-  pub sname: [uint8_t; 64],
-  pub file: [uint8_t; 128],
-  pub cookie: uint32_t,
-  pub options: [uint8_t; 388],
+  pub op: u8,
+  pub htype: u8,
+  pub hlen: u8,
+  pub hops: u8,
+  pub xid: u32,
+  pub secs: u16,
+  pub flags: u16,
+  pub ciaddr: u32,
+  pub yiaddr: u32,
+  pub siaddr_nip: u32,
+  pub gateway_nip: u32,
+  pub chaddr: [u8; 16],
+  pub sname: [u8; 64],
+  pub file: [u8; 128],
+  pub cookie: u32,
+  pub options: [u8; 388],
 }
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -267,16 +267,16 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
     0i32,
     ::std::mem::size_of::<dhcp_packet>() as libc::c_ulong,
   ); /* if client to a server */
-  (*packet).op = 1i32 as uint8_t;
+  (*packet).op = 1i32 as u8;
   match type_0 as libc::c_int {
     2 | 5 | 6 => {
-      (*packet).op = 2i32 as uint8_t
+      (*packet).op = 2i32 as u8
       /* if server to client */
     }
     _ => {}
   } /* ethernet */
-  (*packet).htype = 1i32 as uint8_t;
-  (*packet).hlen = 6i32 as uint8_t;
+  (*packet).htype = 1i32 as u8;
+  (*packet).hlen = 6i32 as u8;
   (*packet).cookie = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = 0x63825363i32 as libc::c_uint;
@@ -296,9 +296,9 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
     __v
   };
   if 0xffi32 != 0i32 {
-    (*packet).options[0] = 0xffi32 as uint8_t
+    (*packet).options[0] = 0xffi32 as u8
   }
-  udhcp_add_simple_option(packet, 0x35i32 as uint8_t, type_0 as uint32_t);
+  udhcp_add_simple_option(packet, 0x35i32 as u8, type_0 as u32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
   *bin2hex(
     buf.as_mut_ptr(),
     (*packet).chaddr.as_mut_ptr() as *mut libc::c_void as *const libc::c_char,
-    ::std::mem::size_of::<[uint8_t; 16]>() as libc::c_ulong as libc::c_int,
+    ::std::mem::size_of::<[u8; 16]>() as libc::c_ulong as libc::c_int,
   ) = '\u{0}' as i32 as libc::c_char;
   bb_info_msg(
     b" chaddr %s\x00" as *const u8 as *const libc::c_char,
@@ -388,11 +388,11 @@ pub unsafe extern "C" fn udhcp_recv_kernel_packet(
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_send_raw_packet(
   mut dhcp_pkt: *mut dhcp_packet,
-  mut source_nip: uint32_t,
+  mut source_nip: u32,
   mut source_port: libc::c_int,
-  mut dest_nip: uint32_t,
+  mut dest_nip: u32,
   mut dest_port: libc::c_int,
-  mut dest_arp: *const uint8_t,
+  mut dest_arp: *const u8,
   mut ifindex: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64; /* struct copy */
@@ -543,7 +543,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
       if padding > (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint {
         padding = (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint
       }
-      packet.ip.protocol = IPPROTO_UDP as libc::c_int as uint8_t;
+      packet.ip.protocol = IPPROTO_UDP as libc::c_int as u8;
       packet.ip.saddr = source_nip;
       packet.ip.daddr = dest_nip;
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.source = {
@@ -602,7 +602,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
       /* for UDP checksumming, ip.len is set to UDP packet len */
       packet.ip.tot_len = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len;
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = inet_cksum(
-        &mut packet as *mut ip_udp_dhcp_packet as *mut uint16_t,
+        &mut packet as *mut ip_udp_dhcp_packet as *mut u16,
         (IP_UDP_DHCP_SIZE as libc::c_int as libc::c_uint).wrapping_sub(padding) as libc::c_int,
       );
       /* but for sending, it is set to IP packet len */
@@ -628,9 +628,9 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         .ip
         .set_ihl((::std::mem::size_of::<iphdr>() as libc::c_ulong >> 2i32) as libc::c_uint);
       packet.ip.set_version(4i32 as libc::c_uint);
-      packet.ip.ttl = 64i32 as uint8_t;
+      packet.ip.ttl = 64i32 as u8;
       packet.ip.check = inet_cksum(
-        &mut packet.ip as *mut iphdr as *mut uint16_t,
+        &mut packet.ip as *mut iphdr as *mut u16,
         ::std::mem::size_of::<iphdr>() as libc::c_ulong as libc::c_int,
       );
       udhcp_dump_packet(dhcp_pkt);
@@ -805,15 +805,15 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
 // All others                 MAY           MAY         MAY                     MUST NOT     MUST NOT
 /* ** Logging ***/
 /* ** Other shared functions ***/
-/* 2nd param is "uint32_t*" */
+/* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
 /* Let the kernel do all the work for packet generation */
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_send_kernel_packet(
   mut dhcp_pkt: *mut dhcp_packet,
-  mut source_nip: uint32_t,
+  mut source_nip: u32,
   mut source_port: libc::c_int,
-  mut dest_nip: uint32_t,
+  mut dest_nip: u32,
   mut dest_port: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;

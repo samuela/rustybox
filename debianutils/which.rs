@@ -22,12 +22,12 @@ extern "C" {
     PATHp: *mut *mut libc::c_char,
   ) -> *mut libc::c_char;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 
-use libc::uint32_t;
+
 
 /*
  * Copyright (C) 1999-2004 by Erik Andersen <andersen@codepoet.org>

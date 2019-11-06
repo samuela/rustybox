@@ -53,11 +53,11 @@ extern "C" {
   #[no_mangle]
   fn rtnl_rttable_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]
-  fn rtnl_rtprot_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rtprot_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn rtnl_rtscope_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rtscope_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn rtnl_rttable_a2n(id: *mut uint32_t, arg: *mut libc::c_char) -> libc::c_int;
+  fn rtnl_rttable_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
   #[no_mangle]
@@ -77,7 +77,7 @@ extern "C" {
   #[no_mangle]
   static mut _SL_: libc::c_char;
 
-  /* We need linux/types.h because older kernels use __u32 etc
+  /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
   /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
   //TODO: pass rth->fd instead of full rth?
@@ -95,14 +95,14 @@ extern "C" {
     n: *mut nlmsghdr,
     maxlen: libc::c_int,
     type_0: libc::c_int,
-    data: uint32_t,
+    data: u32,
   ) -> libc::c_int;
   #[no_mangle]
   fn rta_addattr32(
     rta: *mut rtattr,
     maxlen: libc::c_int,
     type_0: libc::c_int,
-    data: uint32_t,
+    data: u32,
   ) -> libc::c_int;
   #[no_mangle]
   fn addattr_l(
@@ -157,7 +157,7 @@ extern "C" {
   #[no_mangle]
   fn get_addr(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> uint32_t;
+  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
   #[no_mangle]
   fn get_unsigned(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> libc::c_uint;
   #[no_mangle]
@@ -175,8 +175,8 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int16_t;
 use crate::librb::int8_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -204,24 +204,24 @@ use libc::FILE;
 pub type family_t = int8_t;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
-pub type __u32 = libc::c_uint;
+pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_nl {
   pub nl_family: __kernel_sa_family_t,
   pub nl_pad: libc::c_ushort,
-  pub nl_pid: __u32,
-  pub nl_groups: __u32,
+  pub nl_pid: u32,
+  pub nl_groups: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nlmsghdr {
-  pub nlmsg_len: __u32,
+  pub nlmsg_len: u32,
   pub nlmsg_type: __u16,
   pub nlmsg_flags: __u16,
-  pub nlmsg_seq: __u32,
-  pub nlmsg_pid: __u32,
+  pub nlmsg_seq: u32,
+  pub nlmsg_pid: u32,
 }
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed = 97;
@@ -356,14 +356,14 @@ pub const RTA_UNSPEC: rtattr_type_t = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct rta_cacheinfo {
-  pub rta_clntref: __u32,
-  pub rta_lastuse: __u32,
+  pub rta_clntref: u32,
+  pub rta_lastuse: u32,
   pub rta_expires: __s32,
-  pub rta_error: __u32,
-  pub rta_used: __u32,
-  pub rta_id: __u32,
-  pub rta_ts: __u32,
-  pub rta_tsage: __u32,
+  pub rta_error: u32,
+  pub rta_used: u32,
+  pub rta_id: u32,
+  pub rta_ts: u32,
+  pub rta_tsage: u32,
 }
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const __RTAX_MAX: C2RustUnnamed_1 = 18;
@@ -398,17 +398,17 @@ pub struct rtnl_handle {
   pub fd: libc::c_int,
   pub local: sockaddr_nl,
   pub peer: sockaddr_nl,
-  pub seq: uint32_t,
-  pub dump: uint32_t,
+  pub seq: u32,
+  pub dump: u32,
 }
 pub const gw_ok: C2RustUnnamed_3 = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct inet_prefix {
-  pub family: uint8_t,
-  pub bytelen: uint8_t,
+  pub family: u8,
+  pub bytelen: u8,
   pub bitlen: int16_t,
-  pub data: [uint32_t; 4],
+  pub data: [u32; 4],
 }
 pub const dst_ok: C2RustUnnamed_3 = 2;
 pub const type_ok: C2RustUnnamed_3 = 8;
@@ -543,7 +543,7 @@ unsafe extern "C" fn print_route(
     data: [0; 4],
   };
   let mut host_len: libc::c_int = -1i32;
-  let mut tid: uint32_t = 0;
+  let mut tid: u32 = 0;
   if (*n).nlmsg_type as libc::c_int != RTM_NEWROUTE as libc::c_int
     && (*n).nlmsg_type as libc::c_int != RTM_DELROUTE as libc::c_int
   {
@@ -597,9 +597,9 @@ unsafe extern "C" fn print_route(
         .wrapping_sub(1i32 as libc::c_ulong)
         & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
         .wrapping_add(0i32 as libc::c_ulong) as isize,
-    ) as *mut libc::c_void as *mut uint32_t)
+    ) as *mut libc::c_void as *mut u32)
   } else {
-    tid = (*r).rtm_table as uint32_t
+    tid = (*r).rtm_table as u32
   }
   if (*r).rtm_family as libc::c_int == 10i32 {
     host_len = 128i32
@@ -727,7 +727,7 @@ unsafe extern "C" fn print_route(
       16i32
     } else {
       4i32
-    } as uint8_t;
+    } as u8;
     memcpy(
       src.data.as_mut_ptr() as *mut libc::c_void,
       (tb[RTA_SRC as libc::c_int as usize] as *mut libc::c_char).offset(
@@ -746,7 +746,7 @@ unsafe extern "C" fn print_route(
       16i32
     } else {
       4i32
-    } as uint8_t;
+    } as u8;
     memcpy(
       dst.data.as_mut_ptr() as *mut libc::c_void,
       (tb[RTA_DST as libc::c_int as usize] as *mut libc::c_char).offset(
@@ -1061,7 +1061,7 @@ unsafe extern "C" fn print_route(
           .wrapping_sub(1i32 as libc::c_ulong)
           & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
           .wrapping_add(0i32 as libc::c_ulong) as isize,
-      ) as *mut libc::c_void as *mut uint32_t),
+      ) as *mut libc::c_void as *mut u32),
     );
   }
   if (*r).rtm_flags & 1i32 as libc::c_uint != 0 {
@@ -1206,7 +1206,7 @@ unsafe extern "C" fn iproute_modify(
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = (0x1i32 as libc::c_uint | flags) as __u16;
   req.n.nlmsg_type = cmd as __u16;
   req.r.rtm_family = preferred_family as libc::c_uchar;
@@ -1250,7 +1250,7 @@ unsafe extern "C" fn iproute_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong as libc::c_int,
         RTA_PREFSRC as libc::c_int,
-        &mut addr.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut addr.data as *mut [u32; 4] as *mut libc::c_void,
         addr.bytelen as libc::c_int,
       );
     } else if arg == ARG_via as libc::c_int {
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn iproute_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong as libc::c_int,
         RTA_GATEWAY as libc::c_int,
-        &mut addr_0.data as *mut [uint32_t; 4] as *mut libc::c_void,
+        &mut addr_0.data as *mut [u32; 4] as *mut libc::c_void,
         addr_0.bytelen as libc::c_int,
       );
     } else if arg == ARG_mtu as libc::c_int {
@@ -1315,7 +1315,7 @@ unsafe extern "C" fn iproute_modify(
         mss,
       );
     } else if arg == ARG_scope as libc::c_int {
-      let mut scope: uint32_t = 0;
+      let mut scope: u32 = 0;
       argv = next_arg(argv);
       if rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
         invarg_1_to_2(
@@ -1331,7 +1331,7 @@ unsafe extern "C" fn iproute_modify(
       req.r.rtm_scope = scope as libc::c_uchar;
       scope_ok = 1i32 as smalluint
     } else if arg == ARG_protocol as libc::c_int {
-      let mut prot: uint32_t = 0;
+      let mut prot: u32 = 0;
       argv = next_arg(argv);
       if rtnl_rtprot_a2n(&mut prot, *argv) != 0 {
         invarg_1_to_2(
@@ -1348,7 +1348,7 @@ unsafe extern "C" fn iproute_modify(
       req.r.rtm_protocol = prot as libc::c_uchar;
       ok = (ok as libc::c_int | proto_ok as libc::c_int) as smalluint
     } else if arg == ARG_table as libc::c_int {
-      let mut tid: uint32_t = 0;
+      let mut tid: u32 = 0;
       argv = next_arg(argv);
       if rtnl_rttable_a2n(&mut tid, *argv) != 0 {
         invarg_1_to_2(
@@ -1379,7 +1379,7 @@ unsafe extern "C" fn iproute_modify(
       d = *argv
     } else if arg == ARG_metric as libc::c_int {
       //TODO: "metric", "priority" and "preference" are synonyms
-      let mut metric: uint32_t = 0;
+      let mut metric: u32 = 0;
       argv = next_arg(argv);
       metric = get_u32(*argv, b"metric\x00" as *const u8 as *const libc::c_char);
       addattr32(
@@ -1422,7 +1422,7 @@ unsafe extern "C" fn iproute_modify(
           &mut req.n,
           ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong as libc::c_int,
           RTA_DST as libc::c_int,
-          &mut dst.data as *mut [uint32_t; 4] as *mut libc::c_void,
+          &mut dst.data as *mut [u32; 4] as *mut libc::c_void,
           dst.bytelen as libc::c_int,
         );
       }
@@ -1440,7 +1440,7 @@ unsafe extern "C" fn iproute_modify(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong as libc::c_int,
         RTA_OIF as libc::c_int,
-        idx as uint32_t,
+        idx as u32,
       );
     }
   }
@@ -1548,7 +1548,7 @@ unsafe extern "C" fn rtnl_rtcache_request(
     ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong,
   );
   nladdr.nl_family = 16i32 as __kernel_sa_family_t;
-  req.nlh.nlmsg_len = ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as __u32;
+  req.nlh.nlmsg_len = ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong as u32;
   if RTM_GETROUTE as libc::c_int != 0 {
     req.nlh.nlmsg_type = RTM_GETROUTE as libc::c_int as __u16
   }
@@ -1646,14 +1646,14 @@ unsafe extern "C" fn iproute_list_or_flush(
   while !(*argv).is_null() {
     arg = index_in_substrings(keywords.as_ptr(), *argv);
     if arg == KW_proto as libc::c_int {
-      let mut prot: uint32_t = 0i32 as uint32_t;
+      let mut prot: u32 = 0i32 as u32;
       argv = next_arg(argv);
       //G_filter.protocol = prot;
       if rtnl_rtprot_a2n(&mut prot, *argv) != 0 {
         if index_in_strings(keywords.as_ptr(), *argv) != KW_all as libc::c_int {
           invarg_1_to_2(*argv, b"protocol\x00" as *const u8 as *const libc::c_char);
         }
-        prot = 0i32 as uint32_t
+        prot = 0i32 as u32
         //G_filter.protocolmask = -1;
         //G_filter.protocolmask = 0;
       }
@@ -1679,7 +1679,7 @@ unsafe extern "C" fn iproute_list_or_flush(
       } else if parm == KW_all as libc::c_int {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb = 0i32
       } else if parm != KW_main as libc::c_int {
-        let mut tid: uint32_t = 0;
+        let mut tid: u32 = 0;
         if rtnl_rttable_a2n(&mut tid, *argv) != 0 {
           invarg_1_to_2(*argv, b"table\x00" as *const u8 as *const libc::c_char);
         }
@@ -1690,14 +1690,14 @@ unsafe extern "C" fn iproute_list_or_flush(
        * Assuming it's a synonym for 'ip route flush table cache' */
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb = -1i32
     } else if arg == KW_scope as libc::c_int {
-      let mut scope: uint32_t = 0; /* "to" is the default parameter */
+      let mut scope: u32 = 0; /* "to" is the default parameter */
       argv = next_arg(argv);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = -1i32;
       if rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
         if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0i32 {
           invarg_1_to_2(*argv, b"scope\x00" as *const u8 as *const libc::c_char);
         }
-        scope = RT_SCOPE_NOWHERE as libc::c_int as uint32_t;
+        scope = RT_SCOPE_NOWHERE as libc::c_int as u32;
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0i32
       }
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope = scope as libc::c_int
@@ -1903,7 +1903,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
       .wrapping_sub(1i32 as libc::c_ulong)
       & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int
       as libc::c_ulong,
-  ) as __u32;
+  ) as u32;
   req.n.nlmsg_flags = 0x1i32 as __u16;
   if RTM_GETROUTE as libc::c_int != 0 {
     req.n.nlmsg_type = RTM_GETROUTE as libc::c_int as __u16
@@ -1938,7 +1938,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
             &mut req.n,
             ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong as libc::c_int,
             RTA_SRC as libc::c_int,
-            &mut addr.data as *mut [uint32_t; 4] as *mut libc::c_void,
+            &mut addr.data as *mut [u32; 4] as *mut libc::c_void,
             addr.bytelen as libc::c_int,
           );
         }
@@ -1994,7 +1994,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
             &mut req.n,
             ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong as libc::c_int,
             RTA_DST as libc::c_int,
-            &mut addr_0.data as *mut [uint32_t; 4] as *mut libc::c_void,
+            &mut addr_0.data as *mut [u32; 4] as *mut libc::c_void,
             addr_0.bytelen as libc::c_int,
           );
         }
@@ -2019,7 +2019,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong as libc::c_int,
         RTA_IIF as libc::c_int,
-        idx as uint32_t,
+        idx as u32,
       );
     }
     if !odev.is_null() {
@@ -2028,7 +2028,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong as libc::c_int,
         RTA_OIF as libc::c_int,
-        idx as uint32_t,
+        idx as u32,
       );
     }
   }

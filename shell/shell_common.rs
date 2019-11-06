@@ -99,7 +99,7 @@ extern "C" {
 
 pub type __rlim64_t = libc::c_ulong;
 
- use libc::uint8_t;
+
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -167,8 +167,8 @@ pub const BUILTIN_READ_SILENT: C2RustUnnamed = 1;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct limits {
-  pub cmd: uint8_t,
-  pub factor_shift: uint8_t,
+  pub cmd: u8,
+  pub factor_shift: u8,
   /* shift by to get rlim_{cur,max} values */
 }
 pub const OPT_soft: C2RustUnnamed_0 = 2;
@@ -663,106 +663,106 @@ pub unsafe extern "C" fn shell_builtin_read(
 static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
-      cmd: RLIMIT_CORE as libc::c_int as uint8_t,
-      factor_shift: 9i32 as uint8_t,
+      cmd: RLIMIT_CORE as libc::c_int as u8,
+      factor_shift: 9i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_DATA as libc::c_int as uint8_t,
-      factor_shift: 10i32 as uint8_t,
+      cmd: RLIMIT_DATA as libc::c_int as u8,
+      factor_shift: 10i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_NICE as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_NICE as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_FSIZE as libc::c_int as uint8_t,
-      factor_shift: 9i32 as uint8_t,
+      cmd: RLIMIT_FSIZE as libc::c_int as u8,
+      factor_shift: 9i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_SIGPENDING as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_SIGPENDING as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_MEMLOCK as libc::c_int as uint8_t,
-      factor_shift: 10i32 as uint8_t,
+      cmd: __RLIMIT_MEMLOCK as libc::c_int as u8,
+      factor_shift: 10i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_RSS as libc::c_int as uint8_t,
-      factor_shift: 10i32 as uint8_t,
+      cmd: __RLIMIT_RSS as libc::c_int as u8,
+      factor_shift: 10i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_NOFILE as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: RLIMIT_NOFILE as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_MSGQUEUE as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_MSGQUEUE as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_RTPRIO as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_RTPRIO as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_STACK as libc::c_int as uint8_t,
-      factor_shift: 10i32 as uint8_t,
+      cmd: RLIMIT_STACK as libc::c_int as u8,
+      factor_shift: 10i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_CPU as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: RLIMIT_CPU as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_NPROC as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_NPROC as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: RLIMIT_AS as libc::c_int as uint8_t,
-      factor_shift: 10i32 as uint8_t,
+      cmd: RLIMIT_AS as libc::c_int as u8,
+      factor_shift: 10i32 as u8,
     };
     init
   },
   {
     let mut init = limits {
-      cmd: __RLIMIT_LOCKS as libc::c_int as uint8_t,
-      factor_shift: 0i32 as uint8_t,
+      cmd: __RLIMIT_LOCKS as libc::c_int as u8,
+      factor_shift: 0i32 as u8,
     };
     init
   },

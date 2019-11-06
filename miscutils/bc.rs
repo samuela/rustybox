@@ -92,14 +92,14 @@ extern "C" {
     base: libc::c_int,
   ) -> libc::c_uint;
   #[no_mangle]
-  static mut option_mask32: uint32_t;
+  static mut option_mask32: u32;
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,
     optstring: *const libc::c_char,
     longopts: *const libc::c_char,
     _: ...
-  ) -> uint32_t;
+  ) -> u32;
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
@@ -147,8 +147,8 @@ pub struct __va_list_tag {
 }
 
 use crate::librb::int8_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -635,124 +635,124 @@ static mut bc_lex_kws: [BcLexKeyword; 20] = [
 unsafe extern "C" fn lex_allowed_in_bc_expr(mut i: libc::c_uint) -> libc::c_long {
   return (BC_PARSE_EXPRS_BITS as libc::c_ulong & 1u64 << i) as libc::c_long;
 }
-static mut bc_ops_prec_and_assoc: [uint8_t; 25] = [
-  (0i32 * 0x10i32 + 1i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (1i32 * 0x10i32 + 6i32) as uint8_t,
-  (0i32 * 0x10i32 + 2i32) as uint8_t,
-  (1i32 * 0x10i32 + 3i32) as uint8_t,
-  (1i32 * 0x10i32 + 3i32) as uint8_t,
-  (1i32 * 0x10i32 + 3i32) as uint8_t,
-  (1i32 * 0x10i32 + 4i32) as uint8_t,
-  (1i32 * 0x10i32 + 4i32) as uint8_t,
-  (0i32 * 0x10i32 + 1i32) as uint8_t,
-  (1i32 * 0x10i32 + 7i32) as uint8_t,
-  (1i32 * 0x10i32 + 7i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 5i32) as uint8_t,
-  (0i32 * 0x10i32 + 0i32) as uint8_t,
-  (0i32 * 0x10i32 + 0i32) as uint8_t,
+static mut bc_ops_prec_and_assoc: [u8; 25] = [
+  (0i32 * 0x10i32 + 1i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (1i32 * 0x10i32 + 6i32) as u8,
+  (0i32 * 0x10i32 + 2i32) as u8,
+  (1i32 * 0x10i32 + 3i32) as u8,
+  (1i32 * 0x10i32 + 3i32) as u8,
+  (1i32 * 0x10i32 + 3i32) as u8,
+  (1i32 * 0x10i32 + 4i32) as u8,
+  (1i32 * 0x10i32 + 4i32) as u8,
+  (0i32 * 0x10i32 + 1i32) as u8,
+  (1i32 * 0x10i32 + 7i32) as u8,
+  (1i32 * 0x10i32 + 7i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 5i32) as u8,
+  (0i32 * 0x10i32 + 0i32) as u8,
+  (0i32 * 0x10i32 + 0i32) as u8,
 ];
-static mut dc_char_to_LEX: [uint8_t; 90] = [
-  XC_LEX_OP_MODULUS as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_LPAREN as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_OP_MULTIPLY as libc::c_int as uint8_t,
-  XC_LEX_OP_PLUS as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_OP_MINUS as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_OP_DIVIDE as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_COLON as libc::c_int as uint8_t,
-  DC_LEX_SCOLON as libc::c_int as uint8_t,
-  XC_LEX_OP_REL_GT as libc::c_int as uint8_t,
-  XC_LEX_OP_REL_EQ as libc::c_int as uint8_t,
-  XC_LEX_OP_REL_LT as libc::c_int as uint8_t,
-  DC_LEX_READ as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_EQ_NO_REG as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_IBASE as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_SCALE as libc::c_int as uint8_t,
-  DC_LEX_LOAD_POP as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_OP_BOOL_NOT as libc::c_int as uint8_t,
-  DC_LEX_OBASE as libc::c_int as uint8_t,
-  DC_LEX_PRINT_STREAM as libc::c_int as uint8_t,
-  DC_LEX_NQUIT as libc::c_int as uint8_t,
-  DC_LEX_POP as libc::c_int as uint8_t,
-  DC_LEX_STORE_PUSH as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_SCALE_FACTOR as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_LENGTH as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_OP_POWER as libc::c_int as uint8_t,
-  XC_LEX_NEG as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_ASCIIFY as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_CLEAR_STACK as libc::c_int as uint8_t,
-  DC_LEX_DUPLICATE as libc::c_int as uint8_t,
-  DC_LEX_ELSE as libc::c_int as uint8_t,
-  DC_LEX_PRINT_STACK as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_STORE_IBASE as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_STORE_SCALE as libc::c_int as uint8_t,
-  DC_LEX_LOAD as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_PRINT_POP as libc::c_int as uint8_t,
-  DC_LEX_STORE_OBASE as libc::c_int as uint8_t,
-  DC_LEX_PRINT as libc::c_int as uint8_t,
-  DC_LEX_QUIT as libc::c_int as uint8_t,
-  DC_LEX_SWAP as libc::c_int as uint8_t,
-  DC_LEX_OP_ASSIGN as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_SQRT as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_EXECUTE as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_STACK_LEVEL as libc::c_int as uint8_t,
-  DC_LEX_LBRACE as libc::c_int as uint8_t,
-  DC_LEX_OP_MODEXP as libc::c_int as uint8_t,
-  XC_LEX_INVALID as libc::c_int as uint8_t,
-  DC_LEX_OP_DIVMOD as libc::c_int as uint8_t,
+static mut dc_char_to_LEX: [u8; 90] = [
+  XC_LEX_OP_MODULUS as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_LPAREN as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_OP_MULTIPLY as libc::c_int as u8,
+  XC_LEX_OP_PLUS as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_OP_MINUS as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_OP_DIVIDE as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_COLON as libc::c_int as u8,
+  DC_LEX_SCOLON as libc::c_int as u8,
+  XC_LEX_OP_REL_GT as libc::c_int as u8,
+  XC_LEX_OP_REL_EQ as libc::c_int as u8,
+  XC_LEX_OP_REL_LT as libc::c_int as u8,
+  DC_LEX_READ as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_EQ_NO_REG as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_IBASE as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_SCALE as libc::c_int as u8,
+  DC_LEX_LOAD_POP as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_OP_BOOL_NOT as libc::c_int as u8,
+  DC_LEX_OBASE as libc::c_int as u8,
+  DC_LEX_PRINT_STREAM as libc::c_int as u8,
+  DC_LEX_NQUIT as libc::c_int as u8,
+  DC_LEX_POP as libc::c_int as u8,
+  DC_LEX_STORE_PUSH as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_SCALE_FACTOR as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_LENGTH as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_OP_POWER as libc::c_int as u8,
+  XC_LEX_NEG as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_ASCIIFY as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_CLEAR_STACK as libc::c_int as u8,
+  DC_LEX_DUPLICATE as libc::c_int as u8,
+  DC_LEX_ELSE as libc::c_int as u8,
+  DC_LEX_PRINT_STACK as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_STORE_IBASE as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_STORE_SCALE as libc::c_int as u8,
+  DC_LEX_LOAD as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_PRINT_POP as libc::c_int as u8,
+  DC_LEX_STORE_OBASE as libc::c_int as u8,
+  DC_LEX_PRINT as libc::c_int as u8,
+  DC_LEX_QUIT as libc::c_int as u8,
+  DC_LEX_SWAP as libc::c_int as u8,
+  DC_LEX_OP_ASSIGN as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_SQRT as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_EXECUTE as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_STACK_LEVEL as libc::c_int as u8,
+  DC_LEX_LBRACE as libc::c_int as u8,
+  DC_LEX_OP_MODEXP as libc::c_int as u8,
+  XC_LEX_INVALID as libc::c_int as u8,
+  DC_LEX_OP_DIVMOD as libc::c_int as u8,
 ];
 static mut dc_LEX_to_INST: [int8_t; 42] = [
   XC_INST_POWER as libc::c_int as int8_t,
@@ -4076,20 +4076,20 @@ unsafe extern "C" fn zdc_lex_string() -> BcStatus {
 }
 unsafe extern "C" fn zdc_lex_token() -> BcStatus {
   //BcLexType - should be this type, but narrower type saves size:
-  static mut dc_lex_regs: [uint8_t; 13] = [
-    XC_LEX_OP_REL_EQ as libc::c_int as uint8_t,
-    XC_LEX_OP_REL_LE as libc::c_int as uint8_t,
-    XC_LEX_OP_REL_GE as libc::c_int as uint8_t,
-    XC_LEX_OP_REL_NE as libc::c_int as uint8_t,
-    XC_LEX_OP_REL_LT as libc::c_int as uint8_t,
-    XC_LEX_OP_REL_GT as libc::c_int as uint8_t,
-    DC_LEX_SCOLON as libc::c_int as uint8_t,
-    DC_LEX_COLON as libc::c_int as uint8_t,
-    DC_LEX_ELSE as libc::c_int as uint8_t,
-    DC_LEX_LOAD as libc::c_int as uint8_t,
-    DC_LEX_LOAD_POP as libc::c_int as uint8_t,
-    DC_LEX_OP_ASSIGN as libc::c_int as uint8_t,
-    DC_LEX_STORE_PUSH as libc::c_int as uint8_t,
+  static mut dc_lex_regs: [u8; 13] = [
+    XC_LEX_OP_REL_EQ as libc::c_int as u8,
+    XC_LEX_OP_REL_LE as libc::c_int as u8,
+    XC_LEX_OP_REL_GE as libc::c_int as u8,
+    XC_LEX_OP_REL_NE as libc::c_int as u8,
+    XC_LEX_OP_REL_LT as libc::c_int as u8,
+    XC_LEX_OP_REL_GT as libc::c_int as u8,
+    DC_LEX_SCOLON as libc::c_int as u8,
+    DC_LEX_COLON as libc::c_int as u8,
+    DC_LEX_ELSE as libc::c_int as u8,
+    DC_LEX_LOAD as libc::c_int as u8,
+    DC_LEX_LOAD_POP as libc::c_int as u8,
+    DC_LEX_OP_ASSIGN as libc::c_int as u8,
+    DC_LEX_STORE_PUSH as libc::c_int as u8,
   ];
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -4098,8 +4098,8 @@ unsafe extern "C" fn zdc_lex_token() -> BcStatus {
   let mut i: size_t = 0;
   i = 0i32 as size_t;
   while i
-    < (::std::mem::size_of::<[uint8_t; 13]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint8_t>() as libc::c_ulong) as libc::c_uint
+    < (::std::mem::size_of::<[u8; 13]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong) as libc::c_uint
       as libc::c_ulong
   {
     if (*p).lex_last as libc::c_int == dc_lex_regs[i as usize] as libc::c_int {
@@ -4172,7 +4172,7 @@ unsafe extern "C" fn zdc_lex_token() -> BcStatus {
 // ENABLE_DC
 unsafe extern "C" fn xc_parse_push(mut i: libc::c_uint) {
   let mut code: *mut BcVec = &mut (*(*ptr_to_globals).prs.func).code;
-  bc_vec_pushByte(code, i as uint8_t as libc::c_char);
+  bc_vec_pushByte(code, i as u8 as libc::c_char);
 }
 unsafe extern "C" fn xc_parse_pushName(mut name: *mut libc::c_char) {
   let mut code: *mut BcVec = &mut (*(*ptr_to_globals).prs.func).code;
@@ -4505,11 +4505,11 @@ unsafe extern "C" fn zbc_parse_rightParen(mut ops_bgn: size_t, mut nexs: *mut si
   bc_vec_pop(&mut (*p).ops);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_parse_params(mut flags: uint8_t) -> BcStatus {
+unsafe extern "C" fn zbc_parse_params(mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut nparams: size_t = 0;
-  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32) | 1i32 << 2i32) as uint8_t;
+  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32) | 1i32 << 2i32) as u8;
   s = zxc_lex_next();
   if s as u64 != 0 {
     return s;
@@ -4539,7 +4539,7 @@ unsafe extern "C" fn zbc_parse_params(mut flags: uint8_t) -> BcStatus {
   return BC_STATUS_SUCCESS;
 }
 // Note: takes ownership of 'name' (must be malloced)
-unsafe extern "C" fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: uint8_t) -> BcStatus {
+unsafe extern "C" fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut entry: BcId = BcId {
@@ -4576,7 +4576,7 @@ unsafe extern "C" fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: uint
   free(name as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: uint8_t) -> BcStatus {
+unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -4599,7 +4599,7 @@ unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: uint8_t)
           }
         } else {
           *type_0 = XC_INST_ARRAY_ELEM;
-          flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32)) as uint8_t;
+          flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32)) as u8;
           s = zbc_parse_expr(flags);
           if s as u64 != 0 {
             current_block = 11734377364214890191;
@@ -4668,7 +4668,7 @@ unsafe extern "C" fn zbc_parse_read() -> BcStatus {
 }
 unsafe extern "C" fn zbc_parse_builtin(
   mut type_0: BcLexType,
-  mut flags: uint8_t,
+  mut flags: u8,
   mut prev: *mut BcInst,
 ) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
@@ -4680,7 +4680,7 @@ unsafe extern "C" fn zbc_parse_builtin(
   if (*p).lex as libc::c_int != BC_LEX_LPAREN as libc::c_int {
     return bc_error_bad_token() as BcStatus;
   }
-  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32) | 1i32 << 2i32) as uint8_t;
+  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32) | 1i32 << 2i32) as u8;
   s = zxc_lex_next();
   if s as u64 != 0 {
     return s;
@@ -4700,7 +4700,7 @@ unsafe extern "C" fn zbc_parse_builtin(
   xc_parse_push(*prev as libc::c_uint);
   return s;
 }
-unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: uint8_t) -> BcStatus {
+unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_lex_next();
@@ -4713,7 +4713,7 @@ unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: uint8_t
     return BC_STATUS_SUCCESS;
   }
   *type_0 = XC_INST_SCALE_FUNC;
-  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32)) as uint8_t;
+  flags = (flags as libc::c_int & !(1i32 << 1i32 | 1i32 << 0i32)) as u8;
   s = zxc_lex_next();
   if s as u64 != 0 {
     return s;
@@ -4731,7 +4731,7 @@ unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: uint8_t
 unsafe extern "C" fn zbc_parse_incdec(
   mut prev: *mut BcInst,
   mut nexs: *mut size_t,
-  mut flags: uint8_t,
+  mut flags: u8,
 ) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -4765,7 +4765,7 @@ unsafe extern "C" fn zbc_parse_incdec(
     // right here, we need to increment this.
     *nexs = (*nexs).wrapping_add(1i32 as libc::c_ulong);
     match type_0 as libc::c_uint {
-      5 => s = zbc_parse_name(prev, (flags as libc::c_int | 1i32 << 3i32) as uint8_t),
+      5 => s = zbc_parse_name(prev, (flags as libc::c_int | 1i32 << 3i32) as u8),
       47 | 50 | 48 => {
         xc_parse_push(
           (type_0 as libc::c_uint)
@@ -4846,7 +4846,7 @@ unsafe extern "C" fn zbc_parse_print() -> BcStatus {
     if type_0 as libc::c_uint == XC_LEX_STR as libc::c_int as libc::c_uint {
       s = zbc_parse_pushSTR()
     } else {
-      s = zbc_parse_expr(0i32 as uint8_t)
+      s = zbc_parse_expr(0i32 as u8)
     }
     if s as u64 != 0 {
       return s;
@@ -4874,7 +4874,7 @@ unsafe extern "C" fn zbc_parse_return() -> BcStatus {
     xc_parse_push(BC_INST_RET0 as libc::c_int as libc::c_uint);
   } else {
     //TODO: if (p->func->voidfunc) ERROR
-    s = zbc_parse_expr(0i32 as uint8_t);
+    s = zbc_parse_expr(0i32 as u8);
     if s as u64 != 0 {
       return s;
     }
@@ -4913,7 +4913,7 @@ unsafe extern "C" fn zbc_parse_if() -> BcStatus {
   if s as u64 != 0 {
     return s;
   }
-  s = zbc_parse_expr((1i32 << 0i32) as uint8_t);
+  s = zbc_parse_expr((1i32 << 0i32) as u8);
   if s as u64 != 0 {
     return s;
   }
@@ -4983,7 +4983,7 @@ unsafe extern "C" fn zbc_parse_while() -> BcStatus {
     &mut (*(*p).func).labels,
     &mut ip_idx as *mut size_t as *const libc::c_void,
   );
-  s = zbc_parse_expr((1i32 << 0i32) as uint8_t);
+  s = zbc_parse_expr((1i32 << 0i32) as u8);
   if s as u64 != 0 {
     return s;
   }
@@ -5020,7 +5020,7 @@ unsafe extern "C" fn zbc_parse_for() -> BcStatus {
     return s;
   }
   if (*p).lex as libc::c_int != BC_LEX_SCOLON as libc::c_int {
-    s = zbc_parse_expr(0i32 as uint8_t);
+    s = zbc_parse_expr(0i32 as u8);
     xc_parse_push(XC_INST_POP as libc::c_int as libc::c_uint);
     if s as u64 != 0 {
       return s;
@@ -5048,7 +5048,7 @@ unsafe extern "C" fn zbc_parse_for() -> BcStatus {
   body_idx = update_idx.wrapping_add(1i32 as libc::c_ulong);
   exit_idx = body_idx.wrapping_add(1i32 as libc::c_ulong);
   if (*p).lex as libc::c_int != BC_LEX_SCOLON as libc::c_int {
-    s = zbc_parse_expr((1i32 << 0i32) as uint8_t)
+    s = zbc_parse_expr((1i32 << 0i32) as u8)
   } else {
     // Set this for the next call to xc_parse_pushNUM().
     // This is safe to set because the current token is a semicolon,
@@ -5084,7 +5084,7 @@ unsafe extern "C" fn zbc_parse_for() -> BcStatus {
     &mut (*(*p).func).code.len as *mut size_t as *const libc::c_void,
   );
   if (*p).lex as libc::c_int != BC_LEX_RPAREN as libc::c_int {
-    s = zbc_parse_expr(0i32 as uint8_t);
+    s = zbc_parse_expr(0i32 as u8);
     if s as u64 != 0 {
       return s;
     }
@@ -5451,7 +5451,7 @@ unsafe extern "C" fn zbc_parse_stmt_possibly_auto(mut auto_allowed: bool) -> BcS
   }
   match (*p).lex as libc::c_int {
     19 | 30 | 31 | 20 | 32 | 5 | 6 | 47 | 50 | 51 | 48 | 55 | 57 | 58 => {
-      s = zbc_parse_expr((1i32 << 1i32) as uint8_t)
+      s = zbc_parse_expr((1i32 << 1i32) as u8)
     }
     4 => {
       s = zbc_parse_pushSTR();
@@ -5507,7 +5507,7 @@ unsafe extern "C" fn zbc_parse_stmt_or_funcdef() -> BcStatus {
 // We can calculate the conversion between tokens and exprs by subtracting the
 // position of the first operator in the lex enum and adding the position of the
 // first in the expr enum. Note: This only works for binary operators.
-unsafe extern "C" fn zbc_parse_expr(mut flags: uint8_t) -> BcStatus {
+unsafe extern "C" fn zbc_parse_expr(mut flags: u8) -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut prev: BcInst = XC_INST_PRINT;
@@ -5611,7 +5611,7 @@ unsafe extern "C" fn zbc_parse_expr(mut flags: uint8_t) -> BcStatus {
         }
         s = zbc_parse_name(
           &mut prev,
-          (flags as libc::c_int & !(1i32 << 3i32)) as uint8_t,
+          (flags as libc::c_int & !(1i32 << 3i32)) as u8,
         );
         rprn = prev as libc::c_int == BC_INST_CALL as libc::c_int;
         bin_last = 0i32 != 0;
@@ -5804,7 +5804,7 @@ unsafe extern "C" fn dc_parse_string() {
   xc_program_add_fn();
   (*p).func = xc_program_func((*p).fidx);
 }
-unsafe extern "C" fn zdc_parse_mem(mut inst: uint8_t, mut name: bool, mut store: bool) -> BcStatus {
+unsafe extern "C" fn zdc_parse_mem(mut inst: u8, mut name: bool, mut store: bool) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   xc_parse_push(inst as libc::c_uint);
   if name {
@@ -5820,7 +5820,7 @@ unsafe extern "C" fn zdc_parse_mem(mut inst: uint8_t, mut name: bool, mut store:
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zdc_parse_cond(mut inst: uint8_t) -> BcStatus {
+unsafe extern "C" fn zdc_parse_cond(mut inst: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   xc_parse_push(inst as libc::c_uint);
@@ -5849,7 +5849,7 @@ unsafe extern "C" fn zdc_parse_cond(mut inst: uint8_t) -> BcStatus {
 }
 unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
-  let mut inst: uint8_t = 0;
+  let mut inst: u8 = 0;
   let mut assign: bool = false;
   let mut get_token: bool = false;
   s = BC_STATUS_SUCCESS;
@@ -5859,13 +5859,13 @@ unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
       s = zdc_parse_cond(
         (t as libc::c_uint)
           .wrapping_sub(XC_LEX_OP_REL_EQ as libc::c_int as libc::c_uint)
-          .wrapping_add(XC_INST_REL_EQ as libc::c_int as libc::c_uint) as uint8_t,
+          .wrapping_add(XC_INST_REL_EQ as libc::c_int as libc::c_uint) as u8,
       );
       get_token = 0i32 != 0
     }
     23 | 36 => {
       s = zdc_parse_mem(
-        XC_INST_ARRAY_ELEM as libc::c_int as uint8_t,
+        XC_INST_ARRAY_ELEM as libc::c_int as u8,
         1i32 != 0,
         t as libc::c_uint == DC_LEX_COLON as libc::c_int as libc::c_uint,
       )
@@ -5896,7 +5896,7 @@ unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
         XC_INST_VAR as libc::c_int
       } else {
         DC_INST_PUSH_TO_VAR as libc::c_int
-      } as uint8_t;
+      } as u8;
       s = zdc_parse_mem(inst, 1i32 != 0, assign)
     }
     50 | 51 => {
@@ -5904,13 +5904,13 @@ unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
         DC_INST_PUSH_VAR as libc::c_int
       } else {
         DC_INST_LOAD as libc::c_int
-      } as uint8_t;
+      } as u8;
       s = zdc_parse_mem(inst, 1i32 != 0, 0i32 != 0)
     }
     47 | 49 | 48 => {
       inst = (t as libc::c_uint)
         .wrapping_sub(DC_LEX_STORE_IBASE as libc::c_int as libc::c_uint)
-        .wrapping_add(XC_INST_IBASE as libc::c_int as libc::c_uint) as uint8_t;
+        .wrapping_add(XC_INST_IBASE as libc::c_int as libc::c_uint) as u8;
       s = zdc_parse_mem(inst, 0i32 != 0, 1i32 != 0)
     }
     _ => return bc_error_bad_token() as BcStatus,
@@ -6001,12 +6001,12 @@ unsafe extern "C" fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
   let mut vidx: size_t = 0;
   let mut nidx: size_t = 0;
   let mut i: size_t = 0i32 as size_t;
-  //assert(vec->size == sizeof(uint8_t));
+  //assert(vec->size == sizeof(u8));
   vidx = xc_program_index((*vec).v, &mut i);
   nidx = xc_program_index((*vec).v, &mut i);
   v = bc_vec_item(&mut (*ptr_to_globals).prog.arrs, vidx) as *mut BcVec;
   v = bc_vec_item(v, nidx) as *mut BcVec;
-  //assert(v->size != sizeof(uint8_t));
+  //assert(v->size != sizeof(u8));
   return v; // 1 if insertion was successful
 }
 unsafe extern "C" fn xc_program_search(
@@ -6088,7 +6088,7 @@ unsafe extern "C" fn zxc_program_num(mut r: *mut BcResult, mut num: *mut *mut Bc
       if (*r).t as libc::c_uint == XC_RESULT_ARRAY_ELEM as libc::c_int as libc::c_uint {
         let mut idx: size_t = (*r).d.id.idx;
         v = p as *mut BcVec;
-        if (*v).size == ::std::mem::size_of::<uint8_t>() as libc::c_ulong {
+        if (*v).size == ::std::mem::size_of::<u8>() as libc::c_ulong {
           v = xc_program_dereference(v)
         }
         //assert(v->size == sizeof(BcNum));
@@ -6293,7 +6293,7 @@ unsafe extern "C" fn zxc_program_read() -> BcStatus {
   s = zxc_parse_text_init(buf.v); // struct copy
   if !(s as u64 != 0) {
     if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
-      s = zbc_parse_expr(0i32 as uint8_t)
+      s = zbc_parse_expr(0i32 as u8)
     } else {
       s = zdc_parse_exprs_until_eof()
     }
@@ -6870,14 +6870,14 @@ unsafe extern "C" fn zxc_program_popResultAndCopyToVar(
     let mut ref_size: bool = false;
     ref_0 = (*v).size == ::std::mem::size_of::<BcVec>() as libc::c_ulong
       && t as libc::c_uint != BC_TYPE_ARRAY as libc::c_int as libc::c_uint;
-    ref_size = (*v).size == ::std::mem::size_of::<uint8_t>() as libc::c_ulong;
+    ref_size = (*v).size == ::std::mem::size_of::<u8>() as libc::c_ulong;
     if ref_0 as libc::c_int != 0
       || ref_size as libc::c_int != 0
         && t as libc::c_uint == BC_TYPE_REF as libc::c_int as libc::c_uint
     {
       bc_vec_init(
         &mut r.d.v,
-        ::std::mem::size_of::<uint8_t>() as libc::c_ulong,
+        ::std::mem::size_of::<u8>() as libc::c_ulong,
         None,
       );
       if ref_0 {

@@ -52,13 +52,13 @@ extern "C" {
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t);
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
   #[no_mangle]
   fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
   #[no_mangle]
-  static mut xfunc_error_retval: uint8_t;
+  static mut xfunc_error_retval: u8;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -75,8 +75,8 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use libc::uint32_t;
- use libc::uint8_t;
+
+
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -191,7 +191,7 @@ pub unsafe extern "C" fn chat_main(
   let mut max_abort_len: size_t = 0i32 as size_t;
   // directive names
   // make x* functions fail with correct exitcode
-  xfunc_error_retval = ERR_IO as libc::c_int as uint8_t;
+  xfunc_error_retval = ERR_IO as libc::c_int as u8;
   // trap vanilla signals to prevent process from being killed suddenly
   bb_signals(
     0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),

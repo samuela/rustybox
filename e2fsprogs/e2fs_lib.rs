@@ -29,7 +29,7 @@ use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 
 use crate::librb::size_t;
-use libc::uint32_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -185,20 +185,20 @@ pub unsafe extern "C" fn fgetsetflags(
 }
 /* Print file attributes on an ext2 file system */
 #[no_mangle]
-pub static mut e2attr_flags_value: [uint32_t; 13] = [
-  0x1000i32 as uint32_t,
-  0x1i32 as uint32_t,
-  0x2i32 as uint32_t,
-  0x8i32 as uint32_t,
-  0x10000i32 as uint32_t,
-  0x10i32 as uint32_t,
-  0x20i32 as uint32_t,
-  0x40i32 as uint32_t,
-  0x80i32 as uint32_t,
-  0x4i32 as uint32_t,
-  0x4000i32 as uint32_t,
-  0x8000i32 as uint32_t,
-  0x20000i32 as uint32_t,
+pub static mut e2attr_flags_value: [u32; 13] = [
+  0x1000i32 as u32,
+  0x1i32 as u32,
+  0x2i32 as u32,
+  0x8i32 as u32,
+  0x10000i32 as u32,
+  0x10i32 as u32,
+  0x20i32 as u32,
+  0x40i32 as u32,
+  0x80i32 as u32,
+  0x4i32 as u32,
+  0x4000i32 as u32,
+  0x8000i32 as u32,
+  0x20000i32 as u32,
 ];
 #[no_mangle]
 pub static mut e2attr_flags_sname: [libc::c_char; 14] =
@@ -224,7 +224,7 @@ pub unsafe extern "C" fn print_e2flags(
   mut flags: libc::c_ulong,
   mut options: libc::c_uint,
 ) {
-  let mut fv: *const uint32_t = 0 as *const uint32_t;
+  let mut fv: *const u32 = 0 as *const u32;
   let mut fn_0: *const libc::c_char = 0 as *const libc::c_char;
   fv = e2attr_flags_value.as_ptr();
   if options & 1i32 as libc::c_uint != 0 {

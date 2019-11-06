@@ -51,7 +51,7 @@ pub struct option {
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::uint32_t;
+
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -81,7 +81,7 @@ pub const PARAM_STRING: C2RustUnnamed = 0;
 //kbuild:lib-y += getopt32.o
 /*      Documentation
 
-uint32_t
+u32
 getopt32(char **argv, const char *applet_opts, ...)
 
         The command line options are passed as the applet_opts string.
@@ -167,7 +167,7 @@ getopt32(char **argv, const char *applet_opts, ...)
 
  "^"    options string is "^optchars""\0""opt_complementary".
 
-uint32_t
+u32
 getopt32long(char **argv, const char *applet_opts, const char *logopts...)
 
         This allows you to define long options:
@@ -363,7 +363,7 @@ pub static mut bb_argv_dash: [*const libc::c_char; 2] = [
   0 as *const libc::c_char,
 ];
 #[no_mangle]
-pub static mut option_mask32: uint32_t = 0;
+pub static mut option_mask32: u32 = 0;
 static mut bb_null_long_options: [option; 1] = [{
   let mut init = option {
     name: 0 as *const libc::c_char,
@@ -379,7 +379,7 @@ unsafe extern "C" fn vgetopt32(
   mut applet_opts: *const libc::c_char,
   mut applet_long_options: *const libc::c_char,
   mut p: ::std::ffi::VaList,
-) -> uint32_t {
+) -> u32 {
   let mut current_block: u64; /* last stays zero-filled */
   let mut argc: libc::c_int = 0;
   let mut flags: libc::c_uint = 0i32 as libc::c_uint;
@@ -746,15 +746,15 @@ unsafe extern "C" fn vgetopt32(
   if dont_die_flag as libc::c_int != '!' as i32 {
     bb_show_usage();
   }
-  return -1i32 as uint32_t;
+  return -1i32 as u32;
 }
 #[no_mangle]
 pub unsafe extern "C" fn getopt32(
   mut argv: *mut *mut libc::c_char,
   mut applet_opts: *const libc::c_char,
   mut args: ...
-) -> uint32_t {
-  let mut opt: uint32_t = 0;
+) -> u32 {
+  let mut opt: u32 = 0;
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   opt = vgetopt32(argv, applet_opts, 0 as *const libc::c_char, p.as_va_list());
@@ -971,7 +971,7 @@ pub unsafe extern "C" fn getopt32(
 //   active state.  Sequence numbers are of type uint64 and may not
 //   exceed 2^64-1.
 /*uint64_t read_seq64_be;*/
-/*uint8_t *server_write_MAC_key;*/
+/*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -1119,8 +1119,8 @@ pub unsafe extern "C" fn getopt32long(
   mut applet_opts: *const libc::c_char,
   mut longopts: *const libc::c_char,
   mut args: ...
-) -> uint32_t {
-  let mut opt: uint32_t = 0;
+) -> u32 {
+  let mut opt: u32 = 0;
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   opt = vgetopt32(argv, applet_opts, longopts, p.as_va_list());

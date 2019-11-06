@@ -7,7 +7,7 @@ extern "C" {
 }
 use crate::librb::size_t;
 
-use libc::uint16_t;
+
 
 /*
  * This program is free software; you can redistribute it and/or
@@ -33,33 +33,33 @@ pub unsafe extern "C" fn ll_type_n2a(
   ];
   /* FEATURE_IP_RARE_PROTOCOLS */
   /* Keep these arrays in sync! */
-  static mut arphrd_type: [uint16_t; 19] = [
-    0i32 as uint16_t,
-    772i32 as uint16_t,
-    1i32 as uint16_t,
-    32i32 as uint16_t,
-    6i32 as uint16_t,
-    800i32 as uint16_t,
-    801i32 as uint16_t,
-    24i32 as uint16_t,
-    783i32 as uint16_t,
-    256i32 as uint16_t,
-    257i32 as uint16_t,
-    258i32 as uint16_t,
-    259i32 as uint16_t,
-    512i32 as uint16_t,
-    768i32 as uint16_t,
-    769i32 as uint16_t,
-    776i32 as uint16_t,
-    778i32 as uint16_t,
-    0xffffi32 as uint16_t,
+  static mut arphrd_type: [u16; 19] = [
+    0i32 as u16,
+    772i32 as u16,
+    1i32 as u16,
+    32i32 as u16,
+    6i32 as u16,
+    800i32 as u16,
+    801i32 as u16,
+    24i32 as u16,
+    783i32 as u16,
+    256i32 as u16,
+    257i32 as u16,
+    258i32 as u16,
+    259i32 as u16,
+    512i32 as u16,
+    768i32 as u16,
+    769i32 as u16,
+    776i32 as u16,
+    778i32 as u16,
+    0xffffi32 as u16,
   ];
   let mut i: libc::c_uint = 0;
   let mut aname: *const libc::c_char = arphrd_name.as_ptr();
   i = 0i32 as libc::c_uint;
   while i
-    < (::std::mem::size_of::<[uint16_t; 19]>() as libc::c_ulong)
-      .wrapping_div(::std::mem::size_of::<uint16_t>() as libc::c_ulong) as libc::c_uint
+    < (::std::mem::size_of::<[u16; 19]>() as libc::c_ulong)
+      .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
   {
     if arphrd_type[i as usize] as libc::c_int == type_0 {
       return aname;
