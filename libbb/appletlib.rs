@@ -3,11 +3,20 @@ use std::ffi::CStr;
 use std::ffi::CString;
 use std::path::Path;
 
-use crate::applets::applet_tables::{applets, InstallLoc, SUID};
+use crate::applets::applet_tables::applets;
+use crate::applets::applet_tables::InstallLoc;
+use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
-use crate::librb::{
-  __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, uid_t,
-};
+use crate::librb::__gid_t;
+use crate::librb::__uid_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::gid_t;
+use crate::librb::group;
+use crate::librb::mode_t;
+use crate::librb::passwd;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+use crate::librb::uid_t;
 use crate::shell::ash::ash_main;
 
 extern "C" {
@@ -48,7 +57,7 @@ extern "C" {
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
+  fn xzalloc(size: libc::size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
@@ -476,8 +485,7 @@ unsafe fn parse_config_file() {
            * The last config line for each applet will be the
            * one used since we insert at the head of the list.
            * I suppose this could be considered a feature. */
-          sct =
-            xzalloc(::std::mem::size_of::<suid_config_t>() as libc::c_ulong) as *mut suid_config_t;
+          sct = xzalloc(::std::mem::size_of::<suid_config_t>()) as *mut suid_config_t;
           (*sct).m_applet = applet_no;
           /*sct->m_mode = 0;*/
           (*sct).m_next = sct_head;

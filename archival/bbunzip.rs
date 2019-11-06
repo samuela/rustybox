@@ -3,7 +3,12 @@ use libc::stat;
 use libc::timeval;
 use libc::FILE;
 
-use crate::librb::{__suseconds_t, off_t, size_t, smallint, time_t, uoff_t};
+use crate::librb::__suseconds_t;
+use crate::librb::off_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::time_t;
+use crate::librb::uoff_t;
 
 extern "C" {
   #[no_mangle]
