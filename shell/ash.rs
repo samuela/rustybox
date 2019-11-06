@@ -335,7 +335,7 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::__clock_t;
+
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
@@ -362,7 +362,7 @@ use crate::librb::pid_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-pub type clock_t = __clock_t;
+pub type clock_t = libc::clock_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::signal::C2RustUnnamed_9;

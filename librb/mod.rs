@@ -2,7 +2,6 @@ pub mod signal;
 
 // These bits all seem to be from c2rust...
 // See https://pubs.opengroup.org/onlinepubs/7908799/xsh/systypes.h.html.
-pub type __clock_t = libc::c_long;
 pub type __dev_t = libc::c_ulong;
 pub type __ino_t = libc::c_ulong;
 pub type __ino64_t = libc::c_ulong;

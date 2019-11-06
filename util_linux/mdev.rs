@@ -1,4 +1,3 @@
-use crate::librb::__clock_t;
 use crate::librb::__dev_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
@@ -6,6 +5,7 @@ use crate::librb::__pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
+
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::signal::__sigval_t;
@@ -443,8 +443,8 @@ pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
-  pub si_utime: __clock_t,
-  pub si_stime: __clock_t,
+  pub si_utime: libc::clock_t,
+  pub si_stime: libc::clock_t,
 }
 
 #[derive(Copy, Clone)]

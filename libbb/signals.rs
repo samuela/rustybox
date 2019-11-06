@@ -1,4 +1,4 @@
-use crate::librb::__clock_t;
+
 use crate::librb::__pid_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::sigset_t;
@@ -79,8 +79,8 @@ pub struct C2RustUnnamed_5 {
   pub si_pid: __pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
-  pub si_utime: __clock_t,
-  pub si_stime: __clock_t,
+  pub si_utime: libc::clock_t,
+  pub si_stime: libc::clock_t,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

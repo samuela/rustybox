@@ -385,7 +385,7 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::__clock_t;
+
 use crate::librb::__ino64_t;
 use crate::librb::__mode_t;
 use crate::librb::__off64_t;
@@ -443,7 +443,7 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
-pub type clock_t = __clock_t;
+pub type clock_t = libc::clock_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tms {
