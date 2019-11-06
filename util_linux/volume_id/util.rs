@@ -24,7 +24,7 @@ use crate::librb::__off64_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::uint64_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -35,7 +35,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -276,7 +276,7 @@ pub unsafe extern "C" fn volume_id_set_uuid(
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_get_buffer(
   mut id: *mut volume_id,
-  mut off: uint64_t,
+  mut off: u64,
   mut len: size_t,
 ) -> *mut libc::c_void {
   let mut current_block: u64;
@@ -297,7 +297,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
       current_block = 3815402658071396482;
     } else {
       (*id).sbbuf_len = len;
-      off = 0i32 as uint64_t;
+      off = 0i32 as u64;
       current_block = 16164644963279819311;
     }
   } else {
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -408,6 +408,6 @@ pub unsafe extern "C" fn volume_id_free_buffer(mut id: *mut volume_id) {
   free((*id).seekbuf as *mut libc::c_void);
   (*id).seekbuf = 0 as *mut u8;
   (*id).seekbuf_len = 0i32 as size_t;
-  (*id).seekbuf_off = 0i32 as uint64_t;
+  (*id).seekbuf_off = 0i32 as u64;
   /* paranoia */
 }

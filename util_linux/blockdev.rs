@@ -20,15 +20,13 @@ extern "C" {
 
 use crate::librb::size_t;
 
-use crate::librb::uint64_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const FL_SCALE512: C2RustUnnamed = 16;
 /* argument is provided by user */
 pub const FL_NORESULT: C2RustUnnamed = 8;
 pub const FL_USRARG: C2RustUnnamed = 4;
 pub const ARG_MASK: C2RustUnnamed = 3;
-/* Yes, BLKGETSIZE64 takes pointer to uint64_t, not ullong! */
+/* Yes, BLKGETSIZE64 takes pointer to u64, not ullong! */
 pub const ARG_U64: C2RustUnnamed = 3;
 pub const ARG_ULONG: C2RustUnnamed = 2;
 pub const ARG_INT: C2RustUnnamed = 1;
@@ -38,7 +36,7 @@ pub const ARG_NONE: C2RustUnnamed = 0;
 pub union C2RustUnnamed_0 {
   pub i: libc::c_int,
   pub lu: libc::c_ulong,
-  pub u64_0: uint64_t,
+  pub u64_0: u64,
 }
 /*
  * blockdev implementation for busybox
@@ -162,7 +160,7 @@ pub unsafe extern "C" fn blockdev_main(
   let mut bdcmd: libc::c_uint = 0;
   let mut flags: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
-  let mut u64: uint64_t = 0;
+  let mut u64: u64 = 0;
   let mut ioctl_val_on_stack: C2RustUnnamed_0 = C2RustUnnamed_0 { i: 0 };
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() || (*argv.offset(1)).is_null() {
@@ -172,11 +170,11 @@ pub unsafe extern "C" fn blockdev_main(
   bdcmd = find_cmd(*argv);
   /* setrw translates to BLKROSET(0), most other ioctls don't care... */
   /* ...setro will do BLKROSET(1) */
-  u64 = (bdcmd == 0i32 as libc::c_uint) as libc::c_int as uint64_t;
+  u64 = (bdcmd == 0i32 as libc::c_uint) as libc::c_int as u64;
   if bdcmd == 5i32 as libc::c_uint {
     /* ...setbsz is BLKBSZSET(bytes) */
     argv = argv.offset(1);
-    u64 = xatoi_positive(*argv) as uint64_t
+    u64 = xatoi_positive(*argv) as u64
   }
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null() {
@@ -188,7 +186,7 @@ pub unsafe extern "C" fn blockdev_main(
   if ioctl(
     fd,
     bdcmd_ioctl[bdcmd as usize] as libc::c_ulong,
-    &mut ioctl_val_on_stack.u64_0 as *mut uint64_t,
+    &mut ioctl_val_on_stack.u64_0 as *mut u64,
   ) == -1i32
   {
     bb_simple_perror_msg_and_die(*argv);

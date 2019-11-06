@@ -11,13 +11,13 @@ extern "C" {
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -29,7 +29,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -46,27 +46,27 @@ pub const UUID_DCE: uuid_format = 2;
 pub struct btrfs_super_block {
   pub csum: [u8; 32],
   pub fsid: [u8; 16],
-  pub bytenr: uint64_t,
-  pub flags: uint64_t,
+  pub bytenr: u64,
+  pub flags: u64,
   pub magic: [u8; 8],
-  pub generation: uint64_t,
-  pub root: uint64_t,
-  pub chunk_root: uint64_t,
-  pub log_root: uint64_t,
-  pub log_root_transid: uint64_t,
-  pub total_bytes: uint64_t,
-  pub bytes_used: uint64_t,
-  pub root_dir_objectid: uint64_t,
-  pub num_devices: uint64_t,
+  pub generation: u64,
+  pub root: u64,
+  pub chunk_root: u64,
+  pub log_root: u64,
+  pub log_root_transid: u64,
+  pub total_bytes: u64,
+  pub bytes_used: u64,
+  pub root_dir_objectid: u64,
+  pub num_devices: u64,
   pub sectorsize: u32,
   pub nodesize: u32,
   pub leafsize: u32,
   pub stripesize: u32,
   pub sys_chunk_array_size: u32,
-  pub chunk_root_generation: uint64_t,
-  pub compat_flags: uint64_t,
-  pub compat_ro_flags: uint64_t,
-  pub incompat_flags: uint64_t,
+  pub chunk_root_generation: u64,
+  pub compat_flags: u64,
+  pub compat_ro_flags: u64,
+  pub incompat_flags: u64,
   pub csum_type: u16,
   pub root_level: u8,
   pub chunk_root_level: u8,
@@ -80,15 +80,15 @@ pub struct btrfs_super_block {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct btrfs_dev_item {
-  pub devid: uint64_t,
-  pub total_bytes: uint64_t,
-  pub bytes_used: uint64_t,
+  pub devid: u64,
+  pub total_bytes: u64,
+  pub bytes_used: u64,
   pub io_align: u32,
   pub io_width: u32,
   pub sector_size: u32,
-  pub type_0: uint64_t,
-  pub generation: uint64_t,
-  pub start_offset: uint64_t,
+  pub type_0: u64,
+  pub generation: u64,
+  pub start_offset: u64,
   pub dev_group: u32,
   pub seek_speed: u8,
   pub bandwidth: u8,
@@ -126,7 +126,7 @@ pub struct btrfs_dev_item {
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -143,23 +143,23 @@ pub struct btrfs_dev_item {
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
+/*,u64 off*/
 
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t off*/ {
+/*,u64 off*/ {
   // btrfs has superblocks at 64K, 64M and 256G
   // minimum btrfs size is 256M
   // so we never step out the device if we analyze
@@ -170,7 +170,7 @@ pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::
     off = off.wrapping_mul(1024i32 as libc::c_uint);
     sb = volume_id_get_buffer(
       id,
-      off as uint64_t,
+      off as u64,
       ::std::mem::size_of::<btrfs_super_block>() as libc::c_ulong,
     ) as *mut btrfs_super_block;
     if sb.is_null() {

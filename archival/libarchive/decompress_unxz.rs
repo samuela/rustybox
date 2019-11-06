@@ -160,7 +160,7 @@ extern "C" {
 
 
 
-use crate::librb::uint64_t;
+
 
 pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -406,7 +406,7 @@ pub struct xz_dec_hash {
   pub uncompressed: vli_type,
   pub crc32: u32,
 }
-pub type vli_type = uint64_t;
+pub type vli_type = u64;
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const SEQ_INDEX_UNCOMPRESSED: C2RustUnnamed_3 = 2;
 pub const SEQ_INDEX_UNPADDED: C2RustUnnamed_3 = 1;

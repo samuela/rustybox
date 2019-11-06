@@ -89,7 +89,7 @@ use crate::librb::int16_t;
 use crate::librb::int32_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
-use crate::librb::uint64_t;
+
 
 
 
@@ -347,7 +347,7 @@ pub struct ext2_super_block {
   pub s_flags: u32,
   pub s_raid_stride: u16,
   pub s_mmp_interval: u16,
-  pub s_mmp_block: uint64_t,
+  pub s_mmp_block: u64,
   pub s_raid_stripe_width: u32,
   pub s_log_groups_per_flex: u8,
   pub s_reserved_char_pad2: u8,
@@ -561,7 +561,7 @@ unsafe extern "C" fn has_super(mut x: u32) -> u32 {
   }
 }
 /* predefined output descriptor */
-unsafe extern "C" fn PUT(mut off: uint64_t, mut buf: *mut libc::c_void, mut size: u32) {
+unsafe extern "C" fn PUT(mut off: u64, mut buf: *mut libc::c_void, mut size: u32) {
   //bb_error_msg("PUT[%llu]:[%u]", off, size);
   xlseek(3i32, off as off_t, 0i32); // superblock
   xwrite(3i32, buf, size as size_t); // group descriptors
@@ -737,7 +737,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       'm' as i32,
     );
   }
-  nreserved = (nblocks as uint64_t)
+  nreserved = (nblocks as u64)
     .wrapping_mul(reserved_percent as libc::c_ulong)
     .wrapping_div(100i32 as libc::c_ulong) as u32;
   // N.B. killing e2fsprogs feature! Unused blocks don't account in calculations
@@ -764,7 +764,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     let mut overhead: u32 = 0;
     let mut remainder: u32 = 0;
     // ninodes is the max number of inodes in this filesystem
-    let mut ninodes: u32 = (nblocks_full as uint64_t)
+    let mut ninodes: u32 = (nblocks_full as u64)
       .wrapping_mul(blocksize as libc::c_ulong)
       .wrapping_div(bytes_per_inode as libc::c_ulong) as u32;
     if ninodes < (11i32 + 1i32) as libc::c_uint {
@@ -1286,7 +1286,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         (*gd.offset(i as isize)).bg_block_bitmap
       } else {
         BUG_wrong_field_size() as libc::c_uint
-      }) as uint64_t)
+      }) as u64)
         .wrapping_mul(blocksize as libc::c_ulong),
       buf as *mut libc::c_void,
       blocksize,
@@ -1310,7 +1310,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         .wrapping_sub(inodes_per_group),
     );
     // dump inode bitmap
-    //PUT((uint64_t)(FETCH_LE32(gd[i].bg_block_bitmap)) * blocksize, buf, blocksize);
+    //PUT((u64)(FETCH_LE32(gd[i].bg_block_bitmap)) * blocksize, buf, blocksize);
     //but it's right after block bitmap, so we can just:
     xwrite(3i32, buf as *const libc::c_void, blocksize as size_t);
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
@@ -1349,7 +1349,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     if has_super(i) != 0 {
       // N.B. 1024 byte blocks are special
       PUT(
-        (pos as uint64_t)
+        (pos as u64)
           .wrapping_mul(blocksize as libc::c_ulong)
           .wrapping_add(
             (if 0i32 as libc::c_uint == i && 1024i32 as libc::c_uint != blocksize {
@@ -1362,7 +1362,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         1024i32 as u32,
       );
       PUT(
-        (pos as uint64_t)
+        (pos as u64)
           .wrapping_mul(blocksize as libc::c_ulong)
           .wrapping_add(blocksize as libc::c_ulong),
         gd as *mut libc::c_void,
@@ -1389,7 +1389,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         } else {
           BUG_wrong_field_size() as libc::c_uint
         })
-        .wrapping_add(n) as uint64_t)
+        .wrapping_add(n) as u64)
           .wrapping_mul(blocksize as libc::c_ulong),
         buf as *mut libc::c_void,
         blocksize,
@@ -1513,7 +1513,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint
-    }) as uint64_t)
+    }) as u64)
       .wrapping_mul(blocksize as libc::c_ulong)
       .wrapping_add(((2i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as libc::c_ulong),
     buf as *mut libc::c_void,
@@ -1578,7 +1578,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       (*gd.offset(0)).bg_inode_table
     } else {
       BUG_wrong_field_size() as libc::c_uint
-    }) as uint64_t)
+    }) as u64)
       .wrapping_mul(blocksize as libc::c_ulong)
       .wrapping_add(((11i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as libc::c_ulong),
     buf as *mut libc::c_void,
@@ -1607,7 +1607,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       })
       .wrapping_add(inode_table_blocks)
       .wrapping_add(1i32 as libc::c_uint)
-      .wrapping_add(i) as uint64_t)
+      .wrapping_add(i) as u64)
         .wrapping_mul(blocksize as libc::c_ulong),
       buf as *mut libc::c_void,
       blocksize,
@@ -1697,7 +1697,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       BUG_wrong_field_size() as libc::c_uint
     })
     .wrapping_add(inode_table_blocks)
-    .wrapping_add(1i32 as libc::c_uint) as uint64_t)
+    .wrapping_add(1i32 as libc::c_uint) as u64)
       .wrapping_mul(blocksize as libc::c_ulong),
     buf as *mut libc::c_void,
     blocksize,
@@ -1774,7 +1774,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       BUG_wrong_field_size() as libc::c_uint
     })
     .wrapping_add(inode_table_blocks)
-    .wrapping_add(0i32 as libc::c_uint) as uint64_t)
+    .wrapping_add(0i32 as libc::c_uint) as u64)
       .wrapping_mul(blocksize as libc::c_ulong),
     buf as *mut libc::c_void,
     blocksize,

@@ -30,7 +30,7 @@ use crate::librb::ssize_t;
 use libc::time_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -74,7 +74,7 @@ pub struct rc_t {
 pub struct lzma_header_t {
   pub pos: u8,
   pub dict_size: u32,
-  pub dst_size: uint64_t,
+  pub dst_size: u64,
 }
 pub const LZMA_MATCH_MIN_LEN: C2RustUnnamed_0 = 2;
 pub const LZMA_ALIGN: C2RustUnnamed_0 = 802;

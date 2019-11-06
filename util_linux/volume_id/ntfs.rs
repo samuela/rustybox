@@ -5,7 +5,7 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
@@ -23,7 +23,7 @@ use crate::librb::int8_t;
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -35,7 +35,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -70,7 +70,7 @@ pub struct master_file_table_record {
   pub magic: [u8; 4],
   pub usa_ofs: u16,
   pub usa_count: u16,
-  pub lsn: uint64_t,
+  pub lsn: u64,
   pub sequence_number: u16,
   pub link_count: u16,
   pub attrs_offset: u16,
@@ -120,9 +120,9 @@ pub struct ntfs_super_block {
   pub hidden_sectors: u32,
   pub large_sectors: u32,
   pub unused: [u16; 2],
-  pub number_of_sectors: uint64_t,
-  pub mft_cluster_location: uint64_t,
-  pub mft_mirror_cluster_location: uint64_t,
+  pub number_of_sectors: u64,
+  pub mft_cluster_location: u64,
+  pub mft_mirror_cluster_location: u64,
   pub cluster_per_mft_record: int8_t,
   pub reserved1: [u8; 3],
   pub cluster_per_index_record: int8_t,
@@ -160,7 +160,7 @@ pub struct ntfs_super_block {
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -177,42 +177,42 @@ pub struct ntfs_super_block {
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,uint64_t off*/);
-/*, uint64_t off*/
-//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
+/*, u64 off*/
+//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t off*/ {
+/*,u64 off*/ {
   let mut sector_size: libc::c_uint = 0;
   let mut cluster_size: libc::c_uint = 0;
-  let mut mft_cluster: uint64_t = 0;
-  let mut mft_off: uint64_t = 0;
+  let mut mft_cluster: u64 = 0;
+  let mut mft_off: u64 = 0;
   let mut mft_record_size: libc::c_uint = 0;
   let mut attr_type: libc::c_uint = 0;
   let mut attr_off: libc::c_uint = 0;
@@ -223,7 +223,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   let mut ns: *mut ntfs_super_block = 0 as *mut ntfs_super_block;
   let mut buf: *const u8 = 0 as *const u8;
   let mut val: *const u8 = 0 as *const u8;
-  ns = volume_id_get_buffer(id, 0i32 as uint64_t, 0x200i32 as size_t) as *mut ntfs_super_block;
+  ns = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut ntfs_super_block;
   if ns.is_null() {
     return -1i32;
   }
@@ -248,7 +248,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   }
   buf = volume_id_get_buffer(
     id,
-    (0i32 as uint64_t)
+    (0i32 as u64)
       .wrapping_add(mft_off)
       .wrapping_add((3i32 as libc::c_uint).wrapping_mul(mft_record_size) as libc::c_ulong),
     mft_record_size as size_t,

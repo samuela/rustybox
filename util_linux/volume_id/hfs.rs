@@ -30,20 +30,20 @@ extern "C" {
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct md5_ctx_t {
   pub wbuffer: [u8; 64],
   pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t,
+  pub total64: u64,
   pub hash: [u32; 8],
   /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 }
@@ -57,7 +57,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -114,7 +114,7 @@ pub struct hfsplus_bheader_record {
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
 pub struct hfsplus_fork {
-  pub total_size: uint64_t,
+  pub total_size: u64,
   pub clump_size: u32,
   pub total_blocks: u32,
   pub extents: [hfsplus_extent; 8],
@@ -142,7 +142,7 @@ pub struct hfsplus_vol_header {
   pub data_clump_sz: u32,
   pub next_cnid: u32,
   pub write_count: u32,
-  pub encodings_bmp: uint64_t,
+  pub encodings_bmp: u64,
   pub finder_info: hfs_finder_info,
   pub alloc_file: hfsplus_fork,
   pub ext_file: hfsplus_fork,
@@ -287,7 +287,7 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -304,28 +304,28 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t off*/ {
+/*,u64 off*/ {
   let mut current_block: u64;
-  let mut off: uint64_t = 0i32 as uint64_t;
+  let mut off: u64 = 0i32 as u64;
   let mut blocksize: libc::c_uint = 0;
   let mut cat_block: libc::c_uint = 0;
   let mut ext_block_start: libc::c_uint = 0;
@@ -335,7 +335,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
   let mut leaf_node_count: libc::c_uint = 0;
   let mut leaf_node_size: libc::c_uint = 0;
   let mut leaf_block: libc::c_uint = 0;
-  let mut leaf_off: uint64_t = 0;
+  let mut leaf_off: u64 = 0;
   let mut alloc_block_size: libc::c_uint = 0;
   let mut alloc_first_block: libc::c_uint = 0;
   let mut embed_first_block: libc::c_uint = 0;
@@ -424,7 +424,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         alloc_first_block
           .wrapping_mul(512i32 as libc::c_uint)
           .wrapping_add(embed_first_block.wrapping_mul(alloc_block_size)) as libc::c_ulong,
-      ) as uint64_t as uint64_t;
+      ) as u64 as u64;
       buf = volume_id_get_buffer(
         id,
         off.wrapping_add(0x400i32 as libc::c_ulong),
@@ -624,7 +624,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
               if !(ext == 8i32) {
                 leaf_off = ext_block_start
                   .wrapping_add(leaf_block)
-                  .wrapping_mul(blocksize) as uint64_t;
+                  .wrapping_mul(blocksize) as u64;
                 buf = volume_id_get_buffer(id, off.wrapping_add(leaf_off), leaf_node_size as size_t)
                   as *const u8;
                 if !buf.is_null() {

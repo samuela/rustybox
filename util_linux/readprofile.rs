@@ -59,12 +59,8 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__uint64_t;
-
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-
-use crate::librb::uint64_t;
 
 use libc::FILE;
 
@@ -142,7 +138,7 @@ pub unsafe extern "C" fn readprofile_main(
   let mut proFile: *const libc::c_char = 0 as *const libc::c_char;
   let mut indx: libc::c_ulong = 0;
   let mut len: size_t = 0;
-  let mut add0: uint64_t = 0;
+  let mut add0: u64 = 0;
   let mut step: libc::c_uint = 0;
   let mut buf: *mut libc::c_uint = 0 as *mut libc::c_uint;
   let mut total: libc::c_uint = 0;
@@ -278,8 +274,8 @@ pub unsafe extern "C" fn readprofile_main(
         }
         if ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong == 8i32 as libc::c_ulong {
           *p = ({
-            let mut __v: __uint64_t = 0;
-            let mut __x: __uint64_t = *p as __uint64_t;
+            let mut __v: u64 = 0;
+            let mut __x: u64 = *p as u64;
             if 0 != 0 {
               __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
                 | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -288,7 +284,7 @@ pub unsafe extern "C" fn readprofile_main(
                 | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
                 | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
                 | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-                | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+                | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
             } else {
               let fresh6 = &mut __v;
               let fresh7;
@@ -314,7 +310,7 @@ pub unsafe extern "C" fn readprofile_main(
     return 0i32;
   }
   map = xfopen_for_read(mapFile);
-  add0 = 0i32 as uint64_t;
+  add0 = 0i32 as u64;
   maplineno = 1i32;
   while !fgets_unlocked(mapline.as_mut_ptr(), 128i32, map).is_null() {
     if sscanf(
@@ -337,7 +333,7 @@ pub unsafe extern "C" fn readprofile_main(
     ) == 0i32
     {
       /* only elf works like this */
-      add0 = fn_add as uint64_t;
+      add0 = fn_add as u64;
       break;
     } else {
       maplineno += 1

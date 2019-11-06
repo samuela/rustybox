@@ -137,15 +137,15 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::__uint64_t;
+
 
 use crate::librb::int32_t;
 
 
-use crate::librb::uint64_t;
+
 
 pub type bb__aliased_u32 = u32;
-pub type bb__aliased_uint64_t = uint64_t;
+pub type bb__aliased_u64 = u64;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
@@ -556,7 +556,7 @@ pub struct tls_state {
   pub buffered_size: libc::c_int,
   pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
-  pub write_seq64_be: uint64_t,
+  pub write_seq64_be: u64,
   pub client_write_key: *mut u8,
   pub server_write_key: *mut u8,
   pub client_write_IV: *mut u8,
@@ -1173,8 +1173,8 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
     buf.offset(size as isize),
     (*tls).client_write_MAC_key.as_mut_ptr(),
     SHA256_OUTSIZE as libc::c_int as libc::c_uint,
-    &mut (*tls).write_seq64_be as *mut uint64_t,
-    ::std::mem::size_of::<uint64_t>() as libc::c_ulong,
+    &mut (*tls).write_seq64_be as *mut u64,
+    ::std::mem::size_of::<u64>() as libc::c_ulong,
     xhdr,
     RECHDR_LEN as libc::c_int,
     buf,
@@ -1182,14 +1182,14 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
     0 as *mut libc::c_void,
   );
   (*tls).write_seq64_be = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t =
+    let mut __v: u64 = 0;
+    let mut __x: u64 =
                  (1i32 as
                       libc::c_ulong).wrapping_add({
                                                        let mut __v_0:
-                                                               __uint64_t = 0;
+                                                               u64 = 0;
                                                        let mut __x_0:
-                                                               __uint64_t =
+                                                               u64 =
                                                            (*tls).write_seq64_be;
                                                        if 0 != 0 {
                                                            __v_0 =
@@ -1245,7 +1245,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
                                                                         <<
                                                                         56i32)
                                                                    as
-                                                                   __uint64_t
+                                                                   u64
                                                        } else {
                                                            let fresh5 =
                                                                &mut __v_0;
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh8 = &mut __v;
       let fresh9;
@@ -1430,7 +1430,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   let mut xhdr: *mut record_hdr = 0 as *mut record_hdr; /* do it here so that "type" param no longer used */
   let mut remaining: libc::c_uint = 0;
   let mut cnt: libc::c_uint = 0;
-  let mut t64: uint64_t = 0;
+  let mut t64: u64 = 0;
   buf = (*tls).outbuf.offset(OUTBUF_PFX as libc::c_int as isize);
   xhdr = buf.offset(-8).offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void
     as *mut record_hdr;
@@ -1447,19 +1447,19 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
     4i32 as libc::c_ulong,
   );
   t64 = (*tls).write_seq64_be;
-  *(nonce.as_mut_ptr().offset(4) as *mut bb__aliased_uint64_t) = t64;
-  *(aad.as_mut_ptr() as *mut bb__aliased_uint64_t) = t64;
-  *(buf.offset(-8) as *mut bb__aliased_uint64_t) = t64;
+  *(nonce.as_mut_ptr().offset(4) as *mut bb__aliased_u64) = t64;
+  *(aad.as_mut_ptr() as *mut bb__aliased_u64) = t64;
+  *(buf.offset(-8) as *mut bb__aliased_u64) = t64;
   /* seq64 is not used later in this func, can increment here */
   (*tls).write_seq64_be = {
-    let mut __v: __uint64_t = 0; /* yes, first cnt here is 2 (!) */
-    let mut __x: __uint64_t =
+    let mut __v: u64 = 0; /* yes, first cnt here is 2 (!) */
+    let mut __x: u64 =
                  (1i32 as
                       libc::c_ulong).wrapping_add({
                                                        let mut __v_0:
-                                                               __uint64_t = 0;
+                                                               u64 = 0;
                                                        let mut __x_0:
-                                                               __uint64_t =
+                                                               u64 =
                                                            t64;
                                                        if 0 != 0 {
                                                            __v_0 =
@@ -1515,7 +1515,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
                                                                         <<
                                                                         56i32)
                                                                    as
-                                                                   __uint64_t
+                                                                   u64
                                                        } else {
                                                            let fresh12 =
                                                                &mut __v_0;
@@ -1542,7 +1542,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh15 = &mut __v;
       let fresh16;

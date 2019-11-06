@@ -21,7 +21,6 @@ pub type __useconds_t = libc::c_uint;
 pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type __time_t = libc::c_long;
-pub type __uint64_t = libc::c_ulong;
 pub type ino_t = __ino64_t;
 pub type int8_t = __int8_t;
 pub type int16_t = __int16_t;
@@ -34,7 +33,6 @@ pub type size_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
 pub type ssize_t = __ssize_t;
 pub type time_t = __time_t;
-pub type uint64_t = __uint64_t;
 pub type uoff_t = libc::c_ulong;
 pub type ptrdiff_t = libc::c_long;
 
@@ -128,8 +126,8 @@ pub struct fd_pair {
 pub struct md5_ctx_t {
   pub wbuffer: [u8; 64], /* always correctly aligned for uint64_t */
   pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: uint64_t, /* must be directly before hash[] */
-  pub hash: [u32; 8],    /* 4 elements for md5, 5 for sha1, 8 for sha256 */
+  pub total64: u64,   /* must be directly before hash[] */
+  pub hash: [u32; 8], /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 }
 pub type sha1_ctx_t = md5_ctx_t;
 pub type sha256_ctx_t = md5_ctx_t;
@@ -137,15 +135,15 @@ pub type sha256_ctx_t = md5_ctx_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sha512_ctx_t {
-  pub total64: [uint64_t; 2], /* must be directly before hash[] */
-  pub hash: [uint64_t; 8],
+  pub total64: [u64; 2], /* must be directly before hash[] */
+  pub hash: [u64; 8],
   pub wbuffer: [u8; 128], /* always correctly aligned for uint64_t */
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sha3_ctx_t {
-  pub state: [uint64_t; 25],
+  pub state: [u64; 25],
   pub bytes_queued: libc::c_uint,
   pub input_block_bytes: libc::c_uint,
 }

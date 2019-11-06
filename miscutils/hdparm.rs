@@ -135,7 +135,7 @@ extern "C" {
 
 
 
-use crate::librb::uint64_t;
+
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -635,7 +635,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   let mut mm: u32 = 0;
   let mut nn: u32 = 0;
   let mut oo: u32 = 0;
-  let mut bbbig: uint64_t = 0;
+  let mut bbbig: u64 = 0;
   let mut strng: *const libc::c_char = 0 as *const libc::c_char;
   /* check if we recognize the device type */
   bb_putchar('\n' as i32);
@@ -917,7 +917,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     /* addressing...CHS? See section 6.2 of ATA specs 4 or 5 */
     ll = (*val.offset(61) as u32) << 16i32 | *val.offset(60) as libc::c_uint;
     mm = 0i32 as u32;
-    bbbig = 0i32 as uint64_t;
+    bbbig = 0i32 as u64;
     if ll > 0xfbfc10i32 as libc::c_uint && *val.offset(1) == 0 {
       puts(b"\tCHS addressing not supported\x00" as *const u8 as *const libc::c_char);
     } else {
@@ -969,9 +969,9 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     if *val.offset(83) as libc::c_int & 0xc000i32 == 0x4000i32
       && *val.offset(83) as libc::c_int & 0x400i32 != 0
     {
-      bbbig = (*val.offset(103) as uint64_t) << 48i32
-        | (*val.offset(102) as uint64_t) << 32i32
-        | (*val.offset(101) as uint64_t) << 16i32
+      bbbig = (*val.offset(103) as u64) << 48i32
+        | (*val.offset(102) as u64) << 32i32
+        | (*val.offset(101) as u64) << 16i32
         | *val.offset(100) as libc::c_ulong;
       printf(
         b"\tLBA48  user addressable sectors:%11lu\n\x00" as *const u8 as *const libc::c_char,
@@ -979,7 +979,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       );
     }
     if bbbig == 0 {
-      bbbig = if ll > mm { ll } else { mm } as uint64_t
+      bbbig = if ll > mm { ll } else { mm } as u64
     }
     printf(
       b"\tdevice size with M = 1024*1024: %11lu MBytes\n\x00" as *const u8 as *const libc::c_char,

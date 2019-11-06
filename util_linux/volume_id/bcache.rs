@@ -1,5 +1,5 @@
 use crate::librb::size_t;
-use crate::librb::uint64_t;
+
 use libc;
 
 extern "C" {
@@ -13,7 +13,7 @@ extern "C" {
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 }
 
 #[derive(Copy, Clone)]
@@ -25,7 +25,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -40,21 +40,21 @@ pub const UUID_DCE: uuid_format = 2;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct bcache_super_block {
-  pub csum: uint64_t,
-  pub offset: uint64_t,
-  pub version: uint64_t,
+  pub csum: u64,
+  pub offset: u64,
+  pub version: u64,
   pub magic: [u8; 16],
   pub uuid: [u8; 16],
   pub c2rust_unnamed: C2RustUnnamed_3,
   pub label: [u8; 32],
-  pub flags: uint64_t,
-  pub seq: uint64_t,
-  pub pad: [uint64_t; 8],
+  pub flags: u64,
+  pub seq: u64,
+  pub pad: [u64; 8],
   pub c2rust_unnamed_0: C2RustUnnamed_0,
   pub last_mount: u32, /* time_t */
   pub first_bucket: u16,
   pub c2rust_unnamed_1: C2RustUnnamed,
-  pub d: [uint64_t; 256], /* journal buckets */
+  pub d: [u64; 256], /* journal buckets */
 }
 
 #[derive(Copy, Clone)]
@@ -74,7 +74,7 @@ pub union C2RustUnnamed_0 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_1 {
-  pub data_offset: uint64_t,
+  pub data_offset: u64,
   /*
    * block_size from the cache device section is still used by
    * backing devices, so don't add anything here until we fix
@@ -85,7 +85,7 @@ pub struct C2RustUnnamed_1 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_2 {
-  pub nbuckets: uint64_t,
+  pub nbuckets: u64,
   pub block_size: u16,
   pub bucket_size: u16,
   pub nr_in_set: u16,
@@ -96,7 +96,7 @@ pub struct C2RustUnnamed_2 {
 #[repr(C)]
 pub union C2RustUnnamed_3 {
   pub set_uuid: [u8; 16],
-  pub set_magic: uint64_t,
+  pub set_magic: u64,
 }
 static mut bcache_magic: [libc::c_char; 16] = [
   0xc6i32 as libc::c_char,
@@ -163,17 +163,17 @@ static mut bcache_magic: [libc::c_char; 16] = [
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
 /*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
 /* supper block offset in kB */
 /* magic string offset within super block */
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc:
   let mut sb: *mut bcache_super_block = 0 as *mut bcache_super_block;
   sb = volume_id_get_buffer(
     id,
-    0x1000i32 as uint64_t,
+    0x1000i32 as u64,
     ::std::mem::size_of::<bcache_super_block>() as libc::c_ulong,
   ) as *mut bcache_super_block;
   if sb.is_null() {

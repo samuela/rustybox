@@ -6,58 +6,58 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
   /* Probe routines */
   /* RAID */
-  //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-  //int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
+  //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+  //int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
   #[no_mangle]
-  fn volume_id_probe_linux_raid(id: *mut volume_id, size: uint64_t) -> libc::c_int;
-  //int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-  //int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-  //int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+  fn volume_id_probe_linux_raid(id: *mut volume_id, size: u64) -> libc::c_int;
+  //int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+  //int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+  //int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
   /* FS */
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  //int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,uint64_t off*/);
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  //int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
   #[no_mangle]
   fn volume_id_probe_luks(id: *mut volume_id) -> libc::c_int;
   #[no_mangle]
   fn volume_id_probe_vfat(id: *mut volume_id) -> libc::c_int;
-  //int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,uint64_t off*/);
-  /*, uint64_t off*/
-  //int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,uint64_t off*/);
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
+  //int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
+  /*, u64 off*/
+  //int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
   #[no_mangle]
   fn volume_id_probe_exfat(id: *mut volume_id) -> libc::c_int;
   #[no_mangle]
   fn volume_id_probe_lfs(id: *mut volume_id) -> libc::c_int;
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  /*,uint64_t off*/
+  /*,u64 off*/
+  /*,u64 off*/
+  /*,u64 off*/
   #[no_mangle]
   fn volume_id_probe_squashfs(id: *mut volume_id) -> libc::c_int;
-  /*,uint64_t off*/
-  /*,uint64_t off*/
-  //int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,uint64_t off*/);
+  /*,u64 off*/
+  /*,u64 off*/
+  //int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,u64 off*/);
   #[no_mangle]
   fn volume_id_probe_xfs(id: *mut volume_id) -> libc::c_int;
   #[no_mangle]
   fn volume_id_probe_bcache(id: *mut volume_id) -> libc::c_int;
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn volume_id_probe_linux_swap(id: *mut volume_id) -> libc::c_int;
   #[no_mangle]
@@ -99,7 +99,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::uint64_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -110,13 +110,13 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
 pub type probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int>;
-/*, uint64_t off*/
+/*, u64 off*/
 /*
  * volume_id - reads filesystem label and uuid
  *
@@ -145,11 +145,11 @@ pub type probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id) -> libc::c_
 /* None of RAIDs have label or uuid, except LinuxRAID: */
 /* These filesystems also have no label or uuid: */
 pub type raid_probe_fptr =
-  Option<unsafe extern "C" fn(_: *mut volume_id, _: uint64_t) -> libc::c_int>;
+  Option<unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int>;
 static mut raid1: [raid_probe_fptr; 1] = {
   [Some(
     volume_id_probe_linux_raid
-      as unsafe extern "C" fn(_: *mut volume_id, _: uint64_t) -> libc::c_int,
+      as unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int,
   )]
 };
 static mut raid2: [probe_fptr; 1] = {
@@ -157,7 +157,7 @@ static mut raid2: [probe_fptr; 1] = {
     volume_id_probe_luks as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
   )]
 };
-/*uint64_t off,*/
+/*u64 off,*/
 /* signature in the first block, only small buffer needed */
 static mut fs1: [probe_fptr; 6] = {
   [
@@ -194,7 +194,7 @@ static mut fs2: [probe_fptr; 17] = {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_all(
   mut id: *mut volume_id,
-  mut size: uint64_t,
+  mut size: u64,
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut i: libc::c_uint = 0;
@@ -274,7 +274,7 @@ pub unsafe extern "C" fn volume_id_probe_all(
             13835600803501426168 => {}
             _ => {
               /* fill buffer with maximum */
-              volume_id_get_buffer(id, 0i32 as uint64_t, 0x11000i32 as size_t);
+              volume_id_get_buffer(id, 0i32 as u64, 0x11000i32 as size_t);
               i = 0i32 as libc::c_uint;
               while i
                 < (::std::mem::size_of::<[probe_fptr; 17]>() as libc::c_ulong)
@@ -340,7 +340,7 @@ pub unsafe extern "C" fn volume_id_open_node(mut fd: libc::c_int) -> *mut volume
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 #[no_mangle]
 pub unsafe extern "C" fn free_volume_id(mut id: *mut volume_id) {
   if id.is_null() {

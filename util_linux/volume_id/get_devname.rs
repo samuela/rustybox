@@ -8,7 +8,7 @@ extern "C" {
   fn volume_id_open_node(fd: libc::c_int) -> *mut volume_id;
 
   #[no_mangle]
-  fn volume_id_probe_all(id: *mut volume_id, size: uint64_t) -> libc::c_int;
+  fn volume_id_probe_all(id: *mut volume_id, size: u64) -> libc::c_int;
 
   #[no_mangle]
   fn free_volume_id(id: *mut volume_id);
@@ -77,7 +77,7 @@ extern "C" {
 use crate::librb::__dev_t;
 
 use crate::librb::size_t;
-use crate::librb::uint64_t;
+
 
 
 use libc::stat;
@@ -121,7 +121,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -138,7 +138,7 @@ unsafe extern "C" fn get_label_uuid(
   mut type_0: *mut *const libc::c_char,
 ) -> libc::c_int {
   let mut rv: libc::c_int = 1i32;
-  let mut size: uint64_t = 0;
+  let mut size: u64 = 0;
   let mut vid: *mut volume_id = 0 as *mut volume_id;
   /* fd is owned by vid now */
   vid = volume_id_open_node(fd); /* also closes fd */
@@ -148,10 +148,10 @@ unsafe extern "C" fn get_label_uuid(
       | (0x12i32 << 0i32 + 8i32) as libc::c_uint
       | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
       | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
-    &mut size as *mut uint64_t,
+    &mut size as *mut u64,
   ) != 0i32
   {
-    size = 0i32 as uint64_t
+    size = 0i32 as u64
   }
   if !(volume_id_probe_all(vid, size) != 0i32) {
     if (*vid).label[0] as libc::c_int != '\u{0}' as i32

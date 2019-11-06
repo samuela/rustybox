@@ -2,7 +2,7 @@ use libc;
 
 extern "C" {
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
@@ -11,7 +11,7 @@ extern "C" {
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -23,7 +23,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -76,7 +76,7 @@ pub struct ubifs_sb_node {
   pub leb_size: u32,
   pub leb_cnt: u32,
   pub max_leb_cnt: u32,
-  pub max_bud_bytes: uint64_t,
+  pub max_bud_bytes: u64,
   pub log_lebs: u32,
   pub lpt_lebs: u32,
   pub orph_lebs: u32,
@@ -88,7 +88,7 @@ pub struct ubifs_sb_node {
   pub padding1: [u8; 2],
   pub rp_uid: u32,
   pub rp_gid: u32,
-  pub rp_size: uint64_t,
+  pub rp_size: u64,
   pub time_gran: u32,
   pub uuid: [u8; 16],
   pub ro_compat_version: u32,
@@ -114,7 +114,7 @@ pub struct ubifs_sb_node {
 pub struct ubifs_ch {
   pub magic: u32,
   pub crc: u32,
-  pub sqnum: uint64_t,
+  pub sqnum: u64,
   pub len: u32,
   pub node_type: u8,
   pub group_type: u8,
@@ -150,7 +150,7 @@ pub struct ubifs_ch {
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -167,52 +167,52 @@ pub struct ubifs_ch {
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,uint64_t off*/);
-/*, uint64_t off*/
-//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
+/*, u64 off*/
+//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t off*/ {
+/*,u64 off*/ {
   let mut sb: *mut ubifs_sb_node = 0 as *mut ubifs_sb_node;
   sb = volume_id_get_buffer(
     id,
-    0i32 as uint64_t,
+    0i32 as u64,
     ::std::mem::size_of::<ubifs_sb_node>() as libc::c_ulong,
   ) as *mut ubifs_sb_node;
   if sb.is_null() {

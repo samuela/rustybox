@@ -18,7 +18,7 @@ extern "C" {
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -44,7 +44,7 @@ pub struct tls_state {
   pub buffered_size: libc::c_int,
   pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
-  pub write_seq64_be: uint64_t,
+  pub write_seq64_be: u64,
   pub client_write_key: *mut u8,
   pub server_write_key: *mut u8,
   pub client_write_IV: *mut u8,

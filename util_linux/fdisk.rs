@@ -284,7 +284,7 @@ extern "C" {
 use crate::librb::__off64_t;
 
 
-use crate::librb::uint64_t;
+
 
 pub type bb__aliased_u32 = u32;
 
@@ -564,7 +564,7 @@ static mut i386_sys_types: [*const libc::c_char; 49] = [
  */
 unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
   let mut current_block: u64;
-  let mut v64: uint64_t = 0;
+  let mut v64: u64 = 0;
   let mut longsectors: libc::c_ulong = 0;
   if ioctl(
     fd,
@@ -572,7 +572,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
       | (0x12i32 << 0i32 + 8i32) as libc::c_uint
       | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
       | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
-    &mut v64 as *mut uint64_t,
+    &mut v64 as *mut u64,
   ) == 0i32
   {
     /* Got bytes, convert to 512 byte sectors */
@@ -620,7 +620,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
         b"device has more than 2^32 sectors, can\'t use all of them\x00" as *const u8
           as *const libc::c_char,
       );
-      v64 = -1i64 as u32 as uint64_t
+      v64 = -1i64 as u32 as u64
     }
     _ => {}
   }
@@ -708,8 +708,8 @@ unsafe extern "C" fn fdisk_fatal(mut why: *const libc::c_char) {
   bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
 }
 unsafe extern "C" fn seek_sector(mut secno: sector_t) {
-  let mut off: uint64_t =
-    (secno as uint64_t).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
+  let mut off: u64 =
+    (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
   if off
     > (if -1i32 as off_t > 0i32 as libc::c_long {
       -1i32 as off_t

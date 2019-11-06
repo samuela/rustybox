@@ -11,14 +11,14 @@ extern "C" {
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::int16_t;
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -30,7 +30,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -56,22 +56,22 @@ pub struct ocfs2_super_block {
   pub i_clusters: u32,
   pub i_uid: u32,
   pub i_gid: u32,
-  pub i_size: uint64_t,
+  pub i_size: u64,
   pub i_mode: u16,
   pub i_links_count: u16,
   pub i_flags: u32,
-  pub i_atime: uint64_t,
-  pub i_ctime: uint64_t,
-  pub i_mtime: uint64_t,
-  pub i_dtime: uint64_t,
-  pub i_blkno: uint64_t,
-  pub i_last_eb_blk: uint64_t,
+  pub i_atime: u64,
+  pub i_ctime: u64,
+  pub i_mtime: u64,
+  pub i_dtime: u64,
+  pub i_blkno: u64,
+  pub i_last_eb_blk: u64,
   pub i_fs_generation: u32,
   pub i_atime_nsec: u32,
   pub i_ctime_nsec: u32,
   pub i_mtime_nsec: u32,
-  pub i_reserved1: [uint64_t; 9],
-  pub i_pad1: uint64_t,
+  pub i_reserved1: [u64; 9],
+  pub i_pad1: u64,
   pub s_major_rev_level: u16,
   pub s_minor_rev_level: u16,
   pub s_mnt_count: u16,
@@ -79,19 +79,19 @@ pub struct ocfs2_super_block {
   pub s_state: u16,
   pub s_errors: u16,
   pub s_checkinterval: u32,
-  pub s_lastcheck: uint64_t,
+  pub s_lastcheck: u64,
   pub s_creator_os: u32,
   pub s_feature_compat: u32,
   pub s_feature_incompat: u32,
   pub s_feature_ro_compat: u32,
-  pub s_root_blkno: uint64_t,
-  pub s_system_dir_blkno: uint64_t,
+  pub s_root_blkno: u64,
+  pub s_system_dir_blkno: u64,
   pub s_blocksize_bits: u32,
   pub s_clustersize_bits: u32,
   pub s_max_slots: u16,
   pub s_reserved1: u16,
   pub s_reserved2: u32,
-  pub s_first_cluster_group: uint64_t,
+  pub s_first_cluster_group: u64,
   pub s_label: [u8; 64],
   pub s_uuid: [u8; 16],
   /* 128-bit uuid */
@@ -126,7 +126,7 @@ pub struct ocfs2_super_block {
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -143,44 +143,44 @@ pub struct ocfs2_super_block {
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,uint64_t off*/);
-/*, uint64_t off*/
-//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,uint64_t off*/);
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
+/*, u64 off*/
+//int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t off*/ {
+/*,u64 off*/ {
   let mut os: *mut ocfs2_super_block = 0 as *mut ocfs2_super_block;
   os = volume_id_get_buffer(
     id,
-    (0i32 as uint64_t).wrapping_add(0x2000i32 as libc::c_ulong),
+    (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),
     0x200i32 as size_t,
   ) as *mut ocfs2_super_block;
   if os.is_null() {

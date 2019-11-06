@@ -154,7 +154,7 @@ use crate::librb::__off64_t;
 use crate::librb::int32_t;
 pub type int64_t = __int64_t;
 
-use crate::librb::uint64_t;
+
 
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -97707,10 +97707,10 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
   (*ptr_to_globals).get_rowcol_error = query_screen_dimensions();
   if (*ptr_to_globals).get_rowcol_error != 0 {
     /* TODO? && no input on stdin */
-    let mut k: uint64_t = 0; // get memory for virtual screen
+    let mut k: u64 = 0; // get memory for virtual screen
     write1(b"\x1b[999;999H\x1b[6n\x00" as *const u8 as *const libc::c_char); // default Yank/Delete reg
     fflush_all();
-    k = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32) as uint64_t;
+    k = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32) as u64;
     if k as int32_t == KEYCODE_CURSOR_POS as libc::c_int {
       let mut rc: u32 = (k >> 32i32) as u32;
       (*ptr_to_globals).columns = rc & 0x7fffi32 as libc::c_uint;

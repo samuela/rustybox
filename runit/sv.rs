@@ -70,7 +70,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__uint64_t;
+
 
 use crate::librb::__useconds_t;
 
@@ -82,7 +82,7 @@ use libc::stat;
 use libc::time_t;
 
 
-use crate::librb::uint64_t;
+
 
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
@@ -93,15 +93,15 @@ pub struct globals {
   pub acts: *const libc::c_char,
   pub service: *mut *mut libc::c_char,
   pub rc: libc::c_uint,
-  pub tstart: uint64_t,
-  pub tnow: uint64_t,
+  pub tstart: u64,
+  pub tnow: u64,
   pub svstatus: svstatus_t,
   pub islog: smallint,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct svstatus_t {
-  pub time_be64: uint64_t,
+  pub time_be64: u64,
   pub time_nsec_be32: u32,
   pub pid_le32: u32,
   pub paused: u8,
@@ -208,7 +208,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
   let mut pid: libc::c_int = 0;
   let mut normallyup: libc::c_int = 0i32;
   let mut s: stat = std::mem::zeroed();
-  let mut timestamp: uint64_t = 0;
+  let mut timestamp: u64 = 0;
   if stat(b"down\x00" as *const u8 as *const libc::c_char, &mut s) == -1i32 {
     if *bb_errno != 2i32 {
       bb_perror_msg(
@@ -223,8 +223,8 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
     .svstatus
     .pid_le32 as libc::c_int;
   timestamp = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
+    let mut __v: u64 = 0;
+    let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .svstatus
       .time_be64;
     if 0 != 0 {
@@ -235,7 +235,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh2 = &mut __v;
       let fresh3;
@@ -379,7 +379,7 @@ unsafe extern "C" fn checkscript() -> libc::c_int {
 unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
   let mut r: libc::c_int = 0;
   let mut pid_le32: libc::c_uint = 0;
-  let mut timestamp: uint64_t = 0;
+  let mut timestamp: u64 = 0;
   r = svstatus_get();
   if r == -1i32 {
     return -1i32;
@@ -432,8 +432,8 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             == 'd' as i32)
         {
           timestamp = {
-            let mut __v: __uint64_t = 0;
-            let mut __x: __uint64_t = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
+            let mut __v: u64 = 0;
+            let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .svstatus
               .time_be64;
             if 0 != 0 {
@@ -444,7 +444,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
                 | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
                 | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
                 | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-                | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+                | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
             } else {
               let fresh5 = &mut __v;
               let fresh6;
@@ -470,8 +470,8 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
       }
       111 => {
         timestamp = {
-          let mut __v: __uint64_t = 0;
-          let mut __x: __uint64_t = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
+          let mut __v: u64 = 0;
+          let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .svstatus
             .time_be64;
           if 0 != 0 {
@@ -482,7 +482,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
               | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
               | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
               | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-              | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+              | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
           } else {
             let fresh8 = &mut __v;
             let fresh9;
@@ -631,7 +631,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     bb_show_usage();
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow =
-    (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as uint64_t;
+    (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tstart =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow;
   curdir = open(
@@ -940,7 +940,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       usleep(420000i32 as __useconds_t);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow =
         (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64)
-          as uint64_t
+          as u64
     }
   }
   return if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rc > 99i32 as libc::c_uint {

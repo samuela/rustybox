@@ -42,7 +42,7 @@ extern "C" {
 }
 
 pub type __int64_t = libc::c_long;
-use crate::librb::__uint64_t;
+
 
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
@@ -151,8 +151,8 @@ pub unsafe extern "C" fn dumpleases_main(
     ::std::mem::size_of::<int64_t>() as libc::c_ulong,
   );
   written_at = ({
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = written_at as __uint64_t;
+    let mut __v: u64 = 0;
+    let mut __x: u64 = written_at as u64;
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn dumpleases_main(
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh0 = &mut __v;
       let fresh1;

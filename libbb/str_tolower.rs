@@ -277,11 +277,11 @@ use libc;
  * and also it additionally decoded '+' to space.
  */
 /* Sign-extends to a value which never matches fgetc result: */
-/* always correctly aligned for uint64_t */
+/* always correctly aligned for u64 */
 /* must be directly before hash[] */
 /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 /* must be directly before hash[] */
-/* always correctly aligned for uint64_t */
+/* always correctly aligned for u64 */
 /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
 /*unsigned last_eta;*/
 /* Some older linkers don't perform string merging, we used to have common strings

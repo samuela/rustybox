@@ -233,7 +233,7 @@ use crate::librb::__off64_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-use crate::librb::uint64_t;
+
 
 
 
@@ -348,7 +348,7 @@ pub struct tls_state {
   pub buffered_size: libc::c_int,
   pub inbuf: *mut u8,
   pub hsd: *mut tls_handshake_data,
-  pub write_seq64_be: uint64_t,
+  pub write_seq64_be: u64,
   pub client_write_key: *mut u8,
   pub server_write_key: *mut u8,
   pub client_write_IV: *mut u8,

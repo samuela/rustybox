@@ -101,7 +101,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__uint64_t;
+
 
 use crate::librb::__mode_t;
 
@@ -116,7 +116,7 @@ use crate::librb::ssize_t;
 use libc::stat;
 
 
-use crate::librb::uint64_t;
+
 
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
@@ -159,7 +159,7 @@ pub struct svdir {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct svstatus_t {
-  pub time_be64: uint64_t,
+  pub time_be64: u64,
   pub time_nsec_be32: u32,
   pub pid_le32: u32,
   pub paused: u8,
@@ -330,9 +330,9 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
     ::std::mem::size_of::<svstatus_t>() as libc::c_ulong,
   ); /* replace '?' */
   status.time_be64 = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t =
-      ((*s).start.tv_sec as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as __uint64_t;
+    let mut __v: u64 = 0;
+    let mut __x: u64 =
+      ((*s).start.tv_sec as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -341,7 +341,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh1 = &mut __v;
       let fresh2;

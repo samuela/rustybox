@@ -5,7 +5,7 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: uint64_t, len: size_t) -> *mut libc::c_void;
+  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
@@ -17,7 +17,7 @@ extern "C" {
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 
 #[derive(Copy, Clone)]
@@ -29,7 +29,7 @@ pub struct volume_id {
   pub seekbuf_len: size_t,
   pub sbbuf: *mut u8,
   pub seekbuf: *mut u8,
-  pub seekbuf_off: uint64_t,
+  pub seekbuf_off: u64,
   pub label: [libc::c_char; 65],
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
@@ -174,7 +174,7 @@ unsafe extern "C" fn get_attr_volume_id(
 //	char		type_version[VOLUME_ID_FORMAT_SIZE];
 //	smallint	usage_id;
 //	const char	*usage;
-/*uint64_t off,*/
+/*u64 off,*/
 /* util.h */
 /* size of superblock buffer, reiserfs block is at 64k */
 /* size of seek buffer, FAT cluster is 32k max */
@@ -191,25 +191,25 @@ unsafe extern "C" fn get_attr_volume_id(
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
 /* Probe routines */
 /* RAID */
-//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-/*,uint64_t off*/
-//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,uint64_t off*/, uint64_t size);
-//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,uint64_t off*/);
-//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,uint64_t off*/);
+//int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
+/*,u64 off*/
+//int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
+//int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
+//int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
 /* FS */
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
-/*,uint64_t off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
+/*,u64 off*/
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
-/*,uint64_t fat_partition_off*/ {
+/*,u64 fat_partition_off*/ {
   let mut current_block: u64;
   let mut vs: *mut vfat_super_block = 0 as *mut vfat_super_block;
   let mut dir: *mut vfat_dir_entry = 0 as *mut vfat_dir_entry;
@@ -221,14 +221,14 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   let mut root_cluster: u32 = 0;
   let mut dir_size_sct: u32 = 0;
   let mut cluster_count: u32 = 0;
-  let mut root_start_off: uint64_t = 0;
+  let mut root_start_off: u64 = 0;
   let mut start_data_sct: u32 = 0;
   let mut buf: *mut u8 = 0 as *mut u8;
   let mut buf_size: u32 = 0;
   let mut label: *mut u8 = 0 as *mut u8;
   let mut next_cluster: u32 = 0;
   let mut maxloop: libc::c_int = 0;
-  vs = volume_id_get_buffer(id, 0i32 as uint64_t, 0x200i32 as size_t) as *mut vfat_super_block;
+  vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
   if vs.is_null() {
     return -1i32;
   }
@@ -364,11 +364,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         current_block = 11869735117417356968;
         break;
       }
-      let mut next_off_sct: uint64_t = 0;
-      let mut next_off: uint64_t = 0;
-      let mut fat_entry_off: uint64_t = 0;
+      let mut next_off_sct: u64 = 0;
+      let mut next_off: u64 = 0;
+      let mut fat_entry_off: u64 = 0;
       let mut count: libc::c_int = 0;
-      next_off_sct = (next_cluster.wrapping_sub(2i32 as libc::c_uint) as uint64_t)
+      next_off_sct = (next_cluster.wrapping_sub(2i32 as libc::c_uint) as u64)
         .wrapping_mul((*vs).sectors_per_cluster as libc::c_ulong);
       next_off = (start_data_sct as libc::c_ulong)
         .wrapping_add(next_off_sct)
@@ -376,7 +376,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       /* get cluster */
       buf = volume_id_get_buffer(
         id,
-        (0i32 as uint64_t).wrapping_add(next_off),
+        (0i32 as u64).wrapping_add(next_off),
         buf_size as size_t,
       ) as *mut u8;
       if buf.is_null() {
@@ -401,7 +401,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         );
       buf = volume_id_get_buffer(
         id,
-        (0i32 as uint64_t).wrapping_add(fat_entry_off),
+        (0i32 as u64).wrapping_add(fat_entry_off),
         buf_size as size_t,
       ) as *mut u8;
       if buf.is_null() {
@@ -421,7 +421,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         // TODO: why was this translated this way?
         // (maxloop) == 0i32;
         vs =
-          volume_id_get_buffer(id, 0i32 as uint64_t, 0x200i32 as size_t) as *mut vfat_super_block;
+          volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
         if vs.is_null() {
           return -1i32;
         }
@@ -450,18 +450,18 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
     /* the label may be an attribute in the root directory */
     root_start_off = (reserved_sct as libc::c_uint)
       .wrapping_add(fat_size_sct)
-      .wrapping_mul(sector_size_bytes as libc::c_uint) as uint64_t;
+      .wrapping_mul(sector_size_bytes as libc::c_uint) as u64;
     buf_size = (dir_entries as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<vfat_dir_entry>() as libc::c_ulong)
       as u32;
     buf = volume_id_get_buffer(
       id,
-      (0i32 as uint64_t).wrapping_add(root_start_off),
+      (0i32 as u64).wrapping_add(root_start_off),
       buf_size as size_t,
     ) as *mut u8;
     if !buf.is_null() {
       label = get_attr_volume_id(buf as *mut vfat_dir_entry, dir_entries as libc::c_int);
-      vs = volume_id_get_buffer(id, 0i32 as uint64_t, 0x200i32 as size_t) as *mut vfat_super_block;
+      vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
       if vs.is_null() {
         return -1i32;
       }

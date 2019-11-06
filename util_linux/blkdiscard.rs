@@ -39,8 +39,6 @@ extern "C" {
 
 use crate::librb::size_t;
 
-use crate::librb::uint64_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
@@ -86,9 +84,9 @@ pub unsafe extern "C" fn blkdiscard_main(
   let mut opts: libc::c_uint = 0; /* Leaving these two variables out does not  */
   let mut offset_str: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char; /* shrink code size and hampers readability. */
   let mut length_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut offset: uint64_t = 0;
-  let mut length: uint64_t = 0;
-  let mut range: [uint64_t; 2] = [0; 2];
+  let mut offset: u64 = 0;
+  let mut length: u64 = 0;
+  let mut range: [u64; 2] = [0; 2];
   let mut fd: libc::c_int = 0;
   opts = getopt32(
     argv,
@@ -102,9 +100,9 @@ pub unsafe extern "C" fn blkdiscard_main(
   //	xfstat(fd, &st);
   //	if (!S_ISBLK(st.st_mode))
   //		bb_error_msg_and_die("%s: not a block device", argv[0]);
-  offset = xatoull_sfx(offset_str, cwbkMG_suffixes.as_ptr().offset(3)) as uint64_t;
+  offset = xatoull_sfx(offset_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64;
   if opts & OPT_LENGTH as libc::c_int as libc::c_uint != 0 {
-    length = xatoull_sfx(length_str, cwbkMG_suffixes.as_ptr().offset(3)) as uint64_t
+    length = xatoull_sfx(length_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64
   } else {
     bb_xioctl(
       fd,
@@ -113,10 +111,10 @@ pub unsafe extern "C" fn blkdiscard_main(
         | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
         | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
         as libc::c_uint,
-      &mut length as *mut uint64_t as *mut libc::c_void,
+      &mut length as *mut u64 as *mut libc::c_void,
       b"BLKGETSIZE64\x00" as *const u8 as *const libc::c_char,
     );
-    length = (length as libc::c_ulong).wrapping_sub(offset) as uint64_t as uint64_t
+    length = (length as libc::c_ulong).wrapping_sub(offset) as u64 as u64
   }
   range[0] = offset;
   range[1] = length;
@@ -133,7 +131,7 @@ pub unsafe extern "C" fn blkdiscard_main(
         | (119i32 << 0i32) as libc::c_uint)
         | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint
     },
-    &mut range as *mut [uint64_t; 2] as *mut libc::c_void,
+    &mut range as *mut [u64; 2] as *mut libc::c_void,
     b"%s: %s failed\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
     if opts & OPT_SECURE as libc::c_int as libc::c_uint != 0 {

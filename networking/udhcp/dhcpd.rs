@@ -292,7 +292,7 @@ extern "C" {
 }
 
 pub type __int64_t = libc::c_long;
-use crate::librb::__uint64_t;
+
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::int32_t;
@@ -302,7 +302,7 @@ use libc::time_t;
 pub type int64_t = __int64_t;
 
 
-use crate::librb::uint64_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -1453,8 +1453,8 @@ unsafe extern "C" fn write_leases() {
   written_at = time(0 as *mut time_t);
   curr = written_at as leasetime_t;
   written_at = ({
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = written_at as __uint64_t;
+    let mut __v: u64 = 0;
+    let mut __x: u64 = written_at as u64;
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -1463,7 +1463,7 @@ unsafe extern "C" fn write_leases() {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh9 = &mut __v;
       let fresh10;
@@ -1564,8 +1564,8 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
     != ::std::mem::size_of::<int64_t>() as libc::c_ulong)
   {
     written_at = ({
-      let mut __v: __uint64_t = 0;
-      let mut __x: __uint64_t = written_at as __uint64_t;
+      let mut __v: u64 = 0;
+      let mut __x: u64 = written_at as u64;
       if 0 != 0 {
         __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
           | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -1574,7 +1574,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
           | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
           | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
           | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-          | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+          | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
       } else {
         let fresh16 = &mut __v;
         let fresh17;
@@ -1589,7 +1589,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
     time_passed = time(0 as *mut time_t) - written_at;
     /* Strange written_at, or lease file from old version of udhcpd
      * which had no "written_at" field? */
-    if !(time_passed as uint64_t > (12i32 * 60i32 * 60i32) as libc::c_ulong) {
+    if !(time_passed as u64 > (12i32 * 60i32 * 60i32) as libc::c_ulong) {
       /* NB: we do not add lease even if static_nip == lease.lease_nip.
        */
       while full_read(

@@ -63,11 +63,10 @@ extern "C" {
 }
 
 use crate::librb::__pid_t;
-use crate::librb::__uint64_t;
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
 pub const IPPROTO_RAW: C2RustUnnamed = 255;
@@ -106,29 +105,29 @@ pub struct option {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct new_nbd_header_t {
-  pub devsize: uint64_t,
+  pub devsize: u64,
   pub transmission_flags: u16,
   pub data: [libc::c_char; 124],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nbd_opt_t {
-  pub magic: uint64_t,
+  pub magic: u64,
   pub opt: u32,
   pub len: u32,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct old_nbd_header_t {
-  pub devsize: uint64_t,
+  pub devsize: u64,
   pub flags: u32,
   pub data: [libc::c_char; 124],
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct nbd_header_t {
-  pub magic1: uint64_t,
-  pub magic2: uint64_t,
+  pub magic1: u64,
+  pub magic2: u64,
   // old style: 0x420281861253 big endian
   //               // new style: 0x49484156454F5054 (IHAVEOPT)
 }
@@ -343,23 +342,23 @@ pub unsafe extern "C" fn nbdclient_main(
       (8i32 + 8i32) as size_t,
     ); // client_flags
     if memcmp(
-      &mut nbd_header.magic1 as *mut uint64_t as *const libc::c_void,
+      &mut nbd_header.magic1 as *mut u64 as *const libc::c_void,
       b"NBDMAGIC\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-      ::std::mem::size_of::<uint64_t>() as libc::c_ulong,
+      ::std::mem::size_of::<u64>() as libc::c_ulong,
     ) != 0i32
     {
       bb_simple_error_msg_and_die(b"login failed\x00" as *const u8 as *const libc::c_char);
       // NBD_OPT_EXPORT_NAME
     }
     if memcmp(
-      &mut nbd_header.magic2 as *mut uint64_t as *const libc::c_void,
+      &mut nbd_header.magic2 as *mut u64 as *const libc::c_void,
       b"\x00\x00B\x02\x81\x86\x12S\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-      ::std::mem::size_of::<uint64_t>() as libc::c_ulong,
+      ::std::mem::size_of::<u64>() as libc::c_ulong,
     ) == 0i32
     {
       proto_new = 0i32
     } else if memcmp(
-      &mut nbd_header.magic2 as *mut uint64_t as *const libc::c_void,
+      &mut nbd_header.magic2 as *mut u64 as *const libc::c_void,
       b"IHAVEOPT\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       8i32 as libc::c_ulong,
     ) == 0i32
@@ -372,13 +371,13 @@ pub unsafe extern "C" fn nbdclient_main(
       xread(
         sock,
         &mut old_nbd_header as *mut old_nbd_header_t as *mut libc::c_void,
-        (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
+        (::std::mem::size_of::<u64>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<[libc::c_char; 124]>() as libc::c_ulong),
       );
       size_blocks = ({
-        let mut __v: __uint64_t = 0;
-        let mut __x: __uint64_t = old_nbd_header.devsize;
+        let mut __v: u64 = 0;
+        let mut __x: u64 = old_nbd_header.devsize;
         if 0 != 0 {
           __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
             | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -387,7 +386,7 @@ pub unsafe extern "C" fn nbdclient_main(
             | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
             | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
             | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-            | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+            | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
         } else {
           let fresh0 = &mut __v;
           let fresh1;
@@ -457,9 +456,9 @@ pub unsafe extern "C" fn nbdclient_main(
         ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
       );
       memcpy(
-        &mut nbd_opts.magic as *mut uint64_t as *mut libc::c_void,
+        &mut nbd_opts.magic as *mut u64 as *mut libc::c_void,
         b"IHAVEOPT\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-        ::std::mem::size_of::<uint64_t>() as libc::c_ulong,
+        ::std::mem::size_of::<u64>() as libc::c_ulong,
       );
       nbd_opts.opt = {
         let mut __v: libc::c_uint = 0;
@@ -503,7 +502,7 @@ pub unsafe extern "C" fn nbdclient_main(
       xwrite(
         sock,
         &mut nbd_opts as *mut nbd_opt_t as *const libc::c_void,
-        (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
+        (::std::mem::size_of::<u64>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong),
       );
@@ -511,13 +510,13 @@ pub unsafe extern "C" fn nbdclient_main(
       xread(
         sock,
         &mut new_nbd_header as *mut new_nbd_header_t as *mut libc::c_void,
-        (::std::mem::size_of::<uint64_t>() as libc::c_ulong)
+        (::std::mem::size_of::<u64>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u16>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<[libc::c_char; 124]>() as libc::c_ulong),
       );
       size_blocks = ({
-        let mut __v: __uint64_t = 0;
-        let mut __x: __uint64_t = new_nbd_header.devsize;
+        let mut __v: u64 = 0;
+        let mut __x: u64 = new_nbd_header.devsize;
         if 0 != 0 {
           __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
             | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -526,7 +525,7 @@ pub unsafe extern "C" fn nbdclient_main(
             | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
             | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
             | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-            | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+            | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
         } else {
           let fresh12 = &mut __v;
           let fresh13;

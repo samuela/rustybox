@@ -55,7 +55,7 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 
 
-use crate::librb::uint64_t;
+
 
 // Initialized in run_static_initializers
 static mut sizes: [u8; 5] = [0; 5];
@@ -86,8 +86,8 @@ pub unsafe extern "C" fn devmem_main(
 ) -> libc::c_int {
   let mut map_base: *mut libc::c_void = 0 as *mut libc::c_void; /* for compiler */
   let mut virt_addr: *mut libc::c_void = 0 as *mut libc::c_void;
-  let mut read_result: uint64_t = 0;
-  let mut writeval: uint64_t = 0;
+  let mut read_result: u64 = 0;
+  let mut writeval: u64 = 0;
   writeval = writeval;
   let mut target: off_t = 0;
   let mut page_size: libc::c_uint = 0;
@@ -127,7 +127,7 @@ pub unsafe extern "C" fn devmem_main(
     }
     /* VALUE */
     if !(*argv.offset(3)).is_null() {
-      writeval = bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0i32) as uint64_t
+      writeval = bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0i32) as u64
     }
   } else {
     /* make argv[3] to be a valid thing to fetch */
@@ -171,10 +171,10 @@ pub unsafe extern "C" fn devmem_main(
   virt_addr = (map_base as *mut libc::c_char).offset(offset_in_page as isize) as *mut libc::c_void;
   if (*argv.offset(3)).is_null() {
     match width {
-      8 => read_result = *(virt_addr as *mut u8) as uint64_t,
-      16 => read_result = *(virt_addr as *mut u16) as uint64_t,
-      32 => read_result = *(virt_addr as *mut u32) as uint64_t,
-      64 => read_result = *(virt_addr as *mut uint64_t),
+      8 => read_result = *(virt_addr as *mut u8) as u64,
+      16 => read_result = *(virt_addr as *mut u16) as u64,
+      32 => read_result = *(virt_addr as *mut u32) as u64,
+      64 => read_result = *(virt_addr as *mut u64),
       _ => {
         bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
       }
@@ -193,7 +193,7 @@ pub unsafe extern "C" fn devmem_main(
       8 => ::std::ptr::write_volatile(virt_addr as *mut u8, writeval as u8),
       16 => ::std::ptr::write_volatile(virt_addr as *mut u16, writeval as u16),
       32 => ::std::ptr::write_volatile(virt_addr as *mut u32, writeval as u32),
-      64 => ::std::ptr::write_volatile(virt_addr as *mut uint64_t, writeval),
+      64 => ::std::ptr::write_volatile(virt_addr as *mut u64, writeval),
       _ => {
         bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
       }

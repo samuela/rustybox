@@ -12,7 +12,6 @@ extern "C" {
   fn xorbuf_aligned_AES_BLOCK_SIZE(buf: *mut libc::c_void, mask: *const libc::c_void);
 }
 
-use crate::librb::__uint64_t;
 use crate::librb::int32_t;
 
 
@@ -34,8 +33,8 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   };
   // 64-bit code: need to process only 2 words
   let mut tt: libc::c_ulong = {
-    let mut __v: __uint64_t = 0; // zero, or 0x800..00
-    let mut __x: __uint64_t = *(x as *mut libc::c_ulong).offset(0);
+    let mut __v: u64 = 0; // zero, or 0x800..00
+    let mut __x: u64 = *(x as *mut libc::c_ulong).offset(0);
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -44,7 +43,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh0 = &mut __v;
       let fresh1;
@@ -58,8 +57,8 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   let mut carryOut: libc::c_ulong = tt << 64i32 - 1i32;
   tt = tt >> 1i32 ^ carryIn;
   *(x as *mut libc::c_ulong).offset(0) = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = tt;
+    let mut __v: u64 = 0;
+    let mut __x: u64 = tt;
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -68,7 +67,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh3 = &mut __v;
       let fresh4;
@@ -80,8 +79,8 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
     __v
   };
   tt = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = *(x as *mut libc::c_ulong).offset(1);
+    let mut __v: u64 = 0;
+    let mut __x: u64 = *(x as *mut libc::c_ulong).offset(1);
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -90,7 +89,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh6 = &mut __v;
       let fresh7;
@@ -103,8 +102,8 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   };
   tt = tt >> 1i32 ^ carryOut;
   *(x as *mut libc::c_ulong).offset(1) = {
-    let mut __v: __uint64_t = 0;
-    let mut __x: __uint64_t = tt;
+    let mut __v: u64 = 0;
+    let mut __x: u64 = tt;
     if 0 != 0 {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -113,7 +112,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
         | (__x as libc::c_ulonglong & 0xff000000u64) << 8i32
         | (__x as libc::c_ulonglong & 0xff0000u64) << 24i32
         | (__x as libc::c_ulonglong & 0xff00u64) << 40i32
-        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as __uint64_t
+        | (__x as libc::c_ulonglong & 0xffu64) << 56i32) as u64
     } else {
       let fresh9 = &mut __v;
       let fresh10;

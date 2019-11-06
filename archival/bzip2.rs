@@ -68,10 +68,10 @@ use crate::librb::ssize_t;
 use libc::time_t;
 
 
-use crate::librb::uint64_t;
+
 
 pub type bb__aliased_u32 = u32;
-pub type bb__aliased_uint64_t = uint64_t;
+pub type bb__aliased_u64 = u64;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -2362,9 +2362,9 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
     } else {
       inUse16 = inUse16 * 2i32
         + (*(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 0i32) as isize) as *mut Bool
-          as *mut bb__aliased_uint64_t)
+          as *mut bb__aliased_u64)
           | *(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 8i32) as isize) as *mut Bool
-            as *mut bb__aliased_uint64_t)
+            as *mut bb__aliased_u64)
           != 0i32 as libc::c_ulong) as libc::c_int
     }
     i += 1

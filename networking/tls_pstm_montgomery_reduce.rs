@@ -17,7 +17,7 @@ extern "C" {
 use crate::librb::int32_t;
 use crate::librb::size_t;
 
-use crate::librb::uint64_t;
+
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *
@@ -42,7 +42,7 @@ use crate::librb::uint64_t;
 /* Failure as a result of system call error */
 /* Failure to allocate requested memory */
 /* Failure on sanity/limit tests */
-pub type uint64 = uint64_t;
+pub type uint64 = u64;
 pub type uint32 = u32;
 pub type int32 = int32_t;
 pub type pstm_digit = uint32;
