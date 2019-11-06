@@ -2,8 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -19,8 +18,8 @@ extern "C" {
 use crate::librb::__mode_t;
 
 use crate::librb::mode_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -503,32 +502,7 @@ pub unsafe extern "C" fn bb_make_directory(
   let mut fail_msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut c: libc::c_char = 0;
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   /* "path" can be a result of dirname().
    * dirname("no_slashes") returns ".", possibly read-only.
    * musl dirname() can return read-only "/" too.

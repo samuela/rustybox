@@ -236,9 +236,9 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 use crate::librb::uoff_t;
@@ -1889,32 +1889,7 @@ unsafe extern "C" fn remove_file_array(
   mut remove_names: *mut *mut libc::c_char,
   mut exclude_names: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut path_stat: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  }; /* not removed anything yet */
+  let mut path_stat: stat = std::mem::zeroed(); /* not removed anything yet */
   let mut remove_flag: libc::c_int = 1i32;
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;

@@ -11,8 +11,7 @@ extern "C" {
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -41,8 +40,8 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 use crate::librb::dev_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct arena {
@@ -231,32 +230,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
 #[no_mangle]
 pub unsafe extern "C" fn find_block_device(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut a: arena = arena {
-    st: stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    },
+    st: std::mem::zeroed(),
     dev: 0,
     devpath: [0; 256],
   };

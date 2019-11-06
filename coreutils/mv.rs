@@ -58,8 +58,7 @@ extern "C" {
 
 use crate::librb::uint32_t;
 
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
@@ -122,60 +121,10 @@ pub unsafe extern "C" fn mv_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut source_stat: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut source_stat: stat = std::mem::zeroed();
   let mut source_exists: libc::c_int = 0;
   let mut current_block: u64;
-  let mut dest_stat: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut dest_stat: stat = std::mem::zeroed();
   let mut last: *const libc::c_char = 0 as *const libc::c_char;
   let mut dest: *const libc::c_char = 0 as *const libc::c_char;
   let mut flags: libc::c_uint = 0;
@@ -252,32 +201,7 @@ pub unsafe extern "C" fn mv_main(
           6059157660367733168 => {}
           _ => {
             if rename(*argv, dest) < 0i32 {
-              source_stat = stat {
-                st_dev: 0,
-                st_ino: 0,
-                st_nlink: 0,
-                st_mode: 0,
-                st_uid: 0,
-                st_gid: 0,
-                __pad0: 0,
-                st_rdev: 0,
-                st_size: 0,
-                st_blksize: 0,
-                st_blocks: 0,
-                st_atim: timespec {
-                  tv_sec: 0,
-                  tv_nsec: 0,
-                },
-                st_mtim: timespec {
-                  tv_sec: 0,
-                  tv_nsec: 0,
-                },
-                st_ctim: timespec {
-                  tv_sec: 0,
-                  tv_nsec: 0,
-                },
-                __glibc_reserved: [0; 3],
-              };
+              source_stat = std::mem::zeroed();
               source_exists = 0;
               if *bb_errno != 18i32 || {
                 source_exists = cp_mv_stat2(

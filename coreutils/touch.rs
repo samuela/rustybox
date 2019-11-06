@@ -37,11 +37,11 @@ extern "C" {
 
 use crate::librb::__suseconds_t;
 
-use crate::librb::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::timeval;
 use crate::librb::uint32_t;
+use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -175,37 +175,12 @@ pub unsafe extern "C" fn touch_main(
     bb_show_usage();
   }
   if !reference_file.is_null() {
-    let mut stbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut stbuf: stat = std::mem::zeroed();
     xstat(reference_file, &mut stbuf);
-    timebuf[0].tv_sec = stbuf.st_mtim.tv_sec;
+    timebuf[0].tv_sec = stbuf.st_mtime;
     timebuf[1].tv_sec = timebuf[0].tv_sec
-    /* Can use .st_mtim.tv_nsec
-     * (or is it .st_mtimensec?? see date.c)
+    /* Can use .st_mtime.tv_nsec
+     * (or is it .st_mtimeensec?? see date.c)
      * to set microseconds too.
      */
   }

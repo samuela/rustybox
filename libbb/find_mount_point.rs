@@ -2,8 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
@@ -13,8 +12,8 @@ extern "C" {
 }
 
 use crate::librb::dev_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -441,32 +440,7 @@ pub unsafe extern "C" fn find_mount_point(
   mut name: *const libc::c_char,
   mut subdir_too: libc::c_int,
 ) -> *mut mntent {
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   let mut mtab_fp: *mut FILE = 0 as *mut FILE;
   let mut mountEntry: *mut mntent = 0 as *mut mntent;
   let mut devno_of_name: dev_t = 0;

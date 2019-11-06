@@ -70,8 +70,7 @@ extern "C" {
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -231,9 +230,9 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 pub type socklen_t = __socklen_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -933,32 +932,7 @@ unsafe extern "C" fn handle_rest() {
   );
 }
 unsafe extern "C" fn handle_retr() {
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut bytes_transferred: off_t = 0;
   let mut remote_fd: libc::c_int = 0;
   let mut local_file_fd: libc::c_int = 0;
@@ -1215,32 +1189,7 @@ unsafe extern "C" fn handle_stat_file() {
  *  UNIX.mode - unix file mode
  */
 unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut broken_out: tm = tm {
     tm_sec: 0,
     tm_min: 0,
@@ -1275,7 +1224,7 @@ unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
       statbuf.st_size,
     );
   } else {
-    gmtime_r(&mut statbuf.st_mtim.tv_sec, &mut broken_out);
+    gmtime_r(&mut statbuf.st_mtime, &mut broken_out);
     sprintf(
       buf.as_mut_ptr(),
       b"213 %04u%02u%02u%02u%02u%02u\r\n\x00" as *const u8 as *const libc::c_char,
@@ -1389,32 +1338,7 @@ unsafe extern "C" fn handle_rnto() {
   );
 }
 unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_unique: libc::c_int) {
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut tempname: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut bytes_transferred: off_t = 0;
   let mut offset: off_t = 0;

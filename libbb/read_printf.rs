@@ -170,8 +170,8 @@ use crate::librb::__off_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -315,32 +315,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
   let mut size: size_t = 0; /* max to read */
   let mut rd_size: size_t = 0;
   let mut to_read: size_t = 0;
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   to_read = if !maxsz_p.is_null() {
     *maxsz_p
   } else {

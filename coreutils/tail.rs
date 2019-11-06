@@ -18,8 +18,7 @@ extern "C" {
   fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -61,9 +60,9 @@ use crate::librb::__off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
@@ -168,32 +167,7 @@ pub unsafe extern "C" fn tail_main(
       .wrapping_mul((argc + 1i32) as libc::c_ulong),
   ) as *mut libc::c_int;
   if (*argv.offset(0)).is_null() {
-    let mut statbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut statbuf: stat = std::mem::zeroed();
     if fstat(0i32, &mut statbuf) == 0i32
       && statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o10000i32 as libc::c_uint
     {
@@ -429,58 +403,8 @@ pub unsafe extern "C" fn tail_main(
         let mut filename: *const libc::c_char = *argv.offset(i as isize);
         let mut fd_1: libc::c_int = *fds.offset(i as isize);
         if opt & 0x40i32 != 0 {
-          let mut sbuf: stat = stat {
-            st_dev: 0,
-            st_ino: 0,
-            st_nlink: 0,
-            st_mode: 0,
-            st_uid: 0,
-            st_gid: 0,
-            __pad0: 0,
-            st_rdev: 0,
-            st_size: 0,
-            st_blksize: 0,
-            st_blocks: 0,
-            st_atim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            st_mtim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            st_ctim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            __glibc_reserved: [0; 3],
-          };
-          let mut fsbuf: stat = stat {
-            st_dev: 0,
-            st_ino: 0,
-            st_nlink: 0,
-            st_mode: 0,
-            st_uid: 0,
-            st_gid: 0,
-            __pad0: 0,
-            st_rdev: 0,
-            st_size: 0,
-            st_blksize: 0,
-            st_blocks: 0,
-            st_atim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            st_mtim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            st_ctim: timespec {
-              tv_sec: 0,
-              tv_nsec: 0,
-            },
-            __glibc_reserved: [0; 3],
-          };
+          let mut sbuf: stat = std::mem::zeroed();
+          let mut fsbuf: stat = std::mem::zeroed();
           if fd_1 < 0i32
             || fstat(fd_1, &mut fsbuf) < 0i32
             || stat(filename, &mut sbuf) < 0i32
@@ -519,32 +443,7 @@ pub unsafe extern "C" fn tail_main(
           loop
           /* tail -f keeps following files even if they are truncated */
           {
-            let mut sbuf_0: stat = stat {
-              st_dev: 0,
-              st_ino: 0,
-              st_nlink: 0,
-              st_mode: 0,
-              st_uid: 0,
-              st_gid: 0,
-              __pad0: 0,
-              st_rdev: 0,
-              st_size: 0,
-              st_blksize: 0,
-              st_blocks: 0,
-              st_atim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              st_mtim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              st_ctim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              __glibc_reserved: [0; 3],
-            };
+            let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
             if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size > 0i32 as libc::c_long {
               let mut current_0: off_t = lseek(fd_1, 0i32 as __off64_t, 1i32);

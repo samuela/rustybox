@@ -62,8 +62,8 @@ use crate::librb::__off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 
 use libc::FILE;
 /* no conversions */
@@ -734,32 +734,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
   }
 }
 unsafe extern "C" fn do_skip(mut dumper: *mut priv_dumper_t, mut fname: *const libc::c_char) {
-  let mut sbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sbuf: stat = std::mem::zeroed();
   xfstat(0i32, &mut sbuf, fname);
   if sbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && (*dumper).pub_0.dump_skip >= sbuf.st_size

@@ -1,4 +1,5 @@
 use libc;
+use libc::timespec;
 extern "C" {
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
@@ -17,7 +18,7 @@ extern "C" {
 }
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
-use crate::librb::timespec;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

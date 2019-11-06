@@ -43,8 +43,7 @@ extern "C" {
   fn getpriority(__which: __priority_which_t, __who: id_t) -> libc::c_int;
   #[no_mangle]
   fn setpriority(__which: __priority_which_t, __who: id_t, __prio: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const __gid_t) -> libc::c_int;
   #[no_mangle]
@@ -139,8 +138,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type id_t = __id_t;
 
 use libc::FILE;
@@ -279,32 +278,7 @@ unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
   ) == 0i32) as libc::c_int;
 }
 unsafe extern "C" fn pid_is_user(mut pid: libc::c_int) -> libc::c_int {
-  let mut sb: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sb: stat = std::mem::zeroed();
   let mut buf: [libc::c_char; 19] = [0; 19];
   sprintf(
     buf.as_mut_ptr(),

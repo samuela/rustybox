@@ -30,8 +30,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -42,7 +41,7 @@ extern "C" {
     __tp: *const tm,
   ) -> size_t;
   #[no_mangle]
-  fn localtime(__timer: *const time_t) -> *mut tm;
+  fn localtime(_: *const time_t) -> *mut tm;
   #[no_mangle]
   fn statfs(__file: *const libc::c_char, __buf: *mut statfs) -> libc::c_int;
   /* Search for an entry with a matching user ID.  */
@@ -88,11 +87,11 @@ pub type __fsword_t = libc::c_long;
 use crate::librb::gid_t;
 use crate::librb::mode_t;
 use crate::librb::size_t;
-use crate::librb::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
+use libc::stat;
 
 use libc::FILE;
 #[derive(Copy, Clone)]
@@ -238,8 +237,10 @@ pub const OPT_SELINUX: C2RustUnnamed_0 = 0;
 pub const OPT_FILESYS: C2RustUnnamed_0 = 4;
 pub const OPT_DEREFERENCE: C2RustUnnamed_0 = 2;
 pub const OPT_TERSE: C2RustUnnamed_0 = 1;
+
 pub type statfunc_ptr =
   Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> bool>;
+
 unsafe extern "C" fn file_type(mut st: *const stat) -> *const libc::c_char {
   /* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107
    * for some of these formats.
@@ -282,26 +283,26 @@ unsafe extern "C" fn file_type(mut st: *const stat) -> *const libc::c_char {
   }
   return b"weird file\x00" as *const u8 as *const libc::c_char;
 }
-unsafe extern "C" fn human_time(mut ts: *mut timespec) -> *const libc::c_char {
+
+unsafe fn human_time(ts: &libc::timespec) -> *const libc::c_char {
   let mut fmt: [libc::c_char; 39] = [0; 39];
-  /*paranoia*/
-  /* coreutils 6.3 compat */
   sprintf(
     stpcpy(
       fmt.as_mut_ptr(),
       b"%Y-%m-%d %H:%M:%S\x00" as *const u8 as *const libc::c_char,
     ),
     b".%09u %%z\x00" as *const u8 as *const libc::c_char,
-    (*ts).tv_nsec as libc::c_uint,
+    ts.tv_nsec as libc::c_uint,
   );
   strftime(
     bb_common_bufsiz1.as_mut_ptr(),
     COMMON_BUFSIZE as libc::c_int as size_t,
     fmt.as_mut_ptr(),
-    localtime(&mut (*ts).tv_sec),
+    localtime(&ts.tv_sec),
   );
   return bb_common_bufsiz1.as_mut_ptr();
 }
+
 /* Return the type of the specified file system.
  * Some systems have statfvs.f_basetype[FSTYPSZ]. (AIX, HP-UX, and Solaris)
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
@@ -558,7 +559,13 @@ unsafe extern "C" fn print_stat(
     strcat(pformat, b"lu\x00" as *const u8 as *const libc::c_char);
     printf(pformat, (*statbuf).st_blksize as libc::c_ulong);
   } else if m as libc::c_int == 'x' as i32 {
-    printfs(pformat, human_time(&mut (*statbuf).st_atim));
+    printfs(
+      pformat,
+      human_time(&libc::timespec {
+        tv_sec: (*statbuf).st_atime,
+        tv_nsec: (*statbuf).st_atime_nsec,
+      }),
+    );
   } else if m as libc::c_int == 'X' as i32 {
     strcat(
       pformat,
@@ -570,9 +577,15 @@ unsafe extern "C" fn print_stat(
     );
     /* note: (unsigned long) would be wrong:
      * imagine (unsigned long64)int32 */
-    printf(pformat, (*statbuf).st_atim.tv_sec);
+    printf(pformat, (*statbuf).st_atime);
   } else if m as libc::c_int == 'y' as i32 {
-    printfs(pformat, human_time(&mut (*statbuf).st_mtim));
+    printfs(
+      pformat,
+      human_time(&libc::timespec {
+        tv_sec: (*statbuf).st_mtime,
+        tv_nsec: (*statbuf).st_mtime_nsec,
+      }),
+    );
   } else if m as libc::c_int == 'Y' as i32 {
     strcat(
       pformat,
@@ -582,9 +595,15 @@ unsafe extern "C" fn print_stat(
         b"lu\x00" as *const u8 as *const libc::c_char
       },
     );
-    printf(pformat, (*statbuf).st_mtim.tv_sec);
+    printf(pformat, (*statbuf).st_mtime);
   } else if m as libc::c_int == 'z' as i32 {
-    printfs(pformat, human_time(&mut (*statbuf).st_ctim));
+    printfs(
+      pformat,
+      human_time(&libc::timespec {
+        tv_sec: (*statbuf).st_ctime,
+        tv_nsec: (*statbuf).st_ctime_nsec,
+      }),
+    );
   } else if m as libc::c_int == 'Z' as i32 {
     strcat(
       pformat,
@@ -594,7 +613,7 @@ unsafe extern "C" fn print_stat(
         b"lu\x00" as *const u8 as *const libc::c_char
       },
     );
-    printf(pformat, (*statbuf).st_ctim.tv_sec);
+    printf(pformat, (*statbuf).st_ctime);
   } else {
     strcatc(pformat, 'c' as i32 as libc::c_char);
     printf(pformat, m as libc::c_int);
@@ -736,32 +755,7 @@ unsafe extern "C" fn do_stat(
   mut filename: *const libc::c_char,
   mut format: *const libc::c_char,
 ) -> bool {
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   if (if option_mask32 & OPT_DEREFERENCE as libc::c_int as libc::c_uint != 0 {
     Some(stat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
   } else {

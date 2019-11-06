@@ -1,10 +1,11 @@
 use libc;
+use libc::stat;
 use libc::FILE;
 
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __dev_t, __mode_t, __off_t, bb_uidgid_t, dev_t, fd_pair, gid_t, mode_t, off_t, pid_t, size_t,
-  smallint, stat, time_t, timespec, uid_t, uint32_t, uoff_t,
+  smallint, time_t, uid_t, uint32_t, uoff_t,
 };
 
 extern "C" {
@@ -45,9 +46,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
@@ -261,32 +259,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
   loop {
     let mut name: *const libc::c_char = 0 as *const libc::c_char;
     let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut st: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut st: stat = std::mem::zeroed();
     line = if option_mask32 & OPT_NUL_TERMINATED as libc::c_int as libc::c_uint != 0 {
       bb_get_chunk_from_file(stdin, 0 as *mut size_t)
     } else {
@@ -420,7 +393,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
             st.st_uid,
             st.st_gid,
             st.st_nlink as uint32_t,
-            st.st_mtim.tv_sec as uint32_t,
+            st.st_mtime as uint32_t,
             st.st_size as uint32_t,
             gnu_dev_major(st.st_dev),
             gnu_dev_minor(st.st_dev),

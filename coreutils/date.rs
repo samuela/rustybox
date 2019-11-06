@@ -1,4 +1,5 @@
 use libc;
+use libc::timespec;
 extern "C" {
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
@@ -63,10 +64,10 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -363,34 +364,9 @@ pub unsafe extern "C" fn date_main(
   /* Now we have parsed all the information except the date format
    * which depends on whether the clock is being set or read */
   if opt & OPT_REFERENCE as libc::c_int as libc::c_uint != 0 {
-    let mut statbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut statbuf: stat = std::mem::zeroed();
     xstat(filename, &mut statbuf);
-    ts.tv_sec = statbuf.st_mtim.tv_sec
+    ts.tv_sec = statbuf.st_mtime
   } else {
     time(&mut ts.tv_sec);
   }

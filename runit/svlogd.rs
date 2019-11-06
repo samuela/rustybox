@@ -80,8 +80,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -175,8 +174,8 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -798,32 +797,7 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
   };
 }
 unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   let mut now: libc::c_uint = 0;
   if (*ld).fddir == -1i32 {
     (*ld).rotate_period = 0i32 as libc::c_uint;
@@ -1115,32 +1089,7 @@ unsafe extern "C" fn logdir_open(
   let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut np: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut i: libc::c_int = 0;
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   now = monotonic_sec();
   (*ld).fddir = open(fn_0, 0i32 | 0o4000i32);
   if (*ld).fddir == -1i32 {

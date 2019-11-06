@@ -153,8 +153,7 @@ extern "C" {
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
 
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
@@ -394,9 +393,9 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -2133,35 +2132,10 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
     fd = open(gzurl, 0i32);
     free(gzurl as *mut libc::c_void);
     if fd != -1i32 {
-      let mut sb: stat = stat {
-        st_dev: 0,
-        st_ino: 0,
-        st_nlink: 0,
-        st_mode: 0,
-        st_uid: 0,
-        st_gid: 0,
-        __pad0: 0,
-        st_rdev: 0,
-        st_size: 0,
-        st_blksize: 0,
-        st_blocks: 0,
-        st_atim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_mtim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_ctim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        __glibc_reserved: [0; 3],
-      };
+      let mut sb: stat = std::mem::zeroed();
       fstat(fd, &mut sb);
       (*ptr_to_globals).file_size = sb.st_size;
-      (*ptr_to_globals).last_mod = sb.st_mtim.tv_sec
+      (*ptr_to_globals).last_mod = sb.st_mtime
     } else {
       (*ptr_to_globals).content_gzip = 0i32 as smallint;
       fd = open(url, 0i32)
@@ -2549,32 +2523,7 @@ unsafe extern "C" fn send_REQUEST_TIMEOUT_and_exit(mut _sig: libc::c_int) -> ! {
 unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_sockaddr) -> ! {
   let mut current_block: u64;
   static mut request_GET: [libc::c_char; 4] = [71, 69, 84, 0];
-  let mut sb: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sb: stat = std::mem::zeroed();
   let mut urlcopy: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut urlp: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut tptr: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -2908,7 +2857,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     }
     if (*ptr_to_globals).found_moved_temporarily.is_null() {
       (*ptr_to_globals).file_size = sb.st_size;
-      (*ptr_to_globals).last_mod = sb.st_mtim.tv_sec
+      (*ptr_to_globals).last_mod = sb.st_mtime
     }
   } else if *urlp.offset(-1i32 as isize) as libc::c_int == '/' as i32 {
     /* It's a dir URL and there is no index.html

@@ -35,9 +35,9 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 
 /*
  * fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger
@@ -93,32 +93,7 @@ pub unsafe extern "C" fn fdformat_main(
   let mut read_bytes: libc::c_int = 0;
   let mut verify: libc::c_int = 0;
   let mut data: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   let mut param: floppy_struct = floppy_struct {
     size: 0,
     sect: 0,

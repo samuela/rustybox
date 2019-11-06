@@ -41,8 +41,7 @@ extern "C" {
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -135,10 +134,10 @@ use crate::librb::__off64_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
+use libc::stat;
 
 use crate::librb::__compar_fn_t;
 use libc::FILE;
@@ -1170,32 +1169,7 @@ unsafe extern "C" fn skip_dir(
     let l: *mut dlist = userdata as *mut dlist;
     filename = filename.offset((*l).len as isize);
     if *filename.offset(0) != 0 {
-      let mut osb: stat = stat {
-        st_dev: 0,
-        st_ino: 0,
-        st_nlink: 0,
-        st_mode: 0,
-        st_uid: 0,
-        st_gid: 0,
-        __pad0: 0,
-        st_rdev: 0,
-        st_size: 0,
-        st_blksize: 0,
-        st_blocks: 0,
-        st_atim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_mtim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_ctim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        __glibc_reserved: [0; 3],
-      };
+      let mut osb: stat = std::mem::zeroed();
       let mut othername: *mut libc::c_char =
         concat_path_file((*ptr_to_globals).other_dir, filename);
       let mut r: libc::c_int = stat(othername, &mut osb);
@@ -1511,8 +1485,8 @@ pub unsafe extern "C" fn diff_main(
     && (*ptr_to_globals).stb[0].st_ino == (*ptr_to_globals).stb[1].st_ino
     && (*ptr_to_globals).stb[0].st_dev == (*ptr_to_globals).stb[1].st_dev
     && (*ptr_to_globals).stb[0].st_size == (*ptr_to_globals).stb[1].st_size
-    && (*ptr_to_globals).stb[0].st_mtim.tv_sec == (*ptr_to_globals).stb[1].st_mtim.tv_sec
-    && (*ptr_to_globals).stb[0].st_ctim.tv_sec == (*ptr_to_globals).stb[1].st_ctim.tv_sec
+    && (*ptr_to_globals).stb[0].st_mtime == (*ptr_to_globals).stb[1].st_mtime
+    && (*ptr_to_globals).stb[0].st_ctime == (*ptr_to_globals).stb[1].st_ctime
     && (*ptr_to_globals).stb[0].st_mode == (*ptr_to_globals).stb[1].st_mode
     && (*ptr_to_globals).stb[0].st_nlink == (*ptr_to_globals).stb[1].st_nlink
     && (*ptr_to_globals).stb[0].st_uid == (*ptr_to_globals).stb[1].st_uid

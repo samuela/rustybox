@@ -12,8 +12,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -72,10 +71,10 @@ use crate::librb::__mode_t;
 use crate::librb::__uid_t;
 use crate::librb::gid_t;
 use crate::librb::mode_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
+use libc::stat;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -154,32 +153,7 @@ pub unsafe extern "C" fn install_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut mode: mode_t = 0;
   let mut uid: uid_t = 0;
   let mut gid: gid_t = 0;

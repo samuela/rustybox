@@ -89,8 +89,8 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint16_t;
 use libc::FILE;
 
@@ -523,32 +523,7 @@ pub unsafe extern "C" fn dd_main(
         (Z.seek as libc::c_ulong).wrapping_mul(blocksz) as __off64_t,
       ) < 0i32
       {
-        let mut st: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut st: stat = std::mem::zeroed();
         if fstat(ofd as libc::c_int, &mut st) < 0i32
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint

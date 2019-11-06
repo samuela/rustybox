@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::timespec;
 
 extern "C" {
   pub type __dirstream;
@@ -358,10 +359,10 @@ use crate::librb::__mode_t;
 
 use crate::librb::__off64_t;
 
+use crate::librb::__clock_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::__uint32_t;
-use crate::librb::__clock_t;
 
 use crate::librb::__time_t;
 
@@ -387,16 +388,12 @@ use crate::librb::ssize_t;
 pub type DIR = __dirstream;
 use crate::librb::mode_t;
 
-use crate::librb::timespec;
-
-use crate::librb::stat;
 use crate::librb::time_t;
-
+use libc::stat;
 
 use crate::librb::signal::sigset_t;
 
 use crate::librb::timeval;
-
 
 use crate::librb::signal::__sigval_t;
 
@@ -1897,32 +1894,7 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
   };
 }
 unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).root_major =
     gnu_dev_major(st.st_dev) as libc::c_int;

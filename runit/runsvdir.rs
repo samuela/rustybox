@@ -31,8 +31,7 @@ extern "C" {
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
   #[no_mangle]
@@ -78,8 +77,8 @@ use crate::librb::__useconds_t;
 use crate::librb::ino_t;
 use crate::librb::pid_t;
 use crate::librb::smallint;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -177,32 +176,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
   let mut dir: *mut DIR = 0 as *mut DIR;
   let mut d: *mut dirent = 0 as *mut dirent;
   let mut i: libc::c_int = 0;
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   let mut need_rescan: libc::c_int = 0i32;
   dir = opendir(b".\x00" as *const u8 as *const libc::c_char);
   if dir.is_null() {
@@ -366,32 +340,7 @@ pub unsafe extern "C" fn runsvdir_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   let mut last_dev: dev_t = 0;
   last_dev = last_dev;
   let mut last_ino: ino_t = 0;
@@ -480,13 +429,13 @@ pub unsafe extern "C" fn runsvdir_main(
       ) != -1i32
       {
         if need_rescan != 0
-          || s.st_mtim.tv_sec != last_mtime
+          || s.st_mtime != last_mtime
           || s.st_ino != last_ino
           || s.st_dev != last_dev
         {
           /* svdir modified */
           if chdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svdir) != -1i32 {
-            last_mtime = s.st_mtim.tv_sec;
+            last_mtime = s.st_mtime;
             last_dev = s.st_dev;
             last_ino = s.st_ino;
             /* if the svdir changed this very second, wait until the

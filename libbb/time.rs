@@ -1,4 +1,5 @@
 use libc;
+use libc::timespec;
 extern "C" {
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
@@ -48,7 +49,7 @@ extern "C" {
 pub type __clockid_t = libc::c_int;
 
 use crate::librb::size_t;
-use crate::librb::timespec;
+
 pub type clockid_t = __clockid_t;
 use crate::librb::time_t;
 #[derive(Copy, Clone)]

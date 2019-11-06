@@ -19,39 +19,14 @@ extern "C" {
 use crate::librb::__mode_t;
 
 use crate::librb::mode_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 #[no_mangle]
 pub unsafe extern "C" fn mesg_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut sb: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sb: stat = std::mem::zeroed();
   let mut m: mode_t = 0;
   let mut c: libc::c_char = 0i32 as libc::c_char;
   argv = argv.offset(1);

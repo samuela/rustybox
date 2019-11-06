@@ -67,8 +67,8 @@ use crate::librb::int32_t;
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint32_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -550,32 +550,7 @@ pub unsafe extern "C" fn ubi_tools_main(
         xmove_fd(xopen(*argv, 0i32), 0i32);
       }
       if opts & (1i32 << 4i32) as libc::c_uint == 0 {
-        let mut st: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut st: stat = std::mem::zeroed();
         xfstat(0i32, &mut st, *argv);
         size_bytes = st.st_size as libc::c_ulonglong
       }

@@ -6,8 +6,8 @@ use std::path::Path;
 use crate::applets::applet_tables::{applets, InstallLoc, SUID};
 use crate::libbb::llist::llist_t;
 use crate::librb::{
-  __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, stat,
-  timespec, uid_t, uint16_t, uint8_t,
+  __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, uid_t,
+  uint16_t, uint8_t,
 };
 use crate::shell::ash::ash_main;
 
@@ -33,9 +33,6 @@ extern "C" {
 
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
   /* Search for an entry with a matching username. */
   #[no_mangle]
@@ -361,38 +358,13 @@ unsafe fn parse_config_file() {
   let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: libc::stat = std::mem::zeroed();
   ruid = libc::getuid();
   if ruid == 0i32 as libc::c_uint {
     /* run by root - don't need to even read config file */
     return;
   }
-  if stat(str_to_ptr(config_file), &mut st) != 0i32
+  if libc::stat(str_to_ptr(config_file), &mut st) != 0i32
     || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
     || st.st_uid != 0i32 as libc::c_uint
     || st.st_mode & (0o200i32 >> 3i32 | 0o200i32 >> 3i32 >> 3i32) as libc::c_uint != 0

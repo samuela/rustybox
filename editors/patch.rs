@@ -89,9 +89,9 @@ use crate::librb::__mode_t;
 
 use crate::librb::off_t;
 use crate::librb::size_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
@@ -682,32 +682,7 @@ pub unsafe extern "C" fn patch_main(
           } else if option_mask32 & (1i32 << 2i32) as libc::c_uint == 0
             || i_0 as libc::c_long <= (*ptr_to_globals).prefix
           {
-            let mut statbuf: stat = stat {
-              st_dev: 0,
-              st_ino: 0,
-              st_nlink: 0,
-              st_mode: 0,
-              st_uid: 0,
-              st_gid: 0,
-              __pad0: 0,
-              st_rdev: 0,
-              st_size: 0,
-              st_blksize: 0,
-              st_blocks: 0,
-              st_atim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              st_mtim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              st_ctim: timespec {
-                tv_sec: 0,
-                tv_nsec: 0,
-              },
-              __glibc_reserved: [0; 3],
-            };
+            let mut statbuf: stat = std::mem::zeroed();
             // If the old file was null, we're creating a new one.
             if strcmp(
               oldname,

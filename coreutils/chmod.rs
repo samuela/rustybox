@@ -6,8 +6,7 @@ extern "C" {
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -49,8 +48,8 @@ extern "C" {
 
 use crate::librb::__mode_t;
 use crate::librb::mode_t;
-use crate::librb::stat;
 use crate::librb::uint32_t;
+use libc::stat;
 
 /*
  * Mini chmod implementation for busybox

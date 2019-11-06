@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::timespec;
 extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
@@ -42,8 +43,7 @@ extern "C" {
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -113,8 +113,8 @@ use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint32_t;
 use crate::librb::uint64_t;
 use crate::librb::uint8_t;
@@ -407,32 +407,7 @@ unsafe extern "C" fn custom(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_u
   let mut pid: pid_t = 0;
   let mut w: libc::c_int = 0;
   let mut a: [libc::c_char; 10] = [0; 10];
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   if (*s).islog != 0 {
     return 0i32 as libc::c_uint;
   }
@@ -738,32 +713,7 @@ unsafe extern "C" fn ctrl(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_int
   return 1i32;
 }
 unsafe extern "C" fn open_control(mut f: *const libc::c_char, mut s: *mut svdir) {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   mkfifo(f, 0o600i32 as __mode_t);
   if stat(f, &mut st) == -1i32 {
     fatal2_cannot(b"stat \x00" as *const u8 as *const libc::c_char, f);
@@ -786,32 +736,7 @@ pub unsafe extern "C" fn runsv_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   let mut buf: [libc::c_char; 256] = [0; 256];

@@ -6,8 +6,7 @@ extern "C" {
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -16,9 +15,9 @@ extern "C" {
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
 }
 
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 
 /*
  * Mini pwd implementation for busybox
@@ -43,58 +42,8 @@ use crate::librb::uint32_t;
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 unsafe extern "C" fn logical_getcwd() -> libc::c_int {
-  let mut st1: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
-  let mut st2: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st1: stat = std::mem::zeroed();
+  let mut st2: stat = std::mem::zeroed();
   let mut wd: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
   wd = getenv(b"PWD\x00" as *const u8 as *const libc::c_char);

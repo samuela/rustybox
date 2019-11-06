@@ -35,8 +35,7 @@ extern "C" {
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]
@@ -198,9 +197,9 @@ pub struct dirent {
 pub type DIR = __dirstream;
 use crate::librb::dev_t;
 use crate::librb::mode_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;
@@ -656,7 +655,7 @@ unsafe extern "C" fn func_mtime(
   mut statbuf: *const stat,
   mut ap: *mut action_mtime,
 ) -> libc::c_int {
-  let mut file_age: time_t = time(0 as *mut time_t) - (*statbuf).st_mtim.tv_sec;
+  let mut file_age: time_t = time(0 as *mut time_t) - (*statbuf).st_mtime;
   let mut mtime_secs: time_t = (*ap)
     .mtime_days
     .wrapping_mul(24i32 as libc::c_uint)
@@ -677,7 +676,7 @@ unsafe extern "C" fn func_mmin(
   mut statbuf: *const stat,
   mut ap: *mut action_mmin,
 ) -> libc::c_int {
-  let mut file_age: time_t = time(0 as *mut time_t) - (*statbuf).st_mtim.tv_sec;
+  let mut file_age: time_t = time(0 as *mut time_t) - (*statbuf).st_mtime;
   let mut mmin_secs: time_t = (*ap).mmin_mins.wrapping_mul(60i32 as libc::c_uint) as time_t;
   if (*ap).mmin_char as libc::c_int == '+' as i32 {
     return (file_age >= mmin_secs + 60i32 as libc::c_long) as libc::c_int;
@@ -693,7 +692,7 @@ unsafe extern "C" fn func_newer(
   mut statbuf: *const stat,
   mut ap: *mut action_newer,
 ) -> libc::c_int {
-  return ((*ap).newer_mtime < (*statbuf).st_mtim.tv_sec) as libc::c_int;
+  return ((*ap).newer_mtime < (*statbuf).st_mtime) as libc::c_int;
 }
 unsafe extern "C" fn func_inum(
   mut _fileName: *const libc::c_char,
@@ -1700,32 +1699,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_7).mmin_char = *arg1.offset(0);
         (*ap_7).mmin_mins = xatoul(plus_minus_num(arg1)) as libc::c_uint
       } else if parm == PARM_newer as libc::c_int {
-        let mut stat_newer: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut stat_newer: stat = std::mem::zeroed();
         let mut ap_8: *mut action_newer = 0 as *mut action_newer;
         ap_8 = alloc_action(
           &mut ppl,
@@ -1749,7 +1723,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           )),
         ) as *mut action_newer;
         xstat(arg1, &mut stat_newer);
-        (*ap_8).newer_mtime = stat_newer.st_mtim.tv_sec
+        (*ap_8).newer_mtime = stat_newer.st_mtime
       } else if parm == PARM_inum as libc::c_int {
         let mut ap_9: *mut action_inum = 0 as *mut action_inum;
         ap_9 = alloc_action(
@@ -2039,32 +2013,7 @@ pub unsafe extern "C" fn find_main(
   let ref mut fresh20 = *argv.offset(firstopt as isize);
   *fresh20 = 0 as *mut libc::c_char;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_on != 0 {
-    let mut stbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut stbuf: stat = std::mem::zeroed();
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_count = firstopt;
     let ref mut fresh21 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_dev;
     *fresh21 = xzalloc(

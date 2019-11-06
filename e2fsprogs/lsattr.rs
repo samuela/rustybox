@@ -77,8 +77,8 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 
 use libc::FILE;
 
@@ -153,32 +153,7 @@ unsafe extern "C" fn lsattr_dir_proc(
   mut de: *mut dirent,
   mut _private: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
   path = concat_path_file(dir_name, (*de).d_name.as_mut_ptr());
   if lstat(path, &mut st) != 0i32 {
@@ -213,32 +188,7 @@ unsafe extern "C" fn lsattr_dir_proc(
   return 0i32;
 }
 unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut st: stat = std::mem::zeroed();
   if lstat(name, &mut st) == -1i32 {
     bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, name);
   } else if st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint

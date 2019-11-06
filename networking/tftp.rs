@@ -181,8 +181,8 @@ use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -661,32 +661,7 @@ unsafe extern "C" fn tftp_protocol(
                 /* if tftp and uploading, we send file size (maybe dont, to not confuse old servers???) */
                 /* if tftpd and downloading, we are answering to client's request */
                 /* if tftpd and uploading: !want_transfer_size, this code is not executed */
-                let mut st: stat = stat {
-                  st_dev: 0,
-                  st_ino: 0,
-                  st_nlink: 0,
-                  st_mode: 0,
-                  st_uid: 0,
-                  st_gid: 0,
-                  __pad0: 0,
-                  st_rdev: 0,
-                  st_size: 0,
-                  st_blksize: 0,
-                  st_blocks: 0,
-                  st_atim: timespec {
-                    tv_sec: 0,
-                    tv_nsec: 0,
-                  },
-                  st_mtim: timespec {
-                    tv_sec: 0,
-                    tv_nsec: 0,
-                  },
-                  st_ctim: timespec {
-                    tv_sec: 0,
-                    tv_nsec: 0,
-                  },
-                  __glibc_reserved: [0; 3],
-                };
+                let mut st: stat = std::mem::zeroed();
                 strcpy(cp, b"tsize\x00" as *const u8 as *const libc::c_char);
                 cp =
                   cp.offset(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong as isize);

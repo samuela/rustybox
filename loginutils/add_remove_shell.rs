@@ -40,8 +40,8 @@ use crate::librb::__mode_t;
 
 pub type uintptr_t = libc::c_ulong;
 
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 
 use libc::FILE;
 
@@ -53,32 +53,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
   let mut orig_fp: *mut FILE = 0 as *mut FILE;
   let mut orig_fn: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut new_fn: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut sb: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sb: stat = std::mem::zeroed();
   sb.st_mode = 0o666i32 as __mode_t;
   argv = argv.offset(1);
   orig_fn = xmalloc_follow_symlinks(b"/etc/shells\x00" as *const u8 as *const libc::c_char);

@@ -220,7 +220,7 @@ use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
 use crate::librb::uid_t;
 use crate::librb::uint16_t;
@@ -776,8 +776,8 @@ unsafe extern "C" fn writeTarHeader(
   putOctal(
     header.mtime.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong as libc::c_int,
-    if (*statbuf).st_mtim.tv_sec >= 0i32 as libc::c_long {
-      (*statbuf).st_mtim.tv_sec
+    if (*statbuf).st_mtime >= 0i32 as libc::c_long {
+      (*statbuf).st_mtime
     } else {
       0i32 as libc::c_long
     },

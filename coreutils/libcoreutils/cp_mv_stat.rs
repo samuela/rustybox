@@ -1,14 +1,13 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::stat;
+use libc::stat;
 
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

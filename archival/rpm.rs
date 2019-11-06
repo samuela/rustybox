@@ -139,9 +139,9 @@ use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 use crate::librb::uoff_t;
@@ -681,32 +681,7 @@ unsafe extern "C" fn fileaction_dobackup(
   mut filename: *mut libc::c_char,
   mut fileref: libc::c_int,
 ) {
-  let mut oldfile: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut oldfile: stat = std::mem::zeroed();
   let mut stat_res: libc::c_int = 0;
   let mut newname: *mut libc::c_char = 0 as *mut libc::c_char;
   if rpm_getint(1037i32, fileref) & 1i32 << 0i32 != 0 {

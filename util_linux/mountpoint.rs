@@ -1,35 +1,42 @@
 use libc;
+use libc::stat;
+
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
 use crate::librb::__dev_t;
-
 use crate::librb::dev_t;
 use crate::librb::ino_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
 
 /*
@@ -67,32 +74,7 @@ pub unsafe extern "C" fn mountpoint_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut st: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  }; /* make perror_msg work as error_msg */
+  let mut st: stat = std::mem::zeroed(); /* make perror_msg work as error_msg */
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut rc: libc::c_int = 0;

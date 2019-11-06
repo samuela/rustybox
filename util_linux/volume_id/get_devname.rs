@@ -80,7 +80,7 @@ use crate::librb::size_t;
 use crate::librb::uint64_t;
 use crate::librb::uint8_t;
 
-use crate::librb::stat;
+use libc::stat;
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;

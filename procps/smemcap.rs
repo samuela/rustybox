@@ -51,8 +51,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tar_header_t {
@@ -151,7 +151,7 @@ unsafe extern "C" fn writeheader(
   sprintf(
     header.mtime.as_mut_ptr(),
     b"%llo\x00" as *const u8 as *const libc::c_char,
-    (*sb).st_mtim.tv_sec as libc::c_longlong & 0o77777777777i64,
+    (*sb).st_mtime as libc::c_longlong & 0o77777777777i64,
   );
   header.typeflag = type_0 as libc::c_char;
   strcpy(
@@ -189,32 +189,7 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   let mut size: libc::c_uint = 0i32 as libc::c_uint;
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   /* buffer the file */
   fd = open(path, 0i32);
   if fd == -1i32 {
@@ -286,32 +261,7 @@ pub unsafe extern "C" fn smemcap_main(
       break;
     }
     if ((*de).d_name[0] as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-      let mut s: stat = stat {
-        st_dev: 0,
-        st_ino: 0,
-        st_nlink: 0,
-        st_mode: 0,
-        st_uid: 0,
-        st_gid: 0,
-        __pad0: 0,
-        st_rdev: 0,
-        st_size: 0,
-        st_blksize: 0,
-        st_blocks: 0,
-        st_atim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_mtim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_ctim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        __glibc_reserved: [0; 3],
-      };
+      let mut s: stat = std::mem::zeroed();
       memset(
         &mut s as *mut stat as *mut libc::c_void,
         0i32,

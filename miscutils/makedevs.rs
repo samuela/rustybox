@@ -16,8 +16,7 @@ extern "C" {
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -75,10 +74,10 @@ use crate::librb::__mode_t;
 use crate::librb::dev_t;
 use crate::librb::gid_t;
 use crate::librb::size_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
+use libc::stat;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
@@ -332,32 +331,7 @@ pub unsafe extern "C" fn makedevs_main(
           current_block_56 = 1050926138102375056;
         }
       } else if type_0 as libc::c_int == 'f' as i32 {
-        let mut st: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut st: stat = std::mem::zeroed();
         if stat(full_name, &mut st) < 0i32
           || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
         {

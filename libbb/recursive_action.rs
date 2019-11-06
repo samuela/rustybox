@@ -9,8 +9,7 @@ extern "C" {
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -38,8 +37,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;
@@ -239,32 +238,7 @@ pub unsafe extern "C" fn recursive_action(
   mut depth: libc::c_uint,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut follow: libc::c_uint = 0;
   let mut status: libc::c_int = 0;
   let mut dir: *mut DIR = 0 as *mut DIR;

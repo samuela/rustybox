@@ -10,8 +10,7 @@ extern "C" {
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -31,8 +30,8 @@ extern "C" {
   ) -> !;
 }
 
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 use crate::librb::uint8_t;
 
 /*
@@ -48,32 +47,7 @@ use crate::librb::uint8_t;
  */
 #[no_mangle]
 pub unsafe extern "C" fn file_is_executable(mut name: *const libc::c_char) -> libc::c_int {
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   return (access(name, 1i32) == 0
     && stat(name, &mut s) == 0
     && s.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)

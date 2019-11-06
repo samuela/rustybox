@@ -419,7 +419,7 @@ use crate::librb::signal::C2RustUnnamed_9;
 pub type arith_t = libc::c_longlong;
 use crate::librb::ssize_t;
 pub type __size_t = libc::c_ulong;
-use crate::librb::stat;
+use libc::stat;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

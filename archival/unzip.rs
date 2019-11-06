@@ -144,9 +144,9 @@ use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::uint16_t;
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
@@ -616,32 +616,7 @@ unsafe extern "C" fn my_fgets80(mut buf80: *mut libc::c_char) {
   };
 }
 unsafe extern "C" fn get_lstat_mode(mut dst_fn: *const libc::c_char) -> libc::c_int {
-  let mut stat_buf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut stat_buf: stat = std::mem::zeroed();
   if lstat(dst_fn, &mut stat_buf) == -1i32 {
     if *bb_errno != 2i32 {
       bb_perror_msg_and_die(

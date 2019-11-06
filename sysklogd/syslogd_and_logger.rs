@@ -264,8 +264,8 @@ use crate::librb::smallint;
 use crate::librb::ssize_t;
 use crate::librb::uid_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type key_t = __key_t;
 use crate::librb::time_t;
 pub type __socket_type = libc::c_uint;
@@ -1444,32 +1444,7 @@ unsafe extern "C" fn log_locally(
           }
           return;
         }
-        let mut statf: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut statf: stat = std::mem::zeroed();
         (*log_file).isRegular = (fstat((*log_file).fd, &mut statf) == 0i32
           && statf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
           as libc::c_int as uint8_t;

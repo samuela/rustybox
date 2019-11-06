@@ -172,8 +172,8 @@ pub type smalluint = libc::c_uchar;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1895,32 +1895,7 @@ unsafe extern "C" fn file_insert(
   let mut cnt: libc::c_int = -1i32;
   let mut fd: libc::c_int = 0;
   let mut size: libc::c_int = 0;
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   if p < (*ptr_to_globals).text {
     p = (*ptr_to_globals).text
   }

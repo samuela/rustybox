@@ -33,9 +33,9 @@ use crate::librb::__mode_t;
 use crate::librb::__off64_t;
 
 use crate::librb::off_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 pub const OPT_u: C2RustUnnamed = 2;
 pub const OPT_z: C2RustUnnamed = 4;
 pub const OPT_f: C2RustUnnamed = 1;
@@ -103,32 +103,7 @@ pub unsafe extern "C" fn shred_main(
     bb_show_usage();
   }
   loop {
-    let mut sb: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut sb: stat = std::mem::zeroed();
     let mut fname: *const libc::c_char = 0 as *const libc::c_char;
     let mut i: libc::c_uint = 0;
     let mut fd: libc::c_int = 0;

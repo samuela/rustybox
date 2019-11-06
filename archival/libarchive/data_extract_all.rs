@@ -94,12 +94,12 @@ use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
-use crate::librb::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 use crate::librb::timeval;
 use crate::librb::uid_t;
 use crate::librb::uoff_t;
+use libc::stat;
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
@@ -337,32 +337,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
         }
       } else if (*archive_handle).ah_flags & (1i32 << 3i32) as libc::c_uint != 0 {
         /* Remove the existing entry if its older than the extracted entry */
-        let mut existing_sb: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut existing_sb: stat = std::mem::zeroed();
         if lstat(dst_name, &mut existing_sb) == -1i32 {
           if *bb_errno != 2i32 {
             bb_simple_perror_msg_and_die(
@@ -370,7 +345,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
             );
           }
           current_block = 3689906465960840878;
-        } else if existing_sb.st_mtim.tv_sec >= (*file_header).mtime {
+        } else if existing_sb.st_mtime >= (*file_header).mtime {
           if !((*file_header).mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
             bb_error_msg(
               b"%s not created: newer or same age file exists\x00" as *const u8

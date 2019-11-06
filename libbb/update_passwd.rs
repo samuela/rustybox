@@ -98,9 +98,9 @@ pub struct flock {
   pub l_len: __off64_t,
   pub l_pid: __pid_t,
 }
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 
 use libc::FILE;
 
@@ -621,32 +621,7 @@ pub unsafe extern "C" fn update_passwd(
   mut member: *const libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* failure */
-  let mut sb: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut sb: stat = std::mem::zeroed();
   let mut lock: flock = flock {
     l_type: 0,
     l_whence: 0,

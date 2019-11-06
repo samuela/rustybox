@@ -56,8 +56,7 @@ extern "C" {
   fn strpbrk(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
   #[no_mangle]
@@ -154,10 +153,10 @@ use crate::librb::__mode_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
 use crate::librb::uint8_t;
+use libc::stat;
 
 use libc::FILE;
 /* BSD-derived getopt() functions require that optind be set to 1 in
@@ -9216,32 +9215,7 @@ pub unsafe extern "C" fn sed_main(
     *fresh33 = bb_msg_standard_input.as_ptr() as *mut libc::c_char
   /* G.last_input_file = 0; - already is */
   } else {
-    let mut statbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut statbuf: stat = std::mem::zeroed();
     let mut nonstdoutfd: libc::c_int = 0;
     let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
     loop {
@@ -9301,32 +9275,7 @@ pub unsafe extern "C" fn sed_main(
       if (*argv).is_null() {
         break;
       }
-      statbuf = stat {
-        st_dev: 0,
-        st_ino: 0,
-        st_nlink: 0,
-        st_mode: 0,
-        st_uid: 0,
-        st_gid: 0,
-        __pad0: 0,
-        st_rdev: 0,
-        st_size: 0,
-        st_blksize: 0,
-        st_blocks: 0,
-        st_atim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_mtim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        st_ctim: timespec {
-          tv_sec: 0,
-          tv_nsec: 0,
-        },
-        __glibc_reserved: [0; 3],
-      };
+      statbuf = std::mem::zeroed();
       nonstdoutfd = 0;
       sed_cmd = 0 as *mut sed_cmd_t;
       let ref mut fresh34 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).last_input_file;

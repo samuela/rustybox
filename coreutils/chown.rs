@@ -51,7 +51,7 @@ use crate::librb::__gid_t;
 use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::gid_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
 

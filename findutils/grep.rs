@@ -27,8 +27,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -149,8 +148,8 @@ use crate::librb::uint8_t;
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -709,32 +708,7 @@ unsafe extern "C" fn file_action_grep(
    * since that is not portable across operating systems (FreeBSD for
    * example will return the raw directory contents). */
   if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
-    let mut sb: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut sb: stat = std::mem::zeroed();
     if stat(filename, &mut sb) != 0i32 {
       if option_mask32 & OPT_s as libc::c_int as libc::c_uint == 0 {
         bb_simple_perror_msg(filename);
@@ -944,32 +918,7 @@ pub unsafe extern "C" fn grep_main(
       current_block_71 = 9437375157805982253;
     } else {
       if option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0 {
-        let mut st: stat = stat {
-          st_dev: 0,
-          st_ino: 0,
-          st_nlink: 0,
-          st_mode: 0,
-          st_uid: 0,
-          st_gid: 0,
-          __pad0: 0,
-          st_rdev: 0,
-          st_size: 0,
-          st_blksize: 0,
-          st_blocks: 0,
-          st_atim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_mtim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          st_ctim: timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-          },
-          __glibc_reserved: [0; 3],
-        };
+        let mut st: stat = std::mem::zeroed();
         if stat(
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file,
           &mut st,

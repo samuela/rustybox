@@ -1,55 +1,78 @@
 use libc;
+use libc::stat;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn getmntent(__stream: *mut FILE) -> *mut mntent;
+
   #[no_mangle]
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn hasmntopt(__mnt: *const mntent, __opt: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_uint;
+
   #[no_mangle]
   static mut option_mask32: uint32_t;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> uint32_t;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
+
   #[no_mangle]
   fn swapon(__path: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn swapoff(__path: *const libc::c_char) -> libc::c_int;
+
   /* Returns:
    * 0: no UUID= or LABEL= prefix found
    * 1: UUID= or LABEL= prefix found. In this case,
@@ -60,13 +83,8 @@ extern "C" {
 }
 
 use crate::librb::off_t;
+
 use crate::librb::uint32_t;
-
-use crate::librb::timespec;
-
-use crate::librb::stat;
-
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -111,32 +129,7 @@ unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc:
       && (*bb_errno == 22i32 || *bb_errno == 2i32)) as libc::c_int
   } else {
     /* swapon */
-    let mut st: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut st: stat = std::mem::zeroed();
     err = stat(device, &mut st);
     if err == 0 {
       if 1i32 != 0 && st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {

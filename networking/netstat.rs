@@ -222,7 +222,7 @@ use crate::librb::size_t;
 use crate::librb::ssize_t;
 pub type socklen_t = __socklen_t;
 
-use crate::librb::stat;
+use libc::stat;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

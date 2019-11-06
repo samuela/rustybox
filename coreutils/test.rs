@@ -22,8 +22,7 @@ extern "C" {
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -55,8 +54,8 @@ pub type int64_t = __int64_t;
 use crate::librb::gid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -598,7 +597,7 @@ static int newerf(const char *f1, const char *f2)
   struct stat b1, b2;
 
   return (stat(f1, &b1) == 0 &&
-      stat(f2, &b2) == 0 && b1.st_mtime > b2.st_mtime);
+      stat(f2, &b2) == 0 && b1.st_mtimee > b2.st_mtimee);
 }
 
 static int olderf(const char *f1, const char *f2)
@@ -606,7 +605,7 @@ static int olderf(const char *f1, const char *f2)
   struct stat b1, b2;
 
   return (stat(f1, &b1) == 0 &&
-      stat(f2, &b2) == 0 && b1.st_mtime < b2.st_mtime);
+      stat(f2, &b2) == 0 && b1.st_mtimee < b2.st_mtimee);
 }
 
 static int equalf(const char *f1, const char *f2)
@@ -696,66 +695,16 @@ unsafe extern "C" fn binop() -> libc::c_int {
    * yet, so we do not check if the class is correct:
    */
   /*	if (is_file_op(op->op_num)) */
-  let mut b1: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  }; /* false, since at least one stat failed */
-  let mut b2: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut b1: stat = std::mem::zeroed(); /* false, since at least one stat failed */
+  let mut b2: stat = std::mem::zeroed();
   if stat(opnd1, &mut b1) != 0 || stat(opnd2, &mut b2) != 0 {
     return 0i32;
   }
   if (*op).op_num as libc::c_int == FILNT as libc::c_int {
-    return (b1.st_mtim.tv_sec > b2.st_mtim.tv_sec) as libc::c_int;
+    return (b1.st_mtime > b2.st_mtime) as libc::c_int;
   }
   if (*op).op_num as libc::c_int == FILOT as libc::c_int {
-    return (b1.st_mtim.tv_sec < b2.st_mtim.tv_sec) as libc::c_int;
+    return (b1.st_mtime < b2.st_mtime) as libc::c_int;
   }
   /*if (op->op_num == FILEQ)*/
   return (b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino) as libc::c_int;
@@ -817,32 +766,7 @@ unsafe extern "C" fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> l
   return -1i32;
 }
 unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc::c_int {
-  let mut s: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut s: stat = std::mem::zeroed();
   let mut i: libc::c_uint = 0;
   i = i;
   if mode as libc::c_uint == FILSYM as libc::c_int as libc::c_uint {

@@ -95,8 +95,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -304,9 +303,9 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 
-use crate::librb::timespec;
 
-use crate::librb::stat;
+
+use libc::stat;
 
 use crate::librb::signal::__sigset_t;
 
@@ -3280,32 +3279,7 @@ unsafe extern "C" fn xselect() {
 unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> libc::c_int {
   let mut procf: *mut FILE = 0 as *mut FILE;
   let mut buf: [libc::c_char; 100] = [0; 100];
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut is_ide: libc::c_int = 0i32;
   /* No device was given explicitly, and we are trying some
   likely things.  But opening /dev/hdc may produce errors like

@@ -80,10 +80,10 @@ use crate::librb::__uid_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uid_t;
 use crate::librb::uint32_t;
+use libc::stat;
 // -U username
 pub const LPR_V: C2RustUnnamed = 4;
 // -J title: the job title for the banner page
@@ -315,32 +315,7 @@ pub unsafe extern "C" fn lpqr_main(
   {
     let mut cflen: libc::c_uint = 0;
     let mut dfd: libc::c_int = 0;
-    let mut st: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut st: stat = std::mem::zeroed();
     let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut remote_filename: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut controlfile: *mut libc::c_char = 0 as *mut libc::c_char;

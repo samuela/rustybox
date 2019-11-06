@@ -29,8 +29,7 @@ extern "C" {
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -91,8 +90,8 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -404,32 +403,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
   return retval;
 }
 unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc::c_int {
-  let mut buf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut buf: stat = std::mem::zeroed();
   let mut retval: libc::c_int = 0i32;
   if option_mask32 & FLAG_WRITE as libc::c_int as libc::c_uint == 0
     && stat(path, &mut buf) == 0i32

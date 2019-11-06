@@ -48,9 +48,9 @@ use crate::librb::__mode_t;
 use crate::librb::mode_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 
 use libc::FILE;
 
@@ -90,32 +90,7 @@ pub unsafe extern "C" fn uuencode_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut stat_buf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut stat_buf: stat = std::mem::zeroed();
   let mut src_fd: libc::c_int = 0i32;
   let mut tbl: *const libc::c_char = 0 as *const libc::c_char;
   let mut mode: mode_t = 0;

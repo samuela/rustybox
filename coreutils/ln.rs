@@ -14,8 +14,7 @@ extern "C" {
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -43,9 +42,9 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use crate::librb::stat;
-use crate::librb::timespec;
+
 use crate::librb::uint32_t;
+use libc::stat;
 #[no_mangle]
 pub unsafe extern "C" fn ln_main(
   mut argc: libc::c_int,
@@ -58,32 +57,7 @@ pub unsafe extern "C" fn ln_main(
   let mut src: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut suffix: *mut libc::c_char =
     b"~\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut link_func: Option<
     unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
   > = None;

@@ -59,8 +59,7 @@ extern "C" {
   #[no_mangle]
   fn strverscmp(__s1: *const libc::c_char, __s2: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
 
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
@@ -176,8 +175,8 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 use crate::librb::mode_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+
+use libc::stat;
 pub type nlink_t = __nlink_t;
 use crate::librb::time_t;
 pub type blkcnt_t = __blkcnt64_t;
@@ -424,32 +423,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
   let mut column: libc::c_uint = 0i32 as libc::c_uint;
   let mut lpath: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut opt: libc::c_int = 0;
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut append: libc::c_char = append_char((*dn).dn_mode);
   opt = option_mask32 as libc::c_int;
   /* Do readlink early, so that if it fails, error message
@@ -725,32 +699,7 @@ unsafe extern "C" fn my_stat(
   mut name: *const libc::c_char,
   mut force_follow: libc::c_int,
 ) -> *mut dnode {
-  let mut statbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut statbuf: stat = std::mem::zeroed();
   let mut cur: *mut dnode = 0 as *mut dnode;
   cur = xzalloc(::std::mem::size_of::<dnode>() as libc::c_ulong) as *mut dnode;
   (*cur).fullname = fullname;
@@ -775,12 +724,12 @@ unsafe extern "C" fn my_stat(
   /* cur->dstat = statbuf: */
   (*cur).dn_mode = statbuf.st_mode;
   (*cur).dn_size = statbuf.st_size;
-  (*cur).dn_time = statbuf.st_mtim.tv_sec;
+  (*cur).dn_time = statbuf.st_mtime;
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
-    (*cur).dn_time = statbuf.st_atim.tv_sec
+    (*cur).dn_time = statbuf.st_atime
   }
   if option_mask32 & OPT_c as libc::c_int as libc::c_uint != 0 {
-    (*cur).dn_time = statbuf.st_ctim.tv_sec
+    (*cur).dn_time = statbuf.st_ctime
   }
   (*cur).dn_ino = statbuf.st_ino;
   (*cur).dn_blocks = statbuf.st_blocks;

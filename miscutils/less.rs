@@ -168,12 +168,12 @@ pub type __int64_t = libc::c_long;
 use crate::librb::int32_t;
 use crate::librb::size_t;
 use crate::librb::time_t;
-use crate::librb::timespec;
+
 pub type int64_t = __int64_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
-use crate::librb::stat;
+use libc::stat;
 use crate::librb::uint32_t;
 
 use libc::FILE;
@@ -718,32 +718,7 @@ unsafe extern "C" fn safe_lineno(mut fline: libc::c_int) -> libc::c_int {
 unsafe extern "C" fn update_num_lines() {
   let mut count: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
-  let mut stbuf: stat = stat {
-    st_dev: 0,
-    st_ino: 0,
-    st_nlink: 0,
-    st_mode: 0,
-    st_uid: 0,
-    st_gid: 0,
-    __pad0: 0,
-    st_rdev: 0,
-    st_size: 0,
-    st_blksize: 0,
-    st_blocks: 0,
-    st_atim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_mtim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    st_ctim: timespec {
-      tv_sec: 0,
-      tv_nsec: 0,
-    },
-    __glibc_reserved: [0; 3],
-  };
+  let mut stbuf: stat = std::mem::zeroed();
   let mut len: ssize_t = 0;
   let mut i: ssize_t = 0;
   let mut buf: [libc::c_char; 4096] = [0; 4096];

@@ -69,7 +69,7 @@ extern "C" {
 
 use crate::librb::size_t;
 
-use crate::librb::stat;
+use libc::stat;
 
 use libc::FILE;
 

@@ -24,8 +24,7 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn stat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   /* bb_copyfd_XX print read/write errors and return -1 if they occur */
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
@@ -84,8 +83,8 @@ use crate::librb::uint8_t;
 
 use crate::librb::off_t;
 pub type socklen_t = __socklen_t;
-use crate::librb::stat;
-use crate::librb::timespec;
+use libc::stat;
+
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -368,32 +367,7 @@ unsafe extern "C" fn ftp_receive(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue != 0 {
-    let mut sbuf: stat = stat {
-      st_dev: 0,
-      st_ino: 0,
-      st_nlink: 0,
-      st_mode: 0,
-      st_uid: 0,
-      st_gid: 0,
-      __pad0: 0,
-      st_rdev: 0,
-      st_size: 0,
-      st_blksize: 0,
-      st_blocks: 0,
-      st_atim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_mtim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      st_ctim: timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-      },
-      __glibc_reserved: [0; 3],
-    };
+    let mut sbuf: stat = std::mem::zeroed();
     /* lstat would be wrong here! */
     if stat(local_path, &mut sbuf) < 0i32 {
       bb_simple_perror_msg_and_die(b"stat\x00" as *const u8 as *const libc::c_char);
