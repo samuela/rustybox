@@ -7,26 +7,11 @@ use crate::applets::applet_tables::{applets, InstallLoc, SUID};
 use crate::libbb::llist::llist_t;
 use crate::librb::{
   __gid_t, __uid_t, bb_uidgid_t, gid_t, group, mode_t, passwd, size_t, smallint, ssize_t, stat,
-  timespec, uid_t, uint16_t, uint8_t, FILE,
+  timespec, uid_t, uint16_t, uint8_t,
 };
 use crate::shell::ash::ash_main;
 
 extern "C" {
-  #[no_mangle]
-  fn getuid() -> __uid_t;
-
-  #[no_mangle]
-  fn geteuid() -> __uid_t;
-
-  #[no_mangle]
-  fn getgid() -> __gid_t;
-
-  #[no_mangle]
-  fn setuid(__uid: __uid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn setgid(__gid: __gid_t) -> libc::c_int;
-
   #[no_mangle]
   fn setresuid(__ruid: __uid_t, __euid: __uid_t, __suid: __uid_t) -> libc::c_int;
 
@@ -34,29 +19,17 @@ extern "C" {
   fn setresgid(__rgid: __gid_t, __egid: __gid_t, __sgid: __gid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
-    __stream: *mut FILE,
+    __stream: *mut libc::FILE,
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn feof_unlocked(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+  fn feof_unlocked(__stream: *mut libc::FILE) -> libc::c_int;
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
   fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
@@ -91,7 +64,7 @@ extern "C" {
   fn full_write1_str(str: *const libc::c_char) -> ssize_t;
 
   #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+  fn fopen_for_read(path: *const libc::c_char) -> *mut libc::FILE;
 
   #[no_mangle]
   fn get_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char) -> libc::c_int;
@@ -384,7 +357,7 @@ unsafe fn parse_config_file() {
 
   let mut sct_head: *mut suid_config_t = 0 as *mut suid_config_t;
   let mut applet_no: libc::c_int = 0;
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut libc::FILE = 0 as *mut libc::FILE;
   let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
@@ -414,7 +387,7 @@ unsafe fn parse_config_file() {
     },
     __glibc_reserved: [0; 3],
   };
-  ruid = getuid();
+  ruid = libc::getuid();
   if ruid == 0i32 as libc::c_uint {
     /* run by root - don't need to even read config file */
     return;
@@ -451,7 +424,7 @@ unsafe fn parse_config_file() {
       //	errmsg = "reading";
       //	goto pe_label;
       //}
-      fclose(f); /* Success, so set the pointer. */
+      libc::fclose(f); /* Success, so set the pointer. */
       suid_config = sct_head; /* Got a (partial) line. */
       return;
     }
@@ -465,7 +438,7 @@ unsafe fn parse_config_file() {
      * worth adding code to deal with such an unlikely situation, and
      * we do err on the side of caution.  Besides, the line would be
      * too long if it did end with a newline. */
-    if strchr(s, '\n' as i32).is_null() && feof_unlocked(f) == 0 {
+    if libc::strchr(s, '\n' as i32).is_null() && feof_unlocked(f) == 0 {
       errmsg = b"line too long\x00" as *const u8 as *const libc::c_char;
       break;
     } else {
@@ -480,7 +453,7 @@ unsafe fn parse_config_file() {
         /* Unlike the old code, we ignore leading and trailing
          * whitespace for the section name.  We also require that
          * there are no stray characters after the closing bracket. */
-        let mut e: *mut libc::c_char = strchr(s, ']' as i32);
+        let mut e: *mut libc::c_char = libc::strchr(s, ']' as i32);
         if e.is_null() || *e.offset(1) as libc::c_int != 0 || {
           s = get_trimmed_slice(s.offset(1), e);
           (*s) == 0
@@ -508,7 +481,7 @@ unsafe fn parse_config_file() {
          *    <key>[::space::]*=[::space::]*<value>
          * where both key and value could contain inner whitespace. */
         /* First get the key (an applet name in our case). */
-        let mut e_0: *mut libc::c_char = strchr(s, '=' as i32);
+        let mut e_0: *mut libc::c_char = libc::strchr(s, '=' as i32);
         if !e_0.is_null() {
           s = get_trimmed_slice(s, e_0)
         }
@@ -590,7 +563,7 @@ unsafe fn parse_config_file() {
           }
           /* We require whitespace between mode and USER.GROUP */
           if s == e_0 || {
-            e_0 = strchr(s, '.' as i32); /* get_uidgid needs USER:GROUP syntax */
+            e_0 = libc::strchr(s, '.' as i32); /* get_uidgid needs USER:GROUP syntax */
             e_0.is_null()
           } {
             errmsg = b"uid.gid\x00" as *const u8 as *const libc::c_char;
@@ -619,7 +592,7 @@ unsafe fn parse_config_file() {
       }
     }
   }
-  fclose(f);
+  libc::fclose(f);
   bb_error_msg(
     b"parse error in %s, line %u: %s\x00" as *const u8 as *const libc::c_char,
     config_file.as_ptr(),
@@ -658,7 +631,7 @@ unsafe fn check_suid(applet_no: usize) {
     /* run by root - no need to check more */
     return;
   }
-  rgid = getgid();
+  rgid = libc::getgid();
 
   if suid_cfg_readable {
     let mut uid: uid_t = 0;
@@ -728,7 +701,7 @@ unsafe fn check_suid(applet_no: usize) {
       if applets[applet_no].need_suid == SUID::BB_SUID_REQUIRE {
         /* Real uid is not 0. If euid isn't 0 too, suid bit
          * is most probably not set on our executable */
-        if geteuid() != 0 {
+        if libc::geteuid() != 0 {
           bb_simple_error_msg_and_die(
             b"must be suid to work properly\x00" as *const u8 as *const libc::c_char,
           );
@@ -747,8 +720,8 @@ unsafe fn check_suid(applet_no: usize) {
          * since no uids are mapped, calls to setgid/setuid
          * fail (even though they would do nothing).
          */
-        setgid(rgid);
-        setuid(ruid);
+        libc::setgid(rgid);
+        libc::setuid(ruid);
       }
     }
     _ => {}
