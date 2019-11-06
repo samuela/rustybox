@@ -3,7 +3,7 @@ use libc;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
 use crate::librb::fd_pair;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;

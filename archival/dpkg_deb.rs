@@ -58,7 +58,7 @@ use crate::librb::__mode_t;
 
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::smallint;

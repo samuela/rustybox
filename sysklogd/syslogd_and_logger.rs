@@ -234,7 +234,7 @@ extern "C" {
   fn semop(__semid: libc::c_int, __sops: *mut sembuf, __nsops: size_t) -> libc::c_int;
 }
 
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__mode_t;

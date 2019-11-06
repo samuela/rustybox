@@ -84,7 +84,7 @@ pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::size_t;
 use libc::time_t;

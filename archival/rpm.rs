@@ -10,7 +10,7 @@ use crate::librb::__compar_fn_t;
 use crate::librb::__off64_t;
 use crate::librb::__uid_t;
 use crate::librb::dev_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::group;
 use crate::librb::int16_t;
 use crate::librb::int32_t;

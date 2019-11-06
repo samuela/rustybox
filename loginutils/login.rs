@@ -141,7 +141,7 @@ extern "C" {
 
 use crate::librb::__mode_t;
 use crate::librb::__uid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 
 use crate::librb::__pid_t;
 use crate::librb::off_t;

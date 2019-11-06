@@ -230,7 +230,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 use crate::librb::__dev_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::__uid_t;
 
 use crate::librb::__ino64_t;

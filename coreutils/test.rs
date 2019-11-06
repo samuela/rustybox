@@ -2,7 +2,7 @@ use libc;
 use libc::stat;
 
 use crate::librb::__uid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 

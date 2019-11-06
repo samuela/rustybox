@@ -180,7 +180,7 @@ use crate::librb::__off64_t;
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::gid_t;
+use libc::gid_t;
  use libc::ino_t;
 use crate::librb::off_t;
 use crate::librb::size_t;

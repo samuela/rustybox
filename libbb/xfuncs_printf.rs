@@ -197,7 +197,7 @@ pub struct __va_list_tag {
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__uid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;

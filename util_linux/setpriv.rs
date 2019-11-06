@@ -171,7 +171,7 @@ pub struct __user_cap_data_struct {
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
 use crate::librb::__uid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use libc::uid_t;
 
 // so for bbox, let's just repeat the declarations.

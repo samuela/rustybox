@@ -4,7 +4,7 @@ use libc::uid_t;
 
 use crate::librb::__mode_t;
 use crate::librb::__uid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::mode_t;
 
 extern "C" {

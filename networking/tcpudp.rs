@@ -160,7 +160,7 @@ extern "C" {
 use crate::librb::__pid_t;
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;

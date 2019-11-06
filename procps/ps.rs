@@ -69,7 +69,7 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::size_t;
 use libc::uid_t;
 

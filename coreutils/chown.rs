@@ -4,7 +4,7 @@ use libc::uid_t;
 
 use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 
 extern "C" {
   #[no_mangle]

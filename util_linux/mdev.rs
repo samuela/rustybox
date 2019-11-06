@@ -353,7 +353,7 @@ extern "C" {
 }
 
 use crate::librb::__dev_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 
 use crate::librb::__mode_t;
 

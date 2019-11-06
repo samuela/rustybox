@@ -157,7 +157,7 @@ use crate::librb::__off64_t;
 
 pub type __blkcnt64_t = libc::c_long;
 
-use crate::librb::gid_t;
+use libc::gid_t;
  use libc::ino_t;
 use crate::librb::off_t;
 use crate::librb::size_t;

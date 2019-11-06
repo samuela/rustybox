@@ -6,7 +6,6 @@ pub type __blkcnt_t = libc::c_long;
 pub type __blksize_t = libc::c_long;
 pub type __clock_t = libc::c_long;
 pub type __dev_t = libc::c_ulong;
-pub type __gid_t = libc::c_uint;
 pub type __ino_t = libc::c_ulong;
 pub type __ino64_t = libc::c_ulong;
 pub type __int8_t = libc::c_schar;
@@ -33,7 +32,6 @@ pub type int16_t = __int16_t;
 pub type int32_t = __int32_t;
 pub type dev_t = __dev_t;
 pub type uid_t = __uid_t;
-pub type gid_t = __gid_t;
 pub type mode_t = __mode_t;
 pub type off_t = __off64_t;
 pub type pid_t = __pid_t;
@@ -68,7 +66,7 @@ pub struct passwd {
   pub pw_name: *mut libc::c_char,
   pub pw_passwd: *mut libc::c_char,
   pub pw_uid: __uid_t,
-  pub pw_gid: __gid_t,
+  pub pw_gid: libc::gid_t,
   pub pw_gecos: *mut libc::c_char,
   pub pw_dir: *mut libc::c_char,
   pub pw_shell: *mut libc::c_char,
@@ -80,7 +78,7 @@ pub struct passwd {
 pub struct group {
   pub gr_name: *mut libc::c_char,
   pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: __gid_t,
+  pub gr_gid: libc::gid_t,
   pub gr_mem: *mut *mut libc::c_char,
 }
 
@@ -121,7 +119,7 @@ pub struct winsize {
 #[repr(C)]
 pub struct bb_uidgid_t {
   pub uid: uid_t,
-  pub gid: gid_t,
+  pub gid: libc::gid_t,
 }
 
 // TODO: probably not as readable as a rust tuple.

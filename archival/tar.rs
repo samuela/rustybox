@@ -209,7 +209,7 @@ use crate::librb::__uid_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::dev_t;
 use crate::librb::fd_pair;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;

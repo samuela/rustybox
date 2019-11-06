@@ -11,7 +11,7 @@ use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
 use crate::librb::__uid_t;
 use crate::librb::dev_t;
-use crate::librb::gid_t;
+use libc::gid_t;
 use crate::librb::group;
 use crate::librb::mode_t;
 use crate::librb::off_t;
