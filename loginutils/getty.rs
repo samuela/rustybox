@@ -1,17 +1,17 @@
-use crate::librb::__useconds_t;
 use crate::librb::cc_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::speed_t;
-use libc::ssize_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;
 use libc::gid_t;
 use libc::mode_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::uid_t;
+use libc::useconds_t;
 
 extern "C" {
   #[no_mangle]
@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
@@ -493,7 +493,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
   let mut bp: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut c: libc::c_char = 0;
   /* Flush pending input (esp. after parsing or switching the baud rate) */
-  usleep((100i32 * 1000i32) as __useconds_t); /* 0.1 sec */
+  usleep((100i32 * 1000i32) as useconds_t); /* 0.1 sec */
   tcflush(0i32, 0i32);
   loop
   /* Prompt for and read a login name */
@@ -513,7 +513,8 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
         0i32,
         &mut c as *mut libc::c_char as *mut libc::c_void,
         1i32 as size_t,
-      ) <1      {
+      ) < 1
+      {
         finalize_tty_attrs();
         if *bb_errno == 4i32 || *bb_errno == 5i32 {
           exit(0i32);
@@ -744,7 +745,8 @@ pub unsafe extern "C" fn getty_main(
       0i32,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) ==1    {
+    ) == 1
+    {
       if ch as libc::c_int == '\n' as i32 || ch as libc::c_int == '\r' as i32 {
         break;
       }

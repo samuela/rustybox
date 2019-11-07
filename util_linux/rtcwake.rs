@@ -12,7 +12,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -78,7 +78,7 @@ extern "C" {
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use crate::librb::size_t;
 use libc::ssize_t;
@@ -333,7 +333,8 @@ pub unsafe extern "C" fn rtcwake_main(
       );
     }
   } else {
-    alarm_time = rtc_time + seconds as libc::c_long +1  }
+    alarm_time = rtc_time + seconds as libc::c_long + 1
+  }
   setup_alarm(fd, &mut alarm_time, rtc_time);
   sync();
   /*debug*/
@@ -343,7 +344,7 @@ pub unsafe extern "C" fn rtcwake_main(
     ctime(&mut alarm_time),
   );
   fflush_all();
-  usleep((10i32 * 1000i32) as __useconds_t);
+  usleep((10i32 * 1000i32) as useconds_t);
   if strcmp(suspend, b"on\x00" as *const u8 as *const libc::c_char) != 0i32 {
     xopen_xwrite_close(
       b"/sys/power/state\x00" as *const u8 as *const libc::c_char,

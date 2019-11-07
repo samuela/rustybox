@@ -1,12 +1,12 @@
-use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
+use libc::useconds_t;
 use libc;
 use libc::ino64_t;
 use libc::off64_t;
 use libc::off_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::time_t;
 use libc::FILE;
 
@@ -65,7 +65,7 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

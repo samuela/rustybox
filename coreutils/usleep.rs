@@ -5,9 +5,9 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
 }
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 /*
  * usleep implementation for busybox

@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -52,13 +52,11 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use libc::ssize_t;
-
-
 
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
@@ -353,7 +351,7 @@ pub unsafe extern "C" fn pscan_main(
             s,
             b" \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             1i32 as size_t,
-          ) >=0)
+          ) >= 0)
           {
             current_block_42 = 17281240262373992796;
             continue;

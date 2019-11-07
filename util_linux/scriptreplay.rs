@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -20,8 +20,8 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::__useconds_t;
 use libc::off_t;
+use libc::useconds_t;
 
 use libc::FILE;
 
@@ -73,7 +73,7 @@ pub unsafe extern "C" fn scriptreplay_main(
     &mut count as *mut libc::c_ulong,
   ) == 2i32
   {
-    usleep((delay * factor) as __useconds_t);
+    usleep((delay * factor) as useconds_t);
     bb_copyfd_exact_size(fd, 1i32, count as off_t);
   }
   return 0i32;

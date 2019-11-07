@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
@@ -84,7 +84,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -1256,7 +1256,7 @@ pub unsafe extern "C" fn nmeter_main(
     } else {
       ((*ptr_to_globals).delta as libc::c_long)
         - (*ptr_to_globals).tv.tv_usec % (*ptr_to_globals).deltanz as libc::c_long
-    } as __useconds_t);
+    } as useconds_t);
   }
   loop {
     gettimeofday(&mut (*ptr_to_globals).tv, 0 as *mut timezone);
@@ -1291,7 +1291,7 @@ pub unsafe extern "C" fn nmeter_main(
       {
         rem += (*ptr_to_globals).delta
       }
-      usleep(rem as __useconds_t);
+      usleep(rem as useconds_t);
     }
   }
   /*return 0;*/

@@ -1,7 +1,7 @@
 use libc::mode_t;
 use libc::off64_t;
 use libc::pid_t;
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 use crate::librb::size_t;
 use libc;
 use libc::gid_t;
@@ -40,7 +40,7 @@ extern "C" {
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -683,7 +683,7 @@ pub unsafe extern "C" fn update_passwd(
         current_block = 1608152415753874203;
         break;
       }
-      usleep(100000i32 as __useconds_t);
+      usleep(100000i32 as useconds_t);
       i -= 1;
       if !(i != 0) {
         current_block = 1608152415753874203;

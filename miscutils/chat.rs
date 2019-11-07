@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -69,7 +69,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
@@ -496,7 +496,7 @@ pub unsafe extern "C" fn chat_main(
             len_2 = len_2.wrapping_sub(1);
             continue;
           } else if 'p' as i32 == c as libc::c_int {
-            usleep(10000i32 as __useconds_t);
+            usleep(10000i32 as useconds_t);
             len_2 = len_2.wrapping_sub(1);
             continue;
           } else if 'K' as i32 == c as libc::c_int {

@@ -39,7 +39,7 @@ extern "C" {
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -139,17 +139,14 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-use crate::librb::__useconds_t;
-
+use libc::useconds_t;
 
 pub type int64_t = __int64_t;
-use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::pid_t;
 use libc::ssize_t;
 use libc::uid_t;
-
-
 
 pub type DIR = __dirstream;
 
@@ -533,7 +530,7 @@ unsafe extern "C" fn get_jiffy_counts() {
         .wrapping_mul((*ptr_to_globals).num_cpus as libc::c_ulong),
     ) as *mut jiffy_counts_t;
     /* Otherwise the first per cpu display shows all 100% idles */
-    usleep(50000i32 as __useconds_t);
+    usleep(50000i32 as useconds_t);
   } else {
     let mut tmp: *mut jiffy_counts_t = 0 as *mut jiffy_counts_t;
     let mut i: libc::c_int = 0;
@@ -1622,7 +1619,7 @@ pub unsafe extern "C" fn top_main(
       if scan_mask != TOPMEM_MASK as libc::c_int as libc::c_uint {
         if (*ptr_to_globals).prev_hist_count == 0 {
           do_stats();
-          usleep(100000i32 as __useconds_t);
+          usleep(100000i32 as useconds_t);
           clearmems();
           continue;
         } else {

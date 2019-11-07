@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
@@ -35,7 +35,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use crate::librb::size_t;
 use libc::ssize_t;
@@ -174,7 +174,7 @@ pub unsafe extern "C" fn watchdog_main(
       b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       1i32 as size_t,
     ); /* write zero byte */
-    usleep((stimer_duration as libc::c_long * 1000i64) as __useconds_t);
+    usleep((stimer_duration as libc::c_long * 1000i64) as useconds_t);
   }
   /* - not reached, but gcc 4.2.1 is too dumb! */
 }

@@ -1,8 +1,8 @@
 use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
-use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::useconds_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -113,7 +113,7 @@ extern "C" {
   #[no_mangle]
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -339,7 +339,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;
@@ -1198,7 +1198,7 @@ pub unsafe extern "C" fn telnetd_main(
                         }
                         eio += 1;
                         //bb_error_msg("EIO pty %u", eio);
-                        usleep(1000i32 as __useconds_t);
+                        usleep(1000i32 as useconds_t);
                       } else {
                         (*ts).size2 += count;
                         (*ts).rdidx2 += count;

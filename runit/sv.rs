@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
@@ -72,7 +72,7 @@ extern "C" {
 
 
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use libc::pid_t;
 use crate::librb::size_t;
@@ -937,7 +937,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       if want_exit != 0 {
         break;
       }
-      usleep(420000i32 as __useconds_t);
+      usleep(420000i32 as useconds_t);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow =
         (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64)
           as u64

@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -43,7 +43,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 use crate::librb::size_t;
 use libc::time_t;
 
@@ -132,7 +132,7 @@ unsafe extern "C" fn open_loop_on_busy(
     *bb_errno = 0i32;
     rtc = open(name, flags);
     if *bb_errno == 16i32 {
-      usleep((20i32 * 1000i32) as __useconds_t);
+      usleep((20i32 * 1000i32) as useconds_t);
       try_0 -= 1;
       if try_0 != 0i32 {
         continue;

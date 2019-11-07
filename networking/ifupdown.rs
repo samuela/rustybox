@@ -54,7 +54,7 @@ extern "C" {
   fn execle(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
 
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -238,9 +238,9 @@ use libc::ino64_t;
 
 use libc::off64_t;
 
-use crate::librb::__useconds_t;
-use libc::pid_t;
 use crate::librb::size_t;
+use libc::pid_t;
+use libc::useconds_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -933,7 +933,7 @@ unsafe extern "C" fn dhcp_down(
   This enables consecutive ifup->ifdown->ifup */
   /* Sleep a bit, otherwise static_down tries to bring down interface too soon,
   and it may come back up because udhcpc is still shutting down */
-  usleep(100000i32 as __useconds_t);
+  usleep(100000i32 as useconds_t);
   result += static_down(ifd, exec);
   return if result == 3i32 { 3i32 } else { 0i32 };
 }
@@ -1947,7 +1947,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
        */
       flags = 0o1i32 | 0o100i32 | 0o1000i32
     } else {
-      usleep(cnt as __useconds_t);
+      usleep(cnt as useconds_t);
       cnt += 1000i32
     }
   }

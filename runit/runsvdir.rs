@@ -1,4 +1,3 @@
-use crate::librb::__useconds_t;
 use crate::librb::smallint;
 use libc;
 use libc::ino64_t;
@@ -6,6 +5,7 @@ use libc::ino_t;
 use libc::off64_t;
 use libc::pid_t;
 use libc::stat;
+use libc::useconds_t;
 
 extern "C" {
   pub type __dirstream;
@@ -50,7 +50,7 @@ extern "C" {
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
 
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
@@ -466,7 +466,7 @@ pub unsafe extern "C" fn runsvdir_main(
              * next second, because we won't be able to detect more
              * changes within this second */
             while time(0 as *mut time_t) == last_mtime {
-              usleep(100000i32 as __useconds_t);
+              usleep(100000i32 as useconds_t);
             }
             need_rescan = do_rescan();
             while fchdir(curdir) == -1i32 {

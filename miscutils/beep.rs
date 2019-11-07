@@ -9,7 +9,7 @@ extern "C" {
     __shortopts: *const libc::c_char,
   ) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -28,7 +28,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 pub type uintptr_t = libc::c_ulong;
 #[no_mangle]
 pub unsafe extern "C" fn beep_main(

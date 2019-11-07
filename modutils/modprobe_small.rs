@@ -23,7 +23,7 @@ extern "C" {
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -145,7 +145,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__useconds_t;
+use libc::useconds_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -695,7 +695,7 @@ unsafe extern "C" fn start_dep_bb_writeout() -> libc::c_int {
     if *bb_errno == 17i32 {
       let mut count: libc::c_int = 5i32 * 20i32;
       loop {
-        usleep((1000i32 * 1000i32 / 20i32) as __useconds_t);
+        usleep((1000i32 * 1000i32 / 20i32) as useconds_t);
         if load_dep_bb() != 0 {
           return -2i32;
           /* magic number */
@@ -936,7 +936,7 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
             break 'c_11409;
           }
           fclose(fp);
-          usleep((20i32 * 1000i32) as __useconds_t);
+          usleep((20i32 * 1000i32) as useconds_t);
           break;
         } else {
           ret = 1i32;

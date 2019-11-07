@@ -7,11 +7,10 @@ use libc::gid_t;
 use libc::timeval;
 use libc::uid_t;
 
-use libc::pid_t;
-use crate::librb::__useconds_t;
 use crate::librb::size_t;
+use libc::useconds_t;
+use libc::pid_t;
 use libc::ssize_t;
-
 
 extern "C" {
   #[no_mangle]
@@ -170,7 +169,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn usleep(__useconds: __useconds_t) -> libc::c_int;
+  fn usleep(__useconds: useconds_t) -> libc::c_int;
 }
 
 pub type __socklen_t = libc::c_uint;
