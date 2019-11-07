@@ -208,7 +208,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 
 use crate::librb::fd_pair;
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;

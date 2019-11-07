@@ -1,23 +1,18 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::__pid_t;
+use crate::librb::__suseconds_t;
+use crate::librb::group;
+use libc::mode_t;
+use crate::librb::off_t;
+use crate::librb::passwd;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
 use libc::gid_t;
 use libc::stat;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
-
-use crate::libbb::llist::llist_t;
-
-use crate::librb::__mode_t;
-use crate::librb::__pid_t;
-use crate::librb::__suseconds_t;
-
-use crate::librb::group;
-use crate::librb::mode_t;
-use crate::librb::off_t;
-use crate::librb::passwd;
-use crate::librb::smallint;
-
-use crate::librb::uoff_t;
 
 extern "C" {
   pub type hardlinks_t;
@@ -40,11 +35,11 @@ extern "C" {
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
   /* Search for an entry with a matching username.  */

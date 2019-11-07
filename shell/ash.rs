@@ -1,6 +1,26 @@
+use crate::librb::__compar_fn_t;
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::passwd;
+use crate::librb::pid_t;
+use crate::librb::ptrdiff_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::signal::sigaction;
+use crate::librb::signal::sigset_t;
+use crate::librb::signal::C2RustUnnamed_9;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::clock_t;
+use libc::ino64_t;
+use libc::mode_t;
+use libc::stat;
+use libc::timeval;
+use libc::FILE;
 
 extern "C" {
   pub type __dirstream;
@@ -181,7 +201,7 @@ extern "C" {
   #[no_mangle]
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
@@ -335,42 +355,10 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-use libc::ino64_t;
-use crate::librb::__mode_t;
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
-
-
-
-
-
-
-pub type DIR = __dirstream;
-use crate::librb::mode_t;
-use crate::librb::signal::__sigset_t;
-
-use crate::librb::signal::sigset_t;
-
-use libc::stat;
-
- use libc::timeval;
-pub type uintptr_t = libc::c_ulong;
-use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::pid_t;
-
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-pub type clock_t = libc::clock_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
-use libc::FILE;
+pub type DIR = __dirstream;
+pub type uintptr_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;
-use crate::librb::__compar_fn_t;
-use crate::librb::ptrdiff_t;
-use crate::librb::passwd;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -14478,7 +14466,7 @@ unsafe extern "C" fn umaskcmd(
     ) + 1,
   );
   asm!("" : : : "memory" : "volatile");
-  mask = umask(0i32 as __mode_t);
+  mask = umask(0i32 as mode_t);
   umask(mask);
   int_on();
   if (*argptr).is_null() {

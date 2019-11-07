@@ -1,16 +1,14 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
 }
 
-use crate::librb::__mode_t;
-use crate::librb::mode_t;
-
+use libc::mode_t;
 
 /*
  * coreutils utility routine
@@ -46,7 +44,7 @@ pub unsafe extern "C" fn getopt_mk_fifo_nod(mut argv: *mut *mut libc::c_char) ->
     if mode != -1i32 as mode_t {
       /* if mode is valid */
       /* make future mknod/mkfifo set mode bits exactly */
-      umask(0i32 as __mode_t);
+      umask(0i32 as mode_t);
     }
   }
   return mode;

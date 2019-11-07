@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -74,11 +74,10 @@ extern "C" {
   fn read_base64(src_stream: *mut FILE, dst_stream: *mut FILE, flags: libc::c_int);
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -290,7 +289,7 @@ pub unsafe extern "C" fn uudecode_main(
             | 0o200i32
             | 0o100i32
             | (0o400i32 | 0o200i32 | 0o100i32) >> 3i32
-            | (0o400i32 | 0o200i32 | 0o100i32) >> 3i32 >> 3i32)) as __mode_t,
+            | (0o400i32 | 0o200i32 | 0o100i32) >> 3i32 >> 3i32)) as mode_t,
       );
     }
     free(line as *mut libc::c_void);

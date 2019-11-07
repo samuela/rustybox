@@ -1,6 +1,6 @@
 use libc;
 
-use crate::librb::mode_t;
+use libc::mode_t;
 
 /*
  * mode_string implementation for busybox

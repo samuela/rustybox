@@ -23,7 +23,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::mode_t;
+use libc::mode_t;
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

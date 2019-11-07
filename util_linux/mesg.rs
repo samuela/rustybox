@@ -1,26 +1,30 @@
+use libc::mode_t;
 use libc;
+use libc::stat;
+
 extern "C" {
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
+
   #[no_mangle]
   fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
 }
 
-use crate::librb::__mode_t;
-
-use crate::librb::mode_t;
-
-use libc::stat;
 #[no_mangle]
 pub unsafe extern "C" fn mesg_main(
   mut _argc: libc::c_int,

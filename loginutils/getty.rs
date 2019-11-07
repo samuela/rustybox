@@ -1,4 +1,4 @@
-use crate::librb::__mode_t;
+use libc::mode_t;
 use crate::librb::__pid_t;
 use crate::librb::__useconds_t;
 use crate::librb::cc_t;
@@ -56,7 +56,7 @@ extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn cfsetspeed(__termios_p: *mut termios, __speed: speed_t) -> libc::c_int;
   #[no_mangle]
@@ -262,7 +262,7 @@ unsafe extern "C" fn open_tty() {
     close(0i32);
     xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
     fchown(0i32, 0i32 as uid_t, 0i32 as gid_t);
-    fchmod(0i32, 0o620i32 as __mode_t);
+    fchmod(0i32, 0o620i32 as mode_t);
   } else {
     let mut n: *mut libc::c_char = 0 as *mut libc::c_char;
     /* Open the tty as standard input */

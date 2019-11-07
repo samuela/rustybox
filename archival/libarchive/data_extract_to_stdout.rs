@@ -10,7 +10,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 
 use libc::gid_t;
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::smallint;
 use libc::time_t;

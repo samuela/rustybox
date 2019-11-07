@@ -17,7 +17,7 @@ extern "C" {
   #[no_mangle]
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
   #[no_mangle]
@@ -87,7 +87,7 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 pub type __rlim64_t = libc::c_ulong;
 use crate::librb::signal::__sighandler_t;
@@ -401,7 +401,7 @@ pub unsafe extern "C" fn passwd_main(
         0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32),
         ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
       );
-      umask(0o77i32 as __mode_t);
+      umask(0o77i32 as mode_t);
       xsetuid(0i32 as uid_t);
       filename = b"/etc/shadow\x00" as *const u8 as *const libc::c_char;
       rc = update_passwd(

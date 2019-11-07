@@ -1,11 +1,8 @@
 use crate::libbb::llist::llist_t;
-
-use crate::librb::__mode_t;
 use crate::librb::__off_t;
 use crate::librb::bb_uidgid_t;
-
 use crate::librb::fd_pair;
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
@@ -61,7 +58,7 @@ extern "C" {
   fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
@@ -509,7 +506,7 @@ pub unsafe extern "C" fn cpio_main(
       bb_show_usage();
     }
     if opt & OPT_CREATE_LEADING_DIR as libc::c_int as libc::c_uint != 0 {
-      mkdir(*argv.offset(0), 0o777i32 as __mode_t);
+      mkdir(*argv.offset(0), 0o777i32 as mode_t);
     }
     /* Crude existence check:
      * close(xopen(argv[0], O_RDONLY | O_DIRECTORY));

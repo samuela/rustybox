@@ -4,7 +4,7 @@ use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::group;
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

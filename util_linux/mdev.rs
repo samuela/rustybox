@@ -1,11 +1,9 @@
-use crate::librb::__mode_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
-
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::siginfo_t;
@@ -117,13 +115,13 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
 
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -1064,13 +1062,13 @@ unsafe extern "C" fn mkdir_recursive(mut name: *mut libc::c_char) {
    * not according to its "mode" parameter.
    * Since we run with umask=0, need to temporarily switch it.
    */
-  umask(0o22i32 as __mode_t); /* "dir1" (if any) will be 0755 too */
+  umask(0o22i32 as mode_t); /* "dir1" (if any) will be 0755 too */
   bb_make_directory(
     name,
     0o755i32 as libc::c_long,
     FILEUTILS_RECUR as libc::c_int,
   );
-  umask(0i32 as __mode_t);
+  umask(0i32 as mode_t);
 }
 /* Builds an alias path.
  * This function potentionally reallocates the alias parameter.
@@ -1960,7 +1958,7 @@ pub unsafe extern "C" fn mdev_main(
   /* Kernel cannot provide suitable stdio fds for us, do it ourself */
   bb_sanitize_stdio();
   /* Force the configuration file settings exactly */
-  umask(0i32 as __mode_t);
+  umask(0i32 as mode_t);
   xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
   opt = getopt32(argv, b"sdf\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename;

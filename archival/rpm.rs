@@ -12,7 +12,7 @@ use crate::librb::__off64_t;
 
 use crate::librb::group;
 
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::size_t;

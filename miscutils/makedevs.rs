@@ -1,4 +1,4 @@
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::size_t;
 
@@ -27,11 +27,11 @@ extern "C" {
   fn puts(__s: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -229,7 +229,7 @@ pub unsafe extern "C" fn makedevs_main(
   );
   argv = argv.offset(optind as isize);
   xchdir(*argv);
-  umask(0i32 as __mode_t);
+  umask(0i32 as mode_t);
   printf(
     b"rootdir=%s\ntable=\x00" as *const u8 as *const libc::c_char,
     *argv,

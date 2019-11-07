@@ -1,5 +1,5 @@
-use crate::librb::__mode_t;
 use crate::librb::__pid_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::passwd;
 use crate::librb::pid_t;
@@ -63,7 +63,7 @@ extern "C" {
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]
@@ -474,7 +474,7 @@ pub unsafe extern "C" fn login_main(
   /* Try these, but don't complain if they fail.
    * _f_chown is safe wrt race t=ttyname(0);...;chown(t); */
   fchown(0i32, (*pw).pw_uid, (*pw).pw_gid);
-  fchmod(0i32, 0o600i32 as __mode_t);
+  fchmod(0i32, 0o600i32 as mode_t);
   update_utmp(
     getpid(),
     7i32,

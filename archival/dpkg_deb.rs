@@ -1,4 +1,13 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use libc::mode_t;
+use crate::librb::off_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::gid_t;
+use libc::time_t;
+use libc::uid_t;
 
 extern "C" {
   pub type hardlinks_t;
@@ -10,7 +19,7 @@ extern "C" {
   fn close(__fd: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
@@ -51,20 +60,6 @@ extern "C" {
   #[no_mangle]
   fn header_verbose_list(file_header: *const file_header_t);
 }
-
-use crate::libbb::llist::llist_t;
-
-use crate::librb::__mode_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::mode_t;
-use crate::librb::off_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-use libc::gid_t;
-use libc::time_t;
-use libc::uid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -239,7 +234,7 @@ pub unsafe extern "C" fn dpkg_deb_main(
   (*ar_archive).src_fd = xopen_stdin(*argv.offset(0)); /* bb_make_directory(extract_dir, 0777, 0) */
   (*tar_archive).src_fd = (*ar_archive).src_fd;
   if !extract_dir.is_null() {
-    mkdir(extract_dir, 0o777i32 as __mode_t);
+    mkdir(extract_dir, 0o777i32 as mode_t);
     xchdir(extract_dir);
   }
   /* Do it */

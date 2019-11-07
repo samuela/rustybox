@@ -3,7 +3,7 @@ use libc::gid_t;
 use libc::time_t;
 use libc::uid_t;
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 use crate::librb::group;
 use crate::librb::passwd;
 use crate::librb::smallint;
@@ -21,11 +21,11 @@ extern "C" {
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   /* Search for an entry with a matching user ID.  */
@@ -337,12 +337,12 @@ pub unsafe extern "C" fn adduser_main(
   addgroup_wrapper(&mut pw, usegroup);
   /* clear the umask for this process so it doesn't
    * screw up the permissions on the mkdir and chown. */
-  umask(0i32 as __mode_t);
+  umask(0i32 as mode_t);
   if opts & (1i32 << 6i32) as libc::c_uint == 0 {
     /* set the owner and group so it is owned by the new user,
      * then fix up the permissions to 2755. Can't do it before
      * since chown will clear the setgid bit */
-    let mut mkdir_err: libc::c_int = mkdir(pw.pw_dir, 0o755i32 as __mode_t);
+    let mut mkdir_err: libc::c_int = mkdir(pw.pw_dir, 0o755i32 as mode_t);
     if mkdir_err == 0i32 {
       /* New home. Copy /etc/skel to it */
       let mut args: [*const libc::c_char; 5] = [
@@ -366,7 +366,7 @@ pub unsafe extern "C" fn adduser_main(
     }
     if mkdir_err != 0i32 && *bb_errno != 17i32
       || chown(pw.pw_dir, pw.pw_uid, pw.pw_gid) != 0i32
-      || chmod(pw.pw_dir, 0o2755i32 as __mode_t) != 0i32
+      || chmod(pw.pw_dir, 0o2755i32 as mode_t) != 0i32
     {
       /* set setgid bit on homedir */
       bb_simple_perror_msg(pw.pw_dir);

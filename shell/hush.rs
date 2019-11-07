@@ -1,4 +1,23 @@
+use crate::librb::__off64_t;
+use crate::librb::__pid_t;
+use crate::librb::fd_pair;
+use libc::mode_t;
+use crate::librb::pid_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::__sigset_t;
+use crate::librb::signal::sigaction;
+use crate::librb::signal::sigset_t;
+use crate::librb::signal::C2RustUnnamed_9;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use libc;
+use libc::clock_t;
+use libc::ino64_t;
+use libc::stat;
+use libc::timeval;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
@@ -146,7 +165,7 @@ extern "C" {
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
@@ -375,6 +394,7 @@ extern "C" {
   #[no_mangle]
   fn next_random(rnd: *mut random_t) -> u32;
 }
+
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -385,41 +405,13 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-use libc::ino64_t;
-use crate::librb::__mode_t;
-use crate::librb::__off64_t;
-use crate::librb::__pid_t;
-
-
-use crate::librb::size_t;
-use libc::FILE;
 pub type va_list = __builtin_va_list;
-
-
-
-
-pub type uintptr_t = libc::c_ulong;
-use crate::librb::smallint;
-pub type smalluint = libc::c_uchar;
-use crate::librb::mode_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::__sigset_t;
-
-
-use crate::librb::signal::sigset_t;
-
- use libc::timeval;
 pub type __timezone_ptr_t = *mut timezone;
-use crate::librb::fd_pair;
-pub type sighandler_t = __sighandler_t;
-use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
-pub type arith_t = libc::c_longlong;
-use crate::librb::ssize_t;
 pub type __size_t = libc::c_ulong;
-use libc::stat;
+pub type sighandler_t = __sighandler_t;
+pub type arith_t = libc::c_longlong;
+pub type smalluint = libc::c_uchar;
+pub type uintptr_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -443,7 +435,7 @@ pub struct dirent {
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
 }
-pub type clock_t = libc::clock_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tms {
@@ -11807,7 +11799,7 @@ unsafe extern "C" fn builtin_umask(mut argv: *mut *mut libc::c_char) -> libc::c_
   let mut rc: libc::c_int = 0;
   let mut mask: mode_t = 0;
   rc = 1i32;
-  mask = umask(0i32 as __mode_t);
+  mask = umask(0i32 as mode_t);
   argv = skip_dash_dash(argv);
   if !(*argv.offset(0)).is_null() {
     let mut old_mask: mode_t = mask;

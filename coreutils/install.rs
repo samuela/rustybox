@@ -3,9 +3,7 @@ use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
 
-use crate::librb::__mode_t;
-use crate::librb::mode_t;
-
+use libc::mode_t;
 
 extern "C" {
   #[no_mangle]
@@ -22,7 +20,7 @@ extern "C" {
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

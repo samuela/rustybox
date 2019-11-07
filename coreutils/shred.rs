@@ -11,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
   #[no_mangle]
@@ -28,12 +28,11 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__off64_t;
 
 use crate::librb::off_t;
-
 
 use libc::stat;
 pub const OPT_u: C2RustUnnamed = 2;
@@ -117,7 +116,7 @@ pub unsafe extern "C" fn shred_main(
     if opt & OPT_f as libc::c_int as libc::c_uint != 0 {
       fd = open(fname, 0o1i32);
       if fd < 0i32 {
-        chmod(fname, 0o666i32 as __mode_t);
+        chmod(fname, 0o666i32 as mode_t);
       }
     }
     if fd < 0i32 {

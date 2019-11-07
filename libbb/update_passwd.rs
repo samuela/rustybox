@@ -1,4 +1,4 @@
-use crate::librb::__mode_t;
+use libc::mode_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__useconds_t;
@@ -58,7 +58,7 @@ extern "C" {
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]

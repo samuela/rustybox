@@ -1,39 +1,60 @@
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use libc;
+use libc::mode_t;
+use libc::stat;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   static mut stdout: *mut FILE;
+
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
+
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
   // NB: will return short read on error, not -1,
   // if some data was read before error occurred
+
   #[no_mangle]
   fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static bb_uuenc_tbl_base64: [libc::c_char; 0];
+
   #[no_mangle]
   static bb_uuenc_tbl_std: [libc::c_char; 0];
+
   #[no_mangle]
   fn bb_uuencode(
     store: *mut libc::c_char,
@@ -42,17 +63,6 @@ extern "C" {
     tbl: *const libc::c_char,
   );
 }
-
-use crate::librb::__mode_t;
-
-use crate::librb::mode_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-
-
-use libc::stat;
-
-use libc::FILE;
 
 /*
  * Copyright (C) 2000 by Glenn McGrath
@@ -97,7 +107,7 @@ pub unsafe extern "C" fn uuencode_main(
   let mut src_buf: [libc::c_char; 45] = [0; 45];
   let mut dst_buf: [libc::c_char; 61] = [0; 61];
   tbl = bb_uuenc_tbl_std.as_ptr();
-  mode = 0o666i32 as libc::c_uint & !umask(0o666i32 as __mode_t);
+  mode = 0o666i32 as libc::c_uint & !umask(0o666i32 as mode_t);
   if getopt32(argv, b"^m\x00-1:?2\x00" as *const u8 as *const libc::c_char) != 0 {
     tbl = bb_uuenc_tbl_base64.as_ptr()
   }

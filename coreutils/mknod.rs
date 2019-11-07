@@ -1,4 +1,6 @@
+use libc::mode_t;
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
@@ -9,7 +11,7 @@ extern "C" {
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn xatoull_range(
     str: *const libc::c_char,
@@ -27,9 +29,6 @@ extern "C" {
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
 
-use crate::librb::__mode_t;
-
-use crate::librb::mode_t;
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
   mut str: *const libc::c_char,

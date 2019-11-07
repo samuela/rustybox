@@ -78,7 +78,7 @@ extern "C" {
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]
@@ -237,7 +237,7 @@ extern "C" {
 use libc::gid_t;
 
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
@@ -1728,7 +1728,7 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
   );
   chmod(
     b"/dev/log\x00" as *const u8 as *const libc::c_char,
-    0o666i32 as __mode_t,
+    0o666i32 as mode_t,
   );
   return sock_fd;
 }

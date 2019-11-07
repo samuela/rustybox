@@ -34,7 +34,7 @@ extern "C" {
 }
 
 use libc::ino64_t;
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__off64_t;
 use crate::librb::__off_t;
@@ -267,7 +267,7 @@ pub unsafe extern "C" fn smemcap_main(
         0i32,
         ::std::mem::size_of::<stat>() as libc::c_ulong,
       );
-      s.st_mode = 0o555i32 as __mode_t;
+      s.st_mode = 0o555i32 as mode_t;
       writeheader((*de).d_name.as_mut_ptr(), &mut s, '5' as i32);
       archivejoin(
         (*de).d_name.as_mut_ptr(),

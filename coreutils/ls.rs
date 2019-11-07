@@ -3,7 +3,7 @@ use crate::librb::__compar_fn_t;
 use crate::librb::__nlink_t;
 use crate::librb::__off64_t;
 use libc::ino64_t;
-use crate::librb::mode_t;
+use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;

@@ -196,7 +196,7 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-use crate::librb::mode_t;
+use libc::mode_t;
 use libc::stat;
 use libc::time_t;
 

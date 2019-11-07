@@ -36,10 +36,9 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 pub type uintptr_t = libc::c_ulong;
-
 
 use libc::stat;
 
@@ -54,7 +53,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
   let mut orig_fn: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut new_fn: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut sb: stat = std::mem::zeroed();
-  sb.st_mode = 0o666i32 as __mode_t;
+  sb.st_mode = 0o666i32 as mode_t;
   argv = argv.offset(1);
   orig_fn = xmalloc_follow_symlinks(b"/etc/shells\x00" as *const u8 as *const libc::c_char);
   if orig_fn.is_null() {

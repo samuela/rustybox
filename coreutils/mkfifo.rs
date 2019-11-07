@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn mkfifo(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkfifo(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn bb_show_usage() -> !;
   #[no_mangle]
@@ -11,8 +11,7 @@ extern "C" {
   #[no_mangle]
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
-use crate::librb::__mode_t;
-use crate::librb::mode_t;
+use libc::mode_t;
 
 /*
  * mkfifo implementation for busybox

@@ -41,7 +41,7 @@ extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]
@@ -101,7 +101,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__pid_t;
 
@@ -456,7 +456,7 @@ unsafe extern "C" fn create_cdev_if_doesnt_exist(
   if fd != -1i32 {
     close(fd);
   } else if *bb_errno == 2i32 {
-    mknod(name, (0o20000i32 | 0o660i32) as __mode_t, dev);
+    mknod(name, (0o20000i32 | 0o660i32) as mode_t, dev);
   };
 }
 #[inline(never)]

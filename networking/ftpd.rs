@@ -74,7 +74,7 @@ extern "C" {
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
   /* Search for an entry with a matching username.  */
@@ -216,7 +216,7 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__pid_t;
 
@@ -1241,7 +1241,7 @@ unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
 /* Upload commands */
 unsafe extern "C" fn handle_mkd() {
   if (*ptr_to_globals).ftp_arg.is_null()
-    || mkdir((*ptr_to_globals).ftp_arg, 0o777i32 as __mode_t) != 0i32
+    || mkdir((*ptr_to_globals).ftp_arg, 0o777i32 as mode_t) != 0i32
   {
     cmdio_write_error(
       (0i32

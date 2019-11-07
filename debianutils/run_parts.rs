@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
   #[no_mangle]
-  fn umask(__mask: __mode_t) -> __mode_t;
+  fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
@@ -75,7 +75,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::size_t;
 

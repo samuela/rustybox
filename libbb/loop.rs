@@ -12,7 +12,7 @@ extern "C" {
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: __mode_t, __dev: libc::dev_t) -> libc::c_int;
+  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -29,7 +29,7 @@ extern "C" {
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::off_t;
 use crate::librb::size_t;
@@ -650,7 +650,7 @@ pub unsafe extern "C" fn set_loop(
           /* Node doesn't exist, try to create it.  */
           if mknod(
             dev.as_mut_ptr(),
-            (0o60000i32 | 0o644i32) as __mode_t,
+            (0o60000i32 | 0o644i32) as mode_t,
             bb_makedev(7i32 as libc::c_uint, i as libc::c_uint) as libc::dev_t,
           ) == 0i32
           {

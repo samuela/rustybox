@@ -1,4 +1,4 @@
-use crate::librb::__mode_t;
+use libc::mode_t;
 use libc;
 use libc::gid_t;
 use libc::stat;
@@ -25,7 +25,7 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn xmalloc_follow_symlinks(path: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

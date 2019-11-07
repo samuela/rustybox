@@ -26,7 +26,7 @@ extern "C" {
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -88,7 +88,7 @@ extern "C" {
   fn bb_daemonize_or_rexec(flags: libc::c_int);
 }
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::off_t;
 use crate::librb::size_t;
@@ -443,7 +443,7 @@ pub unsafe extern "C" fn lpd_main(
                 }
                 if spooling != 0 {
                   // chmod completely downloaded file as "readable+writable"
-                  fchmod(fd, 0o600i32 as __mode_t);
+                  fchmod(fd, 0o600i32 as mode_t);
                   // bit 1: ctrlfile; bit 2: datafile
                   spooling |= 1i32 << *s.offset(0) as libc::c_int - 1i32
                 }

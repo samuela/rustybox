@@ -45,9 +45,9 @@ extern "C" {
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn mkdir(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
-  fn mkfifo(__path: *const libc::c_char, __mode: __mode_t) -> libc::c_int;
+  fn mkfifo(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> libc::c_int;
   #[no_mangle]
@@ -103,7 +103,7 @@ extern "C" {
 
 
 
-use crate::librb::__mode_t;
+use libc::mode_t;
 
 use crate::librb::__pid_t;
 
@@ -714,7 +714,7 @@ unsafe extern "C" fn ctrl(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_int
 }
 unsafe extern "C" fn open_control(mut f: *const libc::c_char, mut s: *mut svdir) {
   let mut st: stat = std::mem::zeroed();
-  mkfifo(f, 0o600i32 as __mode_t);
+  mkfifo(f, 0o600i32 as mode_t);
   if stat(f, &mut st) == -1i32 {
     fatal2_cannot(b"stat \x00" as *const u8 as *const libc::c_char, f);
   }
@@ -834,7 +834,7 @@ pub unsafe extern "C" fn runsv_main(
   }
   if mkdir(
     b"supervise\x00" as *const u8 as *const libc::c_char,
-    0o700i32 as __mode_t,
+    0o700i32 as mode_t,
   ) == -1i32
   {
     r = readlink(
@@ -850,7 +850,7 @@ pub unsafe extern "C" fn runsv_main(
         );
       }
       buf[r as usize] = 0i32 as libc::c_char;
-      mkdir(buf.as_mut_ptr(), 0o700i32 as __mode_t);
+      mkdir(buf.as_mut_ptr(), 0o700i32 as mode_t);
     } else if *bb_errno != 2i32 && *bb_errno != 22i32 {
       fatal_cannot(b"readlink ./supervise\x00" as *const u8 as *const libc::c_char);
     }
@@ -871,7 +871,7 @@ pub unsafe extern "C" fn runsv_main(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).haslog != 0 {
     if mkdir(
       b"log/supervise\x00" as *const u8 as *const libc::c_char,
-      0o700i32 as __mode_t,
+      0o700i32 as mode_t,
     ) == -1i32
     {
       r = readlink(
@@ -892,7 +892,7 @@ pub unsafe extern "C" fn runsv_main(
           0i32 | 0o4000i32,
         );
         xchdir(b"./log\x00" as *const u8 as *const libc::c_char);
-        mkdir(buf.as_mut_ptr(), 0o700i32 as __mode_t);
+        mkdir(buf.as_mut_ptr(), 0o700i32 as mode_t);
         if fchdir(fd) == -1i32 {
           fatal_cannot(b"change back to service directory\x00" as *const u8 as *const libc::c_char);
         }
@@ -933,7 +933,7 @@ pub unsafe extern "C" fn runsv_main(
   }
   mkfifo(
     (b"log/supervise/ok\x00" as *const u8 as *const libc::c_char).offset(4),
-    0o600i32 as __mode_t,
+    0o600i32 as mode_t,
   );
   fd = xopen(
     (b"log/supervise/ok\x00" as *const u8 as *const libc::c_char).offset(4),
@@ -943,7 +943,7 @@ pub unsafe extern "C" fn runsv_main(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).haslog != 0 {
     mkfifo(
       b"log/supervise/ok\x00" as *const u8 as *const libc::c_char,
-      0o600i32 as __mode_t,
+      0o600i32 as mode_t,
     );
     fd = xopen(
       b"log/supervise/ok\x00" as *const u8 as *const libc::c_char,

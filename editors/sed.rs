@@ -1,5 +1,5 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::__mode_t;
+use libc::mode_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
@@ -67,7 +67,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn fchmod(__fd: libc::c_int, __mode: __mode_t) -> libc::c_int;
+  fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
