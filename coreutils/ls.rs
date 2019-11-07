@@ -1,16 +1,15 @@
 use crate::librb::__compar_fn_t;
-
-use crate::librb::__nlink_t;
 use crate::librb::__off64_t;
-use libc::ino64_t;
-use libc::mode_t;
 use crate::librb::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
 use libc::gid_t;
+use libc::ino64_t;
 use libc::ino_t;
+use libc::mode_t;
+use libc::nlink_t;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
@@ -173,7 +172,6 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-pub type nlink_t = __nlink_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
