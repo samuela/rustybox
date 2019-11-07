@@ -5,7 +5,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: __off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
 
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
@@ -30,8 +30,8 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__off64_t;
-use crate::librb::off_t;
+use libc::off64_t;
+use libc::off_t;
 
 
 /* Last element is marked by mult == 0 */

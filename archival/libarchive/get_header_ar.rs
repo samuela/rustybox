@@ -4,7 +4,7 @@ extern "C" {
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -29,13 +29,13 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 use crate::librb::bb_uidgid_t;
 
 use libc::gid_t;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

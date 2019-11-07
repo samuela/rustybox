@@ -74,7 +74,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 
 

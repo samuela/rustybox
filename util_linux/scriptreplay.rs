@@ -21,7 +21,7 @@ extern "C" {
 }
 
 use crate::librb::__useconds_t;
-use crate::librb::off_t;
+use libc::off_t;
 
 use libc::FILE;
 

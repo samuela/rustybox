@@ -1,10 +1,10 @@
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::siginfo_t;
 use crate::librb::signal::sigset_t;
@@ -330,7 +330,7 @@ extern "C" {
     __fd: libc::c_int,
     __buf: *mut libc::c_void,
     __nbytes: size_t,
-    __offset: __off64_t,
+    __offset: off64_t,
   ) -> ssize_t;
 
   #[no_mangle]
@@ -1715,7 +1715,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
       seqbuf.as_mut_ptr() as *mut libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 26]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong),
-      0i32 as __off64_t,
+      0i32 as off64_t,
     ) as libc::c_int;
     if seqlen < 0i32 {
       close(seq_fd);

@@ -84,7 +84,7 @@ extern "C" {
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::smallint;
 
 use libc::FILE;

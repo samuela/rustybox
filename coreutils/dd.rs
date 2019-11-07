@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: __off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
   #[no_mangle]
@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -84,8 +84,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
-use crate::librb::off_t;
+use libc::off64_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -520,7 +520,7 @@ pub unsafe extern "C" fn dd_main(
       };
       if ftruncate(
         ofd as libc::c_int,
-        (Z.seek as libc::c_ulong).wrapping_mul(blocksz) as __off64_t,
+        (Z.seek as libc::c_ulong).wrapping_mul(blocksz) as off64_t,
       ) < 0i32
       {
         let mut st: stat = std::mem::zeroed();
@@ -555,7 +555,7 @@ pub unsafe extern "C" fn dd_main(
         };
         if lseek(
           ifd as libc::c_int,
-          (Z.skip as libc::c_ulong).wrapping_mul(blocksz_0) as __off64_t,
+          (Z.skip as libc::c_ulong).wrapping_mul(blocksz_0) as off64_t,
           1i32,
         ) < 0i32 as libc::c_long
         {
@@ -602,7 +602,7 @@ pub unsafe extern "C" fn dd_main(
             };
             if lseek(
               ofd as libc::c_int,
-              (Z.seek as libc::c_ulong).wrapping_mul(blocksz_1) as __off64_t,
+              (Z.seek as libc::c_ulong).wrapping_mul(blocksz_1) as off64_t,
               1i32,
             ) < 0i32 as libc::c_long
             {

@@ -17,7 +17,7 @@ extern "C" {
     __prot: libc::c_int,
     __flags: libc::c_int,
     __fd: libc::c_int,
-    __offset: __off64_t,
+    __offset: off64_t,
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
@@ -38,7 +38,7 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -79,7 +79,7 @@ pub unsafe extern "C" fn uevent_main(
       0x1i32 | 0x2i32,
       0x2i32 | 0x20i32,
       -1i32,
-      0i32 as __off64_t,
+      0i32 as off64_t,
     ) as *mut libc::c_char;
     if netbuf == -1i32 as *mut libc::c_void as *mut libc::c_char {
       bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);

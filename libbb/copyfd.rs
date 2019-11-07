@@ -14,13 +14,13 @@ extern "C" {
   fn sendfile(
     __out_fd: libc::c_int,
     __in_fd: libc::c_int,
-    __offset: *mut __off64_t,
+    __offset: *mut off64_t,
     __count: size_t,
   ) -> ssize_t;
 }
-use crate::librb::__off64_t;
+use libc::off64_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 pub const buffer_size: C2RustUnnamed = 4096;
@@ -63,7 +63,7 @@ unsafe extern "C" fn bb_full_fd_action(
           rd = sendfile(
             dst_fd,
             src_fd,
-            0 as *mut __off64_t,
+            0 as *mut off64_t,
             if size > sendfile_sz {
               sendfile_sz
             } else {

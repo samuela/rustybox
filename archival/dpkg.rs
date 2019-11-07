@@ -232,7 +232,7 @@ use crate::librb::bb_uidgid_t;
 use libc::gid_t;
 use crate::librb::md5_ctx_t;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

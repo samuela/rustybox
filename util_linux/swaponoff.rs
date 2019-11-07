@@ -82,7 +82,7 @@ extern "C" {
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-use crate::librb::off_t;
+use libc::off_t;
 
 
 #[derive(Copy, Clone)]

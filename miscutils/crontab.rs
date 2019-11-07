@@ -1,5 +1,5 @@
 use crate::librb::__pid_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::passwd;
 use crate::librb::pid_t;
 

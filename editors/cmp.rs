@@ -36,7 +36,7 @@ use crate::librb::smallint;
 
 
 
-use crate::librb::off_t;
+use libc::off_t;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;

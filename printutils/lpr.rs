@@ -1,4 +1,11 @@
+use crate::librb::__pid_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use libc;
+use libc::off_t;
+use libc::stat;
+use libc::uid_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -71,16 +78,6 @@ extern "C" {
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }
-
-use crate::librb::__off_t;
-use crate::librb::__pid_t;
-
-use crate::librb::off_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-
-use libc::stat;
-use libc::uid_t;
 
 // -U username
 pub const LPR_V: C2RustUnnamed = 4;
@@ -330,7 +327,7 @@ pub unsafe extern "C" fn lpqr_main(
     } else {
       dfd = xopen(*argv, 0i32)
     }
-    st.st_size = 0i32 as __off_t;
+    st.st_size = 0i32 as off_t;
     fstat(dfd, &mut st);
     /* Apparently, some servers are buggy and won't accept 0-sized jobs.
      * Standard lpr works around it by refusing to send such jobs:

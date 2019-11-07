@@ -1,6 +1,6 @@
 use crate::librb::__pid_t;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::passwd;
 use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;

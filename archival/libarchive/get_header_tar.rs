@@ -10,7 +10,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   /* Some useful definitions */
@@ -77,14 +77,14 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 use crate::librb::bb_uidgid_t;
 
 use libc::gid_t;
 
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -689,7 +689,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       /* Two different causes for lseek() != 0:
        * unseekable fd (would like to support that too, but...),
        * or not first block (false positive, it's not .gz/.bz2!) */
-      if lseek((*archive_handle).src_fd, -i as __off64_t, 1i32) != 0i32 as libc::c_long {
+      if lseek((*archive_handle).src_fd, -i as off64_t, 1i32) != 0i32 as libc::c_long {
         current_block = 25209135276526723; /* paranoia */
         break 'c_8845;
       }

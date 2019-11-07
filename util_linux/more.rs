@@ -1,70 +1,90 @@
+use crate::librb::termios;
+use crate::librb::uoff_t;
 use libc;
+use libc::off64_t;
+use libc::off_t;
+use libc::stat;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
-  fn ftello(__stream: *mut FILE) -> __off64_t;
+  fn ftello(__stream: *mut FILE) -> off64_t;
+
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn tcsetattr(
     __fd: libc::c_int,
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn die_if_ferror_stdout();
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn get_terminal_width_height(
     fd: libc::c_int,
     width: *mut libc::c_uint,
     height: *mut libc::c_uint,
   ) -> libc::c_int;
+
   #[no_mangle]
   fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
-use crate::librb::__off_t;
-
-use libc::stat;
-
-
-use crate::librb::termios;
-use crate::librb::uoff_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]
@@ -107,6 +127,7 @@ unsafe extern "C" fn gotsig(mut _sig: libc::c_int) {
   tcsetattr_tty_TCSANOW(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings);
   _exit(1i32);
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn more_main(
   mut _argc: libc::c_int,
@@ -166,7 +187,7 @@ pub unsafe extern "C" fn more_main(
     }
     match current_block {
       15089075282327824602 => {
-        st.st_size = 0i32 as __off_t;
+        st.st_size = 0i32 as off_t;
         fstat(fileno_unlocked(file), &mut st);
         get_wh();
         please_display_more_prompt = 0i32;

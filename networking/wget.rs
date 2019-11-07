@@ -78,7 +78,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -224,12 +224,12 @@ extern "C" {
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: __off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
@@ -238,7 +238,7 @@ use crate::librb::smallint;
 
 
 pub type smalluint = libc::c_uchar;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
@@ -1375,7 +1375,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
    * This lets user to ^C if his 99% complete 10 GB file download
    * failed to restart *without* losing the almost complete file.
    */
-  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0i32 as __off64_t, 1i32); /* Use proxies if env vars are set  */
+  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0i32 as off64_t, 1i32); /* Use proxies if env vars are set  */
   if pos != -1i32 as off_t {
     ftruncate((*ptr_to_globals).output_fd, pos); /* socket to web/ftp server         */
   } /* socket to ftp server (data)      */

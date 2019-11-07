@@ -1,5 +1,5 @@
 use crate::librb::__suseconds_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::time_t;

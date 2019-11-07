@@ -1,6 +1,6 @@
 use libc;
 
-use crate::librb::off_t;
+use libc::off_t;
 
 extern "C" {
   #[no_mangle]

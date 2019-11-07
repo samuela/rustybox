@@ -50,10 +50,10 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
-pub type __loff_t = __off64_t;
-use crate::librb::off_t;
+pub type __loff_t = off64_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 

@@ -20,7 +20,7 @@ extern "C" {
 
 use libc::gid_t;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use libc::time_t;
 use libc::uid_t;
 

@@ -1,6 +1,12 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::off_t;
+use libc::stat;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -170,19 +176,9 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__off_t;
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-
-
 pub type socklen_t = __socklen_t;
 
-use libc::stat;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -194,6 +190,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {
@@ -665,7 +662,7 @@ unsafe extern "C" fn tftp_protocol(
                 strcpy(cp, b"tsize\x00" as *const u8 as *const libc::c_char);
                 cp =
                   cp.offset(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong as isize);
-                st.st_size = 0i32 as __off_t;
+                st.st_size = 0i32 as off_t;
                 fstat(local_fd, &mut st);
                 cp = cp.offset(
                   (sprintf(
@@ -1032,16 +1029,14 @@ unsafe extern "C" fn tftp_protocol(
                         .offset(4) as *mut libc::c_char,
                       b"write error\x00" as *const u8 as *const libc::c_char,
                     );
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] =
-                      3i32 as u8;
+                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 3i32 as u8;
                     current_block = 15308042354214156955;
                     break;
                   }
                   17392506108461345148 => {
                     blksize = tftp_blksize_check(res, blksize);
                     if blksize < 0i32 {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] =
-                        8i32 as u8;
+                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 8i32 as u8;
                       current_block = 15308042354214156955;
                       break;
                     } else {

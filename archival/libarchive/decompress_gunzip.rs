@@ -47,7 +47,7 @@ extern "C" {
 pub type uintptr_t = libc::c_ulong;
 pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;

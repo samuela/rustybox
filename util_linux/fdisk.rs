@@ -14,7 +14,7 @@ extern "C" {
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
 
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -281,7 +281,7 @@ extern "C" {
   fn sun_write_table();
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 
 
@@ -298,7 +298,7 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -594,12 +594,12 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
     ) != 0
     {
       /* Perhaps this is a disk image */
-      let mut sz: off_t = lseek(fd, 0i32 as __off64_t, 2i32);
+      let mut sz: off_t = lseek(fd, 0i32 as off64_t, 2i32);
       longsectors = 0i32 as libc::c_ulong;
       if sz > 0i32 as libc::c_long {
         longsectors = (sz as uoff_t).wrapping_div((*ptr_to_globals).sector_size as libc::c_ulong)
       }
-      lseek(fd, 0i32 as __off64_t, 0i32);
+      lseek(fd, 0i32 as off64_t, 0i32);
     }
     if ::std::mem::size_of::<libc::c_long>() as libc::c_ulong
       > ::std::mem::size_of::<sector_t>() as libc::c_ulong

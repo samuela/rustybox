@@ -55,7 +55,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -160,7 +160,7 @@ pub struct __va_list_tag {
 
 use libc::ino64_t;
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__time_t;
 
@@ -172,7 +172,7 @@ use crate::librb::smallint;
 #[repr(C)]
 pub struct dirent {
   pub d_ino: ino64_t,
-  pub d_off: __off64_t,
+  pub d_off: off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
@@ -1076,7 +1076,7 @@ unsafe extern "C" fn start_one_job(
         (*line).cl_mailto,
         (*line).cl_cmd,
       );
-      (*line).cl_empty_mail_size = lseek(mailFd, 0i32 as __off64_t, 1i32) as libc::c_int
+      (*line).cl_empty_mail_size = lseek(mailFd, 0i32 as off64_t, 1i32) as libc::c_int
     } else {
       bb_error_msg(
         b"can\'t create mail file %s for user %s, discarding output\x00" as *const u8

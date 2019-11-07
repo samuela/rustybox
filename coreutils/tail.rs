@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
@@ -55,9 +55,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn tail_main(
         fmt = b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char
       }
       if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
-        let mut current: off_t = lseek(fd_0, 0i32 as __off64_t, 2i32);
+        let mut current: off_t = lseek(fd_0, 0i32 as off64_t, 2i32);
         if current > 0i32 as libc::c_long {
           let mut off: libc::c_uint = 0;
           if opt & 0x2i32 != 0 {
@@ -446,7 +446,7 @@ pub unsafe extern "C" fn tail_main(
             let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
             if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size > 0i32 as libc::c_long {
-              let mut current_0: off_t = lseek(fd_1, 0i32 as __off64_t, 1i32);
+              let mut current_0: off_t = lseek(fd_1, 0i32 as off64_t, 1i32);
               if sbuf_0.st_size < current_0 {
                 xlseek(fd_1, 0i32 as off_t, 0i32);
               }

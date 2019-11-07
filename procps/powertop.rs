@@ -1,6 +1,6 @@
 use crate::librb::__compar_fn_t;
 use libc::ino64_t;
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -154,7 +154,7 @@ extern "C" {
 #[repr(C)]
 pub struct dirent {
   pub d_ino: ino64_t,
-  pub d_off: __off64_t,
+  pub d_off: off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],

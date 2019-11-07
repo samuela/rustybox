@@ -1,9 +1,6 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::__off_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::fd_pair;
-use libc::mode_t;
-use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -11,6 +8,8 @@ use crate::librb::time_t;
 use crate::librb::uoff_t;
 use libc;
 use libc::gid_t;
+use libc::mode_t;
+use libc::off_t;
 use libc::stat;
 use libc::uid_t;
 use libc::FILE;
@@ -318,7 +317,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
         if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
         {
-          st.st_size = 0i32 as __off_t
+          st.st_size = 0i32 as off_t
         }
         /* Store hardlinks for later processing, dont output them */
         if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
@@ -374,7 +373,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
             if (*links).names.is_null() {
               links = (*links).next
             } else {
-              st.st_size = 0i32 as __off_t
+              st.st_size = 0i32 as off_t
             }
           } else {
             /* GNU cpio is reported to emit file data

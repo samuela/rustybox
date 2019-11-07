@@ -78,7 +78,7 @@ use crate::librb::__pid_t;
 
 pub type bb__aliased_u32 = u32;
 use crate::librb::fd_pair;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;

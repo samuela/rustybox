@@ -8,12 +8,12 @@ use libc::uid_t;
 
 use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 use crate::librb::group;
 
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -63,7 +63,7 @@ extern "C" {
     __prot: libc::c_int,
     __flags: libc::c_int,
     __fd: libc::c_int,
-    __offset: __off64_t,
+    __offset: off64_t,
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
@@ -527,7 +527,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
     0x1i32,
     0x2i32,
     fd,
-    0i32 as __off64_t,
+    0i32 as off64_t,
   );
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).map == -1i32 as *mut libc::c_void {
     bb_perror_msg_and_die(

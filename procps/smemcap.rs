@@ -36,8 +36,8 @@ extern "C" {
 use libc::ino64_t;
 use libc::mode_t;
 
-use crate::librb::__off64_t;
-use crate::librb::__off_t;
+use libc::off64_t;
+use libc::off_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -45,7 +45,7 @@ use crate::librb::ssize_t;
 #[repr(C)]
 pub struct dirent {
   pub d_ino: ino64_t,
-  pub d_off: __off64_t,
+  pub d_off: off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],
@@ -215,7 +215,7 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
   /* write archive header */
   fstat(fd, &mut s);
   close(fd);
-  s.st_size = size as __off_t;
+  s.st_size = size as off_t;
   writeheader(path, &mut s, '0' as i32);
   /* dump file contents */
   cur = start;

@@ -3,7 +3,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn posix_fallocate(__fd: libc::c_int, __offset: __off64_t, __len: __off64_t) -> libc::c_int;
+  fn posix_fallocate(__fd: libc::c_int, __offset: off64_t, __len: off64_t) -> libc::c_int;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -20,8 +20,8 @@ extern "C" {
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::__off64_t;
-use crate::librb::off_t;
+use libc::off64_t;
+use libc::off_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

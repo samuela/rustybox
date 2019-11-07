@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn readahead(__fd: libc::c_int, __offset: __off64_t, __count: size_t) -> __ssize_t;
+  fn readahead(__fd: libc::c_int, __offset: off64_t, __count: size_t) -> __ssize_t;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -11,9 +11,9 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::__ssize_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 
 /*
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn readahead_main(
       /* fdlength was reported to be unreliable - use seek */
       len = xlseek(fd, 0i32 as off_t, 2i32);
       xlseek(fd, 0i32 as off_t, 0i32);
-      r = readahead(fd, 0i32 as __off64_t, len as size_t) as libc::c_int;
+      r = readahead(fd, 0i32 as off64_t, len as size_t) as libc::c_int;
       close(fd);
       if r >= 0i32 {
         continue;

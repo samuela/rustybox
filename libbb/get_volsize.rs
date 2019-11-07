@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
   #[no_mangle]
@@ -15,8 +15,8 @@ extern "C" {
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
 }
-use crate::librb::__off64_t;
-use crate::librb::off_t;
+use libc::off64_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 
@@ -235,7 +235,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
     //}
     if lseek(
       fd,
-      result.wrapping_sub(1i32 as libc::c_ulong) as __off64_t,
+      result.wrapping_sub(1i32 as libc::c_ulong) as off64_t,
       0i32,
     ) != -1i32 as off_t
     {

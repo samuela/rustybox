@@ -166,7 +166,7 @@ extern "C" {
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::__off_t;
+use libc::off_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -322,7 +322,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
     (2147483647i32 - 4095i32) as libc::c_ulong
   };
   /* Estimate file size */
-  st.st_size = 0i32 as __off_t; /* in case fstat fails, assume 0 */
+  st.st_size = 0i32 as off_t; /* in case fstat fails, assume 0 */
   fstat(fd, &mut st);
   /* /proc/N/stat files report st_size 0 */
   /* In order to make such files readable, we add small const */

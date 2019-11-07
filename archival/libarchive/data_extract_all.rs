@@ -3,7 +3,7 @@ use crate::librb::__pid_t;
 use crate::librb::__suseconds_t;
 use crate::librb::group;
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::uoff_t;

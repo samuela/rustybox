@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -20,7 +20,7 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -323,7 +323,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
   }
   match current_block {
     16164644963279819311 => {
-      if lseek((*id).fd, off as __off64_t, 0i32) as libc::c_ulong != off {
+      if lseek((*id).fd, off as off64_t, 0i32) as libc::c_ulong != off {
         current_block = 1886147455329398701;
       } else {
         read_len = full_read((*id).fd, dst as *mut libc::c_void, len);

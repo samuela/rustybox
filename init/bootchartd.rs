@@ -171,21 +171,21 @@ extern "C" {
   fn umount2(__special_file: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__useconds_t;
-use crate::librb::off_t;
 use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
 use libc::ino64_t;
+use libc::off64_t;
+use libc::off_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
   pub d_ino: ino64_t,
-  pub d_off: __off64_t,
+  pub d_off: off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,
   pub d_name: [libc::c_char; 256],

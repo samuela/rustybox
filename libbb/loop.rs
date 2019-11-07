@@ -31,7 +31,7 @@ extern "C" {
 
 use libc::mode_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use libc::stat;
 

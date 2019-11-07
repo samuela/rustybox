@@ -1,6 +1,6 @@
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::__pid_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -28,7 +28,7 @@ extern "C" {
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
 
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -370,7 +370,7 @@ extern "C" {
   fn sendfile(
     __out_fd: libc::c_int,
     __in_fd: libc::c_int,
-    __offset: *mut __off64_t,
+    __offset: *mut off64_t,
     __count: size_t,
   ) -> ssize_t;
 }
@@ -2230,7 +2230,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
     if (*ptr_to_globals).range_end < (*ptr_to_globals).range_start
       || lseek(fd, (*ptr_to_globals).range_start, 0i32) != (*ptr_to_globals).range_start
     {
-      lseek(fd, 0i32 as __off64_t, 0i32);
+      lseek(fd, 0i32 as off64_t, 0i32);
       (*ptr_to_globals).range_start = -1i32 as off_t
     } else {
       (*ptr_to_globals).range_len =

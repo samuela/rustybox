@@ -26,11 +26,11 @@ extern "C" {
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
-  fn fseeko(__stream: *mut FILE, __off: __off64_t, __whence: libc::c_int) -> libc::c_int;
+  fn fseeko(__stream: *mut FILE, __off: off64_t, __whence: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -129,9 +129,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
@@ -604,7 +604,7 @@ unsafe extern "C" fn create_J(
     ) as *mut line;
     /* ft gets here without the correct position, cant use seek_ft */
     (*ft.offset(i as isize)).ft_pos = 0i32 as off_t;
-    fseeko((*ft.offset(i as isize)).ft_fp, 0i32 as __off64_t, 0i32);
+    fseeko((*ft.offset(i as isize)).ft_fp, 0i32 as off64_t, 0i32);
     *nlen.offset(i as isize) = 0i32;
     /* We could zalloc nfile, but then zalloc starts showing in gprof at ~1% */
     (*nfile[i as usize].offset(0)).c2rust_unnamed.offset = 0i32 as off_t; /* saves code */
@@ -1035,7 +1035,7 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
     /* Our diff implementation is using seek.
      * When we meet non-seekable file, we must make a temp copy.
      */
-    if lseek(fd, 0i32 as __off64_t, 0i32) == -1i32 as libc::c_long && *bb_errno == 29i32 {
+    if lseek(fd, 0i32 as off64_t, 0i32) == -1i32 as libc::c_long && *bb_errno == 29i32 {
       let mut name: [libc::c_char; 15] =
         *::std::mem::transmute::<&[u8; 15], &mut [libc::c_char; 15]>(b"/tmp/difXXXXXX\x00");
       let mut fd_tmp: libc::c_int = xmkstemp(name.as_mut_ptr());

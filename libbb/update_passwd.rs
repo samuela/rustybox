@@ -1,5 +1,5 @@
 use libc::mode_t;
-use crate::librb::__off64_t;
+use libc::off64_t;
 use crate::librb::__pid_t;
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
@@ -94,8 +94,8 @@ extern "C" {
 pub struct flock {
   pub l_type: libc::c_short,
   pub l_whence: libc::c_short,
-  pub l_start: __off64_t,
-  pub l_len: __off64_t,
+  pub l_start: off64_t,
+  pub l_len: off64_t,
   pub l_pid: __pid_t,
 }
 
@@ -720,8 +720,8 @@ pub unsafe extern "C" fn update_passwd(
         /* Lock the password file before updating */
         lock.l_type = 1i32 as libc::c_short;
         lock.l_whence = 0i32 as libc::c_short;
-        lock.l_start = 0i32 as __off64_t;
-        lock.l_len = 0i32 as __off64_t;
+        lock.l_start = 0i32 as off64_t;
+        lock.l_len = 0i32 as off64_t;
         if fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0i32 {
           bb_perror_msg(
             b"warning: can\'t lock \'%s\'\x00" as *const u8 as *const libc::c_char,

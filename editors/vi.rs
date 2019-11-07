@@ -29,7 +29,7 @@ extern "C" {
     __shortopts: *const libc::c_char,
   ) -> libc::c_int;
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: __off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -149,7 +149,7 @@ pub struct __va_list_tag {
 
 pub type __int64_t = libc::c_long;
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 
 pub type int64_t = __int64_t;
@@ -2178,7 +2178,7 @@ unsafe extern "C" fn file_write(
   }
   cnt = (last.wrapping_offset_from(first) as libc::c_long + 1i32 as libc::c_long) as libc::c_int;
   charcnt = full_write(fd, first as *const libc::c_void, cnt as size_t) as libc::c_int;
-  ftruncate(fd, charcnt as __off64_t);
+  ftruncate(fd, charcnt as off64_t);
   if !(charcnt == cnt) {
     charcnt = 0i32
   }

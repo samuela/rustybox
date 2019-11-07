@@ -89,7 +89,7 @@ extern "C" {
 
 use crate::librb::__pid_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 

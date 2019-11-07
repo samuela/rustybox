@@ -29,7 +29,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: __off64_t, __whence: libc::c_int) -> __off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -136,11 +136,11 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
 
 use libc::mode_t;
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
@@ -388,7 +388,7 @@ unsafe extern "C" fn find_cdf_offset() -> u32 {
   let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut end: off_t = 0;
   let mut found: u32 = 0;
-  end = lseek(zip_fd as libc::c_int, 0i32 as __off64_t, 2i32);
+  end = lseek(zip_fd as libc::c_int, 0i32 as off64_t, 2i32);
   if end == -1i32 as off_t {
     return 0xffffffffu32;
   }

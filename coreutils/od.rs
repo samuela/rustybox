@@ -37,7 +37,7 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn fseeko(__stream: *mut FILE, __off: __off64_t, __whence: libc::c_int) -> libc::c_int;
+  fn fseeko(__stream: *mut FILE, __off: off64_t, __whence: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -145,9 +145,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__off64_t;
+use libc::off64_t;
 
-use crate::librb::off_t;
+use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::stat;
