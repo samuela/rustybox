@@ -1,13 +1,12 @@
-use crate::librb::__pid_t;
-use libc::mode_t;
-use libc::off_t;
 use crate::librb::passwd;
-use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::termios;
 use libc;
 use libc::gid_t;
+use libc::mode_t;
+use libc::off_t;
+use libc::pid_t;
 use libc::uid_t;
 use libc::FILE;
 
@@ -23,7 +22,7 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

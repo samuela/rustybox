@@ -1,10 +1,8 @@
-use crate::librb::__pid_t;
-use libc::off_t;
 use crate::librb::passwd;
-use crate::librb::pid_t;
-
 use libc;
 use libc::gid_t;
+use libc::off_t;
+use libc::pid_t;
 use libc::stat;
 use libc::uid_t;
 
@@ -16,7 +14,7 @@ extern "C" {
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]

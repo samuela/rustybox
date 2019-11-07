@@ -1,4 +1,9 @@
+use crate::librb::__syscall_slong_t;
+use crate::librb::signal::__sighandler_t;
 use libc;
+use libc::pid_t;
+use libc::timeval;
+
 extern "C" {
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
@@ -15,7 +20,7 @@ extern "C" {
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
-  fn wait3(__stat_loc: *mut libc::c_int, __options: libc::c_int, __usage: *mut rusage) -> __pid_t;
+  fn wait3(__stat_loc: *mut libc::c_int, __options: libc::c_int, __usage: *mut rusage) -> pid_t;
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -39,13 +44,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-
-use crate::librb::__pid_t;
-
-use crate::librb::__syscall_slong_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
- use libc::timeval;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

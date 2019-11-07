@@ -4,7 +4,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]
@@ -29,7 +29,7 @@ extern "C" {
 
 use libc::ino64_t;
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 
 

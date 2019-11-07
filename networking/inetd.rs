@@ -1,16 +1,12 @@
-
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::gid_t;
+use libc::pid_t;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
@@ -93,13 +89,13 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -267,6 +263,7 @@ extern "C" {
 
 pub type __rlim64_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
+
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;
@@ -287,6 +284,7 @@ pub const RLIMIT_STACK: __rlimit_resource = 3;
 pub const RLIMIT_DATA: __rlimit_resource = 2;
 pub const RLIMIT_FSIZE: __rlimit_resource = 1;
 pub const RLIMIT_CPU: __rlimit_resource = 0;
+
 pub type rlim_t = __rlim64_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -516,7 +514,7 @@ pub struct C2RustUnnamed_7 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: libc::clock_t,
@@ -525,7 +523,7 @@ pub struct C2RustUnnamed_8 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_9 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
@@ -539,7 +537,7 @@ pub struct C2RustUnnamed_10 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_11 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
 use crate::librb::signal::__sighandler_t;

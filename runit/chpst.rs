@@ -4,7 +4,7 @@ use libc::uid_t;
 
 use libc::ino64_t;
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 
@@ -15,7 +15,7 @@ extern "C" {
   #[no_mangle]
   fn nice(__inc: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

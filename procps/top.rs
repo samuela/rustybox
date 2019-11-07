@@ -143,7 +143,7 @@ use crate::librb::__useconds_t;
 
 
 pub type int64_t = __int64_t;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

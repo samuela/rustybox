@@ -128,7 +128,7 @@ extern "C" {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 
 use libc::FILE;

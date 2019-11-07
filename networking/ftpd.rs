@@ -1,6 +1,14 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::mode_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::stat;
+use libc::time_t;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -45,7 +53,7 @@ extern "C" {
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -216,22 +224,10 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use libc::mode_t;
-
-use crate::librb::__pid_t;
-
 pub type __socklen_t = libc::c_uint;
 
-
-
 pub type bb__aliased_u32 = u32;
-use libc::off_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
 pub type socklen_t = __socklen_t;
-use libc::stat;
-use libc::time_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

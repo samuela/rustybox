@@ -8,7 +8,7 @@ extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn geteuid() -> uid_t;
   #[no_mangle]
@@ -224,7 +224,7 @@ use libc::ino64_t;
 use libc::off64_t;
 
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 
 
@@ -309,7 +309,7 @@ pub struct C2RustUnnamed_4 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: libc::clock_t,
@@ -318,7 +318,7 @@ pub struct C2RustUnnamed_5 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
@@ -332,7 +332,7 @@ pub struct C2RustUnnamed_7 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
 

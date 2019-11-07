@@ -114,7 +114,7 @@ use libc::ino64_t;
 use libc::off64_t;
 
 use libc::gid_t;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
 use libc::uid_t;

@@ -170,7 +170,7 @@ use libc::mode_t;
 
 use libc::off64_t;
 
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;

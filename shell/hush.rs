@@ -1,8 +1,4 @@
-use libc::off64_t;
-use crate::librb::__pid_t;
 use crate::librb::fd_pair;
-use libc::mode_t;
-use crate::librb::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigaction;
@@ -14,6 +10,9 @@ use crate::librb::ssize_t;
 use libc;
 use libc::clock_t;
 use libc::ino64_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::pid_t;
 use libc::stat;
 use libc::timeval;
 use libc::FILE;
@@ -71,25 +70,25 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn getppid() -> __pid_t;
+  fn getppid() -> pid_t;
   #[no_mangle]
-  fn getpgrp() -> __pid_t;
+  fn getpgrp() -> pid_t;
   #[no_mangle]
-  fn setpgid(__pid: __pid_t, __pgid: __pid_t) -> libc::c_int;
+  fn setpgid(__pid: pid_t, __pgid: pid_t) -> libc::c_int;
   #[no_mangle]
   fn setpgrp() -> libc::c_int;
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn tcgetpgrp(__fd: libc::c_int) -> __pid_t;
+  fn tcgetpgrp(__fd: libc::c_int) -> pid_t;
   #[no_mangle]
-  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: __pid_t) -> libc::c_int;
+  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
   #[no_mangle]
@@ -109,7 +108,7 @@ extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -169,9 +168,9 @@ extern "C" {
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
-  fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
+  fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

@@ -30,7 +30,7 @@ extern "C" {
 
 
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::pid_t;
+use libc::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {

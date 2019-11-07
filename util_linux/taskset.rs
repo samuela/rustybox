@@ -1,14 +1,14 @@
+use crate::librb::size_t;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
-  fn sched_getaffinity(
-    __pid: __pid_t,
-    __cpusetsize: size_t,
-    __cpuset: *mut cpu_set_t,
-  ) -> libc::c_int;
+  fn sched_getaffinity(__pid: pid_t, __cpusetsize: size_t, __cpuset: *mut cpu_set_t)
+    -> libc::c_int;
   #[no_mangle]
   fn sched_setaffinity(
-    __pid: __pid_t,
+    __pid: pid_t,
     __cpusetsize: size_t,
     __cpuset: *const cpu_set_t,
   ) -> libc::c_int;
@@ -48,16 +48,12 @@ extern "C" {
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
-
 
 /*
  * taskset - retrieve or set a processes' CPU affinity

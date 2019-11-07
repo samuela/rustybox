@@ -1,5 +1,5 @@
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -46,7 +46,7 @@ extern "C" {
   fn _exit(_: libc::c_int) -> !;
 
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;

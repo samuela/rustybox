@@ -1,5 +1,5 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__suseconds_t;
 use crate::librb::group;
 use libc::mode_t;
@@ -19,7 +19,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -239,7 +239,7 @@ use crate::librb::smallint;
 
 pub type smalluint = libc::c_uchar;
 use libc::off_t;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

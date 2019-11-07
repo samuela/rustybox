@@ -1,4 +1,15 @@
+use crate::librb::__time_t;
+use crate::librb::passwd;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::ino64_t;
+use libc::off64_t;
+use libc::pid_t;
+use libc::stat;
+use libc::time_t;
+use libc::FILE;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -12,7 +23,7 @@ extern "C" {
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn setpgrp() -> libc::c_int;
   #[no_mangle]
@@ -70,7 +81,7 @@ extern "C" {
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]
@@ -158,16 +169,6 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use libc::ino64_t;
-
-use libc::off64_t;
-use crate::librb::__pid_t;
-use crate::librb::__time_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -178,11 +179,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use libc::stat;
-use libc::time_t;
 
-
-use libc::FILE;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -199,7 +196,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-use crate::librb::passwd;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
@@ -1414,8 +1411,7 @@ pub unsafe extern "C" fn crond_main(
     {
       sbuf.st_mtime = 0i32 as __time_t
     } /* force update (once) if dir was deleted */
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime != sbuf.st_mtime
-    {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime != sbuf.st_mtime {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime = sbuf.st_mtime;
       rescan = 1i32 as libc::c_uint
     }

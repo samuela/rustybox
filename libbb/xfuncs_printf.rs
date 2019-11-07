@@ -1,15 +1,12 @@
-use libc;
-use libc::gid_t;
-use libc::stat;
-use libc::uid_t;
-
-use libc::off64_t;
-use crate::librb::__pid_t;
-use libc::off_t;
-use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
-
+use libc;
+use libc::gid_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::stat;
+use libc::uid_t;
 
 extern "C" {
   pub type __dirstream;
@@ -46,7 +43,7 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn geteuid() -> uid_t;
   #[no_mangle]
@@ -60,7 +57,7 @@ extern "C" {
   #[no_mangle]
   fn setegid(__gid: gid_t) -> libc::c_int;
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -207,7 +204,6 @@ pub struct __va_list_tag {
 }
 
 pub type __socklen_t = libc::c_uint;
-
 pub type socklen_t = __socklen_t;
 pub type DIR = __dirstream;
 

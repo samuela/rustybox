@@ -1,13 +1,23 @@
-use crate::librb::__pid_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::__compar_fn_t;
 use crate::librb::__suseconds_t;
 use crate::librb::__syscall_slong_t;
+use crate::librb::md5_ctx_t;
+use crate::librb::sha1_ctx_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::pid_t;
+use libc::time_t;
+use libc::timeval;
 use libc::uid_t;
+use libc::FILE;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -175,7 +185,7 @@ extern "C" {
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -309,14 +319,8 @@ pub type __socklen_t = libc::c_uint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type id_t = __id_t;
-use libc::time_t;
-
-use libc::timeval;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -443,10 +447,6 @@ pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 
-use crate::librb::signal::__sighandler_t;
-
-use crate::librb::__compar_fn_t;
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]
@@ -526,7 +526,6 @@ pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_3 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_3 = 4;
 pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed_3 = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_3 = 1;
-use crate::libbb::llist::llist_t;
 
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed_4 = 3;
@@ -556,8 +555,7 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
-use crate::librb::md5_ctx_t;
-use crate::librb::sha1_ctx_t;
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

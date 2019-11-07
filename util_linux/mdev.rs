@@ -1,5 +1,5 @@
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
@@ -55,7 +55,7 @@ extern "C" {
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   fn sigemptyset(__set: *mut sigset_t) -> libc::c_int;
@@ -349,7 +349,7 @@ extern "C" {
   fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -437,7 +437,7 @@ pub struct C2RustUnnamed_4 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: libc::clock_t,
@@ -447,7 +447,7 @@ pub struct C2RustUnnamed_5 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
@@ -463,7 +463,7 @@ pub struct C2RustUnnamed_7 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
 
@@ -1791,7 +1791,7 @@ unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
         b"mdev\x00" as *const u8 as *const libc::c_char,
       ) == 0i32
     {
-      kill((*p).pid as __pid_t, 17i32);
+      kill((*p).pid as pid_t, 17i32);
     }
   }
 }

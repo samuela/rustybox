@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -27,7 +27,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;

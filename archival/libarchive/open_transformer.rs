@@ -1,4 +1,12 @@
+use crate::librb::fd_pair;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use libc;
+use libc::off_t;
+use libc::pid_t;
+use libc::time_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -15,7 +23,7 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
-  fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
+  fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -71,19 +79,7 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
-use crate::librb::__pid_t;
-
-
-
-
 pub type bb__aliased_u32 = u32;
-use crate::librb::fd_pair;
-use libc::off_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::time_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -347,8 +343,7 @@ unsafe extern "C" fn setup_transformer_on_fd(
         &mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16 as *mut libc::c_void,
         4i32 as size_t,
       );
-      v32 = *(&mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16
-        as *mut bb__aliased_u32);
+      v32 = *(&mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16 as *mut bb__aliased_u32);
       if v32 == XZ_MAGIC2 as libc::c_int as libc::c_uint {
         (*xstate).xformer = Some(
           unpack_xz_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,

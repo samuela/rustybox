@@ -1,11 +1,16 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::pid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut stdout: *mut FILE;
   #[no_mangle]
@@ -25,7 +30,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
@@ -90,13 +95,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {

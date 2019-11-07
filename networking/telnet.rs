@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -74,7 +74,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;

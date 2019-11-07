@@ -1,14 +1,22 @@
+use crate::librb::fd_pair;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::mode_t;
+use libc::pid_t;
+use libc::stat;
 use libc::timespec;
+
 extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -101,23 +109,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-use libc::mode_t;
-
-use crate::librb::__pid_t;
-
 pub type __clockid_t = libc::c_int;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::stat;
-
-
-
-
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -127,7 +119,6 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-use crate::librb::fd_pair;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

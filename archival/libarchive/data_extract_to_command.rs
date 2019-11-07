@@ -45,7 +45,7 @@ use crate::librb::bb_uidgid_t;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::smallint;
 use libc::time_t;

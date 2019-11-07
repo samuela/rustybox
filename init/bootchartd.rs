@@ -1,4 +1,15 @@
+use crate::librb::__useconds_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use libc;
+use libc::ino64_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::time_t;
+use libc::FILE;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -16,9 +27,9 @@ extern "C" {
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn getppid() -> __pid_t;
+  fn getppid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -36,7 +47,7 @@ extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -68,7 +79,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]
@@ -171,16 +182,6 @@ extern "C" {
   fn umount2(__special_file: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
 }
 
-use crate::librb::__pid_t;
-use crate::librb::__useconds_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::ino64_t;
-use libc::off64_t;
-use libc::off_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -191,9 +192,7 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use libc::time_t;
 
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -209,6 +208,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -219,6 +219,7 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -230,11 +231,13 @@ pub struct parser_t {
   pub nline_alloc: size_t,
   pub lineno: libc::c_int,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
   pub jiffy_line: [libc::c_char; 1024],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct utsname {

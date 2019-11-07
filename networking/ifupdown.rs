@@ -239,7 +239,7 @@ use libc::ino64_t;
 use libc::off64_t;
 
 use crate::librb::__useconds_t;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 
 #[derive(Copy, Clone)]

@@ -1,17 +1,19 @@
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
-  fn getppid() -> __pid_t;
+  fn getppid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
+  fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
   #[no_mangle]
   fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
   #[no_mangle]
@@ -29,9 +31,6 @@ extern "C" {
   #[no_mangle]
   fn get_signum(name: *const libc::c_char) -> libc::c_int;
 }
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
 
 pub type duration_t = libc::c_double;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

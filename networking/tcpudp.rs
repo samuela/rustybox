@@ -1,4 +1,10 @@
+use crate::librb::size_t;
+use crate::librb::ssize_t;
 use libc;
+use libc::gid_t;
+use libc::pid_t;
+use libc::uid_t;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -15,7 +21,7 @@ extern "C" {
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -157,17 +163,7 @@ extern "C" {
   fn ipsvd_perhost_remove(cc: *mut hcc, pid: libc::c_int);
 }
 
-use crate::librb::__pid_t;
-
 pub type __socklen_t = libc::c_uint;
-use libc::gid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use libc::uid_t;
-
-
-
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -180,6 +176,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 pub type sa_family_t = libc::c_ushort;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

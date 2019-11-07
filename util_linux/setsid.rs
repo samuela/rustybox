@@ -1,7 +1,9 @@
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -13,10 +15,6 @@ extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-
 
 /*
  * setsid.c -- execute a command in a new session

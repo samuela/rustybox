@@ -1,14 +1,16 @@
-use libc;
-use libc::gid_t;
-use libc::uid_t;
-
-use libc::ino64_t;
-use libc::off64_t;
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
+use libc;
+use libc::gid_t;
+use libc::ino64_t;
+use libc::off64_t;
+use libc::pid_t;
+use libc::stat;
+use libc::uid_t;
+use libc::FILE;
 
 extern "C" {
   pub type __dirstream;
@@ -19,7 +21,7 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -29,7 +31,7 @@ extern "C" {
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -136,18 +138,14 @@ pub struct dirent {
   pub d_name: [libc::c_char; 256],
 }
 pub type DIR = __dirstream;
-use libc::stat;
 
 pub type id_t = __id_t;
 
-use libc::FILE;
 pub type __priority_which = libc::c_uint;
 pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;
 pub const PRIO_PROCESS: __priority_which = 0;
 pub type __priority_which_t = __priority_which;
-use crate::librb::bb_uidgid_t;
-use crate::librb::passwd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

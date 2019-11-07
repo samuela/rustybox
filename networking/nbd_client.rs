@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
   #[no_mangle]
@@ -62,7 +62,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 
 

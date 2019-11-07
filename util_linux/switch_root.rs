@@ -60,7 +60,7 @@ extern "C" {
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
 
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
 
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
@@ -172,7 +172,7 @@ extern "C" {
 use libc::ino64_t;
 
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

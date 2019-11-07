@@ -1,6 +1,15 @@
+use crate::librb::__suseconds_t;
+use crate::librb::__time_t;
+use crate::librb::__useconds_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::pid_t;
+use libc::timeval;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -110,34 +119,21 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: __pid_t) -> libc::c_int;
+  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__pid_t;
-use crate::librb::__suseconds_t;
-use crate::librb::__time_t;
-use crate::librb::__useconds_t;
-
 pub type __socklen_t = libc::c_uint;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-
-
 pub type socklen_t = __socklen_t;
- use libc::timeval;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]

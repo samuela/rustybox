@@ -1,83 +1,108 @@
+use crate::librb::__useconds_t;
+use crate::librb::smallint;
 use libc;
+use libc::ino64_t;
+use libc::ino_t;
+use libc::off64_t;
+use libc::pid_t;
+use libc::stat;
+
 extern "C" {
   pub type __dirstream;
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
+
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
+
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
+
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
+
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
+
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn usleep(__useconds: __useconds_t) -> libc::c_int;
+
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
 
   #[no_mangle]
-  fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
+  fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;
+
   #[no_mangle]
   fn close_on_exec_on(fd: libc::c_int);
+
   #[no_mangle]
   fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   static mut bb_got_signal: smallint;
+
   #[no_mangle]
   fn record_signo(signo: libc::c_int);
+
   #[no_mangle]
   fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
+
   #[no_mangle]
   fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
+
   #[no_mangle]
   static mut option_mask32: u32;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use libc::ino64_t;
-
-use libc::off64_t;
-
-use crate::librb::__pid_t;
-
-use crate::librb::__useconds_t;
-
-use crate::librb::pid_t;
-use crate::librb::smallint;
-use libc::ino_t;
-use libc::stat;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

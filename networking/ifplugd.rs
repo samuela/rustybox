@@ -1,4 +1,9 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
@@ -10,7 +15,7 @@ extern "C" {
     __flags: libc::c_int,
   ) -> ssize_t;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
@@ -128,11 +133,6 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::__pid_t;
-
-
-
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -143,10 +143,6 @@ use crate::librb::__pid_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

@@ -4,7 +4,7 @@ extern "C" {
   fn free(__ptr: *mut libc::c_void);
 
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
@@ -87,7 +87,7 @@ extern "C" {
 
 
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 use libc::off_t;
 use crate::librb::size_t;
@@ -111,7 +111,7 @@ pub struct __exit_status {
 #[repr(C)]
 pub struct utmpx {
   pub ut_type: libc::c_short,
-  pub ut_pid: __pid_t,
+  pub ut_pid: pid_t,
   pub ut_line: [libc::c_char; 32],
   pub ut_id: [libc::c_char; 4],
   pub ut_user: [libc::c_char; 32],

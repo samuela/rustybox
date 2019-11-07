@@ -1,11 +1,21 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+use crate::librb::termios;
+use crate::librb::winsize;
 use libc;
+use libc::pid_t;
+use libc::time_t;
+use libc::timeval;
+use libc::FILE;
 
 extern "C" {
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
@@ -117,19 +127,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::time_t;
-
-
-use crate::librb::signal::__sighandler_t;
- use libc::timeval;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 
 #[derive(Copy, Clone)]
@@ -140,8 +137,6 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-use crate::librb::winsize;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {
@@ -150,8 +145,6 @@ pub struct timezone {
 }
 
 pub type __timezone_ptr_t = *mut timezone;
-
-use crate::librb::termios;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;

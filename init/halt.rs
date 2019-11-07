@@ -1,4 +1,9 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::pid_t;
+use libc::time_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -7,7 +12,7 @@ extern "C" {
   #[no_mangle]
   fn sync();
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -43,12 +48,6 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::time_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -60,7 +59,7 @@ pub struct __exit_status {
 #[repr(C)]
 pub struct utmpx {
   pub ut_type: libc::c_short,
-  pub ut_pid: __pid_t,
+  pub ut_pid: pid_t,
   pub ut_line: [libc::c_char; 32],
   pub ut_id: [libc::c_char; 4],
   pub ut_user: [libc::c_char; 32],
@@ -179,6 +178,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 //usage:     "\n	-n	Do not sync"
 //usage:     "\n	-f	Force (don't go through init)"
 unsafe extern "C" fn write_wtmp() {
+  // TODO: use std::mem:zeroed here
   let mut utmp: utmpx = utmpx {
     ut_type: 0,
     ut_pid: 0,

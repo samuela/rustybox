@@ -239,7 +239,7 @@ use libc::gid_t;
 
 use libc::mode_t;
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__time_t;
 pub type __key_t = libc::c_int;
 
@@ -549,8 +549,8 @@ pub struct shmid_ds {
   pub shm_atime: __time_t,
   pub shm_dtime: __time_t,
   pub shm_ctime: __time_t,
-  pub shm_cpid: __pid_t,
-  pub shm_lpid: __pid_t,
+  pub shm_cpid: pid_t,
+  pub shm_lpid: pid_t,
   pub shm_nattch: shmatt_t,
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,

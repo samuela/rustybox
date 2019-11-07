@@ -1,7 +1,10 @@
+use crate::librb::ptrdiff_t;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -54,11 +57,6 @@ pub struct vt_stat {
   pub v_signal: libc::c_ushort,
   pub v_state: libc::c_ushort,
 }
-
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-use crate::librb::ptrdiff_t;
-
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;

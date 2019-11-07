@@ -1,9 +1,11 @@
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -37,8 +39,7 @@ extern "C" {
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
 }
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

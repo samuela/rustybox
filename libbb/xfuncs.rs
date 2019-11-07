@@ -1,4 +1,11 @@
+use crate::librb::cc_t;
+use crate::librb::size_t;
+use crate::librb::ssize_t;
+use crate::librb::termios;
+use crate::librb::winsize;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
@@ -23,7 +30,7 @@ extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]
@@ -144,19 +151,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-
-
-use crate::librb::winsize;
-
-use crate::librb::cc_t;
-
-use crate::librb::termios;
 
 pub const IFNAMSIZ: C2RustUnnamed = 16;
 pub type C2RustUnnamed = libc::c_uint;

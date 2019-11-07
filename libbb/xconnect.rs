@@ -36,7 +36,7 @@ extern "C" {
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn getservbyname(__name: *const libc::c_char, __proto: *const libc::c_char) -> *mut servent;
   #[no_mangle]
@@ -324,7 +324,7 @@ extern "C" {
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;

@@ -1,15 +1,24 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::ssize_t;
+use crate::librb::termios;
 use libc;
+use libc::mode_t;
+use libc::pid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
-  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: __pid_t) -> libc::c_int;
+  fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -101,17 +110,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::mode_t;
-
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -121,7 +119,6 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

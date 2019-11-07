@@ -1,6 +1,6 @@
 use libc::mode_t;
 use libc::off64_t;
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use libc;
@@ -96,7 +96,7 @@ pub struct flock {
   pub l_whence: libc::c_short,
   pub l_start: off64_t,
   pub l_len: off64_t,
-  pub l_pid: __pid_t,
+  pub l_pid: pid_t,
 }
 
 /*

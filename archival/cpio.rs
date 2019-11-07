@@ -1,7 +1,7 @@
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::fd_pair;
-use crate::librb::pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::time_t;

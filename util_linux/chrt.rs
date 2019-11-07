@@ -1,33 +1,45 @@
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
-  fn sched_getparam(__pid: __pid_t, __param: *mut sched_param) -> libc::c_int;
+  fn sched_getparam(__pid: pid_t, __param: *mut sched_param) -> libc::c_int;
+
   #[no_mangle]
   fn sched_setscheduler(
-    __pid: __pid_t,
+    __pid: pid_t,
     __policy: libc::c_int,
     __param: *const sched_param,
   ) -> libc::c_int;
+
   #[no_mangle]
-  fn sched_getscheduler(__pid: __pid_t) -> libc::c_int;
+  fn sched_getscheduler(__pid: pid_t) -> libc::c_int;
+
   #[no_mangle]
   fn sched_get_priority_max(__algorithm: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sched_get_priority_min(__algorithm: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
+
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xatoull_range(
     str: *const libc::c_char,
     l: libc::c_ulonglong,
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
+
   #[no_mangle]
   fn xstrtou_range(
     str: *const libc::c_char,
@@ -35,20 +47,23 @@ extern "C" {
     l: libc::c_uint,
     u: libc::c_uint,
   ) -> libc::c_uint;
+
   #[no_mangle]
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
-use crate::librb::__pid_t;
 
-use crate::librb::pid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sched_param {

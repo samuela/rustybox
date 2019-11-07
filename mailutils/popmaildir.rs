@@ -1,4 +1,10 @@
+use crate::librb::md5_ctx_t;
+use crate::librb::ptrdiff_t;
+use crate::librb::size_t;
 use libc;
+use libc::pid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
@@ -7,7 +13,7 @@ extern "C" {
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -84,16 +90,6 @@ extern "C" {
   fn send_mail_command(fmt: *const libc::c_char, param: *const libc::c_char) -> *mut libc::c_char;
 }
 
-use crate::librb::__pid_t;
-
-
-
-use crate::librb::pid_t;
-use crate::librb::size_t;
-
-use crate::librb::md5_ctx_t;
-use crate::librb::ptrdiff_t;
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

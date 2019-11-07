@@ -1,12 +1,10 @@
-use libc::ino64_t;
-use libc::off64_t;
-use crate::librb::__pid_t;
-
-use crate::librb::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::ino64_t;
 use libc::ino_t;
+use libc::off64_t;
+use libc::pid_t;
 use libc::FILE;
 
 extern "C" {
@@ -14,7 +12,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -26,7 +24,7 @@ extern "C" {
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]

@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -56,7 +56,7 @@ extern "C" {
   fn md5_begin(ctx: *mut md5_ctx_t);
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 
 

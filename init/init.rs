@@ -1,13 +1,19 @@
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
+use crate::librb::cc_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::sigaction;
+use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::ssize_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 use libc;
+use libc::pid_t;
 use libc::uid_t;
+use libc::FILE;
 
 extern "C" {
   #[no_mangle]
@@ -31,11 +37,11 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn setsid() -> __pid_t;
+  fn setsid() -> pid_t;
   #[no_mangle]
-  fn fork() -> __pid_t;
+  fn fork() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -45,7 +51,7 @@ extern "C" {
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
   #[no_mangle]
@@ -76,9 +82,9 @@ extern "C" {
   #[no_mangle]
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;
   #[no_mangle]
-  fn wait(__stat_loc: *mut libc::c_int) -> __pid_t;
+  fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
   #[no_mangle]
-  fn waitpid(__pid: __pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> __pid_t;
+  fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]
@@ -254,7 +260,7 @@ pub struct C2RustUnnamed_4 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_5 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_status: libc::c_int,
   pub si_utime: libc::clock_t,
@@ -263,7 +269,7 @@ pub struct C2RustUnnamed_5 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_6 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: __sigval_t,
 }
@@ -277,12 +283,9 @@ pub struct C2RustUnnamed_7 {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_8 {
-  pub si_pid: __pid_t,
+  pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
-use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
 
 pub type va_list = __builtin_va_list;
 pub type __rlimit_resource = libc::c_uint;
@@ -313,11 +316,6 @@ pub struct rlimit {
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
-
-use crate::librb::cc_t;
-use crate::librb::tcflag_t;
-use crate::librb::termios;
-use libc::FILE;
 
 /*
  * Config file parser

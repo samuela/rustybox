@@ -1,14 +1,17 @@
+use crate::librb::size_t;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn getsid(__pid: __pid_t) -> __pid_t;
+  fn getsid(__pid: pid_t) -> pid_t;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -48,11 +51,6 @@ extern "C" {
   #[no_mangle]
   fn print_signames();
 }
-
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-use crate::librb::size_t;
-
 
 pub type DIR = __dirstream;
 #[derive(Copy, Clone)]
@@ -707,7 +705,7 @@ pub unsafe extern "C" fn kill_main(
           }
         }
       }
-      kill((*p).pid as __pid_t, signo);
+      kill((*p).pid as pid_t, signo);
       errors = 0i32
     }
     /* And let them continue */

@@ -14,7 +14,7 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 use libc::time_t;
 
@@ -43,7 +43,7 @@ pub struct __exit_status {
 #[repr(C)]
 pub struct utmpx {
   pub ut_type: libc::c_short,
-  pub ut_pid: __pid_t,
+  pub ut_pid: pid_t,
   pub ut_line: [libc::c_char; 32],
   pub ut_id: [libc::c_char; 4],
   pub ut_user: [libc::c_char; 32],

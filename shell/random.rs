@@ -1,12 +1,12 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,4 +1,7 @@
+use crate::libbb::llist::llist_t;
 use libc;
+use libc::pid_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -26,13 +29,8 @@ extern "C" {
   #[no_mangle]
   fn llist_find_str(first: *mut llist_t, str: *const libc::c_char) -> *mut llist_t;
   #[no_mangle]
-  fn getppid() -> __pid_t;
+  fn getppid() -> pid_t;
 }
-
-use crate::libbb::llist::llist_t;
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-
 
 /*
  * pidof implementation for busybox
@@ -101,6 +99,7 @@ pub const OPT_OMIT: C2RustUnnamed = 2;
 pub const OPT_SINGLE: C2RustUnnamed = 1;
 pub const OPTBIT_OMIT: C2RustUnnamed = 1;
 pub const OPTBIT_SINGLE: C2RustUnnamed = 0;
+
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return xatoull(str) as libc::c_ulong; /* list of pids to omit */

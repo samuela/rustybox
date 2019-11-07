@@ -2,11 +2,8 @@ use libc;
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
-  fn sched_getaffinity(
-    __pid: __pid_t,
-    __cpusetsize: size_t,
-    __cpuset: *mut cpu_set_t,
-  ) -> libc::c_int;
+  fn sched_getaffinity(__pid: pid_t, __cpusetsize: size_t, __cpuset: *mut cpu_set_t)
+    -> libc::c_int;
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]
@@ -28,10 +25,10 @@ extern "C" {
   ) -> u32;
 }
 
-use crate::librb::__pid_t;
 use crate::librb::size_t;
 use libc::ino64_t;
 use libc::off64_t;
+use libc::pid_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

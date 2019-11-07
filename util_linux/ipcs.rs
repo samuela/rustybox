@@ -1,4 +1,4 @@
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__time_t;
 use crate::librb::size_t;
 
@@ -99,8 +99,8 @@ pub struct msqid_ds {
   pub __msg_cbytes: __syscall_ulong_t,
   pub msg_qnum: msgqnum_t,
   pub msg_qbytes: msglen_t,
-  pub msg_lspid: __pid_t,
-  pub msg_lrpid: __pid_t,
+  pub msg_lspid: pid_t,
+  pub msg_lrpid: pid_t,
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,
 }
@@ -125,8 +125,8 @@ pub struct shmid_ds {
   pub shm_atime: __time_t,
   pub shm_dtime: __time_t,
   pub shm_ctime: __time_t,
-  pub shm_cpid: __pid_t,
-  pub shm_lpid: __pid_t,
+  pub shm_cpid: pid_t,
+  pub shm_lpid: pid_t,
   pub shm_nattch: shmatt_t,
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,

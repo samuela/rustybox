@@ -6,13 +6,13 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
-  fn getsid(__pid: __pid_t) -> __pid_t;
+  fn getsid(__pid: pid_t) -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn kill(__pid: __pid_t, __sig: libc::c_int) -> libc::c_int;
+  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -47,7 +47,7 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::size_t;
 
 
@@ -244,7 +244,7 @@ unsafe extern "C" fn act(
       printf(b"%u\n\x00" as *const u8 as *const libc::c_char, pid);
     }
   } else {
-    kill(pid as __pid_t, signo);
+    kill(pid as pid_t, signo);
   };
 }
 #[no_mangle]
@@ -315,7 +315,7 @@ pub unsafe extern "C" fn pgrep_main(
   }
   pid = getpid() as libc::c_uint;
   if sid2match == 0i32 {
-    sid2match = getsid(pid as __pid_t)
+    sid2match = getsid(pid as pid_t)
   }
   scan_mask = PSSCAN_COMM as libc::c_int | PSSCAN_ARGV0 as libc::c_int;
   if opt & (1i32 << OPTBIT_F as libc::c_int) as libc::c_uint != 0 {

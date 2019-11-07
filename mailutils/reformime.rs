@@ -1,9 +1,14 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use libc;
+use libc::pid_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -72,13 +77,6 @@ extern "C" {
   fn vfork() -> libc::c_int;
 }
 
-use crate::librb::__pid_t;
-use crate::librb::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

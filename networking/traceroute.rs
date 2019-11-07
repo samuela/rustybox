@@ -7,7 +7,7 @@ use libc::gid_t;
 use libc::timeval;
 use libc::uid_t;
 
-use crate::librb::__pid_t;
+use libc::pid_t;
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::ssize_t;
@@ -46,7 +46,7 @@ extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
-  fn getpid() -> __pid_t;
+  fn getpid() -> pid_t;
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
   #[no_mangle]
