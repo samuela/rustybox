@@ -1,4 +1,17 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::gid_t;
+use libc::mode_t;
+use libc::pid_t;
+use libc::ssize_t;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;
@@ -234,14 +247,7 @@ extern "C" {
   fn semop(__semid: libc::c_int, __sops: *mut sembuf, __nsops: size_t) -> libc::c_int;
 }
 
-use libc::gid_t;
-
-use libc::mode_t;
-
-use crate::librb::__time_t;
-use libc::pid_t;
 pub type __key_t = libc::c_int;
-
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
 
@@ -255,15 +261,9 @@ pub type __socklen_t = libc::c_uint;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::uid_t;
-pub type socklen_t = __socklen_t;
-use libc::stat;
 
+pub type socklen_t = __socklen_t;
 pub type key_t = __key_t;
-use libc::time_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -363,9 +363,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-use crate::librb::signal::__sighandler_t;
 
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -430,7 +428,7 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_2 = 1;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::libbb::llist::llist_t;
+
 /*
  * Config file parser
  */
@@ -542,9 +540,9 @@ pub type CODE = _code;
 pub struct shmid_ds {
   pub shm_perm: ipc_perm,
   pub shm_segsz: size_t,
-  pub shm_atime: __time_t,
-  pub shm_dtime: __time_t,
-  pub shm_ctime: __time_t,
+  pub shm_atime: time_t,
+  pub shm_dtime: time_t,
+  pub shm_ctime: time_t,
   pub shm_cpid: pid_t,
   pub shm_lpid: pid_t,
   pub shm_nattch: shmatt_t,

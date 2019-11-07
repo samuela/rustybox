@@ -1,9 +1,7 @@
-use libc::pid_t;
-use crate::librb::__time_t;
 use crate::librb::size_t;
-
 use libc;
 use libc::gid_t;
+use libc::pid_t;
 use libc::time_t;
 use libc::uid_t;
 
@@ -65,9 +63,9 @@ pub struct ipc_perm {
 #[repr(C)]
 pub struct semid_ds {
   pub sem_perm: ipc_perm,
-  pub sem_otime: __time_t,
+  pub sem_otime: time_t,
   pub __glibc_reserved1: __syscall_ulong_t,
-  pub sem_ctime: __time_t,
+  pub sem_ctime: time_t,
   pub __glibc_reserved2: __syscall_ulong_t,
   pub sem_nsems: __syscall_ulong_t,
   pub __glibc_reserved3: __syscall_ulong_t,
@@ -93,9 +91,9 @@ pub type msglen_t = __syscall_ulong_t;
 #[repr(C)]
 pub struct msqid_ds {
   pub msg_perm: ipc_perm,
-  pub msg_stime: __time_t,
-  pub msg_rtime: __time_t,
-  pub msg_ctime: __time_t,
+  pub msg_stime: time_t,
+  pub msg_rtime: time_t,
+  pub msg_ctime: time_t,
   pub __msg_cbytes: __syscall_ulong_t,
   pub msg_qnum: msgqnum_t,
   pub msg_qbytes: msglen_t,
@@ -122,9 +120,9 @@ pub type shmatt_t = __syscall_ulong_t;
 pub struct shmid_ds {
   pub shm_perm: ipc_perm,
   pub shm_segsz: size_t,
-  pub shm_atime: __time_t,
-  pub shm_dtime: __time_t,
-  pub shm_ctime: __time_t,
+  pub shm_atime: time_t,
+  pub shm_dtime: time_t,
+  pub shm_ctime: time_t,
   pub shm_cpid: pid_t,
   pub shm_lpid: pid_t,
   pub shm_nattch: shmatt_t,

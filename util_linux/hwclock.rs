@@ -1,4 +1,8 @@
 use libc;
+use libc::suseconds_t;
+use libc::time_t;
+use libc::timeval;
+
 extern "C" {
   #[no_mangle]
   fn bb_xioctl(
@@ -69,11 +73,6 @@ extern "C" {
   #[no_mangle]
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
-
-use crate::librb::__time_t;
-use libc::suseconds_t;
-use libc::time_t;
-use libc::timeval;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -234,12 +233,12 @@ unsafe extern "C" fn from_sys_clock(
   gettimeofday(&mut tv, 0 as *mut timezone);
   /* Prepare tm_time */
   if ::std::mem::size_of::<time_t>() as libc::c_ulong
-    == ::std::mem::size_of::<__time_t>() as libc::c_ulong
+    == ::std::mem::size_of::<time_t>() as libc::c_ulong
   {
     if utc != 0 {
-      gmtime_r(&mut tv.tv_sec as *mut __time_t as *mut time_t, &mut tm_time);
+      gmtime_r(&mut tv.tv_sec as *mut time_t as *mut time_t, &mut tm_time);
     } else {
-      localtime_r(&mut tv.tv_sec as *mut __time_t as *mut time_t, &mut tm_time);
+      localtime_r(&mut tv.tv_sec as *mut time_t as *mut time_t, &mut tm_time);
     }
   } else {
     let mut t: time_t = tv.tv_sec;

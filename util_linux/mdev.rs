@@ -1,5 +1,4 @@
 use crate::librb::__syscall_slong_t;
-use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::siginfo_t;
@@ -1687,7 +1686,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
   /* We time out after 2 sec */
   static mut ts: timespec = {
     let mut init = timespec {
-      tv_sec: 0i32 as __time_t,
+      tv_sec: 0i32 as time_t,
       tv_nsec: (32i32 * 1000i32 * 1000i32) as __syscall_slong_t,
     };
     init

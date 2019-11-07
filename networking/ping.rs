@@ -155,9 +155,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__time_t;
-use libc::suseconds_t;
+use libc::time_t;
 use libc::pid_t;
+use libc::suseconds_t;
 
 pub type __socklen_t = libc::c_uint;
 
@@ -649,11 +649,11 @@ unsafe extern "C" fn sendping_tail(
     };
     signal(14i32, sp);
     /* Didn't send all pings yet - schedule next in -i SEC interval */
-    i.it_interval.tv_sec = 0i32 as __time_t;
+    i.it_interval.tv_sec = 0i32 as time_t;
     i.it_interval.tv_usec = 0i32 as suseconds_t;
     i.it_value.tv_sec = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .interval_us
-      .wrapping_div(1000000i32 as libc::c_uint) as __time_t;
+      .wrapping_div(1000000i32 as libc::c_uint) as time_t;
     i.it_value.tv_usec = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .interval_us
       .wrapping_rem(1000000i32 as libc::c_uint) as suseconds_t;

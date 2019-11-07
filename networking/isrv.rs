@@ -1,4 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::suseconds_t;
+use libc::time_t;
+use libc::timeval;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -40,14 +45,8 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__time_t;
-use libc::suseconds_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-
 pub type socklen_t = __socklen_t;
-use libc::time_t;
-use libc::timeval;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -507,9 +506,9 @@ pub unsafe extern "C" fn isrv_run(
     let mut wr: fd_set = fd_set { fds_bits: [0; 16] };
     let mut wrp: *mut fd_set = 0 as *mut fd_set;
     let mut n: libc::c_int = 0;
-    tv.tv_sec = timeout as __time_t;
+    tv.tv_sec = timeout as time_t;
     if (*state).peer_count <= 1i32 {
-      tv.tv_sec = linger_timeout as __time_t
+      tv.tv_sec = linger_timeout as time_t
     }
     tv.tv_usec = 0i32 as suseconds_t;
     rd = (*state).rd;

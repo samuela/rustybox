@@ -17,7 +17,7 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 use crate::librb::__syscall_slong_t;
-use crate::librb::__time_t;
+use libc::time_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -409,17 +409,17 @@ pub unsafe extern "C" fn sleep_for_duration(mut duration: duration_t) {
     tv_sec: 0,
     tv_nsec: 0,
   };
-  ts.tv_sec = if -1i32 as __time_t >0{
-    -1i32 as __time_t
+  ts.tv_sec = if -1i32 as time_t >0{
+    -1i32 as time_t
   } else {
-    !((1i32 as __time_t)
-      << (::std::mem::size_of::<__time_t>() as libc::c_ulong)
+    !((1i32 as time_t)
+      << (::std::mem::size_of::<time_t>() as libc::c_ulong)
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   };
   ts.tv_nsec = 0i32 as __syscall_slong_t;
   if duration >= 0i32 as libc::c_double && duration < ts.tv_sec as libc::c_double {
-    ts.tv_sec = duration as __time_t;
+    ts.tv_sec = duration as time_t;
     ts.tv_nsec = ((duration - ts.tv_sec as libc::c_double) * 1000000000i32 as libc::c_double)
       as __syscall_slong_t
   }

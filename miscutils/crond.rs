@@ -1,4 +1,3 @@
-use crate::librb::__time_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -1409,7 +1408,7 @@ pub unsafe extern "C" fn crond_main(
       &mut sbuf,
     ) != 0i32
     {
-      sbuf.st_mtime = 0i32 as __time_t
+      sbuf.st_mtime = 0i32 as time_t
     } /* force update (once) if dir was deleted */
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime != sbuf.st_mtime {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime = sbuf.st_mtime;
@@ -1428,7 +1427,7 @@ pub unsafe extern "C" fn crond_main(
         dt / 60i32 as libc::c_long,
       );
     /* and we do not run any jobs in this case */
-    } else if dt >0{
+    } else if dt > 0 {
       /* Usual case: time advances forward, as expected */
       flag_starting_jobs(t1, t2);
       start_jobs(-1i32);
