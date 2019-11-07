@@ -42,14 +42,14 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__ino64_t;
+use libc::ino64_t;
 
 use crate::librb::__off64_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
-  pub d_ino: __ino64_t,
+  pub d_ino: ino64_t,
   pub d_off: __off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,

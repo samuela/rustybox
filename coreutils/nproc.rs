@@ -28,9 +28,9 @@ extern "C" {
   ) -> u32;
 }
 
-use crate::librb::__ino64_t;
 use crate::librb::__off64_t;
 use crate::librb::__pid_t;
+use libc::ino64_t;
 use crate::librb::size_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -42,7 +42,7 @@ pub struct cpu_set_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
-  pub d_ino: __ino64_t,
+  pub d_ino: ino64_t,
   pub d_off: __off64_t,
   pub d_reclen: libc::c_ushort,
   pub d_type: libc::c_uchar,
