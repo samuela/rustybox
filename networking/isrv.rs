@@ -40,16 +40,14 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
+use libc::suseconds_t;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 
-
-
 pub type socklen_t = __socklen_t;
 use libc::time_t;
- use libc::timeval;
+use libc::timeval;
 pub type __fd_mask = libc::c_long;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -186,7 +184,7 @@ pub unsafe extern "C" fn isrv_want_wr(mut state: *mut isrv_state_t, mut fd: libc
     [(fd / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int)) as usize]
     & (1u64 << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
       as __fd_mask
-    !=0)
+    != 0)
   {
     (*state).wr_count += 1;
     (*state).wr.fds_bits[(fd
@@ -212,7 +210,8 @@ pub unsafe extern "C" fn isrv_dont_want_wr(mut state: *mut isrv_state_t, mut fd:
     [(fd / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int)) as usize]
     & (1u64 << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
       as __fd_mask
-    != 0   {
+    != 0
+  {
     (*state).wr_count -= 1;
     (*state).wr.fds_bits[(fd
       / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
@@ -403,7 +402,7 @@ unsafe extern "C" fn handle_fd_set(
   /* Find next nonzero bit */
   {
     if fds_pos < LONG_CNT as libc::c_int {
-      if *(fds as *mut libc::c_long).offset(fds_pos as isize) ==0{
+      if *(fds as *mut libc::c_long).offset(fds_pos as isize) == 0 {
         fds_pos += 1
       } else {
         /* Found non-zero word */
@@ -417,7 +416,8 @@ unsafe extern "C" fn handle_fd_set(
             & (1u64
               << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as __fd_mask
-            != 0           {
+            != 0
+          {
             (*fds).fds_bits[(fd
               / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as usize] &= !((1u64
@@ -511,7 +511,7 @@ pub unsafe extern "C" fn isrv_run(
     if (*state).peer_count <= 1i32 {
       tv.tv_sec = linger_timeout as __time_t
     }
-    tv.tv_usec = 0i32 as __suseconds_t;
+    tv.tv_usec = 0i32 as suseconds_t;
     rd = (*state).rd;
     if (*state).wr_count != 0 {
       wr = (*state).wr;

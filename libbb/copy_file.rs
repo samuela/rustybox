@@ -1,12 +1,12 @@
-use libc::off64_t;
-use crate::librb::__suseconds_t;
-use libc::mode_t;
-use libc::off_t;
 use crate::librb::smallint;
 use libc;
 use libc::gid_t;
 use libc::ino64_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
 use libc::stat;
+use libc::suseconds_t;
 use libc::timeval;
 use libc::uid_t;
 use libc::FILE;
@@ -738,7 +738,7 @@ pub unsafe extern "C" fn copy_file(
               }; 2];
               times[0].tv_sec = source_stat.st_mtime;
               times[1].tv_sec = times[0].tv_sec;
-              times[0].tv_usec = 0i32 as __suseconds_t;
+              times[0].tv_usec = 0i32 as suseconds_t;
               times[1].tv_usec = times[0].tv_usec;
               /* BTW, utimes sets usec-precision time - just FYI */
               if utimes(dest, times.as_mut_ptr() as *const timeval) < 0i32 {

@@ -1,14 +1,14 @@
-use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::useconds_t;
+use libc::suseconds_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::timeval;
+use libc::useconds_t;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -972,7 +972,7 @@ pub unsafe extern "C" fn telnetd_main(
         .is_null()
     {
       tv.tv_sec = sec_linger as __time_t;
-      tv.tv_usec = 0i32 as __suseconds_t;
+      tv.tv_usec = 0i32 as suseconds_t;
       tv_ptr = &mut tv
     }
     count = select(

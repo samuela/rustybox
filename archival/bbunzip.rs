@@ -1,11 +1,11 @@
-use crate::librb::__suseconds_t;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::time_t;
 use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
 use libc::stat;
+use libc::suseconds_t;
 use libc::timeval;
 use libc::FILE;
 
@@ -361,14 +361,14 @@ pub unsafe extern "C" fn bbunpack(
               if status >= 0i32 as libc::c_longlong {
                 let mut new_name_len: libc::c_uint = 0;
                 /* TODO: restore other things? */
-                if xstate.mtime !=0{
+                if xstate.mtime != 0 {
                   let mut times: [timeval; 2] = [timeval {
                     tv_sec: 0,
                     tv_usec: 0,
                   }; 2];
                   times[0].tv_sec = xstate.mtime;
                   times[1].tv_sec = times[0].tv_sec;
-                  times[0].tv_usec = 0i32 as __suseconds_t;
+                  times[0].tv_usec = 0i32 as suseconds_t;
                   times[1].tv_usec = times[0].tv_usec;
                   /* ignoring errors */
                   utimes(new_name, times.as_mut_ptr() as *const timeval);

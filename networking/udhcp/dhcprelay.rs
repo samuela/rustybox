@@ -80,7 +80,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__suseconds_t;
+use libc::suseconds_t;
 use crate::librb::__time_t;
 
 pub type __socklen_t = libc::c_uint;
@@ -599,7 +599,7 @@ pub unsafe extern "C" fn dhcprelay_main(
       i += 1
     }
     tv.tv_sec = (2i32 * 60i32 / 8i32) as __time_t;
-    tv.tv_usec = 0i32 as __suseconds_t;
+    tv.tv_usec = 0i32 as suseconds_t;
     if select(
       max_socket + 1i32,
       &mut rfds,

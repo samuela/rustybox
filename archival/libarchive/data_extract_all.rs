@@ -1,15 +1,15 @@
 use crate::libbb::llist::llist_t;
-use libc::pid_t;
-use crate::librb::__suseconds_t;
 use crate::librb::group;
-use libc::mode_t;
-use libc::off_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
 use libc::gid_t;
+use libc::mode_t;
+use libc::off_t;
+use libc::pid_t;
 use libc::stat;
+use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
@@ -231,7 +231,8 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
    * with a nonempty link field */
   hard_link = 0 as *mut libc::c_char;
   if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
-    && (*file_header).size == 0   {
+    && (*file_header).size == 0
+  {
     hard_link = (*file_header).link_target
   }
   dst_name = (*file_header).name;
@@ -484,7 +485,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
                 }; 2];
                 t[0].tv_sec = (*file_header).mtime;
                 t[1].tv_sec = t[0].tv_sec;
-                t[0].tv_usec = 0i32 as __suseconds_t;
+                t[0].tv_usec = 0i32 as suseconds_t;
                 t[1].tv_usec = t[0].tv_usec;
                 utimes(dst_name, t.as_mut_ptr() as *const timeval);
               }

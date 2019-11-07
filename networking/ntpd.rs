@@ -1,6 +1,5 @@
 use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
-use crate::librb::__suseconds_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
@@ -14,6 +13,7 @@ use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::pid_t;
 use libc::ssize_t;
+use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
@@ -806,7 +806,7 @@ unsafe extern "C" fn gettime1900d() -> libc::c_double {
 unsafe extern "C" fn d_to_tv(mut d: libc::c_double, mut tv: *mut timeval) {
   (*tv).tv_sec = d as libc::c_long;
   (*tv).tv_usec =
-    ((d - (*tv).tv_sec as libc::c_double) * 1000000i32 as libc::c_double) as __suseconds_t;
+    ((d - (*tv).tv_sec as libc::c_double) * 1000000i32 as libc::c_double) as suseconds_t;
 }
 
 unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {

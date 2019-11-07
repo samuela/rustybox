@@ -35,11 +35,11 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::librb::__suseconds_t;
+use libc::suseconds_t;
 
 use libc::time_t;
 
- use libc::timeval;
+use libc::timeval;
 
 use libc::stat;
 #[derive(Copy, Clone)]
@@ -157,7 +157,7 @@ pub unsafe extern "C" fn touch_main(
     tv_sec: 0,
     tv_usec: 0,
   }; 2];
-  timebuf[0].tv_usec = 0i32 as __suseconds_t;
+  timebuf[0].tv_usec = 0i32 as suseconds_t;
   timebuf[1].tv_usec = timebuf[0].tv_usec;
   /* -d and -t both set time. In coreutils,
    * accepted data format differs a bit between -d and -t.

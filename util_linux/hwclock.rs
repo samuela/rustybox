@@ -70,10 +70,10 @@ extern "C" {
   fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
 
-use crate::librb::__suseconds_t;
 use crate::librb::__time_t;
+use libc::suseconds_t;
 use libc::time_t;
- use libc::timeval;
+use libc::timeval;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -203,7 +203,7 @@ unsafe extern "C" fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut 
    */
   tz.tz_dsttime = 0i32;
   tv.tv_sec = read_rtc(pp_rtcname, utc);
-  tv.tv_usec = 0i32 as __suseconds_t;
+  tv.tv_usec = 0i32 as suseconds_t;
   if settimeofday(&mut tv, &mut tz) != 0 {
     bb_simple_perror_msg_and_die(b"settimeofday\x00" as *const u8 as *const libc::c_char);
   };
