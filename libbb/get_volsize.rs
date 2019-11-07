@@ -216,7 +216,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
       9223372036854775807i64 as libc::c_ulong,
     );
     if result
-      >= ((if -1i32 as off_t > 0i32 as libc::c_long {
+      >= ((if -1i32 as off_t >0{
         -1i32 as off_t
       } else {
         !((1i32 as off_t)

@@ -161,7 +161,7 @@ pub struct __va_list_tag {
 /* add other arches which benefit from this... */
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use libc::FILE;
 pub type va_list = __builtin_va_list;
@@ -1399,10 +1399,10 @@ unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t
   }
   if (*a).len == 0i32 as libc::c_ulong {
     return (((*b).len != 0) as libc::c_int as ssize_t ^ -(!(*b).neg as libc::c_int as ssize_t))
-      + !(*b).neg as libc::c_int as libc::c_long;
+      + !(*b).neg as isize;
   }
   if (*b).len == 0i32 as libc::c_ulong {
-    return (1i32 as ssize_t ^ -((*a).neg as ssize_t)) + (*a).neg as libc::c_long;
+    return (1i32 as ssize_t ^ -((*a).neg as ssize_t)) + (*a).neg as isize;
   }
   if (*a).neg as libc::c_int != (*b).neg as libc::c_int {
     // signs of a and b differ
@@ -1432,25 +1432,25 @@ unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t
     // same as "neg = (a_max == neg)"
   }
   cmp = bc_num_compare(max_num, min_num, b_int.wrapping_add(min));
-  if cmp != 0i32 as libc::c_long {
-    return (cmp ^ -(neg as ssize_t)) + neg as libc::c_long;
+  if cmp !=0{
+    return (cmp ^ -(neg as ssize_t)) + neg as isize;
   }
   max_num = max_num.offset(-(diff as isize));
   i = diff.wrapping_sub(1i32 as libc::c_ulong);
   while i < diff {
     if *max_num.offset(i as isize) != 0 {
-      return (1i32 as ssize_t ^ -(neg as ssize_t)) + neg as libc::c_long;
+      return (1 ^ -(neg as ssize_t)) + neg as isize;
     }
     i = i.wrapping_sub(1)
   }
-  return 0i32 as ssize_t;
+  return 0;
 }
 unsafe extern "C" fn bc_num_truncate(mut n: *mut BcNum, mut places: size_t) {
-  if places == 0i32 as libc::c_ulong {
+  if places == 0 {
     return;
   }
   (*n).rdx = ((*n).rdx as libc::c_ulong).wrapping_sub(places) as size_t as size_t;
-  if (*n).len != 0i32 as libc::c_ulong {
+  if (*n).len != 0 {
     (*n).len = ((*n).len as libc::c_ulong).wrapping_sub(places) as size_t as size_t;
     memmove(
       (*n).num as *mut libc::c_void,
@@ -1463,7 +1463,7 @@ unsafe extern "C" fn bc_num_truncate(mut n: *mut BcNum, mut places: size_t) {
 }
 unsafe extern "C" fn bc_num_extend(mut n: *mut BcNum, mut places: size_t) {
   let mut len: size_t = (*n).len.wrapping_add(places);
-  if places != 0i32 as libc::c_ulong {
+  if places != 0 {
     if (*n).cap < len {
       bc_num_expand(n, len);
     }
@@ -1922,7 +1922,7 @@ unsafe extern "C" fn zbc_num_s(
   cmp = bc_num_cmp(a, b);
   (*a).neg = aneg;
   (*b).neg = bneg;
-  if cmp == 0i32 as libc::c_long {
+  if cmp ==0{
     bc_num_setToZero(
       c,
       if (*a).rdx > (*b).rdx {
@@ -1933,7 +1933,7 @@ unsafe extern "C" fn zbc_num_s(
     );
     return BC_STATUS_SUCCESS;
   }
-  if cmp > 0i32 as libc::c_long {
+  if cmp >0{
     neg = (*a).neg;
     minuend = a;
     subtrahend = b
@@ -2328,8 +2328,7 @@ unsafe extern "C" fn zbc_num_d(
     n = cp.num.offset(i as isize);
     q = 0i32 as BcDig;
     while *n.offset(len as isize) as libc::c_int != 0i32
-      || bc_num_compare(n, (*b).num, len) >= 0i32 as libc::c_long
-    {
+      || bc_num_compare(n, (*b).num, len) >= 0     {
       bc_num_subArrays(n, (*b).num, len);
       q += 1
     }
@@ -2632,10 +2631,10 @@ unsafe extern "C" fn zbc_num_sqrt(
   let mut digs1: size_t = 0;
   let mut resrdx: size_t = 0;
   let mut req: size_t = 0;
-  let mut times: size_t = 0i32 as size_t;
-  let mut cmp: ssize_t = 1i32 as ssize_t;
-  let mut cmp1: ssize_t = 9223372036854775807i64;
-  let mut cmp2: ssize_t = 9223372036854775807i64;
+  let mut times: size_t = 0;
+  let mut cmp: ssize_t = 1;
+  let mut cmp1: ssize_t = 9223372036854775807;
+  let mut cmp2: ssize_t = 9223372036854775807;
   req = (if scale > (*a).rdx { scale } else { (*a).rdx })
     .wrapping_add(
       (*a)
@@ -2701,7 +2700,7 @@ unsafe extern "C" fn zbc_num_sqrt(
     .wrapping_add(resrdx)
     .wrapping_sub(1i32 as libc::c_ulong);
   loop {
-    if !(cmp != 0i32 as libc::c_long || digs < len) {
+    if !(cmp !=0|| digs < len) {
       current_block = 13826291924415791078;
       break;
     }
@@ -6348,7 +6347,7 @@ unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
           break;
         }
       } else {
-        if n.wrapping_offset_from(esc.as_ptr()) as libc::c_long == 0i32 as libc::c_long {
+        if n.wrapping_offset_from(esc.as_ptr()) as libc::c_long ==0{
           // "\n" ?
           (*ptr_to_globals).prog.nchars = 18446744073709551615u64
         }
@@ -6759,11 +6758,11 @@ unsafe extern "C" fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
   } else {
     cond = bc_num_cmp(n1, n2);
     match inst as libc::c_int {
-      5 => cond = (cond == 0i32 as libc::c_long) as libc::c_int as ssize_t,
-      6 => cond = (cond <= 0i32 as libc::c_long) as libc::c_int as ssize_t,
-      7 => cond = (cond >= 0i32 as libc::c_long) as libc::c_int as ssize_t,
-      9 => cond = (cond < 0i32 as libc::c_long) as libc::c_int as ssize_t,
-      10 => cond = (cond > 0i32 as libc::c_long) as libc::c_int as ssize_t,
+      5 => cond = (cond ==0) as libc::c_int as ssize_t,
+      6 => cond = (cond <=0) as libc::c_int as ssize_t,
+      7 => cond = (cond >=0) as libc::c_int as ssize_t,
+      9 => cond = (cond <0) as libc::c_int as ssize_t,
+      10 => cond = (cond >0) as libc::c_int as ssize_t,
       _ => {}
     }
   }
@@ -7977,7 +7976,7 @@ unsafe extern "C" fn zxc_program_exec() -> BcStatus {
         if s as u64 != 0 {
           return s;
         }
-        zero = bc_num_cmp(num, &mut (*ptr_to_globals).prog.zero) == 0i32 as libc::c_long;
+        zero = bc_num_cmp(num, &mut (*ptr_to_globals).prog.zero) == 0;
         bc_vec_pop(&mut (*ptr_to_globals).prog.results);
         if !zero {
           xc_program_index(code, &mut (*ip).inst_idx);
@@ -8075,7 +8074,7 @@ unsafe extern "C" fn zxc_program_exec() -> BcStatus {
           return s;
         }
         bc_num_init_DEF_SIZE(&mut r.d.n);
-        if bc_num_cmp(num_0, &mut (*ptr_to_globals).prog.zero) == 0i32 as libc::c_long {
+        if bc_num_cmp(num_0, &mut (*ptr_to_globals).prog.zero) ==0{
           bc_num_one(&mut r.d.n);
         }
         //else bc_num_zero(&r.d.n); - already is

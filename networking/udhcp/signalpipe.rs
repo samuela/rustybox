@@ -23,7 +23,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pollfd {
@@ -39,8 +39,7 @@ unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
     4i32,
     &mut ch as *mut libc::c_uchar as *const libc::c_void,
     1i32 as size_t,
-  ) != 1i32 as libc::c_long
-  {
+  ) !=1  {
     bb_simple_perror_msg(b"can\'t send signal\x00" as *const u8 as *const libc::c_char);
   }
   *bb_errno = sv;
@@ -243,8 +242,7 @@ pub unsafe extern "C" fn udhcp_sp_read() -> libc::c_int {
     3i32,
     &mut sig as *mut libc::c_uchar as *mut libc::c_void,
     1i32 as size_t,
-  ) != 1i32 as libc::c_long
-  {
+  ) !=1  {
     return 0i32;
   }
   return sig as libc::c_int;

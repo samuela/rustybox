@@ -99,11 +99,10 @@ extern "C" {
 
 pub type __rlim64_t = libc::c_ulong;
 
-
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
@@ -454,7 +453,7 @@ pub unsafe extern "C" fn shell_builtin_read(
       pfd[0].fd,
       &mut *buffer.offset(bufpos as isize) as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) != 1i32 as libc::c_long
+    ) != 1
     {
       err = *bb_errno as libc::c_uint;
       retval = 1i32 as uintptr_t as *const libc::c_char;

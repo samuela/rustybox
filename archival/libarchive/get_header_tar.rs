@@ -83,14 +83,13 @@ use crate::librb::bb_uidgid_t;
 
 use libc::gid_t;
 
-use libc::mode_t;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::mode_t;
+use libc::off_t;
+use libc::ssize_t;
 use libc::time_t;
 use libc::uid_t;
-
 
 use crate::librb::uoff_t;
 
@@ -370,7 +369,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
          * not short read 0 < len < 512). Complain only if
          * the very first read fails. Grrr.
          */
-        if (*archive_handle).offset == 0i32 as libc::c_long {
+        if (*archive_handle).offset == 0 {
           bb_simple_error_msg(b"short read\x00" as *const u8 as *const libc::c_char);
         }
         /* this merely signals end of archive, not exit(1): */
@@ -391,7 +390,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               (*archive_handle).src_fd,
               &mut tar as *mut tar_header_t as *mut libc::c_void,
               512i32 as size_t,
-            ) == 512i32 as libc::c_long
+            ) == 512
             {}
             return 1i32 as libc::c_char;
             /* "end of archive" */
@@ -610,8 +609,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               free((*archive_handle).tar__longname as *mut libc::c_void);
               /* For paranoia reasons we allocate extra NUL char */
               (*archive_handle).tar__longname =
-                xzalloc(((*file_header).size + 1i32 as libc::c_long) as size_t)
-                  as *mut libc::c_char;
+                xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
               /* We read ASCIZ string, including NUL */
               xread(
                 (*archive_handle).src_fd,
@@ -627,8 +625,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             75 => {
               free((*archive_handle).tar__linkname as *mut libc::c_void);
               (*archive_handle).tar__linkname =
-                xzalloc(((*file_header).size + 1i32 as libc::c_long) as size_t)
-                  as *mut libc::c_char;
+                xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
               xread(
                 (*archive_handle).src_fd,
                 (*archive_handle).tar__linkname as *mut libc::c_void,
@@ -689,7 +686,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       /* Two different causes for lseek() != 0:
        * unseekable fd (would like to support that too, but...),
        * or not first block (false positive, it's not .gz/.bz2!) */
-      if lseek((*archive_handle).src_fd, -i as off64_t, 1i32) != 0i32 as libc::c_long {
+      if lseek((*archive_handle).src_fd, -i as off64_t, 1i32) != 0 {
         current_block = 25209135276526723; /* paranoia */
         break 'c_8845;
       }

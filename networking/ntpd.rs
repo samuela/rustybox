@@ -7,13 +7,13 @@ use crate::librb::sha1_ctx_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
@@ -2271,7 +2271,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   if (*ptr_to_globals).offset_to_jitter_ratio >= 2i32 as libc::c_uint {
     tmx.constant -= 1
   }
-  if tmx.constant < 0i32 as libc::c_long {
+  if tmx.constant < 0 {
     tmx.constant = 0i32 as __syscall_slong_t
   }
   //tmx.esterror = (u32)(clock_jitter * 1e6);
@@ -2445,7 +2445,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
       ::std::mem::size_of::<msg_t>() as libc::c_ulong,
       MSG_DONTWAIT as libc::c_int,
     );
-    if size < 0i32 as libc::c_long {
+    if size < 0 {
       if *bb_errno == 4i32 {
         continue;
       }
@@ -2465,9 +2465,9 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         (*p).p_dotted,
       );
     } else {
-      if size != NTP_MSGSIZE_NOAUTH as libc::c_int as libc::c_long
-        && size != NTP_MSGSIZE_MD5_AUTH as libc::c_int as libc::c_long
-        && size != NTP_MSGSIZE_SHA1_AUTH as libc::c_int as libc::c_long
+      if size != NTP_MSGSIZE_NOAUTH as isize
+        && size != NTP_MSGSIZE_MD5_AUTH as isize
+        && size != NTP_MSGSIZE_SHA1_AUTH as isize
       {
         bb_error_msg(
           b"malformed packet received from %s: size %u\x00" as *const u8 as *const libc::c_char,
@@ -2712,6 +2712,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
   //u8          version;
   let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut from: *mut sockaddr = 0 as *mut sockaddr;
+  // TODO use std::mem::zeroed()
   let mut msg: msg_t = msg_t {
     m_status: 0,
     m_stratum: 0,
@@ -2766,12 +2767,12 @@ unsafe extern "C" fn recv_and_process_client_pkt()
    *  https://docs.ntpsec.org/latest/mode6.html
    * We don't support this.
    */
-  if size != NTP_MSGSIZE_NOAUTH as libc::c_int as libc::c_long
-    && size != NTP_MSGSIZE_MD5_AUTH as libc::c_int as libc::c_long
-    && size != NTP_MSGSIZE_SHA1_AUTH as libc::c_int as libc::c_long
+  if size != NTP_MSGSIZE_NOAUTH as isize
+    && size != NTP_MSGSIZE_MD5_AUTH as isize
+    && size != NTP_MSGSIZE_SHA1_AUTH as isize
   {
     let mut addr: *mut libc::c_char = 0 as *mut libc::c_char;
-    if size < 0i32 as libc::c_long {
+    if size < 0 {
       if !(*bb_errno == 11i32) {
         bb_simple_perror_msg_and_die(b"recv\x00" as *const u8 as *const libc::c_char);
       }

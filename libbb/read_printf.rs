@@ -169,7 +169,7 @@ extern "C" {
 use libc::off_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::stat;
 
 pub type nfds_t = libc::c_ulong;
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn nonblock_immune_read(
   let mut n: ssize_t = 0;
   loop {
     n = safe_read(fd, buf, count);
-    if n >= 0i32 as libc::c_long || *bb_errno != 11i32 {
+    if n >=0|| *bb_errno != 11i32 {
       return n;
     }
     /* fd is in O_NONBLOCK mode. Wait using poll and repeat */
@@ -272,7 +272,7 @@ pub unsafe extern "C" fn xmalloc_reads(
     p = buf.offset(sz as isize);
     sz = (sz as libc::c_ulong).wrapping_add(128i32 as libc::c_ulong) as size_t as size_t;
     while !(nonblock_immune_read(fd, p as *mut libc::c_void, 1i32 as size_t)
-      != 1i32 as libc::c_long)
+      != 1)
     {
       if *p as libc::c_int == '\n' as i32 {
         break 'c_6940;
@@ -326,7 +326,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
   fstat(fd, &mut st);
   /* /proc/N/stat files report st_size 0 */
   /* In order to make such files readable, we add small const */
-  size = ((st.st_size | 0x3ffi32 as libc::c_long) + 1i32 as libc::c_long) as size_t;
+  size = ((st.st_size | 0x3ffi32 as libc::c_long) + 1) as size_t;
   loop {
     if to_read < size {
       size = to_read

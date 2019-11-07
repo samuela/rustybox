@@ -1,5 +1,5 @@
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc;
 use libc::gid_t;
 use libc::off64_t;
@@ -560,7 +560,7 @@ pub unsafe extern "C" fn xwrite(
        * or some writes succeeded, then we hit an error.
        * In either case, errno is set.
        */
-      bb_simple_perror_msg_and_die(if size >= 0i32 as libc::c_long {
+      bb_simple_perror_msg_and_die(if size >=0{
         b"short write\x00" as *const u8 as *const libc::c_char
       } else {
         b"write error\x00" as *const u8 as *const libc::c_char
@@ -840,7 +840,7 @@ pub unsafe extern "C" fn xsendto(
     __CONST_SOCKADDR_ARG { __sockaddr__: to },
     tolen,
   );
-  if ret < 0i32 as libc::c_long {
+  if ret < 0 {
     bb_simple_perror_msg_and_die(b"sendto\x00" as *const u8 as *const libc::c_char);
   }
   return ret;

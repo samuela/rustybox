@@ -19,7 +19,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
@@ -77,7 +77,7 @@ unsafe extern "C" fn sum_file(
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
     ) as size_t;
-    if bytes_read as ssize_t <= 0i32 as libc::c_long {
+    if bytes_read as ssize_t <=0{
       r = (fd != 0 && close(fd) != 0i32) as libc::c_int;
       if bytes_read == 0 && r == 0 {
         break;

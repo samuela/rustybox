@@ -599,7 +599,7 @@ pub unsafe extern "C" fn patch_main(
           newlen = strtol(s_0.offset(1), &mut s_0, 10i32);
           (*ptr_to_globals).newlen = newlen
         }
-        if oldlen < 1i32 as libc::c_long && newlen < 1i32 as libc::c_long {
+        if oldlen <1&& newlen <1{
           bb_error_msg_and_die(
             b"Really? %s\x00" as *const u8 as *const libc::c_char,
             patchline,
@@ -730,7 +730,7 @@ pub unsafe extern "C" fn patch_main(
               (*ptr_to_globals).fileout =
                 xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o1i32)
             }
-            (*ptr_to_globals).linenum = 0i32 as libc::c_long;
+            (*ptr_to_globals).linenum = 0;
             (*ptr_to_globals).hunknum = 0i32
           }
         }

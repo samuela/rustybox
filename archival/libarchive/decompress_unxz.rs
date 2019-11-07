@@ -176,7 +176,7 @@ pub type bb__aliased_u32 = u32;
 use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 
 #[derive(Copy, Clone)]

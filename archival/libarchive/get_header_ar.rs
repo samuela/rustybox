@@ -1,47 +1,54 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::gid_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+use libc::time_t;
+use libc::uid_t;
+
 extern "C" {
   pub type hardlinks_t;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xread_char(fd: libc::c_int) -> libc::c_uchar;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,
     endp: *mut *mut libc::c_char,
     base: libc::c_int,
   ) -> libc::c_uint;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn data_skip(archive_handle: *mut archive_handle_t);
+
   #[no_mangle]
   fn create_links_from_list(list: *mut llist_t);
 }
-
-use crate::libbb::llist::llist_t;
-
-use libc::off64_t;
-
-use crate::librb::bb_uidgid_t;
-
-use libc::gid_t;
-use libc::mode_t;
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::time_t;
-use libc::uid_t;
-use crate::librb::uoff_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -143,7 +150,7 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
     (*archive_handle).src_fd,
     ar.raw.as_mut_ptr() as *mut libc::c_void,
     60i32 as size_t,
-  ) != 60i32 as libc::c_long
+  ) != 60
   {
     /* End Of File */
     return 1i32 as libc::c_char;

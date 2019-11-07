@@ -1,7 +1,7 @@
 use libc;
 extern "C" {
   #[no_mangle]
-  fn readahead(__fd: libc::c_int, __offset: off64_t, __count: size_t) -> __ssize_t;
+  fn readahead(__fd: libc::c_int, __offset: off64_t, __count: size_t) -> ssize_t;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -11,10 +11,10 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-use libc::off64_t;
-use crate::librb::__ssize_t;
-use libc::off_t;
 use crate::librb::size_t;
+use libc::ssize_t;
+use libc::off64_t;
+use libc::off_t;
 
 /*
  * readahead implementation for busybox

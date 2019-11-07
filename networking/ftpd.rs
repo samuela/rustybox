@@ -477,7 +477,7 @@ unsafe extern "C" fn escape_text(
   loop {
     found = strchrnul(str, escapee as libc::c_int);
     chunklen =
-      (found.wrapping_offset_from(str) as libc::c_long + 1i32 as libc::c_long) as libc::c_uint;
+      (found.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_uint;
     /* Copy chunk up to and including escapee (or NUL) to ret */
     memcpy(
       ret.offset(retlen as isize) as *mut libc::c_void,
@@ -972,7 +972,7 @@ unsafe extern "C" fn handle_retr() {
      */
     ndelay_off(local_file_fd);
     /* Set the download offset (from REST) if any */
-    if offset != 0i32 as libc::c_long {
+    if offset !=0{
       xlseek(local_file_fd, offset, 0i32);
     }
     response = xasprintf(
@@ -985,7 +985,7 @@ unsafe extern "C" fn handle_retr() {
     if !(remote_fd < 0i32) {
       bytes_transferred = bb_copyfd_eof(local_file_fd, remote_fd);
       close(remote_fd);
-      if bytes_transferred < 0i32 as libc::c_long {
+      if bytes_transferred < 0 {
         cmdio_write_error(
           (0i32
             | (' ' as i32) << SHIFTsp as libc::c_int
@@ -1389,7 +1389,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
     if !(remote_fd < 0i32) {
       bytes_transferred = bb_copyfd_eof(remote_fd, local_file_fd);
       close(remote_fd);
-      if bytes_transferred < 0i32 as libc::c_long {
+      if bytes_transferred < 0 {
         cmdio_write_error(
           (0i32
             | (' ' as i32) << SHIFTsp as libc::c_int

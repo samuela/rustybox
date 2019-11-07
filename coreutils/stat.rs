@@ -245,7 +245,7 @@ unsafe extern "C" fn file_type(mut st: *const stat) -> *const libc::c_char {
    * returned string must start with a consonant.
    */
   if (*st).st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {
-    return if (*st).st_size == 0i32 as libc::c_long {
+    return if (*st).st_size ==0{
       b"regular empty file\x00" as *const u8 as *const libc::c_char
     } else {
       b"regular file\x00" as *const u8 as *const libc::c_char

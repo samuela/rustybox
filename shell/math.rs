@@ -807,7 +807,7 @@ unsafe extern "C" fn evaluate_string(
       if p != expr {
         /* Name */
         var_name_size =
-          (p.wrapping_offset_from(expr) as libc::c_long + 1i32 as libc::c_long) as size_t; /* +1 for NUL */
+          (p.wrapping_offset_from(expr) as libc::c_long + 1) as size_t; /* +1 for NUL */
         let mut fresh3 = ::std::vec::from_elem(0, var_name_size as usize);
         (*numstackptr).var = fresh3.as_mut_ptr() as *mut libc::c_char;
         safe_strncpy((*numstackptr).var, expr, var_name_size);

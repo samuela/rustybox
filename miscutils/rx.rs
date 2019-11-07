@@ -44,7 +44,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use crate::librb::termios;
 unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
@@ -120,7 +120,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
         file_fd,
         blockBuf.as_mut_ptr() as *const libc::c_void,
         blockLength as size_t,
-      ) != blockLength as libc::c_long
+      ) != blockLength as isize
       {
         bb_simple_perror_msg(b"write error\x00" as *const u8 as *const libc::c_char);
         current_block = 2830166982076203563;

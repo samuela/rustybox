@@ -19,7 +19,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 /*
  * Busybox main internal header file

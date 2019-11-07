@@ -57,7 +57,7 @@ pub struct iovec {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

@@ -105,7 +105,7 @@ use libc::off64_t;
 
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -420,8 +420,7 @@ unsafe extern "C" fn write_uint(
     fd,
     bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
     n as size_t,
-  ) < 0i32 as libc::c_long
-  {
+  ) < 0   {
     bb_simple_perror_msg_and_die(name);
   };
 }
@@ -472,7 +471,7 @@ unsafe extern "C" fn read_bridge_forward_db(
       &mut *fdb.offset(nentries as isize) as *mut fdb_entry as *mut libc::c_void,
       ::std::mem::size_of::<fdb_entry>() as libc::c_ulong,
     );
-    if cc == 0i32 as libc::c_long {
+    if cc ==0{
       break;
     }
     if cc as libc::c_ulong != ::std::mem::size_of::<fdb_entry>() as libc::c_ulong {

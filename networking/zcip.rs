@@ -111,7 +111,7 @@ pub type bb__aliased_u32 = u32;
 /* add other arches which benefit from this... */
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -924,8 +924,7 @@ pub unsafe extern "C" fn zcip_main(
                 sock_fd as libc::c_int,
                 &mut p as *mut arp_packet as *mut libc::c_void,
                 ::std::mem::size_of::<arp_packet>() as libc::c_ulong,
-              ) < 0i32 as libc::c_long
-              {
+              ) < 0               {
                 bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
               }
               if p.eth.ether_type as libc::c_int

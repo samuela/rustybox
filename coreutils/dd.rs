@@ -84,13 +84,12 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off64_t;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
 use libc::stat;
-
 
 use libc::FILE;
 
@@ -252,7 +251,7 @@ unsafe extern "C" fn write_and_stats(
 ) -> bool {
   let mut n: ssize_t = 0;
   n = full_write(ofd as libc::c_int, buf, len);
-  if n > 0i32 as libc::c_long {
+  if n > 0 {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).total_bytes;
     *fresh0 = (*fresh0).wrapping_add(n as libc::c_ulonglong)
   }
@@ -557,8 +556,7 @@ pub unsafe extern "C" fn dd_main(
           ifd as libc::c_int,
           (Z.skip as libc::c_ulong).wrapping_mul(blocksz_0) as off64_t,
           1i32,
-        ) < 0i32 as libc::c_long
-        {
+        ) < 0         {
           loop {
             let mut n_0: ssize_t = 0;
             if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags
@@ -569,16 +567,16 @@ pub unsafe extern "C" fn dd_main(
             } else {
               n_0 = safe_read(ifd as libc::c_int, ibuf as *mut libc::c_void, blocksz_0)
             }
-            if n_0 < 0i32 as libc::c_long {
+            if n_0 < 0 {
               current_block = 5737263145267917659;
               break;
             }
-            if n_0 == 0i32 as libc::c_long {
+            if n_0 == 0 {
               current_block = 1658462350791934405;
               break;
             }
             Z.skip -= 1;
-            if !(Z.skip != 0i32 as libc::c_long) {
+            if !(Z.skip !=0) {
               current_block = 1658462350791934405;
               break;
             }
@@ -604,8 +602,7 @@ pub unsafe extern "C" fn dd_main(
               ofd as libc::c_int,
               (Z.seek as libc::c_ulong).wrapping_mul(blocksz_1) as off64_t,
               1i32,
-            ) < 0i32 as libc::c_long
-            {
+            ) < 0             {
               current_block = 17215991467164075883;
             } else {
               current_block = 17372050596571538954;
@@ -636,11 +633,11 @@ pub unsafe extern "C" fn dd_main(
                 } else {
                   n_1 = safe_read(ifd as libc::c_int, ibuf as *mut libc::c_void, ibs)
                 }
-                if n_1 == 0i32 as libc::c_long {
+                if n_1 == 0 {
                   current_block = 9354678635443812511;
                   break;
                 }
-                if n_1 < 0i32 as libc::c_long {
+                if n_1 < 0 {
                   /* "Bad block" */
                   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags
                     & FLAG_NOERROR as libc::c_int
@@ -663,7 +660,7 @@ pub unsafe extern "C" fn dd_main(
                   let mut p16: *mut u16 = 0 as *mut u16;
                   let mut n2: ssize_t = 0;
                   /* Our code allows only last read to be odd-sized */
-                  if Z.prev_read_size & 1i32 as libc::c_long != 0 {
+                  if Z.prev_read_size & 1 != 0 {
                     bb_error_msg_and_die(
                       b"can\'t swab %lu byte buffer\x00" as *const u8 as *const libc::c_char,
                       Z.prev_read_size as libc::c_ulong,
@@ -678,7 +675,7 @@ pub unsafe extern "C" fn dd_main(
                   n2 = n_1 >> 1i32;
                   loop {
                     n2 -= 1;
-                    if !(n2 >= 0i32 as libc::c_long) {
+                    if !(n2 >=0) {
                       break;
                     }
                     *p16 = {

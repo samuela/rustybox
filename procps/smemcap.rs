@@ -40,7 +40,7 @@ use libc::off64_t;
 use libc::off_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {

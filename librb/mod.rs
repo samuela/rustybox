@@ -2,14 +2,12 @@ pub mod signal;
 
 // These bits all seem to be from c2rust...
 // See https://pubs.opengroup.org/onlinepubs/7908799/xsh/systypes.h.html.
-pub type __ssize_t = libc::c_long;
 pub type __useconds_t = libc::c_uint;
 pub type __suseconds_t = libc::c_long;
 pub type __syscall_slong_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type size_t = libc::c_ulong;
 pub type smallint = libc::c_schar;
-pub type ssize_t = __ssize_t;
 pub type time_t = __time_t;
 pub type uoff_t = libc::c_ulong;
 pub type ptrdiff_t = libc::c_long;

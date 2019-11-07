@@ -88,7 +88,7 @@ use crate::librb::__useconds_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
  use libc::timeval;
 
@@ -394,13 +394,13 @@ unsafe extern "C" fn rdval(
       // read this value
       let fresh4 = vec;
       vec = vec.offset(1);
-      *fresh4 = if posbits & 1i32 as libc::c_long == conv_decimal as libc::c_int as libc::c_long {
+      *fresh4 = if posbits &1== conv_decimal as libc::c_int as libc::c_long {
         strtoull(p, 0 as *mut *mut libc::c_char, 10i32)
       } else {
         read_after_slash(p)
       };
       posbits -= curpos as libc::c_long;
-      if posbits <= 1i32 as libc::c_long {
+      if posbits <=1{
         return 0i32;
       }
     }
@@ -1132,8 +1132,7 @@ pub unsafe extern "C" fn nmeter_main(
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
-  ) > 0i32 as libc::c_long
-  {
+  ) > 0   {
     buf[(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong) as usize] = '\u{0}' as i32 as libc::c_char;
     (*ptr_to_globals).is26 = (strstr(

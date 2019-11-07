@@ -149,7 +149,7 @@ use crate::librb::__useconds_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 use libc::stat;
@@ -281,7 +281,7 @@ unsafe extern "C" fn find_keyword(
   }
   len = (len as libc::c_ulong).wrapping_sub(strlen(word).wrapping_sub(1i32 as libc::c_ulong))
     as size_t as size_t;
-  while len as ssize_t > 0i32 as libc::c_long {
+  while len as ssize_t >0{
     let mut old: *mut libc::c_char = ptr;
     let mut after_word: *mut libc::c_char = 0 as *mut libc::c_char;
     /* search for the first char in word */
@@ -396,7 +396,7 @@ unsafe extern "C" fn load_module(
   mut options: *const libc::c_char,
 ) -> libc::c_int {
   let mut r: libc::c_int = 0;
-  let mut len: size_t = if -1i32 as ssize_t > 0i32 as libc::c_long {
+  let mut len: size_t = if -1i32 as ssize_t >0{
     -1i32 as ssize_t
   } else {
     !((1i32 as ssize_t)
@@ -417,13 +417,13 @@ unsafe extern "C" fn load_module(
   r = 1i32;
   let mut fd: libc::c_int = open(fname, 0i32 | 0o2000000i32);
   if fd >= 0i32 {
-    r = (syscall(313i32 as libc::c_long, fd, options, 0i32) != 0i32 as libc::c_long) as libc::c_int;
+    r = (syscall(313i32 as libc::c_long, fd, options, 0i32) !=0) as libc::c_int;
     close(fd);
   }
   if r != 0i32 {
     module_image = xmalloc_open_zipped_read_close(fname, &mut len) as *mut libc::c_char;
     r = (module_image.is_null()
-      || syscall(175i32 as libc::c_long, module_image, len, options) != 0i32 as libc::c_long)
+      || syscall(175i32 as libc::c_long, module_image, len, options) !=0)
       as libc::c_int;
     free(module_image as *mut libc::c_void);
   }
@@ -1387,7 +1387,7 @@ pub unsafe extern "C" fn modprobe_main(
   {
     let mut len: size_t = 0;
     let mut map: *mut libc::c_void = 0 as *mut libc::c_void;
-    len = if -1i32 as ssize_t > 0i32 as libc::c_long {
+    len = if -1i32 as ssize_t >0{
       -1i32 as ssize_t
     } else {
       !((1i32 as ssize_t)
@@ -1411,8 +1411,7 @@ pub unsafe extern "C" fn modprobe_main(
       } else {
         b"\x00" as *const u8 as *const libc::c_char
       },
-    ) != 0i32 as libc::c_long
-    {
+    ) != 0     {
       bb_error_msg_and_die(
         b"can\'t insert \'%s\': %s\x00" as *const u8 as *const libc::c_char,
         *argv,

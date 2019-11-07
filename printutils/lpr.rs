@@ -1,8 +1,8 @@
 use crate::librb::size_t;
-use crate::librb::ssize_t;
 use libc;
 use libc::off_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::uid_t;
 
@@ -170,13 +170,13 @@ unsafe extern "C" fn get_response_or_say_and_die(
     bb_error_msg(
       b"error while %s%s\x00" as *const u8 as *const libc::c_char,
       errmsg,
-      if sz > 0i32 as libc::c_long {
+      if sz > 0 {
         b". Server said:\x00" as *const u8 as *const libc::c_char
       } else {
         b"\x00" as *const u8 as *const libc::c_char
       },
     );
-    if sz > 0i32 as libc::c_long {
+    if sz > 0 {
       // sz = (bytes in buf) - 1
       if buf[sz as usize] as libc::c_int != '\n' as i32 {
         sz += 1; // printer class, max 32 char
@@ -185,7 +185,7 @@ unsafe extern "C" fn get_response_or_say_and_die(
       safe_write(
         2i32,
         buf.as_mut_ptr() as *const libc::c_void,
-        (sz + 1i32 as libc::c_long) as size_t,
+        (sz + 1) as size_t,
       ); // server[:port] of printer queue
     }
     xfunc_die();
@@ -332,7 +332,7 @@ pub unsafe extern "C" fn lpqr_main(
     /* Apparently, some servers are buggy and won't accept 0-sized jobs.
      * Standard lpr works around it by refusing to send such jobs:
      */
-    if st.st_size == 0i32 as libc::c_long {
+    if st.st_size == 0 {
       bb_simple_error_msg(b"nothing to print\x00" as *const u8 as *const libc::c_char);
     } else {
       /* "The name ... should start with ASCII "cfA",

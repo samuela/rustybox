@@ -770,11 +770,10 @@ unsafe extern "C" fn writeTarHeader(
   putOctal(
     header.mtime.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong as libc::c_int,
-    if (*statbuf).st_mtime >= 0i32 as libc::c_long {
+    if (*statbuf).st_mtime >=0{
       (*statbuf).st_mtime
     } else {
-      0i32 as libc::c_long
-    },
+      0     },
   );
   /* Enter the user and group names */
   safe_strncpy(

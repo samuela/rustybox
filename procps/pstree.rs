@@ -519,7 +519,7 @@ pub unsafe extern "C" fn pstree_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pid: pid_t = 1i32;
-  let mut uid: libc::c_long = 0i32 as libc::c_long;
+  let mut uid: libc::c_long = 0;
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh2 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;

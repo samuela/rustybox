@@ -979,7 +979,7 @@ unsafe extern "C" fn func_empty(
     return (dent == 0 as *mut libc::c_void as *mut dirent) as libc::c_int;
   }
   return ((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
-    && (*statbuf).st_size == 0i32 as libc::c_long) as libc::c_int;
+    && (*statbuf).st_size ==0) as libc::c_int;
 }
 unsafe extern "C" fn func_links(
   mut _fileName: *const libc::c_char,

@@ -79,7 +79,7 @@ use libc::pid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -159,8 +159,7 @@ unsafe extern "C" fn con_escape() {
     0i32,
     &mut b as *mut libc::c_char as *mut libc::c_void,
     1i32 as size_t,
-  ) <= 0i32 as libc::c_long
-  {
+  ) <= 0   {
     doexit(1i32);
   }
   match b as libc::c_int {
@@ -236,7 +235,7 @@ unsafe extern "C" fn handle_net_output(mut len: libc::c_int) {
     }
     dst = dst.offset(1)
   }
-  if dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long != 0i32 as libc::c_long {
+  if dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long !=0{
     full_write(
       netfd as libc::c_int,
       outbuf.as_mut_ptr() as *const libc::c_void,

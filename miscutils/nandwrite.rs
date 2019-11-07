@@ -1,4 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -50,18 +55,13 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::off64_t;
-
 pub type __loff_t = off64_t;
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-
 pub type loff_t = __loff_t;
 pub type __u8 = libc::c_uchar;
 pub type u32 = libc::c_uint;
 pub type __u64 = libc::c_ulonglong;
 pub type __kernel_loff_t = libc::c_longlong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mtd_oob_buf {
@@ -69,6 +69,7 @@ pub struct mtd_oob_buf {
   pub length: u32,
   pub ptr: *mut libc::c_uchar,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mtd_info_user {
@@ -80,6 +81,7 @@ pub struct mtd_info_user {
   pub oobsize: u32,
   pub padding: __u64,
 }
+
 /* helper for writing out 0xff for bad blocks pad */
 unsafe extern "C" fn dump_bad(
   mut meminfo: *mut mtd_info_user,
@@ -386,10 +388,10 @@ pub unsafe extern "C" fn nandwrite_main(
       filebuf as *mut libc::c_void,
       meminfo_writesize as size_t,
     );
-    if cnt == 0i32 as libc::c_long {
+    if cnt == 0 {
       break;
     }
-    if cnt < meminfo_writesize as libc::c_long {
+    if cnt < meminfo_writesize as isize {
       if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
         bb_simple_error_msg_and_die(b"short read\x00" as *const u8 as *const libc::c_char);
       }
@@ -403,7 +405,7 @@ pub unsafe extern "C" fn nandwrite_main(
       memset(
         filebuf.offset(cnt as isize) as *mut libc::c_void,
         0i32,
-        (meminfo_writesize as libc::c_long - cnt) as libc::c_ulong,
+        (meminfo_writesize as isize - cnt) as u64,
       );
     }
     xwrite(
@@ -434,20 +436,17 @@ pub unsafe extern "C" fn nandwrite_main(
       );
     }
     mtdoffset = mtdoffset.wrapping_add(meminfo_writesize);
-    if cnt < meminfo_writesize as libc::c_long {
+    if cnt < meminfo_writesize as isize {
       break;
     }
   }
-  if 1i32 != 0
-    && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32)
-    && cnt != 0i32 as libc::c_long
-  {
+  if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) && cnt != 0 {
     /* We filled entire MTD, but did we reach EOF on input? */
     if full_read(
       0i32,
       filebuf as *mut libc::c_void,
       meminfo_writesize as size_t,
-    ) != 0i32 as libc::c_long
+    ) != 0
     {
       /* no */
       bb_simple_error_msg_and_die(

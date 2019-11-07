@@ -49,9 +49,8 @@ extern "C" {
 use crate::librb::ptrdiff_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use crate::librb::termios;
-
+use libc::ssize_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
@@ -112,13 +111,7 @@ pub unsafe extern "C" fn showkey_main(
       b"on EOF (ctrl-D)\x00" as *const u8 as *const libc::c_char,
     );
     // read and show byte values
-    while 1i32 as libc::c_long
-      == read(
-        0i32,
-        &mut c as *mut libc::c_uchar as *mut libc::c_void,
-        1i32 as size_t,
-      )
-    {
+    while read(0, &mut c as *mut libc::c_uchar as *mut libc::c_void, 1) == 1 {
       printf(
         b"%3u 0%03o 0x%02x\r\n\x00" as *const u8 as *const libc::c_char,
         c as libc::c_int,

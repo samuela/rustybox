@@ -6,7 +6,7 @@ use libc::ino64_t;
 use libc::off64_t;
 use libc::pid_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 extern "C" {
   pub type __dirstream;
@@ -406,7 +406,7 @@ unsafe extern "C" fn limit(mut what: libc::c_int, mut l: libc::c_long) {
   };
   /* Never fails under Linux (except if you pass it bad arguments) */
   getrlimit(what as __rlimit_resource_t, &mut r); /* for compiler */
-  if l < 0i32 as libc::c_long || l as libc::c_ulong > r.rlim_max {
+  if l < 0 || l as libc::c_ulong > r.rlim_max {
     r.rlim_cur = r.rlim_max
   } else {
     r.rlim_cur = l as rlim_t

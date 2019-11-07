@@ -38,7 +38,7 @@ use libc::ino64_t;
 use libc::off64_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -89,12 +89,12 @@ unsafe extern "C" fn get_line(
     buf as *mut libc::c_void,
     bufsize.wrapping_sub(2i32 as libc::c_uint) as size_t,
   );
-  if sz < 0i32 as libc::c_long {
-    sz = 0i32 as ssize_t
+  if sz < 0 {
+    sz = 0
   }
   *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
-  sz = trim(buf).wrapping_offset_from(buf) as libc::c_long + 1i32 as libc::c_long;
-  bufsize = (bufsize as libc::c_long - sz) as libc::c_uint;
+  sz = trim(buf).wrapping_offset_from(buf) + 1;
+  bufsize -= sz as u32;
   buf = buf.offset(sz as isize);
   *buf.offset(0) = '\u{0}' as i32 as libc::c_char;
   *bufsize_p = bufsize;

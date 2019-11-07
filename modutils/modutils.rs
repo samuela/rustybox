@@ -290,7 +290,7 @@ pub unsafe extern "C" fn bb_init_module(
   let mut fd: libc::c_int = open(filename, 0i32 | 0o2000000i32); /* may be changed by e.g. open errors below */
   if fd >= 0i32 {
     rc =
-      (syscall(313i32 as libc::c_long, fd, options, 0i32) != 0i32 as libc::c_long) as libc::c_int;
+      (syscall(313i32 as libc::c_long, fd, options, 0i32) !=0) as libc::c_int;
     close(fd);
     if rc == 0i32 {
       return rc;

@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -1056,8 +1056,7 @@ unsafe extern "C" fn tftp_protocol(
                 }
                 if !remote_file.is_null()
                   && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size
-                    == 0i32 as libc::c_long
-                {
+                    == 0                 {
                   /* if we don't know it yet */
                   res = tftp_get_option(
                     b"tsize\x00" as *const u8 as *const libc::c_char,

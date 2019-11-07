@@ -77,13 +77,7 @@ extern "C" {
    * Licensed under GPLv2, see file LICENSE in this source tree.
    */
   #[no_mangle]
-  fn aesgcm_GHASH(
-    h: *mut u8,
-    a: *const u8,
-    c: *const u8,
-    cSz: libc::c_uint,
-    s: *mut u8,
-  );
+  fn aesgcm_GHASH(h: *mut u8, a: *const u8, c: *const u8, cSz: libc::c_uint, s: *mut u8);
   #[no_mangle]
   fn aes_cbc_encrypt(
     aes: *mut tls_aes,
@@ -137,17 +131,10 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
-
-
-
-
 pub type bb__aliased_u32 = u32;
 pub type bb__aliased_u64 = u64;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use libc::FILE;
 pub type va_list = __builtin_va_list;
@@ -731,12 +718,12 @@ unsafe extern "C" fn get24be(mut p: *const u8) -> libc::c_uint {
 }
 #[no_mangle]
 pub unsafe extern "C" fn tls_get_random(mut buf: *mut libc::c_void, mut len: libc::c_uint) {
-  if len as libc::c_long
+  if len
     != open_read_close(
       b"/dev/urandom\x00" as *const u8 as *const libc::c_char,
       buf,
       len as size_t,
-    )
+    ) as u32
   {
     xfunc_die();
   };
@@ -1728,7 +1715,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
   //u8 aad[13 + 3] ALIGNED_long; /* +3 creates [16] buffer, simplifying GHASH() */
   let mut nonce: [u8; 16] = [0; 16]; /* +4 creates space for AES block counter */
   let mut scratch: [u8; 16] = [0; 16]; //[16]
-                                            //u8 authtag[AES_BLOCK_SIZE] ALIGNED_long; //[16]
+                                       //u8 authtag[AES_BLOCK_SIZE] ALIGNED_long; //[16]
   let mut remaining: libc::c_uint = 0;
   let mut cnt: libc::c_uint = 0;
   //memcpy(aad, buf, 8);
@@ -2060,10 +2047,7 @@ unsafe extern "C" fn get_der_len(
   *bodyp = der;
   return len;
 }
-unsafe extern "C" fn enter_der_item(
-  mut der: *mut u8,
-  mut endp: *mut *mut u8,
-) -> *mut u8 {
+unsafe extern "C" fn enter_der_item(mut der: *mut u8, mut endp: *mut *mut u8) -> *mut u8 {
   let mut new_der: *mut u8 = 0 as *mut u8;
   let mut len: libc::c_uint = get_der_len(&mut new_der, der, *endp);
   /* Move "end" position to cover only this item */
@@ -2419,10 +2403,10 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
     //ptr[1] = 0;             //extension_type
     //ptr[2] = 0;         //
     *ptr.offset(3) = (sni_len + 5i32) as u8; //list len
-                                                  //ptr[4] = 0;             //
+                                             //ptr[4] = 0;             //
     *ptr.offset(5) = (sni_len + 3i32) as u8; //len of 1st SNI
-                                                  //ptr[6] = 0;         //name type
-                                                  //ptr[7] = 0;             //
+                                             //ptr[6] = 0;         //name type
+                                             //ptr[7] = 0;             //
     *ptr.offset(8) = sni_len as u8; //name len
     ptr = mempcpy(
       &mut *ptr.offset(9) as *mut u8 as *mut libc::c_void,
@@ -2739,8 +2723,8 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
       rsa_premaster.as_mut_ptr(),
       ::std::mem::size_of::<[u8; 48]>() as libc::c_ulong as uint32,
       (*record).key.as_mut_ptr().offset(2),
-      (::std::mem::size_of::<[u8; 4098]>() as libc::c_ulong)
-        .wrapping_sub(2i32 as libc::c_ulong) as uint32,
+      (::std::mem::size_of::<[u8; 4098]>() as libc::c_ulong).wrapping_sub(2i32 as libc::c_ulong)
+        as uint32,
     );
     /* keylen16 exists for RSA (in TLS, not in SSL), but not for some other key types */
     (*record).key[0] = (len >> 8i32) as u8;
@@ -2751,38 +2735,8 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
   } else {
     /* ECDHE */
     static mut basepoint9: [u8; 32] = [
-      9i32 as u8,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      9i32 as u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0,
     ]; //[32]
     let mut privkey: [u8; 32] = [0; 32];
     if (*tls).flags & GOT_EC_KEY as libc::c_int as libc::c_uint == 0 {

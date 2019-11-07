@@ -30,7 +30,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use crate::librb::uoff_t;
 use libc::off_t;
 

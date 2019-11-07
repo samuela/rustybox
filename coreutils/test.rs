@@ -678,16 +678,16 @@ unsafe extern "C" fn binop() -> libc::c_int {
   if ((*op).op_num as libc::c_int - STREZ as libc::c_int) as libc::c_uchar as libc::c_int <= 5i32 {
     val1 = strcmp(opnd1, opnd2) as number_t;
     if (*op).op_num as libc::c_int == STREQ as libc::c_int {
-      return (val1 == 0i32 as libc::c_long) as libc::c_int;
+      return (val1 ==0) as libc::c_int;
     }
     if (*op).op_num as libc::c_int == STRNE as libc::c_int {
-      return (val1 != 0i32 as libc::c_long) as libc::c_int;
+      return (val1 !=0) as libc::c_int;
     }
     if (*op).op_num as libc::c_int == STRLT as libc::c_int {
-      return (val1 < 0i32 as libc::c_long) as libc::c_int;
+      return (val1 <0) as libc::c_int;
     }
     /*if (op->op_num == STRGT)*/
-    return (val1 > 0i32 as libc::c_long) as libc::c_int;
+    return (val1 >0) as libc::c_int;
   }
   /* We are sure that these three are by now the only binops we didn't check
    * yet, so we do not check if the class is correct:

@@ -7,7 +7,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 /*
  * Busybox main internal header file
@@ -267,7 +267,7 @@ pub unsafe extern "C" fn safe_write(
   let mut n: ssize_t = 0;
   loop {
     n = write(fd, buf, count);
-    if n >= 0i32 as libc::c_long || *bb_errno != 4i32 {
+    if n >=0|| *bb_errno != 4i32 {
       break;
     }
     /* repeat the write() */

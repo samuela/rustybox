@@ -372,7 +372,7 @@ unsafe extern "C" fn ftp_receive(
     if stat(local_path, &mut sbuf) < 0i32 {
       bb_simple_perror_msg_and_die(b"stat\x00" as *const u8 as *const libc::c_char);
     }
-    if sbuf.st_size > 0i32 as libc::c_long {
+    if sbuf.st_size >0{
       beg_range = sbuf.st_size
     } else {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32

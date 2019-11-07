@@ -1,4 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
@@ -18,13 +23,10 @@ extern "C" {
     __count: size_t,
   ) -> ssize_t;
 }
-use libc::off64_t;
 
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
 pub const buffer_size: C2RustUnnamed = 4096;
 pub type C2RustUnnamed = libc::c_uint;
+
 /* Used by NOFORK applets (e.g. cat) - must not use xmalloc.
  * size < 0 means "ignore write errors", used by tar --to-command
  * size = 0 means "copy till EOF"
@@ -39,7 +41,7 @@ unsafe extern "C" fn bb_full_fd_action(
   let mut continue_on_write_error: bool = 0i32 != 0;
   let mut sendfile_sz: ssize_t = 0;
   let mut buffer: [libc::c_char; 4096] = [0; 4096];
-  if size < 0i32 as libc::c_long {
+  if size < 0 {
     size = -size;
     continue_on_write_error = 1i32 != 0
   }
@@ -64,13 +66,13 @@ unsafe extern "C" fn bb_full_fd_action(
             dst_fd,
             src_fd,
             0 as *mut off64_t,
-            if size > sendfile_sz {
-              sendfile_sz
+            if size > sendfile_sz as i64 {
+              sendfile_sz as size_t
             } else {
-              size
-            } as size_t,
+              size as size_t
+            },
           );
-          if rd >= 0i32 as libc::c_long {
+          if rd >= 0 {
             current_block_18 = 1688160156426625504;
           } else {
             current_block_18 = 15904375183555213903;
@@ -100,7 +102,7 @@ unsafe extern "C" fn bb_full_fd_action(
               size
             } as size_t,
           );
-          if rd < 0i32 as libc::c_long {
+          if rd < 0 {
             bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
             break;
           }
@@ -128,12 +130,12 @@ unsafe extern "C" fn bb_full_fd_action(
             }
           }
         }
-        total += rd;
+        total += rd as i64;
         if !(status < 0i32) {
           continue;
         }
         /* if we aren't copying till EOF... */
-        size -= rd;
+        size -= rd as i64;
         if !(size == 0) {
           continue;
         }
@@ -168,13 +170,7 @@ pub unsafe extern "C" fn bb_copyfd_exact_size(
   mut size: off_t,
 ) {
   let mut sz: off_t = bb_copyfd_size(fd1, fd2, size);
-  if sz
-    == (if size >= 0i32 as libc::c_long {
-      size
-    } else {
-      -size
-    })
-  {
+  if sz == (if size >= 0 { size } else { -size }) {
     return;
   }
   if sz != -1i32 as libc::c_long {

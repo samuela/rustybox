@@ -349,7 +349,7 @@ pub unsafe extern "C" fn bbunpack(
               if status < 0i32 as libc::c_longlong {
                 exitcode = 1i32 as smallint
               }
-            } else if bb_copyfd_eof(0i32, 1i32) < 0i32 as libc::c_long {
+            } else if bb_copyfd_eof(0i32, 1i32) < 0 {
               /* Disk full, tty closed, etc. No point in continuing */
               xfunc_die(); /* with error check! */
             }
@@ -361,7 +361,7 @@ pub unsafe extern "C" fn bbunpack(
               if status >= 0i32 as libc::c_longlong {
                 let mut new_name_len: libc::c_uint = 0;
                 /* TODO: restore other things? */
-                if xstate.mtime != 0i32 as libc::c_long {
+                if xstate.mtime !=0{
                   let mut times: [timeval; 2] = [timeval {
                     tv_sec: 0,
                     tv_usec: 0,

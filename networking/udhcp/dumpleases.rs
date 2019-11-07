@@ -46,7 +46,7 @@ pub type __int64_t = libc::c_long;
 
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 
 

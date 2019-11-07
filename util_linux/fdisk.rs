@@ -95,8 +95,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-
-
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
 
@@ -283,9 +281,6 @@ extern "C" {
 
 use libc::off64_t;
 
-
-
-
 pub type bb__aliased_u32 = u32;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -298,12 +293,10 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-
+use libc::off_t;
+use libc::ssize_t;
 
 use libc::stat;
 
@@ -596,7 +589,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
       /* Perhaps this is a disk image */
       let mut sz: off_t = lseek(fd, 0i32 as off64_t, 2i32);
       longsectors = 0i32 as libc::c_ulong;
-      if sz > 0i32 as libc::c_long {
+      if sz > 0 {
         longsectors = (sz as uoff_t).wrapping_div((*ptr_to_globals).sector_size as libc::c_ulong)
       }
       lseek(fd, 0i32 as off64_t, 0i32);
@@ -708,10 +701,9 @@ unsafe extern "C" fn fdisk_fatal(mut why: *const libc::c_char) {
   bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
 }
 unsafe extern "C" fn seek_sector(mut secno: sector_t) {
-  let mut off: u64 =
-    (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
+  let mut off: u64 = (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
   if off
-    > (if -1i32 as off_t > 0i32 as libc::c_long {
+    > (if -1i32 as off_t > 0 {
       -1i32 as off_t
     } else {
       !((1i32 as off_t)
@@ -838,7 +830,7 @@ unsafe extern "C" fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
     dev_fd as libc::c_int,
     (*pe).sectorbuffer as *mut libc::c_void,
     (*ptr_to_globals).sector_size as size_t,
-  ) != (*ptr_to_globals).sector_size as libc::c_long
+  ) != (*ptr_to_globals).sector_size as isize
   {
     fdisk_fatal(b"can\'t read from %s\x00" as *const u8 as *const libc::c_char);
   }
@@ -1461,7 +1453,7 @@ unsafe extern "C" fn get_boot(mut what: action) -> libc::c_int {
         dev_fd as libc::c_int,
         (*ptr_to_globals).MBRbuffer.as_mut_ptr() as *mut libc::c_void,
         512i32 as size_t,
-      )
+      ) as i64
     {
       if what as libc::c_uint == TRY_ONLY as libc::c_int as libc::c_uint {
         close_dev_fd();

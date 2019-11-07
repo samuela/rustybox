@@ -231,8 +231,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
    * with a nonempty link field */
   hard_link = 0 as *mut libc::c_char;
   if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
-    && (*file_header).size == 0i32 as libc::c_long
-  {
+    && (*file_header).size == 0   {
     hard_link = (*file_header).link_target
   }
   dst_name = (*file_header).name;

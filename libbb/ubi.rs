@@ -19,7 +19,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 #[no_mangle]
 pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {
   let mut ubi_devnum: libc::c_uint = 0;
@@ -607,7 +607,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
       fname.as_mut_ptr(),
       buf.as_mut_ptr() as *mut libc::c_void,
       ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
-    ) <= 0i32 as libc::c_long)
+    ) <=0)
     {
       buf[127] = '\u{0}' as i32 as libc::c_char;
       *strchrnul(buf.as_mut_ptr(), '\n' as i32).offset(0) = '\u{0}' as i32 as libc::c_char;

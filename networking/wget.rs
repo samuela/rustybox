@@ -493,8 +493,7 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
     (*ptr_to_globals).beg_range as uoff_t,
     (*ptr_to_globals).transferred as uoff_t,
     if (*ptr_to_globals).chunked as libc::c_int != 0 || (*ptr_to_globals).got_clen == 0 {
-      0i32 as libc::c_long
-    } else {
+      0     } else {
       ((*ptr_to_globals).beg_range + (*ptr_to_globals).transferred) + (*ptr_to_globals).content_len
     } as uoff_t,
   );
@@ -1082,7 +1081,7 @@ unsafe extern "C" fn prepare_ftp_session(
       0 as *mut *mut libc::c_char,
       10i32,
     ) as off_t;
-    if (*ptr_to_globals).content_len < 0i32 as libc::c_long || *bb_errno != 0 {
+    if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
       bb_error_msg_and_die(
         b"bad SIZE value \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).wget_buf.as_mut_ptr().offset(4),
@@ -1150,7 +1149,7 @@ unsafe extern "C" fn prepare_ftp_session(
             spawn_ssl_client((*target).host, fileno_unlocked(*dfpp), 0i32);
           }
         }
-        if (*ptr_to_globals).beg_range != 0i32 as libc::c_long {
+        if (*ptr_to_globals).beg_range !=0{
           sprintf(
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
             b"REST %lu\x00" as *const u8 as *const libc::c_char,
@@ -1283,7 +1282,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
             (*ptr_to_globals).transferred += n as libc::c_long;
             if (*ptr_to_globals).got_clen != 0 {
               (*ptr_to_globals).content_len -= n as libc::c_long;
-              if (*ptr_to_globals).content_len == 0i32 as libc::c_long {
+              if (*ptr_to_globals).content_len ==0{
                 break;
               }
             }
@@ -1346,13 +1345,13 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
          * Had a bug with inputs like "ffffffff0001f400"
          * smashing the heap later. Ensure >= 0.
          */
-        if (*ptr_to_globals).content_len < 0i32 as libc::c_long || *bb_errno != 0 {
+        if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
           bb_error_msg_and_die(
             b"bad chunk length \'%s\'\x00" as *const u8 as *const libc::c_char,
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
           ); /* all done! */
         }
-        if (*ptr_to_globals).content_len == 0i32 as libc::c_long {
+        if (*ptr_to_globals).content_len ==0{
           break;
         }
         (*ptr_to_globals).got_clen = 1i32 as smallint;
@@ -1364,7 +1363,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
   (*ptr_to_globals).chunked = 0i32 as smallint; /* makes it show 100% even for chunked download */
   (*ptr_to_globals).got_clen = 1i32 as smallint; /* makes it show 100% even for download of (formerly) unknown size */
   progress_meter(PROGRESS_END as libc::c_int);
-  if (*ptr_to_globals).content_len != 0i32 as libc::c_long {
+  if (*ptr_to_globals).content_len !=0{
     bb_simple_perror_msg_and_die(
       b"connection closed prematurely\x00" as *const u8 as *const libc::c_char,
     );
@@ -1591,8 +1590,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             base64enc(server.user),
           );
         }
-        if (*ptr_to_globals).beg_range != 0i32 as libc::c_long
-          && (*ptr_to_globals).user_headers as libc::c_int & HDR_RANGE as libc::c_int == 0
+        if (*ptr_to_globals).beg_range != 0           && (*ptr_to_globals).user_headers as libc::c_int & HDR_RANGE as libc::c_int == 0
         {
           fprintf(
             sfp,
@@ -1671,7 +1669,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             }
             206 => {
               /* Partial Content */
-              if !((*ptr_to_globals).beg_range != 0i32 as libc::c_long) {
+              if !((*ptr_to_globals).beg_range !=0) {
                 current_block = 7174816550491926890;
                 break 'c_12019;
               }
@@ -1737,7 +1735,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
           (e.g. Boa/0.94.14rc21) simply use code 204 when file size is zero.
           */
           {
-            if (*ptr_to_globals).beg_range != 0i32 as libc::c_long {
+            if (*ptr_to_globals).beg_range !=0{
               /* "Range:..." was not honored by the server.
                * Restart download from the beginning.
                */
@@ -1775,7 +1773,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
           if key as libc::c_int == KEY_content_length as libc::c_int {
             (*ptr_to_globals).content_len =
               bb_strtoul(str, 0 as *mut *mut libc::c_char, 10i32) as off_t;
-            if (*ptr_to_globals).content_len < 0i32 as libc::c_long || *bb_errno != 0 {
+            if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
               bb_error_msg_and_die(
                 b"content-length %s is garbage\x00" as *const u8 as *const libc::c_char,
                 str,

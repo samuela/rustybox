@@ -297,7 +297,7 @@ pub type __int64_t = libc::c_long;
 pub type __socklen_t = libc::c_uint;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 pub type int64_t = __int64_t;
 

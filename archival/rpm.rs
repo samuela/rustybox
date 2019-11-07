@@ -1098,7 +1098,7 @@ pub unsafe extern "C" fn rpm2cpio_main(
   } else {
     setup_unzip_on_fd(rpm_fd, 1i32);
   }
-  if bb_copyfd_eof(rpm_fd, 1i32) < 0i32 as libc::c_long {
+  if bb_copyfd_eof(rpm_fd, 1i32) < 0 {
     bb_simple_error_msg_and_die(b"error unpacking\x00" as *const u8 as *const libc::c_char);
   }
   if 0i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0i32 != 0 {

@@ -3,11 +3,11 @@ use crate::librb::__time_t;
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::timeval;
 
 extern "C" {
@@ -308,14 +308,14 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
       found =
         memchr(buf as *const libc::c_void, '\r' as i32, wr as libc::c_ulong) as *mut libc::c_uchar;
       if !found.is_null() {
-        rc = found.wrapping_offset_from(buf) as libc::c_long + 1i32 as libc::c_long
+        rc = found.wrapping_offset_from(buf) + 1
       }
       rc = safe_write((*ts).ptyfd, buf as *const libc::c_void, rc as size_t);
-      if rc <= 0i32 as libc::c_long {
+      if rc <= 0 {
         return rc;
       }
-      if rc < wr as libc::c_long
-        && *buf.offset((rc - 1i32 as libc::c_long) as isize) as libc::c_int == '\r' as i32
+      if rc < wr as isize
+        && *buf.offset((rc - 1) as isize) as libc::c_int == '\r' as i32
         && (*buf.offset(rc as isize) as libc::c_int == '\n' as i32
           || *buf.offset(rc as isize) as libc::c_int == '\u{0}' as i32)
       {
@@ -339,7 +339,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-
+      
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;
@@ -454,12 +454,12 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
     _ => {}
   }
   /* trailing IAC SE will be eaten separately, as 2-byte NOP */
-  (*ts).wridx1 = ((*ts).wridx1 as libc::c_long + rc) as libc::c_int;
+  (*ts).wridx1 = ((*ts).wridx1 + rc as i32) as libc::c_int;
   if (*ts).wridx1 >= BUFSIZE as libc::c_int {
     /* actually == BUFSIZE */
     (*ts).wridx1 = 0i32
   }
-  (*ts).size1 = ((*ts).size1 as libc::c_long - rc) as libc::c_int;
+  (*ts).size1 = ((*ts).size1 - rc as i32) as libc::c_int;
   /*
    * Hack. We cannot process IACs which wrap around buffer's end.
    * Since properly fixing it requires writing bigger code,
@@ -534,7 +534,7 @@ unsafe extern "C" fn safe_write_double_iac(
     }
   }
   /* here: rc - result of last short write */
-  if (rc as ssize_t) < 0i32 as libc::c_long {
+  if (rc as ssize_t) < 0 {
     /* error? */
     if total == 0i32 as libc::c_ulong {
       return rc;
@@ -998,7 +998,7 @@ pub unsafe extern "C" fn telnetd_main(
           << master_fd
             % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
           as __fd_mask
-        != 0i32 as libc::c_long
+        != 0
     {
       let mut fd: libc::c_int = 0;
       let mut new_ts: *mut tsession = 0 as *mut tsession;
@@ -1035,7 +1035,7 @@ pub unsafe extern "C" fn telnetd_main(
           << (*ts).ptyfd
             % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
           as __fd_mask
-        != 0i32 as libc::c_long
+        != 0
       {
         /* Write to pty from buffer 1 */
         count = safe_write_to_pty_decode_iac(ts) as libc::c_int;
@@ -1060,7 +1060,7 @@ pub unsafe extern "C" fn telnetd_main(
               << (*ts).sockfd_write
                 % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as __fd_mask
-            != 0i32 as libc::c_long
+            != 0
           {
             /* Write to socket from buffer 2 */
             count = if BUFSIZE as libc::c_int - (*ts).wridx2 < (*ts).size2 {
@@ -1108,7 +1108,7 @@ pub unsafe extern "C" fn telnetd_main(
                   << (*ts).sockfd_read
                     % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
                   as __fd_mask
-                != 0i32 as libc::c_long
+                != 0
               {
                 /* Read from socket to buffer 1 */
                 count =
@@ -1159,7 +1159,7 @@ pub unsafe extern "C" fn telnetd_main(
                         % (8i32
                           * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
                       as __fd_mask
-                    != 0i32 as libc::c_long
+                    != 0
                   {
                     /* Read from pty to buffer 2 */
                     let mut eio: libc::c_int = 0i32;

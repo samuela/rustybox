@@ -92,7 +92,7 @@ use libc::mode_t;
 
 use libc::off_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
@@ -435,8 +435,7 @@ pub unsafe extern "C" fn lpd_main(
                   0i32,
                   &mut *s.offset(1) as *mut libc::c_char as *mut libc::c_void,
                   1i32 as size_t,
-                ) != 1i32 as libc::c_long
-                  || *s.offset(1) as libc::c_int != 0i32
+                ) !=1                  || *s.offset(1) as libc::c_int != 0i32
                 {
                   current_block = 12481496603591474651;
                   break;

@@ -11,7 +11,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 /*
  * Utility routines.
@@ -29,7 +29,7 @@ pub unsafe extern "C" fn safe_read(
   let mut n: ssize_t = 0;
   loop {
     n = read(fd, buf, count);
-    if n >= 0i32 as libc::c_long || *bb_errno != 4i32 {
+    if n >=0|| *bb_errno != 4i32 {
       break;
     }
     /* repeat the read() */
@@ -58,7 +58,7 @@ pub unsafe extern "C" fn full_read(
   total = 0i32 as ssize_t;
   while len != 0 {
     cc = safe_read(fd, buf, len);
-    if cc < 0i32 as libc::c_long {
+    if cc < 0 {
       if total != 0 {
         /* we already have some! */
         /* user can do another read to know the error code */
@@ -67,7 +67,7 @@ pub unsafe extern "C" fn full_read(
       return cc;
       /* read() returns -1 on failure. */
     }
-    if cc == 0i32 as libc::c_long {
+    if cc ==0{
       break;
     }
     buf = (buf as *mut libc::c_char).offset(cc as isize) as *mut libc::c_void;

@@ -32,7 +32,7 @@ pub unsafe extern "C" fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int
       if fd != 0i32 {
         close(fd);
       }
-      if r >= 0i32 as libc::c_long {
+      if r >=0{
         current_block_5 = 16658872821858055392;
       } else {
         current_block_5 = 3640593987805443782;

@@ -74,7 +74,7 @@ use crate::librb::__useconds_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 pub type nfds_t = libc::c_ulong;
@@ -341,8 +341,7 @@ pub unsafe extern "C" fn chat_main(
                 0i32,
                 bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *mut libc::c_void,
                 1i32 as size_t,
-              ) > 0i32 as libc::c_long
-              {
+              ) > 0               {
                 // dump device input if RECORD fname
                 if record_fd > 0i32 {
                   full_write(
@@ -387,8 +386,7 @@ pub unsafe extern "C" fn chat_main(
               while !l_0.is_null() {
                 let mut len_1: size_t = strlen((*l_0).data);
                 delta = buf_len.wrapping_sub(len_1) as ssize_t;
-                if delta >= 0i32 as libc::c_long
-                  && memcmp(
+                if delta >= 0                   && memcmp(
                     bb_common_bufsiz1.as_mut_ptr().offset(delta as isize) as *const libc::c_void,
                     (*l_0).data as *const libc::c_void,
                     len_1,
@@ -403,8 +401,7 @@ pub unsafe extern "C" fn chat_main(
               bb_got_signal = ERR_OK as libc::c_int as smallint;
               // expected reply received? -> goto next command
               delta = buf_len.wrapping_sub(expect_len as libc::c_ulong) as ssize_t;
-              if delta >= 0i32 as libc::c_long
-                && memcmp(
+              if delta >= 0                 && memcmp(
                   bb_common_bufsiz1.as_mut_ptr().offset(delta as isize) as *const libc::c_void,
                   expect as *const libc::c_void,
                   expect_len as libc::c_ulong,
@@ -510,7 +507,7 @@ pub unsafe extern "C" fn chat_main(
             buf_0 = buf_0.offset(-1)
           }
         }
-        if safe_write(1i32, buf_0 as *const libc::c_void, 1i32 as size_t) != 1i32 as libc::c_long {
+        if safe_write(1i32, buf_0 as *const libc::c_void, 1i32 as size_t) !=1{
           break;
         }
         len_2 = len_2.wrapping_sub(1);

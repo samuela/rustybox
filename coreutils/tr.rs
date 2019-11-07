@@ -34,8 +34,6 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
 
-
-
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -87,7 +85,7 @@ extern "C" {
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 /*
  * Mini tr implementation for busybox
@@ -548,8 +546,8 @@ pub unsafe extern "C" fn tr_main(
         str1 as *mut libc::c_void,
         TR_BUFSIZ as libc::c_int as size_t,
       );
-      if read_chars <= 0i32 as libc::c_long {
-        if read_chars < 0i32 as libc::c_long {
+      if read_chars <=0{
+        if read_chars < 0 {
           bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
         }
         break 'c_9891;

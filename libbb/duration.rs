@@ -409,7 +409,7 @@ pub unsafe extern "C" fn sleep_for_duration(mut duration: duration_t) {
     tv_sec: 0,
     tv_nsec: 0,
   };
-  ts.tv_sec = if -1i32 as __time_t > 0i32 as libc::c_long {
+  ts.tv_sec = if -1i32 as __time_t >0{
     -1i32 as __time_t
   } else {
     !((1i32 as __time_t)

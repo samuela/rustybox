@@ -51,7 +51,7 @@ use libc::off_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 
 pub type __jmp_buf = [libc::c_long; 8];
@@ -407,7 +407,7 @@ unsafe extern "C" fn fill_bitbuffer(
   while *current < required {
     if (*state).bytebuffer_offset >= (*state).bytebuffer_size {
       let mut sz: libc::c_uint = (0x4000i32 - 4i32) as libc::c_uint;
-      if (*state).to_read >= 0i32 as libc::c_long && (*state).to_read < sz as libc::c_long {
+      if (*state).to_read >=0&& (*state).to_read < sz as libc::c_long {
         /* unzip only */
         sz = (*state).to_read as libc::c_uint
       }
@@ -422,7 +422,7 @@ unsafe extern "C" fn fill_bitbuffer(
         (*state).error_msg = b"unexpected end of file\x00" as *const u8 as *const libc::c_char;
         abort_unzip(state);
       }
-      if (*state).to_read >= 0i32 as libc::c_long {
+      if (*state).to_read >=0{
         /* unzip only */
         (*state).to_read -= (*state).bytebuffer_size as libc::c_long
       } /* counter for codes of length k */

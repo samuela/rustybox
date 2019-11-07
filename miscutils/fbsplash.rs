@@ -93,7 +93,7 @@ extern "C" {
 use libc::off64_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 

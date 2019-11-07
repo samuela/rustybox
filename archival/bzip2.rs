@@ -1,4 +1,9 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::off_t;
+use libc::ssize_t;
+use libc::time_t;
 
 extern "C" {
   #[no_mangle]
@@ -59,16 +64,6 @@ extern "C" {
     expected_ext: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::time_t;
-
-
-
 
 pub type bb__aliased_u32 = u32;
 pub type bb__aliased_u64 = u64;
@@ -307,12 +302,7 @@ This program is released under the terms of the license contained
 in the file LICENSE.
 ------------------------------------------------------------------ */
 /* #include "bzlib_private.h" */
-unsafe extern "C" fn mvswap(
-  mut ptr: *mut u32,
-  mut zzp1: i32,
-  mut zzp2: i32,
-  mut zzn: i32,
-) {
+unsafe extern "C" fn mvswap(mut ptr: *mut u32, mut zzp1: i32, mut zzp2: i32, mut zzn: i32) {
   while zzn > 0i32 {
     let mut zztmp: i32 = *ptr.offset(zzp1 as isize) as i32;
     *ptr.offset(zzp1 as isize) = *ptr.offset(zzp2 as isize);
@@ -559,8 +549,8 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
     *fmap.offset(k as isize) = i as u32;
     i += 1
   }
-  nBhtab = (2i32 as libc::c_uint)
-    .wrapping_add((nblock as u32).wrapping_div(32i32 as libc::c_uint)) as i32;
+  nBhtab =
+    (2i32 as libc::c_uint).wrapping_add((nblock as u32).wrapping_div(32i32 as libc::c_uint)) as i32;
   i = 0i32;
   while i < nBhtab {
     *bhtab.offset(i as isize) = 0i32 as u32;
@@ -687,11 +677,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
 /*---------------------------------------------*/
 /*---------------------------------------------*/
 #[inline(never)]
-unsafe extern "C" fn mainGtU(
-  mut state: *mut EState,
-  mut i1: u32,
-  mut i2: u32,
-) -> libc::c_int {
+unsafe extern "C" fn mainGtU(mut state: *mut EState, mut i1: u32, mut i2: u32) -> libc::c_int {
   let mut k: i32 = 0;
   let mut c1: u8 = 0;
   let mut c2: u8 = 0;
@@ -924,12 +910,7 @@ static mut incs: [u32; 14] = [
   797161i32 as u32,
   2391484i32 as u32,
 ];
-unsafe extern "C" fn mainSimpleSort(
-  mut state: *mut EState,
-  mut lo: i32,
-  mut hi: i32,
-  mut d: i32,
-) {
+unsafe extern "C" fn mainSimpleSort(mut state: *mut EState, mut lo: i32, mut hi: i32, mut d: i32) {
   let ptr: *mut u32 = (*state).ptr;
   /* At which increment to start? */
   let mut hp: libc::c_int = 0i32;
@@ -1199,8 +1180,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
   /* 3%, +300 bytes */
   while i >= 0i32 {
     *quadrant.offset(i as isize) = 0i32 as u16;
-    j = ((j >> 8i32) as libc::c_uint | (*block.offset(i as isize) as libc::c_uint) << 8i32)
-      as i32;
+    j = ((j >> 8i32) as libc::c_uint | (*block.offset(i as isize) as libc::c_uint) << 8i32) as i32;
     let ref mut fresh4 = *ftab.offset(j as isize);
     *fresh4 = (*fresh4).wrapping_add(1);
     i -= 1
@@ -1330,16 +1310,15 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
      */
     j = 0i32;
     while j <= 255i32 {
-      (*state).mainSort__copyStart[j as usize] =
-        (*ftab.offset(((j << 8i32) as libc::c_uint).wrapping_add(ss) as isize)
-          & !(1i32 << 21i32) as libc::c_uint) as i32;
+      (*state).mainSort__copyStart[j as usize] = (*ftab
+        .offset(((j << 8i32) as libc::c_uint).wrapping_add(ss) as isize)
+        & !(1i32 << 21i32) as libc::c_uint) as i32;
       (*state).mainSort__copyEnd[j as usize] = (*ftab.offset(
         ((j << 8i32) as libc::c_uint)
           .wrapping_add(ss)
           .wrapping_add(1i32 as libc::c_uint) as isize,
       ) & !(1i32 << 21i32) as libc::c_uint)
-        .wrapping_sub(1i32 as libc::c_uint)
-        as i32;
+        .wrapping_sub(1i32 as libc::c_uint) as i32;
       j += 1
     }
     j = (*ftab.offset((ss << 8i32) as isize) & !(1i32 << 21i32) as libc::c_uint) as i32;
@@ -1985,8 +1964,7 @@ unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
     *ryy_j = rtmp2
   }
   *yy.offset(0) = rtmp;
-  return ryy_j.wrapping_offset_from(&mut *yy.offset(0) as *mut u8) as libc::c_long
-    as libc::c_int;
+  return ryy_j.wrapping_offset_from(&mut *yy.offset(0) as *mut u8) as libc::c_long as libc::c_int;
 }
 #[inline(never)]
 unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
@@ -2876,7 +2854,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
       iobuf as *mut libc::c_void,
       IOBUF_SIZE as libc::c_int as size_t,
     );
-    if count < 0i32 as libc::c_long {
+    if count < 0 {
       bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
       total = -1i32 as libc::c_longlong;
       break;
@@ -2888,7 +2866,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
         count,
         iobuf.offset(IOBUF_SIZE as libc::c_int as isize) as *mut libc::c_void,
       );
-      if count == 0i32 as libc::c_long || total < 0i32 as libc::c_longlong {
+      if count ==0|| total < 0i32 as libc::c_longlong {
         break;
       }
     }

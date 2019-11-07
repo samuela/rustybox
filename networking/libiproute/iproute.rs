@@ -187,7 +187,7 @@ pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]
@@ -1579,7 +1579,7 @@ unsafe extern "C" fn iproute_flush_cache() {
     flush_fd,
     b"-1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     2i32 as size_t,
-  ) < 2i32 as libc::c_long
+  ) < 2
   {
     bb_simple_perror_msg(b"can\'t flush routing cache\x00" as *const u8 as *const libc::c_char);
     return;

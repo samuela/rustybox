@@ -660,8 +660,7 @@ unsafe extern "C" fn create_J(
       - (*nfile[i as usize].offset((*nlen.offset(i as isize) - 1i32) as isize))
         .c2rust_unnamed
         .offset
-      == 1i32 as libc::c_long
-    {
+      ==1    {
       let ref mut fresh7 = *nlen.offset(i as isize);
       *fresh7 -= 1
     }
@@ -868,7 +867,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
           while k <= v[j as usize].b {
             nonempty = nonempty
               | (*ix[j as usize].offset(k as isize) - *ix[j as usize].offset((k - 1i32) as isize)
-                != 1i32 as libc::c_long);
+                != 1);
             k += 1
           }
           j += 1
@@ -1040,7 +1039,7 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
         *::std::mem::transmute::<&[u8; 15], &mut [libc::c_char; 15]>(b"/tmp/difXXXXXX\x00");
       let mut fd_tmp: libc::c_int = xmkstemp(name.as_mut_ptr());
       unlink(name.as_mut_ptr());
-      if bb_copyfd_eof(fd, fd_tmp) < 0i32 as libc::c_long {
+      if bb_copyfd_eof(fd, fd_tmp) < 0 {
         xfunc_die();
       }
       if fd != 0i32 {

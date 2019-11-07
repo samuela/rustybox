@@ -853,7 +853,7 @@ unsafe extern "C" fn str2sockaddr(
     let mut current_block_34: u64;
     /* points to ":" or "]:" */
     let mut sz: libc::c_int =
-      (cp.wrapping_offset_from(host) as libc::c_long + 1i32 as libc::c_long) as libc::c_int; /* skip ']' */
+      (cp.wrapping_offset_from(host) as libc::c_long + 1) as libc::c_int; /* skip ']' */
     let mut fresh3 = ::std::vec::from_elem(0, sz as libc::c_ulong as usize); /* skip ':' */
     host = safe_strncpy(fresh3.as_mut_ptr() as *mut libc::c_char, host, sz as size_t);
     if 1i32 != 0 && *cp as libc::c_int != ':' as i32 {

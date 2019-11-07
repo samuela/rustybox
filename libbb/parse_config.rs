@@ -1,12 +1,15 @@
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn getline(__lineptr: *mut *mut libc::c_char, __n: *mut size_t, __stream: *mut FILE)
-    -> __ssize_t;
+  fn getline(__lineptr: *mut *mut libc::c_char, __n: *mut size_t, __stream: *mut FILE) -> ssize_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -35,12 +38,6 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use crate::librb::__ssize_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-
-
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -51,6 +48,7 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct parser_t {
@@ -134,18 +132,16 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
   let mut nlen: ssize_t = 0;
   let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
   len = getline(&mut (*parser).line, &mut (*parser).line_alloc, (*parser).fp);
-  if len <= 0i32 as libc::c_long {
+  if len <= 0 {
     return len as libc::c_int;
   }
   line = (*parser).line;
   loop {
     (*parser).lineno += 1;
-    if *line.offset((len - 1i32 as libc::c_long) as isize) as libc::c_int == '\n' as i32 {
+    if *line.offset((len - 1) as isize) as libc::c_int == '\n' as i32 {
       len -= 1
     }
-    if len == 0i32 as libc::c_long
-      || *line.offset((len - 1i32 as libc::c_long) as isize) as libc::c_int != '\\' as i32
-    {
+    if len == 0 || *line.offset((len - 1) as isize) as libc::c_int != '\\' as i32 {
       break;
     }
     len -= 1;
@@ -154,11 +150,11 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
       &mut (*parser).nline_alloc,
       (*parser).fp,
     );
-    if nlen <= 0i32 as libc::c_long {
+    if nlen <= 0 {
       break;
     }
-    if (*parser).line_alloc < (len + nlen + 1i32 as libc::c_long) as libc::c_ulong {
-      (*parser).line_alloc = (len + nlen + 1i32 as libc::c_long) as size_t;
+    if (*parser).line_alloc < (len + nlen + 1) as libc::c_ulong {
+      (*parser).line_alloc = (len + nlen + 1) as size_t;
       (*parser).line =
         xrealloc(line as *mut libc::c_void, (*parser).line_alloc) as *mut libc::c_char;
       line = (*parser).line

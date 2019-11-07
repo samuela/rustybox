@@ -5,7 +5,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred
 
@@ -33,7 +33,7 @@ pub unsafe extern "C" fn full_write(
   total = 0i32 as ssize_t;
   while len != 0 {
     cc = safe_write(fd, buf, len);
-    if cc < 0i32 as libc::c_long {
+    if cc < 0 {
       if total != 0 {
         /* we already wrote some! */
         /* user can do another write to know the error code */

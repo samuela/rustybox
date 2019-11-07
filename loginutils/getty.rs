@@ -4,7 +4,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::speed_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;
@@ -513,8 +513,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
         0i32,
         &mut c as *mut libc::c_char as *mut libc::c_void,
         1i32 as size_t,
-      ) < 1i32 as libc::c_long
-      {
+      ) <1      {
         finalize_tty_attrs();
         if *bb_errno == 4i32 || *bb_errno == 5i32 {
           exit(0i32);
@@ -695,7 +694,7 @@ pub unsafe extern "C" fn getty_main(
   /* Steal ctty if we don't have it yet */
   tsid = tcgetsid(0i32);
   if tsid < 0i32 || pid != tsid {
-    if ioctl(0i32, 0x540ei32 as libc::c_ulong, 1i32 as libc::c_long) < 0i32 {
+    if ioctl(0i32, 0x540ei32 as libc::c_ulong, 1) < 0i32 {
       bb_simple_perror_msg_and_die(b"TIOCSCTTY\x00" as *const u8 as *const libc::c_char);
     }
   }
@@ -745,8 +744,7 @@ pub unsafe extern "C" fn getty_main(
       0i32,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) == 1i32 as libc::c_long
-    {
+    ) ==1    {
       if ch as libc::c_int == '\n' as i32 || ch as libc::c_int == '\r' as i32 {
         break;
       }

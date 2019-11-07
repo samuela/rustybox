@@ -250,7 +250,7 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

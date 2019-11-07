@@ -1,6 +1,6 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc;
 use libc::gid_t;
 use libc::pid_t;

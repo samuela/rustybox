@@ -550,7 +550,7 @@ unsafe extern "C" fn parse_file_cmd(
     /* If lines glued together, put backslash back. */
     *retval = xstrndup(
       start,
-      (eol.wrapping_offset_from(start) as libc::c_long + 1i32 as libc::c_long) as libc::c_int,
+      (eol.wrapping_offset_from(start) as libc::c_long + 1) as libc::c_int,
     );
     *(*retval).offset(eol.wrapping_offset_from(start) as libc::c_long as isize) =
       '\\' as i32 as libc::c_char
@@ -599,7 +599,7 @@ unsafe extern "C" fn parse_subst_cmd(
           10i32,
         ) as libc::c_uint;
         idx =
-          (pos.wrapping_offset_from(substr) as libc::c_long - 1i32 as libc::c_long) as libc::c_int
+          (pos.wrapping_offset_from(substr) as libc::c_long - 1) as libc::c_int
       }
     } else {
       /* Skip spaces */

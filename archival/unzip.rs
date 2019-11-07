@@ -143,7 +143,7 @@ use libc::mode_t;
 use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
 
@@ -393,7 +393,7 @@ unsafe extern "C" fn find_cdf_offset() -> u32 {
     return 0xffffffffu32;
   }
   end -= (64i32 * 1024i32) as libc::c_long;
-  if end < 0i32 as libc::c_long {
+  if end < 0 {
     end = 0i32 as off_t
   }
   xlseek(zip_fd as libc::c_int, end, 0i32);
@@ -493,7 +493,7 @@ unsafe extern "C" fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
   };
 }
 unsafe extern "C" fn unzip_skip(mut skip: off_t) {
-  if skip != 0i32 as libc::c_long {
+  if skip !=0{
     if lseek(zip_fd as libc::c_int, skip, 1i32) == -1i32 as off_t {
       bb_copyfd_exact_size(zip_fd as libc::c_int, -1i32, skip);
     }
@@ -579,19 +579,19 @@ unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc:
      * and will seek to the correct beginning of next file.
      */
     xstate.bytes_out = unpack_bz2_stream(&mut xstate) as off_t;
-    if xstate.bytes_out < 0i32 as libc::c_long {
+    if xstate.bytes_out < 0 {
       bb_simple_error_msg_and_die(b"inflate error\x00" as *const u8 as *const libc::c_char);
     }
   } else if (*zip).fmt.method as libc::c_int == 14i32 {
     /* Not tested yet */
     xstate.bytes_out = unpack_lzma_stream(&mut xstate) as off_t;
-    if xstate.bytes_out < 0i32 as libc::c_long {
+    if xstate.bytes_out < 0 {
       bb_simple_error_msg_and_die(b"inflate error\x00" as *const u8 as *const libc::c_char);
     }
   } else if (*zip).fmt.method as libc::c_int == 95i32 {
     /* Not tested yet */
     xstate.bytes_out = unpack_xz_stream(&mut xstate) as off_t;
-    if xstate.bytes_out < 0i32 as libc::c_long {
+    if xstate.bytes_out < 0 {
       bb_simple_error_msg_and_die(b"inflate error\x00" as *const u8 as *const libc::c_char);
     }
   } else {
@@ -1243,7 +1243,7 @@ pub unsafe extern "C" fn unzip_main(
       ); /* happens if usize < size */
     } else {
       let mut percents_0: libc::c_ulong = total_usize.wrapping_sub(total_size);
-      if (percents_0 as libc::c_long) < 0i32 as libc::c_long {
+      if (percents_0 as libc::c_long) < 0 {
         percents_0 = 0i32 as libc::c_ulong
       }
       percents_0 = percents_0.wrapping_mul(100i32 as libc::c_ulong);

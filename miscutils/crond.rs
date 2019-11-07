@@ -1428,7 +1428,7 @@ pub unsafe extern "C" fn crond_main(
         dt / 60i32 as libc::c_long,
       );
     /* and we do not run any jobs in this case */
-    } else if dt > 0i32 as libc::c_long {
+    } else if dt >0{
       /* Usual case: time advances forward, as expected */
       flag_starting_jobs(t1, t2);
       start_jobs(-1i32);

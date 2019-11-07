@@ -213,7 +213,7 @@ pub unsafe extern "C" fn more_main(
           {
             if input != 'r' as i32 && please_display_more_prompt != 0 {
               len = printf(b"--More-- \x00" as *const u8 as *const libc::c_char);
-              if st.st_size != 0i32 as libc::c_long {
+              if st.st_size !=0{
                 let mut d: uoff_t = (st.st_size as uoff_t).wrapping_div(100i32 as libc::c_ulong);
                 if d == 0i32 as libc::c_ulong {
                   d = 1i32 as uoff_t

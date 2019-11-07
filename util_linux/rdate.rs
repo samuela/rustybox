@@ -1,6 +1,11 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::ssize_t;
+use libc::time_t;
+
 extern "C" {
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
@@ -37,13 +42,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-
-
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::ssize_t;
-use libc::time_t;
-
 
 /*
  * The Rdate command will ask a time server for the RFC 868 time
@@ -90,7 +88,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
     fd,
     &mut nett as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
-  ) != 4i32 as libc::c_long
+  ) != 4
   {
     /* read time from server */
     bb_error_msg_and_die(

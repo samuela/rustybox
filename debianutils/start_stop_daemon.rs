@@ -2,7 +2,7 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc;
 use libc::gid_t;
 use libc::ino64_t;
@@ -219,7 +219,7 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_cmpbuf as *mut libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_sizeof as size_t,
   );
-  if bytes > 0i32 as libc::c_long {
+  if bytes >0{
     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .execname_cmpbuf
       .offset(bytes as isize) = '\u{0}' as i32 as libc::c_char;
@@ -245,8 +245,7 @@ unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
-  ) < 0i32 as libc::c_long
-  {
+  ) < 0   {
     return 0i32;
   }
   buf[(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)

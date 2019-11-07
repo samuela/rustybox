@@ -105,7 +105,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use crate::librb::size_t;
 

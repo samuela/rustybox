@@ -1,10 +1,10 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use libc;
 use libc::off_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::time_t;
 
 extern "C" {
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn check_signature16(
       (*xstate).src_fd,
       &mut magic2 as *mut u16 as *mut libc::c_void,
       2i32 as size_t,
-    ) != 2i32 as libc::c_long
+    ) != 2
       || magic2 as libc::c_uint != magic16
     {
       bb_simple_error_msg(b"invalid magic\x00" as *const u8 as *const libc::c_char);

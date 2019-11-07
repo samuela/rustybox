@@ -60,7 +60,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use libc::FILE;
 
@@ -189,7 +189,7 @@ pub unsafe extern "C" fn readprofile_main(
   /*
    * Use an fd for the profiling buffer, to skip stdio overhead
    */
-  len = if -1i32 as ssize_t > 0i32 as libc::c_long {
+  len = if -1i32 as ssize_t > 0 {
     -1i32 as ssize_t
   } else {
     !((1i32 as ssize_t)

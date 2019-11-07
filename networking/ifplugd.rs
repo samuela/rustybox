@@ -1,8 +1,8 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use libc;
 use libc::pid_t;
+use libc::ssize_t;
 
 extern "C" {
   #[no_mangle]
@@ -1027,7 +1027,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
       BUF_SIZE as libc::c_int as size_t,
       MSG_DONTWAIT as libc::c_int,
     );
-    if bytes < 0i32 as libc::c_long {
+    if bytes < 0 {
       if *bb_errno == 11i32 {
         break;
       }
@@ -1038,12 +1038,11 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
       return -1i32;
     } else {
       mhdr = replybuf as *mut nlmsghdr;
-      while bytes > 0i32 as libc::c_long {
-        if !(bytes
-          >= ::std::mem::size_of::<nlmsghdr>() as libc::c_ulong as libc::c_int as libc::c_long
+      while bytes > 0 {
+        if !(bytes >= ::std::mem::size_of::<nlmsghdr>() as isize
           && (*mhdr).nlmsg_len as libc::c_ulong
             >= ::std::mem::size_of::<nlmsghdr>() as libc::c_ulong
-          && (*mhdr).nlmsg_len as libc::c_long <= bytes)
+          && (*mhdr).nlmsg_len <= bytes as u32)
         {
           bb_simple_error_msg(
             b"netlink packet too small or truncated\x00" as *const u8 as *const libc::c_char,
@@ -1148,7 +1147,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
           .nlmsg_len
           .wrapping_add(4u32)
           .wrapping_sub(1i32 as libc::c_uint)
-          & !4u32.wrapping_sub(1i32 as libc::c_uint)) as libc::c_long;
+          & !4u32.wrapping_sub(1i32 as libc::c_uint)) as isize;
         mhdr = (mhdr as *mut libc::c_char).offset(
           ((*mhdr)
             .nlmsg_len

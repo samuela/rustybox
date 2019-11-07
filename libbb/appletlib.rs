@@ -7,7 +7,7 @@ use crate::librb::group;
 use libc::mode_t;
 use crate::librb::passwd;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use crate::shell::ash::ash_main;
 use libc;
 use libc::gid_t;

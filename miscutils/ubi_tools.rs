@@ -66,7 +66,7 @@ pub type __int64_t = libc::c_long;
 
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::stat;
 
 
@@ -127,8 +127,7 @@ unsafe extern "C" fn get_num_from_file(
     path,
     buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 24]>() as libc::c_ulong,
-  ) < 0i32 as libc::c_long
-  {
+  ) < 0   {
     bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,

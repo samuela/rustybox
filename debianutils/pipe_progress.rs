@@ -14,7 +14,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 /* Read a block of data from stdin, write it to stdout.
  * Activity is indicated by a '.' to stderr

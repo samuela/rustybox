@@ -43,7 +43,7 @@ use libc::mode_t;
 use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 use libc::uid_t;
 use crate::librb::uoff_t;
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn get_header_cpio(
       if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
         (*file_header).size &= 0x1fffi32 as libc::c_long;
         (*file_header).link_target =
-          xzalloc(((*file_header).size + 1i32 as libc::c_long) as size_t) as *mut libc::c_char;
+          xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
         xread(
           (*archive_handle).src_fd,
           (*file_header).link_target as *mut libc::c_void,

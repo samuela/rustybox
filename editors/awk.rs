@@ -184,7 +184,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 
 
@@ -2586,8 +2586,7 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
         n as libc::c_long
       } else {
         (v.wrapping_offset_from((*ptr_to_globals.offset(-1i32 as isize)).Fields) as libc::c_long)
-          + 1i32 as libc::c_long
-      } as libc::c_double,
+          +1      } as libc::c_double,
     );
     /* right here v is invalid. Just to note... */
   };
@@ -2759,12 +2758,11 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
     m = qrealloc(m, a + p + 128i32, &mut size);
     b = m.offset(a as isize);
     pp = p;
-    p = (p as libc::c_long
-      + safe_read(
+    p = p + safe_read(
         fd,
         b.offset(p as isize) as *mut libc::c_void,
-        (size - p - 1i32) as size_t,
-      )) as libc::c_int;
+        (size - p - 1) as size_t,
+      ) as i32;
     if p < pp {
       p = 0i32;
       r = 0i32;
@@ -3303,7 +3301,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
         if (*ptr_to_globals.offset(-1i32 as isize)).icase == 0 {
           let mut s_2: *mut libc::c_char = strstr(as_0[0], as_0[1]);
           if !s_2.is_null() {
-            n = (s_2.wrapping_offset_from(as_0[0]) as libc::c_long + 1i32 as libc::c_long)
+            n = (s_2.wrapping_offset_from(as_0[0]) as libc::c_long + 1)
               as libc::c_int
           }
         } else {

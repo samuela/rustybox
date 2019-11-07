@@ -1,12 +1,12 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::mode_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::timespec;
 
@@ -998,8 +998,7 @@ pub unsafe extern "C" fn runsv_main(
         .rd,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) == 1i32 as libc::c_long
-    {}
+    ) ==1    {}
     loop {
       let mut child: pid_t = 0;
       let mut wstat: libc::c_int = 0;
@@ -1037,7 +1036,7 @@ pub unsafe extern "C" fn runsv_main(
         deadline = ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svd[0]
           .start
           .tv_sec
-          + 1i32 as libc::c_long) as libc::c_uint;
+          + 1) as libc::c_uint;
         gettimeofday_ns(
           &mut (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .svd
@@ -1072,7 +1071,7 @@ pub unsafe extern "C" fn runsv_main(
           deadline = ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svd[1]
             .start
             .tv_sec
-            + 1i32 as libc::c_long) as libc::c_uint;
+            + 1) as libc::c_uint;
           gettimeofday_ns(
             &mut (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .svd
@@ -1102,8 +1101,7 @@ pub unsafe extern "C" fn runsv_main(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svd[0].fdcontrol,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) == 1i32 as libc::c_long
-    {
+    ) ==1    {
       ctrl(
         &mut *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .svd
@@ -1117,7 +1115,7 @@ pub unsafe extern "C" fn runsv_main(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svd[1].fdcontrol,
         &mut ch as *mut libc::c_char as *mut libc::c_void,
         1i32 as size_t,
-      ) == 1i32 as libc::c_long
+      ) == 1
       {
         ctrl(
           &mut *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))

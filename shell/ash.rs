@@ -8,7 +8,7 @@ use crate::librb::signal::sigset_t;
 use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
@@ -3094,7 +3094,7 @@ unsafe extern "C" fn set_curjob(mut jp: *mut job, mut mode: libc::c_uint) {
   };
 }
 unsafe extern "C" fn jobno(mut jp: *const job) -> libc::c_int {
-  return (jp.wrapping_offset_from(jobtab) as libc::c_long + 1i32 as libc::c_long) as libc::c_int;
+  return (jp.wrapping_offset_from(jobtab) as libc::c_long + 1) as libc::c_int;
 }
 unsafe extern "C" fn getjob(mut name: *const libc::c_char, mut getctl: libc::c_int) -> *mut job {
   let mut current_block: u64;
@@ -4472,8 +4472,7 @@ unsafe extern "C" fn clear_traps() {
       }
       *tp = 0 as *mut libc::c_char;
       if tp.wrapping_offset_from((*ash_ptr_to_globals_misc).trap.as_mut_ptr()) as libc::c_long
-        != 0i32 as libc::c_long
-      {
+        != 0       {
         setsignal(
           tp.wrapping_offset_from((*ash_ptr_to_globals_misc).trap.as_mut_ptr()) as libc::c_long
             as libc::c_int,
@@ -5591,7 +5590,7 @@ unsafe extern "C" fn rmescapes(
   if flag & 0x8i32 != 0 {
     expdest = r;
     expdest =
-      expdest.offset((q.wrapping_offset_from(r) as libc::c_long + 1i32 as libc::c_long) as isize)
+      expdest.offset((q.wrapping_offset_from(r) as libc::c_long + 1) as isize)
   }
   return r;
 }
@@ -6264,7 +6263,7 @@ unsafe extern "C" fn varunset(
   }
   ash_msg_and_raise_error(
     b"%.*s: %s%s\x00" as *const u8 as *const libc::c_char,
-    (end.wrapping_offset_from(var) as libc::c_long - 1i32 as libc::c_long) as libc::c_int,
+    (end.wrapping_offset_from(var) as libc::c_long - 1) as libc::c_int,
     var,
     msg,
     tail,
@@ -6397,7 +6396,7 @@ unsafe extern "C" fn subevalvar(
       }
       /* Read LEN in ${var:POS:LEN} */
       len =
-        (str.wrapping_offset_from(startp) as libc::c_long - 1i32 as libc::c_long) as libc::c_int;
+        (str.wrapping_offset_from(startp) as libc::c_long - 1) as libc::c_int;
       /* *loc != '\0', guaranteed by parser */
       if quotes != 0 {
         let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -6872,7 +6871,7 @@ unsafe extern "C" fn varvalue(
         return -1i32 as ssize_t;
       }
       len = strtodest(p, syntax, quotes) as ssize_t;
-      if subtype == 0xai32 && len > 0i32 as libc::c_long {
+      if subtype == 0xai32 && len >0{
         reinit_unicode_for_ash();
         if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
           expdest = expdest.offset(-len as isize);
@@ -6950,7 +6949,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
       varlen -= 1
     }
     if subtype as libc::c_int == 0x3i32 {
-      varlen = -1i32 as libc::c_long - varlen;
+      varlen = -1 - varlen;
       current_block = 4602131768141143591;
       break;
     } else {
@@ -6959,7 +6958,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
         break;
       }
       if subtype as libc::c_int == 0x5i32 || subtype as libc::c_int == 0x4i32 {
-        if varlen >= 0i32 as libc::c_long {
+        if varlen >=0{
           current_block = 12784458099392390209;
           break;
         }
@@ -6979,7 +6978,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
          */
         removerecordregions(startloc);
       } else {
-        if varlen < 0i32 as libc::c_long
+        if varlen < 0
           && (*ash_ptr_to_globals_misc).optlist[13] as libc::c_int != 0
         {
           varunset(p, var, 0 as *const libc::c_char, 0i32);
@@ -6996,7 +6995,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
   }
   match current_block {
     4602131768141143591 => {
-      if varlen < 0i32 as libc::c_long {
+      if varlen < 0 {
         argstr(p, flag | 0x2i32 | 0x40i32);
         current_block = 8905788842858268286;
       } else {
@@ -7006,7 +7005,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
     17788412896529399552 => {
       if subtype as libc::c_int == 0x1i32 {
         current_block = 12784458099392390209;
-      } else if varlen >= 0i32 as libc::c_long {
+      } else if varlen >=0{
         /*
          * Terminate the string and start recording the pattern
          * right after it
@@ -7041,10 +7040,10 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
       }
     }
     1608152415753874203 => {
-      cvtnum(if varlen > 0i32 as libc::c_long {
+      cvtnum(if varlen > 0 {
         varlen
       } else {
-        0i32 as libc::c_long
+        0
       } as arith_t);
       current_block = 12784458099392390209;
     }
@@ -7088,7 +7087,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
       if c as libc::c_int == '\u{81}' as i32 as libc::c_uchar as libc::c_int {
         p = p.offset(1)
       } else if c as libc::c_int == '\u{84}' as i32 as libc::c_uchar as libc::c_int {
-        if varlen >= 0i32 as libc::c_long {
+        if varlen >=0{
           argbackq = (*argbackq).next
         }
       } else if c as libc::c_int == '\u{82}' as i32 as libc::c_uchar as libc::c_int {
@@ -7336,7 +7335,7 @@ unsafe extern "C" fn expmeta(
         let mut len: libc::c_uint = 0;
         p = stpcpy(enddir, (*dp).d_name.as_mut_ptr());
         *p = '/' as i32 as libc::c_char;
-        offset = (p.wrapping_offset_from((*exp).dir) as libc::c_long + 1i32 as libc::c_long)
+        offset = (p.wrapping_offset_from((*exp).dir) as libc::c_long + 1)
           as libc::c_uint;
         len = offset
           .wrapping_add(name_len)
@@ -10541,7 +10540,7 @@ unsafe extern "C" fn preadbuffer() -> libc::c_int {
             if c as libc::c_int == '\n' as i32 {
               (*g_parsefile).left_in_line = (q.wrapping_offset_from((*g_parsefile).next_to_pgetc)
                 as libc::c_long
-                - 1i32 as libc::c_long) as libc::c_int;
+                - 1) as libc::c_int;
               break 's_104;
             }
           }
@@ -10550,7 +10549,7 @@ unsafe extern "C" fn preadbuffer() -> libc::c_int {
           }
           (*g_parsefile).left_in_line = (q.wrapping_offset_from((*g_parsefile).next_to_pgetc)
             as libc::c_long
-            - 1i32 as libc::c_long) as libc::c_int;
+            - 1) as libc::c_int;
           if (*g_parsefile).left_in_line < 0i32 {
             current_block = 6729265098275823777;
             break;
@@ -11419,7 +11418,7 @@ unsafe extern "C" fn getopts(
     _ => {}
   }
   ind =
-    (optnext.wrapping_offset_from(optfirst) as libc::c_long + 1i32 as libc::c_long) as libc::c_int;
+    (optnext.wrapping_offset_from(optfirst) as libc::c_long + 1) as libc::c_int;
   setvar(
     b"OPTIND\x00" as *const u8 as *const libc::c_char,
     itoa(ind),

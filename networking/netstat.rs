@@ -219,7 +219,7 @@ use crate::librb::smallint;
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 
 use libc::stat;
@@ -472,7 +472,7 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
   if !linkname.is_null() {
     inode = extract_socket_inode(linkname);
     free(linkname as *mut libc::c_void);
-    if inode >= 0i32 as libc::c_long {
+    if inode >=0{
       prg_cache_add(inode, pid_slash_progname as *mut libc::c_char);
     }
   }

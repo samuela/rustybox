@@ -85,7 +85,7 @@ use crate::librb::__time_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -635,8 +635,7 @@ pub unsafe extern "C" fn dhcprelay_main(
           << *fds.offset(0)
             % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
           as __fd_mask
-        != 0i32 as libc::c_long
-      {
+        != 0       {
         packlen = udhcp_recv_kernel_packet(&mut dhcp_msg, *fds.offset(0));
         if packlen > 0i32 {
           pass_to_client(&mut dhcp_msg, packlen, fds);
@@ -659,8 +658,7 @@ pub unsafe extern "C" fn dhcprelay_main(
             << *fds.offset(i as isize)
               % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
             as __fd_mask
-          != 0i32 as libc::c_long
-        {
+          != 0         {
           addr_size = ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as socklen_t;
           packlen = recvfrom(
             *fds.offset(i as isize),

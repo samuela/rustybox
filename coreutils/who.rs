@@ -154,7 +154,7 @@ unsafe extern "C" fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
     str6[1] = '\0';
     return;
   }*/
-  if t >= 0i32 as libc::c_long && t < (24i32 * 60i32 * 60i32) as libc::c_long {
+  if t >= 0 && t < (24i32 * 60i32 * 60i32) as libc::c_long {
     sprintf(
       str6,
       b"%02d:%02d\x00" as *const u8 as *const libc::c_char,

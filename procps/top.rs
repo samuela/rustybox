@@ -146,7 +146,7 @@ pub type int64_t = __int64_t;
 use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::uid_t;
 
 

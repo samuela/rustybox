@@ -524,8 +524,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
       /* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
       let mut age: time_t =
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_time_t - (*dn).dn_time;
-      if age < 3600i64 * 24i32 as libc::c_long * 365i32 as libc::c_long / 2i32 as libc::c_long
-        && age > (-15i32 * 60i32) as libc::c_long
+      if age < 3600i64 * 24i32 as libc::c_long * 365i32 as libc::c_long / 2         && age > (-15i32 * 60i32) as libc::c_long
       {
         /* less than 6 months old */
         /* "mmm dd hh:mm " */
@@ -845,7 +844,7 @@ unsafe extern "C" fn sortcmp(
       as libc::c_int
       - ((*d1).dn_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) as libc::c_int)
       as off_t;
-    if dif != 0i32 as libc::c_long {
+    if dif != 0 {
       current_block = 17197688095750354635;
     } else {
       current_block = 2473556513754201174;
@@ -871,7 +870,7 @@ unsafe extern "C" fn sortcmp(
           strchrnul((*d2).name, '.' as i32),
         ) as off_t
       }
-      if dif == 0i32 as libc::c_long {
+      if dif == 0 {
         /* sort by name, use as tie breaker for other sorts */
         dif = strcmp((*d1).name, (*d2).name) as off_t
       } else if ::std::mem::size_of::<off_t>() as libc::c_ulong

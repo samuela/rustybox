@@ -35,7 +35,7 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -553,7 +553,7 @@ pub unsafe extern "C" fn recv_from_to(
   msg.msg_control = &mut u as *mut C2RustUnnamed_2 as *mut libc::c_void;
   msg.msg_controllen = ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong;
   recv_length = recvmsg(fd, &mut msg, flags);
-  if recv_length < 0i32 as libc::c_long {
+  if recv_length < 0 {
     return recv_length;
   }
   /* Here we try to retrieve destination IP and memorize it */

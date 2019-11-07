@@ -339,7 +339,7 @@ pub unsafe extern "C" fn last_main(
     .wrapping_mul(::std::mem::size_of::<utmpx>() as libc::c_ulong) as off_t;
   loop {
     pos -= ::std::mem::size_of::<utmpx>() as libc::c_ulong as off_t;
-    if pos < 0i32 as libc::c_long {
+    if pos < 0 {
       break;
     }
     xlseek(file, pos, 0i32);
@@ -414,7 +414,7 @@ pub unsafe extern "C" fn last_main(
           }
           if show != 0 {
             let mut state: libc::c_int = boot_down as libc::c_int;
-            if boot_time == 0i32 as libc::c_long {
+            if boot_time ==0{
               state = LOGGED as libc::c_int;
               /* Check if the process is alive */
               if ut.ut_pid > 0i32 && kill(ut.ut_pid, 0i32) != 0i32 && *bb_errno == 3i32 {

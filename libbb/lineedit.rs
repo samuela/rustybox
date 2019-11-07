@@ -244,7 +244,7 @@ pub type int64_t = __int64_t;
 use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -474,7 +474,7 @@ unsafe extern "C" fn load_string(mut src: *const libc::c_char) -> size_t {
       src,
       ((*lineedit_ptr_to_statics).maxsize - 1i32) as size_t,
     ) as ssize_t;
-    if len < 0i32 as libc::c_long {
+    if len < 0 {
       len = 0i32 as ssize_t
     }
     *(*lineedit_ptr_to_statics).command_ps.offset(len as isize) = 0i32;
@@ -502,7 +502,7 @@ unsafe extern "C" fn save_string(
       (*lineedit_ptr_to_statics).command_ps,
       maxsize.wrapping_sub(1i32 as libc::c_uint) as size_t,
     ) as ssize_t;
-    if len < 0i32 as libc::c_long {
+    if len < 0 {
       len = 0i32 as ssize_t
     }
     *dst.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
@@ -531,7 +531,7 @@ unsafe extern "C" fn BB_PUTCHAR(mut c: wchar_t) {
       init
     };
     let mut len: ssize_t = bb_wcrtomb(buf.as_mut_ptr(), c, &mut mbst) as ssize_t;
-    if len > 0i32 as libc::c_long {
+    if len >0{
       buf[len as usize] = '\u{0}' as i32 as libc::c_char;
       fputs_unlocked(buf.as_mut_ptr(), stdout);
     }

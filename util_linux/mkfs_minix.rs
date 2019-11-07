@@ -1,4 +1,12 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
+use libc::ssize_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -61,16 +69,6 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 }
 
-use libc::off_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-
-
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -81,7 +79,7 @@ pub struct mntent {
   pub mnt_freq: libc::c_int,
   pub mnt_passno: libc::c_int,
 }
-use crate::librb::uoff_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -108,12 +106,14 @@ pub struct globals {
   pub ind_block2: [libc::c_ulong; 256],
   pub dind_block2: [libc::c_ulong; 256],
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
   pub superblock_buffer: [libc::c_char; 1024],
   pub SB: minix_superblock,
 }
+
 /*
  * minix superblock data on disk
  */
@@ -131,6 +131,7 @@ pub struct minix_superblock {
   pub s_state: u16,
   pub s_zones: u32,
 }
+
 /*
  * This is the original minix inode layout on disk.
  * Note the 8-bit gid and atime and ctime.
@@ -146,6 +147,7 @@ pub struct minix1_inode {
   pub i_nlinks: u8,
   pub i_zone: [u16; 9],
 }
+
 /*
  * The new minix inode has all the time entries, as well as
  * long block numbers and a third indirect block (7+1+1+1
@@ -165,6 +167,7 @@ pub struct minix2_inode {
   pub i_ctime: u32,
   pub i_zone: [u32; 10],
 }
+
 /* Believe it or not, but mount.h has this one #defined */
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const MINIX2_INODES_PER_BLOCK: C2RustUnnamed_0 = 16;
@@ -188,11 +191,14 @@ pub const MINIX_BAD_INO: C2RustUnnamed_0 = 2;
 pub const MINIX_ROOT_INO: C2RustUnnamed_0 = 1;
 pub const BITS_PER_BLOCK: C2RustUnnamed_0 = 8192;
 pub const BLOCK_SIZE: C2RustUnnamed_0 = 1024;
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const TEST_BUFFER_BLOCKS: C2RustUnnamed_1 = 16;
 pub const MAX_GOOD_BLOCKS: C2RustUnnamed_1 = 512;
+
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const dev_fd: C2RustUnnamed_2 = 3;
+
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return xatoull(str) as libc::c_ulong;
@@ -719,11 +725,11 @@ unsafe extern "C" fn do_check(
     buffer as *mut libc::c_void,
     try_0.wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_ulong),
   );
-  if got < 0i32 as libc::c_long {
-    got = 0i32 as ssize_t
+  if got < 0 {
+    got = 0
   }
   try_0 = (got as size_t).wrapping_div(BLOCK_SIZE as libc::c_int as libc::c_ulong);
-  if got & (BLOCK_SIZE as libc::c_int - 1i32) as libc::c_long != 0 {
+  if got & (BLOCK_SIZE - 1) as isize != 0 {
     fprintf(
       stderr,
       b"Short read at block %u\n\x00" as *const u8 as *const libc::c_char,

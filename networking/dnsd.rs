@@ -93,7 +93,7 @@ pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

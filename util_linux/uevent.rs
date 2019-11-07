@@ -41,7 +41,7 @@ extern "C" {
 use libc::off64_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MAX_ENV: C2RustUnnamed = 127;
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -90,7 +90,7 @@ pub unsafe extern "C" fn uevent_main(
       netbuf as *mut libc::c_void,
       (16i32 * 1024i32 - 1i32) as size_t,
     );
-    if len < 0i32 as libc::c_long {
+    if len < 0 {
       bb_simple_perror_msg_and_die(b"read\x00" as *const u8 as *const libc::c_char);
     }
     end = netbuf.offset(len as isize);

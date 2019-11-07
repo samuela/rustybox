@@ -19,7 +19,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 pub const OPT_r: C2RustUnnamed = 8;
 pub const OPT_c: C2RustUnnamed = 1;

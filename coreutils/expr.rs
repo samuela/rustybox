@@ -171,7 +171,7 @@ unsafe extern "C" fn freev(mut v: *mut VALUE) {
 /* Return nonzero if V is a null-string or zero-number.  */
 unsafe extern "C" fn null(mut v: *mut VALUE) -> libc::c_int {
   if (*v).type_0 as libc::c_int == INTEGER as libc::c_int {
-    return ((*v).u.i == 0i32 as libc::c_long) as libc::c_int;
+    return ((*v).u.i ==0) as libc::c_int;
   }
   /* STRING: */
   return (*(*v).u.s.offset(0) as libc::c_int == '\u{0}' as i32
@@ -279,7 +279,7 @@ unsafe extern "C" fn arithmetic_common(
   if op == '*' as i32 {
     return li * ri;
   }
-  if ri == 0i32 as libc::c_long {
+  if ri ==0{
     bb_simple_error_msg_and_die(b"division by zero\x00" as *const u8 as *const libc::c_char);
   }
   if op == '/' as i32 {
@@ -433,7 +433,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
     tostring(l);
     tostring(r);
     v = int_value(strcspn((*l).u.s, (*r).u.s).wrapping_add(1i32 as libc::c_ulong) as arith_t);
-    if (*v).u.i == strlen((*l).u.s) as arith_t + 1i32 as libc::c_long {
+    if (*v).u.i == strlen((*l).u.s) as arith_t +1{
       (*v).u.i = 0i32 as arith_t
     }
     freev(l);
@@ -447,9 +447,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
     if !toarith(i1)
       || !toarith(i2)
       || (*i1).u.i > strlen((*l).u.s) as arith_t
-      || (*i1).u.i <= 0i32 as libc::c_long
-      || (*i2).u.i <= 0i32 as libc::c_long
-    {
+      || (*i1).u.i <= 0       || (*i2).u.i <= 0     {
       v = str_value(b"\x00" as *const u8 as *const libc::c_char)
     } else {
       v = xmalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong) as *mut VALUE;

@@ -77,7 +77,7 @@ extern "C" {
 use libc::mode_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -346,7 +346,7 @@ pub unsafe extern "C" fn base64_main(
       if size == 0 {
         break;
       }
-      if (size as ssize_t) < 0i32 as libc::c_long {
+      if (size as ssize_t) < 0 {
         bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
       }
       /* Encode the buffer we just read in */

@@ -3,7 +3,7 @@ use libc::ino64_t;
 use libc::off64_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use crate::librb::termios;
 use libc;
 use libc::uid_t;
@@ -814,8 +814,7 @@ pub unsafe extern "C" fn powertop_main(
         0i32,
         &mut c as *mut libc::c_uchar as *mut libc::c_void,
         1i32 as size_t,
-      ) != 1i32 as libc::c_long
-      {
+      ) !=1      {
         break;
       }
       if c as libc::c_int == (*ptr_to_globals).init_settings.c_cc[0] as libc::c_int {

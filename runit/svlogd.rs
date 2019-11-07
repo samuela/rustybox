@@ -1,6 +1,19 @@
+use crate::librb::signal::sigset_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::ino64_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::pid_t;
+use libc::ssize_t;
+use libc::stat;
+use libc::time_t;
+use libc::timeval;
+use libc::FILE;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -165,18 +178,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::ino64_t;
-use libc::mode_t;
-
-use libc::off64_t;
-
-use libc::pid_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-use libc::stat;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct dirent {
@@ -188,11 +189,6 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-use libc::time_t;
-use crate::librb::signal::sigset_t;
- use libc::timeval;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1774,7 +1770,7 @@ pub unsafe extern "C" fn svlogd_main(
       stdin_cnt as size_t,
     ) as *mut libc::c_char; /* avail. bytes at tail */
     if np.is_null() && (*ptr_to_globals).exitasap == 0 {
-      i = ((*ptr_to_globals).linemax as libc::c_long - stdin_cnt) as libc::c_int;
+      i = (*ptr_to_globals).linemax - stdin_cnt as i32;
       if i >= 128i32 {
         i = buffer_pread(lineptr.offset(stdin_cnt as isize), i as libc::c_uint);
         if i <= 0i32 {
@@ -1788,11 +1784,11 @@ pub unsafe extern "C" fn svlogd_main(
             '\n' as i32,
             i as size_t,
           ) as *mut libc::c_char;
-          stdin_cnt += i as libc::c_long
+          stdin_cnt += i as isize;
         }
       }
     }
-    if stdin_cnt <= 0i32 as libc::c_long && (*ptr_to_globals).exitasap as libc::c_int != 0 {
+    if stdin_cnt <= 0 && (*ptr_to_globals).exitasap as libc::c_int != 0 {
       break;
     }
     /* Search for '\n' (in fact, np already holds the result) */
@@ -1807,8 +1803,8 @@ pub unsafe extern "C" fn svlogd_main(
         368077705793071303 => {
           /* NB: starting from here lineptr may point
            * farther out into line[] */
-          (*ptr_to_globals).linelen = (np.wrapping_offset_from(lineptr) as libc::c_long
-            + 1i32 as libc::c_long) as libc::c_int;
+          (*ptr_to_globals).linelen =
+            (np.wrapping_offset_from(lineptr) as libc::c_long + 1) as libc::c_int;
           current_block_116 = 12961834331865314435;
         }
         _ => {
@@ -1877,7 +1873,7 @@ pub unsafe extern "C" fn svlogd_main(
             } else {
               buffer_pread(lineptr, (*ptr_to_globals).linemax as libc::c_uint)
             } as ssize_t;
-            if stdin_cnt <= 0i32 as libc::c_long {
+            if stdin_cnt <= 0 {
               /* EOF or error on stdin */
               (*ptr_to_globals).exitasap = 1i32 as smallint;
               ch = '\n' as i32 as libc::c_char;
@@ -1894,8 +1890,8 @@ pub unsafe extern "C" fn svlogd_main(
                 stdin_cnt as size_t,
               ) as *mut libc::c_char;
               if !np.is_null() {
-                (*ptr_to_globals).linelen = (np.wrapping_offset_from(lineptr) as libc::c_long
-                  + 1i32 as libc::c_long) as libc::c_int
+                (*ptr_to_globals).linelen =
+                  (np.wrapping_offset_from(lineptr) as libc::c_long + 1) as libc::c_int
               }
               ch = *lineptr.offset(((*ptr_to_globals).linelen - 1i32) as isize)
             }
@@ -1922,8 +1918,8 @@ pub unsafe extern "C" fn svlogd_main(
               i += 1
             }
           }
-          stdin_cnt -= (*ptr_to_globals).linelen as libc::c_long;
-          if !(stdin_cnt > 0i32 as libc::c_long) {
+          stdin_cnt -= (*ptr_to_globals).linelen as isize;
+          if !(stdin_cnt > 0) {
             break;
           }
           lineptr = lineptr.offset((*ptr_to_globals).linelen as isize);

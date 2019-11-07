@@ -1,7 +1,7 @@
 use crate::librb::size_t;
-use crate::librb::ssize_t;
 use libc;
 use libc::mode_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::FILE;
 
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn uuencode_main(
     if size == 0 {
       break;
     }
-    if (size as ssize_t) < 0i32 as libc::c_long {
+    if (size as ssize_t) < 0 {
       bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
     }
     /* Encode the buffer we just read in */

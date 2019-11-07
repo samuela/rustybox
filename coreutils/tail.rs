@@ -59,7 +59,7 @@ use libc::off64_t;
 
 use libc::off_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 use libc::stat;
@@ -90,7 +90,7 @@ unsafe extern "C" fn tail_read(
 ) -> ssize_t {
   let mut r: ssize_t = 0;
   r = full_read(fd, buf as *mut libc::c_void, count);
-  if r < 0i32 as libc::c_long {
+  if r < 0 {
     bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 != 0
   }
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn tail_main(
       }
       if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
         let mut current: off_t = lseek(fd_0, 0i32 as off64_t, 2i32);
-        if current > 0i32 as libc::c_long {
+        if current >0{
           let mut off: libc::c_uint = 0;
           if opt & 0x2i32 != 0 {
             /* Optimizing count-bytes case if the file is seekable.
@@ -237,7 +237,7 @@ pub unsafe extern "C" fn tail_main(
               current_block_118 = 11763295167351361500; /* showing zero bytes is easy :) */
             } else {
               current -= count as libc::c_long;
-              if current < 0i32 as libc::c_long {
+              if current < 0 {
                 current = 0i32 as off_t
               }
               xlseek(fd_0, current, 0i32);
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn tail_main(
               off = (2147483647i32 / (64i32 * 1024i32)) as libc::c_uint
             }
             current -= off.wrapping_mul((64i32 * 1024i32) as libc::c_uint) as libc::c_long;
-            if current < 0i32 as libc::c_long {
+            if current < 0 {
               current = 0i32 as off_t
             }
             xlseek(fd_0, current, 0i32);
@@ -445,7 +445,7 @@ pub unsafe extern "C" fn tail_main(
           {
             let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
-            if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size > 0i32 as libc::c_long {
+            if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size >0{
               let mut current_0: off_t = lseek(fd_1, 0i32 as off64_t, 1i32);
               if sbuf_0.st_size < current_0 {
                 xlseek(fd_1, 0i32 as off_t, 0i32);

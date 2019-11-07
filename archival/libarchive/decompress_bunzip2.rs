@@ -37,15 +37,12 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-use libc::off_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::off_t;
+use libc::ssize_t;
 use libc::time_t;
-
-
-
 
 pub type __jmp_buf = [libc::c_long; 8];
 
@@ -883,8 +880,7 @@ unsafe extern "C" fn start_bunzip(
     (100000i32 as libc::c_uint).wrapping_mul(i.wrapping_sub(h0 as libc::c_int as libc::c_uint));
   /* Cannot use xmalloc - may leak bd in NOFORK case! */
   (*bd).dbuf = malloc_or_warn(
-    ((*bd).dbufSize as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+    ((*bd).dbufSize as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
   ) as *mut u32;
   if (*bd).dbuf.is_null() {
     free(bd as *mut libc::c_void);
@@ -942,10 +938,8 @@ pub unsafe extern "C" fn unpack_bz2_stream(
           if i == 0i32 {
             break;
           }
-          if i as libc::c_long
-            != transformer_write(xstate, outbuf as *const libc::c_void, i as size_t)
-          {
-            i = -4i32;
+          if i as isize != transformer_write(xstate, outbuf as *const libc::c_void, i as size_t) {
+            i = -4;
             break 's_36;
           } else {
             total_written += i as libc::c_longlong
@@ -954,7 +948,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
       }
     }
     /* EOF? */
-    if i != -1i32 && i != 0i32 {
+    if i != -1 && i != 0 {
       bb_error_msg(
         b"bunzip error %d\x00" as *const u8 as *const libc::c_char,
         i,
@@ -965,7 +959,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
       break;
     } else {
       /* Successfully unpacked one BZ stream */
-      i = 0i32;
+      i = 0;
       /* Do we have "BZ..." after last processed byte?
        * pbzip2 (parallelized bzip2) produces such files.
        */
@@ -975,22 +969,22 @@ pub unsafe extern "C" fn unpack_bz2_stream(
         &mut *(*bd).inbuf.offset((*bd).inbufPos as isize) as *mut u8 as *const libc::c_void,
         len as libc::c_ulong,
       );
-      if len < 2i32 as libc::c_uint {
+      if len < 2 {
         if safe_read(
           (*xstate).src_fd,
           outbuf.offset(len as isize) as *mut libc::c_void,
-          (2i32 as libc::c_uint).wrapping_sub(len) as size_t,
-        ) != (2i32 as libc::c_uint).wrapping_sub(len) as libc::c_long
+          (2 as libc::c_uint).wrapping_sub(len) as size_t,
+        ) != (2 as libc::c_uint).wrapping_sub(len) as isize
         {
           break;
         }
-        len = 2i32 as libc::c_uint
+        len = 2
       }
       if *(outbuf as *mut u16) as libc::c_int != BZIP2_MAGIC as libc::c_int {
         break;
       }
       dealloc_bunzip(bd);
-      len = len.wrapping_sub(2i32 as libc::c_uint)
+      len = len.wrapping_sub(2)
     }
   }
   /* "BZ"? */

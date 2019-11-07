@@ -2562,7 +2562,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
         b"multcount\x00" as *const u8 as *const libc::c_char,
         multcount,
       );
-      on_off((multcount != 0i32 as libc::c_long) as libc::c_int);
+      on_off((multcount !=0) as libc::c_int);
     }
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_io32bit != 0 {
@@ -2577,11 +2577,11 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
         b" IO_support\t=%3ld (\x00" as *const u8 as *const libc::c_char,
         parm,
       );
-      if parm == 0i32 as libc::c_long {
+      if parm ==0{
         puts(b"default 16-bit)\x00" as *const u8 as *const libc::c_char);
       } else if parm == 2i32 as libc::c_long {
         puts(b"16-bit)\x00" as *const u8 as *const libc::c_char);
-      } else if parm == 1i32 as libc::c_long {
+      } else if parm ==1{
         puts(b"32-bit)\x00" as *const u8 as *const libc::c_char);
       } else if parm == 3i32 as libc::c_long {
         puts(b"32-bit w/sync)\x00" as *const u8 as *const libc::c_char);
@@ -2622,7 +2622,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       if parm == 8i32 as libc::c_long {
         puts(b" (DMA-Assisted-PIO)\x00" as *const u8 as *const libc::c_char);
       } else {
-        on_off((parm != 0i32 as libc::c_long) as libc::c_int);
+        on_off((parm !=0) as libc::c_int);
       }
     }
   }

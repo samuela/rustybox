@@ -122,7 +122,7 @@ pub unsafe extern "C" fn shred_main(
     if fd < 0i32 {
       fd = xopen(fname, 0o1i32)
     }
-    if fstat(fd, &mut sb) == 0i32 && sb.st_size > 0i32 as libc::c_long {
+    if fstat(fd, &mut sb) == 0i32 && sb.st_size >0{
       let mut size: off_t = sb.st_size;
       i = 0i32 as libc::c_uint;
       while i < num_iter {

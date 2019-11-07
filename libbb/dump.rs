@@ -623,7 +623,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
          * pointer, update original.
          */
         len =
-          (p1.wrapping_offset_from(fmtp) as libc::c_long + 1i32 as libc::c_long) as libc::c_uint;
+          (p1.wrapping_offset_from(fmtp) as libc::c_long + 1) as libc::c_uint;
         (*pr).fmt = xstrndup(fmtp, len as libc::c_int);
         /* DBU:[dave@cray.com] w/o this, trailing fmt text, space is lost.
          * Skip subsequent text and up to the next % sign and tack the
@@ -634,13 +634,13 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         while *p3 as libc::c_int != 0 && *p3 as libc::c_int != '%' as i32 {
           p3 = p3.offset(1)
         }
-        if p3.wrapping_offset_from(p2) as libc::c_long != 0i32 as libc::c_long {
+        if p3.wrapping_offset_from(p2) as libc::c_long !=0{
           let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
           d = xrealloc(
             (*pr).fmt as *mut libc::c_void,
             (len as libc::c_long
               + p3.wrapping_offset_from(p2) as libc::c_long
-              + 1i32 as libc::c_long) as size_t,
+              + 1) as size_t,
           ) as *mut libc::c_char;
           (*pr).fmt = d;
           d = d.offset(len as isize);
@@ -778,7 +778,7 @@ unsafe extern "C" fn next(mut dumper: *mut priv_dumper_t) -> libc::c_int {
         },
       );
     }
-    if (*dumper).pub_0.dump_skip == 0i32 as libc::c_long {
+    if (*dumper).pub_0.dump_skip ==0{
       return 1i32;
     }
   }

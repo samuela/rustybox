@@ -102,8 +102,8 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::FILE;
 
 #[derive(Copy, Clone)]
@@ -261,7 +261,7 @@ unsafe extern "C" fn encode_n_base64(
         SRC_BUF_SIZE as libc::c_int as size_t,
         fp,
       );
-      if (size as ssize_t) < 0i32 as libc::c_long {
+      if (size as ssize_t) < 0 {
         bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
       }
     } else {

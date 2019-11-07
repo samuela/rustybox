@@ -1,61 +1,95 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::mode_t;
+use libc::ssize_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn creat(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
+
   #[no_mangle]
   static mut stdout: *mut FILE;
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+
   #[no_mangle]
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fputc_printable(ch: libc::c_int, file: *mut FILE);
+
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   fn bb_error_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn bb_simple_error_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   fn read_line_input(
     st: *mut line_input_t,
@@ -63,16 +97,11 @@ extern "C" {
     command: *mut libc::c_char,
     maxsize: libc::c_int,
   ) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::mode_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::ssize_t;
-
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PRINTABLE_META: C2RustUnnamed = 256;
 #[derive(Copy, Clone)]
@@ -496,8 +525,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
       (*ptr_to_globals).bufUsed as libc::c_ulong,
     ) as *mut libc::c_char;
     if !cp.is_null() {
-      len = (cp.wrapping_offset_from((*ptr_to_globals).bufPtr) as libc::c_long
-        + 1i32 as libc::c_long) as libc::c_int;
+      len = (cp.wrapping_offset_from((*ptr_to_globals).bufPtr) as libc::c_long + 1) as libc::c_int;
       if insertLine(num, (*ptr_to_globals).bufPtr, len) == 0 {
         close(fd);
         return 0i32;
@@ -608,7 +636,7 @@ unsafe extern "C" fn writeLines(
       fd,
       (*lp).data.as_mut_ptr() as *const libc::c_void,
       (*lp).len as size_t,
-    ) != (*lp).len as libc::c_long
+    ) != (*lp).len as isize
     {
       bb_simple_perror_msg(file);
       close(fd);

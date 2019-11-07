@@ -186,7 +186,7 @@ pub unsafe extern "C" fn isrv_want_wr(mut state: *mut isrv_state_t, mut fd: libc
     [(fd / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int)) as usize]
     & (1u64 << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
       as __fd_mask
-    != 0i32 as libc::c_long)
+    !=0)
   {
     (*state).wr_count += 1;
     (*state).wr.fds_bits[(fd
@@ -212,8 +212,7 @@ pub unsafe extern "C" fn isrv_dont_want_wr(mut state: *mut isrv_state_t, mut fd:
     [(fd / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int)) as usize]
     & (1u64 << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
       as __fd_mask
-    != 0i32 as libc::c_long
-  {
+    != 0   {
     (*state).wr_count -= 1;
     (*state).wr.fds_bits[(fd
       / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
@@ -404,7 +403,7 @@ unsafe extern "C" fn handle_fd_set(
   /* Find next nonzero bit */
   {
     if fds_pos < LONG_CNT as libc::c_int {
-      if *(fds as *mut libc::c_long).offset(fds_pos as isize) == 0i32 as libc::c_long {
+      if *(fds as *mut libc::c_long).offset(fds_pos as isize) ==0{
         fds_pos += 1
       } else {
         /* Found non-zero word */
@@ -418,8 +417,7 @@ unsafe extern "C" fn handle_fd_set(
             & (1u64
               << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as __fd_mask
-            != 0i32 as libc::c_long
-          {
+            != 0           {
             (*fds).fds_bits[(fd
               / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as usize] &= !((1u64

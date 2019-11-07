@@ -116,7 +116,7 @@ use libc::off64_t;
 use libc::gid_t;
 use libc::pid_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::uid_t;
 
 
@@ -297,11 +297,10 @@ unsafe extern "C" fn read_to_buf(
     ret = read(fd, buf, (1024i32 - 1i32) as size_t);
     close(fd);
   }
-  *(buf as *mut libc::c_char).offset(if ret > 0i32 as libc::c_long {
+  *(buf as *mut libc::c_char).offset(if ret >0{
     ret
   } else {
-    0i32 as libc::c_long
-  } as isize) = '\u{0}' as i32 as libc::c_char;
+    0   } as isize) = '\u{0}' as i32 as libc::c_char;
   return ret as libc::c_int;
 }
 unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
@@ -748,8 +747,8 @@ pub unsafe extern "C" fn procps_scan(
           (*sp).state[1] = 'W' as i32 as libc::c_char;
           s_idx = 2i32
         }
-        if tasknice != 0i32 as libc::c_long {
-          if tasknice < 0i32 as libc::c_long {
+        if tasknice !=0{
+          if tasknice < 0 {
             (*sp).state[s_idx as usize] = '<' as i32 as libc::c_char
           } else {
             /* > 0 */

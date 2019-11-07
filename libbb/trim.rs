@@ -36,7 +36,7 @@ pub unsafe extern "C" fn trim(mut s: *mut libc::c_char) -> *mut libc::c_char {
   /* trim leading whitespace */
   if len != 0 {
     let mut nws: *mut libc::c_char = skip_whitespace(s);
-    if nws.wrapping_offset_from(s) as libc::c_long != 0i32 as libc::c_long {
+    if nws.wrapping_offset_from(s) as libc::c_long !=0{
       len = (len as libc::c_ulong)
         .wrapping_sub(nws.wrapping_offset_from(s) as libc::c_long as libc::c_ulong)
         as size_t as size_t;

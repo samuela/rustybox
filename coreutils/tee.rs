@@ -32,8 +32,7 @@ extern "C" {
 
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
-
+use libc::ssize_t;
 
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
@@ -156,7 +155,7 @@ pub unsafe extern "C" fn tee_main(
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
     );
-    if !(c > 0i32 as libc::c_long) {
+    if !(c > 0) {
       break;
     }
     fp = files;
@@ -173,7 +172,7 @@ pub unsafe extern "C" fn tee_main(
       }
     }
   }
-  if c < 0i32 as libc::c_long {
+  if c < 0 {
     /* Make sure read errors are signaled. */
     retval = 1i32 as libc::c_char
   }

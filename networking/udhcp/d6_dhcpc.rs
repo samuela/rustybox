@@ -257,7 +257,7 @@ pub type bb__aliased_u32 = u32;
 /* add other arches which benefit from this... */
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -1274,8 +1274,7 @@ unsafe extern "C" fn add_d6_client_options(mut ptr: *mut u8) -> *mut u8 {
     }
     option = option.wrapping_add(1)
   }
-  if ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long != 0i32 as libc::c_long
-  {
+  if ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long != 0   {
     *start.offset(0) = (6i32 >> 8i32) as u8;
     *start.offset(1) = 6i32 as u8;
     *start.offset(2) =

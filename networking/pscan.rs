@@ -56,7 +56,7 @@ use crate::librb::__useconds_t;
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -353,7 +353,7 @@ pub unsafe extern "C" fn pscan_main(
             s,
             b" \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             1i32 as size_t,
-          ) >= 0i32 as libc::c_long)
+          ) >=0)
           {
             current_block_42 = 17281240262373992796;
             continue;

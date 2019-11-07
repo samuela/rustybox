@@ -31,7 +31,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>

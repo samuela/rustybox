@@ -6,7 +6,7 @@ use crate::librb::signal::sigset_t;
 use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc;
 use libc::clock_t;
 use libc::ino64_t;
@@ -2171,7 +2171,7 @@ unsafe extern "C" fn set_local_var(
     bb_simple_error_msg_and_die(b"BUG in setvar\x00" as *const u8 as *const libc::c_char);
   }
   name_len =
-    (eq_sign.wrapping_offset_from(str) as libc::c_long + 1i32 as libc::c_long) as libc::c_int;
+    (eq_sign.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_int;
   cur_pp = &mut (*ptr_to_globals).top_var;
   loop {
     cur = *cur_pp;
@@ -4246,7 +4246,7 @@ unsafe extern "C" fn parse_group(
   }
   pipe_list = parse_stream(&mut heredoc_cnt, input, endch);
   /* empty ()/{} or parse error? */
-  if pipe_list.is_null() || pipe_list == 1i32 as libc::c_long as *mut libc::c_void as *mut pipe {
+  if pipe_list.is_null() || pipe_list == 1 as *mut libc::c_void as *mut pipe {
     /* parse_stream already emitted error msg */
     if 1i32 == 0 {
       free(0 as *mut libc::c_void);
@@ -7055,7 +7055,7 @@ unsafe extern "C" fn parse_stream(
     }
   }
   o_free(&mut ctx.word);
-  return 1i32 as libc::c_long as *mut libc::c_void as *mut pipe;
+  return 1 as *mut libc::c_void as *mut pipe;
 }
 /* expand_strvec_to_strvec() takes a list of strings, expands
  * all variable references within and returns a pointer to
@@ -7623,7 +7623,7 @@ unsafe extern "C" fn replace_pattern(
       (res_len as libc::c_long
         + s.wrapping_offset_from(val) as libc::c_long
         + repl_len as libc::c_long
-        + 1i32 as libc::c_long) as size_t,
+        + 1) as size_t,
     ) as *mut libc::c_char;
     strcpy(
       mempcpy(
@@ -8547,12 +8547,12 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
       (*ptr_to_globals).promptmode = 0i32 as smallint
     }
     pipe_list = parse_stream(0 as *mut libc::c_int, inp, end_trigger);
-    if pipe_list.is_null() || pipe_list == 1i32 as libc::c_long as *mut libc::c_void as *mut pipe {
+    if pipe_list.is_null() || pipe_list == 1 as *mut libc::c_void as *mut pipe {
       /* EOF/error */
       /* If we are in "big" script
        * (not in `cmd` or something similar)...
        */
-      if pipe_list == 1i32 as libc::c_long as *mut libc::c_void as *mut pipe
+      if pipe_list == 1 as *mut libc::c_void as *mut pipe
         && end_trigger == ';' as i32
       {
         /* Discard cached input (rest of line) */
@@ -8961,7 +8961,7 @@ unsafe extern "C" fn save_fd_on_redirect(
    * With this case separate from sqp == NULL and *after* move_HFILEs,
    * it now works:
    */
-  if sqp == 1i32 as libc::c_long as *mut libc::c_void as *mut *mut squirrel {
+  if sqp == 1 as *mut libc::c_void as *mut *mut squirrel {
     /* Don't preserve redirected fds: exec is _meant_ to change these */
     //bb_error_msg("sqp == ERR_PTR: exec >FILE");
     return 0i32;
@@ -9102,7 +9102,7 @@ unsafe extern "C" fn setup_redirects(
               if internally_opened_fd(
                 newfd,
                 if !sqp.is_null()
-                  && sqp != 1i32 as libc::c_long as *mut libc::c_void as *mut *mut squirrel
+                  && sqp != 1 as *mut libc::c_void as *mut *mut squirrel
                 {
                   *sqp
                 } else {
@@ -10212,7 +10212,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
             (*ptr_to_globals).shadowed_vars_pp = &mut old_vars;
             rcode = redirect_and_varexp_helper(
               command,
-              1i32 as libc::c_long as *mut libc::c_void as *mut *mut squirrel,
+              1 as *mut libc::c_void as *mut *mut squirrel,
               argv_expanded,
             );
             (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;

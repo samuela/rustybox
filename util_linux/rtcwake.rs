@@ -81,7 +81,7 @@ extern "C" {
 use crate::librb::__useconds_t;
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::time_t;
 
 #[derive(Copy, Clone)]
@@ -145,7 +145,7 @@ unsafe extern "C" fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
     buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
   );
-  if ret < 0i32 as libc::c_long {
+  if ret < 0 {
     return 0i32 != 0;
   }
   /* wakeup events could be disabled or not supported */
@@ -333,8 +333,7 @@ pub unsafe extern "C" fn rtcwake_main(
       );
     }
   } else {
-    alarm_time = rtc_time + seconds as libc::c_long + 1i32 as libc::c_long
-  }
+    alarm_time = rtc_time + seconds as libc::c_long +1  }
   setup_alarm(fd, &mut alarm_time, rtc_time);
   sync();
   /*debug*/
@@ -359,7 +358,7 @@ pub unsafe extern "C" fn rtcwake_main(
         &mut data as *mut libc::c_ulong as *mut libc::c_void,
         ::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong,
       );
-      if ret < 0i32 as libc::c_long {
+      if ret < 0 {
         bb_simple_perror_msg(b"rtc read\x00" as *const u8 as *const libc::c_char);
         break;
       } else if !(data & 0x20i32 as libc::c_ulong == 0) {

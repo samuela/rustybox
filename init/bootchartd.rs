@@ -1,7 +1,7 @@
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc;
 use libc::ino64_t;
 use libc::off64_t;

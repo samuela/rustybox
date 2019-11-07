@@ -236,18 +236,14 @@ extern "C" {
 
 use libc::gid_t;
 
-
 use libc::mode_t;
 
-use libc::pid_t;
 use crate::librb::__time_t;
+use libc::pid_t;
 pub type __key_t = libc::c_int;
 
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type __socklen_t = libc::c_uint;
-
-
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -261,7 +257,7 @@ pub type __socklen_t = libc::c_uint;
 /* add other arches which benefit from this... */
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::uid_t;
 pub type socklen_t = __socklen_t;
 use libc::stat;
@@ -1798,7 +1794,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
         recvbuf as *mut libc::c_void,
         (MAX_READ as libc::c_int - 1i32) as size_t,
       );
-      if sz < 0i32 as libc::c_long {
+      if sz < 0 {
         if bb_got_signal == 0 {
           bb_perror_msg(
             b"read from %s\x00" as *const u8 as *const libc::c_char,
@@ -1810,7 +1806,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
         loop
         /* Drop trailing '\n' and NULs (typically there is one NUL) */
         {
-          if sz == 0i32 as libc::c_long {
+          if sz == 0 {
             continue 'c_12157;
           }
           /* man 3 syslog says: "A trailing newline is added when needed".
@@ -1820,16 +1816,14 @@ unsafe extern "C" fn do_syslogd() -> ! {
            * IOW: newline is passed verbatim!
            * I take it to mean that it's syslogd's job
            * to make those look identical in the log files. */
-          if *recvbuf.offset((sz - 1i32 as libc::c_long) as isize) as libc::c_int != '\u{0}' as i32
-            && *recvbuf.offset((sz - 1i32 as libc::c_long) as isize) as libc::c_int != '\n' as i32
+          if *recvbuf.offset(sz - 1) as libc::c_int != '\u{0}' as i32
+            && *recvbuf.offset(sz - 1) as libc::c_int != '\n' as i32
           {
             break;
           }
           sz -= 1
         }
-        if option_mask32 & OPT_dup as libc::c_int as libc::c_uint != 0
-          && sz == last_sz as libc::c_long
-        {
+        if option_mask32 & OPT_dup as libc::c_int as libc::c_uint != 0 && sz == last_sz as isize {
           current_block_32 = 9828876828309294594;
           break;
         } else {
@@ -1880,13 +1874,13 @@ unsafe extern "C" fn do_syslogd() -> ! {
           if sendto(
             (*rh).remoteFD,
             recvbuf as *const libc::c_void,
-            (sz + 1i32 as libc::c_long) as size_t,
+            (sz + 1) as size_t,
             MSG_DONTWAIT as libc::c_int | MSG_NOSIGNAL as libc::c_int,
             __CONST_SOCKADDR_ARG {
               __sockaddr__: &mut (*(*rh).remoteAddr).u.sa,
             },
             (*(*rh).remoteAddr).len,
-          ) == -1i32 as libc::c_long
+          ) == -1
           {
             match *bb_errno {
               104 | 107 | 32 => {

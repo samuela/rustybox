@@ -166,7 +166,7 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -926,8 +926,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
             .query
             .offset(qn as isize))
           .qlen as size_t,
-        ) < 0i32 as libc::c_long
-        {
+        ) < 0         {
           bb_perror_msg(
             b"write to \'%s\'\x00" as *const u8 as *const libc::c_char,
             (*ns).name,

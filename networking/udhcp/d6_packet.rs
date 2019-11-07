@@ -98,7 +98,7 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 

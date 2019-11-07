@@ -22,7 +22,7 @@ pub type __int64_t = libc::c_long;
 
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -257,8 +257,7 @@ pub unsafe extern "C" fn read_key(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,
-          ) <= 0i32 as libc::c_long
-          {
+          ) <= 0           {
             /* If EAGAIN, then fd is O_NONBLOCK and poll lied:
              * in fact, there is no data. */
             if *bb_errno != 11i32 {
@@ -315,8 +314,7 @@ pub unsafe extern "C" fn read_key(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,
-          ) <= 0i32 as libc::c_long
-          {
+          ) <= 0           {
             /* If EAGAIN, then fd is O_NONBLOCK and poll lied:
              * in fact, there is no data. */
             if *bb_errno != 11i32 {

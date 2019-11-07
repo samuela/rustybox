@@ -10,7 +10,7 @@ use libc::uid_t;
 use libc::pid_t;
 use crate::librb::__useconds_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 extern "C" {

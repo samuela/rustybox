@@ -61,7 +61,7 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 
 
@@ -512,7 +512,7 @@ pub unsafe extern "C" fn arpping(
         __sockaddr__: &mut addr,
       },
       ::std::mem::size_of::<sockaddr>() as libc::c_ulong as socklen_t,
-    ) < 0i32 as libc::c_long)
+    ) <0)
     {
       /* wait for arp reply, and check it */
       timeout_ms = timeo as libc::c_int;

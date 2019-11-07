@@ -75,7 +75,7 @@ use libc::pid_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -290,8 +290,7 @@ pub unsafe extern "C" fn microcom_main(
                 0i32,
                 &mut c as *mut libc::c_char as *mut libc::c_void,
                 1i32 as size_t,
-              ) < 1i32 as libc::c_long
-              {
+              ) <1              {
                 // don't poll stdin anymore if we got EOF/error
                 nfd -= 1
               } else {
@@ -336,7 +335,7 @@ pub unsafe extern "C" fn microcom_main(
               bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
               COMMON_BUFSIZE as libc::c_int as size_t,
             );
-            if len > 0i32 as libc::c_long {
+            if len >0{
               full_write(
                 1i32,
                 bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,

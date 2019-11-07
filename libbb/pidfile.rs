@@ -31,7 +31,7 @@ use libc::pid_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 use libc::stat;
 
 
@@ -74,7 +74,7 @@ pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
     full_write(
       pid_fd,
       buf.as_mut_ptr() as *const libc::c_void,
-      (end.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long + 1i32 as libc::c_long) as size_t,
+      (end.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long + 1) as size_t,
     );
   }
   close(pid_fd);

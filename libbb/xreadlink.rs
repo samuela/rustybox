@@ -34,7 +34,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::ssize_t;
 pub const GROWBY: C2RustUnnamed = 80;
 pub type C2RustUnnamed = libc::c_uint;
 

@@ -1,20 +1,20 @@
-use libc::off64_t;
-use libc::pid_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::__time_t;
 use crate::librb::bb_uidgid_t;
-use libc::mode_t;
-use libc::off_t;
 use crate::librb::signal::__sigval_t;
 use crate::librb::signal::siginfo_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::gid_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
 use libc::timespec;
@@ -1598,7 +1598,7 @@ unsafe extern "C" fn load_firmware(
           loading_fd,
           b"1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           1i32 as size_t,
-        ) != 1i32 as libc::c_long
+        ) != 1
         {
           current_block = 128850887951311672;
         } else {
@@ -1924,7 +1924,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
       (::std::mem::size_of::<[libc::c_char; 2048]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong),
     );
-    if len < 0i32 as libc::c_long {
+    if len < 0 {
       bb_simple_perror_msg_and_die(b"read\x00" as *const u8 as *const libc::c_char);
     }
     end = netbuf.as_mut_ptr().offset(len as isize);

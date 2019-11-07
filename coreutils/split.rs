@@ -44,9 +44,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off_t;
 use crate::librb::size_t;
-use crate::librb::ssize_t;
+use libc::off_t;
+use libc::ssize_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -229,7 +229,7 @@ pub unsafe extern "C" fn split_main(
     if bytes_read == 0 {
       break;
     }
-    if bytes_read < 0i32 as libc::c_long {
+    if bytes_read < 0 {
       bb_simple_perror_msg_and_die(*argv.offset(0));
     }
     src = bb_common_bufsiz1.as_mut_ptr();
@@ -246,12 +246,12 @@ pub unsafe extern "C" fn split_main(
       }
       if opt & (1i32 << 1i32) as libc::c_uint != 0 {
         /* split by bytes */
-        to_write = if bytes_read < remaining {
+        to_write = if bytes_read < remaining as isize {
           bytes_read
         } else {
-          remaining
+          remaining as isize
         };
-        remaining -= to_write
+        remaining -= to_write as i64
       } else {
         /* split by lines */
         /* can be sped up by using _memrchr_
@@ -263,7 +263,7 @@ pub unsafe extern "C" fn split_main(
         ) as *mut libc::c_char;
         if !end.is_null() {
           remaining -= 1;
-          to_write = end.wrapping_offset_from(src) as libc::c_long + 1i32 as libc::c_long
+          to_write = end.wrapping_offset_from(src) + 1
         } else {
           to_write = bytes_read
         }

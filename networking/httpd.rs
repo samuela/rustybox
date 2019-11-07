@@ -1,13 +1,13 @@
-use libc::off64_t;
-use libc::pid_t;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::gid_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
@@ -1190,8 +1190,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
             (*cur_0).before_colon.as_mut_ptr(),
             b"/%s%.*s\x00" as *const u8 as *const libc::c_char,
             path,
-            (after_colon.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long
-              - 1i32 as libc::c_long) as libc::c_int,
+            (after_colon.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long - 1) as libc::c_int,
             buf.as_mut_ptr(),
           );
           /* canonicalize it */
@@ -1507,8 +1506,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
         (*ptr_to_globals).range_end,
         (*ptr_to_globals).file_size,
       ) as libc::c_uint);
-      (*ptr_to_globals).file_size =
-        (*ptr_to_globals).range_end - (*ptr_to_globals).range_start + 1i32 as libc::c_long
+      (*ptr_to_globals).file_size = (*ptr_to_globals).range_end - (*ptr_to_globals).range_start + 1
     }
     //RFC 2616 4.4 Message Length
     // The transfer-length of a message is the length of the message-body as
@@ -1579,10 +1577,10 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
     ) as libc::c_uint)
   }
   if full_write(
-    1i32,
+    1,
     (*ptr_to_globals).iobuf as *const libc::c_void,
     len as size_t,
-  ) != len as libc::c_long
+  ) != len as isize
   {
     if (*ptr_to_globals).verbose > 1i32 {
       bb_simple_perror_msg(b"error\x00" as *const u8 as *const libc::c_char);
@@ -1809,12 +1807,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
           ) == 0i32
         {
           /* send "HTTP/1.0 " */
-          if full_write(
-            1i32,
-            HTTP_200.as_ptr() as *const libc::c_void,
-            9i32 as size_t,
-          ) != 9i32 as libc::c_long
-          {
+          if full_write(1, HTTP_200.as_ptr() as *const libc::c_void, 9) != 9 {
             break;
           }
           /* skip "Status: " (including space, sending "HTTP/1.0  NNN" is wrong) */
@@ -1864,7 +1857,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
       }
       /* eof (or error) */
     }
-    if full_write(1i32, rbuf as *const libc::c_void, count as size_t) != count as libc::c_long {
+    if full_write(1, rbuf as *const libc::c_void, count as size_t) != count as isize {
       break;
     }
   }
@@ -2213,7 +2206,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
     // /why?
     (*ptr_to_globals).range_start = -1i32 as off_t
   }
-  (*ptr_to_globals).range_len = if -1i32 as off_t > 0i32 as libc::c_long {
+  (*ptr_to_globals).range_len = if -1i32 as off_t > 0 {
     -1i32 as off_t
   } else {
     !((1i32 as off_t)
@@ -2221,11 +2214,11 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   };
-  if (*ptr_to_globals).range_start >= 0i32 as libc::c_long {
+  if (*ptr_to_globals).range_start >= 0 {
     if (*ptr_to_globals).range_end == 0
-      || (*ptr_to_globals).range_end > (*ptr_to_globals).file_size - 1i32 as libc::c_long
+      || (*ptr_to_globals).range_end > (*ptr_to_globals).file_size - 1
     {
-      (*ptr_to_globals).range_end = (*ptr_to_globals).file_size - 1i32 as libc::c_long
+      (*ptr_to_globals).range_end = (*ptr_to_globals).file_size - 1
     }
     if (*ptr_to_globals).range_end < (*ptr_to_globals).range_start
       || lseek(fd, (*ptr_to_globals).range_start, 0i32) != (*ptr_to_globals).range_start
@@ -2246,19 +2239,19 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
   loop
   /* sz is rounded down to 64k */
   {
-    let mut sz: ssize_t = (if -1i32 as ssize_t > 0i32 as libc::c_long {
-      -1i32 as ssize_t
+    let mut sz: ssize_t = (if -1 > 0 {
+      -1
     } else {
-      !((1i32 as ssize_t)
-        << (::std::mem::size_of::<ssize_t>() as libc::c_ulong)
-          .wrapping_mul(8i32 as libc::c_ulong)
-          .wrapping_sub(1i32 as libc::c_ulong))
-    }) - 0xffffi32 as libc::c_long; /* fall back to read/write loop */
-    if sz > (*ptr_to_globals).range_len {
-      sz = (*ptr_to_globals).range_len
+      !(1
+        << (::std::mem::size_of::<ssize_t>())
+          .wrapping_mul(8)
+          .wrapping_sub(1))
+    }) - 0xffff; /* fall back to read/write loop */
+    if sz > (*ptr_to_globals).range_len as isize {
+      sz = (*ptr_to_globals).range_len as isize
     }
     count = sendfile(1i32, fd, &mut offset, sz as size_t);
-    if count < 0i32 as libc::c_long {
+    if count < 0 {
       if offset == (*ptr_to_globals).range_start {
         current_block = 4746626699541760585;
         break;
@@ -2267,8 +2260,8 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
         break;
       }
     } else {
-      (*ptr_to_globals).range_len -= count;
-      if count == 0i32 as libc::c_long || (*ptr_to_globals).range_len == 0i32 as libc::c_long {
+      (*ptr_to_globals).range_len -= count as i64;
+      if count == 0 || (*ptr_to_globals).range_len == 0 {
         log_and_exit();
       }
     }
@@ -2281,12 +2274,12 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
           (*ptr_to_globals).iobuf as *mut libc::c_void,
           8192i32 as size_t,
         );
-        if !(count > 0i32 as libc::c_long) {
+        if !(count > 0) {
           break;
         }
         let mut n: ssize_t = 0;
-        if count > (*ptr_to_globals).range_len {
-          count = (*ptr_to_globals).range_len
+        if count > (*ptr_to_globals).range_len as isize {
+          count = (*ptr_to_globals).range_len as isize
         }
         n = full_write(
           1i32,
@@ -2296,12 +2289,12 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
         if count != n {
           break;
         }
-        (*ptr_to_globals).range_len -= count;
-        if (*ptr_to_globals).range_len == 0i32 as libc::c_long {
+        (*ptr_to_globals).range_len -= count as i64;
+        if (*ptr_to_globals).range_len == 0 {
           break;
         }
       }
-      if count < 0i32 as libc::c_long {
+      if count < 0 {
         current_block = 13828257217690466024;
       } else {
         current_block = 10213293998891106930;
@@ -2381,8 +2374,8 @@ unsafe extern "C" fn check_user_passwd(
           && strncmp(
             (*cur).after_colon,
             user_and_passwd,
-            (colon_after_user.wrapping_offset_from(user_and_passwd) as libc::c_long
-              + 1i32 as libc::c_long) as libc::c_ulong,
+            (colon_after_user.wrapping_offset_from(user_and_passwd) as libc::c_long + 1)
+              as libc::c_ulong,
           ) != 0i32
         {
           current_block = 16559507199688588974;
@@ -2959,9 +2952,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
               .wrapping_sub(1i32 as libc::c_ulong) as isize,
           );
           (*ptr_to_globals).range_start = bb_strtoul(s, &mut s, 10i32) as off_t;
-          if *s.offset(0) as libc::c_int != '-' as i32
-            || (*ptr_to_globals).range_start < 0i32 as libc::c_long
-          {
+          if *s.offset(0) as libc::c_int != '-' as i32 || (*ptr_to_globals).range_start < 0 {
             (*ptr_to_globals).range_start = -1i32 as off_t
           } else if *s.offset(1) != 0 {
             (*ptr_to_globals).range_end =
