@@ -41,7 +41,6 @@ pub struct group {
 // See
 //  * https://www.gnu.org/software/libc/manual/html_node/Mode-Data-Types.html
 //  * http://man7.org/linux/man-pages/man3/termios.3.html
-pub type cc_t = libc::c_uchar;
 pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
 
@@ -52,8 +51,8 @@ pub struct termios {
   pub c_oflag: tcflag_t,
   pub c_cflag: tcflag_t,
   pub c_lflag: tcflag_t,
-  pub c_line: cc_t,
-  pub c_cc: [cc_t; 32],
+  pub c_line: libc::cc_t,
+  pub c_cc: [libc::cc_t; 32],
   pub c_ispeed: speed_t,
   pub c_ospeed: speed_t,
 }
