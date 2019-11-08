@@ -2,7 +2,7 @@ use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
 use libc::sigset_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
+use crate::librb::signal::SigactionHandler;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
@@ -1855,12 +1855,7 @@ unsafe extern "C" fn install_sighandler(
   mut sig: libc::c_int,
   mut handler: sighandler_t,
 ) -> sighandler_t {
-  let mut old_sa: sigaction = sigaction {
-    __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: std::mem::zeroed(),
-    sa_flags: 0,
-    sa_restorer: None,
-  };
+  let mut old_sa: sigaction = std::mem::zeroed();
   /* We could use signal() to install handlers... almost:
    * except that we need to mask ALL signals while handlers run.
    * I saw signal nesting in strace, race window isn't small.

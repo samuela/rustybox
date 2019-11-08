@@ -1,13 +1,13 @@
+use crate::librb::signal::SigactionHandler;
 use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
-use libc::sigval;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
 use libc::cc_t;
 use libc::pid_t;
+use crate::librb::signal::sigaction;
 use libc::sigset_t;
+use libc::sigval;
 use libc::ssize_t;
 use libc::tcflag_t;
 use libc::termios;
@@ -1299,12 +1299,7 @@ pub unsafe extern "C" fn init_main(
   }
   /* Set up signal handlers */
   if 0i32 == 0 {
-    let mut sa: sigaction = sigaction {
-      __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-      sa_mask: std::mem::zeroed(),
-      sa_flags: 0,
-      sa_restorer: None,
-    };
+    let mut sa: sigaction = std::mem::zeroed();
     /* Stop handler must allow only SIGCONT inside itself */
     memset(
       &mut sa as *mut sigaction as *mut libc::c_void,

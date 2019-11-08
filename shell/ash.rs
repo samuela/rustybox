@@ -4,7 +4,7 @@ use libc::ptrdiff_t;
 use crate::librb::signal::__sighandler_t;
 use libc::sigset_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
+use crate::librb::signal::SigactionHandler;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
@@ -2959,12 +2959,7 @@ unsafe extern "C" fn setsignal(mut signo: libc::c_int) {
   let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut cur_act: libc::c_char = 0;
   let mut new_act: libc::c_char = 0;
-  let mut act: sigaction = sigaction {
-    __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: std::mem::zeroed(),
-    sa_flags: 0,
-    sa_restorer: None,
-  };
+  let mut act: sigaction = std::mem::zeroed();
   t = (*ash_ptr_to_globals_misc).trap[signo as usize];
   new_act = 1i32 as libc::c_char;
   if !t.is_null() {

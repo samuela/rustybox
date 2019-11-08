@@ -85,12 +85,15 @@ pub struct C2RustUnnamed_8 {
   pub si_pid: libc::pid_t,
   pub si_uid: libc::uid_t,
 }
+
+// libc::sighandler_t is size_t which doesn't really make much sense.
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
+// This is meaningfully different from libc::sigaction.
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sigaction {
-  pub __sigaction_handler: C2RustUnnamed_9,
+  pub __sigaction_handler: SigactionHandler,
   pub sa_mask: libc::sigset_t,
   pub sa_flags: libc::c_int,
   pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
@@ -98,8 +101,11 @@ pub struct sigaction {
 
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub union C2RustUnnamed_9 {
+pub union SigactionHandler {
+  /* Used if SA_SIGINFO is not set. */
   pub sa_handler: __sighandler_t,
+
+  /* Used if SA_SIGINFO is set. */
   pub sa_sigaction: Option<
     unsafe extern "C" fn(_: libc::c_int, _: *mut libc::siginfo_t, _: *mut libc::c_void) -> (),
   >,

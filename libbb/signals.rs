@@ -103,7 +103,7 @@ pub struct C2RustUnnamed_8 {
 }
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::C2RustUnnamed_9;
+use crate::librb::signal::SigactionHandler;
 
 /*
  * Utility routines.
@@ -171,12 +171,7 @@ pub unsafe extern "C" fn bb_signals_recursive_norestart(
 ) {
   let mut sig_no: libc::c_int = 0i32;
   let mut bit: libc::c_int = 1i32;
-  let mut sa: sigaction = sigaction {
-    __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: std::mem::zeroed(),
-    sa_flags: 0,
-    sa_restorer: None,
-  };
+  let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
     0i32,
@@ -229,12 +224,7 @@ pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
   mut sig: libc::c_int,
   mut handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
-  let mut sa: sigaction = sigaction {
-    __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: std::mem::zeroed(),
-    sa_flags: 0,
-    sa_restorer: None,
-  };
+  let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
     0i32,
@@ -397,12 +387,7 @@ pub unsafe extern "C" fn signal_no_SA_RESTART_empty_mask(
   mut sig: libc::c_int,
   mut handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
-  let mut sa: sigaction = sigaction {
-    __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: std::mem::zeroed(),
-    sa_flags: 0,
-    sa_restorer: None,
-  };
+  let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
     0i32,
