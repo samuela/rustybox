@@ -28,10 +28,10 @@ pub struct file_header_t {
 #[repr(C)]
 pub struct hardlinks_t {
   pub next: *mut hardlinks_t,
-  pub inode: libc::c_int,
+  pub inode: libc::c_int, /* TODO: must match maj/min too! */
   pub mode: libc::c_int,
-  pub mtime: libc::c_int,
-  pub uid: libc::c_int,
+  pub mtime: libc::c_int, /* These three are useful only in corner case */
+  pub uid: libc::c_int,   /* of hardlinks with zero size body */
   pub gid: libc::c_int,
   pub name: [libc::c_char; 1],
 }
@@ -39,18 +39,41 @@ pub struct hardlinks_t {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {
+  /* Flags. 1st since it is most used member */
   pub ah_flags: libc::c_uint,
+
+  /* The raw stream as read from disk or stdin */
   pub src_fd: libc::c_int,
+
+  /* Define if the header and data component should be processed */
   pub filter: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
+
+  /* List of files that have been accepted */
   pub accept: *mut llist_t,
+  /* List of files that have been rejected */
   pub reject: *mut llist_t,
+  /* List of files that have successfully been worked on */
   pub passed: *mut llist_t,
+
+  /* Currently processed file's header */
   pub file_header: *mut file_header_t,
+
+  /* List of link placeholders */
   pub link_placeholders: *mut llist_t,
+
+  /* Process the header component, e.g. tar -t */
   pub action_header: Option<unsafe extern "C" fn(_: *const file_header_t) -> ()>,
+
+  /* Process the data component, e.g. extract to filesystem */
   pub action_data: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> ()>,
+
+  /* Function that skips data */
   pub seek: Option<unsafe extern "C" fn(_: libc::c_int, _: off_t) -> ()>,
+
+  /* Count processed bytes */
   pub offset: off_t,
+
+  /* Archiver specific. Can make it a union if it ever gets big */
   pub tar__strip_components: libc::c_uint,
   pub tar__end: smallint,
   pub tar__longname: *mut libc::c_char,
@@ -61,9 +84,13 @@ pub struct archive_handle_t {
   pub cpio__owner: bb_uidgid_t,
   pub cpio__hardlinks_to_create: *mut hardlinks_t,
   pub cpio__created_hardlinks: *mut hardlinks_t,
+
+  /* Temporary storage */
   pub dpkg__buffer: *mut libc::c_char,
+  /* How to process any sub archive, e.g. get_header_tar_gz */
   pub dpkg__action_data_subarchive:
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
+  /* Contains the handle to a sub archive */
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
 
