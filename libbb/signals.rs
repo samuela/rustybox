@@ -1,4 +1,4 @@
-use crate::librb::signal::__sigval_t;
+use libc::sigval;
 use crate::librb::smallint;
 use libc;
 use libc::pid_t;
@@ -86,14 +86,14 @@ pub struct C2RustUnnamed_5 {
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

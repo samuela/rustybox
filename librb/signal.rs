@@ -3,15 +3,6 @@
 //  * http://man7.org/linux/man-pages/man7/sigevent.7.html
 //  * https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union sigval {
-  pub sival_int: libc::c_int,
-  pub sival_ptr: *mut libc::c_void,
-}
-
-pub type __sigval_t = sigval;
-
 // See http://man7.org/linux/man-pages/man2/sigaction.2.html.
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -88,7 +79,7 @@ pub struct C2RustUnnamed_5 {
 pub struct C2RustUnnamed_6 {
   pub si_pid: libc::pid_t,
   pub si_uid: libc::uid_t,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: libc::sigval,
 }
 
 #[derive(Copy, Clone)]
@@ -96,7 +87,7 @@ pub struct C2RustUnnamed_6 {
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: libc::sigval,
 }
 
 #[derive(Copy, Clone)]

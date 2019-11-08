@@ -216,18 +216,13 @@ extern "C" {
   static lineedit_ptr_to_statics: *mut lineedit_statics;
 }
 
-
 pub type __int64_t = libc::c_long;
 
 use libc::ino64_t;
 
 use libc::off64_t;
 
-
 use libc::pid_t;
-
-
-
 
 pub type int64_t = __int64_t;
 
@@ -241,9 +236,9 @@ pub type int64_t = __int64_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::off_t;
 use libc::ssize_t;
 use libc::uid_t;
 #[derive(Copy, Clone)]
@@ -257,10 +252,9 @@ pub struct dirent {
 }
 
 pub type DIR = __dirstream;
-use crate::librb::signal::__sigval_t;
+use libc::sigval;
 use libc::stat;
 use libc::time_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -320,14 +314,14 @@ pub struct C2RustUnnamed_5 {
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -531,7 +525,7 @@ unsafe extern "C" fn BB_PUTCHAR(mut c: wchar_t) {
       init
     };
     let mut len: ssize_t = bb_wcrtomb(buf.as_mut_ptr(), c, &mut mbst) as ssize_t;
-    if len >0{
+    if len > 0 {
       buf[len as usize] = '\u{0}' as i32 as libc::c_char;
       fputs_unlocked(buf.as_mut_ptr(), stdout);
     }

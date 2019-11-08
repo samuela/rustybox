@@ -448,7 +448,7 @@ pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 
-use crate::librb::signal::__sigval_t;
+use libc::sigval;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct servent {
@@ -524,14 +524,14 @@ pub struct C2RustUnnamed_8 {
 pub struct C2RustUnnamed_9 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed_10 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
-  pub si_sigval: __sigval_t,
+  pub si_sigval: sigval,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
