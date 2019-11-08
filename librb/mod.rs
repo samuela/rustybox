@@ -38,18 +38,13 @@ pub struct group {
   pub gr_mem: *mut *mut libc::c_char,
 }
 
-// See
-//  * https://www.gnu.org/software/libc/manual/html_node/Mode-Data-Types.html
-//  * http://man7.org/linux/man-pages/man3/termios.3.html
-pub type tcflag_t = libc::c_uint;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {
-  pub c_iflag: tcflag_t,
-  pub c_oflag: tcflag_t,
-  pub c_cflag: tcflag_t,
-  pub c_lflag: tcflag_t,
+  pub c_iflag: libc::tcflag_t,
+  pub c_oflag: libc::tcflag_t,
+  pub c_cflag: libc::tcflag_t,
+  pub c_lflag: libc::tcflag_t,
   pub c_line: libc::cc_t,
   pub c_cc: [libc::cc_t; 32],
   pub c_ispeed: libc::speed_t,

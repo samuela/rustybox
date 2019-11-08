@@ -1,15 +1,15 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::speed_t;
-use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;
 use libc::cc_t;
 use libc::gid_t;
 use libc::mode_t;
 use libc::pid_t;
+use libc::speed_t;
 use libc::ssize_t;
+use libc::tcflag_t;
 use libc::uid_t;
 use libc::useconds_t;
 

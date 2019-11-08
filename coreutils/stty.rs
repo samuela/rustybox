@@ -1,4 +1,4 @@
-use crate::librb::tcflag_t;
+use libc::tcflag_t;
 use crate::librb::termios;
 use crate::librb::winsize;
 use libc;

@@ -1,8 +1,8 @@
-use libc::speed_t;
-use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;
 use libc::cc_t;
+use libc::speed_t;
+use libc::tcflag_t;
 
 extern "C" {
   #[no_mangle]
