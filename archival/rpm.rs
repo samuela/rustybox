@@ -1,27 +1,23 @@
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::gid_t;
+use libc::group;
+use libc::off64_t;
+use libc::off_t;
+use libc::passwd;
 use libc::stat;
 use libc::time_t;
 use libc::uid_t;
 
-use crate::libbb::llist::llist_t;
-use crate::librb::__compar_fn_t;
-use libc::off64_t;
-
-use libc::group;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-use libc::off_t;
-use libc::passwd;
-
-use crate::librb::uoff_t;
-
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

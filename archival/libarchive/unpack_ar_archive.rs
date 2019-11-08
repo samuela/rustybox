@@ -1,7 +1,14 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
 
 extern "C" {
-  pub type hardlinks_t;
 
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
@@ -16,20 +23,6 @@ extern "C" {
   fn get_header_ar(archive_handle: *mut archive_handle_t) -> libc::c_char;
 }
 
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-
-
-use libc::off_t;
-
-
-
-use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

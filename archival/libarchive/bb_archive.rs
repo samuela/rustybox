@@ -14,3 +14,16 @@ pub struct file_header_t {
   pub mtime: libc::time_t,
   pub device: libc::dev_t,
 }
+
+// Declared in bb_archive.h but defined in get_header_cpio.c.
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct hardlinks_t {
+  pub next: *mut hardlinks_t,
+  pub inode: libc::c_int,
+  pub mode: libc::c_int,
+  pub mtime: libc::c_int,
+  pub uid: libc::c_int,
+  pub gid: libc::c_int,
+  pub name: [libc::c_char; 1],
+}

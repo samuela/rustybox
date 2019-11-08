@@ -1,20 +1,17 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
+
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn find_list_entry2(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
 }
-
-use crate::libbb::llist::llist_t;
-use crate::librb::bb_uidgid_t;
-
-use crate::archival::libarchive::bb_archive::file_header_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-
-
-use libc::off_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

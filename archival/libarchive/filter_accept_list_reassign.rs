@@ -1,6 +1,14 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
+
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -18,16 +26,6 @@ extern "C" {
   #[no_mangle]
   fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
 }
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-
-
-use libc::off_t;
-
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
@@ -68,7 +66,6 @@ use libc::off_t;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

@@ -1,16 +1,17 @@
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
+use libc;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::time_t;
 use libc::uid_t;
-use crate::archival::libarchive::bb_archive::file_header_t;
-use libc;
 
 extern "C" {
   #[no_mangle]
@@ -47,20 +48,6 @@ extern "C" {
   fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
 }
 
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hardlinks_t {
-  pub next: *mut hardlinks_t,
-  pub inode: libc::c_int,
-  pub mode: libc::c_int,
-  pub mtime: libc::c_int,
-  pub uid: libc::c_int,
-  pub gid: libc::c_int,
-  pub name: [libc::c_char; 1],
-}
-
-#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {
   pub ah_flags: libc::c_uint,

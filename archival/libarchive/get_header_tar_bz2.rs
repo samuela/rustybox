@@ -1,7 +1,15 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
+use libc::time_t;
 
 extern "C" {
-  pub type hardlinks_t;
 
   #[no_mangle]
   fn get_header_tar(archive_handle: *mut archive_handle_t) -> libc::c_char;
@@ -19,21 +27,6 @@ extern "C" {
     transformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
   );
 }
-
-use crate::libbb::llist::llist_t;
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-
-use libc::off_t;
-use libc::time_t;
-
-
-use crate::librb::uoff_t;
-
-use crate::archival::libarchive::bb_archive::file_header_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

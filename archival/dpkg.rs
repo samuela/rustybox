@@ -1,9 +1,9 @@
+use crate::archival::libarchive::bb_archive::hardlinks_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
 
 extern "C" {
-  pub type hardlinks_t;
 
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
@@ -233,14 +233,11 @@ use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-
 use libc::off_t;
 use libc::ssize_t;
 use libc::stat;
 
-
 use crate::librb::uoff_t;
-
 
 use libc::FILE;
 

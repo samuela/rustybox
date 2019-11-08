@@ -1,3 +1,4 @@
+use crate::archival::libarchive::bb_archive::hardlinks_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::fd_pair;
@@ -10,12 +11,10 @@ use libc::mode_t;
 use libc::off_t;
 use libc::pid_t;
 use libc::stat;
-
 use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type hardlinks_t;
 
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);

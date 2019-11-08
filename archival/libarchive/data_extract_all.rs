@@ -1,3 +1,4 @@
+use crate::archival::libarchive::bb_archive::hardlinks_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
@@ -10,12 +11,11 @@ use libc::passwd;
 use libc::pid_t;
 use libc::stat;
 use libc::suseconds_t;
-
 use libc::timeval;
 use libc::uid_t;
 
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
   #[no_mangle]

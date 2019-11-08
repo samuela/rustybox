@@ -1,6 +1,21 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::gid_t;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+use libc::time_t;
+use libc::uid_t;
+
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn strtoull(
     __nptr: *const libc::c_char,
@@ -75,24 +90,6 @@ extern "C" {
   fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
 }
 
-use crate::libbb::llist::llist_t;
-
-use libc::off64_t;
-
-use crate::librb::bb_uidgid_t;
-
-use libc::gid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::mode_t;
-use libc::off_t;
-use libc::ssize_t;
-use libc::time_t;
-use libc::uid_t;
-
-use crate::librb::uoff_t;
-
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */
@@ -111,7 +108,7 @@ use crate::librb::uoff_t;
  * instead of int/ssize_t. No lseek64(), O_LARGEFILE etc necessary */
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
-use crate::archival::libarchive::bb_archive::file_header_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

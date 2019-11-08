@@ -1,6 +1,17 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::gid_t;
+use libc::off_t;
+use libc::uid_t;
+
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -12,21 +23,6 @@ extern "C" {
   #[no_mangle]
   fn seek_by_jump(fd: libc::c_int, amount: off_t);
 }
-
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-use libc::gid_t;
-
-use libc::off_t;
-
-use libc::uid_t;
-
-use crate::archival::libarchive::bb_archive::file_header_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

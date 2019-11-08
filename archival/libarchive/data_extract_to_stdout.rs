@@ -1,21 +1,16 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off_t;
+
 extern "C" {
-  pub type hardlinks_t;
   #[no_mangle]
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
 }
-
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-
-
-use libc::off_t;
-
-
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
@@ -35,7 +30,6 @@ use libc::off_t;
  * instead of int/ssize_t. No lseek64(), O_LARGEFILE etc necessary */
 /* CONFIG_LFS is on */
 /* "long" is long enough on this system */
-use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

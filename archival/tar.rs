@@ -1,6 +1,24 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::fd_pair;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::gid_t;
+use libc::ino_t;
+use libc::off_t;
+use libc::pid_t;
+use libc::stat;
+use libc::time_t;
+use libc::uid_t;
+use libc::FILE;
+
 extern "C" {
-  pub type hardlinks_t;
+
   #[no_mangle]
   fn fnmatch(
     __pattern: *const libc::c_char,
@@ -203,26 +221,6 @@ extern "C" {
   );
 }
 
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::fd_pair;
-
-use libc::off_t;
-use libc::pid_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-use libc::gid_t;
-use libc::ino_t;
-use libc::stat;
-use libc::time_t;
-use libc::uid_t;
-
-use libc::FILE;
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -241,7 +239,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-use crate::archival::libarchive::bb_archive::file_header_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {
@@ -757,10 +755,11 @@ unsafe extern "C" fn writeTarHeader(
   putOctal(
     header.mtime.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong as libc::c_int,
-    if (*statbuf).st_mtime >=0{
+    if (*statbuf).st_mtime >= 0 {
       (*statbuf).st_mtime
     } else {
-      0     },
+      0
+    },
   );
   /* Enter the user and group names */
   safe_strncpy(
