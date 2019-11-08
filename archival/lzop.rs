@@ -118,11 +118,11 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::off_t;
+
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-use libc::time_t;
+
 
 
 

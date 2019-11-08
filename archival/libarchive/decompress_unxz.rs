@@ -173,11 +173,11 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::off_t;
+
 use crate::librb::size_t;
-use crate::librb::smallint;
+
 use libc::ssize_t;
-use libc::time_t;
+
 
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 #[derive(Copy, Clone)]

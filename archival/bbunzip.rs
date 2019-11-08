@@ -6,7 +6,7 @@ use libc;
 use libc::off_t;
 use libc::stat;
 use libc::suseconds_t;
-use libc::time_t;
+
 use libc::timeval;
 use libc::FILE;
 
