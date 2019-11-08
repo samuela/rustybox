@@ -1,10 +1,10 @@
 use crate::librb::size_t;
-use libc::termios;
-use crate::librb::winsize;
 use libc;
 use libc::cc_t;
 use libc::pid_t;
 use libc::ssize_t;
+use libc::termios;
+use libc::winsize;
 
 extern "C" {
   #[no_mangle]

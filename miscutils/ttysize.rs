@@ -1,4 +1,6 @@
 use libc;
+use libc::winsize;
+
 extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
@@ -7,7 +9,6 @@ extern "C" {
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
-use crate::librb::winsize;
 
 /*
  * Replacement for "stty size", which is awkward for shell script use.

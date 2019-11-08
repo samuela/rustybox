@@ -15,16 +15,6 @@ pub type __syscall_slong_t = libc::c_long;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 
-// See http://www.delorie.com/djgpp/doc/libc/libc_495.html.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct winsize {
-  pub ws_row: libc::c_ushort,
-  pub ws_col: libc::c_ushort,
-  pub ws_xpixel: libc::c_ushort,
-  pub ws_ypixel: libc::c_ushort,
-}
-
 // ... end c2rust stuff
 
 // Defined in libbb.h

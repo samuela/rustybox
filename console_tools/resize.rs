@@ -1,7 +1,7 @@
 use libc;
+use libc::termios;
+use libc::winsize;
 use libc::FILE;
-
-use crate::librb::{termios, winsize};
 
 extern "C" {
   #[no_mangle]

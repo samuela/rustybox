@@ -3,7 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc::termios;
-use crate::librb::winsize;
+use libc::winsize;
 use libc;
 use libc::pid_t;
 use libc::time_t;
