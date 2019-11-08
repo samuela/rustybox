@@ -1,7 +1,7 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::speed_t;
+use libc::speed_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;

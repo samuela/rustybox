@@ -1,9 +1,9 @@
-use libc::cc_t;
-use crate::librb::speed_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use crate::librb::winsize;
 use libc;
+use libc::cc_t;
+use libc::speed_t;
 use libc::FILE;
 
 extern "C" {

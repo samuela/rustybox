@@ -86,7 +86,7 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-use crate::librb::speed_t;
+use libc::speed_t;
 
 use crate::librb::termios;
 pub type C2RustUnnamed = libc::c_uint;

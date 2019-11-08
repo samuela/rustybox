@@ -1,5 +1,5 @@
-use crate::librb::speed_t;
 use libc;
+use libc::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;
 
 /*

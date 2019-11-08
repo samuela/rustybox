@@ -1,4 +1,4 @@
-use crate::librb::speed_t;
+use libc::speed_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;

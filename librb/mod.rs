@@ -41,7 +41,6 @@ pub struct group {
 // See
 //  * https://www.gnu.org/software/libc/manual/html_node/Mode-Data-Types.html
 //  * http://man7.org/linux/man-pages/man3/termios.3.html
-pub type speed_t = libc::c_uint;
 pub type tcflag_t = libc::c_uint;
 
 #[derive(Copy, Clone)]
@@ -53,8 +52,8 @@ pub struct termios {
   pub c_lflag: tcflag_t,
   pub c_line: libc::cc_t,
   pub c_cc: [libc::cc_t; 32],
-  pub c_ispeed: speed_t,
-  pub c_ospeed: speed_t,
+  pub c_ispeed: libc::speed_t,
+  pub c_ospeed: libc::speed_t,
 }
 
 // See http://www.delorie.com/djgpp/doc/libc/libc_495.html.
