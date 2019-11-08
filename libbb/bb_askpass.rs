@@ -1,5 +1,4 @@
 use crate::librb::signal::sigaction;
-
 use crate::librb::size_t;
 use libc;
 use libc::ssize_t;

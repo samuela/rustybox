@@ -1,8 +1,8 @@
-use libc::sigval;
 use crate::librb::smallint;
 use libc;
 use libc::pid_t;
 use libc::sigset_t;
+use libc::sigval;
 use libc::uid_t;
 
 extern "C" {
@@ -103,7 +103,6 @@ pub struct C2RustUnnamed_8 {
 }
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
-
 
 /*
  * Utility routines.
