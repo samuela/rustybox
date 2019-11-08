@@ -1,4 +1,3 @@
-use crate::librb::cc_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::signal::C2RustUnnamed_9;
@@ -7,11 +6,12 @@ use crate::librb::signal::__sigval_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
 use crate::librb::tcflag_t;
 use crate::librb::termios;
 use libc;
+use libc::cc_t;
 use libc::pid_t;
+use libc::ssize_t;
 use libc::uid_t;
 use libc::FILE;
 
@@ -687,7 +687,8 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
       0i32,
       &mut c as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) ==1      && c as libc::c_int != '\n' as i32
+    ) == 1
+      && c as libc::c_int != '\n' as i32
     {}
   }
   /*

@@ -1,4 +1,11 @@
+use libc::cc_t;
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
+use crate::librb::winsize;
 use libc;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -112,14 +119,8 @@ pub struct __va_list_tag {
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-
-use libc::FILE;
 pub type va_list = __builtin_va_list;
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
-use crate::librb::termios;
-use crate::librb::winsize;
+
 /* Last element is marked by mult == 0 */
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,4 +1,6 @@
 use libc;
+use libc::cc_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -141,7 +143,6 @@ pub struct rlimit {
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
-use crate::librb::cc_t;
 
 use crate::librb::termios;
 /* "OPTIND=1" */

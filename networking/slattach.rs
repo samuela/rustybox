@@ -1,4 +1,9 @@
+use crate::librb::speed_t;
+use crate::librb::tcflag_t;
+use crate::librb::termios;
 use libc;
+use libc::cc_t;
+
 extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -78,11 +83,6 @@ extern "C" {
   #[no_mangle]
   fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
 }
-
-use crate::librb::cc_t;
-use crate::librb::speed_t;
-use crate::librb::tcflag_t;
-use crate::librb::termios;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
