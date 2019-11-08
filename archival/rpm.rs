@@ -1,9 +1,7 @@
-
-
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -218,7 +216,6 @@ pub struct rpm_index {
   pub offset: u32,
   pub count: u32,
 }
-use crate::archival::libarchive::bb_archive::archive_handle_t;
 
 /* Then follows the header: */
 #[derive(Copy, Clone)]

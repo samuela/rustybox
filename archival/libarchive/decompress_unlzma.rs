@@ -1,4 +1,8 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -21,19 +25,6 @@ extern "C" {
     bufsize: size_t,
   ) -> ssize_t;
 }
-
-
-
-use crate::librb::size_t;
-
-use libc::ssize_t;
-
-
-
-
-
-
-use crate::archival::libarchive::bb_archive::transformer_state_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

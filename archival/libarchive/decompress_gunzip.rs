@@ -1,3 +1,4 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
@@ -70,22 +71,7 @@ pub const XZ_MAGIC1: C2RustUnnamed = 14333;
 pub const BZIP2_MAGIC: C2RustUnnamed = 23106;
 pub const GZIP_MAGIC: C2RustUnnamed = 35615;
 pub const COMPRESS_MAGIC: C2RustUnnamed = 40223;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed_0,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {

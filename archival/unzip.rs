@@ -1,4 +1,16 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+use libc::stat;
+use libc::time_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -134,24 +146,6 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
-use crate::libbb::llist::llist_t;
-
-use libc::off64_t;
-
-
-use libc::mode_t;
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::stat;
-use libc::time_t;
-
-
-
-
-use libc::FILE;
-
 pub type C2RustUnnamed = libc::c_int;
 /* cp --reflink[=always] */
 /*
@@ -214,22 +208,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed_0,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed_0 {
@@ -451,10 +430,7 @@ unsafe extern "C" fn find_cdf_offset() -> u32 {
   free(buf as *mut libc::c_void);
   return found;
 }
-unsafe extern "C" fn read_next_cdf(
-  mut cdf_offset: u32,
-  mut cdf: *mut cdf_header_t,
-) -> u32 {
+unsafe extern "C" fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header_t) -> u32 {
   let mut magic: u32 = 0;
   if cdf_offset == 0xffffffffu32 {
     return cdf_offset;
@@ -493,7 +469,7 @@ unsafe extern "C" fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
   };
 }
 unsafe extern "C" fn unzip_skip(mut skip: off_t) {
-  if skip !=0{
+  if skip != 0 {
     if lseek(zip_fd as libc::c_int, skip, 1i32) == -1i32 as off_t {
       bb_copyfd_exact_size(zip_fd as libc::c_int, -1i32, skip);
     }
@@ -539,20 +515,7 @@ unsafe extern "C" fn unzip_extract_symlink(
   free(target as *mut libc::c_void);
 }
 unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc::c_int) {
-  let mut xstate: transformer_state_t = transformer_state_t {
-    signature_skipped: 0,
-    xformer: None,
-    src_fd: 0,
-    dst_fd: 0,
-    mem_output_size_max: 0,
-    mem_output_size: 0,
-    mem_output_buf: 0 as *mut libc::c_char,
-    bytes_out: 0,
-    bytes_in: 0,
-    crc32: 0,
-    mtime: 0,
-    magic: C2RustUnnamed_0 { b: [0; 8] },
-  };
+  let mut xstate: transformer_state_t = std::mem::zeroed();
   if (*zip).fmt.method as libc::c_int == 0i32 {
     /* Method 0 - stored (not compressed) */
     let mut size: off_t = (*zip).fmt.ucmpsize as off_t;

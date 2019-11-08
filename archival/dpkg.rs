@@ -1,7 +1,12 @@
-
+use crate::libbb::llist::llist_t;
+use crate::librb::md5_ctx_t;
+use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::ssize_t;
+use libc::stat;
+use libc::FILE;
 
 extern "C" {
 
@@ -224,22 +229,6 @@ extern "C" {
   #[no_mangle]
   fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
 }
-
-use crate::libbb::llist::llist_t;
-
-
-
-use crate::librb::md5_ctx_t;
-use crate::librb::size_t;
-
-
-
-use libc::ssize_t;
-use libc::stat;
-
-
-
-use libc::FILE;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake

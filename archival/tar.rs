@@ -1,7 +1,7 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
-
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::libbb::llist::llist_t;
-
 use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
@@ -240,7 +240,6 @@ pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 
-use crate::archival::libarchive::bb_archive::archive_handle_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tar_header_t {
@@ -260,22 +259,6 @@ pub struct tar_header_t {
   pub devminor: [libc::c_char; 8],
   pub prefix: [libc::c_char; 155],
   pub padding: [libc::c_char; 12],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed_0,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,4 +1,8 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -51,15 +55,6 @@ extern "C" {
     expected_ext: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-
-
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -651,35 +646,10 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
 /* number of codes used to transfer the bit lengths */
 /* extra bits for each length code */
 static mut extra_lbits: [u8; 29] = [
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  1i32 as u8,
-  1i32 as u8,
-  1i32 as u8,
-  1i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  3i32 as u8,
-  3i32 as u8,
-  3i32 as u8,
-  3i32 as u8,
-  4i32 as u8,
-  4i32 as u8,
-  4i32 as u8,
-  4i32 as u8,
-  5i32 as u8,
-  5i32 as u8,
-  5i32 as u8,
-  5i32 as u8,
-  0i32 as u8,
+  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
+  1i32 as u8, 1i32 as u8, 1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8,
+  3i32 as u8, 3i32 as u8, 3i32 as u8, 3i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8,
+  5i32 as u8, 5i32 as u8, 5i32 as u8, 5i32 as u8, 0i32 as u8,
 ];
 /* extra bits for each distance code */
 static mut extra_dbits: [u8; 30] = [
@@ -716,25 +686,9 @@ static mut extra_dbits: [u8; 30] = [
 ];
 /* extra bits for each bit length code */
 static mut extra_blbits: [u8; 19] = [
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  2i32 as u8,
-  3i32 as u8,
-  7i32 as u8,
+  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
+  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
+  2i32 as u8, 3i32 as u8, 7i32 as u8,
 ];
 /* number of codes at each bit length for an optimal tree */
 static mut bl_order: [u8; 19] = [

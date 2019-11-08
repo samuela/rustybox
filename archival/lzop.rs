@@ -1,6 +1,10 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -117,14 +121,6 @@ extern "C" {
     dst_len: *mut libc::c_uint,
   ) -> libc::c_int;
 }
-
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-
-
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -716,11 +712,7 @@ unsafe extern "C" fn lzo1x_optimize(
 // adapted from free code by Mark Adler <madler@alumni.caltech.edu>
 // see http://www.zlib.org/
 /* *********************************************************************/
-unsafe extern "C" fn lzo_adler32(
-  mut adler: u32,
-  mut buf: *const u8,
-  mut len: libc::c_uint,
-) -> u32 {
+unsafe extern "C" fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
   let mut s1: u32 = adler & 0xffffi32 as libc::c_uint;
   let mut s2: u32 = adler >> 16i32 & 0xffffi32 as libc::c_uint;
   let mut k: libc::c_uint = 0;
@@ -746,18 +738,12 @@ unsafe extern "C" fn lzo_adler32(
         }
       }
     }
-    s1 = (s1 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32
-      as u32;
-    s2 = (s2 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32
-      as u32
+    s1 = (s1 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32 as u32;
+    s2 = (s2 as libc::c_uint).wrapping_rem(LZO_BASE as libc::c_int as libc::c_uint) as u32 as u32
   }
   return s2 << 16i32 | s1;
 }
-unsafe extern "C" fn lzo_crc32(
-  mut c: u32,
-  mut buf: *const u8,
-  mut len: libc::c_uint,
-) -> u32 {
+unsafe extern "C" fn lzo_crc32(mut c: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
   //if (buf == NULL) - impossible
   //	return 0;
   return !crc32_block_endian0(!c, buf as *const libc::c_void, len, global_crc32_table);
@@ -928,14 +914,12 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
    */
   if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
     wrk_mem = xzalloc(
-      (16384i32 as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
+      (16384i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
     ) as *mut u8
   } else {
     /* check only if it's not the only possibility */
     wrk_mem = xzalloc(
-      (32768i32 as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
+      (32768i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
     ) as *mut u8
   }
   loop {
@@ -1178,9 +1162,7 @@ unsafe extern "C" fn lzo_check(
   mut init: u32,
   mut buf: *mut u8,
   mut len: libc::c_uint,
-  mut fn_0: Option<
-    unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
-  >,
+  mut fn_0: Option<unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32>,
   mut ref_0: u32,
 ) {
   /* This function, by having the same order of parameters
@@ -1280,14 +1262,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
             1i32 as u32,
             b1,
             src_len,
-            Some(
-              lzo_adler32
-                as unsafe extern "C" fn(
-                  _: u32,
-                  _: *const u8,
-                  _: libc::c_uint,
-                ) -> u32,
-            ),
+            Some(lzo_adler32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
             c_adler32,
           );
         }
@@ -1296,14 +1271,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
             0i32 as u32,
             b1,
             src_len,
-            Some(
-              lzo_crc32
-                as unsafe extern "C" fn(
-                  _: u32,
-                  _: *const u8,
-                  _: libc::c_uint,
-                ) -> u32,
-            ),
+            Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
             c_crc32,
           );
         }
@@ -1328,10 +1296,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
           1i32 as u32,
           dst,
           dst_len,
-          Some(
-            lzo_adler32
-              as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
-          ),
+          Some(lzo_adler32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
           d_adler32,
         );
       }
@@ -1340,10 +1305,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
           0i32 as u32,
           dst,
           dst_len,
-          Some(
-            lzo_crc32
-              as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32,
-          ),
+          Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
           d_crc32,
         );
       }
