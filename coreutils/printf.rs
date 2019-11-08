@@ -1,4 +1,7 @@
+use crate::librb::size_t;
 use libc;
+use libc::ptrdiff_t;
+
 extern "C" {
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
@@ -68,8 +71,6 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
-use crate::librb::ptrdiff_t;
-use crate::librb::size_t;
 
 /*
  * printf - format and print data

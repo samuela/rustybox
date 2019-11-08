@@ -1,4 +1,6 @@
 use libc;
+use libc::ptrdiff_t;
+
 extern "C" {
   #[no_mangle]
   fn get_console_fd_or_die() -> libc::c_int;
@@ -14,8 +16,6 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-use crate::librb::ptrdiff_t;
 
 /*
  * Disallocate virtual terminal(s)

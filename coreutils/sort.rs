@@ -1,4 +1,9 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
@@ -74,10 +79,6 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-
-use crate::librb::__compar_fn_t;
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tm {
@@ -93,7 +94,6 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-use crate::libbb::llist::llist_t;
 
 /*
  * SuS3 compliant sort implementation for busybox

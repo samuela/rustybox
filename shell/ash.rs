@@ -1,6 +1,6 @@
 use crate::librb::__compar_fn_t;
 use crate::librb::passwd;
-use crate::librb::ptrdiff_t;
+use libc::ptrdiff_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigaction;
@@ -3998,7 +3998,7 @@ unsafe extern "C" fn growjobtab() -> *mut job {
       (4i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<job>() as libc::c_ulong),
     ),
   ) as *mut job;
-  offset = (jp as *mut libc::c_char).wrapping_offset_from(jq as *mut libc::c_char) as libc::c_long;
+  offset = (jp as *mut libc::c_char).wrapping_offset_from(jq as *mut libc::c_char);
   if offset != 0 {
     let mut l: size_t = len;
     jq = (jq as *mut libc::c_char).offset(l as isize) as *mut job;

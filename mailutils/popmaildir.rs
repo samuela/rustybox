@@ -1,8 +1,8 @@
 use crate::librb::md5_ctx_t;
-use crate::librb::ptrdiff_t;
 use crate::librb::size_t;
 use libc;
 use libc::pid_t;
+use libc::ptrdiff_t;
 use libc::FILE;
 
 extern "C" {
@@ -102,6 +102,15 @@ pub struct globals {
   pub fp0: *mut FILE,
   pub opt_charset: *mut libc::c_char,
 }
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub union C2RustUnnamed {
+  pub ctx: md5_ctx_t,
+  pub hex: [libc::c_char; 33],
+}
+
+pub type C2RustUnnamed_0 = libc::c_uint;
 // -T get messages with TOP instead with RETR
 pub const OPT_k: C2RustUnnamed_0 = 256;
 // -H30 type first 30 lines of a message; (-L12000 -H30). Ignored
@@ -110,17 +119,10 @@ pub const OPT_M: C2RustUnnamed_0 = 16384;
 pub const OPT_F: C2RustUnnamed_0 = 32768;
 // -s skip authorization
 pub const OPT_T: C2RustUnnamed_0 = 128;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub ctx: md5_ctx_t,
-  pub hex: [libc::c_char; 33],
-}
 // -c use tcpclient. Ignored
 pub const OPT_a: C2RustUnnamed_0 = 32;
 // -a use APOP protocol
 pub const OPT_s: C2RustUnnamed_0 = 64;
-pub type C2RustUnnamed_0 = libc::c_uint;
 // -F\"program arg1 arg2 ...\"; filter by program. Treated like -M
 // -L50000 not retrieve new messages >= 50000 bytes. Ignored
 pub const OPT_H: C2RustUnnamed_0 = 8192;
@@ -141,6 +143,7 @@ pub const OPT_m: C2RustUnnamed_0 = 4;
 // -b binary mode. Ignored
 pub const OPT_d: C2RustUnnamed_0 = 2;
 pub const OPT_b: C2RustUnnamed_0 = 1;
+
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;

@@ -1,4 +1,6 @@
 use libc;
+use libc::ptrdiff_t;
+
 extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
@@ -18,7 +20,7 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-use crate::librb::ptrdiff_t;
+
 pub const KDGKBTYPE: C2RustUnnamed = 19251;
 /* make vt active */
 pub const VT_WAITACTIVE: C2RustUnnamed_0 = 22023;

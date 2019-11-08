@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::ptrdiff_t;
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
@@ -113,7 +114,6 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = u32;
-use crate::librb::ptrdiff_t;
 
 /*
  * Generic non-forking server infrastructure.

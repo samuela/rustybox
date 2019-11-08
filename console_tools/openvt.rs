@@ -1,6 +1,6 @@
-use crate::librb::ptrdiff_t;
 use libc;
 use libc::pid_t;
+use libc::ptrdiff_t;
 
 extern "C" {
   #[no_mangle]

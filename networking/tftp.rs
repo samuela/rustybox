@@ -1,10 +1,11 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::off_t;
+use libc::ptrdiff_t;
+use libc::ssize_t;
 use libc::stat;
 
 extern "C" {
@@ -250,7 +251,6 @@ pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = u32;
-use crate::librb::ptrdiff_t;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1055,8 +1055,8 @@ unsafe extern "C" fn tftp_protocol(
                   _ => {}
                 }
                 if !remote_file.is_null()
-                  && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size
-                    == 0                 {
+                  && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size == 0
+                {
                   /* if we don't know it yet */
                   res = tftp_get_option(
                     b"tsize\x00" as *const u8 as *const libc::c_char,

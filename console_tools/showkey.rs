@@ -1,4 +1,10 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::termios;
 use libc;
+use libc::ptrdiff_t;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
@@ -45,12 +51,6 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-use crate::librb::ptrdiff_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::termios;
-use libc::ssize_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

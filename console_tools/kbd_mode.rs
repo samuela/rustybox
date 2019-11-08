@@ -1,4 +1,6 @@
 use libc;
+use libc::ptrdiff_t;
+
 extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -18,9 +20,6 @@ extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
 }
-
-use crate::librb::ptrdiff_t;
-
 
 pub const UNICODE: C2RustUnnamed = 8;
 pub type C2RustUnnamed = libc::c_uint;
