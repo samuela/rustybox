@@ -1,9 +1,8 @@
-
-use libc::pid_t;
 use crate::librb::signal::__sigval_t;
-use crate::librb::signal::sigset_t;
 use crate::librb::smallint;
 use libc;
+use libc::pid_t;
+use libc::sigset_t;
 use libc::uid_t;
 
 extern "C" {

@@ -1,4 +1,13 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc;
+use libc::off64_t;
+use libc::off_t;
+use libc::sigset_t;
+use libc::ssize_t;
+use libc::stat;
+use libc::FILE;
 
 extern "C" {
   #[no_mangle]
@@ -195,11 +204,6 @@ extern "C" {
   #[no_mangle]
   static sgi_sys_types: [*const libc::c_char; 0];
 
-  // #[no_mangle]
-  // fn sgi_get_num_sectors(i: libc::c_int) -> libc::c_uint;
-  // #[no_mangle]
-  // fn sgi_get_sysid(i: libc::c_int) -> libc::c_int;
-
   #[no_mangle]
   fn sgi_delete_partition(i: libc::c_int);
 
@@ -235,9 +239,6 @@ extern "C" {
 
   #[no_mangle]
   fn sgi_set_bootpartition(i: libc::c_int);
-
-  // #[no_mangle]
-  // static sun_sys_types: [*const libc::c_char; 0];
 
   #[no_mangle]
   fn sun_delete_partition(i: libc::c_int);
@@ -279,8 +280,6 @@ extern "C" {
   fn sun_write_table();
 }
 
-use libc::off64_t;
-
 pub type bb__aliased_u32 = u32;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -293,14 +292,6 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::off_t;
-use libc::ssize_t;
-
-use libc::stat;
-
-use crate::librb::signal::__sigset_t;
 
 pub type __jmp_buf = [libc::c_long; 8];
 
@@ -309,13 +300,10 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 
 pub type jmp_buf = [__jmp_buf_tag; 1];
-
-use crate::librb::uoff_t;
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

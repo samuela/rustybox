@@ -1,8 +1,7 @@
 use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::__sigset_t;
+use libc::sigset_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::sigset_t;
 use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -1858,7 +1857,7 @@ unsafe extern "C" fn install_sighandler(
 ) -> sighandler_t {
   let mut old_sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: __sigset_t { __val: [0; 16] },
+    sa_mask: sigset_t { __val: [0; 16] },
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -12834,7 +12833,7 @@ unsafe extern "C" fn wait_for_child_or_signal(
   let mut ret: libc::c_int = 0i32;
   loop {
     let mut sig: libc::c_int = 0;
-    let mut oldset: sigset_t = __sigset_t { __val: [0; 16] };
+    let mut oldset: sigset_t = sigset_t { __val: [0; 16] };
     if !(sigisemptyset(&mut (*ptr_to_globals).pending_set) == 0) {
       /* SIGCHLD, or no signal, or ignored one, such as SIGQUIT. Repeat */
       /* waitpid is not interruptible by SA_RESTARTed

@@ -1,12 +1,12 @@
-use crate::librb::signal::__sigset_t;
-use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
-use libc::ssize_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::gid_t;
 use libc::pid_t;
+use libc::sigset_t;
+use libc::sigset_t;
+use libc::ssize_t;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
@@ -545,7 +545,7 @@ use crate::librb::signal::__sighandler_t;
 #[repr(C)]
 pub struct sigaction {
   pub __sigaction_handler: C2RustUnnamed_12,
-  pub sa_mask: __sigset_t,
+  pub sa_mask: sigset_t,
   pub sa_flags: libc::c_int,
   pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
 }
@@ -890,7 +890,8 @@ unsafe extern "C" fn recalculate_maxsock() {
       [(fd / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int)) as usize]
       & (1u64 << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
         as __fd_mask
-      != 0     {
+      != 0
+    {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock = fd
     } /* paranoia */
     fd += 1
@@ -1815,7 +1816,7 @@ pub unsafe extern "C" fn inetd_main(
               << (*sep).se_fd
                 % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
               as __fd_mask
-            !=0))
+            != 0))
         {
           ready_fd_cnt -= 1;
           ctrl = (*sep).se_fd;
@@ -2206,7 +2207,7 @@ unsafe extern "C" fn echo_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
         .as_mut_ptr() as *mut libc::c_void,
       LINE_SIZE as libc::c_int as size_t,
     ); /* for jumbo sized packets! :) */
-    if sz <=0{
+    if sz <= 0 {
       break; /* too big for stack */
     }
     xwrite(
@@ -2263,7 +2264,8 @@ unsafe extern "C" fn discard_stream(mut s: libc::c_int, mut _sep: *mut servtab_t
       .line
       .as_mut_ptr() as *mut libc::c_void,
     LINE_SIZE as libc::c_int as size_t,
-  ) > 0   {}
+  ) > 0
+  {}
 }
 /* ARGSUSED */
 unsafe extern "C" fn discard_dg(mut s: libc::c_int, mut _sep: *mut servtab_t) {
@@ -2371,7 +2373,8 @@ unsafe extern "C" fn chargen_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
       __sockaddr__: &mut (*lsa).u.sa as *mut sockaddr,
     },
     &mut (*lsa).len,
-  ) < 0   {
+  ) < 0
+  {
     return;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -2493,7 +2496,8 @@ unsafe extern "C" fn machtime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
       __sockaddr__: &mut (*lsa).u.sa as *mut sockaddr,
     },
     &mut (*lsa).len,
-  ) < 0   {
+  ) < 0
+  {
     return;
   }
   result = machtime();
@@ -2540,7 +2544,8 @@ unsafe extern "C" fn daytime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
       __sockaddr__: &mut (*lsa).u.sa as *mut sockaddr,
     },
     &mut (*lsa).len,
-  ) < 0   {
+  ) < 0
+  {
     return;
   }
   t = time(0 as *mut time_t);

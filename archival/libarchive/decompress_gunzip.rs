@@ -1,4 +1,11 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::off_t;
+use libc::sigset_t;
+use libc::ssize_t;
+use libc::time_t;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -41,18 +48,9 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-
-
-
 pub type uintptr_t = libc::c_ulong;
 pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
-use libc::off_t;
-use crate::librb::signal::__sigset_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::time_t;
 
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
@@ -60,7 +58,7 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
 
@@ -407,7 +405,7 @@ unsafe extern "C" fn fill_bitbuffer(
   while *current < required {
     if (*state).bytebuffer_offset >= (*state).bytebuffer_size {
       let mut sz: libc::c_uint = (0x4000i32 - 4i32) as libc::c_uint;
-      if (*state).to_read >=0&& (*state).to_read < sz as libc::c_long {
+      if (*state).to_read >= 0 && (*state).to_read < sz as libc::c_long {
         /* unzip only */
         sz = (*state).to_read as libc::c_uint
       }
@@ -422,7 +420,7 @@ unsafe extern "C" fn fill_bitbuffer(
         (*state).error_msg = b"unexpected end of file\x00" as *const u8 as *const libc::c_char;
         abort_unzip(state);
       }
-      if (*state).to_read >=0{
+      if (*state).to_read >= 0 {
         /* unzip only */
         (*state).to_read -= (*state).bytebuffer_size as libc::c_long
       } /* counter for codes of length k */

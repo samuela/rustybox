@@ -1,7 +1,7 @@
-use crate::librb::signal::__sigset_t;
 use crate::librb::size_t;
 use libc;
 use libc::gid_t;
+use libc::sigset_t;
 use libc::stat;
 use libc::uid_t;
 
@@ -60,7 +60,7 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
 /* We try to minimize both static and stack usage. */
@@ -678,16 +678,16 @@ unsafe extern "C" fn binop() -> libc::c_int {
   if ((*op).op_num as libc::c_int - STREZ as libc::c_int) as libc::c_uchar as libc::c_int <= 5i32 {
     val1 = strcmp(opnd1, opnd2) as number_t;
     if (*op).op_num as libc::c_int == STREQ as libc::c_int {
-      return (val1 ==0) as libc::c_int;
+      return (val1 == 0) as libc::c_int;
     }
     if (*op).op_num as libc::c_int == STRNE as libc::c_int {
-      return (val1 !=0) as libc::c_int;
+      return (val1 != 0) as libc::c_int;
     }
     if (*op).op_num as libc::c_int == STRLT as libc::c_int {
-      return (val1 <0) as libc::c_int;
+      return (val1 < 0) as libc::c_int;
     }
     /*if (op->op_num == STRGT)*/
-    return (val1 >0) as libc::c_int;
+    return (val1 > 0) as libc::c_int;
   }
   /* We are sure that these three are by now the only binops we didn't check
    * yet, so we do not check if the class is correct:

@@ -1,6 +1,10 @@
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::sigset_t;
+use libc::ssize_t;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -142,12 +146,6 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-
-use crate::librb::signal::sigset_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-
-
 
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

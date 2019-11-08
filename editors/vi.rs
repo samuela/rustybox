@@ -1,4 +1,13 @@
+use crate::librb::signal::__sighandler_t;
+use libc::FILE;
+use libc::off64_t;
+use crate::librb::smallint;
+use libc::sigset_t;
+use crate::librb::size_t;
+use libc::ssize_t;
+use libc::stat;
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -148,14 +157,8 @@ pub struct __va_list_tag {
 }
 
 pub type __int64_t = libc::c_long;
-
-use libc::off64_t;
-
-
 pub type int64_t = __int64_t;
-
-
-
+pub type smalluint = libc::c_uchar;
 pub type uintptr_t = libc::c_ulong;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -167,12 +170,6 @@ pub type uintptr_t = libc::c_ulong;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
-pub type smalluint = libc::c_uchar;
-use crate::librb::signal::__sigset_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::stat;
 
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
@@ -180,12 +177,9 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 pub type sigjmp_buf = [__jmp_buf_tag; 1];
-use crate::librb::signal::__sighandler_t;
-
-use libc::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

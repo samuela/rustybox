@@ -1,6 +1,13 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::pid_t;
+use libc::sigset_t;
+use libc::ssize_t;
+use libc::FILE;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -197,14 +204,8 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use libc::pid_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-
-
-
 pub type socklen_t = __socklen_t;
-use crate::librb::signal::__sigset_t;
+
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -352,12 +353,9 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
-use crate::librb::signal::__sighandler_t;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

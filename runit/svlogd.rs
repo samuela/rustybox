@@ -1,4 +1,3 @@
-use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
@@ -8,6 +7,7 @@ use libc::ino64_t;
 use libc::mode_t;
 use libc::off64_t;
 use libc::pid_t;
+use libc::sigset_t;
 use libc::ssize_t;
 use libc::stat;
 use libc::time_t;

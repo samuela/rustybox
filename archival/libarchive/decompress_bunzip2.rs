@@ -1,4 +1,10 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::off_t;
+use libc::sigset_t;
+use libc::ssize_t;
+use libc::time_t;
 
 extern "C" {
   #[no_mangle]
@@ -37,13 +43,6 @@ extern "C" {
   fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
-use crate::librb::signal::__sigset_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::off_t;
-use libc::ssize_t;
-use libc::time_t;
-
 pub type __jmp_buf = [libc::c_long; 8];
 
 #[derive(Copy, Clone)]
@@ -51,7 +50,7 @@ pub type __jmp_buf = [libc::c_long; 8];
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
-  pub __saved_mask: __sigset_t,
+  pub __saved_mask: sigset_t,
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
 
@@ -913,7 +912,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
     let mut jmpbuf: jmp_buf = [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: __sigset_t { __val: [0; 16] },
+      __saved_mask: sigset_t { __val: [0; 16] },
     }; 1];
     /* Setup for I/O error handling via longjmp */
     i = _setjmp(jmpbuf.as_mut_ptr());
@@ -1009,7 +1008,7 @@ pub unsafe extern "C" fn unpack_bz2_data(
   let mut jmpbuf: jmp_buf = [__jmp_buf_tag {
     __jmpbuf: [0; 8],
     __mask_was_saved: 0,
-    __saved_mask: __sigset_t { __val: [0; 16] },
+    __saved_mask: sigset_t { __val: [0; 16] },
   }; 1];
   /* Setup for I/O error handling via longjmp */
   i = _setjmp(jmpbuf.as_mut_ptr());
