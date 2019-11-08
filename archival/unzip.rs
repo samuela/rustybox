@@ -8,7 +8,6 @@ use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::stat;
-use libc::time_t;
 use libc::FILE;
 
 extern "C" {

@@ -13,7 +13,6 @@ use libc::ino_t;
 use libc::off_t;
 use libc::pid_t;
 use libc::stat;
-use libc::time_t;
 use libc::uid_t;
 use libc::FILE;
 
