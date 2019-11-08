@@ -1694,7 +1694,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
   let mut timeout: libc::c_int = 2000i32 / 32i32;
   let mut seq_fd: libc::c_int = -1i32;
   let mut do_once: libc::c_int = 1i32;
-  let mut set_CHLD: sigset_t = sigset_t { __val: [0; 16] };
+  let mut set_CHLD: sigset_t = std::mem::zeroed();
   sigemptyset(&mut set_CHLD);
   sigaddset(&mut set_CHLD, 17i32);
   sigprocmask(0i32, &mut set_CHLD, 0 as *mut sigset_t);

@@ -2,7 +2,6 @@ use crate::librb::signal::sigaction;
 use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::size_t;
 use libc;
-use libc::sigset_t;
 use libc::ssize_t;
 use libc::termios;
 use libc::FILE;
@@ -71,13 +70,13 @@ pub unsafe extern "C" fn bb_ask_noecho(
   let mut i: libc::c_int = 0;
   let mut sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
   let mut oldsa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };

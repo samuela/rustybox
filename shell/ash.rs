@@ -2961,7 +2961,7 @@ unsafe extern "C" fn setsignal(mut signo: libc::c_int) {
   let mut new_act: libc::c_char = 0;
   let mut act: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -3571,7 +3571,7 @@ unsafe extern "C" fn sprint_status48(
 unsafe extern "C" fn wait_block_or_sig(mut status: *mut libc::c_int) -> libc::c_int {
   let mut pid: libc::c_int = 0;
   loop {
-    let mut mask: sigset_t = sigset_t { __val: [0; 16] };
+    let mut mask: sigset_t = std::mem::zeroed();
     ::std::ptr::write_volatile(
       &mut (*ash_ptr_to_globals_misc).got_sigchld as *mut smallint,
       0i32 as smallint,
@@ -5120,7 +5120,7 @@ unsafe extern "C" fn redirectsafe(mut redir: *mut node, mut flags: libc::c_int) 
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   ::std::ptr::write_volatile(
@@ -9119,7 +9119,7 @@ unsafe extern "C" fn evalfun(
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   let mut e: libc::c_int = 0;
@@ -10205,7 +10205,7 @@ unsafe extern "C" fn evalbltin(
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   let mut status: libc::c_int = 0;
@@ -13439,7 +13439,7 @@ unsafe extern "C" fn expandstr(
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   /* XXX Fix (char *) cast. */
@@ -13521,7 +13521,7 @@ unsafe extern "C" fn evalstring(mut s: *mut libc::c_char, mut flags: libc::c_int
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   let mut ex: libc::c_int = 0;
@@ -14546,7 +14546,7 @@ unsafe extern "C" fn exitshell() -> ! {
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -15119,7 +15119,7 @@ pub unsafe extern "C" fn ash_main(
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1],
   };
   let mut smark: stackmark = stackmark {

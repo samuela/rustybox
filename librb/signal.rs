@@ -111,7 +111,7 @@ pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 #[repr(C)]
 pub struct sigaction {
   pub __sigaction_handler: C2RustUnnamed_9,
-  pub sa_mask: sigset_t,
+  pub sa_mask: libc::sigset_t,
   pub sa_flags: libc::c_int,
   pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
 }

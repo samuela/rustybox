@@ -132,7 +132,7 @@ pub unsafe extern "C" fn sigaction_set(
 }
 #[no_mangle]
 pub unsafe extern "C" fn sigprocmask_allsigs(mut how: libc::c_int) -> libc::c_int {
-  let mut set: sigset_t = sigset_t { __val: [0; 16] };
+  let mut set: sigset_t = std::mem::zeroed();
   sigfillset(&mut set);
   return sigprocmask(how, &mut set, 0 as *mut sigset_t);
 }
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn bb_signals_recursive_norestart(
   let mut bit: libc::c_int = 1i32;
   let mut sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -196,21 +196,21 @@ pub unsafe extern "C" fn bb_signals_recursive_norestart(
 }
 #[no_mangle]
 pub unsafe extern "C" fn sig_block(mut sig: libc::c_int) {
-  let mut ss: sigset_t = sigset_t { __val: [0; 16] };
+  let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigaddset(&mut ss, sig);
   sigprocmask(0i32, &mut ss, 0 as *mut sigset_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn sig_unblock(mut sig: libc::c_int) {
-  let mut ss: sigset_t = sigset_t { __val: [0; 16] };
+  let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigaddset(&mut ss, sig);
   sigprocmask(1i32, &mut ss, 0 as *mut sigset_t);
 }
 #[no_mangle]
 pub unsafe extern "C" fn wait_for_any_sig() {
-  let mut ss: sigset_t = sigset_t { __val: [0; 16] };
+  let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigsuspend(&mut ss);
 }
@@ -231,7 +231,7 @@ pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
 ) {
   let mut sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -399,7 +399,7 @@ pub unsafe extern "C" fn signal_no_SA_RESTART_empty_mask(
 ) {
   let mut sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };

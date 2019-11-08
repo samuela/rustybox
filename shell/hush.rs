@@ -1857,7 +1857,7 @@ unsafe extern "C" fn install_sighandler(
 ) -> sighandler_t {
   let mut old_sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -12833,7 +12833,7 @@ unsafe extern "C" fn wait_for_child_or_signal(
   let mut ret: libc::c_int = 0i32;
   loop {
     let mut sig: libc::c_int = 0;
-    let mut oldset: sigset_t = sigset_t { __val: [0; 16] };
+    let mut oldset: sigset_t = std::mem::zeroed();
     if !(sigisemptyset(&mut (*ptr_to_globals).pending_set) == 0) {
       /* SIGCHLD, or no signal, or ignored one, such as SIGQUIT. Repeat */
       /* waitpid is not interruptible by SA_RESTARTed

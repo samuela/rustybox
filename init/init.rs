@@ -1301,7 +1301,7 @@ pub unsafe extern "C" fn init_main(
   if 0i32 == 0 {
     let mut sa: sigaction = sigaction {
       __sigaction_handler: C2RustUnnamed_9 { sa_handler: None },
-      sa_mask: sigset_t { __val: [0; 16] },
+      sa_mask: std::mem::zeroed(),
       sa_flags: 0,
       sa_restorer: None,
     };

@@ -5,7 +5,6 @@ use libc;
 use libc::gid_t;
 use libc::pid_t;
 use libc::sigset_t;
-use libc::sigset_t;
 use libc::ssize_t;
 use libc::time_t;
 use libc::timeval;
@@ -1314,7 +1313,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
 }
 unsafe extern "C" fn insert_in_servlist(mut cp: *mut servtab_t) -> *mut servtab_t {
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
-  let mut omask: sigset_t = sigset_t { __val: [0; 16] };
+  let mut omask: sigset_t = std::mem::zeroed();
   sep = new_servtab();
   *sep = *cp;
   (*sep).se_fd = -1i32;
@@ -1347,7 +1346,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
   let mut cp: *mut servtab_t = 0 as *mut servtab_t;
   let mut sepp: *mut *mut servtab_t = 0 as *mut *mut servtab_t;
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut omask: sigset_t = sigset_t { __val: [0; 16] };
+  let mut omask: sigset_t = std::mem::zeroed();
   let mut n: libc::c_uint = 0;
   let mut port: u16 = 0;
   let mut save_errno: libc::c_int = *bb_errno;
@@ -1662,13 +1661,13 @@ pub unsafe extern "C" fn inetd_main(
   let mut current_block: u64;
   let mut sa: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_12 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
   let mut saved_pipe_handler: sigaction = sigaction {
     __sigaction_handler: C2RustUnnamed_12 { sa_handler: None },
-    sa_mask: sigset_t { __val: [0; 16] },
+    sa_mask: std::mem::zeroed(),
     sa_flags: 0,
     sa_restorer: None,
   };
@@ -1679,7 +1678,7 @@ pub unsafe extern "C" fn inetd_main(
   grp = grp;
   let mut opt: libc::c_int = 0;
   let mut pid: pid_t = 0;
-  let mut omask: sigset_t = sigset_t { __val: [0; 16] };
+  let mut omask: sigset_t = std::mem::zeroed();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rlim_ofile_cur = 64i32 as rlim_t;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).global_queuelen = 128i32;
   let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename;

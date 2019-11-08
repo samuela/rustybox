@@ -912,7 +912,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
     let mut jmpbuf: jmp_buf = [__jmp_buf_tag {
       __jmpbuf: [0; 8],
       __mask_was_saved: 0,
-      __saved_mask: sigset_t { __val: [0; 16] },
+      __saved_mask: std::mem::zeroed(),
     }; 1];
     /* Setup for I/O error handling via longjmp */
     i = _setjmp(jmpbuf.as_mut_ptr());
@@ -1008,7 +1008,7 @@ pub unsafe extern "C" fn unpack_bz2_data(
   let mut jmpbuf: jmp_buf = [__jmp_buf_tag {
     __jmpbuf: [0; 8],
     __mask_was_saved: 0,
-    __saved_mask: sigset_t { __val: [0; 16] },
+    __saved_mask: std::mem::zeroed(),
   }; 1];
   /* Setup for I/O error handling via longjmp */
   i = _setjmp(jmpbuf.as_mut_ptr());
