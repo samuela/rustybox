@@ -21,6 +21,7 @@ pub mod archival {
   pub mod dpkg_deb;
   pub mod gzip;
   pub mod libarchive {
+    pub mod bb_archive;
     pub mod common;
     pub mod data_align;
     pub mod data_extract_all;

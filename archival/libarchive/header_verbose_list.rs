@@ -17,7 +17,6 @@ extern "C" {
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 }
 
-
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
@@ -39,20 +38,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct file_header_t {
-  pub name: *mut libc::c_char,
-  pub link_target: *mut libc::c_char,
-  pub tar__uname: *mut libc::c_char,
-  pub tar__gname: *mut libc::c_char,
-  pub size: off_t,
-  pub uid: uid_t,
-  pub gid: gid_t,
-  pub mode: mode_t,
-  pub mtime: time_t,
-  pub device: libc::dev_t,
-}
+use crate::archival::libarchive::bb_archive::file_header_t;
 
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

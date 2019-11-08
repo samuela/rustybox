@@ -241,20 +241,7 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct file_header_t {
-  pub name: *mut libc::c_char,
-  pub link_target: *mut libc::c_char,
-  pub tar__uname: *mut libc::c_char,
-  pub tar__gname: *mut libc::c_char,
-  pub size: off_t,
-  pub uid: uid_t,
-  pub gid: gid_t,
-  pub mode: mode_t,
-  pub mtime: time_t,
-  pub device: libc::dev_t,
-}
+use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

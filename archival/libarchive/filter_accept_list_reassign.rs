@@ -22,13 +22,13 @@ use crate::libbb::llist::llist_t;
 
 use crate::librb::bb_uidgid_t;
 
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
-use crate::librb::smallint;
 use libc::time_t;
 use libc::uid_t;
-use crate::librb::uoff_t;
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
 /* musl <= 1.1.15 does not support fflush_unlocked(NULL) */
@@ -68,20 +68,7 @@ use crate::librb::uoff_t;
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct file_header_t {
-  pub name: *mut libc::c_char,
-  pub link_target: *mut libc::c_char,
-  pub tar__uname: *mut libc::c_char,
-  pub tar__gname: *mut libc::c_char,
-  pub size: off_t,
-  pub uid: uid_t,
-  pub gid: gid_t,
-  pub mode: mode_t,
-  pub mtime: time_t,
-  pub device: libc::dev_t,
-}
+use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

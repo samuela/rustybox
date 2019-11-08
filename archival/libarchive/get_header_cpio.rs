@@ -38,30 +38,17 @@ use crate::libbb::llist::llist_t;
 
 use crate::librb::bb_uidgid_t;
 
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
 use libc::ssize_t;
 use libc::time_t;
 use libc::uid_t;
-use crate::librb::uoff_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct file_header_t {
-  pub name: *mut libc::c_char,
-  pub link_target: *mut libc::c_char,
-  pub tar__uname: *mut libc::c_char,
-  pub tar__gname: *mut libc::c_char,
-  pub size: off_t,
-  pub uid: uid_t,
-  pub gid: gid_t,
-  pub mode: mode_t,
-  pub mtime: time_t,
-  pub device: libc::dev_t,
-}
+use crate::archival::libarchive::bb_archive::file_header_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -243,7 +230,8 @@ pub unsafe extern "C" fn get_header_cpio(
         (*new).next = (*archive_handle).cpio__created_hardlinks;
         (*archive_handle).cpio__created_hardlinks = new
       }
-      (*file_header).device = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
+      (*file_header).device =
+        bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
       if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
         == 0i32
       {
