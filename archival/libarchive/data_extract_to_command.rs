@@ -1,10 +1,6 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
-
-
-
 use crate::librb::signal::__sighandler_t;
-
-
 use libc;
 use libc::off_t;
 use libc::pid_t;
@@ -47,9 +43,8 @@ extern "C" {
   fn bb_die_memory_exhausted() -> !;
 }
 
-use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 pub type C2RustUnnamed = libc::c_uint;
+//TAR_FILETYPE,
 pub const TAR_MAX: C2RustUnnamed = 8;
 pub const TAR_GID: C2RustUnnamed = 7;
 pub const TAR_UID: C2RustUnnamed = 6;
@@ -58,7 +53,6 @@ pub const TAR_GNAME: C2RustUnnamed = 4;
 pub const TAR_UNAME: C2RustUnnamed = 3;
 pub const TAR_REALNAME: C2RustUnnamed = 2;
 pub const TAR_FILENAME: C2RustUnnamed = 1;
-//TAR_FILETYPE,
 pub const TAR_MODE: C2RustUnnamed = 0;
 
 /*

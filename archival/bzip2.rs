@@ -78,22 +78,7 @@ pub type bb__aliased_u64 = u64;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed,
-}
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -2866,7 +2851,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
         count,
         iobuf.offset(IOBUF_SIZE as libc::c_int as isize) as *mut libc::c_void,
       );
-      if count ==0|| total < 0i32 as libc::c_longlong {
+      if count == 0 || total < 0i32 as libc::c_longlong {
         break;
       }
     }

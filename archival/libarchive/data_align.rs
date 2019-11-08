@@ -1,17 +1,7 @@
-
-
-
-
-
-
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use libc;
 use libc::off_t;
 
-use crate::archival::libarchive::bb_archive::archive_handle_t;
-
-/*
- * Licensed under GPLv2 or later, see file LICENSE in this source tree.
- */
 #[no_mangle]
 pub unsafe extern "C" fn data_align(
   mut archive_handle: *mut archive_handle_t,

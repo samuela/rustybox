@@ -2,18 +2,11 @@
 
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
-
-
+use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
 use libc::off_t;
-
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -72,4 +65,33 @@ pub struct archive_handle_t {
   pub dpkg__action_data_subarchive:
     Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
   pub dpkg__sub_archive: *mut archive_handle_t,
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct transformer_state_t {
+  pub signature_skipped: smallint,
+
+  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
+
+  pub src_fd: libc::c_int,         /* Source */
+  pub dst_fd: libc::c_int,         /* Output */
+  pub mem_output_size_max: size_t, /* if non-zero, decompress to RAM instead of fd */
+  pub mem_output_size: size_t,
+  pub mem_output_buf: *mut libc::c_char,
+
+  pub bytes_out: libc::off_t,
+  pub bytes_in: libc::off_t, /* used in unzip code only: needs to know packed size */
+  pub crc32: u32,
+  pub mtime: libc::time_t, /* gunzip code may set this on exit */
+
+  pub magic: TransformerMagic, /* if we read magic, it's saved here */
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub union TransformerMagic {
+  pub b: [u8; 8],
+  pub b16: [u16; 4],
+  pub b32: [u32; 2],
 }

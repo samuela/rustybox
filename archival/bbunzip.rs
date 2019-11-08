@@ -1,3 +1,4 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
@@ -119,33 +120,6 @@ extern "C" {
   fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
 }
 
-// TODO: this is defined in bb_archive.h. We should pull it out into a common
-// module.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
-
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_OPT_STDOUT: C2RustUnnamed_0 = 1;
 /* only some decompressors: */
@@ -215,20 +189,7 @@ pub unsafe extern "C" fn bbunpack(
   let mut filename: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut new_name: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut exitcode: smallint = 0i32 as smallint;
-  let mut xstate: transformer_state_t = transformer_state_t {
-    signature_skipped: 0,
-    xformer: None,
-    src_fd: 0,
-    dst_fd: 0,
-    mem_output_size_max: 0,
-    mem_output_size: 0,
-    mem_output_buf: 0 as *mut libc::c_char,
-    bytes_out: 0,
-    bytes_in: 0,
-    crc32: 0,
-    mtime: 0,
-    magic: C2RustUnnamed { b: [0; 8] },
-  };
+  let mut xstate: transformer_state_t = std::mem::zeroed();
   loop {
     /* NB: new_name is *maybe* malloc'ed! */
     new_name = 0 as *mut libc::c_char; /* can be NULL - 'streaming' bunzip2 */

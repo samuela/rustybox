@@ -1,3 +1,4 @@
+use crate::archival::libarchive::bb_archive::TransformerMagic;
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -81,22 +82,7 @@ extern "C" {
 
 pub type bb__aliased_u32 = u32;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed,
-}
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -154,7 +140,7 @@ pub unsafe extern "C" fn transformer_write(
   mut bufsize: size_t,
 ) -> ssize_t {
   let mut nwrote: ssize_t = 0;
-  if (*xstate).mem_output_size_max != 0i32 as libc::c_ulong {
+  if (*xstate).mem_output_size_max != 0 {
     let mut pos: size_t = (*xstate).mem_output_size;
     let mut size: size_t = 0;
     (*xstate).mem_output_size =
@@ -171,7 +157,7 @@ pub unsafe extern "C" fn transformer_write(
     } else {
       (*xstate).mem_output_buf = xrealloc(
         (*xstate).mem_output_buf as *mut libc::c_void,
-        size.wrapping_add(1i32 as libc::c_ulong),
+        size.wrapping_add(1),
       ) as *mut libc::c_char;
       memcpy(
         (*xstate).mem_output_buf.offset(pos as isize) as *mut libc::c_void,
@@ -273,20 +259,7 @@ pub unsafe extern "C" fn fork_transformer(
     close(fd_pipe.rd); /* we don't want to read from the parent */
     /* notreached */
     let mut r: libc::c_longlong = 0;
-    let mut xstate: transformer_state_t = transformer_state_t {
-      signature_skipped: 0,
-      xformer: None,
-      src_fd: 0,
-      dst_fd: 0,
-      mem_output_size_max: 0,
-      mem_output_size: 0,
-      mem_output_buf: 0 as *mut libc::c_char,
-      bytes_out: 0,
-      bytes_in: 0,
-      crc32: 0,
-      mtime: 0,
-      magic: C2RustUnnamed { b: [0; 8] },
-    };
+    let mut xstate: transformer_state_t = std::mem::zeroed();
     init_transformer_state(&mut xstate);
     xstate.signature_skipped = signature_skipped as smallint;
     xstate.src_fd = fd;
@@ -741,7 +714,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
       (*xstate).src_fd,
       maxsz_p,
       xmemdup(
-        &mut (*xstate).magic as *mut C2RustUnnamed as *const libc::c_void,
+        &mut (*xstate).magic as *mut TransformerMagic as *const libc::c_void,
         (*xstate).signature_skipped as libc::c_int,
       ) as *mut libc::c_char,
       (*xstate).signature_skipped as size_t,
