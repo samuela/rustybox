@@ -1,7 +1,7 @@
-use crate::archival::libarchive::bb_archive::hardlinks_t;
+
 use crate::libbb::llist::llist_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
+
+
 use libc;
 use libc::gid_t;
 use libc::group;
@@ -149,7 +149,7 @@ pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 /* cp.c, mv.c, install.c depend on these values. CAREFUL when changing them! */
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-use crate::librb::bb_uidgid_t;
+
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()

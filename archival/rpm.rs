@@ -1,9 +1,9 @@
-use crate::archival::libarchive::bb_archive::hardlinks_t;
-use crate::libbb::llist::llist_t;
+
+
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::uoff_t;
+
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -176,7 +176,7 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-use crate::librb::bb_uidgid_t;
+
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()
@@ -219,7 +219,7 @@ pub struct rpm_index {
   pub count: u32,
 }
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-use crate::archival::libarchive::bb_archive::file_header_t;
+
 /* Then follows the header: */
 #[derive(Copy, Clone)]
 #[repr(C)]

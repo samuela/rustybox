@@ -1,4 +1,4 @@
-use crate::archival::libarchive::bb_archive::hardlinks_t;
+
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
@@ -227,17 +227,17 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 
-use crate::librb::bb_uidgid_t;
+
 
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
-use crate::librb::smallint;
 
-use libc::off_t;
+
+
 use libc::ssize_t;
 use libc::stat;
 
-use crate::librb::uoff_t;
+
 
 use libc::FILE;
 
@@ -294,7 +294,7 @@ pub struct edge_s {
   #[bitfield(padding)]
   pub c2rust_padding_0: [u8; 2],
 }
-use crate::archival::libarchive::bb_archive::file_header_t;
+
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 /* Even numbers are for 'extras', like ored dependencies or null */
 pub type edge_type_e = libc::c_uint;
