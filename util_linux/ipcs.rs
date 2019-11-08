@@ -152,7 +152,7 @@ pub struct shm_info {
   pub swap_attempts: __syscall_ulong_t,
   pub swap_successes: __syscall_ulong_t,
 }
-use crate::librb::group;
+use libc::group;
 use libc::passwd;
 
 /*

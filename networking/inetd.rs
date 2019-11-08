@@ -565,7 +565,7 @@ pub struct timezone {
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-use crate::librb::group;
+use libc::group;
 use libc::passwd;
 /* Useful for having small structure members/global variables */
 pub type socktype_t = i8;

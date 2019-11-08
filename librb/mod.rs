@@ -15,16 +15,6 @@ pub type __syscall_slong_t = libc::c_long;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 
-// See https://www.mkssoftware.com/docs/man5/struct_group.5.asp.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct group {
-  pub gr_name: *mut libc::c_char,
-  pub gr_passwd: *mut libc::c_char,
-  pub gr_gid: libc::gid_t,
-  pub gr_mem: *mut *mut libc::c_char,
-}
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct termios {

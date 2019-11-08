@@ -3,7 +3,7 @@ use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
-use crate::librb::group;
+use libc::group;
 use libc::mode_t;
 use libc::passwd;
 use crate::librb::smallint;

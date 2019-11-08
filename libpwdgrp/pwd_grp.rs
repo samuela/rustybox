@@ -3,7 +3,7 @@ use libc::gid_t;
 use libc::uid_t;
 use libc::FILE;
 
-use crate::librb::group;
+use libc::group;
 use libc::passwd;
 use crate::librb::size_t;
 

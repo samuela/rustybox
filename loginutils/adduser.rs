@@ -3,11 +3,10 @@ use libc::gid_t;
 use libc::time_t;
 use libc::uid_t;
 
-use libc::mode_t;
-use crate::librb::group;
-use libc::passwd;
 use crate::librb::smallint;
-
+use libc::group;
+use libc::mode_t;
+use libc::passwd;
 
 extern "C" {
   #[no_mangle]

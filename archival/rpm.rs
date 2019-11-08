@@ -10,7 +10,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use libc::off64_t;
 
-use crate::librb::group;
+use libc::group;
 
 use libc::mode_t;
 use libc::off_t;
