@@ -342,7 +342,7 @@ use libc::FILE;
 pub type wchar_t = libc::c_int;
 
 use libc::passwd;
-use crate::librb::termios;
+use libc::termios;
 pub type C2RustUnnamed_10 = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed_10 = 16;
 pub const KEYCODE_CURSOR_POS: C2RustUnnamed_10 = -256;

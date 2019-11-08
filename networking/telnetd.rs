@@ -202,7 +202,7 @@ pub struct in_addr {
 pub type in_addr_t = u32;
 use crate::librb::signal::__sighandler_t;
 
-use crate::librb::termios;
+use libc::termios;
 use crate::librb::winsize;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -339,7 +339,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

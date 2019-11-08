@@ -159,7 +159,7 @@ pub struct div_t {
 }
 use crate::librb::__compar_fn_t;
 
-use crate::librb::termios;
+use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type duration_t = libc::c_double;

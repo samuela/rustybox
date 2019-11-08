@@ -2,7 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::mode_t;
 use libc::pid_t;

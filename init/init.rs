@@ -6,7 +6,7 @@ use crate::librb::signal::__sigval_t;
 use crate::librb::signal::sigset_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::cc_t;
 use libc::pid_t;

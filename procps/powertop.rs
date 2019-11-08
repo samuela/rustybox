@@ -4,7 +4,7 @@ use libc::off64_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::uid_t;
 use libc::FILE;

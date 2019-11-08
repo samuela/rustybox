@@ -2,7 +2,7 @@ use crate::librb::signal::__sigset_t;
 use crate::librb::signal::sigaction;
 use crate::librb::signal::C2RustUnnamed_9;
 use crate::librb::size_t;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::ssize_t;
 use libc::FILE;

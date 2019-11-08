@@ -1,4 +1,4 @@
-use crate::librb::termios;
+use libc::termios;
 use crate::librb::uoff_t;
 use libc;
 use libc::off64_t;

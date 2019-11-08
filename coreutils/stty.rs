@@ -1,5 +1,5 @@
 use libc::tcflag_t;
-use crate::librb::termios;
+use libc::termios;
 use crate::librb::winsize;
 use libc;
 use libc::cc_t;

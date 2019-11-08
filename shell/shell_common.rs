@@ -144,7 +144,7 @@ pub struct rlimit {
 }
 pub type __rlimit_resource_t = __rlimit_resource;
 
-use crate::librb::termios;
+use libc::termios;
 /* "OPTIND=1" */
 /* Builtins */
 #[derive(Copy, Clone)]

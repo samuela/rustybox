@@ -46,7 +46,7 @@ extern "C" {
 use crate::librb::size_t;
 use libc::ssize_t;
 
-use crate::librb::termios;
+use libc::termios;
 unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
   let mut buf: libc::c_uchar = 0;
   let mut n: libc::c_int = 0;

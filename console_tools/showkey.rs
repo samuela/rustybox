@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::ptrdiff_t;
 use libc::ssize_t;

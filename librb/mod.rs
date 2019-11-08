@@ -15,19 +15,6 @@ pub type __syscall_slong_t = libc::c_long;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct termios {
-  pub c_iflag: libc::tcflag_t,
-  pub c_oflag: libc::tcflag_t,
-  pub c_cflag: libc::tcflag_t,
-  pub c_lflag: libc::tcflag_t,
-  pub c_line: libc::cc_t,
-  pub c_cc: [libc::cc_t; 32],
-  pub c_ispeed: libc::speed_t,
-  pub c_ospeed: libc::speed_t,
-}
-
 // See http://www.delorie.com/djgpp/doc/libc/libc_495.html.
 #[derive(Copy, Clone)]
 #[repr(C)]

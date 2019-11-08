@@ -88,7 +88,7 @@ pub struct pollfd {
 
 use libc::speed_t;
 
-use crate::librb::termios;
+use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 pub const OPT_X: C2RustUnnamed_0 = 1;

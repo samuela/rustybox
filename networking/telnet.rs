@@ -90,7 +90,7 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-use crate::librb::termios;
+use libc::termios;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

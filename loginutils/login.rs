@@ -1,6 +1,6 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-use crate::librb::termios;
+use libc::termios;
 use libc;
 use libc::gid_t;
 use libc::mode_t;

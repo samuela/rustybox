@@ -106,7 +106,7 @@ use crate::librb::smallint;
 
 use libc::FILE;
 
-use crate::librb::termios;
+use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_int;

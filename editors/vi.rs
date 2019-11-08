@@ -196,7 +196,7 @@ pub struct pollfd {
   pub revents: libc::c_short,
 }
 
-use crate::librb::termios;
+use libc::termios;
 pub type C2RustUnnamed = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed = 16;
 pub const KEYCODE_CURSOR_POS: C2RustUnnamed = -256;

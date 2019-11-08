@@ -113,7 +113,7 @@ use libc::off_t;
 
 use libc::ssize_t;
 
-use crate::librb::termios;
+use libc::termios;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
