@@ -1,7 +1,7 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
 use libc::sigval;
-use crate::librb::signal::siginfo_t;
+use libc::siginfo_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;

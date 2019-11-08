@@ -3,17 +3,6 @@
 //  * http://man7.org/linux/man-pages/man7/sigevent.7.html
 //  * https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html
 
-// See http://man7.org/linux/man-pages/man2/sigaction.2.html.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct siginfo_t {
-  pub si_signo: libc::c_int,
-  pub si_errno: libc::c_int,
-  pub si_code: libc::c_int,
-  pub __pad0: libc::c_int,
-  pub _sifields: C2RustUnnamed,
-}
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -111,6 +100,7 @@ pub struct sigaction {
 #[repr(C)]
 pub union C2RustUnnamed_9 {
   pub sa_handler: __sighandler_t,
-  pub sa_sigaction:
-    Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
+  pub sa_sigaction: Option<
+    unsafe extern "C" fn(_: libc::c_int, _: *mut libc::siginfo_t, _: *mut libc::c_void) -> (),
+  >,
 }

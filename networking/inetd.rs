@@ -1,10 +1,13 @@
 use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::gid_t;
 use libc::pid_t;
+use libc::siginfo_t;
 use libc::sigset_t;
+use libc::sigval;
 use libc::ssize_t;
 use libc::time_t;
 use libc::timeval;
@@ -419,7 +422,6 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-use crate::librb::smallint;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_1 = 256;
 pub const IPPROTO_RAW: C2RustUnnamed_1 = 255;
@@ -448,7 +450,6 @@ pub const IPPROTO_IGMP: C2RustUnnamed_1 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_1 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 
-use libc::sigval;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct servent {
@@ -456,15 +457,6 @@ pub struct servent {
   pub s_aliases: *mut *mut libc::c_char,
   pub s_port: libc::c_int,
   pub s_proto: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct siginfo_t {
-  pub si_signo: libc::c_int,
-  pub si_errno: libc::c_int,
-  pub si_code: libc::c_int,
-  pub __pad0: libc::c_int,
-  pub _sifields: C2RustUnnamed_2,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
