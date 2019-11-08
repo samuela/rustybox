@@ -153,7 +153,7 @@ pub struct shm_info {
   pub swap_successes: __syscall_ulong_t,
 }
 use crate::librb::group;
-use crate::librb::passwd;
+use libc::passwd;
 
 /*
  * ipcs.c -- provides information on allocated ipc resources.

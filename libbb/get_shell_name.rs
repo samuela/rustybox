@@ -12,7 +12,7 @@ extern "C" {
 }
 
 
-use crate::librb::passwd;
+use libc::passwd;
 use libc::uid_t;
 
 /*

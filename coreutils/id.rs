@@ -55,9 +55,9 @@ extern "C" {
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 }
 
-use crate::librb::passwd;
 use crate::librb::size_t;
 use libc::gid_t;
+use libc::passwd;
 use libc::uid_t;
 
 /*

@@ -50,7 +50,7 @@ extern "C" {
 
 
 use libc::gid_t;
-use crate::librb::passwd;
+use libc::passwd;
 use libc::uid_t;
 
 /*

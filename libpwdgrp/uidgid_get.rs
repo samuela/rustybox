@@ -41,7 +41,7 @@ extern "C" {
 use crate::librb::bb_uidgid_t;
 use libc::gid_t;
 use crate::librb::group;
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::size_t;
 use libc::uid_t;
 /*

@@ -41,8 +41,8 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::passwd;
 use crate::librb::smallint;
+use libc::passwd;
 use libc::uid_t;
 
 pub type C2RustUnnamed = libc::c_uint;

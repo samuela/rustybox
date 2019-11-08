@@ -5,7 +5,7 @@ use libc::uid_t;
 
 use libc::mode_t;
 use crate::librb::group;
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::smallint;
 
 

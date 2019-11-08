@@ -1,5 +1,5 @@
 use crate::librb::__compar_fn_t;
-use crate::librb::passwd;
+use libc::passwd;
 use libc::ptrdiff_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::__sigset_t;

@@ -1,4 +1,4 @@
-use crate::librb::passwd;
+use libc::passwd;
 use libc;
 use libc::gid_t;
 use libc::off_t;

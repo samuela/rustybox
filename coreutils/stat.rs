@@ -107,7 +107,7 @@ pub struct tm {
   pub tm_zone: *const libc::c_char,
 }
 use crate::librb::group;
-use crate::librb::passwd;
+use libc::passwd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct statfs {

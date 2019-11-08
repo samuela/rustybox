@@ -344,7 +344,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-use crate::librb::passwd;
+use libc::passwd;
 /* In this form code with pipes is much more readable */
 use crate::librb::fd_pair;
 #[derive(Copy, Clone)]

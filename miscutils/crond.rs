@@ -1,4 +1,4 @@
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;

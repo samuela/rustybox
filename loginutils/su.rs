@@ -57,11 +57,9 @@ extern "C" {
   fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
 }
 
-
-use crate::librb::passwd;
 use crate::librb::size_t;
+use libc::passwd;
 use libc::uid_t;
-
 
 /*
  * Mini su implementation for busybox

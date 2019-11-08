@@ -15,19 +15,6 @@ pub type __syscall_slong_t = libc::c_long;
 pub type __compar_fn_t =
   Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
 
-// See http://man7.org/linux/man-pages/man3/getpwnam.3.html.
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct passwd {
-  pub pw_name: *mut libc::c_char,
-  pub pw_passwd: *mut libc::c_char,
-  pub pw_uid: libc::uid_t,
-  pub pw_gid: libc::gid_t,
-  pub pw_gecos: *mut libc::c_char,
-  pub pw_dir: *mut libc::c_char,
-  pub pw_shell: *mut libc::c_char,
-}
-
 // See https://www.mkssoftware.com/docs/man5/struct_group.5.asp.
 #[derive(Copy, Clone)]
 #[repr(C)]

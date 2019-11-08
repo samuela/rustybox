@@ -507,7 +507,7 @@ pub struct tm {
   pub tm_gmtoff: libc::c_long,
   pub tm_zone: *const libc::c_char,
 }
-use crate::librb::passwd;
+use libc::passwd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct spwd {

@@ -51,8 +51,8 @@ extern "C" {
 use crate::librb::signal::__sighandler_t;
 use libc::uid_t;
 
-use crate::librb::passwd;
 use crate::librb::termios;
+use libc::passwd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct vt_mode {

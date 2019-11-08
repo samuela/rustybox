@@ -259,7 +259,7 @@ pub struct pollfd {
   pub events: libc::c_short,
   pub revents: libc::c_short,
 }
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::uoff_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

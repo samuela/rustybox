@@ -4,7 +4,7 @@ use libc::uid_t;
 use libc::FILE;
 
 use crate::librb::group;
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::size_t;
 
 extern "C" {

@@ -1,6 +1,6 @@
 use crate::librb::group;
-use crate::librb::passwd;
 use libc;
+use libc::passwd;
 use libc::uid_t;
 
 extern "C" {

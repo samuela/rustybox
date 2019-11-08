@@ -341,7 +341,7 @@ use crate::librb::signal::sigaction;
 use libc::FILE;
 pub type wchar_t = libc::c_int;
 
-use crate::librb::passwd;
+use libc::passwd;
 use crate::librb::termios;
 pub type C2RustUnnamed_10 = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed_10 = 16;

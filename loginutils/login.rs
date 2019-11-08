@@ -1,4 +1,3 @@
-use crate::librb::passwd;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::termios;
@@ -6,6 +5,7 @@ use libc;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
+use libc::passwd;
 use libc::pid_t;
 use libc::uid_t;
 use libc::FILE;
