@@ -2,7 +2,7 @@ use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
 use libc::sigset_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::SigactionHandler;
+
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;

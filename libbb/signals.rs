@@ -103,7 +103,7 @@ pub struct C2RustUnnamed_8 {
 }
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
-use crate::librb::signal::SigactionHandler;
+
 
 /*
  * Utility routines.
