@@ -11,11 +11,11 @@ use crate::librb::bb_uidgid_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-use libc::gid_t;
-use libc::mode_t;
+
+
 use libc::off_t;
-use libc::time_t;
-use libc::uid_t;
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct archive_handle_t {

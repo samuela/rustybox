@@ -21,11 +21,11 @@ use crate::librb::bb_uidgid_t;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::gid_t;
-use libc::mode_t;
+
+
 use libc::off_t;
 use libc::time_t;
-use libc::uid_t;
+
 
 use crate::librb::uoff_t;
 

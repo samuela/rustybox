@@ -1,4 +1,17 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::uoff_t;
+use libc::gid_t;
+use libc::mode_t;
+use libc::off_t;
+use libc::ssize_t;
+use libc::time_t;
+use libc::uid_t;
+use crate::archival::libarchive::bb_archive::file_header_t;
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -34,21 +47,6 @@ extern "C" {
   fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
 }
 
-use crate::libbb::llist::llist_t;
-
-use crate::librb::bb_uidgid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use crate::librb::uoff_t;
-use libc::gid_t;
-use libc::mode_t;
-use libc::off_t;
-use libc::ssize_t;
-use libc::time_t;
-use libc::uid_t;
-
-use crate::archival::libarchive::bb_archive::file_header_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

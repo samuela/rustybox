@@ -45,12 +45,12 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-use libc::gid_t;
-use libc::mode_t;
+
+
 use libc::off_t;
 use libc::pid_t;
-use libc::time_t;
-use libc::uid_t;
+
+
 
 use crate::archival::libarchive::bb_archive::file_header_t;
 #[derive(Copy, Clone)]

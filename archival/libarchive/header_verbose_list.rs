@@ -17,11 +17,11 @@ extern "C" {
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 }
 
-use libc::gid_t;
+
 use libc::mode_t;
-use libc::off_t;
+
 use libc::time_t;
-use libc::uid_t;
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -4,13 +4,13 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-use libc::gid_t;
-use libc::mode_t;
+
+
 use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::time_t;
-use libc::uid_t;
+
 
 extern "C" {
   pub type hardlinks_t;

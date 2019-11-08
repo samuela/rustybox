@@ -1,11 +1,3 @@
-use libc;
-
-use libc::gid_t;
-use libc::mode_t;
-use libc::off_t;
-use libc::time_t;
-use libc::uid_t;
-
 use crate::archival::libarchive::bb_archive::file_header_t;
 
 /*

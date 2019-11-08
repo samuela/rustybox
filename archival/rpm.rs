@@ -14,7 +14,7 @@ use libc::group;
 
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::mode_t;
+
 use libc::off_t;
 use libc::passwd;
 
