@@ -1,6 +1,5 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::useconds_t;
 use libc;
 use libc::ino64_t;
 use libc::off64_t;
@@ -8,6 +7,7 @@ use libc::off_t;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::time_t;
+use libc::useconds_t;
 use libc::FILE;
 
 extern "C" {
@@ -193,21 +193,7 @@ pub struct dirent {
 }
 pub type DIR = __dirstream;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tm {
-  pub tm_sec: libc::c_int,
-  pub tm_min: libc::c_int,
-  pub tm_hour: libc::c_int,
-  pub tm_mday: libc::c_int,
-  pub tm_mon: libc::c_int,
-  pub tm_year: libc::c_int,
-  pub tm_wday: libc::c_int,
-  pub tm_yday: libc::c_int,
-  pub tm_isdst: libc::c_int,
-  pub tm_gmtoff: libc::c_long,
-  pub tm_zone: *const libc::c_char,
-}
+use libc::tm;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;

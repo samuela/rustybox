@@ -82,32 +82,18 @@ pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 
-use libc::mode_t;
 use crate::librb::size_t;
 use libc::gid_t;
+use libc::mode_t;
 use libc::time_t;
 
 use libc::stat;
 use libc::uid_t;
 
-use libc::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tm {
-  pub tm_sec: libc::c_int,
-  pub tm_min: libc::c_int,
-  pub tm_hour: libc::c_int,
-  pub tm_mday: libc::c_int,
-  pub tm_mon: libc::c_int,
-  pub tm_year: libc::c_int,
-  pub tm_wday: libc::c_int,
-  pub tm_yday: libc::c_int,
-  pub tm_isdst: libc::c_int,
-  pub tm_gmtoff: libc::c_long,
-  pub tm_zone: *const libc::c_char,
-}
 use libc::group;
 use libc::passwd;
+use libc::tm;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct statfs {
@@ -245,7 +231,7 @@ unsafe extern "C" fn file_type(mut st: *const stat) -> *const libc::c_char {
    * returned string must start with a consonant.
    */
   if (*st).st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {
-    return if (*st).st_size ==0{
+    return if (*st).st_size == 0 {
       b"regular empty file\x00" as *const u8 as *const libc::c_char
     } else {
       b"regular file\x00" as *const u8 as *const libc::c_char

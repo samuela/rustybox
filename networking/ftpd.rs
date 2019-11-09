@@ -329,21 +329,7 @@ pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 use crate::librb::signal::__sighandler_t;
 
 use libc::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tm {
-  pub tm_sec: libc::c_int,
-  pub tm_min: libc::c_int,
-  pub tm_hour: libc::c_int,
-  pub tm_mday: libc::c_int,
-  pub tm_mon: libc::c_int,
-  pub tm_year: libc::c_int,
-  pub tm_wday: libc::c_int,
-  pub tm_yday: libc::c_int,
-  pub tm_isdst: libc::c_int,
-  pub tm_gmtoff: libc::c_long,
-  pub tm_zone: *const libc::c_char,
-}
+use libc::tm;
 use libc::passwd;
 /* In this form code with pipes is much more readable */
 use crate::librb::fd_pair;

@@ -142,21 +142,7 @@ extern "C" {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tm {
-  pub tm_sec: libc::c_int,
-  pub tm_min: libc::c_int,
-  pub tm_hour: libc::c_int,
-  pub tm_mday: libc::c_int,
-  pub tm_mon: libc::c_int,
-  pub tm_year: libc::c_int,
-  pub tm_wday: libc::c_int,
-  pub tm_yday: libc::c_int,
-  pub tm_isdst: libc::c_int,
-  pub tm_gmtoff: libc::c_long,
-  pub tm_zone: *const libc::c_char,
-}
+use libc::tm;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
