@@ -145,19 +145,7 @@ unsafe extern "C" fn read_rtc(
   mut pp_rtcname: *mut *const libc::c_char,
   mut utc: libc::c_int,
 ) -> time_t {
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm_time: tm =std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = rtc_xopen(pp_rtcname, 0i32);
   rtc_read_tm(&mut tm_time, fd);
@@ -201,19 +189,7 @@ unsafe extern "C" fn from_sys_clock(
     tv_sec: 0,
     tv_usec: 0,
   };
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm_time: tm =std::mem::zeroed();
   let mut rtc: libc::c_int = 0;
   rtc = rtc_xopen(pp_rtcname, 0o1i32);
   gettimeofday(&mut tv, 0 as *mut timezone);

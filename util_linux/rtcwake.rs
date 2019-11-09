@@ -290,19 +290,7 @@ pub unsafe extern "C" fn rtcwake_main(
   }
   /* relative or absolute alarm time, normalized to time_t */
   sys_time = time(0 as *mut time_t);
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm_time: tm = std::mem::zeroed();
   rtc_read_tm(&mut tm_time, fd);
   rtc_time = rtc_tm2time(&mut tm_time, utc);
   if opt & 0x40i32 as libc::c_uint != 0 {

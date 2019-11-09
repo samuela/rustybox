@@ -408,19 +408,7 @@ unsafe extern "C" fn pmatch(
 /* ** ex fmt_ptime.[ch] ***/
 /* NUL terminated */
 unsafe extern "C" fn fmt_time_human_30nul(mut s: *mut libc::c_char, mut dt_delim: libc::c_char) {
-  let mut tm: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm: tm =std::mem::zeroed();
   let mut ptm: *mut tm = 0 as *mut tm;
   let mut tv: timeval = timeval {
     tv_sec: 0,

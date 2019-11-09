@@ -31,19 +31,7 @@ use crate::archival::libarchive::bb_archive::file_header_t;
  */
 #[no_mangle]
 pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header_t) {
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  }; //localtime(&file_header->mtime);
+  let mut tm_time: tm =std::mem::zeroed(); //localtime(&file_header->mtime);
   let mut ptm: *mut tm = &mut tm_time;
   let mut uid: [libc::c_char; 14] = [0; 14];
   /*char gid[sizeof(int)*3 + 2];*/

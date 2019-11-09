@@ -3082,19 +3082,7 @@ unsafe extern "C" fn awk_sub(
 }
 #[inline(never)]
 unsafe extern "C" fn do_mktime(mut ds: *const libc::c_char) -> libc::c_int {
-  let mut then: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut then: tm =std::mem::zeroed();
   let mut count: libc::c_int = 0;
   /*memset(&then, 0, sizeof(then)); - not needed */
   then.tm_isdst = -1i32; /* default is unknown */

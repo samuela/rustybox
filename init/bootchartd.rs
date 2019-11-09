@@ -528,19 +528,7 @@ unsafe extern "C" fn finalize(
   let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut kcmdline: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut t: time_t = 0;
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm_time: tm = std::mem::zeroed();
   /* x2 for possible localized weekday/month names */
   let mut date_buf: [libc::c_char; 60] = [0; 60]; /* never fails */
   let mut unamebuf: utsname = utsname {

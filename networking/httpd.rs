@@ -1357,19 +1357,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
   ];
   /* Fixed size 29-byte string. Example: Sun, 06 Nov 1994 08:49:37 GMT */
   let mut date_str: [libc::c_char; 40] = [0; 40]; /* using a bit larger buffer to paranoia reasons */
-  let mut tm: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut tm: tm =std::mem::zeroed();
   let mut responseString: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut infoString: *const libc::c_char = 0 as *const libc::c_char;
   let mut error_page: *const libc::c_char = 0 as *const libc::c_char;

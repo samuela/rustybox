@@ -106,19 +106,7 @@ pub unsafe extern "C" fn cal_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut zero_tm: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut zero_tm: tm = std::mem::zeroed();
   let mut now: time_t = 0;
   let mut month: libc::c_uint = 0;
   let mut year: libc::c_uint = 0;

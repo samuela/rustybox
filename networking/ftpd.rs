@@ -1172,19 +1172,7 @@ unsafe extern "C" fn handle_stat_file() {
  */
 unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
   let mut statbuf: stat = std::mem::zeroed();
-  let mut broken_out: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  };
+  let mut broken_out: tm =std::mem::zeroed();
   let mut buf: [libc::c_char; 55] = [0; 55];
   if (*ptr_to_globals).ftp_arg.is_null()
     || stat((*ptr_to_globals).ftp_arg, &mut statbuf) != 0i32

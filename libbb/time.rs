@@ -528,10 +528,7 @@ unsafe extern "C" fn get_mono(mut ts: *mut timespec) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn monotonic_ns() -> libc::c_ulonglong {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  };
+  let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
     .wrapping_mul(1000000000u64)
@@ -539,10 +536,7 @@ pub unsafe extern "C" fn monotonic_ns() -> libc::c_ulonglong {
 }
 #[no_mangle]
 pub unsafe extern "C" fn monotonic_us() -> libc::c_ulonglong {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  };
+  let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
     .wrapping_mul(1000000u64)
@@ -550,10 +544,7 @@ pub unsafe extern "C" fn monotonic_us() -> libc::c_ulonglong {
 }
 #[no_mangle]
 pub unsafe extern "C" fn monotonic_ms() -> libc::c_ulonglong {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  };
+  let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
     .wrapping_mul(1000u64)
@@ -629,10 +620,7 @@ pub unsafe extern "C" fn monotonic_ms() -> libc::c_ulonglong {
 /* We can just memorize it once - no multithreading in busybox :) */
 #[no_mangle]
 pub unsafe extern "C" fn monotonic_sec() -> libc::c_uint {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  };
+  let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return ts.tv_sec as libc::c_uint;
 }

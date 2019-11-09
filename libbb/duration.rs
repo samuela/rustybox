@@ -405,11 +405,8 @@ pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> durat
 /* Useful for reading port numbers */
 #[no_mangle]
 pub unsafe extern "C" fn sleep_for_duration(mut duration: duration_t) {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  };
-  ts.tv_sec = if -1i32 as time_t >0{
+  let mut ts: timespec = std::mem::zeroed();
+  ts.tv_sec = if -1i32 as time_t > 0 {
     -1i32 as time_t
   } else {
     !((1i32 as time_t)

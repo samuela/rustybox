@@ -238,23 +238,8 @@ pub unsafe extern "C" fn date_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ts: timespec = timespec {
-    tv_sec: 0,
-    tv_nsec: 0,
-  }; /* skip over the '+' */
-  let mut tm_time: tm = tm {
-    tm_sec: 0,
-    tm_min: 0,
-    tm_hour: 0,
-    tm_mday: 0,
-    tm_mon: 0,
-    tm_year: 0,
-    tm_wday: 0,
-    tm_yday: 0,
-    tm_isdst: 0,
-    tm_gmtoff: 0,
-    tm_zone: 0 as *const libc::c_char,
-  }; /* can be NULL */
+  let mut ts: timespec = std::mem::zeroed(); /* skip over the '+' */
+  let mut tm_time: tm = std::mem::zeroed(); /* can be NULL */
   let mut buf_fmt_dt2str: [libc::c_char; 64] = [0; 64];
   let mut opt: libc::c_uint = 0;
   let mut ifmt: libc::c_int = -1i32;
