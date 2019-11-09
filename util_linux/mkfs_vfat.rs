@@ -1,5 +1,5 @@
 use libc;
-use libc::close;
+
 
 
 use super::mkfs_ext2::BUG_wrong_field_size;

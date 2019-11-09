@@ -1,5 +1,5 @@
 use libc;
-use libc::close;
+
 
 /* !RETURNS_MALLOC: it's a realloc-like function */
 /* bb_signals(BB_FATAL_SIGS, handler) catches all signals which

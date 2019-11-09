@@ -1,5 +1,5 @@
 use libc;
-use libc::close;
+
 
 use libc::termios;
 use libc::winsize;

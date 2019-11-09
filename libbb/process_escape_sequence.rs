@@ -1,5 +1,5 @@
 use libc;
-use libc::close;
+
 
 /* Usual "this only works for ascii compatible encodings" disclaimer. */
 #[no_mangle]

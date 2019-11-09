@@ -5,7 +5,7 @@ use crate::libbb::llist::llist_t;
 
 
 use libc;
-use libc::close;
+
 
 use libc::mode_t;
 

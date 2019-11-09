@@ -1,7 +1,7 @@
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use libc;
-use libc::close;
+
 use libc::free;
 use libc::ssize_t;
 

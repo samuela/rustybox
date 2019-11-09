@@ -1,5 +1,5 @@
 use libc;
-use libc::close;
+
 
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]

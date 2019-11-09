@@ -1,6 +1,6 @@
 /* Print string that matches bit masked flags */
 use libc;
-use libc::close;
+
 
 
 extern "C" {

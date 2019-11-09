@@ -1,7 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::close;
+
 use libc::free;
 extern "C" {
   pub type __dirstream;

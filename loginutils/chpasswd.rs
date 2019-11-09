@@ -1,6 +1,6 @@
 use crate::librb::smallint;
 use libc;
-use libc::close;
+
 use libc::free;
 use libc::uid_t;
 use libc::FILE;
