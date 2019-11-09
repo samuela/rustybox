@@ -3,6 +3,7 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -15,8 +16,7 @@ extern "C" {
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
 

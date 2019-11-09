@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -39,8 +40,7 @@ extern "C" {
   #[no_mangle]
   fn sync();
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;

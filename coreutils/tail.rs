@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -8,8 +9,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

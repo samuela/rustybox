@@ -10,6 +10,7 @@ use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -79,8 +80,7 @@ extern "C" {
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]

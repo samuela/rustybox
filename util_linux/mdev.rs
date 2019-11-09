@@ -7,6 +7,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::open;
 use libc::unlink;
 use libc::close;
 use libc::free;
@@ -47,8 +48,7 @@ extern "C" {
   #[no_mangle]
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;

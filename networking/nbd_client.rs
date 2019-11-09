@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -16,8 +17,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn daemon(__nochdir: libc::c_int, __noclose: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

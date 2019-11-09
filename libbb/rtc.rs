@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 
 
@@ -11,8 +12,7 @@ extern "C" {
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]

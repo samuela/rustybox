@@ -1,5 +1,6 @@
 use libc::passwd;
 use libc;
+use libc::open;
 use libc::unlink;
 use libc::close;
 
@@ -25,8 +26,7 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
 

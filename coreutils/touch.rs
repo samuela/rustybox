@@ -1,12 +1,12 @@
 use libc;
+use libc::open;
 
 
 
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
   #[no_mangle]

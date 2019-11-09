@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::open;
 use libc::close;
 use libc::free;
 use libc::off_t;
@@ -9,8 +10,7 @@ use libc::stat;
 
 extern "C" {
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;

@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -15,8 +16,7 @@ extern "C" {
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   static mut stderr: *mut FILE;
   #[no_mangle]

@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::open;
 use libc::unlink;
 use libc::close;
 
@@ -43,8 +44,7 @@ extern "C" {
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]

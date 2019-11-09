@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::termios;
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -31,8 +32,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 use libc::pollfd;
 
 extern "C" {

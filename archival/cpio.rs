@@ -5,6 +5,7 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;

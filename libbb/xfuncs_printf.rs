@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::open;
 use libc::unlink;
 use libc::close;
 use libc::free;
@@ -69,8 +70,7 @@ extern "C" {
   fn chroot(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
   #[no_mangle]

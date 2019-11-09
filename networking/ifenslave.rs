@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 extern "C" {
   #[no_mangle]

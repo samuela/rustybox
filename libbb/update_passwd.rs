@@ -4,6 +4,7 @@ use libc::pid_t;
 use libc::useconds_t;
 use crate::librb::size_t;
 use libc;
+use libc::open;
 use libc::unlink;
 
 use libc::free;
@@ -22,8 +23,7 @@ extern "C" {
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 
 
@@ -9,8 +10,7 @@ extern "C" {
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]

@@ -1,10 +1,10 @@
 use libc;
+use libc::open;
 
 
 
 extern "C" {
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
   #[no_mangle]

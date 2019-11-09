@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -11,8 +12,7 @@ use libc::FILE;
 extern "C" {
 
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn creat(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;

@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -10,8 +11,7 @@ extern "C" {
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]

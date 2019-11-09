@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -32,8 +33,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn bb_progress_init(p: *mut bb_progress_t, curfile: *const libc::c_char);
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn socketpair(
     __domain: libc::c_int,

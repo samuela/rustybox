@@ -1,5 +1,6 @@
 use libc::termios;
 use libc;
+use libc::open;
 
 
 use libc::free;
@@ -13,8 +14,7 @@ extern "C" {
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;

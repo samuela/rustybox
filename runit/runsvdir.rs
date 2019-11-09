@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::open;
 
 
 
@@ -13,8 +14,7 @@ use libc::useconds_t;
 extern "C" {
 
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;

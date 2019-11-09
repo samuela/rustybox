@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 use libc::unlink;
 use libc::close;
 use libc::free;
@@ -11,8 +12,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn syscall(__sysno: libc::c_long, _: ...) -> libc::c_long;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

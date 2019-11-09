@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 
 
@@ -16,8 +17,7 @@ extern "C" {
   #[no_mangle]
   fn free_volume_id(id: *mut volume_id);
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;

@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -22,8 +23,7 @@ extern "C" {
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
 
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;

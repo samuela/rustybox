@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -9,8 +10,7 @@ extern "C" {
   fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
 

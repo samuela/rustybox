@@ -1,4 +1,5 @@
 use libc;
+use libc::open;
 
 use libc::close;
 
@@ -11,8 +12,7 @@ extern "C" {
   fn setsid() -> pid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

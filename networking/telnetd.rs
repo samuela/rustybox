@@ -4,6 +4,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::open;
 
 use libc::close;
 use libc::free;
@@ -334,7 +335,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

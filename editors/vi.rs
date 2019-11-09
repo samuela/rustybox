@@ -9,6 +9,7 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::open;
 use libc::close;
 use libc::free;
 
@@ -42,8 +43,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
-  #[no_mangle]
-  fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
