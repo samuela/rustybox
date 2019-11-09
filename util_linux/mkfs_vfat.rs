@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 
 use super::mkfs_ext2::BUG_wrong_field_size;
 
@@ -18,8 +19,7 @@ extern "C" {
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;

@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
   #[no_mangle]

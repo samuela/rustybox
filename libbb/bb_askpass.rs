@@ -1,13 +1,13 @@
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::ssize_t;
 use libc::termios;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;

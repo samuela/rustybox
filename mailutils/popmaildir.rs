@@ -1,6 +1,7 @@
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::ptrdiff_t;
 use libc::FILE;
@@ -8,8 +9,7 @@ use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

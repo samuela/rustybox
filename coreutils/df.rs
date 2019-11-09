@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
@@ -8,8 +9,7 @@ extern "C" {
   fn endmntent(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn statvfs(__file: *const libc::c_char, __buf: *mut statvfs) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

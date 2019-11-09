@@ -3,6 +3,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
@@ -11,8 +12,7 @@ use libc::stat;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
   #[no_mangle]

@@ -7,6 +7,7 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::free;
 
 extern "C" {
   #[no_mangle]
@@ -79,8 +80,7 @@ extern "C" {
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

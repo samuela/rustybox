@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 
 extern "C" {
   /*
@@ -86,8 +87,7 @@ extern "C" {
   #[no_mangle]
   fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn getresuid(__ruid: *mut uid_t, __euid: *mut uid_t, __suid: *mut uid_t) -> libc::c_int;

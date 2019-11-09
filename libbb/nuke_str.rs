@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -
  * in many places people want *non-negative* values, but store them

@@ -5,6 +5,7 @@ use libc::ssize_t;
 use libc::termios;
 use libc::winsize;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::time_t;
 use libc::timeval;

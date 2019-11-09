@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::off_t;
 use libc::pid_t;
 use libc::ssize_t;
@@ -7,8 +8,7 @@ use libc::stat;
 use libc::uid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

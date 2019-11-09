@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;
   #[no_mangle]

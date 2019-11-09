@@ -5,6 +5,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::group;
 use libc::off64_t;
@@ -36,8 +37,7 @@ extern "C" {
   fn getpagesize() -> libc::c_int;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn bsearch(
     __key: *const libc::c_void,

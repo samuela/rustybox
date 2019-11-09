@@ -5,6 +5,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
@@ -17,8 +18,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_long;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
   #[no_mangle]

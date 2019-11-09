@@ -1,12 +1,12 @@
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::pid_t;
 use libc::uid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]

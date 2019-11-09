@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 
 extern "C" {
   pub type __dirstream;
@@ -8,8 +9,7 @@ extern "C" {
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;

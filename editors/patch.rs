@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
@@ -8,8 +9,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_long;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]

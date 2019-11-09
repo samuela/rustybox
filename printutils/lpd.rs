@@ -1,8 +1,8 @@
 use libc;
+use libc::free;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;

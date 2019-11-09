@@ -1,11 +1,11 @@
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]

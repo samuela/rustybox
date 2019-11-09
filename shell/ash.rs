@@ -10,6 +10,7 @@ use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 use libc::clock_t;
 use libc::ino64_t;
 use libc::mode_t;
@@ -140,8 +141,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn abort() -> !;
   #[no_mangle]

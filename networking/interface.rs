@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -81,8 +82,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn in_ether(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   /*
    * stolen from net-tools-1.59 and stripped down for busybox by

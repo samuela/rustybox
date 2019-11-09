@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 
 extern "C" {
   #[no_mangle]
@@ -27,8 +28,7 @@ extern "C" {
     __data: *const libc::c_void,
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;

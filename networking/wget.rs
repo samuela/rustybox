@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
   pub type tls_handshake_data;
   #[no_mangle]
@@ -11,8 +12,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

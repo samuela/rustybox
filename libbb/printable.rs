@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;

@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

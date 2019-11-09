@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
@@ -24,8 +25,7 @@ extern "C" {
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

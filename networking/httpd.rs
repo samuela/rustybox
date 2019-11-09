@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::off64_t;
 use libc::off_t;
@@ -117,8 +118,7 @@ extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;

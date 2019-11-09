@@ -1,6 +1,7 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::signal::__sighandler_t;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::timeval;
 

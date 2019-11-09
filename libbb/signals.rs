@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::sigset_t;
 use libc::sigval;

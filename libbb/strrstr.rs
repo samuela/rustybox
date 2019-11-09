@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;

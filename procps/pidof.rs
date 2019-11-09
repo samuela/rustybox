@@ -1,10 +1,10 @@
 use crate::libbb::llist::llist_t;
 use libc;
+use libc::free;
 use libc::pid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn pidlist_reverse(pidList: *mut pid_t) -> *mut pid_t;
   #[no_mangle]

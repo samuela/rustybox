@@ -1,12 +1,12 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::time_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

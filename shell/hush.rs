@@ -6,6 +6,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc;
+use libc::free;
 use libc::clock_t;
 use libc::ino64_t;
 use libc::mode_t;
@@ -30,8 +31,7 @@ extern "C" {
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn glob(
     __pattern: *const libc::c_char,

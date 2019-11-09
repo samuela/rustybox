@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -14,8 +15,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

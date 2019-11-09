@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;
@@ -60,8 +61,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
   #[no_mangle]

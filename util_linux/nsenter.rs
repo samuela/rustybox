@@ -1,6 +1,7 @@
 use libc::pid_t;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::uid_t;
 

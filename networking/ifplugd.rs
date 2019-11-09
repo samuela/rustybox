@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::ssize_t;
 
@@ -16,8 +17,7 @@ extern "C" {
   ) -> ssize_t;
   #[no_mangle]
   fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

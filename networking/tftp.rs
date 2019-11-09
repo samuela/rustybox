@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::off_t;
 use libc::ptrdiff_t;
 use libc::ssize_t;
@@ -19,8 +20,7 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 
 use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 
@@ -13,8 +14,7 @@ extern "C" {
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

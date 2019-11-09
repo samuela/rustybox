@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::sigset_t;
 use libc::ssize_t;
 
@@ -50,8 +51,7 @@ extern "C" {
   fn puts(__s: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

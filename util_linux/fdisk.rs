@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::free;
 use libc::off64_t;
 use libc::off_t;
 use libc::sigset_t;

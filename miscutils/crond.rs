@@ -2,6 +2,7 @@ use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::ino64_t;
 use libc::off64_t;
 use libc::pid_t;
@@ -17,8 +18,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_long;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

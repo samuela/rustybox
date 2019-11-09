@@ -5,6 +5,7 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
@@ -15,8 +16,7 @@ use libc::FILE;
 
 extern "C" {
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   static mut optind: libc::c_int;

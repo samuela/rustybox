@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn fnmatch(
@@ -8,8 +9,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

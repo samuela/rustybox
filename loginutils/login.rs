@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc::termios;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
@@ -11,8 +12,7 @@ use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

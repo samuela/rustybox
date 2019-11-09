@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::uid_t;
 use libc::FILE;
@@ -8,8 +9,7 @@ use libc::passwd;
 use crate::librb::size_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]

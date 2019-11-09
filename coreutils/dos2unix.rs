@@ -1,13 +1,13 @@
 use libc::mode_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
   #[no_mangle]

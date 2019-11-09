@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn syscall(__sysno: libc::c_long, _: ...) -> libc::c_long;
   #[no_mangle]

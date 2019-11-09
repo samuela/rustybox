@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::timespec;
 extern "C" {
   #[no_mangle]

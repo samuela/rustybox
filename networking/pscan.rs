@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -12,8 +13,7 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]

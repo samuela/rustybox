@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 
 extern "C" {
   #[no_mangle]
@@ -27,8 +28,7 @@ extern "C" {
   #[no_mangle]
   fn umount2(__special_file: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   static mut optind: libc::c_int;

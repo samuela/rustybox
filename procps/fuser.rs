@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::ino64_t;
 use libc::ino_t;
 use libc::off64_t;
@@ -9,8 +10,7 @@ use libc::FILE;
 
 extern "C" {
   pub type __dirstream;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getpid() -> pid_t;
   #[no_mangle]

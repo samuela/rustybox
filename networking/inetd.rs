@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::pid_t;
 use libc::siginfo_t;
@@ -126,8 +127,7 @@ extern "C" {
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

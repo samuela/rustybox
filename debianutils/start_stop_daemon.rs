@@ -4,6 +4,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::ino64_t;
 use libc::off64_t;
@@ -14,8 +15,7 @@ use libc::FILE;
 
 extern "C" {
   pub type __dirstream;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

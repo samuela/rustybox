@@ -6,6 +6,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
@@ -14,8 +15,7 @@ use libc::time_t;
 use libc::uid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

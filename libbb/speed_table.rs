@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;
 

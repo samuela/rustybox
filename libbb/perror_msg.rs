@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;

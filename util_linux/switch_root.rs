@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::stat;
 
 extern "C" {
@@ -95,8 +96,7 @@ extern "C" {
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;

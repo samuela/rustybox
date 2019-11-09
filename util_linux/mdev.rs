@@ -7,6 +7,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off64_t;
@@ -89,8 +90,7 @@ extern "C" {
   #[no_mangle]
   fn atoll(__nptr: *const libc::c_char) -> libc::c_longlong;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;

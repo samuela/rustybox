@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::cc_t;
 use libc::pid_t;
 use crate::librb::signal::sigaction;
@@ -63,8 +64,7 @@ extern "C" {
     _: *const libc::c_char,
     _: ::std::ffi::VaList,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

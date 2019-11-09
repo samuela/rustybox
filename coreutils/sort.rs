@@ -2,6 +2,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::FILE;
 
 extern "C" {
@@ -15,8 +16,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

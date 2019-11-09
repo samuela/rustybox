@@ -6,6 +6,7 @@ use crate::librb::smallint;
 use libc::ssize_t;
 use libc::termios;
 use libc;
+use libc::free;
 use libc::uid_t;
 use libc::FILE;
 
@@ -17,8 +18,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
   #[no_mangle]

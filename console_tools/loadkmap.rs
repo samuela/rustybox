@@ -1,7 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::free;
+
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn close(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -20,9 +22,6 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-
-
 /* From <linux/kd.h> */
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -31,6 +30,7 @@ pub struct kbentry {
   pub kb_index: libc::c_uchar,
   pub kb_value: libc::c_ushort,
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn loadkmap_main(
   mut _argc: libc::c_int,

@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::pid_t;
 use libc::uid_t;
@@ -16,8 +17,7 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

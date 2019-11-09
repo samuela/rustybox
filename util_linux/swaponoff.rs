@@ -1,10 +1,10 @@
 use libc;
+use libc::free;
 use libc::stat;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   static mut applet_name: *const libc::c_char;

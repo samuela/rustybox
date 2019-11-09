@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);

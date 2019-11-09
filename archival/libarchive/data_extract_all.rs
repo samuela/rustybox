@@ -1,5 +1,6 @@
 use crate::libbb::llist::llist_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::group;
 use libc::mode_t;
@@ -13,8 +14,7 @@ use libc::uid_t;
 
 extern "C" {
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getpid() -> pid_t;
   #[no_mangle]

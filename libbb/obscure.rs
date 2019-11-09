@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

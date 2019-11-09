@@ -4,6 +4,7 @@ use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 use libc::ssize_t;
 use libc::stat;
 use libc::FILE;
@@ -49,8 +50,7 @@ extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn system(__command: *const libc::c_char) -> libc::c_int;

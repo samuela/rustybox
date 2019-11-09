@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::ino64_t;
 use libc::mode_t;
 use libc::off64_t;
@@ -22,8 +23,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

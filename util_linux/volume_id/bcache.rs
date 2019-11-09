@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 
 use libc;
+use libc::free;
 
 extern "C" {
   #[no_mangle]

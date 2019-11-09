@@ -1,9 +1,9 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

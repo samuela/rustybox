@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;

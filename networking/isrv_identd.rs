@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
 
   /*
@@ -11,8 +12,7 @@ extern "C" {
    */
   /* opaque structure */
   pub type isrv_state_t;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

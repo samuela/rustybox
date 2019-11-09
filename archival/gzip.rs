@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::ssize_t;
 
 extern "C" {

@@ -3,6 +3,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::pid_t;
@@ -78,8 +79,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

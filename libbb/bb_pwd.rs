@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 
 extern "C" {
   /* Search for an entry with a matching user ID.  */

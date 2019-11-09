@@ -1,5 +1,6 @@
 use libc::mode_t;
 use libc;
+use libc::free;
 
 extern "C" {
   #[no_mangle]

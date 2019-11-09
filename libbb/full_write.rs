@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;

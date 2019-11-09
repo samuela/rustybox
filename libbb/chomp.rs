@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   /* dmalloc will redefine these to it's own implementation. It is safe
    * to have the prototypes here unconditionally.  */

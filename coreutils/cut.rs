@@ -1,11 +1,11 @@
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

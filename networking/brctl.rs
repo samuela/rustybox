@@ -1,10 +1,10 @@
 use libc;
+use libc::free;
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
   #[no_mangle]

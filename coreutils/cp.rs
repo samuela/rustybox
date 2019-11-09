@@ -1,9 +1,9 @@
 use libc;
+use libc::free;
 use libc::stat;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

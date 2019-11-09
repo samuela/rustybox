@@ -1,12 +1,12 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getpid() -> pid_t;
   #[no_mangle]

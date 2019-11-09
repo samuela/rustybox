@@ -1,8 +1,8 @@
 use libc;
+use libc::free;
 extern "C" {
   pub type __dirstream;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

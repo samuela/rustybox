@@ -1,11 +1,11 @@
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::ssize_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]

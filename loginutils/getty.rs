@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::termios;
 use libc;
+use libc::free;
 use libc::cc_t;
 use libc::gid_t;
 use libc::mode_t;

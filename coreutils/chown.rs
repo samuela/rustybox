@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::stat;
 use libc::uid_t;

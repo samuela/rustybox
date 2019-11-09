@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn display_uuid_cache(scan_devices: libc::c_int);

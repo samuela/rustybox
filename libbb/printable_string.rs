@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;

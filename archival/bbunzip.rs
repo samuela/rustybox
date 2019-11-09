@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::free;
 use libc::off_t;
 use libc::stat;
 use libc::suseconds_t;
@@ -11,8 +12,7 @@ use libc::timeval;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;

@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn lremovexattr(__path: *const libc::c_char, __name: *const libc::c_char) -> libc::c_int;

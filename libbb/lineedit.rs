@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -57,8 +58,7 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

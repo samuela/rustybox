@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::cc_t;
 use libc::speed_t;
 use libc::tcflag_t;

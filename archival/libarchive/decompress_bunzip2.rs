@@ -1,14 +1,14 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::off_t;
 use libc::sigset_t;
 use libc::ssize_t;
 use libc::time_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]

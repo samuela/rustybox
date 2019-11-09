@@ -1,12 +1,12 @@
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::time_t;
 use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

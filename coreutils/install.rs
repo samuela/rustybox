@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
@@ -6,8 +7,7 @@ use libc::uid_t;
 use libc::mode_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]

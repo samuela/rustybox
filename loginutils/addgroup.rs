@@ -1,11 +1,11 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::group;
 use libc::uid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

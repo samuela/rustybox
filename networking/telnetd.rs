@@ -4,6 +4,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::suseconds_t;
@@ -24,8 +25,7 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
@@ -338,7 +338,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

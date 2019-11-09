@@ -1,7 +1,7 @@
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getcwd(__buf: *mut libc::c_char, __size: size_t) -> *mut libc::c_char;
   #[no_mangle]

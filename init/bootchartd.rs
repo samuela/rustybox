@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::ino64_t;
 use libc::off64_t;
 use libc::off_t;
@@ -14,8 +15,7 @@ extern "C" {
   pub type __dirstream;
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::time_t;
 use libc::uid_t;
@@ -9,8 +10,7 @@ use libc::mode_t;
 use libc::passwd;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]

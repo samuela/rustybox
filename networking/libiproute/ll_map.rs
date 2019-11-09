@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;

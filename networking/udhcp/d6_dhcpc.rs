@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
@@ -92,8 +93,7 @@ extern "C" {
   fn rand() -> libc::c_int;
   #[no_mangle]
   fn srand(__seed: libc::c_uint);
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -1,12 +1,12 @@
 use crate::librb::size_t;
 use libc;
+use libc::free;
 use libc::ptrdiff_t;
 
 extern "C" {
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]

@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -27,8 +28,7 @@ extern "C" {
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]

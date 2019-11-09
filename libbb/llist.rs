@@ -1,10 +1,10 @@
 use libc;
+use libc::free;
 
 use crate::librb::size_t;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;

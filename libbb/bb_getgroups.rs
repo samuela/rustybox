@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::gid_t;
 
 use crate::librb::size_t;

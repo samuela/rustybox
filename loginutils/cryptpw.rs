@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;

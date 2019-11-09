@@ -1,9 +1,9 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getservbyport(__port: libc::c_int, __proto: *const libc::c_char) -> *mut servent;
   #[no_mangle]

@@ -1,13 +1,13 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::mode_t;
 use libc::ssize_t;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;

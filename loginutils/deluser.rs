@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 use libc::group;
 use libc::passwd;
 use libc::uid_t;

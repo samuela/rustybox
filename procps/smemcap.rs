@@ -1,8 +1,8 @@
 use libc;
+use libc::free;
 extern "C" {
   pub type __dirstream;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
   #[no_mangle]

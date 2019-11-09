@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::off64_t;
 use libc::off_t;
@@ -28,8 +29,7 @@ extern "C" {
   fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn setenv(
     __name: *const libc::c_char,

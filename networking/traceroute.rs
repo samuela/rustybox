@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::timeval;
 use libc::uid_t;
@@ -42,8 +43,7 @@ extern "C" {
   fn getgid() -> gid_t;
   #[no_mangle]
   fn getuid() -> uid_t;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn getpid() -> pid_t;
   #[no_mangle]

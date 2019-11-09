@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::ino64_t;
 use libc::ino_t;
@@ -18,8 +19,7 @@ use libc::FILE;
 extern "C" {
   pub type __dirstream;
 
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;

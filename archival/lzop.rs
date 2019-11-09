@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::free;
 use libc::ssize_t;
 
 extern "C" {
@@ -14,8 +15,7 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

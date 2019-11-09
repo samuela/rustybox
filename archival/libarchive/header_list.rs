@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;

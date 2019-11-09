@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::gid_t;
 use libc::ino64_t;
 use libc::mode_t;
@@ -13,8 +14,7 @@ use libc::FILE;
 
 extern "C" {
   pub type __dirstream;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]

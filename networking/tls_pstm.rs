@@ -1,4 +1,5 @@
 use libc;
+use libc::free;
 extern "C" {
   #[no_mangle]
   fn pstm_sqr_comba(
@@ -29,8 +30,7 @@ extern "C" {
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
 }
 
 

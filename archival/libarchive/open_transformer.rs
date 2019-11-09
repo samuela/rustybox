@@ -3,14 +3,14 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::free;
 use libc::off_t;
 use libc::pid_t;
 use libc::ssize_t;
 
 
 extern "C" {
-  #[no_mangle]
-  fn free(__ptr: *mut libc::c_void);
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
