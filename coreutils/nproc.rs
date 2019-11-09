@@ -27,8 +27,8 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use libc::pid_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]

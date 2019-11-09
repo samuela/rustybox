@@ -1,6 +1,6 @@
 use crate::librb::__compar_fn_t;
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;

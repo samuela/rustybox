@@ -74,9 +74,9 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use crate::librb::size_t;
 

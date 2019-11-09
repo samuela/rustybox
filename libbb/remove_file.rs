@@ -43,9 +43,9 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use libc::dirent;
 pub type DIR = __dirstream;

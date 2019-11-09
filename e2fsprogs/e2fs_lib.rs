@@ -25,9 +25,9 @@ extern "C" {
   static bb_errno: *mut libc::c_int;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use crate::librb::size_t;
 

@@ -3,9 +3,9 @@ use libc;
 use libc::close;
 use libc::free;
 use libc::gid_t;
-use libc::ino64_t;
+
 use libc::mode_t;
-use libc::off64_t;
+
 use libc::off_t;
 use libc::stat;
 use libc::suseconds_t;

@@ -169,9 +169,9 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 use libc::pid_t;
 
 #[derive(Copy, Clone)]

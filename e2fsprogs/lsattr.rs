@@ -63,9 +63,9 @@ extern "C" {
   fn print_e2flags(f: *mut FILE, flags: libc::c_ulong, options: libc::c_uint);
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 
 

@@ -234,9 +234,9 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use crate::librb::size_t;
 use libc::pid_t;

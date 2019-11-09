@@ -1,8 +1,8 @@
 use crate::librb::size_t;
 use libc;
 use libc::dirent;
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use libc::ssize_t;
 
 extern "C" {

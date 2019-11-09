@@ -33,10 +33,10 @@ extern "C" {
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
 }
 
-use libc::ino64_t;
+
 use libc::mode_t;
 
-use libc::off64_t;
+
 use libc::off_t;
 
 use crate::librb::size_t;

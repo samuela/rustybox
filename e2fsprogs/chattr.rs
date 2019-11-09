@@ -63,9 +63,9 @@ extern "C" {
   static e2attr_flags_sname: [libc::c_char; 0];
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use crate::librb::smallint;
 

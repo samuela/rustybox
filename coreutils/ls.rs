@@ -6,11 +6,11 @@ use libc;
 
 use libc::free;
 use libc::gid_t;
-use libc::ino64_t;
+
 use libc::ino_t;
 use libc::mode_t;
 use libc::nlink_t;
-use libc::off64_t;
+
 use libc::off_t;
 use libc::stat;
 use libc::time_t;

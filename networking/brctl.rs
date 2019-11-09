@@ -99,9 +99,9 @@ extern "C" {
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::size_t;

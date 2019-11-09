@@ -28,8 +28,8 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use libc::pid_t;
 use crate::librb::size_t;
 

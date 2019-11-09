@@ -7,8 +7,8 @@ use libc;
 
 use libc::free;
 use libc::gid_t;
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use libc::pid_t;
 use libc::stat;
 use libc::uid_t;

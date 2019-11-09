@@ -3,8 +3,8 @@ use crate::librb::smallint;
 use libc;
 use libc::close;
 
-use libc::ino64_t;
-use libc::off64_t;
+
+
 use libc::off_t;
 use libc::pid_t;
 use libc::ssize_t;

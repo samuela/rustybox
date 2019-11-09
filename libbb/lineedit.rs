@@ -218,9 +218,9 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use libc::pid_t;
 

@@ -48,8 +48,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::ino64_t;
-use libc::off64_t;
+
+
 
 use libc::stat;
 

@@ -13,9 +13,9 @@ use libc;
 use libc::close;
 use libc::free;
 use libc::clock_t;
-use libc::ino64_t;
+
 use libc::mode_t;
-use libc::off64_t;
+
 use libc::pid_t;
 use libc::stat;
 use libc::timeval;

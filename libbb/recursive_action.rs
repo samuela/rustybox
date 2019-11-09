@@ -24,9 +24,9 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::ino64_t;
 
-use libc::off64_t;
+
+
 
 use libc::dirent;
 pub type DIR = __dirstream;
