@@ -3,6 +3,7 @@ use libc;
 use libc::stat;
 use libc::time_t;
 use libc::timespec;
+use libc::tm;
 
 extern "C" {
   #[no_mangle]
@@ -67,7 +68,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::tm;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 
@@ -201,38 +201,52 @@ much as possible, missed out a lot of bounds checking */
 //usage:#define date_example_usage
 //usage:       "$ date\n"
 //usage:       "Wed Apr 12 18:52:41 MDT 2000\n"
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 /* D */
-/* I */
 pub const OPT_HINT: C2RustUnnamed_0 = 64;
-/* r */
+/* I */
 pub const OPT_TIMESPEC: C2RustUnnamed_0 = 32;
-/* d */
+/* r */
 pub const OPT_REFERENCE: C2RustUnnamed_0 = 16;
-/* u */
+/* d */
 pub const OPT_DATE: C2RustUnnamed_0 = 8;
-/* s */
+/* u */
 pub const OPT_UTC: C2RustUnnamed_0 = 4;
-/* R */
+/* s */
 pub const OPT_SET: C2RustUnnamed_0 = 2;
+/* R */
 pub const OPT_RFC2822: C2RustUnnamed_0 = 1;
+
+// Originally:
+// static const char date_longopts[] ALIGN1 =
+// 		"rfc-822\0"   No_argument       "R"
+// 		"rfc-2822\0"  No_argument       "R"
+// 		"set\0"       Required_argument "s"
+// 		"utc\0"       No_argument       "u"
+// 	/*	"universal\0" No_argument       "u" */
+// 		"date\0"      Required_argument "d"
+// 		"reference\0" Required_argument "r"
+// 		;
 static mut date_longopts: [libc::c_char; 53] = [
   114, 102, 99, 45, 56, 50, 50, 0, 0, 82, 114, 102, 99, 45, 50, 56, 50, 50, 0, 0, 82, 115, 101,
   116, 0, 1, 115, 117, 116, 99, 0, 0, 117, 100, 97, 116, 101, 0, 1, 100, 114, 101, 102, 101, 114,
   101, 110, 99, 101, 0, 1, 114, 0,
 ];
+
 /* We are a NOEXEC applet.
  * Obstacles to NOFORK:
  * - we change env
  * - xasprintf result not freed
  * - after xasprintf we use other xfuncs
  */
+
 unsafe extern "C" fn maybe_set_utc(mut opt: libc::c_int) {
   if opt & OPT_UTC as libc::c_int != 0 {
     putenv(b"TZ=UTC0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
-    /* default is date */
-  }; /* ns? */
+  };
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn date_main(
   mut _argc: libc::c_int,
@@ -261,14 +275,15 @@ pub unsafe extern "C" fn date_main(
   argv = argv.offset(optind as isize);
   maybe_set_utc(opt as libc::c_int);
   if 1i32 != 0 && opt & OPT_TIMESPEC as libc::c_int as libc::c_uint != 0 {
-    ifmt = 0i32;
+    ifmt = 0i32; /* default is date */
     if !isofmt_arg.is_null() {
+      // "date\0""hours\0""minutes\0""seconds\0"
       static mut isoformats: [libc::c_char; 28] = [
         100, 97, 116, 101, 0, 104, 111, 117, 114, 115, 0, 109, 105, 110, 117, 116, 101, 115, 0,
         115, 101, 99, 111, 110, 100, 115, 0, 0,
-      ];
+      ]; /* ns? */
       ifmt = index_in_substrings(isoformats.as_ptr(), isofmt_arg);
-      if ifmt < 0i32 {
+      if ifmt < 0 {
         bb_show_usage();
       }
     }

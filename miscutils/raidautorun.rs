@@ -1,4 +1,5 @@
 use libc;
+
 extern "C" {
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
@@ -42,13 +43,13 @@ pub unsafe extern "C" fn raidautorun_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   bb_xioctl(
-    xopen(single_argv(argv), 0i32),
-    0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (9i32 << 0i32 + 8i32) as libc::c_uint
-      | (0x14i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+    xopen(single_argv(argv), 0),
+    0u32 << 0 + 8 + 8 + 14
+      | (9 << 0 + 8) as libc::c_uint
+      | (0x14 << 0) as libc::c_uint
+      | (0 << 0 + 8 + 8) as libc::c_uint,
     0 as *mut libc::c_void,
     b"RAID_AUTORUN\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }
