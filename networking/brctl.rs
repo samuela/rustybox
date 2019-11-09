@@ -2,7 +2,7 @@ use libc;
 
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
 
@@ -110,7 +110,7 @@ use libc::ssize_t;
 
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

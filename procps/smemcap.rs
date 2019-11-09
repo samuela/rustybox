@@ -2,7 +2,7 @@ use libc;
 use libc::close;
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
@@ -42,7 +42,7 @@ use libc::off_t;
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::stat;
 #[derive(Copy, Clone)]

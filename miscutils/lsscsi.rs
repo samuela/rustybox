@@ -1,12 +1,11 @@
 use crate::librb::size_t;
 use libc;
 use libc::dirent;
-
-
 use libc::ssize_t;
+use libc::DIR;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -40,8 +39,6 @@ extern "C" {
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
-
-pub type DIR = __dirstream;
 
 /*
  * lsscsi implementation for busybox

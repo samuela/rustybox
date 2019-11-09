@@ -4,7 +4,7 @@ use libc::free;
 use libc::stat;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn statfs(__file: *const libc::c_char, __buf: *mut statfs) -> libc::c_int;
@@ -254,7 +254,7 @@ use libc::ssize_t;
 
 use libc::dirent;
 
-pub type DIR = __dirstream;
+use libc::DIR;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

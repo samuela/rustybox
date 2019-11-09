@@ -2,7 +2,7 @@ use libc;
 use libc::close;
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -243,7 +243,7 @@ use libc::ssize_t;
 use libc::uid_t;
 use libc::dirent;
 
-pub type DIR = __dirstream;
+use libc::DIR;
 use libc::sigval;
 use libc::stat;
 use libc::time_t;

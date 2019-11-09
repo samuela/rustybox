@@ -12,7 +12,7 @@ use libc::time_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn strtol(
     __nptr: *const libc::c_char,
@@ -169,7 +169,7 @@ pub struct __va_list_tag {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type va_list = __builtin_va_list;
 use libc::tm;

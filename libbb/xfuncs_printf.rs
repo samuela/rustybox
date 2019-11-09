@@ -11,7 +11,7 @@ use libc::stat;
 use libc::uid_t;
 
 extern "C" {
-  pub type __dirstream;
+
   pub type sockaddr_x25;
   pub type sockaddr_un;
   pub type sockaddr_ns;
@@ -205,7 +205,7 @@ pub struct __va_list_tag {
 
 pub type __socklen_t = libc::c_uint;
 pub type socklen_t = __socklen_t;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type sa_family_t = libc::c_ushort;
 #[derive(Copy, Clone)]

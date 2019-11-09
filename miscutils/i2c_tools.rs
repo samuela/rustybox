@@ -2,7 +2,7 @@ use libc;
 use libc::close;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -129,7 +129,7 @@ extern "C" {
 pub type intptr_t = libc::c_long;
 use crate::librb::size_t;
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::FILE;
 pub type __u8 = libc::c_uchar;

@@ -15,7 +15,7 @@ use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
@@ -130,7 +130,7 @@ extern "C" {
 pub type __id_t = libc::c_uint;
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type id_t = __id_t;
 

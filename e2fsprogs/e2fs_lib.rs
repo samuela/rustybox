@@ -2,7 +2,7 @@ use libc;
 use libc::close;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]
@@ -32,7 +32,7 @@ extern "C" {
 use crate::librb::size_t;
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 use libc::stat;
 
 

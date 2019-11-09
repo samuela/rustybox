@@ -10,7 +10,7 @@ use libc::pid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn getpid() -> pid_t;
@@ -86,7 +86,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::stat;
 pub type __socket_type = libc::c_uint;

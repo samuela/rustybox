@@ -23,7 +23,7 @@ use libc::timeval;
 use libc::uid_t;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -380,7 +380,7 @@ extern "C" {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-pub type DIR = __dirstream;
+use libc::DIR;
 pub type smalluint = libc::c_uchar;
 
 #[derive(Copy, Clone)]

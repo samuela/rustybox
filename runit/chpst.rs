@@ -11,7 +11,7 @@ use crate::librb::size_t;
 use libc::ssize_t;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -82,7 +82,7 @@ extern "C" {
 pub type __rlim64_t = libc::c_ulong;
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;

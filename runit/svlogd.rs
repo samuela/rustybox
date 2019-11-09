@@ -17,7 +17,7 @@ use libc::timeval;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -179,7 +179,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

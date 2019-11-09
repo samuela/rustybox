@@ -5,7 +5,7 @@ use libc::close;
 use libc::free;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
@@ -250,7 +250,7 @@ pub struct in_addr {
 pub type in_addr_t = u32;
 use crate::librb::smallint;
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use crate::libbb::llist::llist_t;
 use crate::librb::fd_pair;

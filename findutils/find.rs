@@ -4,7 +4,7 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn fnmatch(
     __pattern: *const libc::c_char,
@@ -187,7 +187,7 @@ use libc::off_t;
 use crate::librb::size_t;
 use libc::uid_t;
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::mode_t;
 use libc::stat;

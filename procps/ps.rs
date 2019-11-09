@@ -2,7 +2,7 @@ use libc;
 
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -77,7 +77,7 @@ use libc::uid_t;
 
 
 
-pub type DIR = __dirstream;
+use libc::DIR;
 use crate::libbb::llist::llist_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

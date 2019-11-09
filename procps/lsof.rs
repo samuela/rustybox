@@ -2,7 +2,7 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn getpid() -> pid_t;
@@ -35,7 +35,7 @@ use crate::librb::size_t;
 
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {

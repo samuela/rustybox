@@ -3,8 +3,6 @@ use crate::librb::smallint;
 use libc;
 use libc::close;
 
-
-
 use libc::off_t;
 use libc::pid_t;
 use libc::ssize_t;
@@ -13,7 +11,7 @@ use libc::useconds_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
 
@@ -183,7 +181,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::tm;
 

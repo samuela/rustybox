@@ -2,7 +2,7 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
@@ -29,7 +29,7 @@ extern "C" {
 
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 use libc::stat;
 
 pub type C2RustUnnamed = libc::c_uint;

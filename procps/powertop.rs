@@ -12,7 +12,7 @@ use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
@@ -152,7 +152,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type nfds_t = libc::c_ulong;
 #[derive(Copy, Clone)]

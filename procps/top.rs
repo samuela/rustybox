@@ -2,7 +2,7 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
@@ -149,7 +149,7 @@ use libc::pid_t;
 use libc::ssize_t;
 use libc::uid_t;
 
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::FILE;
 #[derive(Copy, Clone)]

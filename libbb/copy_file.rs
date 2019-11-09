@@ -14,7 +14,7 @@ use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
@@ -243,7 +243,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

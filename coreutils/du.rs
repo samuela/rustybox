@@ -2,7 +2,6 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
@@ -48,14 +47,11 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
 use libc::stat;
 
 use libc::dirent;
 
-pub type DIR = __dirstream;
+use libc::DIR;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

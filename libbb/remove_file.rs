@@ -2,7 +2,7 @@ use libc;
 
 use libc::free;
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
@@ -48,7 +48,7 @@ extern "C" {
 
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 use libc::stat;
 
 

@@ -2,7 +2,7 @@ use libc;
 
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -45,7 +45,7 @@ use libc::uid_t;
 
 
 
-pub type DIR = __dirstream;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {

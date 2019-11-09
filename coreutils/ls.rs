@@ -18,7 +18,6 @@ use libc::uid_t;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
@@ -162,7 +161,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::tm;
 

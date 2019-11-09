@@ -10,7 +10,7 @@ use libc::stat;
 use libc::useconds_t;
 
 extern "C" {
-  pub type __dirstream;
+
 
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
@@ -107,7 +107,7 @@ extern "C" {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 
 use libc::time_t;
 #[derive(Copy, Clone)]

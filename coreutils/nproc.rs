@@ -1,7 +1,7 @@
 use libc;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn sched_getaffinity(__pid: pid_t, __cpusetsize: size_t, __cpuset: *mut cpu_set_t)
     -> libc::c_int;
@@ -28,7 +28,6 @@ extern "C" {
 
 use crate::librb::size_t;
 
-
 use libc::pid_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
@@ -38,7 +37,7 @@ pub struct cpu_set_t {
 }
 
 use libc::dirent;
-pub type DIR = __dirstream;
+use libc::DIR;
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

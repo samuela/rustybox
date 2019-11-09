@@ -2,7 +2,7 @@ use libc;
 
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -27,7 +27,7 @@ use libc::pid_t;
 use crate::librb::size_t;
 
 
-pub type DIR = __dirstream;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {

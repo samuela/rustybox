@@ -22,7 +22,7 @@ use libc::timeval;
 use libc::FILE;
 
 extern "C" {
-  pub type __dirstream;
+
   #[no_mangle]
   fn fnmatch(
     __pattern: *const libc::c_char,
@@ -353,7 +353,7 @@ pub struct __va_list_tag {
 }
 
 pub type smalluint = libc::c_uchar;
-pub type DIR = __dirstream;
+use libc::DIR;
 pub type uintptr_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;
 
