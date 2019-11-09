@@ -3,6 +3,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::gid_t;
@@ -39,8 +40,7 @@ extern "C" {
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
   fn geteuid() -> uid_t;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

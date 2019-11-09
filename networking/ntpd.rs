@@ -11,6 +11,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::pid_t;

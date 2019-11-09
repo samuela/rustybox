@@ -5,6 +5,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::unlink;
 
 use libc::free;
 use libc::gid_t;
@@ -22,8 +23,7 @@ extern "C" {
 
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 
@@ -8,8 +9,7 @@ extern "C" {
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;

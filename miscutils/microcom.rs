@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 
 extern "C" {
@@ -7,8 +8,7 @@ extern "C" {
   fn getpid() -> pid_t;
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

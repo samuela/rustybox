@@ -2,6 +2,7 @@ use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 
@@ -28,8 +29,7 @@ extern "C" {
   fn setpgrp() -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]

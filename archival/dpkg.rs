@@ -4,6 +4,7 @@ use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::ssize_t;
@@ -17,8 +18,7 @@ extern "C" {
 
 
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn rmdir(__path: *const libc::c_char) -> libc::c_int;

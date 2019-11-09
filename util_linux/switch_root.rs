@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::stat;
@@ -64,8 +65,7 @@ extern "C" {
   #[no_mangle]
   fn getpid() -> pid_t;
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn rmdir(__path: *const libc::c_char) -> libc::c_int;

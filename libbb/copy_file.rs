@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::gid_t;
@@ -22,8 +23,7 @@ extern "C" {
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
   #[no_mangle]

@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::gid_t;
@@ -63,8 +64,7 @@ extern "C" {
   fn vfork() -> libc::c_int;
   #[no_mangle]
   fn ttyname_r(__fd: libc::c_int, __buf: *mut libc::c_char, __buflen: size_t) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn chroot(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

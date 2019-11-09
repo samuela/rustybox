@@ -1,14 +1,14 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::unlink;
 
 use libc::free;
 use libc::pid_t;
 use libc::ssize_t;
 
 extern "C" {
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn recv(
     __fd: libc::c_int,

@@ -1,17 +1,12 @@
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 
 extern "C" {
 
-
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
-
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
@@ -168,12 +163,10 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::pid_t;
 use libc::ssize_t;
-
-
 
 use libc::stat;
 

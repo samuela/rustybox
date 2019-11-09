@@ -1,5 +1,6 @@
-use libc::mode_t;
 use libc;
+use libc::unlink;
+use libc::mode_t;
 
 use libc::free;
 use libc::gid_t;
@@ -49,8 +50,7 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 }
 
 /*

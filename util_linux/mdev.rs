@@ -7,6 +7,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::gid_t;
@@ -338,8 +339,7 @@ extern "C" {
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;

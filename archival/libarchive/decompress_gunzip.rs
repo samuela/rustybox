@@ -2,6 +2,7 @@ use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::unlink;
 
 use libc::free;
 use libc::off_t;

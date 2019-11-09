@@ -7,6 +7,7 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 

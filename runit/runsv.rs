@@ -4,6 +4,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::unlink;
 use libc::close;
 
 use libc::mode_t;
@@ -21,8 +22,7 @@ extern "C" {
   fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;
   #[no_mangle]

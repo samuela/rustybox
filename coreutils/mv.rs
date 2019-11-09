@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 
 use libc::free;
 extern "C" {
@@ -47,8 +48,7 @@ extern "C" {
     path: *const libc::c_char,
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -56,8 +56,6 @@ extern "C" {
   #[no_mangle]
   fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
-
-
 
 use libc::stat;
 

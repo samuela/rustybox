@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 extern "C" {
@@ -29,8 +30,7 @@ extern "C" {
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn __cmsg_nxthdr(__mhdr: *mut msghdr, __cmsg: *mut cmsghdr) -> *mut cmsghdr;

@@ -4,6 +4,7 @@ use libc::pid_t;
 use libc::useconds_t;
 use crate::librb::size_t;
 use libc;
+use libc::unlink;
 
 use libc::free;
 use libc::gid_t;
@@ -16,8 +17,7 @@ extern "C" {
 
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

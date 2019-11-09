@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::mode_t;
@@ -29,8 +30,7 @@ extern "C" {
   fn mkstemp(__template: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn rmdir(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 extern "C" {
@@ -81,8 +82,7 @@ extern "C" {
     flags: libc::c_int,
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
 }
 
 use libc::mode_t;

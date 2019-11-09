@@ -1,5 +1,6 @@
 use libc::passwd;
 use libc;
+use libc::unlink;
 use libc::close;
 
 use libc::gid_t;
@@ -21,8 +22,7 @@ extern "C" {
   fn getuid() -> uid_t;
   #[no_mangle]
   fn vfork() -> libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

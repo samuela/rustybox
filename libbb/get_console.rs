@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 
 use libc::ptrdiff_t;

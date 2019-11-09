@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 
@@ -64,8 +65,7 @@ extern "C" {
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]

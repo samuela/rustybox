@@ -1,4 +1,5 @@
 use libc;
+use libc::unlink;
 use libc::close;
 use libc::free;
 
@@ -6,8 +7,7 @@ extern "C" {
 
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-  #[no_mangle]
-  fn unlink(__name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
