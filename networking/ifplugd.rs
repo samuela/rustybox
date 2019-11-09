@@ -1,11 +1,11 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::unlink;
-
 use libc::free;
 use libc::pid_t;
+use libc::pollfd;
 use libc::ssize_t;
+use libc::unlink;
 
 extern "C" {
 
@@ -185,13 +185,7 @@ pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_0 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_0 = 4;

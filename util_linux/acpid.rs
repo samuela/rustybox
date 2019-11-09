@@ -1,7 +1,16 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::pid_t;
+use libc::pollfd;
+use libc::ssize_t;
+use libc::stat;
+use libc::timeval;
+use libc::unlink;
+use libc::FILE;
 
 extern "C" {
 
@@ -163,27 +172,8 @@ extern "C" {
   fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::pid_t;
-use libc::ssize_t;
-
-use libc::stat;
-
-use libc::timeval;
-
-use crate::librb::signal::__sighandler_t;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 /* Helpers for daemonization.
  *
  * bb_daemonize(flags) = daemonize, does not compile on NOMMU

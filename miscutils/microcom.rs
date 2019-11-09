@@ -1,6 +1,13 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
-use libc::unlink;
 use libc::close;
+use libc::pid_t;
+use libc::pollfd;
+use libc::speed_t;
+use libc::ssize_t;
+use libc::termios;
+use libc::unlink;
 
 extern "C" {
 
@@ -71,24 +78,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::pid_t;
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 
-use libc::speed_t;
-
-use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 pub const OPT_X: C2RustUnnamed_0 = 1;
@@ -290,7 +281,8 @@ pub unsafe extern "C" fn microcom_main(
                 0i32,
                 &mut c as *mut libc::c_char as *mut libc::c_void,
                 1i32 as size_t,
-              ) <1              {
+              ) < 1
+              {
                 // don't poll stdin anymore if we got EOF/error
                 nfd -= 1
               } else {
@@ -335,7 +327,7 @@ pub unsafe extern "C" fn microcom_main(
               bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
               COMMON_BUFSIZE as libc::c_int as size_t,
             );
-            if len >0{
+            if len > 0 {
               full_write(
                 1i32,
                 bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,

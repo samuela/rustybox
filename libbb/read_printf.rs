@@ -1,7 +1,12 @@
+use crate::librb::size_t;
 use libc;
-
 use libc::close;
 use libc::free;
+use libc::off_t;
+use libc::pollfd;
+use libc::ssize_t;
+use libc::stat;
+
 extern "C" {
 
   #[no_mangle]
@@ -167,20 +172,7 @@ extern "C" {
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use libc::off_t;
-
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::stat;
-
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 
 /*
  * Utility routines.
@@ -239,7 +231,7 @@ pub unsafe extern "C" fn nonblock_immune_read(
   let mut n: ssize_t = 0;
   loop {
     n = safe_read(fd, buf, count);
-    if n >=0|| *bb_errno != 11i32 {
+    if n >= 0 || *bb_errno != 11i32 {
       return n;
     }
     /* fd is in O_NONBLOCK mode. Wait using poll and repeat */
@@ -272,9 +264,7 @@ pub unsafe extern "C" fn xmalloc_reads(
     ) as *mut libc::c_char;
     p = buf.offset(sz as isize);
     sz = (sz as libc::c_ulong).wrapping_add(128i32 as libc::c_ulong) as size_t as size_t;
-    while !(nonblock_immune_read(fd, p as *mut libc::c_void, 1i32 as size_t)
-      != 1)
-    {
+    while !(nonblock_immune_read(fd, p as *mut libc::c_void, 1i32 as size_t) != 1) {
       if *p as libc::c_int == '\n' as i32 {
         break 'c_6940;
       }

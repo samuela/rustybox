@@ -1,14 +1,13 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
-use libc::termios;
 use libc;
-
 use libc::close;
-
 use libc::mode_t;
 use libc::pid_t;
+use libc::pollfd;
+use libc::ssize_t;
+use libc::termios;
 use libc::FILE;
 
 extern "C" {
@@ -113,13 +112,6 @@ extern "C" {
 }
 
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

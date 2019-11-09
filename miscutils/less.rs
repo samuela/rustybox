@@ -1,9 +1,18 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
 use libc::close;
 use libc::free;
+use libc::pollfd;
+use libc::ssize_t;
+use libc::stat;
+use libc::termios;
+use libc::time_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn sched_yield() -> libc::c_int;
@@ -165,29 +174,10 @@ extern "C" {
 }
 
 pub type __int64_t = libc::c_long;
-
-
-use crate::librb::size_t;
-use libc::time_t;
-
 pub type int64_t = __int64_t;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::stat;
 
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 
-use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_int;
@@ -417,8 +407,7 @@ unsafe extern "C" fn re_wrap() {
     }
     /* this is not a continuation line!
      * create next _new_ line too */
-    sz = (d.wrapping_offset_from(linebuf.as_mut_ptr()) as libc::c_long + 1)
-      as libc::c_int;
+    sz = (d.wrapping_offset_from(linebuf.as_mut_ptr()) as libc::c_long + 1) as libc::c_int;
     d = (xmalloc((sz + 4i32) as size_t) as *mut libc::c_char).offset(4);
     *(d.offset(-4) as *mut u32) = lineno;
     memcpy(
@@ -563,7 +552,7 @@ unsafe extern "C" fn read_lines() {
         fcntl(0i32, 4i32, flags);
         (*ptr_to_globals).readpos = 0i32 as ssize_t;
         (*ptr_to_globals).readeof = (*ptr_to_globals).eof_error;
-        if (*ptr_to_globals).eof_error <=0{
+        if (*ptr_to_globals).eof_error <= 0 {
           break;
         }
         retry_EAGAIN = 1i32
@@ -680,7 +669,7 @@ unsafe extern "C" fn read_lines() {
           break;
         }
       }
-      if (*ptr_to_globals).eof_error <=0{
+      if (*ptr_to_globals).eof_error <= 0 {
         break;
       }
       (*ptr_to_globals).max_fline = (*ptr_to_globals).max_fline.wrapping_add(1);
@@ -695,7 +684,7 @@ unsafe extern "C" fn read_lines() {
     } else {
       print_statusline(b"read error\x00" as *const u8 as *const libc::c_char);
     }
-  } else if (*ptr_to_globals).eof_error ==0{
+  } else if (*ptr_to_globals).eof_error == 0 {
     (*ptr_to_globals).num_lines = (*ptr_to_globals).max_lineno as libc::c_int
   }
   fill_match_lines(old_max_fline);
@@ -750,7 +739,7 @@ unsafe extern "C" fn update_num_lines() {
           buf.as_mut_ptr() as *mut libc::c_void,
           ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong,
         );
-        if !(len >0) {
+        if !(len > 0) {
           break;
         }
         i = 0i32 as ssize_t;
@@ -1045,7 +1034,8 @@ unsafe extern "C" fn buffer_print() {
     i = i.wrapping_add(1)
   }
   if option_mask32 & (FLAG_E as libc::c_int | FLAG_F as libc::c_int) as libc::c_uint != 0
-    && (*ptr_to_globals).eof_error <= 0   {
+    && (*ptr_to_globals).eof_error <= 0
+  {
     i = if option_mask32 & FLAG_F as libc::c_int as libc::c_uint != 0 {
       0i32
     } else {
@@ -1073,8 +1063,8 @@ unsafe extern "C" fn buffer_fill_and_print() {
   while i <= (*ptr_to_globals).max_displayed_line
     && fpos as libc::c_uint <= (*ptr_to_globals).max_fline
   {
-    let mut lineno: libc::c_int = *((*(*ptr_to_globals).flines.offset(fpos as isize)).offset(-4)
-      as *mut u32) as libc::c_int;
+    let mut lineno: libc::c_int =
+      *((*(*ptr_to_globals).flines.offset(fpos as isize)).offset(-4) as *mut u32) as libc::c_int;
     let ref mut fresh6 = *(*ptr_to_globals).buffer.offset(i as isize);
     *fresh6 = *(*ptr_to_globals).flines.offset(fpos as isize);
     i = i.wrapping_add(1);
@@ -1122,7 +1112,7 @@ unsafe extern "C" fn goto_lineno(mut target: libc::c_int) {
         .offset((*ptr_to_globals).cur_fline as isize))
       .offset(-4) as *mut u32)
         != target as libc::c_uint
-        && (*ptr_to_globals).eof_error >0)
+        && (*ptr_to_globals).eof_error > 0)
       {
         break;
       }
@@ -1303,7 +1293,7 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
     rd = 1i32;
     /* Are we interested in stdin? */
     if at_end() != 0 {
-      if (*ptr_to_globals).eof_error >0{
+      if (*ptr_to_globals).eof_error > 0 {
         /* did NOT reach eof yet */
         rd = 0i32
       }
@@ -1570,7 +1560,7 @@ unsafe extern "C" fn goto_match(mut match_0: libc::c_int) {
     match_0 = 0i32
   }
   /* Try to find next match if eof isn't reached yet */
-  if match_0 >= (*ptr_to_globals).num_matches && (*ptr_to_globals).eof_error > 0   {
+  if match_0 >= (*ptr_to_globals).num_matches && (*ptr_to_globals).eof_error > 0 {
     (*ptr_to_globals).wanted_match = match_0; /* "I want to read until I see N'th match" */
     read_lines();
   }

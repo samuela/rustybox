@@ -395,13 +395,7 @@ pub const IPPROTO_IGMP: C2RustUnnamed = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed = 1;
 pub const IPPROTO_IP: C2RustUnnamed = 0;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 /* BSD-derived getopt() functions require that optind be set to 1 in
  * order to reset getopt() state.  This used to be generally accepted
  * way of resetting getopt().  However, glibc's getopt()

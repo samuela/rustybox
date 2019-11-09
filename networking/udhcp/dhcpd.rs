@@ -408,13 +408,7 @@ use crate::librb::smallint;
 
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

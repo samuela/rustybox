@@ -113,13 +113,7 @@ extern "C" {
 pub type __clockid_t = libc::c_int;
 pub type clockid_t = __clockid_t;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */

@@ -140,13 +140,7 @@ pub struct in_addr {
 }
 pub type in_addr_t = u32;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

@@ -1,19 +1,23 @@
+use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
 use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::off64_t;
 use libc::off_t;
+use libc::passwd;
 use libc::pid_t;
+use libc::pollfd;
 use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
+use libc::tm;
 use libc::uid_t;
+use libc::FILE;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -32,8 +36,6 @@ extern "C" {
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
-
-
 
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
@@ -118,8 +120,6 @@ extern "C" {
 
   #[no_mangle]
   fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
@@ -482,19 +482,7 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-use crate::librb::signal::__sighandler_t;
-
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
-use libc::tm;
-use libc::passwd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct spwd {
@@ -1358,7 +1346,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
   ];
   /* Fixed size 29-byte string. Example: Sun, 06 Nov 1994 08:49:37 GMT */
   let mut date_str: [libc::c_char; 40] = [0; 40]; /* using a bit larger buffer to paranoia reasons */
-  let mut tm: tm =std::mem::zeroed();
+  let mut tm: tm = std::mem::zeroed();
   let mut responseString: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut infoString: *const libc::c_char = 0 as *const libc::c_char;
   let mut error_page: *const libc::c_char = 0 as *const libc::c_char;

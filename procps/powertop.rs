@@ -156,13 +156,7 @@ use libc::dirent;
 use libc::DIR;
 
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

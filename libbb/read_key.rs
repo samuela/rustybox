@@ -1,6 +1,7 @@
+use crate::librb::size_t;
 use libc;
-
-
+use libc::pollfd;
+use libc::ssize_t;
 
 extern "C" {
   #[no_mangle]
@@ -22,19 +23,9 @@ extern "C" {
 }
 
 pub type __int64_t = libc::c_long;
-
 pub type int64_t = __int64_t;
-use crate::librb::size_t;
-use libc::ssize_t;
 
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 pub type C2RustUnnamed = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed = 16;
 pub const KEYCODE_CURSOR_POS: C2RustUnnamed = -256;
@@ -260,7 +251,8 @@ pub unsafe extern "C" fn read_key(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,
-          ) <= 0           {
+          ) <= 0
+          {
             /* If EAGAIN, then fd is O_NONBLOCK and poll lied:
              * in fact, there is no data. */
             if *bb_errno != 11i32 {
@@ -317,7 +309,8 @@ pub unsafe extern "C" fn read_key(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,
-          ) <= 0           {
+          ) <= 0
+          {
             /* If EAGAIN, then fd is O_NONBLOCK and poll lied:
              * in fact, there is no data. */
             if *bb_errno != 11i32 {

@@ -1,10 +1,10 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc;
 use libc::ssize_t;
 use libc::termios;
 use libc::winsize;
-use libc;
 
 use libc::close;
 
@@ -37,8 +37,6 @@ extern "C" {
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
@@ -131,13 +129,7 @@ extern "C" {
 
 pub type nfds_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

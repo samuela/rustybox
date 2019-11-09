@@ -450,13 +450,7 @@ pub const IPPROTO_IP: C2RustUnnamed_1 = 0;
 
 pub type nfds_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 pub type __priority_which = libc::c_uint;
 pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;

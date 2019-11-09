@@ -1,3 +1,5 @@
+use libc::pollfd;
+use libc::termios;
 use crate::librb::signal::__sighandler_t;
 use libc::FILE;
 use libc::off64_t;
@@ -7,7 +9,6 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
-
 use libc::close;
 use libc::free;
 
@@ -183,15 +184,7 @@ pub struct __jmp_buf_tag {
 pub type sigjmp_buf = [__jmp_buf_tag; 1];
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
 
-use libc::termios;
 pub type C2RustUnnamed = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed = 16;
 pub const KEYCODE_CURSOR_POS: C2RustUnnamed = -256;

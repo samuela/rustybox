@@ -27,13 +27,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pollfd {
-  pub fd: libc::c_int,
-  pub events: libc::c_short,
-  pub revents: libc::c_short,
-}
+use libc::pollfd;
 use crate::librb::fd_pair;
 unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
   let mut sv: libc::c_int = *bb_errno; /* use char, avoid dealing with partial writes */
