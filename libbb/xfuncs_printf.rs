@@ -207,7 +207,7 @@ pub type __socklen_t = libc::c_uint;
 pub type socklen_t = __socklen_t;
 use libc::DIR;
 
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

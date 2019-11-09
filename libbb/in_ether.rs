@@ -2,7 +2,7 @@ use libc;
 
 
 
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

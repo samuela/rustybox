@@ -123,7 +123,7 @@ pub type __socklen_t = libc::c_uint;
 pub type bb__aliased_u32 = u32;
 use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

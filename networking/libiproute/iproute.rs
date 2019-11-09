@@ -191,7 +191,7 @@ pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
 use libc::ssize_t;
 pub type socklen_t = __socklen_t;
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

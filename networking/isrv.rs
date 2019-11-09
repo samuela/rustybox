@@ -56,7 +56,7 @@ pub type __fd_mask = libc::c_long;
 pub struct fd_set {
   pub fds_bits: [__fd_mask; 16],
 }
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr {

@@ -251,7 +251,7 @@ pub type socklen_t = __socklen_t;
 
 use libc::stat;
 
-pub type sa_family_t = libc::c_ushort;
+use libc::sa_family_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
