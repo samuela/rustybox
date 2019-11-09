@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -9,8 +10,7 @@ extern "C" {
   fn fclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
   #[no_mangle]

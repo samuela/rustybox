@@ -6,6 +6,7 @@ use crate::librb::size_t;
 
 
 use libc;
+use libc::close;
 
 use libc::gid_t;
 use libc::off_t;

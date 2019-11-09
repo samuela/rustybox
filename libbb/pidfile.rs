@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -14,8 +15,7 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]

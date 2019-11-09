@@ -1,11 +1,11 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
 
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]

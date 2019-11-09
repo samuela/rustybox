@@ -11,6 +11,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 use libc::pid_t;
 use libc::ssize_t;
@@ -188,8 +189,7 @@ extern "C" {
   fn getpid() -> pid_t;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
   #[no_mangle]

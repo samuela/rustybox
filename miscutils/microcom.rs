@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
 
@@ -18,8 +19,7 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
   #[no_mangle]

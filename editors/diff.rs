@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 
 extern "C" {
@@ -27,8 +28,7 @@ extern "C" {
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
   fn fseeko(__stream: *mut FILE, __off: off64_t, __whence: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]

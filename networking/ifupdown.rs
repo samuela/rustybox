@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 use libc::free;
 
 extern "C" {
@@ -56,8 +57,7 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;

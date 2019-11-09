@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::pid_t;
@@ -11,8 +12,7 @@ extern "C" {
   fn getuid() -> uid_t;
   #[no_mangle]
   fn getgid() -> gid_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn setutxent();
   #[no_mangle]

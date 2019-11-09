@@ -1,10 +1,10 @@
 use libc;
+use libc::close;
 
 use libc::ptrdiff_t;
 
 extern "C" {
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn get_console_fd_or_die() -> libc::c_int;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -20,8 +21,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

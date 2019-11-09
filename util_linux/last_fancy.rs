@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
 
@@ -20,8 +21,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;

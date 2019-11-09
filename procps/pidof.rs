@@ -1,5 +1,6 @@
 use crate::libbb::llist::llist_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::pid_t;
 

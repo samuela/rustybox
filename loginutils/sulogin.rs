@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -9,8 +10,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;

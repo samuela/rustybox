@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   pub type __dirstream;
@@ -27,8 +28,7 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]

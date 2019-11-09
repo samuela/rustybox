@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 
 extern "C" {
 
@@ -12,8 +13,7 @@ extern "C" {
   static mut stderr: *mut FILE;
   #[no_mangle]
   fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]

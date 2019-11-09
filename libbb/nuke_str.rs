@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -

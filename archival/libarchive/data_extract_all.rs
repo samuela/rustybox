@@ -1,5 +1,6 @@
 use crate::libbb::llist::llist_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::group;
@@ -21,8 +22,7 @@ extern "C" {
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

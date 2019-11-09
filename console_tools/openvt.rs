@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 use libc::pid_t;
 use libc::ptrdiff_t;
@@ -14,8 +15,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]

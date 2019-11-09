@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   pub type __dirstream;
@@ -101,8 +102,7 @@ extern "C" {
   fn uid2uname_utoa(uid: uid_t) -> *mut libc::c_char;
   #[no_mangle]
   fn gid2group_utoa(gid: gid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]

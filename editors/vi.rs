@@ -7,6 +7,7 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::close;
 use libc::free;
 
 extern "C" {
@@ -26,8 +27,7 @@ extern "C" {
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
   #[no_mangle]

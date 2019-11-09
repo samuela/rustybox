@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::off64_t;
@@ -117,8 +118,7 @@ extern "C" {
   fn pipe(__pipedes: *mut libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]

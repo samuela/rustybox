@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::timeval;
@@ -166,8 +167,7 @@ extern "C" {
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 }

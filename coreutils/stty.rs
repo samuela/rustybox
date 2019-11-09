@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 use libc::cc_t;
 use libc::speed_t;

@@ -1,8 +1,8 @@
 use libc;
+use libc::close;
 
 extern "C" {
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]

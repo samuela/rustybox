@@ -5,6 +5,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::group;
@@ -17,8 +18,7 @@ use libc::uid_t;
 
 extern "C" {
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]

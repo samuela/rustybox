@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -29,8 +30,7 @@ extern "C" {
   fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

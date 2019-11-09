@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -26,8 +27,7 @@ extern "C" {
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn inet_ntop(
     __af: libc::c_int,

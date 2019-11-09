@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -11,8 +12,7 @@ extern "C" {
   fn sync();
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   #[no_mangle]

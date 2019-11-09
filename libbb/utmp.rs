@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::close;
 
 use libc::pid_t;
 use libc::time_t;
@@ -7,8 +8,7 @@ use libc::time_t;
 extern "C" {
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
   #[no_mangle]

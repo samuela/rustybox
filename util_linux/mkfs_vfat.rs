@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 
 use super::mkfs_ext2::BUG_wrong_field_size;
@@ -7,8 +8,7 @@ extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   static mut optind: libc::c_int;

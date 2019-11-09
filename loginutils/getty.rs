@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::termios;
 use libc;
+use libc::close;
 
 use libc::cc_t;
 use libc::gid_t;
@@ -49,8 +50,7 @@ extern "C" {
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

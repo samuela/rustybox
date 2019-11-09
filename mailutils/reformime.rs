@@ -1,6 +1,7 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::pid_t;
 use libc::FILE;
@@ -25,8 +26,7 @@ extern "C" {
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]

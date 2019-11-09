@@ -10,6 +10,7 @@ use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 use libc::clock_t;
 use libc::ino64_t;
@@ -32,8 +33,7 @@ extern "C" {
   fn times(__buffer: *mut tms) -> clock_t;
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]

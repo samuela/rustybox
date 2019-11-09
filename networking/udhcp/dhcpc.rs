@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -23,8 +24,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;

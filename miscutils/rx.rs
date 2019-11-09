@@ -1,12 +1,12 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]

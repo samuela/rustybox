@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 use libc::stat;
 
@@ -90,8 +91,7 @@ extern "C" {
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;

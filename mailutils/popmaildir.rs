@@ -1,6 +1,7 @@
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::pid_t;
 use libc::ptrdiff_t;

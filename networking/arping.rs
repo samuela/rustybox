@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 
 use libc::sigset_t;
 use libc::ssize_t;
@@ -66,8 +67,7 @@ extern "C" {
     __src: *const libc::c_void,
     __n: size_t,
   ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
   #[no_mangle]

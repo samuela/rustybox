@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   /* dmalloc will redefine these to it's own implementation. It is safe

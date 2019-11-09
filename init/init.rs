@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::cc_t;
 use libc::pid_t;
@@ -25,8 +26,7 @@ extern "C" {
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
 
@@ -12,8 +13,7 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]

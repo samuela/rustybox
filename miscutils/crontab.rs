@@ -1,5 +1,6 @@
 use libc::passwd;
 use libc;
+use libc::close;
 
 use libc::gid_t;
 use libc::off_t;
@@ -28,8 +29,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]

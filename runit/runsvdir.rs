@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::close;
 
 use libc::ino64_t;
 use libc::ino_t;

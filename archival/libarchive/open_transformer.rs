@@ -3,6 +3,7 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::off_t;
 use libc::pid_t;
@@ -17,8 +18,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]

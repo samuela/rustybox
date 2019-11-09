@@ -2,6 +2,7 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::signal::__sighandler_t;
 use libc;
+use libc::close;
 
 use libc::off_t;
 use libc::pid_t;
@@ -16,8 +17,7 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]

@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 use libc::free;
 use libc::off_t;
 use libc::ptrdiff_t;
@@ -45,8 +46,7 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

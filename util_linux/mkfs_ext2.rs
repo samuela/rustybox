@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
 
@@ -9,8 +10,7 @@ extern "C" {
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;

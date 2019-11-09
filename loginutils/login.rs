@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc::termios;
 use libc;
+use libc::close;
 
 use libc::gid_t;
 use libc::mode_t;
@@ -53,8 +54,7 @@ extern "C" {
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
   #[no_mangle]

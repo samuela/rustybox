@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 use libc::gid_t;
 use libc::uid_t;
@@ -27,8 +28,7 @@ extern "C" {
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
   #[no_mangle]
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

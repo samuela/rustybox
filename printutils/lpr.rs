@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::off_t;
 use libc::pid_t;
@@ -23,8 +24,7 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

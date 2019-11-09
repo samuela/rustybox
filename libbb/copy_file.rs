@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::ino64_t;
@@ -39,8 +40,7 @@ extern "C" {
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
 

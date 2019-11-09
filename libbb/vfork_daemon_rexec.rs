@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 use libc::pid_t;
 
@@ -17,8 +18,7 @@ extern "C" {
   fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

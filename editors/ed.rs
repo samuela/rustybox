@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::mode_t;
 use libc::ssize_t;
@@ -33,8 +34,7 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;

@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -11,8 +12,7 @@ extern "C" {
   fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
   #[no_mangle]

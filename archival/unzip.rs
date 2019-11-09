@@ -3,6 +3,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::mode_t;
 use libc::off64_t;
@@ -37,8 +38,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]

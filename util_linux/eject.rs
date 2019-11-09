@@ -1,12 +1,12 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]

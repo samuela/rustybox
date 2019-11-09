@@ -1,11 +1,11 @@
 use libc;
+use libc::close;
 
 
 use libc::off_t;
 
 extern "C" {
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;

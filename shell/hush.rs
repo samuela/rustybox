@@ -6,6 +6,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::clock_t;
 use libc::ino64_t;
@@ -53,8 +54,7 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]

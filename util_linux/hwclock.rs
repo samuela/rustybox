@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 use libc::suseconds_t;
 use libc::time_t;
@@ -54,8 +55,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   /*
    * Common defines/structures/etc... for applets that need to work with the RTC.
    *

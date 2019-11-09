@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -129,8 +130,7 @@ extern "C" {
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

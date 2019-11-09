@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 use libc::free;
 
 use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
@@ -19,8 +20,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn unlink(__name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]

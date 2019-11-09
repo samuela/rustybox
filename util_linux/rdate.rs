@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::close;
 
 use libc::ssize_t;
 use libc::time_t;
@@ -16,8 +17,7 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;
   #[no_mangle]

@@ -1,13 +1,13 @@
 use libc::termios;
 use libc;
+use libc::close;
 use libc::free;
 use libc::cc_t;
 use libc::speed_t;
 use libc::tcflag_t;
 
 extern "C" {
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]

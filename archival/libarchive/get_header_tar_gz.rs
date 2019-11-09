@@ -6,6 +6,7 @@
 
 
 use libc;
+use libc::close;
 
 use libc::off_t;
 

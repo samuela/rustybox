@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 use libc::free;
 use libc::ino64_t;
 use libc::ino_t;
@@ -37,8 +38,7 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
   #[no_mangle]

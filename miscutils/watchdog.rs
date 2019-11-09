@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -9,8 +10,7 @@ extern "C" {
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

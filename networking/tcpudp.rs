@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::pid_t;
@@ -47,8 +48,7 @@ extern "C" {
   fn accept(__fd: libc::c_int, __addr: __SOCKADDR_ARG, __addr_len: *mut socklen_t) -> libc::c_int;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
 
@@ -14,8 +15,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn puts(__s: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
   #[no_mangle]

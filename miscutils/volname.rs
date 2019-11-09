@@ -1,4 +1,5 @@
 use libc;
+use libc::close;
 
 extern "C" {
   #[no_mangle]
@@ -11,8 +12,7 @@ extern "C" {
   fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
   #[no_mangle]
   fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 }
 
 use libc::off_t;

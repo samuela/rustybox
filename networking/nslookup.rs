@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -158,8 +159,7 @@ extern "C" {
   /* NB: (bb_hexdigits_upcase[i] | 0x20) -> lowercase hex digit */
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }

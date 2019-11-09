@@ -1,9 +1,9 @@
 use libc;
+use libc::close;
 use libc::free;
 extern "C" {
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   /* Probe routines */
   /* RAID */
   //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);

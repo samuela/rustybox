@@ -8,6 +8,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
+use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::ino_t;
@@ -29,8 +30,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

@@ -5,6 +5,7 @@ use crate::libbb::llist::llist_t;
 
 
 use libc;
+use libc::close;
 
 use libc::mode_t;
 
@@ -14,8 +15,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;

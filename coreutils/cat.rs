@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::close;
 
 use libc::ssize_t;
 use libc::FILE;
@@ -16,8 +17,7 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn close(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
