@@ -1,6 +1,6 @@
 use libc::termios;
 use libc;
-use libc::unlink;
+
 
 use libc::free;
 use libc::cc_t;

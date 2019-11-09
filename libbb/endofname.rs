@@ -1,5 +1,5 @@
 use libc;
-use libc::unlink;
+
 
 
 /* !RETURNS_MALLOC: it's a realloc-like function */

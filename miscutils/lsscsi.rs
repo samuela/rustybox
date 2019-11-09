@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use libc;
-use libc::unlink;
+
 use libc::dirent;
 use libc::ssize_t;
 use libc::DIR;

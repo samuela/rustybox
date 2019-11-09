@@ -4,7 +4,7 @@ use crate::librb::smallint;
 use libc::ssize_t;
 use libc::termios;
 use libc;
-use libc::unlink;
+
 use libc::close;
 
 use libc::mode_t;

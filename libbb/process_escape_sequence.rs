@@ -1,5 +1,5 @@
 use libc;
-use libc::unlink;
+
 
 
 /* Usual "this only works for ascii compatible encodings" disclaimer. */

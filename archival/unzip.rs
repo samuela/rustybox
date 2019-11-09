@@ -3,7 +3,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::unlink;
+
 use libc::close;
 use libc::free;
 use libc::mode_t;

@@ -10,7 +10,7 @@ use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::unlink;
+
 use libc::close;
 use libc::free;
 use libc::clock_t;

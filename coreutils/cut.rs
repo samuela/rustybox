@@ -1,7 +1,7 @@
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
-use libc::unlink;
+
 
 use libc::free;
 use libc::FILE;
