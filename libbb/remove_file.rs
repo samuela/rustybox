@@ -1,5 +1,5 @@
 use libc;
-use libc::open;
+
 use libc::unlink;
 
 use libc::free;

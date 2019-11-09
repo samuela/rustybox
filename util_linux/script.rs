@@ -2,7 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::open;
+
 use libc::ssize_t;
 use libc::termios;
 use libc::winsize;

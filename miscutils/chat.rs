@@ -3,7 +3,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::open;
+
 use libc::close;
 use libc::free;
 use libc::pollfd;

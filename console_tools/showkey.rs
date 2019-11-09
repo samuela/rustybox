@@ -2,7 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::termios;
 use libc;
-use libc::open;
+
 
 
 

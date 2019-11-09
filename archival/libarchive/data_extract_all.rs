@@ -1,6 +1,6 @@
 use crate::libbb::llist::llist_t;
 use libc;
-use libc::open;
+
 use libc::unlink;
 use libc::close;
 use libc::free;

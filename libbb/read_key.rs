@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use libc;
-use libc::open;
+
 use libc::pollfd;
 use libc::ssize_t;
 

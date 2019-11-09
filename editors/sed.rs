@@ -5,7 +5,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::open;
+
 use libc::unlink;
 
 use libc::free;

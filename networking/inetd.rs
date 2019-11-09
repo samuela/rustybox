@@ -3,7 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::open;
+
 use libc::unlink;
 use libc::close;
 use libc::free;

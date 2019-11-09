@@ -8,7 +8,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-use libc::open;
+
 
 use libc::close;
 use libc::free;
