@@ -30,8 +30,6 @@ extern "C" {
     __data: *const libc::c_void,
   ) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
 
@@ -43,8 +41,6 @@ extern "C" {
 
   #[no_mangle]
   fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -78,8 +74,6 @@ extern "C" {
 
   #[no_mangle]
   fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -242,23 +236,13 @@ pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __socklen_t = libc::c_uint;
 
-
-
-
 pub type socklen_t = __socklen_t;
-
-
 
 use libc::stat;
 
 use libc::sa_family_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr {
-  pub sa_family: sa_family_t,
-  pub sa_data: [libc::c_char; 14],
-}
+use libc::sockaddr;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -515,8 +499,7 @@ unsafe extern "C" fn parse_mount_options(
     loop {
       if !(i
         < (::std::mem::size_of::<[i32; 44]>() as libc::c_ulong)
-          .wrapping_div(::std::mem::size_of::<i32>() as libc::c_ulong)
-          as libc::c_uint)
+          .wrapping_div(::std::mem::size_of::<i32>() as libc::c_ulong) as libc::c_uint)
       {
         current_block_14 = 10048703153582371463;
         break;

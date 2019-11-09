@@ -100,12 +100,7 @@ pub struct fd_set {
   pub fds_bits: [__fd_mask; 16],
 }
 use libc::sa_family_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr {
-  pub sa_family: sa_family_t,
-  pub sa_data: [libc::c_char; 14],
-}
+use libc::sockaddr;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union __SOCKADDR_ARG {

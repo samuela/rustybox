@@ -335,12 +335,7 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr {
-  pub sa_family: sa_family_t,
-  pub sa_data: [libc::c_char; 14],
-}
+use libc::sockaddr;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;

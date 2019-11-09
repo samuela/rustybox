@@ -1,8 +1,5 @@
 use libc;
 
-
-
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -21,17 +18,10 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 
-
-
 pub type socklen_t = __socklen_t;
 use libc::sa_family_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr {
-  pub sa_family: sa_family_t,
-  pub sa_data: [libc::c_char; 14],
-}
+use libc::sockaddr;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

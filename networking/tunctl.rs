@@ -1,7 +1,5 @@
 use libc;
 
-
-
 use libc::uid_t;
 
 extern "C" {
@@ -38,12 +36,7 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 
 use libc::sa_family_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr {
-  pub sa_family: sa_family_t,
-  pub sa_data: [libc::c_char; 14],
-}
+use libc::sockaddr;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct ifmap {
