@@ -92,13 +92,7 @@ pub type lng = i32;
 pub type ush = u16;
 pub type uch = u8;
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
 pub const BBUNPK_OPT_TEST: C2RustUnnamed_0 = 64;

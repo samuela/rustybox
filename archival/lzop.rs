@@ -144,13 +144,7 @@ pub struct chksum_t {
   pub f_crc32: u32,
 }
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const M_LZO1X_999: C2RustUnnamed_0 = 3;
 pub const M_LZO1X_1_15: C2RustUnnamed_0 = 2;

@@ -84,13 +84,7 @@ pub type bb__aliased_u32 = u32;
 
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 pub const XZ_MAGIC2: C2RustUnnamed_0 = 5920890;
 pub const XZ_MAGIC1: C2RustUnnamed_0 = 14333;
 pub const BZIP2_MAGIC: C2RustUnnamed_0 = 23106;

@@ -22,7 +22,6 @@ pub mod archival {
   pub mod gzip;
   pub mod libarchive {
     pub mod bb_archive;
-    pub mod common;
     pub mod data_align;
     pub mod data_extract_all;
     pub mod data_extract_to_command;

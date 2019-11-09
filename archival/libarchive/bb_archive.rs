@@ -94,6 +94,11 @@ pub struct archive_handle_t {
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
 
+// Declared in bb_archive.h but defined in common.c.
+// "TRAILER!!!"
+#[no_mangle]
+pub static mut cpio_TRAILER: [libc::c_char; 11] = [84, 82, 65, 73, 76, 69, 82, 33, 33, 33, 0];
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct transformer_state_t {

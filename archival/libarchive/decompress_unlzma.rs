@@ -26,13 +26,7 @@ extern "C" {
   ) -> ssize_t;
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 
 #[derive(Copy, Clone)]
 #[repr(C)]

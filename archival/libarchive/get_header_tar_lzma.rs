@@ -1,13 +1,5 @@
-
-
-
-
-
-
-
 use libc;
 use libc::off_t;
-
 
 extern "C" {
 
@@ -27,13 +19,6 @@ extern "C" {
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
 
 /*
  * Small lzma deflate implementation.

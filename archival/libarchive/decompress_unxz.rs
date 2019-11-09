@@ -180,13 +180,7 @@ use libc::ssize_t;
 
 
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct xz_dec {

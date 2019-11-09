@@ -4,7 +4,6 @@ use libc;
 
 use libc::ssize_t;
 
-
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -79,13 +78,7 @@ pub type bb__aliased_u64 = u64;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub b: [u8; 8],
-  pub b16: [u16; 4],
-  pub b32: [u32; 2],
-}
+
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
 pub const BBUNPK_OPT_TEST: C2RustUnnamed_0 = 64;
