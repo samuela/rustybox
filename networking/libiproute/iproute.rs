@@ -191,7 +191,7 @@ pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
 use libc::ssize_t;
 pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
+
 use libc::sockaddr;
 
 use libc::FILE;

@@ -35,7 +35,7 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 
-use libc::sa_family_t;
+
 use libc::sockaddr;
 #[derive(Copy, Clone)]
 #[repr(C)]
