@@ -1,4 +1,9 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::ssize_t;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -28,12 +33,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

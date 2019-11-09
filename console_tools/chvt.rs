@@ -19,11 +19,7 @@ pub unsafe extern "C" fn chvt_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut num: libc::c_int = xatou_range(
-    single_argv(argv),
-    1i32 as libc::c_uint,
-    63i32 as libc::c_uint,
-  ) as libc::c_int;
+  let mut num: libc::c_int = xatou_range(single_argv(argv), 1, 63) as libc::c_int;
   console_make_active(get_console_fd_or_die(), num);
-  return 0i32;
+  return 0;
 }

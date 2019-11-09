@@ -1,5 +1,9 @@
+use crate::librb::size_t;
 use libc;
+use libc::stat;
+use libc::time_t;
 use libc::timespec;
+
 extern "C" {
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
@@ -62,12 +66,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use crate::librb::size_t;
-use libc::time_t;
-
-
-use libc::stat;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

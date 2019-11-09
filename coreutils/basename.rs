@@ -1,4 +1,7 @@
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
+
 extern "C" {
   #[no_mangle]
   fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
@@ -11,9 +14,6 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-
-use crate::librb::size_t;
-use libc::ssize_t;
 
 /*
  * Mini basename implementation for busybox

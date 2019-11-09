@@ -1,4 +1,6 @@
 use libc;
+use libc::stat;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -50,10 +52,6 @@ extern "C" {
   #[no_mangle]
   fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
-
-
-
-use libc::stat;
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

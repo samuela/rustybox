@@ -1,4 +1,8 @@
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc;
+use libc::FILE;
+
 extern "C" {
   #[no_mangle]
   fn free(__ptr: *mut libc::c_void);
@@ -47,11 +51,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
-
-use crate::librb::__compar_fn_t;
-use crate::librb::size_t;
-
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

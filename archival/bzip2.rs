@@ -1,7 +1,6 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
-
 use libc;
-
 use libc::ssize_t;
 
 extern "C" {
@@ -77,7 +76,6 @@ pub type bb__aliased_u64 = u64;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::archival::libarchive::bb_archive::transformer_state_t;
 
 pub type C2RustUnnamed_0 = libc::c_int;
 pub const BBUNPK_SEAMLESS_MAGIC: C2RustUnnamed_0 = -2147483648;
