@@ -4,7 +4,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::free;
+
 use libc::mode_t;
 use libc::pid_t;
 use libc::ssize_t;

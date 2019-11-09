@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn pstm_mul_comba(

@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;

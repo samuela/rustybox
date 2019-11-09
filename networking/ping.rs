@@ -3,7 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::free;
+
 
 extern "C" {
   pub type sockaddr_x25;

@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;

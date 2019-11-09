@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;

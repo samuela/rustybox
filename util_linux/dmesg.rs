@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn klogctl(__type: libc::c_int, __bufp: *mut libc::c_char, __len: libc::c_int) -> libc::c_int;

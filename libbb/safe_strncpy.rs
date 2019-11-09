@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;

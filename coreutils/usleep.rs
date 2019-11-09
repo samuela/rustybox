@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn xatou(str: *const libc::c_char) -> libc::c_uint;

@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   pub type __dirstream;
   #[no_mangle]

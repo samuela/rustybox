@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 /* Returns a pointer past the formatted number, does NOT null-terminate */
 /* Intelligent formatters of bignums */
 /* If block_size == 0, display size without fractional part,

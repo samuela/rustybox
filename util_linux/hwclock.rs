@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;

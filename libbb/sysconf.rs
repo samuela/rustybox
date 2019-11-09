@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn sysconf(__name: libc::c_int) -> libc::c_long;

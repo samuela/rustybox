@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;

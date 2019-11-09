@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 use libc::ptrdiff_t;
 
 extern "C" {

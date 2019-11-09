@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 use libc::pid_t;
 
 extern "C" {

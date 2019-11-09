@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn fclose(__stream: *mut FILE) -> libc::c_int;

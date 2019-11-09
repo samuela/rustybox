@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;

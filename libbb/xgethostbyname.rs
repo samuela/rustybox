@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn gethostbyname(__name: *const libc::c_char) -> *mut hostent;

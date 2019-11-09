@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn gnu_dev_makedev(__major: libc::c_uint, __minor: libc::c_uint) -> libc::dev_t;

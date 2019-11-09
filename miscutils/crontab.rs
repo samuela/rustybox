@@ -1,6 +1,6 @@
 use libc::passwd;
 use libc;
-use libc::free;
+
 use libc::gid_t;
 use libc::off_t;
 use libc::pid_t;

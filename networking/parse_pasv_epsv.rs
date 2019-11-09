@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;

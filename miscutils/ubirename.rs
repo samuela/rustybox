@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn ubi_get_volid_by_name(ubi_devnum: libc::c_uint, vol_name: *const libc::c_char) -> libc::c_int;

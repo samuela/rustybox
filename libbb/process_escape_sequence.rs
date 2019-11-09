@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 /* Usual "this only works for ascii compatible encodings" disclaimer. */
 #[no_mangle]
 pub unsafe extern "C" fn bb_process_escape_sequence(

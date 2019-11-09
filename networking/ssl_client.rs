@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   pub type tls_handshake_data;
   #[no_mangle]

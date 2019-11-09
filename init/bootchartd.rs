@@ -1,7 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::free;
+
 use libc::ino64_t;
 use libc::off64_t;
 use libc::off_t;

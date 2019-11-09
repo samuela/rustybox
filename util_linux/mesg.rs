@@ -1,6 +1,6 @@
 use libc::mode_t;
 use libc;
-use libc::free;
+
 use libc::stat;
 
 extern "C" {

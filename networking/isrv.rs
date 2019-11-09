@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use libc;
-use libc::free;
+
 use libc::ptrdiff_t;
 use libc::suseconds_t;
 use libc::time_t;

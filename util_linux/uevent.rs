@@ -1,5 +1,5 @@
 use libc;
-use libc::free;
+
 extern "C" {
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
