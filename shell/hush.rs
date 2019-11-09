@@ -423,15 +423,7 @@ pub struct glob_t {
   pub gl_lstat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
   pub gl_stat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dirent {
-  pub d_ino: ino64_t,
-  pub d_off: off64_t,
-  pub d_reclen: libc::c_ushort,
-  pub d_type: libc::c_uchar,
-  pub d_name: [libc::c_char; 256],
-}
+use libc::dirent;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

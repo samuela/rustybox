@@ -1,6 +1,5 @@
 use libc;
 
-
 extern "C" {
   pub type __dirstream;
   #[no_mangle]
@@ -38,15 +37,7 @@ pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dirent {
-  pub d_ino: ino64_t,
-  pub d_off: off64_t,
-  pub d_reclen: libc::c_ushort,
-  pub d_type: libc::c_uchar,
-  pub d_name: [libc::c_char; 256],
-}
+use libc::dirent;
 pub type DIR = __dirstream;
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>

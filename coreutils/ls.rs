@@ -20,8 +20,6 @@ use libc::FILE;
 extern "C" {
   pub type __dirstream;
 
-
-
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
 
@@ -163,15 +161,7 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dirent {
-  pub d_ino: ino64_t,
-  pub d_off: off64_t,
-  pub d_reclen: libc::c_ushort,
-  pub d_type: libc::c_uchar,
-  pub d_name: [libc::c_char; 256],
-}
+use libc::dirent;
 pub type DIR = __dirstream;
 
 use libc::tm;
@@ -511,7 +501,8 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
       /* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
       let mut age: time_t =
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_time_t - (*dn).dn_time;
-      if age < 3600i64 * 24i32 as libc::c_long * 365i32 as libc::c_long / 2         && age > (-15i32 * 60i32) as libc::c_long
+      if age < 3600i64 * 24i32 as libc::c_long * 365i32 as libc::c_long / 2
+        && age > (-15i32 * 60i32) as libc::c_long
       {
         /* less than 6 months old */
         /* "mmm dd hh:mm " */

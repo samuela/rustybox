@@ -242,15 +242,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dirent {
-  pub d_ino: ino64_t,
-  pub d_off: off64_t,
-  pub d_reclen: libc::c_ushort,
-  pub d_type: libc::c_uchar,
-  pub d_name: [libc::c_char; 256],
-}
+use libc::dirent;
 pub type DIR = __dirstream;
 
 pub type C2RustUnnamed = libc::c_int;

@@ -385,15 +385,7 @@ pub struct utsname {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dirent {
-  pub d_ino: ino64_t,
-  pub d_off: off64_t,
-  pub d_reclen: libc::c_ushort,
-  pub d_type: libc::c_uchar,
-  pub d_name: [libc::c_char; 256],
-}
+use libc::dirent;
 
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
