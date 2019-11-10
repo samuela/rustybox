@@ -1,44 +1,15 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getegid;
-
-use libc::getgid;
-
-
-
-use libc::geteuid;
-
-use libc::isatty;
-
-use libc::lstat;
-
-use libc::strcmp;
-
 use libc::free;
+use libc::getegid;
+use libc::geteuid;
+use libc::getgid;
 use libc::gid_t;
+use libc::isatty;
+use libc::lstat;
 use libc::sigset_t;
 use libc::stat;
-
+use libc::strcmp;
 extern "C" {
   #[no_mangle]
   fn strtoll(

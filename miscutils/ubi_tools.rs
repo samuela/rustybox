@@ -1,78 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sprintf;
-
-
-
-
-
-
-
-
-
+use libc::sscanf;
+use libc::strcpy;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -126,13 +59,10 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
@@ -190,7 +120,8 @@ unsafe extern "C" fn get_num_from_file(
     path,
     buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 24]>() as libc::c_ulong,
-  ) < 0   {
+  ) < 0
+  {
     bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,

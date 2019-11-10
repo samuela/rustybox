@@ -1,78 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::printf;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-
 
   #[no_mangle]
   fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
@@ -96,10 +29,9 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::ssize_t;
 use crate::librb::uoff_t;
 use libc::off_t;
-
+use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 

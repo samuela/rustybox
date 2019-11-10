@@ -1,39 +1,20 @@
 use libc;
 use libc::access;
-
 use libc::close;
 use libc::closedir;
-
-
-
 use libc::free;
-
-
-
 use libc::getpid;
-
-
 use libc::lstat;
-
 use libc::mount;
 use libc::opendir;
 use libc::prctl;
-
-
 use libc::readdir;
 use libc::rmdir;
-
-
-
 use libc::sscanf;
 use libc::stat;
 use libc::statfs;
 use libc::strtok;
-
-
-
 use libc::unlink;
-
 extern "C" {
 
   /*
@@ -209,12 +190,9 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 use crate::librb::size_t;
-use libc::ssize_t;
-
 use libc::dirent;
-
+use libc::ssize_t;
 use libc::DIR;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct caps {

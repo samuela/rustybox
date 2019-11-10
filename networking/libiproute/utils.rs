@@ -1,37 +1,10 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-use libc::fscanf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
+use libc::fscanf;
 use libc::strchr;
 use libc::strcmp;
-
 extern "C" {
 
   #[no_mangle]
@@ -85,7 +58,6 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 
 use crate::librb::size_t;
-
 pub type socklen_t = __socklen_t;
 
 use libc::FILE;

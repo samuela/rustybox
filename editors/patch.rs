@@ -1,43 +1,13 @@
 use libc;
-
-
-
-use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
 use libc::atoi;
-
+use libc::close;
+use libc::fchmod;
+use libc::free;
+use libc::fstat;
 use libc::printf;
-
 use libc::rename;
-
 use libc::strcmp;
 use libc::strrchr;
-
-use libc::close;
-use libc::free;
 use libc::unlink;
 extern "C" {
 
@@ -111,13 +81,9 @@ extern "C" {
 
 }
 
-
-
 use crate::librb::size_t;
 use libc::off_t;
-
 use libc::stat;
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

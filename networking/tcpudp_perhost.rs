@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
+use libc::strcmp;
 extern "C" {
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

@@ -1,79 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::strcpy;
 extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
@@ -91,7 +24,6 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

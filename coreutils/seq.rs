@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
@@ -90,7 +23,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 pub const OPT_w: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_s: C2RustUnnamed = 2;

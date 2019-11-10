@@ -3,80 +3,28 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-use libc::fstat;
-
-
-
-use libc::getpid;
-
-
-use libc::openlog;
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-use libc::fclose;
-
-
-
-
-use libc::rename;
-use libc::rmdir;
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-
-
 use libc::close;
+use libc::fclose;
 use libc::free;
+use libc::fstat;
+use libc::getpid;
 use libc::mode_t;
 use libc::off_t;
 use libc::open;
+use libc::openlog;
 use libc::pid_t;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
+use libc::strrchr;
 use libc::time_t;
 use libc::unlink;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -110,19 +58,11 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-
-
-
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -130,7 +70,6 @@ extern "C" {
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
@@ -372,7 +311,6 @@ pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 use crate::librb::signal::__sighandler_t;
-
 use libc::passwd;
 use libc::tm;
 use libc::FILE;
@@ -635,7 +573,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-
+  
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

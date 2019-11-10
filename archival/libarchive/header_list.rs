@@ -1,84 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
-extern "C" {
-
-}
-
-
-
-
-
-
+extern "C" {}
 
 use crate::archival::libarchive::bb_archive::file_header_t;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

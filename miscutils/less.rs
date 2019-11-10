@@ -4,80 +4,26 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-use libc::getenv;
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-use libc::time;
 use libc::access;
-
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
-
+use libc::free;
+use libc::fstat;
+use libc::getenv;
+use libc::isatty;
+use libc::open;
+use libc::pollfd;
 use libc::printf;
 use libc::puts;
-
-
-
-use libc::strchr;
-
-
-
-
-use libc::open;
-use libc::close;
-use libc::free;
-use libc::pollfd;
 use libc::ssize_t;
 use libc::stat;
+use libc::strchr;
+use libc::strcpy;
 use libc::termios;
+use libc::time;
 use libc::time_t;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn sched_yield() -> libc::c_int;
@@ -90,9 +36,6 @@ extern "C" {
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-
-
-
 
   #[no_mangle]
   static ptr_to_globals: *mut globals;
@@ -121,7 +64,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
@@ -193,8 +135,6 @@ extern "C" {
   fn bb_show_usage() -> !;
   #[no_mangle]
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
-
-
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

@@ -1,79 +1,15 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
-
 use libc::cc_t;
+use libc::ioctl;
+use libc::printf;
 use libc::speed_t;
+use libc::sscanf;
+use libc::strcmp;
+use libc::strcpy;
 use libc::tcflag_t;
 use libc::termios;
 use libc::winsize;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -92,8 +28,6 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn cfgetospeed(__termios_p: *const termios) -> speed_t;

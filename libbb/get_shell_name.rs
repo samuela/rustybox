@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
-
 use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::getuid;
 extern "C" {
-
 
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
@@ -77,10 +10,8 @@ extern "C" {
   static bb_default_login_shell: [libc::c_char; 0];
 }
 
-
 use libc::passwd;
 use libc::uid_t;
-
 /*
  * Busybox main internal header file
  *

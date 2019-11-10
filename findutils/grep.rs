@@ -1,74 +1,11 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
+use libc::free;
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
 use libc::strstr;
-
-
-
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
@@ -79,9 +16,6 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stdin: *mut FILE;
-
-
-
 
   #[no_mangle]
   fn strcasestr(
@@ -157,9 +91,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -211,9 +142,7 @@ extern "C" {
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
-
 use libc::stat;
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;

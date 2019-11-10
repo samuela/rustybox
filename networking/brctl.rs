@@ -1,72 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
+use libc::open;
+use libc::opendir;
 use libc::printf;
 use libc::puts;
-
-
+use libc::readdir;
 use libc::sprintf;
-
-
-
-
-
-use libc::open;
-
-
-
+use libc::strcpy;
 extern "C" {
 
   #[no_mangle]
@@ -75,13 +15,8 @@ extern "C" {
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
 
-
-
-
   #[no_mangle]
   static mut stdout: *mut FILE;
-
-
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
@@ -157,17 +92,10 @@ extern "C" {
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
 }
 
-
-
-
-
 pub type __caddr_t = *mut libc::c_char;
 use crate::librb::size_t;
-use libc::ssize_t;
-
-
-
 use libc::dirent;
+use libc::ssize_t;
 use libc::DIR;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -180,9 +108,8 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
-
 use crate::librb::__compar_fn_t;
+use libc::sockaddr;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
@@ -465,7 +392,8 @@ unsafe extern "C" fn write_uint(
     fd,
     bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
     n as size_t,
-  ) < 0   {
+  ) < 0
+  {
     bb_simple_perror_msg_and_die(name);
   };
 }
@@ -516,7 +444,7 @@ unsafe extern "C" fn read_bridge_forward_db(
       &mut *fdb.offset(nentries as isize) as *mut fdb_entry as *mut libc::c_void,
       ::std::mem::size_of::<fdb_entry>() as libc::c_ulong,
     );
-    if cc ==0{
+    if cc == 0 {
       break;
     }
     if cc as libc::c_ulong != ::std::mem::size_of::<fdb_entry>() as libc::c_ulong {

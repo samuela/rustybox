@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::strcmp;
 extern "C" {
   #[no_mangle]
   fn fnmatch(
@@ -141,8 +76,6 @@ pub struct utsname {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
@@ -243,7 +176,7 @@ unsafe extern "C" fn modinfo(
   let mut allocated: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut tags: libc::c_int = option_mask32 as libc::c_int;
   allocated = 0 as *mut libc::c_char;
-  len = if -1i32 as ssize_t >0{
+  len = if -1i32 as ssize_t > 0 {
     -1i32 as ssize_t
   } else {
     !((1i32 as ssize_t)

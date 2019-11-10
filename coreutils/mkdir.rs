@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::mode_t;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -90,8 +23,6 @@ extern "C" {
     flags: libc::c_int,
   ) -> libc::c_int;
 }
-
-use libc::mode_t;
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

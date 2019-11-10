@@ -1,72 +1,14 @@
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-use libc::strtok;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-use libc::time;
-
-
 use libc::fclose;
-
-
+use libc::free;
 use libc::printf;
-
-
-
-
+use libc::sscanf;
 use libc::strchr;
 use libc::strcmp;
-
 use libc::strstr;
-
-
-
-
-use libc::free;
+use libc::strtok;
+use libc::time;
 extern "C" {
   #[no_mangle]
   fn strtoul(
@@ -87,7 +29,6 @@ extern "C" {
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
 
-
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
@@ -101,10 +42,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
-
-
 
   #[no_mangle]
   fn strftime(
@@ -161,10 +98,8 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::time_t;
-
-
-use libc::FILE;
 use libc::tm;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -1,72 +1,15 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-use libc::getopt;
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
+use libc::free;
+use libc::getenv;
+use libc::getopt;
+use libc::isatty;
 use libc::printf;
-
-
-
-
+use libc::putchar_unlocked;
 use libc::strchr;
 use libc::strcmp;
+use libc::strcpy;
 use libc::strrchr;
-
-
-
-
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
@@ -80,7 +23,6 @@ extern "C" {
   static mut stdout: *mut FILE;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -180,8 +122,6 @@ extern "C" {
     maxsize: libc::c_int,
   ) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
@@ -199,9 +139,6 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-
-
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -215,7 +152,6 @@ pub struct __va_list_tag {
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-
 use libc::FILE;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
@@ -1485,7 +1421,7 @@ unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t
     // same as "neg = (a_max == neg)"
   }
   cmp = bc_num_compare(max_num, min_num, b_int.wrapping_add(min));
-  if cmp !=0{
+  if cmp != 0 {
     return (cmp ^ -(neg as ssize_t)) + neg as isize;
   }
   max_num = max_num.offset(-(diff as isize));
@@ -1975,7 +1911,7 @@ unsafe extern "C" fn zbc_num_s(
   cmp = bc_num_cmp(a, b);
   (*a).neg = aneg;
   (*b).neg = bneg;
-  if cmp ==0{
+  if cmp == 0 {
     bc_num_setToZero(
       c,
       if (*a).rdx > (*b).rdx {
@@ -1986,7 +1922,7 @@ unsafe extern "C" fn zbc_num_s(
     );
     return BC_STATUS_SUCCESS;
   }
-  if cmp >0{
+  if cmp > 0 {
     neg = (*a).neg;
     minuend = a;
     subtrahend = b
@@ -2380,8 +2316,7 @@ unsafe extern "C" fn zbc_num_d(
     let mut q: BcDig = 0;
     n = cp.num.offset(i as isize);
     q = 0i32 as BcDig;
-    while *n.offset(len as isize) as libc::c_int != 0i32
-      || bc_num_compare(n, (*b).num, len) >= 0     {
+    while *n.offset(len as isize) as libc::c_int != 0i32 || bc_num_compare(n, (*b).num, len) >= 0 {
       bc_num_subArrays(n, (*b).num, len);
       q += 1
     }
@@ -2753,7 +2688,7 @@ unsafe extern "C" fn zbc_num_sqrt(
     .wrapping_add(resrdx)
     .wrapping_sub(1i32 as libc::c_ulong);
   loop {
-    if !(cmp !=0|| digs < len) {
+    if !(cmp != 0 || digs < len) {
       current_block = 13826291924415791078;
       break;
     }
@@ -5661,10 +5596,7 @@ unsafe extern "C" fn zbc_parse_expr(mut flags: u8) -> BcStatus {
         if !bin_last && (rprn as libc::c_int != 0 || bc_parse_inst_isLeaf(prev) != 0) {
           return bc_error_bad_expression() as BcStatus;
         }
-        s = zbc_parse_name(
-          &mut prev,
-          (flags as libc::c_int & !(1i32 << 3i32)) as u8,
-        );
+        s = zbc_parse_name(&mut prev, (flags as libc::c_int & !(1i32 << 3i32)) as u8);
         rprn = prev as libc::c_int == BC_INST_CALL as libc::c_int;
         bin_last = 0i32 != 0;
         //get_token = false; - already is
@@ -6400,7 +6332,7 @@ unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
           break;
         }
       } else {
-        if n.wrapping_offset_from(esc.as_ptr()) as libc::c_long ==0{
+        if n.wrapping_offset_from(esc.as_ptr()) as libc::c_long == 0 {
           // "\n" ?
           (*ptr_to_globals).prog.nchars = 18446744073709551615u64
         }
@@ -6811,11 +6743,11 @@ unsafe extern "C" fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
   } else {
     cond = bc_num_cmp(n1, n2);
     match inst as libc::c_int {
-      5 => cond = (cond ==0) as libc::c_int as ssize_t,
-      6 => cond = (cond <=0) as libc::c_int as ssize_t,
-      7 => cond = (cond >=0) as libc::c_int as ssize_t,
-      9 => cond = (cond <0) as libc::c_int as ssize_t,
-      10 => cond = (cond >0) as libc::c_int as ssize_t,
+      5 => cond = (cond == 0) as libc::c_int as ssize_t,
+      6 => cond = (cond <= 0) as libc::c_int as ssize_t,
+      7 => cond = (cond >= 0) as libc::c_int as ssize_t,
+      9 => cond = (cond < 0) as libc::c_int as ssize_t,
+      10 => cond = (cond > 0) as libc::c_int as ssize_t,
       _ => {}
     }
   }
@@ -8127,7 +8059,7 @@ unsafe extern "C" fn zxc_program_exec() -> BcStatus {
           return s;
         }
         bc_num_init_DEF_SIZE(&mut r.d.n);
-        if bc_num_cmp(num_0, &mut (*ptr_to_globals).prog.zero) ==0{
+        if bc_num_cmp(num_0, &mut (*ptr_to_globals).prog.zero) == 0 {
           bc_num_one(&mut r.d.n);
         }
         //else bc_num_zero(&r.d.n); - already is

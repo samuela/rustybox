@@ -1,74 +1,10 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-use libc::sprintf;
-
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
-
+use libc::printf;
+use libc::sprintf;
+use libc::strcmp;
 extern "C" {
   #[no_mangle]
   fn fnmatch(
@@ -89,7 +25,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
@@ -250,7 +185,6 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 
-
 use crate::librb::size_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -264,8 +198,6 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
 use libc::sockaddr;
-
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;

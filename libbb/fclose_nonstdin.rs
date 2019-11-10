@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
@@ -78,7 +11,6 @@ extern "C" {
 }
 
 use libc::FILE;
-
 /*
  * Busybox main internal header file
  *

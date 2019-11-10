@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   static mut logmode: smallint;

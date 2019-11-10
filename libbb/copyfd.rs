@@ -1,77 +1,8 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
-
 extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);

@@ -1,74 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::off_t;
-
 extern "C" {
 
   #[no_mangle]
@@ -87,7 +18,6 @@ extern "C" {
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

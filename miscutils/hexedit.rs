@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
+use libc::putchar_unlocked;
 use libc::sprintf;
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -83,8 +18,6 @@ extern "C" {
     __modes: libc::c_int,
     __n: size_t,
   ) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn mmap(
@@ -160,18 +93,14 @@ extern "C" {
 pub type __int64_t = libc::c_long;
 
 use libc::off64_t;
-
 pub type int64_t = __int64_t;
 
-
 pub type uintptr_t = libc::c_ulong;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
-use libc::FILE;
-
+use libc::off_t;
 use libc::termios;
+use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type C2RustUnnamed_0 = libc::c_int;
@@ -261,7 +190,7 @@ unsafe extern "C" fn format_line(
   hex = hex.offset(ofs_pos as isize);
   text = hex.offset((16i32 * 3i32) as isize);
   end1 = data.offset(15);
-  if (*ptr_to_globals).size - offset >0{
+  if (*ptr_to_globals).size - offset > 0 {
     end = end1;
     if (*ptr_to_globals).size - offset <= 15i32 as libc::c_long {
       end = data
@@ -419,7 +348,7 @@ unsafe extern "C" fn move_mapping_further() -> libc::c_int {
     /* move offset up until current position is in 1st page */
     {
       (*ptr_to_globals).offset += pagesize as libc::c_long;
-      if (*ptr_to_globals).offset ==0{
+      if (*ptr_to_globals).offset == 0 {
         /* whoops */
         (*ptr_to_globals).offset -= pagesize as libc::c_long; /* we are at 0 already */
         break; /* constant on most arches */
@@ -437,7 +366,7 @@ unsafe extern "C" fn move_mapping_further() -> libc::c_int {
 unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
   let mut pos: libc::c_uint = 0;
   let mut pagesize: libc::c_uint = 0;
-  if (*ptr_to_globals).offset ==0{
+  if (*ptr_to_globals).offset == 0 {
     return 0i32;
   }
   pagesize = 4096i32 as libc::c_uint;
@@ -449,7 +378,7 @@ unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
   while pos < (64i32 * 1024i32) as libc::c_uint {
     pos = pos.wrapping_add(pagesize);
     (*ptr_to_globals).offset -= pagesize as libc::c_long;
-    if (*ptr_to_globals).offset ==0{
+    if (*ptr_to_globals).offset == 0 {
       break;
     }
   }
@@ -601,14 +530,15 @@ pub unsafe extern "C" fn hexedit_main(
             let mut cursor: libc::c_uint = 0;
             t = bb_strtoull(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0i32) as off_t;
             if t >= (*ptr_to_globals).size {
-              t = (*ptr_to_globals).size -1            }
+              t = (*ptr_to_globals).size - 1
+            }
             cursor = (t & (4096i32 - 1i32) as libc::c_long) as libc::c_uint;
             t -= cursor as libc::c_long;
             if t < 0 {
               t = 0i32 as off_t;
               cursor = t as libc::c_uint
             }
-            if t !=0&& cursor < 0x1ffi32 as libc::c_uint {
+            if t != 0 && cursor < 0x1ffi32 as libc::c_uint {
               /* very close to end of page, possibly to EOF */
               /* move one page lower */
               t -= 4096i32 as libc::c_long;
@@ -641,7 +571,8 @@ pub unsafe extern "C" fn hexedit_main(
             if move_mapping_further() == 0 {
               /* already at EOF; extend the file */
               (*ptr_to_globals).size += 1;
-              if (*ptr_to_globals).size <= 0                 || ftruncate((*ptr_to_globals).fd, (*ptr_to_globals).size) != 0i32
+              if (*ptr_to_globals).size <= 0
+                || ftruncate((*ptr_to_globals).fd, (*ptr_to_globals).size) != 0i32
               {
                 /* error extending? (e.g. block dev) */
                 (*ptr_to_globals).size -= 1;

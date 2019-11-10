@@ -3,38 +3,14 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-use libc::fscanf;
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
+use libc::fscanf;
 use libc::off_t;
 use libc::printf;
 use libc::ssize_t;
 use libc::strcpy;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;

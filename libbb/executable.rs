@@ -1,79 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
-
-
-
-
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
+use libc::getenv;
+use libc::strchr;
 extern "C" {
-
 
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -95,9 +28,6 @@ extern "C" {
 }
 
 use libc::stat;
-
-
-
 /*
  * Utility routines.
  *

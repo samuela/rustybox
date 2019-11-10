@@ -1,76 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -116,13 +48,9 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
+use crate::librb::size_t;
 use libc::off64_t;
 use libc::off_t;
-use crate::librb::size_t;
-
-
-
-
 // Initialized in run_static_initializers
 static mut sizes: [u8; 5] = [0; 5];
 /*

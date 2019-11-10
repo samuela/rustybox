@@ -1,39 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-use libc::getgid;
-
-
-
 use libc::chmod;
-
 use libc::free;
+use libc::getgid;
+use libc::getuid;
 use libc::gid_t;
+use libc::mode_t;
 use libc::stat;
 use libc::uid_t;
-
-use libc::mode_t;
-
 extern "C" {
 
   #[no_mangle]

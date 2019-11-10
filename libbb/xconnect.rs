@@ -1,74 +1,10 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strchr;
-
-use libc::strrchr;
-
-
-
-
-
 use libc::free;
+use libc::getpid;
+use libc::strchr;
+use libc::strrchr;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;
@@ -100,8 +36,6 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
   #[no_mangle]
   fn getservbyname(__name: *const libc::c_char, __proto: *const libc::c_char) -> *mut servent;
   #[no_mangle]
@@ -123,7 +57,6 @@ extern "C" {
     __servlen: socklen_t,
     __flags: libc::c_int,
   ) -> libc::c_int;
-
 
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
@@ -387,7 +320,6 @@ extern "C" {
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
 }
 
-
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
@@ -449,7 +381,6 @@ pub union C2RustUnnamed {
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
-
 
 pub type in_port_t = u16;
 #[derive(Copy, Clone)]
@@ -910,8 +841,7 @@ unsafe extern "C" fn str2sockaddr(
   if !cp.is_null() {
     let mut current_block_34: u64;
     /* points to ":" or "]:" */
-    let mut sz: libc::c_int =
-      (cp.wrapping_offset_from(host) as libc::c_long + 1) as libc::c_int; /* skip ']' */
+    let mut sz: libc::c_int = (cp.wrapping_offset_from(host) as libc::c_long + 1) as libc::c_int; /* skip ']' */
     let mut fresh3 = ::std::vec::from_elem(0, sz as libc::c_ulong as usize); /* skip ':' */
     host = safe_strncpy(fresh3.as_mut_ptr() as *mut libc::c_char, host, sz as size_t);
     if 1i32 != 0 && *cp as libc::c_int != ':' as i32 {

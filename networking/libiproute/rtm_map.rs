@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn strtoul(
@@ -82,7 +15,6 @@ extern "C" {
   #[no_mangle]
   fn rtnl_rtrealm_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
 }
-
 
 pub type smalluint = libc::c_uchar;
 pub type C2RustUnnamed = libc::c_uint;

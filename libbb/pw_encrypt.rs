@@ -1,77 +1,12 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::free;
 use libc::getpid;
-
-
-
-
-
-
-
-
+use libc::sprintf;
 use libc::strcasecmp;
 use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-
-
-use libc::free;
 extern "C" {
-
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -118,10 +53,6 @@ extern "C" {
   #[no_mangle]
   fn md5_begin(ctx: *mut md5_ctx_t);
 }
-
-
-
-
 
 use crate::librb::size_t;
 #[derive(Copy, Clone)]
@@ -177,7 +108,6 @@ pub union C2RustUnnamed_1 {
   pub y: sha512_ctx_t,
 }
 use crate::librb::sha1_ctx_t;
-
 /*
  * Utility routines.
  *
@@ -484,22 +414,8 @@ static mut key_perm: [u8; 56] = [
   4i32 as u8,
 ];
 static mut key_shifts: [u8; 16] = [
-  1i32 as u8,
-  1i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  1i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  2i32 as u8,
-  1i32 as u8,
+  1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8,
+  1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 1i32 as u8,
 ];
 static mut comp_perm: [u8; 48] = [
   14i32 as u8,

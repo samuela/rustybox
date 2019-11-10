@@ -1,83 +1,17 @@
-use libc::termios;
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::system;
-use libc::open;
-
-
-use libc::free;
 use libc::cc_t;
+use libc::free;
+use libc::ioctl;
+use libc::open;
+use libc::sleep;
 use libc::speed_t;
+use libc::system;
 use libc::tcflag_t;
-
+use libc::termios;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;

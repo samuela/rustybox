@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sscanf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
@@ -75,7 +9,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -127,7 +60,6 @@ extern "C" {
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
-
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,

@@ -1,86 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
+use libc::sscanf;
 use libc::strcmp;
-
 use libc::strstr;
-
-
-
-
-
-
 extern "C" {
-
-
-
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -124,12 +50,8 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
 use crate::librb::size_t;
-
-
 use libc::FILE;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 // pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -291,11 +213,7 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
   return BUG_xatou32_unimplemented();
 }
 
-unsafe extern "C" fn copy_if_gt0(
-  mut src: *mut u32,
-  mut dst: *mut u32,
-  mut cnt: libc::c_uint,
-) {
+unsafe extern "C" fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: libc::c_uint) {
   loop {
     if *src as i32 > 0i32 {
       *dst = *src

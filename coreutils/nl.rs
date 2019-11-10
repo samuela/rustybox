@@ -1,72 +1,6 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -86,9 +20,6 @@ extern "C" {
   #[no_mangle]
   fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
 }
-
-use crate::librb::size_t;
-use crate::librb::smallint;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

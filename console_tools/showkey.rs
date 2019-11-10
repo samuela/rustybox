@@ -1,81 +1,13 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::termios;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::ptrdiff_t;
+use libc::puts;
 use libc::ssize_t;
-
+use libc::termios;
 extern "C" {
-
-
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;

@@ -1,79 +1,12 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sscanf;
-
-
-
-
-
-use libc::time;
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
-
 use libc::strrchr;
-
-
-
-
-
-
+use libc::time;
 use libc::time_t;
 use libc::timespec;
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -116,7 +49,6 @@ extern "C" {
 pub type __clockid_t = libc::c_int;
 pub type clockid_t = __clockid_t;
 use libc::tm;
-
 /*
  * ascii-to-numbers implementations for busybox
  *

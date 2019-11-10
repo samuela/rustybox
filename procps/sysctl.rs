@@ -1,89 +1,24 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
-
-
-
-
+use libc::close;
+use libc::closedir;
+use libc::free;
+use libc::open;
+use libc::opendir;
 use libc::printf;
 use libc::puts;
-
-
-
+use libc::readdir;
 use libc::strchr;
-
-
-
-
-use libc::open;
-
-use libc::close;
-use libc::free;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
 
   #[no_mangle]
   static mut stdout: *mut FILE;
 
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
-
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -132,17 +67,10 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
 use crate::librb::size_t;
-
 use libc::dirent;
-use libc::DIR;
 use libc::stat;
-
-
+use libc::DIR;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;

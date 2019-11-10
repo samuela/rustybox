@@ -1,34 +1,8 @@
 use libc;
-
-
-
 use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::free;
 use libc::strchr;
 use libc::strcmp;
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
@@ -98,11 +72,9 @@ extern "C" {
   fn read_base64(src_stream: *mut FILE, dst_stream: *mut FILE, flags: libc::c_int);
 }
 
-use libc::mode_t;
-
 use crate::librb::size_t;
+use libc::mode_t;
 use libc::ssize_t;
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;

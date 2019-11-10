@@ -3,58 +3,32 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-use libc::setsid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
+use libc::close;
+use libc::free;
 use libc::getgid;
-
-
-
+use libc::getuid;
+use libc::gid_t;
 use libc::openlog;
+use libc::pid_t;
+use libc::setsid;
 use libc::sigaddset;
 use libc::sigemptyset;
+use libc::siginfo_t;
 use libc::sigprocmask;
+use libc::sigset_t;
+use libc::sigval;
 use libc::sleep;
-
-use libc::time;
-
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
-
-use libc::close;
-use libc::free;
-use libc::gid_t;
-use libc::pid_t;
-use libc::siginfo_t;
-use libc::sigset_t;
-use libc::sigval;
-use libc::ssize_t;
+use libc::time;
 use libc::time_t;
 use libc::timeval;
 use libc::uid_t;
 use libc::unlink;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;
@@ -127,7 +101,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-
 
   #[no_mangle]
   fn fork() -> pid_t;

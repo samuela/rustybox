@@ -1,75 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::sscanf;
 extern "C" {
-
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -84,8 +17,6 @@ extern "C" {
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
-
-
 
 use libc::FILE;
 #[derive(Copy, Clone)]

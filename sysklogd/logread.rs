@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::sleep;
 extern "C" {
 
   #[no_mangle]
@@ -116,7 +50,6 @@ extern "C" {
 pub type __key_t = libc::c_int;
 
 use crate::librb::size_t;
-
 pub type key_t = __key_t;
 
 use libc::FILE;

@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::puts;
 extern "C" {
-
 
   #[no_mangle]
   fn xmalloc_realpath_coreutils(path: *const libc::c_char) -> *mut libc::c_char;

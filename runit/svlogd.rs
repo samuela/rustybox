@@ -3,85 +3,32 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-use libc::fchmod;
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
-
-
-
-
-
-
-
-
-
-
-
+use libc::close;
+use libc::closedir;
+use libc::fchmod;
+use libc::fclose;
+use libc::free;
+use libc::mode_t;
+use libc::open;
+use libc::opendir;
+use libc::pid_t;
+use libc::readdir;
+use libc::rename;
 use libc::sigaddset;
 use libc::sigemptyset;
 use libc::sigprocmask;
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-use libc::fclose;
-
-
-
-
-use libc::rename;
-
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-
-
-
-use libc::open;
-use libc::unlink;
-use libc::close;
-use libc::free;
-
-use libc::mode_t;
-
-use libc::pid_t;
 use libc::sigset_t;
+use libc::sleep;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
 use libc::time_t;
 use libc::timeval;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -93,14 +40,8 @@ extern "C" {
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
 
-
-
-
-
-
   #[no_mangle]
   static mut stderr: *mut FILE;
-
 
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
@@ -128,7 +69,6 @@ extern "C" {
   #[no_mangle]
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
 
-
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -145,8 +85,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -230,7 +168,6 @@ extern "C" {
 
 use libc::dirent;
 use libc::DIR;
-
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
 #[derive(Copy, Clone)]
@@ -444,7 +381,7 @@ unsafe extern "C" fn pmatch(
 /* ** ex fmt_ptime.[ch] ***/
 /* NUL terminated */
 unsafe extern "C" fn fmt_time_human_30nul(mut s: *mut libc::c_char, mut dt_delim: libc::c_char) {
-  let mut tm: tm =std::mem::zeroed();
+  let mut tm: tm = std::mem::zeroed();
   let mut ptm: *mut tm = 0 as *mut tm;
   let mut tv: timeval = timeval {
     tv_sec: 0,

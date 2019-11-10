@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -153,7 +86,6 @@ extern "C" {
 pub type smalluint = libc::c_uchar;
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Mini tr implementation for busybox
  *
@@ -613,7 +545,7 @@ pub unsafe extern "C" fn tr_main(
         str1 as *mut libc::c_void,
         TR_BUFSIZ as libc::c_int as size_t,
       );
-      if read_chars <=0{
+      if read_chars <= 0 {
         if read_chars < 0 {
           bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
         }

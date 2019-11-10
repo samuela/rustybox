@@ -3,57 +3,29 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::closedir;
-use libc::readdir;
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-use libc::isatty;
-
-use libc::time;
-
-use libc::lstat;
-use libc::printf;
-
-use libc::strchr;
-use libc::strcmp;
-
+use libc::dirent;
 use libc::free;
+use libc::getenv;
 use libc::gid_t;
-
 use libc::ino_t;
+use libc::isatty;
+use libc::lstat;
 use libc::mode_t;
 use libc::nlink_t;
-
 use libc::off_t;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::readdir;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::time;
 use libc::time_t;
+use libc::tm;
 use libc::uid_t;
+use libc::DIR;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -166,11 +138,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use libc::dirent;
-use libc::DIR;
-
-use libc::tm;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

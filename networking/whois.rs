@@ -1,77 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
@@ -109,10 +44,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
 use libc::FILE;
-
 /*
  * whois - tiny client for the whois directory service
  *

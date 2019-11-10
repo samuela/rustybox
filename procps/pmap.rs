@@ -1,76 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -93,7 +26,6 @@ extern "C" {
     comm: *const libc::c_char,
   );
 }
-
 
 pub type uintptr_t = libc::c_ulong;
 use libc::pid_t;

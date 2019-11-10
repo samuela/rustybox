@@ -3,76 +3,15 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::openlog;
-
-
-
-use libc::sleep;
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::openlog;
+use libc::putenv;
+use libc::sleep;
+use libc::sprintf;
+use libc::strcpy;
+use libc::unlink;
 extern "C" {
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -83,16 +22,8 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-
-
-
-
-
 
   #[no_mangle]
   fn __cmsg_nxthdr(__mhdr: *mut msghdr, __cmsg: *mut cmsghdr) -> *mut cmsghdr;
@@ -100,17 +31,11 @@ extern "C" {
   #[no_mangle]
   fn recvmsg(__fd: libc::c_int, __message: *mut msghdr, __flags: libc::c_int) -> ssize_t;
 
-
-
   #[no_mangle]
   fn rand() -> libc::c_int;
 
   #[no_mangle]
   fn srand(__seed: libc::c_uint);
-
-
-
-
 
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
@@ -248,11 +173,7 @@ extern "C" {
   #[no_mangle]
   fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: u8, data: u32);
   #[no_mangle]
-  fn dname_dec(
-    cstr: *const u8,
-    clen: libc::c_int,
-    pre: *const libc::c_char,
-  ) -> *mut libc::c_char;
+  fn dname_dec(cstr: *const u8, clen: libc::c_int, pre: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn udhcp_find_option(opt_list: *mut option_set, code: u8) -> *mut option_set;
   // RFC 2131  Table 5: Fields and options used by DHCP clients
@@ -360,8 +281,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-
-
 
 pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
@@ -1746,11 +1665,7 @@ unsafe extern "C" fn send_discover(mut xid: u32, mut requested: u32) -> libc::c_
  */
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
-unsafe extern "C" fn send_select(
-  mut xid: u32,
-  mut server: u32,
-  mut requested: u32,
-) -> libc::c_int {
+unsafe extern "C" fn send_select(mut xid: u32, mut server: u32, mut requested: u32) -> libc::c_int {
   let mut packet: dhcp_packet = dhcp_packet {
     op: 0,
     htype: 0,
@@ -1805,11 +1720,7 @@ unsafe extern "C" fn send_select(
 /* Unicast or broadcast a DHCP renew message */
 /* NOINLINE: limit stack usage in caller */
 #[inline(never)]
-unsafe extern "C" fn send_renew(
-  mut xid: u32,
-  mut server: u32,
-  mut ciaddr: u32,
-) -> libc::c_int {
+unsafe extern "C" fn send_renew(mut xid: u32, mut server: u32, mut ciaddr: u32) -> libc::c_int {
   let mut packet: dhcp_packet = dhcp_packet {
     op: 0,
     htype: 0,
@@ -2186,10 +2097,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = 0i32 as u16;
       if check as libc::c_int != 0
         && check as libc::c_int
-          != inet_cksum(
-            &mut packet as *mut ip_udp_dhcp_packet as *mut u16,
-            bytes,
-          ) as libc::c_int
+          != inet_cksum(&mut packet as *mut ip_udp_dhcp_packet as *mut u16, bytes) as libc::c_int
       {
         if dhcp_verbose >= 1i32 as libc::c_uint {
           bb_simple_info_msg(

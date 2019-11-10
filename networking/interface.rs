@@ -1,82 +1,20 @@
 use libc;
-
-
-
-
-use libc::fscanf;
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::fclose;
-
-
+use libc::free;
+use libc::fscanf;
+use libc::ioctl;
 use libc::printf;
 use libc::puts;
-
-
 use libc::sprintf;
-
+use libc::sscanf;
 use libc::strcmp;
-
 use libc::strstr;
-
-
-
-use libc::close;
-use libc::free;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
-
-
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -87,7 +25,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
@@ -140,7 +77,6 @@ extern "C" {
   #[no_mangle]
   fn in_ether(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
 
-
   /*
    * stolen from net-tools-1.59 and stripped down for busybox by
    *                      Erik Andersen <andersen@codepoet.org>
@@ -165,18 +101,13 @@ extern "C" {
   fn INET6_resolve(name: *const libc::c_char, sin6: *mut sockaddr_in6) -> libc::c_int;
   /* These return malloced string */
   #[no_mangle]
-  fn INET_rresolve(
-    s_in: *mut sockaddr_in,
-    numeric: libc::c_int,
-    netmask: u32,
-  ) -> *mut libc::c_char;
+  fn INET_rresolve(s_in: *mut sockaddr_in, numeric: libc::c_int, netmask: u32)
+    -> *mut libc::c_char;
   #[no_mangle]
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
 
 pub type __caddr_t = *mut libc::c_char;
-
-
 
 pub type intptr_t = libc::c_long;
 /* NB: unaligned parameter should be a pointer, aligned one -

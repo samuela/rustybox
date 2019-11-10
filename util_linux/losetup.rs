@@ -1,70 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
-
 use libc::printf;
 use libc::puts;
-
-
 use libc::sprintf;
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]

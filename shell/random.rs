@@ -1,76 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
 }
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

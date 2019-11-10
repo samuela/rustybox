@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sprintf;
-
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn strtoull(
@@ -74,7 +8,6 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -872,8 +805,7 @@ unsafe extern "C" fn evaluate_string(
       p = endofname(expr);
       if p != expr {
         /* Name */
-        var_name_size =
-          (p.wrapping_offset_from(expr) as libc::c_long + 1) as size_t; /* +1 for NUL */
+        var_name_size = (p.wrapping_offset_from(expr) as libc::c_long + 1) as size_t; /* +1 for NUL */
         let mut fresh3 = ::std::vec::from_elem(0, var_name_size as usize);
         (*numstackptr).var = fresh3.as_mut_ptr() as *mut libc::c_char;
         safe_strncpy((*numstackptr).var, expr, var_name_size);

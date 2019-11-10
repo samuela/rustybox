@@ -1,79 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fprintf;
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
-
+use libc::fprintf;
+use libc::printf;
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -255,7 +190,6 @@ use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 
 use libc::sockaddr;
-
 use libc::FILE;
 pub type family_t = i8;
 pub type __u16 = libc::c_ushort;

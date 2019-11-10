@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
 use libc::open;
-
-
-
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
@@ -98,7 +32,6 @@ extern "C" {
   #[no_mangle]
   fn get_shell_name() -> *const libc::c_char;
 }
-
 
 pub const OPT_c: C2RustUnnamed = 16;
 pub const OPT_n: C2RustUnnamed = 4;

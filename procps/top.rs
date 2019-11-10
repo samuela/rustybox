@@ -1,72 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
+use libc::free;
 use libc::printf;
 use libc::puts;
-
-
-
+use libc::sscanf;
 use libc::strchr;
-
-
-
-
-
-
-
-use libc::free;
+use libc::strcpy;
 extern "C" {
 
   #[no_mangle]
@@ -82,7 +21,6 @@ extern "C" {
   fn div(__numer: libc::c_int, __denom: libc::c_int) -> div_t;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn snprintf(
@@ -105,7 +43,6 @@ extern "C" {
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -201,16 +138,13 @@ extern "C" {
 pub type __int64_t = libc::c_long;
 
 use libc::useconds_t;
-
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::uid_t;
-
 use libc::DIR;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -219,7 +153,6 @@ pub struct div_t {
   pub rem: libc::c_int,
 }
 use crate::librb::__compar_fn_t;
-
 use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;

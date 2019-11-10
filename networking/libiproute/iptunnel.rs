@@ -3,76 +3,13 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-use libc::strchr;
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::printf;
+use libc::sscanf;
+use libc::strchr;
+use libc::strcmp;
 extern "C" {
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -87,8 +24,6 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn inet_ntop(
@@ -160,9 +95,6 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-
-
-
 
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
@@ -1274,18 +1206,12 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
       b"unknown\x00" as *const u8 as *const libc::c_char
     },
     if (*p).iph.daddr != 0 {
-      rt_addr_n2a(
-        2i32,
-        &mut (*p).iph.daddr as *mut u32 as *mut libc::c_void,
-      )
+      rt_addr_n2a(2i32, &mut (*p).iph.daddr as *mut u32 as *mut libc::c_void)
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
     },
     if (*p).iph.saddr != 0 {
-      rt_addr_n2a(
-        2i32,
-        &mut (*p).iph.saddr as *mut u32 as *mut libc::c_void,
-      )
+      rt_addr_n2a(2i32, &mut (*p).iph.saddr as *mut u32 as *mut libc::c_void)
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
     },

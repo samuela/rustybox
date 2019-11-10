@@ -1,72 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::lstat;
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
 use libc::free;
+use libc::lstat;
 use libc::stat;
-
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]

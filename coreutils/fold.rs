@@ -1,72 +1,8 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -98,12 +34,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-
-use libc::FILE;
 
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.

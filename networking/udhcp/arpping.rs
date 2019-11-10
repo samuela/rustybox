@@ -1,74 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -129,9 +62,6 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use libc::ssize_t;
-
-
-
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -200,7 +130,6 @@ pub union __CONST_SOCKADDR_ARG {
 }
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-
 /*
  * Mostly stolen from: dhcpcd - DHCP client daemon
  * by Yoichi Hariguchi <yoichi@fore.com>
@@ -568,7 +497,7 @@ pub unsafe extern "C" fn arpping(
         __sockaddr__: &mut addr,
       },
       ::std::mem::size_of::<sockaddr>() as libc::c_ulong as socklen_t,
-    ) <0)
+    ) < 0)
     {
       /* wait for arp reply, and check it */
       timeout_ms = timeo as libc::c_int;

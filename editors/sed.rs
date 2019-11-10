@@ -1,83 +1,22 @@
 use crate::libbb::llist::llist_t;
-
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
 use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
 use libc::fprintf;
-
-
-use libc::puts;
-
-
-
-use libc::strchr;
-use libc::strcmp;
-
-
-
-
-use libc::unlink;
-
 use libc::free;
 use libc::gid_t;
+use libc::puts;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
 use libc::uid_t;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn strtol(
@@ -96,7 +35,6 @@ extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
 
-
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -114,7 +52,6 @@ extern "C" {
   #[no_mangle]
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
@@ -125,7 +62,6 @@ extern "C" {
   fn strpbrk(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
@@ -657,8 +593,7 @@ unsafe extern "C" fn parse_subst_cmd(
           &mut pos as *mut *const libc::c_char as *mut *mut libc::c_char,
           10i32,
         ) as libc::c_uint;
-        idx =
-          (pos.wrapping_offset_from(substr) as libc::c_long - 1) as libc::c_int
+        idx = (pos.wrapping_offset_from(substr) as libc::c_long - 1) as libc::c_int
       }
     } else {
       /* Skip spaces */

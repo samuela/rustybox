@@ -1,56 +1,29 @@
 use crate::librb::smallint;
 use libc;
-
-use libc::umask;
-use libc::mknod;
-
-
-
-
-
-use libc::ioctl;
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
 use libc::chown;
-
-use libc::symlink;
-
 use libc::close;
-
+use libc::closedir;
 use libc::fprintf;
 use libc::free;
 use libc::gid_t;
+use libc::ioctl;
 use libc::lstat;
-use libc::open;
-use libc::printf;
-
-use libc::unlink;
-
+use libc::mknod;
 use libc::mode_t;
-
 use libc::off_t;
+use libc::open;
+use libc::opendir;
+use libc::printf;
+use libc::readdir;
 use libc::stat;
 use libc::suseconds_t;
+use libc::symlink;
 use libc::timeval;
 use libc::uid_t;
+use libc::umask;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -58,14 +31,8 @@ extern "C" {
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 
-
-
-
-
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
@@ -260,7 +227,6 @@ extern "C" {
 
 use libc::dirent;
 use libc::DIR;
-
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

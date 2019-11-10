@@ -1,32 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::endmntent;
 use libc::setmntent;
-
-
-
-
-
-
-
 use libc::strcmp;
-
 extern "C" {
 
   #[no_mangle]
@@ -35,7 +10,6 @@ extern "C" {
 }
 
 use libc::stat;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,73 +1,10 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fprintf;
-
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
 use libc::close;
-
+use libc::fprintf;
+use libc::fstat;
+use libc::strchr;
 extern "C" {
 
   #[no_mangle]
@@ -83,7 +20,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
@@ -151,9 +87,7 @@ use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::stat;
-
 use libc::FILE;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

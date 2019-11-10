@@ -11,82 +11,21 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::putenv;
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strchr;
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::getpid;
+use libc::getuid;
 use libc::pid_t;
+use libc::putenv;
 use libc::ssize_t;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
-
 use libc::FILE;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -227,7 +166,6 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
@@ -245,9 +183,6 @@ extern "C" {
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
   fn settimeofday(__tv: *const timeval, __tz: *const timezone) -> libc::c_int;
-
-
-
 
   #[no_mangle]
   fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
@@ -392,9 +327,7 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
-
 use libc::sockaddr;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;

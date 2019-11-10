@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn volume_id_set_label_unicode16(
@@ -85,11 +16,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

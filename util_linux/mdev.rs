@@ -5,31 +5,6 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::putenv;
-use libc::umask;
-use libc::mknod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
 use libc::chmod;
 use libc::chown;
@@ -38,11 +13,13 @@ use libc::free;
 use libc::getenv;
 use libc::getpid;
 use libc::kill;
+use libc::mknod;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::pid_t;
+use libc::putenv;
 use libc::sigaddset;
 use libc::sigemptyset;
 use libc::siginfo_t;
@@ -66,9 +43,9 @@ use libc::time_t;
 use libc::timespec;
 use libc::timeval;
 use libc::uid_t;
+use libc::umask;
 use libc::unlink;
 use libc::DIR;
-
 extern "C" {
 
   #[no_mangle]
@@ -429,7 +406,6 @@ pub struct C2RustUnnamed_8 {
 }
 
 use libc::FILE;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timezone {

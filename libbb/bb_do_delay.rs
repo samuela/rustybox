@@ -1,80 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sleep;
-
-
-
-
-
-
 use libc::time;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::time_t;
-
-extern "C" {
-
-
-
-}
+extern "C" {}
 
 #[no_mangle]
 pub unsafe extern "C" fn bb_do_delay(mut seconds: libc::c_int) {

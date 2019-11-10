@@ -1,80 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::lstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern "C" {
-
-
-}
+extern "C" {}
 
 use libc::stat;
-
-
 /*
  * Busybox main internal header file
  *

@@ -1,72 +1,11 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::free;
 use libc::openlog;
-
-
-
-
-
+use libc::sprintf;
 use libc::strcasecmp;
 use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]

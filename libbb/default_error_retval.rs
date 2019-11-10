@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
  *

@@ -1,38 +1,13 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::ssize_t;
 use libc::strcmp;
+use libc::sync;
 use libc::time;
 use libc::time_t;
 use libc::tm;
 use libc::useconds_t;
-
 extern "C" {
 
   #[no_mangle]

@@ -1,72 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getopt;
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-use libc::strchr;
-use libc::strcmp;
-
-
-
-
 use libc::cc_t;
 use libc::free;
-
+use libc::getopt;
+use libc::isatty;
+use libc::printf;
+use libc::puts;
+use libc::strchr;
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
@@ -157,7 +97,6 @@ pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;

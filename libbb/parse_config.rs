@@ -1,78 +1,11 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
 use libc::ssize_t;
+use libc::strchr;
 use libc::FILE;
-
 extern "C" {
-
 
   #[no_mangle]
   fn getline(__lineptr: *mut *mut libc::c_char, __n: *mut size_t, __stream: *mut FILE) -> ssize_t;

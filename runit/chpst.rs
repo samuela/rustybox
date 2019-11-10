@@ -1,43 +1,14 @@
-use libc;
-
-
-
-
-
-
-
-use libc::setsid;
-
-
-
-
-
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-use libc::strchr;
-
-use libc::open;
-
-use libc::close;
-
-use libc::gid_t;
-use libc::uid_t;
-
 use crate::librb::size_t;
-
+use libc;
+use libc::close;
+use libc::closedir;
+use libc::gid_t;
+use libc::open;
+use libc::readdir;
+use libc::setsid;
 use libc::ssize_t;
-
+use libc::strchr;
+use libc::uid_t;
 extern "C" {
 
   #[no_mangle]
@@ -49,8 +20,6 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
-
-
 
   #[no_mangle]
   fn getrlimit(__resource: __rlimit_resource_t, __rlimits: *mut rlimit) -> libc::c_int;

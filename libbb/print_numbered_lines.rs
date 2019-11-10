@@ -1,77 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
 extern "C" {
 
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
@@ -82,7 +16,6 @@ extern "C" {
 }
 
 use crate::librb::smallint;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -76,7 +8,6 @@ extern "C" {
 }
 
 use libc::stat;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

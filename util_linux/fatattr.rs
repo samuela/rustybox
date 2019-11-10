@@ -1,75 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::puts;
-
-
-
-use libc::strchr;
-
-
-
-
-
-
 use libc::close;
-
+use libc::puts;
+use libc::strchr;
 extern "C" {
-
-
 
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
@@ -87,8 +20,6 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-
 
 /*
  * Display or change file attributes on a fat file system

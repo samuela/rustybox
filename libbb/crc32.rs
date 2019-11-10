@@ -1,81 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-
-
-
 /*
  * CRC32 table fill function
  * Copyright (C) 2006 by Rob Sullivan <cogito.ergo.cogito@gmail.com>
@@ -108,9 +37,9 @@ pub unsafe extern "C" fn crc32_filltable(
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   if crc_table.is_null() {
-    crc_table = xmalloc(
-      (256i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
-    ) as *mut u32
+    crc_table =
+      xmalloc((256i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong))
+        as *mut u32
   }
   i = 0i32 as libc::c_uint;
   while i < 256i32 as libc::c_uint {
@@ -156,11 +85,10 @@ pub unsafe extern "C" fn crc32_block_endian1(
   mut len: libc::c_uint,
   mut crc_table: *mut u32,
 ) -> u32 {
-  let mut end: *const libc::c_void =
-    (buf as *mut u8).offset(len as isize) as *const libc::c_void;
+  let mut end: *const libc::c_void = (buf as *mut u8).offset(len as isize) as *const libc::c_void;
   while buf != end {
-    val = val << 8i32
-      ^ *crc_table.offset((val >> 24i32 ^ *(buf as *mut u8) as libc::c_uint) as isize);
+    val =
+      val << 8i32 ^ *crc_table.offset((val >> 24i32 ^ *(buf as *mut u8) as libc::c_uint) as isize);
     buf = (buf as *mut u8).offset(1) as *const libc::c_void
   }
   return val;
@@ -722,11 +650,9 @@ pub unsafe extern "C" fn crc32_block_endian0(
   mut len: libc::c_uint,
   mut crc_table: *mut u32,
 ) -> u32 {
-  let mut end: *const libc::c_void =
-    (buf as *mut u8).offset(len as isize) as *const libc::c_void;
+  let mut end: *const libc::c_void = (buf as *mut u8).offset(len as isize) as *const libc::c_void;
   while buf != end {
-    val = *crc_table
-      .offset((val as u8 as libc::c_int ^ *(buf as *mut u8) as libc::c_int) as isize)
+    val = *crc_table.offset((val as u8 as libc::c_int ^ *(buf as *mut u8) as libc::c_int) as isize)
       ^ val >> 8i32;
     buf = (buf as *mut u8).offset(1) as *const libc::c_void
   }

@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char) -> *mut FILE;
@@ -201,7 +133,6 @@ extern "C" {
 }
 
 use libc::FILE;
-
 /*
  * Utility routines.
  *

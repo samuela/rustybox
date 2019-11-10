@@ -1,40 +1,15 @@
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
 use libc::fclose;
 use libc::fstat;
 use libc::isatty;
 use libc::off64_t;
 use libc::off_t;
 use libc::printf;
+use libc::putchar_unlocked;
 use libc::stat;
 use libc::termios;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
@@ -47,8 +22,6 @@ extern "C" {
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn ftello(__stream: *mut FILE) -> off64_t;

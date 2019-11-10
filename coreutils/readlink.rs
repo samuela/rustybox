@@ -1,72 +1,7 @@
+use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
 extern "C" {
 
   #[no_mangle]
@@ -83,8 +18,6 @@ extern "C" {
   #[no_mangle]
   static mut logmode: smallint;
 }
-
-use crate::librb::smallint;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;

@@ -1,72 +1,16 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-use libc::opendir;
-
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
-
+use libc::ioctl;
+use libc::open;
+use libc::opendir;
 use libc::printf;
 use libc::puts;
-
-
+use libc::readdir;
 use libc::sprintf;
+use libc::sscanf;
 use libc::strchr;
-
-
-
-
-use libc::open;
-
-use libc::close;
-
 extern "C" {
 
   #[no_mangle]
@@ -77,15 +21,11 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
   #[no_mangle]
   static mut stderr: *mut FILE;
 
   #[no_mangle]
   fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char) -> *mut FILE;
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -116,7 +56,6 @@ extern "C" {
   ) -> libc::c_ulong;
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
-
 
   /* Some useful definitions */
   /* Macros for min/max.  */
@@ -174,18 +113,10 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
-
-
-
-
 pub type intptr_t = libc::c_long;
 use crate::librb::size_t;
 use libc::dirent;
 use libc::DIR;
-
 use libc::FILE;
 pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
@@ -936,21 +867,9 @@ pub unsafe extern "C" fn i2cset_main(
   match mode {
     1 => status = i2c_smbus_write_byte(fd, data_addr as u8),
     3 => status = i2c_smbus_write_word_data(fd, data_addr as u8, val as u16),
-    5 => {
-      status = i2c_smbus_write_block_data(
-        fd,
-        data_addr as u8,
-        blen as u8,
-        block.as_mut_ptr(),
-      )
-    }
+    5 => status = i2c_smbus_write_block_data(fd, data_addr as u8, blen as u8, block.as_mut_ptr()),
     8 => {
-      status = i2c_smbus_write_i2c_block_data(
-        fd,
-        data_addr as u8,
-        blen as u8,
-        block.as_mut_ptr(),
-      )
+      status = i2c_smbus_write_i2c_block_data(fd, data_addr as u8, blen as u8, block.as_mut_ptr())
     }
     _ => {
       /* I2C_SMBUS_BYTE_DATA */

@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-use libc::syslog;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::strcpy;
+use libc::syslog;
 extern "C" {
   #[no_mangle]
   fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;

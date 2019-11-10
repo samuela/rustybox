@@ -1,38 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-use libc::setsid;
-
-
-
-use libc::prctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::dup2;
-
-use libc::open;
-
 use libc::close;
-
+use libc::dup2;
+use libc::open;
 use libc::pid_t;
-
+use libc::prctl;
+use libc::setsid;
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;

@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
@@ -88,11 +19,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -415,8 +341,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
           /* read anchor volume descriptor */
           vd = volume_id_get_buffer(
             id,
-            (0i32 as u64)
-              .wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as libc::c_ulong),
+            (0i32 as u64).wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as libc::c_ulong),
             0x200i32 as size_t,
           ) as *mut volume_descriptor;
           if vd.is_null() {
@@ -436,8 +361,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
               }
               vd = volume_id_get_buffer(
                 id,
-                (0i32 as u64)
-                  .wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as libc::c_ulong),
+                (0i32 as u64).wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as libc::c_ulong),
                 0x200i32 as size_t,
               ) as *mut volume_descriptor;
               if vd.is_null() {

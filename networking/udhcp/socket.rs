@@ -1,74 +1,8 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strrchr;
-
-
-
-
 use libc::close;
-
+use libc::strrchr;
 extern "C" {
 
   #[no_mangle]
@@ -117,8 +51,6 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-
-
 
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;

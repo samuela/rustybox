@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
@@ -90,10 +22,10 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::pollfd;
 use crate::librb::fd_pair;
+use crate::librb::size_t;
+use libc::pollfd;
+use libc::ssize_t;
 unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
   let mut sv: libc::c_int = *bb_errno; /* use char, avoid dealing with partial writes */
   let mut ch: libc::c_uchar = sig as libc::c_uchar;
@@ -101,7 +33,8 @@ unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
     4i32,
     &mut ch as *mut libc::c_uchar as *const libc::c_void,
     1i32 as size_t,
-  ) !=1  {
+  ) != 1
+  {
     bb_simple_perror_msg(b"can\'t send signal\x00" as *const u8 as *const libc::c_char);
   }
   *bb_errno = sv;
@@ -304,7 +237,8 @@ pub unsafe extern "C" fn udhcp_sp_read() -> libc::c_int {
     3i32,
     &mut sig as *mut libc::c_uchar as *mut libc::c_void,
     1i32 as size_t,
-  ) !=1  {
+  ) != 1
+  {
     return 0i32;
   }
   return sig as libc::c_int;

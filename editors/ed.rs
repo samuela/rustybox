@@ -1,82 +1,17 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-use libc::strchr;
-
-
-
-
-use libc::open;
-
 use libc::close;
 use libc::free;
 use libc::mode_t;
+use libc::open;
+use libc::printf;
+use libc::puts;
 use libc::ssize_t;
+use libc::strchr;
+use libc::strcpy;
 use libc::FILE;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn creat(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
@@ -87,17 +22,11 @@ extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
 
-
-
-
-
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -107,10 +36,6 @@ extern "C" {
 
   #[no_mangle]
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

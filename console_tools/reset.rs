@@ -1,75 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
-
-
 
   /*
    * Mini reset implementation for busybox

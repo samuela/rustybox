@@ -1,77 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::sprintf;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
@@ -92,8 +26,6 @@ extern "C" {
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
-
-
 
 /*
  * pwdx implementation for busybox

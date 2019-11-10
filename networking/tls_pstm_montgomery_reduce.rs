@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -81,10 +14,7 @@ extern "C" {
   fn s_pstm_sub(a: *mut pstm_int, b: *mut pstm_int, c: *mut pstm_int) -> int32;
 }
 
-
 use crate::librb::size_t;
-
-
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *

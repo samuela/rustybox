@@ -1,92 +1,25 @@
-use crate::archival::libarchive::bb_archive::hardlinks_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
+use crate::archival::libarchive::bb_archive::hardlinks_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
+use libc::sscanf;
 use libc::ssize_t;
+use libc::strcmp;
+use libc::strcpy;
 use libc::time_t;
 use libc::uid_t;
-
 extern "C" {
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

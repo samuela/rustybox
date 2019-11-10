@@ -1,37 +1,9 @@
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-use libc::strchr;
-
 use libc::free;
-
+use libc::getuid;
+use libc::strchr;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

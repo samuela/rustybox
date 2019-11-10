@@ -1,74 +1,8 @@
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::putenv;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -98,12 +32,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
 use crate::librb::size_t;
 use libc::time_t;
- use libc::timeval;
-
-
+use libc::timeval;
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

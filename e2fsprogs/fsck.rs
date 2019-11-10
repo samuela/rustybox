@@ -1,48 +1,18 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::endmntent;
-use libc::setmntent;
-
-
-
-
-
-
-
+use libc::free;
 use libc::getenv;
-
 use libc::kill;
-
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
-
+use libc::setmntent;
 use libc::strchr;
 use libc::strcmp;
-
 use libc::strstr;
-
-use libc::free;
-use libc::pid_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

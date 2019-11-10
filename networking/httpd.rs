@@ -4,72 +4,14 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::putenv;
-
-
-
-
-use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::chdir;
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcasecmp;
-use libc::strcpy;
-
-
-
-use libc::time;
 use libc::access;
+use libc::alarm;
 use libc::atoi;
-use libc::fclose;
-
-
-
-use libc::puts;
-
-
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-use libc::strstr;
-
+use libc::chdir;
 use libc::close;
+use libc::fclose;
 use libc::free;
+use libc::fstat;
 use libc::gid_t;
 use libc::off64_t;
 use libc::off_t;
@@ -77,13 +19,22 @@ use libc::open;
 use libc::passwd;
 use libc::pid_t;
 use libc::pollfd;
+use libc::putenv;
+use libc::puts;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strcasecmp;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
+use libc::strrchr;
+use libc::strstr;
+use libc::time;
 use libc::time_t;
 use libc::tm;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -98,10 +49,6 @@ extern "C" {
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
-
-
-
-
 
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
@@ -163,8 +110,6 @@ extern "C" {
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn setenv(
     __name: *const libc::c_char,
@@ -175,12 +120,8 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -188,14 +129,8 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-
-
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn strftime(
@@ -428,7 +363,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
-
 use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const SHUT_RDWR: C2RustUnnamed = 2;

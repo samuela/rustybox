@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-
 use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -85,7 +19,6 @@ extern "C" {
 }
 
 use libc::passwd;
-
 /*
  * Busybox main internal header file
  *

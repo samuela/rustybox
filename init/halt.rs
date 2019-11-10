@@ -1,44 +1,14 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::kill;
-
-use libc::sleep;
-
-use libc::strcpy;
-
 use libc::access;
-use libc::time;
-
+use libc::kill;
 use libc::pid_t;
+use libc::sleep;
+use libc::strcpy;
+use libc::sync;
+use libc::time;
 use libc::time_t;
-
 extern "C" {
 
   #[no_mangle]

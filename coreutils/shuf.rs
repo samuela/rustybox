@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
 use libc::strchr;
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn rand() -> libc::c_int;
@@ -74,7 +8,6 @@ extern "C" {
   fn srand(__seed: libc::c_uint);
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
@@ -108,10 +41,8 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-
 pub type uintptr_t = libc::c_ulong;
 use crate::librb::size_t;
-
 use libc::FILE;
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.

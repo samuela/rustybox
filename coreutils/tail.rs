@@ -1,72 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::fstat;
+use libc::open;
+use libc::sleep;
 extern "C" {
 
   #[no_mangle]
@@ -116,12 +52,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off64_t;
-
 use crate::librb::size_t;
+use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
-
 use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]

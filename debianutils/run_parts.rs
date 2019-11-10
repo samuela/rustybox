@@ -1,76 +1,11 @@
 use libc;
-
-use libc::umask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
-
-
-
-
-
 use libc::puts;
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
+use libc::umask;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
@@ -139,12 +74,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-use crate::librb::size_t;
-
-
 use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc::stat;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;

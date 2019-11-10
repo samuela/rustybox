@@ -1,34 +1,13 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getegid;
-use libc::getuid;
-use libc::getgid;
-
-
-
 use libc::geteuid;
-
+use libc::getgid;
+use libc::getuid;
+use libc::gid_t;
+use libc::passwd;
 use libc::printf;
-
+use libc::uid_t;
 extern "C" {
 
   #[no_mangle]
@@ -75,11 +54,6 @@ extern "C" {
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 }
-
-use crate::librb::size_t;
-use libc::gid_t;
-use libc::passwd;
-use libc::uid_t;
 
 /*
  * Mini id implementation for busybox

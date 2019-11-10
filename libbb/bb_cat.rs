@@ -1,77 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
-
 use libc::off_t;
-
 extern "C" {
-
 
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
@@ -99,7 +29,7 @@ pub unsafe extern "C" fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int
       if fd != 0i32 {
         close(fd);
       }
-      if r >=0{
+      if r >= 0 {
         current_block_5 = 16658872821858055392;
       } else {
         current_block_5 = 3640593987805443782;

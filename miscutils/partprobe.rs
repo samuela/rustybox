@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
 extern "C" {
 
   #[no_mangle]
@@ -84,8 +17,6 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
-
-
 
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>

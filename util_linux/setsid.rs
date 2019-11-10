@@ -1,31 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-use libc::setsid;
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::pid_t;
-
+use libc::setsid;
 extern "C" {
 
   #[no_mangle]

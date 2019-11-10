@@ -2,31 +2,6 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::printf;
 use libc::sscanf;
@@ -34,7 +9,6 @@ use libc::ssize_t;
 use libc::strcmp;
 use libc::strcpy;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

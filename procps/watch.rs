@@ -1,77 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-use libc::system;
-
-
-
 use libc::free;
+use libc::printf;
+use libc::system;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn strftime_YYYYMMDDHHMMSS(
@@ -94,7 +28,6 @@ extern "C" {
 }
 
 use libc::time_t;
-
 pub type duration_t = libc::c_double;
 
 /*

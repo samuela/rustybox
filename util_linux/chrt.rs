@@ -1,74 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::pid_t;
-
+use libc::printf;
 extern "C" {
   #[no_mangle]
   fn sched_getparam(__pid: pid_t, __param: *mut sched_param) -> libc::c_int;
@@ -91,8 +23,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;

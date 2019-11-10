@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -98,10 +33,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
-
-
-
-use libc::FILE;
 
 /*
  * paste.c - implementation of the posix paste command

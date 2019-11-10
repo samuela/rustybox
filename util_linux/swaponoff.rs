@@ -1,29 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 use libc::off_t;
 use libc::stat;
@@ -31,7 +6,6 @@ use libc::strcmp;
 use libc::swapoff;
 use libc::swapon;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

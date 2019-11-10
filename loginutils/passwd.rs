@@ -1,39 +1,11 @@
 use libc;
-
-use libc::umask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getuid;
-
-
-
-
 use libc::openlog;
-
-use libc::syslog;
-
 use libc::printf;
 use libc::puts;
-
 use libc::strcmp;
-
+use libc::syslog;
+use libc::umask;
 extern "C" {
 
   #[no_mangle]
@@ -111,13 +83,11 @@ extern "C" {
 }
 
 use libc::mode_t;
-
 pub type __rlim64_t = libc::c_ulong;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::uid_t;
-
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;

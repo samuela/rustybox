@@ -1,82 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::printf;
 use libc::sscanf;
 use libc::strcasecmp;
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn capget(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
-
-
-
-
-
-
 
   #[no_mangle]
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
@@ -107,8 +35,6 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

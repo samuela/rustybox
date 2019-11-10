@@ -1,80 +1,5 @@
-
-
 use crate::libbb::llist::llist_t;
-
-
-
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -82,7 +7,6 @@ extern "C" {
 }
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 /*
  * Copyright (C) 2002 by Glenn McGrath
  *

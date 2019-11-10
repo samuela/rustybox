@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -81,7 +14,6 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 use crate::librb::size_t;
-
 /*
  * Busybox main internal header file
  *

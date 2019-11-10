@@ -1,79 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   fn sethostname(__name: *const libc::c_char, __len: size_t) -> libc::c_int;
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -117,7 +50,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {

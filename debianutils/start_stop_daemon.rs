@@ -2,56 +2,27 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-use libc::fscanf;
-
-
-use libc::setsid;
-
-
-
-
-
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-use libc::passwd;
-use libc::ssize_t;
-
-use libc::kill;
-
-use libc::strcpy;
-
 use libc::fclose;
-
+use libc::free;
+use libc::fscanf;
+use libc::gid_t;
+use libc::kill;
+use libc::passwd;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
-
+use libc::readdir;
+use libc::setsid;
 use libc::sprintf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
+use libc::strcpy;
 use libc::strrchr;
-
-use libc::free;
-use libc::gid_t;
-
-use libc::pid_t;
-use libc::stat;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -63,8 +34,6 @@ extern "C" {
   fn vfork() -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -146,7 +115,6 @@ pub type __id_t = libc::c_uint;
 
 use libc::dirent;
 use libc::DIR;
-
 pub type id_t = __id_t;
 
 pub type __priority_which = libc::c_uint;

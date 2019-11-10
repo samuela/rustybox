@@ -1,77 +1,10 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::signal::__sighandler_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::pid_t;
+use libc::printf;
 use libc::timeval;
-
 extern "C" {
 
   #[no_mangle]

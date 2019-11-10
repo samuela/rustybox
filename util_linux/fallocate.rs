@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -90,7 +22,6 @@ extern "C" {
 
 use libc::off64_t;
 use libc::off_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

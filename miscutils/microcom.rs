@@ -1,83 +1,16 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::getpid;
 use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::open;
-use libc::close;
-
 use libc::pollfd;
 use libc::speed_t;
 use libc::ssize_t;
 use libc::termios;
 use libc::unlink;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;

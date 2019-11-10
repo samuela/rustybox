@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strstr;
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn mempcpy(
@@ -82,7 +15,6 @@ extern "C" {
   fn xmalloc(size: size_t) -> *mut libc::c_void;
 }
 use crate::librb::size_t;
-
 /*
  * Utility routines.
  *

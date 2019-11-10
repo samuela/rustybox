@@ -1,33 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-use libc::prctl;
-
-
-
-use libc::strtok;
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
+use libc::prctl;
 use libc::printf;
+use libc::strtok;
 use libc::uid_t;
-
 extern "C" {
   /*
    * setpriv implementation for busybox based on linux-utils-ng 2.29

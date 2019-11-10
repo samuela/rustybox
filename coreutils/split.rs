@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -114,7 +46,6 @@ extern "C" {
 use crate::librb::size_t;
 use libc::off_t;
 use libc::ssize_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

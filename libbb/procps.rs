@@ -1,82 +1,21 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
+use libc::close;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
+use libc::free;
+use libc::open;
+use libc::opendir;
+use libc::readdir;
 use libc::sprintf;
+use libc::sscanf;
 use libc::strchr;
 use libc::strcmp;
+use libc::strcpy;
 use libc::strrchr;
-
-
-use libc::open;
-
-use libc::close;
-use libc::free;
 extern "C" {
-
-
-
-
-
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
 
   #[no_mangle]
   fn snprintf(
@@ -99,8 +38,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -164,22 +101,14 @@ extern "C" {
   fn getpagesize() -> libc::c_int;
 }
 
-
-
-
-
+use crate::librb::size_t;
+use libc::dirent;
 use libc::gid_t;
 use libc::pid_t;
-use crate::librb::size_t;
 use libc::ssize_t;
-use libc::uid_t;
-
-
-use libc::dirent;
-use libc::DIR;
-
 use libc::stat;
-
+use libc::uid_t;
+use libc::DIR;
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -344,10 +273,8 @@ unsafe extern "C" fn read_to_buf(
     ret = read(fd, buf, (1024i32 - 1i32) as size_t);
     close(fd);
   }
-  *(buf as *mut libc::c_char).offset(if ret >0{
-    ret
-  } else {
-    0   } as isize) = '\u{0}' as i32 as libc::c_char;
+  *(buf as *mut libc::c_char).offset(if ret > 0 { ret } else { 0 } as isize) =
+    '\u{0}' as i32 as libc::c_char;
   return ret as libc::c_int;
 }
 unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
@@ -794,7 +721,7 @@ pub unsafe extern "C" fn procps_scan(
           (*sp).state[1] = 'W' as i32 as libc::c_char;
           s_idx = 2i32
         }
-        if tasknice !=0{
+        if tasknice != 0 {
           if tasknice < 0 {
             (*sp).state[s_idx as usize] = '<' as i32 as libc::c_char
           } else {

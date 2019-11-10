@@ -1,74 +1,7 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

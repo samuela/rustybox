@@ -1,80 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::printf;
+use libc::puts;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stdin: *mut FILE;
-
-
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
@@ -99,8 +33,6 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-
-
 
 use libc::FILE;
 pub const OPT_c: C2RustUnnamed = 1;

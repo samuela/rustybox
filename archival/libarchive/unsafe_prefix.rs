@@ -1,75 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strstr;
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
@@ -79,7 +10,6 @@ extern "C" {
 }
 
 use crate::librb::smallint;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

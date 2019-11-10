@@ -1,34 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::ino_t;
 use libc::lstat;
 use libc::printf;
 use libc::stat;
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;

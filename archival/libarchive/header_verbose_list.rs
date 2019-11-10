@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
 use libc::sprintf;
-
-
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
@@ -83,21 +16,16 @@ extern "C" {
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 }
 
-
-use libc::mode_t;
-
-use libc::time_t;
-
-
-use libc::tm;
 use crate::archival::libarchive::bb_archive::file_header_t;
-
+use libc::mode_t;
+use libc::time_t;
+use libc::tm;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 #[no_mangle]
 pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header_t) {
-  let mut tm_time: tm =std::mem::zeroed(); //localtime(&file_header->mtime);
+  let mut tm_time: tm = std::mem::zeroed(); //localtime(&file_header->mtime);
   let mut ptm: *mut tm = &mut tm_time;
   let mut uid: [libc::c_char; 14] = [0; 14];
   /*char gid[sizeof(int)*3 + 2];*/

@@ -2,54 +2,25 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-use libc::fchmod;
-
 use libc::alarm;
-
-use libc::setsid;
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-use libc::openlog;
-
-use libc::sleep;
-
-use libc::open;
-
-use libc::termios;
-
-use libc::close;
-
 use libc::cc_t;
+use libc::close;
+use libc::fchmod;
+use libc::getpid;
 use libc::gid_t;
+use libc::ioctl;
 use libc::mode_t;
+use libc::open;
+use libc::openlog;
 use libc::pid_t;
+use libc::setsid;
+use libc::sleep;
 use libc::speed_t;
 use libc::ssize_t;
 use libc::tcflag_t;
+use libc::termios;
 use libc::uid_t;
 use libc::useconds_t;
-
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;

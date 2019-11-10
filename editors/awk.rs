@@ -1,75 +1,17 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::fclose;
+use libc::free;
+use libc::sprintf;
 use libc::sscanf;
 use libc::strcasecmp;
-use libc::strcpy;
-
-
-
-use libc::time;
-
-
-use libc::fclose;
-
-
-
-
-
-
-use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
-
+use libc::strcpy;
 use libc::strstr;
 use libc::system;
-
-
-
-use libc::free;
-
+use libc::time;
 extern "C" {
   /* Macros for min/max.  */
   /* buffer allocation schemes */
@@ -155,7 +97,6 @@ extern "C" {
   #[no_mangle]
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
@@ -239,16 +180,13 @@ extern "C" {
   fn sqrt(_: libc::c_double) -> libc::c_double;
 }
 
+use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc::time_t;
-
-
-
-use libc::FILE;
 use libc::tm;
-use crate::libbb::llist::llist_t;
+use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
@@ -699,8 +637,7 @@ static mut tokeninfo: [u32; 100] = [
   (OC_IN as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 49i32 << 24i32) as u32,
   (OC_COMMA as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32 | 0x80000i32) | 80i32 << 24i32)
     as u32,
-  (OC_PGETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 37i32 << 24i32)
-    as u32,
+  (OC_PGETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 37i32 << 24i32) as u32,
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '+' as i32) as u32,
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '-' as i32) as u32,
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '!' as i32) as u32,
@@ -995,7 +932,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-
+  
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -1685,8 +1622,8 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
         == OC_TERNARY as libc::c_int as libc::c_uint
       {
         let ref mut fresh27 = (*(ptr_to_globals as *mut globals2)).t_info;
-        *fresh27 = (*fresh27 as libc::c_uint).wrapping_add((6i32 << 24i32) as libc::c_uint)
-          as u32 as u32
+        *fresh27 =
+          (*fresh27 as libc::c_uint).wrapping_add((6i32 << 24i32) as libc::c_uint) as u32 as u32
       }
       (*(*vn).a.n).r.n = new_node((*(ptr_to_globals as *mut globals2)).t_info);
       cn = (*(*vn).a.n).r.n;
@@ -1864,9 +1801,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           }
           524288 => (*cn).l.n = condition(),
           1048576 => {
-            next_token(
-              (1i32 << 0i32 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as u32,
-            );
+            next_token((1i32 << 0i32 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as u32);
             rollback_token();
             if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 0i32) as libc::c_uint != 0 {
               /* It was a "(" token. Handle just like TC_BUILTIN */
@@ -2192,9 +2127,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
         (*f).nargs = (*f).nargs.wrapping_add(1);
         (*v).x.aidx = fresh43 as libc::c_int;
         /* Arg followed either by end of arg list or 1 comma */
-        if next_token((1i32 << 8i32 | 1i32 << 1i32) as u32) & (1i32 << 1i32) as libc::c_uint
-          != 0
-        {
+        if next_token((1i32 << 8i32 | 1i32 << 1i32) as u32) & (1i32 << 1i32) as libc::c_uint != 0 {
           break;
         }
         if (*(ptr_to_globals as *mut globals2)).t_tclass != (1i32 << 8i32) as libc::c_uint {
@@ -2629,7 +2562,8 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
         n as libc::c_long
       } else {
         (v.wrapping_offset_from((*ptr_to_globals.offset(-1i32 as isize)).Fields) as libc::c_long)
-          +1      } as libc::c_double,
+          + 1
+      } as libc::c_double,
     );
     /* right here v is invalid. Just to note... */
   };
@@ -2801,7 +2735,8 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
     m = qrealloc(m, a + p + 128i32, &mut size);
     b = m.offset(a as isize);
     pp = p;
-    p = p + safe_read(
+    p = p
+      + safe_read(
         fd,
         b.offset(p as isize) as *mut libc::c_void,
         (size - p - 1) as size_t,
@@ -3139,7 +3074,7 @@ unsafe extern "C" fn awk_sub(
 }
 #[inline(never)]
 unsafe extern "C" fn do_mktime(mut ds: *const libc::c_char) -> libc::c_int {
-  let mut then: tm =std::mem::zeroed();
+  let mut then: tm = std::mem::zeroed();
   let mut count: libc::c_int = 0;
   /*memset(&then, 0, sizeof(then)); - not needed */
   then.tm_isdst = -1i32; /* default is unknown */
@@ -3332,8 +3267,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
         if (*ptr_to_globals.offset(-1i32 as isize)).icase == 0 {
           let mut s_2: *mut libc::c_char = strstr(as_0[0], as_0[1]);
           if !s_2.is_null() {
-            n = (s_2.wrapping_offset_from(as_0[0]) as libc::c_long + 1)
-              as libc::c_int
+            n = (s_2.wrapping_offset_from(as_0[0]) as libc::c_long + 1) as libc::c_int
           }
         } else {
           /* this piece of code is terribly slow and
@@ -21435,8 +21369,7 @@ pub unsafe extern "C" fn awk_main(
     .offset(::std::mem::size_of::<globals>() as libc::c_ulong as isize)
     as *mut libc::c_void as *mut globals;
   asm!("" : : : "memory" : "volatile");
-  (*(ptr_to_globals as *mut globals2)).next_token__ltclass =
-    (1i32 << 14i32 | 1i32 << 15i32) as u32;
+  (*(ptr_to_globals as *mut globals2)).next_token__ltclass = (1i32 << 14i32 | 1i32 << 15i32) as u32;
   (*(ptr_to_globals as *mut globals2)).evaluate__seed = 1i32 as libc::c_uint;
   /* Undo busybox.c, or else strtod may eat ','! This breaks parsing:
    * $1,$2 == '$1,' '$2', NOT '$1' ',' '$2' */

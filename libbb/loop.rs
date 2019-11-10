@@ -1,80 +1,13 @@
 use libc;
-
-
-use libc::mknod;
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::ioctl;
+use libc::mknod;
+use libc::open;
+use libc::sprintf;
 extern "C" {
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -92,12 +25,10 @@ extern "C" {
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
-use libc::mode_t;
-
-use libc::off_t;
 use crate::librb::size_t;
+use libc::mode_t;
+use libc::off_t;
 use libc::stat;
-
 pub type __u8 = libc::c_uchar;
 
 /*

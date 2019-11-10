@@ -1,83 +1,15 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::free;
 use libc::getpid;
-
 use libc::kill;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-use libc::free;
-use libc::pid_t;
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn getsid(__pid: pid_t) -> pid_t;
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

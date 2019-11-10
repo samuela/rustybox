@@ -1,70 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-use libc::puts;
-
-
-
-
-use libc::strcmp;
-
-
-
-
 use libc::free;
+use libc::puts;
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
@@ -98,13 +36,10 @@ extern "C" {
 }
 
 use libc::mode_t;
-
 pub type uintptr_t = libc::c_ulong;
 
 use libc::stat;
-
 use libc::FILE;
-
 #[no_mangle]
 pub unsafe extern "C" fn add_remove_shell_main(
   mut _argc: libc::c_int,

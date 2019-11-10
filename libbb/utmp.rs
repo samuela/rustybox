@@ -1,41 +1,13 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::setutxent;
-use libc::endutxent;
-
 use libc::access;
-use libc::time;
-
-use libc::open;
-
 use libc::close;
-
+use libc::endutxent;
+use libc::open;
 use libc::pid_t;
+use libc::setutxent;
+use libc::time;
 use libc::time_t;
-
 extern "C" {
 
   #[no_mangle]
@@ -44,7 +16,6 @@ extern "C" {
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn getutxent() -> *mut utmpx;

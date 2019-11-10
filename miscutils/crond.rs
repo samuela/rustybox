@@ -1,82 +1,32 @@
-use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
+use libc::close;
+use libc::closedir;
 use libc::dup2;
-use libc::fstat;
-
-
-
-use libc::getpid;
-
-
-use libc::openlog;
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-use libc::time;
-
-
 use libc::fclose;
 use libc::fprintf;
-
-
-
+use libc::free;
+use libc::fstat;
+use libc::getpid;
+use libc::off64_t;
+use libc::open;
+use libc::opendir;
+use libc::openlog;
+use libc::passwd;
+use libc::pid_t;
+use libc::putenv;
+use libc::readdir;
 use libc::rename;
-
-
+use libc::sleep;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
-
-
-
-use libc::open;
-use libc::unlink;
-use libc::close;
-use libc::free;
-
-use libc::off64_t;
-use libc::pid_t;
-use libc::stat;
+use libc::time;
 use libc::time_t;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -86,21 +36,13 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_long;
 
-
-
   #[no_mangle]
   fn setpgrp() -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
 
-
-
-
-
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -114,20 +56,15 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 
-
-
-
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
 
   #[no_mangle]
   fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
@@ -218,10 +155,8 @@ pub struct __va_list_tag {
 
 use libc::dirent;
 use libc::DIR;
-
 pub type va_list = __builtin_va_list;
 use libc::tm;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;

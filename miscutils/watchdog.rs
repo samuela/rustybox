@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
@@ -102,11 +35,9 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::useconds_t;
-
 use crate::librb::size_t;
 use libc::ssize_t;
-
+use libc::useconds_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

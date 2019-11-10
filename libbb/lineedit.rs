@@ -1,72 +1,27 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-use libc::geteuid;
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
 use libc::atoi;
+use libc::close;
+use libc::closedir;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
+use libc::getenv;
+use libc::geteuid;
+use libc::getpid;
 use libc::lstat;
+use libc::open;
+use libc::opendir;
 use libc::printf;
+use libc::putchar_unlocked;
 use libc::puts;
+use libc::readdir;
 use libc::rename;
-
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
+use libc::strcpy;
 use libc::strrchr;
 use libc::strstr;
-
-use libc::open;
-
-use libc::close;
-use libc::free;
 extern "C" {
 
   #[no_mangle]
@@ -74,24 +29,12 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
-
-
-
-
-
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
-
-
-
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -110,19 +53,14 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulong;
 
-
-
   #[no_mangle]
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-
 
   /* Copyright (C) 1991,92,95,96,97,98,99,2001 Free Software Foundation, Inc.
   This file is part of the GNU C Library.
@@ -264,7 +202,6 @@ extern "C" {
 pub type __int64_t = libc::c_long;
 
 use libc::pid_t;
-
 pub type int64_t = __int64_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -281,14 +218,12 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::dirent;
 use libc::off_t;
-use libc::ssize_t;
-use libc::uid_t;
-
 use libc::sigval;
+use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
+use libc::uid_t;
 use libc::DIR;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -364,7 +299,6 @@ pub struct C2RustUnnamed_8 {
 }
 
 use crate::librb::signal::sigaction;
-
 use libc::FILE;
 pub type wchar_t = libc::c_int;
 

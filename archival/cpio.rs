@@ -5,85 +5,20 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-use libc::fprintf;
-use libc::lstat;
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
+use libc::fprintf;
 use libc::free;
 use libc::gid_t;
+use libc::lstat;
 use libc::mode_t;
 use libc::off_t;
 use libc::pid_t;
+use libc::printf;
 use libc::stat;
+use libc::strcpy;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -100,21 +35,11 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-
-
-
-
-
-
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
@@ -219,7 +144,6 @@ pub struct globals {
 }
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_2STDOUT: C2RustUnnamed = 16384;
 pub const OPT_QUIET: C2RustUnnamed = 8192;

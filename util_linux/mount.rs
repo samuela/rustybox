@@ -1,35 +1,13 @@
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-use libc::mount;
-
-
-
-
-
-
-use libc::endmntent;
-use libc::setmntent;
-
-
-
-
-
-
 use libc::close;
+use libc::endmntent;
 use libc::free;
+use libc::mount;
 use libc::printf;
 use libc::sa_family_t;
+use libc::setmntent;
 use libc::sockaddr;
 use libc::stat;
 use libc::strcasecmp;
@@ -38,9 +16,7 @@ use libc::strcmp;
 use libc::strcpy;
 use libc::strstr;
 use libc::FILE;
-
 extern "C" {
-
 
   #[no_mangle]
   fn getmntent_r(
@@ -52,10 +28,6 @@ extern "C" {
 
   #[no_mangle]
   fn addmntent(__stream: *mut FILE, __mnt: *const mntent) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;

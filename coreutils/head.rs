@@ -1,72 +1,10 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getopt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::getopt;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -112,9 +50,6 @@ extern "C" {
   static bb_msg_standard_input: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

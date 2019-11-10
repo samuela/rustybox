@@ -1,72 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
-
-
 use libc::fprintf;
+use libc::free;
+use libc::isatty;
 use libc::lstat;
 use libc::printf;
-
 use libc::rename;
-
-
-
-
-
-
-
-
+use libc::stat;
 use libc::unlink;
-
-use libc::free;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -111,9 +53,6 @@ extern "C" {
   fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
 
-use libc::stat;
-
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

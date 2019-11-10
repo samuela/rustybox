@@ -1,75 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sprintf;
-
+use libc::sscanf;
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -672,7 +605,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
       fname.as_mut_ptr(),
       buf.as_mut_ptr() as *mut libc::c_void,
       ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
-    ) <=0)
+    ) <= 0)
     {
       buf[127] = '\u{0}' as i32 as libc::c_char;
       *strchrnul(buf.as_mut_ptr(), '\n' as i32).offset(0) = '\u{0}' as i32 as libc::c_char;

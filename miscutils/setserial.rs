@@ -1,83 +1,17 @@
 use libc;
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcasecmp;
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-use libc::close;
-
+use libc::strcasecmp;
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
-
 
   #[no_mangle]
   fn device_open(device: *const libc::c_char, mode: libc::c_int) -> libc::c_int;
@@ -100,8 +34,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct serial_struct {

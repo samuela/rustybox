@@ -1,83 +1,8 @@
-
-
 use crate::libbb::llist::llist_t;
-
-
-
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcmp;
 use libc::strrchr;
-
-
-
-
-
-
-
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn get_header_tar(archive_handle: *mut archive_handle_t) -> libc::c_char;
@@ -133,7 +58,6 @@ extern "C" {
  * on them.
  */
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 /*
  * Copyright (C) 2002 by Glenn McGrath
  *

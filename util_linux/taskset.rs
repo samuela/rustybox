@@ -1,34 +1,8 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::pid_t;
 use libc::printf;
 use libc::sprintf;
-
 extern "C" {
   #[no_mangle]
   fn sched_getaffinity(__pid: pid_t, __cpusetsize: size_t, __cpuset: *mut cpu_set_t)

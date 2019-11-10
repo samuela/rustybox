@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
@@ -79,9 +10,7 @@ extern "C" {
   fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
-
 use crate::librb::size_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {

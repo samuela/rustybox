@@ -1,74 +1,11 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getopt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
-
 use libc::pid_t;
-
 use libc::puts;
-
-
-
-
-
-
-
-
 use libc::time_t;
 use libc::uid_t;
-
 extern "C" {
   #[no_mangle]
   static mut optarg: *mut libc::c_char;

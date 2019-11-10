@@ -1,46 +1,16 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strtok;
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-use libc::strcasecmp;
-
-use libc::fclose;
-
-use libc::sprintf;
-use libc::strchr;
-
 use libc::close;
+use libc::fclose;
 use libc::free;
+use libc::getpid;
 use libc::pid_t;
+use libc::sprintf;
+use libc::strcasecmp;
+use libc::strchr;
+use libc::strtok;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

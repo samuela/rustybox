@@ -1,74 +1,19 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
+use libc::fstat;
+use libc::off64_t;
+use libc::off_t;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::puts;
+use libc::stat;
+use libc::strchr;
+use libc::strcpy;
+use libc::FILE;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -79,19 +24,11 @@ extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
 
-
-
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
 
-
-
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
@@ -116,12 +53,6 @@ extern "C" {
 
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-
-
-
-
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -205,17 +136,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off64_t;
-
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::stat;
-
-
-
-
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {
@@ -1094,7 +1014,7 @@ N_SKIP bytes in the combined input, give an error message and return
 nonzero.  When possible, use seek rather than read operations to
 advance IN_STREAM.  */
 unsafe extern "C" fn skip(mut n_skip: off_t) {
-  if n_skip ==0{
+  if n_skip == 0 {
     return;
   }
   while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1122,7 +1042,8 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
       &mut file_stats,
     ) == 0i32
       && file_stats.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
-      && file_stats.st_size > 0     {
+      && file_stats.st_size > 0
+    {
       if file_stats.st_size < n_skip {
         n_skip -= file_stats.st_size
       /* take "check & close / open_next" route */
@@ -1143,7 +1064,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
       let mut buf: [libc::c_char; 1024] = [0; 1024];
       let mut n_bytes_to_read: size_t = 1024i32 as size_t;
       let mut n_bytes_read: size_t = 0;
-      while n_skip >0{
+      while n_skip > 0 {
         if (n_skip as libc::c_ulong) < n_bytes_to_read {
           n_bytes_to_read = n_skip as size_t
         }
@@ -1160,7 +1081,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
         /* EOF on this file or error */
       }
     }
-    if n_skip ==0{
+    if n_skip == 0 {
       return;
     }
     check_and_close();
@@ -1704,7 +1625,7 @@ unsafe extern "C" fn parse_old_offset(
   if !p.is_null() {
     *p.offset(0) = '.' as i32 as libc::c_char
   }
-  return (*offset >=0) as libc::c_int;
+  return (*offset >= 0) as libc::c_int;
 }
 
 #[no_mangle]
@@ -1768,11 +1689,8 @@ pub unsafe extern "C" fn od_main(
       'o' as i32 as libc::c_char,
       'x' as i32 as libc::c_char,
     ];
-    static mut doxn_address_pad_len_char: [u8; 3] = [
-      '7' as i32 as u8,
-      '7' as i32 as u8,
-      '6' as i32 as u8,
-    ];
+    static mut doxn_address_pad_len_char: [u8; 3] =
+      ['7' as i32 as u8, '7' as i32 as u8, '6' as i32 as u8];
     let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut pos: libc::c_int = 0;
     p = strchr(doxn.as_ptr(), *str_A.offset(0) as libc::c_int);
@@ -1903,7 +1821,7 @@ pub unsafe extern "C" fn od_main(
       } else {
         bb_simple_error_msg_and_die(b"too many arguments\x00" as *const u8 as *const libc::c_char);
       }
-      if pseudo_start >=0{
+      if pseudo_start >= 0 {
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).format_address
           == Some(format_address_none as unsafe extern "C" fn(_: off_t, _: libc::c_char) -> ())
         {

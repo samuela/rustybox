@@ -1,81 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::open;
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -99,8 +29,6 @@ extern "C" {
 
 use libc::off64_t;
 use libc::off_t;
-
-
 /* Last element is marked by mult == 0 */
 #[derive(Copy, Clone)]
 #[repr(C)]

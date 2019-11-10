@@ -1,43 +1,16 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
+use libc::free;
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::kill;
 use libc::openlog;
-
-use libc::strchr;
-
-use libc::free;
 use libc::pid_t;
 use libc::pollfd;
+use libc::putenv;
 use libc::ssize_t;
+use libc::strchr;
 use libc::unlink;
-
 extern "C" {
 
   #[no_mangle]

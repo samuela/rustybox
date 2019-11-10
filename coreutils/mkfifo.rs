@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::mode_t;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -79,8 +12,6 @@ extern "C" {
   #[no_mangle]
   fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
 }
-use libc::mode_t;
-
 /*
  * mkfifo implementation for busybox
  *

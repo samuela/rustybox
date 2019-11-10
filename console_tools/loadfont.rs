@@ -1,71 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -120,10 +54,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
 use libc::FILE;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -430,8 +361,8 @@ unsafe extern "C" fn do_loadtable(
               tailsz -= 1;
               let fresh1 = inbuf;
               inbuf = inbuf.offset(1);
-              unicode = (((unicode as libc::c_int) << 6i32) + (*fresh1 as libc::c_int & 0x3fi32))
-                as u16;
+              unicode =
+                (((unicode as libc::c_int) << 6i32) + (*fresh1 as libc::c_int & 0x3fi32)) as u16;
               maxct -= 1;
               if !(maxct > 0i32) {
                 break;

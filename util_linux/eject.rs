@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -91,7 +24,6 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 }
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

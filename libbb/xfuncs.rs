@@ -1,82 +1,17 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::atoi;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
-use libc::close;
-
 use libc::cc_t;
+use libc::close;
+use libc::getenv;
+use libc::ioctl;
+use libc::isatty;
+use libc::open;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::termios;
 use libc::winsize;
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;

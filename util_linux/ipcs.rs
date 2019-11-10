@@ -1,74 +1,10 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
-
 use libc::pid_t;
 use libc::printf;
-
-
-
-
-
-
-
-
-
 use libc::time_t;
 use libc::uid_t;
-
 extern "C" {
   #[no_mangle]
   fn semctl(__semid: libc::c_int, __semnum: libc::c_int, __cmd: libc::c_int, _: ...)
@@ -217,7 +153,6 @@ pub struct shm_info {
 }
 use libc::group;
 use libc::passwd;
-
 /*
  * ipcs.c -- provides information on allocated ipc resources.
  *

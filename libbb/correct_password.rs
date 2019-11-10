@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
+use libc::strcmp;
 extern "C" {
-
 
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
@@ -96,9 +29,8 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::passwd;
 use crate::librb::size_t;
-
+use libc::passwd;
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 

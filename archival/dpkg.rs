@@ -5,78 +5,28 @@ use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
 use libc::atoi;
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
 use libc::rmdir;
 use libc::sprintf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::close;
-use libc::free;
-use libc::open;
-use libc::ssize_t;
-use libc::stat;
 use libc::unlink;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

@@ -8,82 +8,24 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
-
-
-use libc::puts;
-
-
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-
-
-
-
-
-use libc::close;
 use libc::free;
+use libc::getuid;
 use libc::gid_t;
 use libc::ino_t;
 use libc::off_t;
 use libc::pid_t;
+use libc::putenv;
+use libc::puts;
+use libc::sprintf;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -118,11 +60,6 @@ extern "C" {
   static mut stdout: *mut FILE;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
-
-
-
 
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
@@ -231,7 +168,6 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
   fn get_shell_name() -> *const libc::c_char;
-
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

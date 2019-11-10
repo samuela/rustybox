@@ -1,79 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
 use libc::fprintf;
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
+use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
 
   #[no_mangle]
   fn getchar_unlocked() -> libc::c_int;
@@ -140,8 +75,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -192,9 +125,8 @@ extern "C" {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use libc::pid_t;
 use crate::librb::size_t;
-
+use libc::pid_t;
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

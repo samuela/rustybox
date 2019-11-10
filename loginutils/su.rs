@@ -1,40 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
 use libc::closelog;
-
 use libc::getenv;
-
+use libc::getuid;
 use libc::openlog;
-
-use libc::syslog;
-
 use libc::strcmp;
-
+use libc::syslog;
 extern "C" {
 
   #[no_mangle]
@@ -87,7 +57,6 @@ extern "C" {
 use crate::librb::size_t;
 use libc::passwd;
 use libc::uid_t;
-
 /*
  * Mini su implementation for busybox
  *

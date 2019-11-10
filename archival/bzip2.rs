@@ -1,84 +1,14 @@
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 use libc::ssize_t;
-
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

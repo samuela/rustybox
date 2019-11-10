@@ -1,36 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::openlog;
-
-use libc::strcpy;
-
 use libc::strcmp;
-
+use libc::strcpy;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -130,7 +102,6 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
 use libc::sockaddr;
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;

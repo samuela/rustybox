@@ -1,83 +1,16 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-use libc::kill;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::getpid;
+use libc::kill;
+use libc::printf;
 extern "C" {
-
-
 
   #[no_mangle]
   fn getsid(__pid: pid_t) -> pid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -111,11 +44,8 @@ extern "C" {
   fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
-use libc::pid_t;
 use crate::librb::size_t;
-
-
-
+use libc::pid_t;
 use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]

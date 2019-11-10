@@ -1,79 +1,13 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
+use libc::sscanf;
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -84,7 +18,6 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -163,7 +96,6 @@ pub type __caddr_t = *mut libc::c_char;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -176,7 +108,6 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
 use libc::sockaddr;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

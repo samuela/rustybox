@@ -1,77 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::closedir;
+use libc::ioctl;
+use libc::open;
+use libc::opendir;
+use libc::readdir;
 extern "C" {
-
-
-
-
 
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
@@ -81,24 +15,15 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
 }
 
-
-
-
-
 use crate::librb::size_t;
-
 use libc::dirent;
-use libc::DIR;
 use libc::stat;
-
-
+use libc::DIR;
 use libc::FILE;
-
 /*
  * See README for additional information
  *

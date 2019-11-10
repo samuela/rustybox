@@ -1,74 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -89,9 +22,7 @@ extern "C" {
 
 use crate::librb::__syscall_slong_t;
 use crate::librb::size_t;
- use libc::timeval;
-
-
+use libc::timeval;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
 pub struct timex {

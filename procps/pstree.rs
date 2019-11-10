@@ -1,82 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::sprintf;
-
 use libc::strcmp;
-
-
-
-
-
-
-
+use libc::strcpy;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-
-
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
@@ -100,13 +32,10 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::pid_t;
 use libc::uid_t;
-
-
-
 use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]

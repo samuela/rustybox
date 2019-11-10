@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn snprintf(
@@ -146,8 +79,6 @@ extern "C" {
   #[no_mangle]
   fn ll_proto_a2n(id: *mut libc::c_ushort, buf: *mut libc::c_char) -> libc::c_int;
 }
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -412,10 +343,7 @@ unsafe extern "C" fn get_qdisc_handle(
   return 0i32;
 }
 /* Get class ID.  Return 0 on success, !0 otherwise.  */
-unsafe extern "C" fn get_tc_classid(
-  mut h: *mut u32,
-  mut str: *const libc::c_char,
-) -> libc::c_int {
+unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
   let mut maj: u32 = 0;
   let mut min: u32 = 0;
   let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -450,11 +378,7 @@ unsafe extern "C" fn get_tc_classid(
   *h = maj;
   return 0i32;
 }
-unsafe extern "C" fn print_rate(
-  mut buf: *mut libc::c_char,
-  mut len: libc::c_int,
-  mut rate: u32,
-) {
+unsafe extern "C" fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int, mut rate: u32) {
   let mut tmp: libc::c_double = rate as libc::c_double * 8i32 as libc::c_double;
   if tmp >= (1000i32 * 1000000i32) as libc::c_double {
     snprintf(

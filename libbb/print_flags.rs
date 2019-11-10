@@ -1,76 +1,7 @@
 /* Print string that matches bit masked flags */
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> libc::c_ulong;

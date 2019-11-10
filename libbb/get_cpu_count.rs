@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::sscanf;
 extern "C" {
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -81,7 +14,6 @@ extern "C" {
 }
 
 use libc::FILE;
-
 /*
  * Factored out of mpstat/iostat.
  *

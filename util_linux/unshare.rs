@@ -1,42 +1,18 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-use libc::mount;
-
-
-
-
-
-
-
-
-
-use libc::getegid;
-
-
-
-
 use libc::close;
+use libc::getegid;
 use libc::geteuid;
 use libc::getpid;
 use libc::gid_t;
+use libc::mount;
 use libc::pid_t;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::strcmp;
 use libc::uid_t;
 use libc::unshare;
-
 extern "C" {
 
   #[no_mangle]

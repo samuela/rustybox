@@ -2,76 +2,12 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
-
+use libc::free;
 use libc::printf;
-
-
-
-
 use libc::strchr;
 use libc::strcmp;
-
-
-
-
-
-
-use libc::free;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
@@ -88,7 +24,6 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
 
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
@@ -143,7 +78,6 @@ extern "C" {
 }
 
 use libc::tm;
-
 /*
  * SuS3 compliant sort implementation for busybox
  *

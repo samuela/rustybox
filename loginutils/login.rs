@@ -1,65 +1,29 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-use libc::fchmod;
-
-use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-use libc::getpid;
-use libc::isatty;
-
-use libc::openlog;
-
-use libc::strcpy;
-
-use libc::syslog;
-
 use libc::access;
-
-use libc::fclose;
-
-use libc::open;
-use libc::printf;
-use libc::puts;
-
-use libc::strchr;
-
-use libc::termios;
-
+use libc::alarm;
 use libc::close;
-
+use libc::fchmod;
+use libc::fclose;
+use libc::getenv;
+use libc::getpid;
 use libc::gid_t;
+use libc::isatty;
 use libc::mode_t;
 use libc::off_t;
+use libc::open;
+use libc::openlog;
 use libc::passwd;
 use libc::pid_t;
+use libc::printf;
+use libc::puts;
+use libc::strchr;
+use libc::strcpy;
+use libc::syslog;
+use libc::termios;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

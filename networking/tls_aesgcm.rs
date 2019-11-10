@@ -1,74 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -79,9 +11,6 @@ extern "C" {
   #[no_mangle]
   fn xorbuf_aligned_AES_BLOCK_SIZE(buf: *mut libc::c_void, mask: *const libc::c_void);
 }
-
-
-
 
 /*
  * Copyright (C) 2018 Denys Vlasenko

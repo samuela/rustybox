@@ -1,87 +1,11 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
-
 use crate::libbb::llist::llist_t;
-
-
-
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::mode_t;
-
-
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
@@ -127,7 +51,6 @@ extern "C" {
 }
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 #[no_mangle]
 pub unsafe extern "C" fn dpkg_deb_main(
   mut _argc: libc::c_int,

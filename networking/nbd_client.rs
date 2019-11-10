@@ -1,74 +1,12 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
-
-
-
-use libc::sprintf;
-
-
-use libc::strrchr;
-
-
-
 use libc::close;
-
+use libc::ioctl;
+use libc::open;
+use libc::sleep;
+use libc::sprintf;
+use libc::strrchr;
 extern "C" {
 
   #[no_mangle]
@@ -124,7 +62,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::pid_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
 pub const IPPROTO_RAW: C2RustUnnamed = 255;

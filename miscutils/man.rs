@@ -1,86 +1,20 @@
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
 use libc::access;
-
-
-
-
-
-use libc::puts;
-
-
-
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-
-use libc::system;
-
-
 use libc::close;
 use libc::free;
+use libc::getenv;
+use libc::isatty;
+use libc::putenv;
+use libc::puts;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
+use libc::strrchr;
+use libc::system;
 extern "C" {
-
-
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -149,9 +83,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::stat;
-
-
-
 use libc::FILE;
 /*
  * Config file parser

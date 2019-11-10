@@ -1,80 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::symlink;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strstr;
-
-
-
-
-
-
+use libc::symlink;
 extern "C" {
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -94,7 +23,6 @@ extern "C" {
 
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

@@ -1,69 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::puts;
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -103,9 +40,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 use libc::FILE;
-
 /*
  * cryptpw.c - output a crypt(3)ed password to stdout.
  *

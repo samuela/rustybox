@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::strcpy;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -224,10 +158,6 @@ extern "C" {
   ) -> ssize_t;
 }
 
-
-
-
-
 pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -240,13 +170,9 @@ pub type bb__aliased_u32 = u32;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-use crate::librb::size_t;
-
-use libc::ssize_t;
-
-
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-
+use crate::librb::size_t;
+use libc::ssize_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct xz_dec {
@@ -520,11 +446,7 @@ pub struct xz_buf {
  */
 /* Skip check (rather than fail) of unsupported hash functions */
 /* We use our own crc32 function */
-unsafe extern "C" fn xz_crc32(
-  mut buf: *const u8,
-  mut size: size_t,
-  mut crc: u32,
-) -> u32 {
+unsafe extern "C" fn xz_crc32(mut buf: *const u8, mut size: size_t, mut crc: u32) -> u32 {
   return !crc32_block_endian0(
     !crc,
     buf as *const libc::c_void,
@@ -777,8 +699,7 @@ unsafe extern "C" fn rc_bittree_reverse(
   loop {
     if rc_bit(rc, &mut *probs.offset(symbol as isize)) != 0 {
       symbol = (symbol << 1i32).wrapping_add(1i32 as libc::c_uint);
-      *dest =
-        (*dest as libc::c_uint).wrapping_add((1i32 << i) as libc::c_uint) as u32 as u32
+      *dest = (*dest as libc::c_uint).wrapping_add((1i32 << i) as libc::c_uint) as u32 as u32
     } else {
       symbol <<= 1i32
     }
@@ -814,8 +735,7 @@ unsafe extern "C" fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut u32, mut limi
     (*rc).range >>= 1i32;
     (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as u32 as u32;
     mask = (0i32 as u32).wrapping_sub((*rc).code >> 31i32);
-    (*rc).code =
-      ((*rc).code as libc::c_uint).wrapping_add((*rc).range & mask) as u32 as u32;
+    (*rc).code = ((*rc).code as libc::c_uint).wrapping_add((*rc).range & mask) as u32 as u32;
     *dest = (*dest << 1i32).wrapping_add(mask.wrapping_add(1i32 as libc::c_uint));
     limit = limit.wrapping_sub(1);
     if !(limit > 0i32 as libc::c_uint) {
@@ -875,11 +795,7 @@ unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: u32) -> u32
   } as u32;
 }
 #[inline(always)]
-unsafe extern "C" fn rc_bittree(
-  mut rc: *mut rc_dec,
-  mut probs: *mut u16,
-  mut limit: u32,
-) -> u32 {
+unsafe extern "C" fn rc_bittree(mut rc: *mut rc_dec, mut probs: *mut u16, mut limit: u32) -> u32 {
   let mut symbol: u32 = 1i32 as u32;
   loop {
     if rc_bit(rc, &mut *probs.offset(symbol as isize)) != 0 {
@@ -1255,8 +1171,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
     (*s).lzma2.compressed =
       ((*s).lzma2.compressed as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as u32 as u32;
     if (*s).rc.in_pos < (*s).temp.size as libc::c_ulong {
-      (*s).temp.size =
-        ((*s).temp.size as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as u32 as u32;
+      (*s).temp.size = ((*s).temp.size as libc::c_ulong).wrapping_sub((*s).rc.in_pos) as u32 as u32;
       memmove(
         (*s).temp.buf.as_mut_ptr() as *mut libc::c_void,
         (*s).temp.buf.as_mut_ptr().offset((*s).rc.in_pos as isize) as *const libc::c_void,
@@ -1467,9 +1382,8 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
         if !rc_read_init(&mut (*s).rc, b) {
           return XZ_OK;
         }
-        (*s).lzma2.compressed = ((*s).lzma2.compressed as libc::c_uint)
-          .wrapping_sub(5i32 as libc::c_uint) as u32
-          as u32;
+        (*s).lzma2.compressed =
+          ((*s).lzma2.compressed as libc::c_uint).wrapping_sub(5i32 as libc::c_uint) as u32 as u32;
         (*s).lzma2.sequence = SEQ_LZMA_RUN;
         current_block_64 = 14938516266808412833;
       }
@@ -1836,8 +1750,7 @@ unsafe extern "C" fn crc32_validate(mut s: *mut xz_dec, mut b: *mut xz_buf) -> x
     {
       return XZ_DATA_ERROR;
     }
-    (*s).pos =
-      ((*s).pos as libc::c_uint).wrapping_add(8i32 as libc::c_uint) as u32 as u32;
+    (*s).pos = ((*s).pos as libc::c_uint).wrapping_add(8i32 as libc::c_uint) as u32 as u32;
     if !((*s).pos < 32i32 as libc::c_uint) {
       break;
     }
@@ -1941,8 +1854,7 @@ unsafe extern "C" fn dec_stream_header(mut s: *mut xz_dec) -> xz_ret {
     2i32 as size_t,
     0i32 as u32,
   ) != ({
-    let mut v: u32 =
-      *((*s).temp.buf.as_mut_ptr().offset(6).offset(2) as *mut bb__aliased_u32);
+    let mut v: u32 = *((*s).temp.buf.as_mut_ptr().offset(6).offset(2) as *mut bb__aliased_u32);
     v
   }) {
     return XZ_DATA_ERROR;
@@ -2284,8 +2196,7 @@ unsafe extern "C" fn dec_vli(
       (*s).pos = 0i32 as u32;
       return XZ_STREAM_END;
     }
-    (*s).pos =
-      ((*s).pos as libc::c_uint).wrapping_add(7i32 as libc::c_uint) as u32 as u32;
+    (*s).pos = ((*s).pos as libc::c_uint).wrapping_add(7i32 as libc::c_uint) as u32 as u32;
     if (*s).pos as libc::c_ulong
       == (7i32 as libc::c_ulong).wrapping_mul(
         (::std::mem::size_of::<vli_type>() as libc::c_ulong)

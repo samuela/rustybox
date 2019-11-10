@@ -2,79 +2,11 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::signal::__sighandler_t;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
 use libc::off_t;
 use libc::pid_t;
-
+use libc::putenv;
 extern "C" {
-
 
   #[no_mangle]
   fn vfork() -> libc::c_int;

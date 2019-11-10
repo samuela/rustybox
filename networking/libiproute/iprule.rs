@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -171,11 +104,7 @@ extern "C" {
   fn xrtnl_open(rth: *mut rtnl_handle);
 }
 
-
-
 use crate::librb::size_t;
-
-
 pub type smalluint = libc::c_uchar;
 
 use libc::FILE;

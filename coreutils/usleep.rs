@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn xatou(str: *const libc::c_char) -> libc::c_uint;
@@ -76,7 +8,6 @@ extern "C" {
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 }
 use libc::useconds_t;
-
 /*
  * usleep implementation for busybox
  *

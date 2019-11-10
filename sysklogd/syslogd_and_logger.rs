@@ -3,85 +3,34 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::chmod;
-
-use libc::closelog;
-
-use libc::fstat;
-
-use libc::geteuid;
-
-
-
-
-use libc::openlog;
-
-
-
-
-
-use libc::strcasecmp;
-use libc::strcpy;
-
-
-use libc::syslog;
-use libc::time;
-
 use libc::atoi;
+use libc::chmod;
 use libc::close;
-
-
+use libc::closelog;
 use libc::free;
+use libc::fstat;
+use libc::geteuid;
 use libc::gid_t;
-
 use libc::mode_t;
 use libc::open;
+use libc::openlog;
 use libc::pid_t;
-
-
 use libc::rename;
-
 use libc::sa_family_t;
 use libc::sockaddr;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strcasecmp;
 use libc::strchr;
 use libc::strcmp;
-
-
-
+use libc::strcpy;
+use libc::syslog;
+use libc::time;
 use libc::time_t;
 use libc::uid_t;
 use libc::unlink;
 use libc::FILE;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_ns;

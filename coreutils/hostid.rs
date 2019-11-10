@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn gethostid() -> libc::c_long;
@@ -76,8 +9,6 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-
-
 
 /*
  * Mini hostid implementation for busybox

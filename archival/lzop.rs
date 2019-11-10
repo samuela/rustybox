@@ -3,76 +3,10 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-use libc::strrchr;
-
-
-
-
-
 use libc::free;
 use libc::ssize_t;
-
+use libc::strcmp;
+use libc::strrchr;
 extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -82,8 +16,6 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
@@ -209,7 +141,6 @@ pub struct chksum_t {
   pub f_crc32: u32,
 }
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const M_LZO1X_999: C2RustUnnamed_0 = 3;
 pub const M_LZO1X_1_15: C2RustUnnamed_0 = 2;

@@ -1,74 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
@@ -77,10 +9,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -315,8 +243,7 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
         }
         xs = volume_id_get_buffer(
           id,
-          (0i32 as u64)
-            .wrapping_add(boff.wrapping_add(0x18i32 as libc::c_uint) as libc::c_ulong),
+          (0i32 as u64).wrapping_add(boff.wrapping_add(0x18i32 as libc::c_uint) as libc::c_ulong),
           0x200i32 as size_t,
         ) as *mut xenix_super;
         if xs.is_null() {

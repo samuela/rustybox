@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn lremovexattr(__path: *const libc::c_char, __name: *const libc::c_char) -> libc::c_int;
@@ -99,7 +31,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 pub const OPT_h: C2RustUnnamed = 1;
 pub const OPT_x: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;

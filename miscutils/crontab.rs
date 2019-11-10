@@ -1,86 +1,23 @@
-use libc::passwd;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::fstat;
 use libc::getenv;
-
-
 use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-use libc::unlink;
-use libc::close;
-
+use libc::getuid;
 use libc::gid_t;
 use libc::off_t;
+use libc::open;
+use libc::passwd;
 use libc::pid_t;
 use libc::stat;
 use libc::uid_t;
-
+use libc::unlink;
 extern "C" {
 
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
-
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
@@ -90,7 +27,6 @@ extern "C" {
 
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-
 
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;

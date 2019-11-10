@@ -1,30 +1,5 @@
 use libc;
-
-
-
-
 use libc::fscanf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
@@ -43,9 +18,7 @@ extern "C" {
 
 use libc::off_t;
 use libc::useconds_t;
-
 use libc::FILE;
-
 /*
  * scriptreplay - play back typescripts, using timing information
  *

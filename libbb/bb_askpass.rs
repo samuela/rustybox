@@ -1,82 +1,12 @@
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 use libc::ssize_t;
 use libc::termios;
 use libc::FILE;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;

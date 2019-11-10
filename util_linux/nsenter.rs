@@ -1,35 +1,9 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::gid_t;
 use libc::pid_t;
 use libc::uid_t;
-
 extern "C" {
   #[no_mangle]
   fn setns(__fd: libc::c_int, __nstype: libc::c_int) -> libc::c_int;

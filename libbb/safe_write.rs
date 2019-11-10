@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
@@ -76,7 +8,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Busybox main internal header file
  *
@@ -335,7 +266,7 @@ pub unsafe extern "C" fn safe_write(
   let mut n: ssize_t = 0;
   loop {
     n = write(fd, buf, count);
-    if n >=0|| *bb_errno != 4i32 {
+    if n >= 0 || *bb_errno != 4i32 {
       break;
     }
     /* repeat the write() */

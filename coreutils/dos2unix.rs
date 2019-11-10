@@ -1,41 +1,12 @@
 use libc;
-
-
-
 use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::unlink;
-
 use libc::free;
 use libc::gid_t;
 use libc::stat;
 use libc::uid_t;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

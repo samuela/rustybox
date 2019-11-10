@@ -5,95 +5,30 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-use libc::getgid;
-
-
-
-
 use libc::chown;
-
-
-
-
-
-use libc::getopt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::lstat;
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::getgid;
+use libc::getopt;
+use libc::getuid;
 use libc::gid_t;
 use libc::group;
+use libc::lstat;
 use libc::off64_t;
 use libc::off_t;
 use libc::passwd;
+use libc::printf;
 use libc::stat;
+use libc::strcmp;
 use libc::time_t;
 use libc::uid_t;
-
 extern "C" {
-
-
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
-
 
   #[no_mangle]
   fn bsearch(

@@ -1,74 +1,16 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
 use libc::access;
-
-
-
-
+use libc::closedir;
+use libc::free;
+use libc::opendir;
 use libc::printf;
 use libc::puts;
-
+use libc::readdir;
 use libc::rmdir;
-
-
-
-
-
-
-
+use libc::time;
 use libc::unlink;
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
@@ -80,21 +22,12 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
-
-
-
-
-
-
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -220,12 +153,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
-
-
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -238,18 +165,16 @@ extern "C" {
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use libc::gid_t;
- use libc::ino_t;
-use libc::off_t;
 use crate::librb::size_t;
-use libc::uid_t;
 use libc::dirent;
-use libc::DIR;
-
+use libc::gid_t;
+use libc::ino_t;
 use libc::mode_t;
+use libc::off_t;
 use libc::stat;
 use libc::time_t;
-
+use libc::uid_t;
+use libc::DIR;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;
@@ -1029,7 +954,7 @@ unsafe extern "C" fn func_empty(
     return (dent == 0 as *mut libc::c_void as *mut dirent) as libc::c_int;
   }
   return ((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
-    && (*statbuf).st_size ==0) as libc::c_int;
+    && (*statbuf).st_size == 0) as libc::c_int;
 }
 unsafe extern "C" fn func_links(
   mut _fileName: *const libc::c_char,

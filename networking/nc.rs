@@ -3,79 +3,18 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::dup2;
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-use libc::fprintf;
-
-
-
-
-
-use libc::sprintf;
-
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
+use libc::dup2;
+use libc::fprintf;
 use libc::free;
 use libc::pid_t;
 use libc::sigset_t;
+use libc::sleep;
+use libc::sprintf;
 use libc::ssize_t;
+use libc::strcmp;
 use libc::FILE;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -116,10 +55,6 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
-
-
 
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;

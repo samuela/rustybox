@@ -1,79 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getenv;
-
-
-
-
 use libc::kill;
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::sleep;
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -138,16 +73,12 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
-
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-
 use libc::termios;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
@@ -217,7 +148,8 @@ unsafe extern "C" fn con_escape() {
     0i32,
     &mut b as *mut libc::c_char as *mut libc::c_void,
     1i32 as size_t,
-  ) <= 0   {
+  ) <= 0
+  {
     doexit(1i32);
   }
   match b as libc::c_int {
@@ -293,7 +225,7 @@ unsafe extern "C" fn handle_net_output(mut len: libc::c_int) {
     }
     dst = dst.offset(1)
   }
-  if dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long !=0{
+  if dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long != 0 {
     full_write(
       netfd as libc::c_int,
       outbuf.as_mut_ptr() as *const libc::c_void,

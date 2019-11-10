@@ -1,79 +1,11 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 use libc::off_t;
 use libc::sigset_t;
 use libc::ssize_t;
 use libc::time_t;
-
 extern "C" {
 
   #[no_mangle]

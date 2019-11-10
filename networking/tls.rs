@@ -1,73 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -201,7 +135,6 @@ pub type bb__aliased_u32 = u32;
 pub type bb__aliased_u64 = u64;
 use crate::librb::size_t;
 use libc::ssize_t;
-
 use libc::FILE;
 pub type va_list = __builtin_va_list;
 pub type nfds_t = libc::c_ulong;

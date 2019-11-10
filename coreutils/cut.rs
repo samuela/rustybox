@@ -1,39 +1,11 @@
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-use libc::puts;
-
-use libc::strchr;
-
 use libc::free;
+use libc::putchar_unlocked;
+use libc::puts;
+use libc::strchr;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

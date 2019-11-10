@@ -2,83 +2,24 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-use libc::sscanf;
-
-
-
-
-
-
-
-
-use libc::fclose;
-
-
-use libc::printf;
-use libc::puts;
-
-
-use libc::sprintf;
-
-use libc::strcmp;
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::fclose;
+use libc::ioctl;
 use libc::off64_t;
 use libc::off_t;
+use libc::open;
+use libc::printf;
+use libc::puts;
 use libc::sigset_t;
+use libc::sleep;
+use libc::sprintf;
+use libc::sscanf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strcmp;
+use libc::sync;
 use libc::FILE;
-
 extern "C" {
-
 
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -86,33 +27,17 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
 
-
-
-
-
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
 
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
-
-
-
-
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -122,16 +47,12 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn strtoul(

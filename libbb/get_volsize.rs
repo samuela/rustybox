@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -83,11 +15,10 @@ extern "C" {
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
 }
-use libc::off64_t;
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
-
+use libc::off64_t;
+use libc::off_t;
 /*
  * ascii-to-numbers implementations for busybox
  *
@@ -284,7 +215,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
       9223372036854775807i64 as libc::c_ulong,
     );
     if result
-      >= ((if -1i32 as off_t >0{
+      >= ((if -1i32 as off_t > 0 {
         -1i32 as off_t
       } else {
         !((1i32 as off_t)

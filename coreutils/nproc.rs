@@ -1,34 +1,11 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
+use libc::opendir;
+use libc::pid_t;
 use libc::printf;
-
+use libc::readdir;
 use libc::strstr;
-
 extern "C" {
 
   #[no_mangle]
@@ -46,9 +23,6 @@ extern "C" {
   ) -> u32;
 }
 
-use crate::librb::size_t;
-
-use libc::pid_t;
 pub type __cpu_mask = libc::c_ulong;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,39 +1,10 @@
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::isatty;
-
 use libc::printf;
 use libc::puts;
-
 use libc::sprintf;
-
 use libc::strcmp;
-
+use libc::sync;
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
@@ -112,7 +83,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -126,11 +96,8 @@ pub struct mntent {
 
 use crate::librb::smallint;
 use libc::off_t;
-
 use libc::ssize_t;
-
 use libc::termios;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

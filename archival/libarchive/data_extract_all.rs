@@ -1,56 +1,27 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
+use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
 use libc;
-
-
-use libc::mknod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
 use libc::chown;
-
-use libc::getpid;
-
-use libc::lstat;
-
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-
 use libc::close;
 use libc::free;
+use libc::getpid;
 use libc::gid_t;
 use libc::group;
+use libc::lstat;
+use libc::mknod;
 use libc::mode_t;
 use libc::off_t;
 use libc::passwd;
-
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
 use libc::suseconds_t;
 use libc::timeval;
 use libc::uid_t;
 use libc::unlink;
-
 extern "C" {
 
   #[no_mangle]
@@ -183,12 +154,6 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
  */
 /*def __GLIBC__*/
 /* BSD style */
-/* Having next pointer as a first member allows easy creation
- * of "llist-compatible" structs, and using llist_FOO functions
- * on them.
- */
-use crate::archival::libarchive::bb_archive::archive_handle_t;
-use crate::archival::libarchive::bb_archive::file_header_t;
 
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

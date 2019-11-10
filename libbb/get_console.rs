@@ -1,77 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::ioctl;
+use libc::open;
 use libc::ptrdiff_t;
-
 extern "C" {
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

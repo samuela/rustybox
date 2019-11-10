@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -76,7 +8,6 @@ extern "C" {
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 }
 use crate::librb::size_t;
-
 /*
  * Utility routines.
  *
@@ -104,7 +35,7 @@ pub unsafe extern "C" fn trim(mut s: *mut libc::c_char) -> *mut libc::c_char {
   /* trim leading whitespace */
   if len != 0 {
     let mut nws: *mut libc::c_char = skip_whitespace(s);
-    if nws.wrapping_offset_from(s) as libc::c_long !=0{
+    if nws.wrapping_offset_from(s) as libc::c_long != 0 {
       len = (len as libc::c_ulong)
         .wrapping_sub(nws.wrapping_offset_from(s) as libc::c_long as libc::c_ulong)
         as size_t as size_t;

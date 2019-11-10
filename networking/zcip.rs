@@ -1,74 +1,8 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::openlog;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -161,8 +95,6 @@ extern "C" {
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
-
-
 
 pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -979,7 +911,8 @@ pub unsafe extern "C" fn zcip_main(
                 sock_fd as libc::c_int,
                 &mut p as *mut arp_packet as *mut libc::c_void,
                 ::std::mem::size_of::<arp_packet>() as libc::c_ulong,
-              ) < 0               {
+              ) < 0
+              {
                 bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
               }
               if p.eth.ether_type as libc::c_int

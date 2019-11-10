@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn fnmatch(
@@ -76,7 +8,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 use crate::libbb::llist::llist_t;
-
 /*
  * Copyright (C) 2002 by Glenn McGrath
  *

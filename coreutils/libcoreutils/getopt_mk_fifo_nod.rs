@@ -1,72 +1,5 @@
 use libc;
-
 use libc::umask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -76,7 +9,6 @@ extern "C" {
 }
 
 use libc::mode_t;
-
 /*
  * coreutils utility routine
  *

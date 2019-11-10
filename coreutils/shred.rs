@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
-
-
-
 use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::open;
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -74,8 +9,6 @@ extern "C" {
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
@@ -94,11 +27,8 @@ extern "C" {
 }
 
 use libc::mode_t;
-
 use libc::off64_t;
-
 use libc::off_t;
-
 use libc::stat;
 pub const OPT_u: C2RustUnnamed = 2;
 pub const OPT_z: C2RustUnnamed = 4;
@@ -187,7 +117,7 @@ pub unsafe extern "C" fn shred_main(
     if fd < 0i32 {
       fd = xopen(fname, 0o1i32)
     }
-    if fstat(fd, &mut sb) == 0i32 && sb.st_size >0{
+    if fstat(fd, &mut sb) == 0i32 && sb.st_size > 0 {
       let mut size: off_t = sb.st_size;
       i = 0i32 as libc::c_uint;
       while i < num_iter {

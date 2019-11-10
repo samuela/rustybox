@@ -2,77 +2,14 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sigaddset;
-
-use libc::sigprocmask;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-use libc::close;
-
+use libc::sigaddset;
+use libc::sigprocmask;
 use libc::sigset_t;
 use libc::ssize_t;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -108,11 +45,6 @@ extern "C" {
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-
-
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
@@ -220,7 +152,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
-
 use libc::sockaddr;
 #[derive(Copy, Clone)]
 #[repr(C)]

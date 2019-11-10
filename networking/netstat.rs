@@ -1,81 +1,17 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::sscanf;
+use libc::strcpy;
 extern "C" {
 
   #[no_mangle]
   fn getservbyport(__port: libc::c_int, __proto: *const libc::c_char) -> *mut servent;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn snprintf(
@@ -227,10 +163,6 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-
-
-
-
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -530,7 +462,7 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
   if !linkname.is_null() {
     inode = extract_socket_inode(linkname);
     free(linkname as *mut libc::c_void);
-    if inode >=0{
+    if inode >= 0 {
       prg_cache_add(inode, pid_slash_progname as *mut libc::c_char);
     }
   }

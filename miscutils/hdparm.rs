@@ -1,75 +1,14 @@
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getopt;
-
-use libc::isatty;
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::getopt;
+use libc::ioctl;
+use libc::isatty;
+use libc::printf;
+use libc::puts;
+use libc::sleep;
+use libc::sync;
 extern "C" {
-
-
 
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
@@ -78,9 +17,6 @@ extern "C" {
 
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
-
-
-
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
@@ -188,10 +124,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-
-
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
  */
@@ -202,9 +134,9 @@ extern "C" {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct masks_labels_t {
@@ -2577,9 +2509,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       b"standby\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).standby_requested,
     );
-    interpret_standby(
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).standby_requested as u8,
-    );
+    interpret_standby((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).standby_requested as u8);
     bb_ioctl_or_warn(
       fd as libc::c_int,
       0x31fi32 as libc::c_uint,
@@ -2617,7 +2547,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
         b"multcount\x00" as *const u8 as *const libc::c_char,
         multcount,
       );
-      on_off((multcount !=0) as libc::c_int);
+      on_off((multcount != 0) as libc::c_int);
     }
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_io32bit != 0 {
@@ -2632,11 +2562,11 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
         b" IO_support\t=%3ld (\x00" as *const u8 as *const libc::c_char,
         parm,
       );
-      if parm ==0{
+      if parm == 0 {
         puts(b"default 16-bit)\x00" as *const u8 as *const libc::c_char);
       } else if parm == 2i32 as libc::c_long {
         puts(b"16-bit)\x00" as *const u8 as *const libc::c_char);
-      } else if parm ==1{
+      } else if parm == 1 {
         puts(b"32-bit)\x00" as *const u8 as *const libc::c_char);
       } else if parm == 3i32 as libc::c_long {
         puts(b"32-bit w/sync)\x00" as *const u8 as *const libc::c_char);
@@ -2677,7 +2607,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       if parm == 8i32 as libc::c_long {
         puts(b" (DMA-Assisted-PIO)\x00" as *const u8 as *const libc::c_char);
       } else {
-        on_off((parm !=0) as libc::c_int);
+        on_off((parm != 0) as libc::c_int);
       }
     }
   }
@@ -3048,8 +2978,7 @@ unsafe extern "C" fn identify_from_stdin() -> ! {
     while j < 4i32 {
       let fresh1 = b;
       b = b.offset(1);
-      sbuf[i as usize] =
-        (((sbuf[i as usize] as libc::c_int) << 4i32) + fromhex(*fresh1)) as u16;
+      sbuf[i as usize] = (((sbuf[i as usize] as libc::c_int) << 4i32) + fromhex(*fresh1)) as u16;
       j += 1
     }
     i += 1

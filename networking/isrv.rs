@@ -1,78 +1,10 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
 use libc::ptrdiff_t;
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;

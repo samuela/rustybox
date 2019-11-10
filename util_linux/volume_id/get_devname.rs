@@ -1,75 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcasecmp;
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
 use libc::open;
-
-
-
-
+use libc::printf;
+use libc::strcasecmp;
+use libc::strcmp;
 extern "C" {
-
 
   #[no_mangle]
   fn volume_id_open_node(fd: libc::c_int) -> *mut volume_id;
@@ -80,19 +15,11 @@ extern "C" {
   #[no_mangle]
   fn free_volume_id(id: *mut volume_id);
 
-
-
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
-
-
-
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
@@ -138,9 +65,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 use libc::stat;
-
 pub type C2RustUnnamed = libc::c_uint;
 // pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 // pub const ACTION_QUIET: C2RustUnnamed = 32;

@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::open;
 extern "C" {
-
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
@@ -78,7 +11,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Utility routines.
  *
@@ -95,7 +27,7 @@ pub unsafe extern "C" fn safe_read(
   let mut n: ssize_t = 0;
   loop {
     n = read(fd, buf, count);
-    if n >=0|| *bb_errno != 4i32 {
+    if n >= 0 || *bb_errno != 4i32 {
       break;
     }
     /* repeat the read() */
@@ -133,7 +65,7 @@ pub unsafe extern "C" fn full_read(
       return cc;
       /* read() returns -1 on failure. */
     }
-    if cc ==0{
+    if cc == 0 {
       break;
     }
     buf = (buf as *mut libc::c_char).offset(cc as isize) as *mut libc::c_void;

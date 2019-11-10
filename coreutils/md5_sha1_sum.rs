@@ -1,80 +1,21 @@
+use crate::librb::md5_ctx_t;
+use crate::librb::sha1_ctx_t;
+use crate::librb::sha256_ctx_t;
+use crate::librb::sha3_ctx_t;
+use crate::librb::sha512_ctx_t;
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-use libc::strstr;
-
-
 use libc::close;
 use libc::free;
-
+use libc::printf;
+use libc::ssize_t;
+use libc::strcmp;
+use libc::strstr;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
@@ -161,17 +102,6 @@ extern "C" {
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 }
-
-use libc::ssize_t;
-
-use crate::librb::size_t;
-
-use crate::librb::md5_ctx_t;
-use crate::librb::sha1_ctx_t;
-use crate::librb::sha256_ctx_t;
-use crate::librb::sha3_ctx_t;
-use crate::librb::sha512_ctx_t;
-use libc::FILE;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const HASH_SHA512: C2RustUnnamed = 53;

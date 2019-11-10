@@ -1,38 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strtok;
-
-
-
-
-
-
-
-
-
-
 use libc::getenv;
-
 use libc::printf;
 use libc::puts;
-
 use libc::strchr;
 use libc::strcmp;
-
+use libc::strtok;
 extern "C" {
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
@@ -101,7 +73,6 @@ pub struct option {
 
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-
 /*
  * getopt.c - Enhanced implementation of BSD getopt(1)
  * Copyright (c) 1997, 1998, 1999, 2000  Frodo Looijaard <frodol@dds.nl>

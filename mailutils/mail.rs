@@ -1,39 +1,11 @@
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-use libc::prctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::isatty;
-
+use libc::close;
 use libc::fclose;
-
+use libc::isatty;
+use libc::prctl;
 use libc::printf;
 use libc::puts;
-
-use libc::close;
-
 extern "C" {
 
   #[no_mangle]
@@ -119,7 +91,6 @@ use crate::librb::size_t;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::FILE;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

@@ -1,72 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::syscall;
-
-
-
-
-
-
-
+use libc::close;
+use libc::free;
 use libc::open;
-
-
-
-
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
-
-
-
-
-use libc::close;
-use libc::free;
+use libc::syscall;
 extern "C" {
 
   #[no_mangle]

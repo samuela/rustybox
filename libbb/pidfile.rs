@@ -1,75 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::fstat;
-
-
-
 use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::open;
 use libc::unlink;
-use libc::close;
-
 extern "C" {
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -78,7 +13,6 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-
 
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
@@ -90,14 +24,10 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc::stat;
-
-
 /*
  * pid file routines
  *

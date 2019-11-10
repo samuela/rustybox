@@ -1,81 +1,5 @@
-
-
-
-
 use crate::librb::size_t;
-
-
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -92,7 +16,6 @@ extern "C" {
 }
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */

@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -87,7 +20,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Busybox main internal header file
  *

@@ -1,72 +1,10 @@
 use crate::librb::signal::__sighandler_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::dup2;
-
-use libc::getenv;
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
-
-
+use libc::dup2;
+use libc::getenv;
+use libc::isatty;
 use libc::open;
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]

@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -86,7 +19,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";
  * returns a newly allocated string containing the space-separated domains,
@@ -218,8 +150,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
     c = *fresh0 as u8;
     if c as libc::c_int == '.' as i32 || c as libc::c_int == '\u{0}' as i32 {
       /* end of label */
-      len =
-        (dst.wrapping_offset_from(lenptr) as libc::c_long - 1) as libc::c_int;
+      len = (dst.wrapping_offset_from(lenptr) as libc::c_long - 1) as libc::c_int;
       /* label too long, too short, or two '.'s in a row? abort */
       if len > 63i32
         || len == 0i32

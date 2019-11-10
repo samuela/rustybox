@@ -1,94 +1,29 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-use libc::getpid;
-
-use libc::kill;
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
 use libc::access;
-
-use libc::fclose;
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
+use libc::closedir;
+use libc::fclose;
 use libc::free;
-
+use libc::fstat;
+use libc::getpid;
 use libc::ino_t;
-
+use libc::kill;
+use libc::opendir;
 use libc::pid_t;
+use libc::printf;
+use libc::readdir;
+use libc::sscanf;
+use libc::strcpy;
 use libc::FILE;
-
 extern "C" {
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
-
-
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -97,11 +32,8 @@ extern "C" {
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
 
-
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -141,9 +73,8 @@ extern "C" {
 }
 
 use libc::dirent;
-use libc::DIR;
-
 use libc::stat;
+use libc::DIR;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

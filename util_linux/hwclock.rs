@@ -1,73 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
 use libc::suseconds_t;
-
 use libc::time_t;
 use libc::timeval;
 use libc::tm;
-
 extern "C" {
   #[no_mangle]
   fn bb_xioctl(

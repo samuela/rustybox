@@ -1,80 +1,14 @@
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::getenv;
 use libc::open;
-
-
-
+use libc::putenv;
 extern "C" {
-
 
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -107,12 +41,11 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::useconds_t;
 use crate::librb::size_t;
 use libc::time_t;
-
-use libc::FILE;
 use libc::tm;
+use libc::useconds_t;
+use libc::FILE;
 /*
  * Everything below this point has been copied from linux/rtc.h
  * to eliminate the kernel header dependency

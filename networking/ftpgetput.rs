@@ -1,74 +1,11 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-use libc::fprintf;
-
-use libc::printf;
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::fprintf;
+use libc::printf;
+use libc::sprintf;
+use libc::strcpy;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -77,16 +14,12 @@ extern "C" {
   #[no_mangle]
   fn fdopen(__fd: libc::c_int, __modes: *const libc::c_char) -> *mut FILE;
 
-
-
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-
-
 
   /* bb_copyfd_XX print read/write errors and return -1 if they occur */
   #[no_mangle]
@@ -141,15 +74,11 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 
-
-
-
 use libc::off_t;
 pub type socklen_t = __socklen_t;
-use libc::stat;
-
 use libc::sa_family_t;
 use libc::sockaddr;
+use libc::stat;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {
@@ -430,7 +359,7 @@ unsafe extern "C" fn ftp_receive(
     if stat(local_path, &mut sbuf) < 0i32 {
       bb_simple_perror_msg_and_die(b"stat\x00" as *const u8 as *const libc::c_char);
     }
-    if sbuf.st_size >0{
+    if sbuf.st_size > 0 {
       beg_range = sbuf.st_size
     } else {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32

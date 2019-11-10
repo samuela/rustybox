@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -84,7 +15,6 @@ extern "C" {
 
 use libc::off64_t;
 use libc::off_t;
-
 #[no_mangle]
 pub unsafe extern "C" fn seek_by_jump(mut fd: libc::c_int, mut amount: off_t) {
   if amount != 0 && lseek(fd, amount, 1i32) == -1i32 as off_t {

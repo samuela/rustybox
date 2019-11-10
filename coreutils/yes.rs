@@ -1,30 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -36,7 +11,6 @@ extern "C" {
 }
 
 use libc::FILE;
-
 /*
  * yes implementation for busybox
  *

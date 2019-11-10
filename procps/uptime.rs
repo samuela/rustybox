@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::time;
 extern "C" {
-
 
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
@@ -81,9 +14,7 @@ extern "C" {
 }
 
 use libc::pid_t;
-
 use libc::time_t;
-
 use libc::tm;
 #[derive(Copy, Clone)]
 #[repr(C)]

@@ -1,76 +1,11 @@
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
-
+use libc::ioctl;
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::termios;
 use libc::winsize;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
@@ -78,19 +13,11 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-
-
-
-
   #[no_mangle]
   fn scanf(_: *const libc::c_char, _: ...) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
-
 
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;

@@ -1,82 +1,14 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
 use libc::free;
 use libc::gid_t;
-use libc::uid_t;
-use libc::FILE;
-
 use libc::group;
 use libc::passwd;
-use crate::librb::size_t;
-
+use libc::strcmp;
+use libc::uid_t;
+use libc::FILE;
 extern "C" {
-
 
   #[no_mangle]
   fn rewind(__stream: *mut FILE);

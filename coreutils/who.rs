@@ -1,39 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::setutxent;
-
-
-use libc::strcpy;
-
-use libc::time;
-
 use libc::printf;
 use libc::puts;
-
+use libc::setutxent;
 use libc::sprintf;
-
+use libc::strcpy;
+use libc::time;
 extern "C" {
 
   #[no_mangle]
@@ -57,12 +28,10 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-use libc::pid_t;
-
 use crate::librb::size_t;
-use libc::time_t;
-
+use libc::pid_t;
 use libc::stat;
+use libc::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

@@ -1,32 +1,6 @@
 use libc;
-
-
-
-
-
-
-use libc::sync;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::sync;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;

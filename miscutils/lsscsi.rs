@@ -1,81 +1,13 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-use libc::strchr;
-
-
-
-
-
-
 use libc::dirent;
+use libc::printf;
+use libc::readdir;
 use libc::ssize_t;
+use libc::strchr;
 use libc::DIR;
-
 extern "C" {
-
-
-
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

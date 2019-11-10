@@ -1,80 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::getpid;
+use libc::opendir;
+use libc::printf;
+use libc::readdir;
+use libc::sprintf;
 extern "C" {
-
-
-
-
-
-
-
 
   #[no_mangle]
   fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
@@ -88,12 +20,7 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-
-
-
 use crate::librb::size_t;
-
-
 use libc::dirent;
 use libc::DIR;
 #[derive(Copy, Clone)]

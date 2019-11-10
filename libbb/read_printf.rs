@@ -1,81 +1,14 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
 use libc::close;
 use libc::free;
+use libc::fstat;
 use libc::off_t;
+use libc::open;
 use libc::pollfd;
 use libc::ssize_t;
 use libc::stat;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

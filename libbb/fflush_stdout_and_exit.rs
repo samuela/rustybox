@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -385,10 +317,7 @@ extern "C" {
   static mut xfunc_error_retval: u8;
 }
 
-
-
 use libc::FILE;
-
 /*
  * fflush_stdout_and_exit implementation for busybox
  *

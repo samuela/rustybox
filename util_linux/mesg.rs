@@ -1,34 +1,9 @@
 use libc;
-
-
-
 use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::isatty;
 use libc::mode_t;
 use libc::puts;
 use libc::stat;
-
 extern "C" {
 
   #[no_mangle]

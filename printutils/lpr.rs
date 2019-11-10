@@ -1,82 +1,19 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
-use libc::fstat;
-use libc::getenv;
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::fstat;
+use libc::getenv;
+use libc::getpid;
+use libc::getuid;
 use libc::off_t;
-
 use libc::ssize_t;
 use libc::stat;
+use libc::strchr;
+use libc::strcpy;
 use libc::uid_t;
 use libc::unlink;
-
 extern "C" {
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;

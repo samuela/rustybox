@@ -3,99 +3,24 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
-
-
-
-
-
-
-
-use libc::strcmp;
-use libc::strrchr;
-
-
-
-use libc::unlink;
-
 use libc::free;
+use libc::isatty;
 use libc::off_t;
 use libc::stat;
+use libc::strcmp;
+use libc::strrchr;
 use libc::suseconds_t;
-
 use libc::timeval;
+use libc::unlink;
 use libc::FILE;
-
 extern "C" {
-
-
-
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
-
-
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

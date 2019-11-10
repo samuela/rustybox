@@ -1,78 +1,16 @@
+use crate::librb::smallint;
 use libc;
-
-use libc::umask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
 use libc::chown;
-
-
-
-
 use libc::geteuid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
-use libc::time_t;
-use libc::uid_t;
-
-use crate::librb::smallint;
 use libc::group;
 use libc::mode_t;
 use libc::passwd;
-
+use libc::time;
+use libc::time_t;
+use libc::uid_t;
+use libc::umask;
 extern "C" {
 
   #[no_mangle]
@@ -80,8 +18,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;

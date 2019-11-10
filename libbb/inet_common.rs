@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
+use libc::strcpy;
 extern "C" {
   #[no_mangle]
   fn gethostbyname(__name: *const libc::c_char) -> *mut hostent;
@@ -83,7 +17,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -112,9 +45,6 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
-
-
 pub type socklen_t = __socklen_t;
 use libc::sa_family_t;
 use libc::sockaddr;

@@ -1,72 +1,10 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -75,8 +13,6 @@ extern "C" {
   static mut stdin: *mut FILE;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
-
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
@@ -114,10 +50,6 @@ extern "C" {
   fn unicode_strwidth(string: *const libc::c_char) -> size_t;
 }
 
-use crate::librb::size_t;
-
-
-use libc::FILE;
 /* expand - convert tabs to spaces
  * unexpand - convert spaces to tabs
  *

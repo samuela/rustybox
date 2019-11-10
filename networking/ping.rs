@@ -3,75 +3,10 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -112,7 +47,6 @@ extern "C" {
   fn exit(_: libc::c_int) -> !;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -219,10 +153,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::time_t;
-
 use libc::suseconds_t;
-
+use libc::time_t;
 pub type __socklen_t = libc::c_uint;
 
 use crate::librb::size_t;

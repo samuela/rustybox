@@ -1,73 +1,10 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
-
 use libc::printf;
-
-
-
-
 use libc::stat;
-
 use libc::strcmp;
-
-
-
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

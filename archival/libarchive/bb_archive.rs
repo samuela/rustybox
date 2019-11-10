@@ -6,74 +6,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::off_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct file_header_t {
@@ -90,6 +23,10 @@ pub struct file_header_t {
 }
 
 // Declared in bb_archive.h but defined in get_header_cpio.c.
+/* Having next pointer as a first member allows easy creation
+ * of "llist-compatible" structs, and using llist_FOO functions
+ * on them.
+ */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hardlinks_t {

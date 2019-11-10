@@ -1,74 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getuid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
-
 
   /* Copyright (C) 1991,92,95,96,97,98,99,2000,01 Free Software Foundation, Inc.
     This file is part of the GNU C Library.
@@ -115,11 +47,9 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-
 use libc::gid_t;
 use libc::passwd;
 use libc::uid_t;
-
 /*
  * Busybox main internal header file
  *

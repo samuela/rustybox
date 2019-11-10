@@ -1,84 +1,20 @@
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-use libc::setsid;
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-
-
-
-
+use libc::closedir;
 use libc::getpid;
-
-use libc::kill;
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
-
-
-
 use libc::ino_t;
-
+use libc::kill;
+use libc::open;
+use libc::opendir;
 use libc::pid_t;
+use libc::readdir;
+use libc::setsid;
+use libc::sleep;
 use libc::stat;
+use libc::time;
 use libc::useconds_t;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -86,20 +22,8 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
-
-
-
-
-
-
   #[no_mangle]
   fn vfork() -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
@@ -107,17 +31,11 @@ extern "C" {
   #[no_mangle]
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -163,9 +81,8 @@ extern "C" {
 }
 
 use libc::dirent;
-use libc::DIR;
-
 use libc::time_t;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

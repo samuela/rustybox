@@ -1,81 +1,28 @@
 use crate::librb::size_t;
-use libc::ssize_t;
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-use libc::opendir;
-
-
-
-use libc::putchar_unlocked;
-
-
-
-use libc::getegid;
-
-
-
-
 use libc::chdir;
-
-
-
-use libc::dup2;
-use libc::fstat;
-
-use libc::geteuid;
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fclose;
-
-
-
-
-use libc::rename;
-
-
-use libc::strchr;
-
-
-
-
-use libc::open;
-use libc::unlink;
 use libc::close;
+use libc::dup2;
+use libc::fclose;
 use libc::free;
+use libc::fstat;
+use libc::getegid;
+use libc::geteuid;
+use libc::getpid;
 use libc::gid_t;
+use libc::ioctl;
 use libc::off64_t;
 use libc::off_t;
+use libc::open;
+use libc::opendir;
 use libc::pid_t;
+use libc::putchar_unlocked;
+use libc::rename;
+use libc::ssize_t;
 use libc::stat;
+use libc::strchr;
 use libc::uid_t;
-
+use libc::unlink;
 extern "C" {
 
   pub type sockaddr_x25;
@@ -110,8 +57,6 @@ extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
 
-
-
   #[no_mangle]
   fn setuid(__uid: uid_t) -> libc::c_int;
   #[no_mangle]
@@ -130,7 +75,6 @@ extern "C" {
   #[no_mangle]
   fn chroot(__path: *const libc::c_char) -> libc::c_int;
 
-
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -148,7 +92,6 @@ extern "C" {
   fn listen(__fd: libc::c_int, __n: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
@@ -191,8 +134,6 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -257,10 +198,9 @@ pub struct __va_list_tag {
 
 pub type __socklen_t = libc::c_uint;
 pub type socklen_t = __socklen_t;
-use libc::DIR;
-
 use libc::sa_family_t;
 use libc::sockaddr;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {
@@ -607,7 +547,7 @@ pub unsafe extern "C" fn xwrite(
        * or some writes succeeded, then we hit an error.
        * In either case, errno is set.
        */
-      bb_simple_perror_msg_and_die(if size >=0{
+      bb_simple_perror_msg_and_die(if size >= 0 {
         b"short write\x00" as *const u8 as *const libc::c_char
       } else {
         b"write error\x00" as *const u8 as *const libc::c_char

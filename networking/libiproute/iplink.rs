@@ -1,74 +1,8 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
 use libc::close;
-
+use libc::strcmp;
 extern "C" {
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
@@ -180,9 +114,6 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
 use libc::sockaddr;
-
-
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;
@@ -501,11 +432,7 @@ unsafe extern "C" fn get_ctl_fd() -> libc::c_int {
   return xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
 }
 /* Exits on error */
-unsafe extern "C" fn do_chflags(
-  mut dev: *mut libc::c_char,
-  mut flags: u32,
-  mut mask: u32,
-) {
+unsafe extern "C" fn do_chflags(mut dev: *mut libc::c_char, mut flags: u32, mut mask: u32) {
   let mut ifr: ifreq = ifreq {
     ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
     ifr_ifru: C2RustUnnamed_0 {

@@ -1,34 +1,7 @@
 use libc;
 use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::puts;
-
 use libc::strchr;
-
 extern "C" {
 
   #[no_mangle]
@@ -55,7 +28,6 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 use crate::libbb::llist::llist_t;
-
 /*
  * env implementation for busybox
  *

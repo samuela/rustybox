@@ -1,69 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::geteuid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::puts;
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -75,7 +12,6 @@ extern "C" {
 }
 
 use libc::uid_t;
-
 /*
  * Mini whoami implementation for busybox
  *

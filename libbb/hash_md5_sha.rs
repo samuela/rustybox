@@ -1,85 +1,12 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
-
-
-
-
-
 
 pub type bb__aliased_u64 = u64;
 use crate::librb::md5_ctx_t;
@@ -377,32 +304,32 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     let fresh4 = pc;
     pc = pc.offset(1);
     A = (A as libc::c_uint)
-      .wrapping_add((D ^ B & (C ^ D)).wrapping_add(*words).wrapping_add(*fresh4))
-      as u32 as u32;
+      .wrapping_add((D ^ B & (C ^ D)).wrapping_add(*words).wrapping_add(*fresh4)) as u32
+      as u32;
     words = words.offset(1);
     A = rotl32(A, 7i32 as libc::c_uint);
     A = (A as libc::c_uint).wrapping_add(B) as u32 as u32;
     let fresh5 = pc;
     pc = pc.offset(1);
     D = (D as libc::c_uint)
-      .wrapping_add((C ^ A & (B ^ C)).wrapping_add(*words).wrapping_add(*fresh5))
-      as u32 as u32;
+      .wrapping_add((C ^ A & (B ^ C)).wrapping_add(*words).wrapping_add(*fresh5)) as u32
+      as u32;
     words = words.offset(1);
     D = rotl32(D, 12i32 as libc::c_uint);
     D = (D as libc::c_uint).wrapping_add(A) as u32 as u32;
     let fresh6 = pc;
     pc = pc.offset(1);
     C = (C as libc::c_uint)
-      .wrapping_add((B ^ D & (A ^ B)).wrapping_add(*words).wrapping_add(*fresh6))
-      as u32 as u32;
+      .wrapping_add((B ^ D & (A ^ B)).wrapping_add(*words).wrapping_add(*fresh6)) as u32
+      as u32;
     words = words.offset(1);
     C = rotl32(C, 17i32 as libc::c_uint);
     C = (C as libc::c_uint).wrapping_add(D) as u32 as u32;
     let fresh7 = pc;
     pc = pc.offset(1);
     B = (B as libc::c_uint)
-      .wrapping_add((A ^ C & (D ^ A)).wrapping_add(*words).wrapping_add(*fresh7))
-      as u32 as u32;
+      .wrapping_add((A ^ C & (D ^ A)).wrapping_add(*words).wrapping_add(*fresh7)) as u32
+      as u32;
     words = words.offset(1);
     B = rotl32(B, 22i32 as libc::c_uint);
     B = (B as libc::c_uint).wrapping_add(C) as u32 as u32;
@@ -651,8 +578,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
   while i < 16i32 {
     W[(i + 16i32) as usize] = {
       let mut __v: libc::c_uint = 0;
-      let mut __x: libc::c_uint =
-        *((*ctx).wbuffer.as_mut_ptr() as *mut u32).offset(i as isize);
+      let mut __x: libc::c_uint = *((*ctx).wbuffer.as_mut_ptr() as *mut u32).offset(i as isize);
       if 0 != 0 {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -1102,8 +1028,8 @@ pub unsafe extern "C" fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
   let mut tp: *mut u64 = (*ctx).total64.as_mut_ptr();
   i = 0i32;
   while i < 2i32 + 8i32 {
-    *tp.offset(i as isize) = ((init256[i as usize] as u64) << 32i32)
-      .wrapping_add(init512_lo[i as usize] as libc::c_ulong);
+    *tp.offset(i as isize) =
+      ((init256[i as usize] as u64) << 32i32).wrapping_add(init512_lo[i as usize] as libc::c_ulong);
     i += 1
   }
   /*ctx->total64[0] = ctx->total64[1] = 0; - already done */
@@ -1119,8 +1045,7 @@ pub unsafe extern "C" fn sha512_hash(
   /* First increment the byte count.  FIPS 180-2 specifies the possible
   length of the file up to 2^128 _bits_.
   We compute the number of _bytes_ and convert to bits later.  */
-  (*ctx).total64[0] =
-    ((*ctx).total64[0] as libc::c_ulong).wrapping_add(len) as u64 as u64;
+  (*ctx).total64[0] = ((*ctx).total64[0] as libc::c_ulong).wrapping_add(len) as u64 as u64;
   if (*ctx).total64[0] < len {
     (*ctx).total64[1] = (*ctx).total64[1].wrapping_add(1)
   }

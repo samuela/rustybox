@@ -1,77 +1,15 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::symlink;
-
-
-
-
-
-
-
+use libc::free;
 use libc::lstat;
 use libc::printf;
-
 use libc::rename;
-
-
-
-
-
-
-
-
+use libc::stat;
+use libc::symlink;
 use libc::unlink;
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -101,7 +39,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::stat;
 #[no_mangle]
 pub unsafe extern "C" fn ln_main(
   mut argc: libc::c_int,

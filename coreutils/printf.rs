@@ -1,73 +1,11 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-use libc::strchr;
-
-
-use libc::strstr;
-
-
 use libc::free;
+use libc::printf;
 use libc::ptrdiff_t;
-
+use libc::putchar_unlocked;
+use libc::strchr;
+use libc::strstr;
 extern "C" {
   #[no_mangle]
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
@@ -75,10 +13,8 @@ extern "C" {
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
-
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

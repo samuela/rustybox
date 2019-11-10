@@ -1,74 +1,13 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::openlog;
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::openlog;
+use libc::putenv;
+use libc::sleep;
+use libc::strcmp;
+use libc::unlink;
 extern "C" {
 
   #[no_mangle]
@@ -84,8 +23,6 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-
 
   /* client -> server */
   /* client -> server */
@@ -155,7 +92,6 @@ extern "C" {
   fn rand() -> libc::c_int;
   #[no_mangle]
   fn srand(__seed: libc::c_uint);
-
 
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
@@ -248,11 +184,7 @@ extern "C" {
     option_strings: *const libc::c_char,
   ) -> libc::c_uint;
   #[no_mangle]
-  fn dname_dec(
-    cstr: *const u8,
-    clen: libc::c_int,
-    pre: *const libc::c_char,
-  ) -> *mut libc::c_char;
+  fn dname_dec(cstr: *const u8, clen: libc::c_int, pre: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   static mut dhcp_verbose: libc::c_uint;
   #[no_mangle]
@@ -302,8 +234,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-
-
 
 pub type bb__aliased_u32 = u32;
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -372,8 +302,8 @@ pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
 use crate::libbb::llist::llist_t;
+use libc::pollfd;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed_1 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_1 = 2;
@@ -1324,7 +1254,7 @@ unsafe extern "C" fn add_d6_client_options(mut ptr: *mut u8) -> *mut u8 {
     }
     option = option.wrapping_add(1)
   }
-  if ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long != 0   {
+  if ptr.wrapping_offset_from(start) as libc::c_long - 4i32 as libc::c_long != 0 {
     *start.offset(0) = (6i32 >> 8i32) as u8;
     *start.offset(1) = 6i32 as u8;
     *start.offset(2) =

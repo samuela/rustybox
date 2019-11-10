@@ -1,33 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::setutxent;
-
-
 use libc::printf;
 use libc::puts;
-
+use libc::setutxent;
 extern "C" {
 
   #[no_mangle]
@@ -36,7 +10,6 @@ extern "C" {
   fn utmpxname(__file: *const libc::c_char) -> libc::c_int;
 }
 use libc::pid_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

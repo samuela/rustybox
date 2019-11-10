@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
@@ -83,11 +14,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -408,8 +334,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       .wrapping_add(dir_size_sct),
   );
   cluster_count = (cluster_count as libc::c_uint)
-    .wrapping_div((*vs).sectors_per_cluster as libc::c_uint) as u32
-    as u32;
+    .wrapping_div((*vs).sectors_per_cluster as libc::c_uint) as u32 as u32;
   //	if (cluster_count < FAT12_MAX) {
   //		strcpy(id->type_version, "FAT12");
   //	} else if (cluster_count < FAT16_MAX) {
@@ -420,8 +345,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   //	}
   if cluster_count > 0xfff4i32 as libc::c_uint {
     /* FAT32 root dir is a cluster chain like any other directory */
-    buf_size =
-      ((*vs).sectors_per_cluster as libc::c_int * sector_size_bytes as libc::c_int) as u32;
+    buf_size = ((*vs).sectors_per_cluster as libc::c_int * sector_size_bytes as libc::c_int) as u32;
     root_cluster = (*vs).type_0.fat32.root_cluster;
     start_data_sct = (reserved_sct as libc::c_uint).wrapping_add(fat_size_sct);
     next_cluster = root_cluster;
@@ -442,11 +366,8 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         .wrapping_add(next_off_sct)
         .wrapping_mul(sector_size_bytes as libc::c_ulong);
       /* get cluster */
-      buf = volume_id_get_buffer(
-        id,
-        (0i32 as u64).wrapping_add(next_off),
-        buf_size as size_t,
-      ) as *mut u8;
+      buf = volume_id_get_buffer(id, (0i32 as u64).wrapping_add(next_off), buf_size as size_t)
+        as *mut u8;
       if buf.is_null() {
         current_block = 7641562720398393250;
         break;
@@ -488,8 +409,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       _ => {
         // TODO: why was this translated this way?
         // (maxloop) == 0i32;
-        vs =
-          volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+        vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
         if vs.is_null() {
           return -1i32;
         }
@@ -520,8 +440,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       .wrapping_add(fat_size_sct)
       .wrapping_mul(sector_size_bytes as libc::c_uint) as u64;
     buf_size = (dir_entries as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<vfat_dir_entry>() as libc::c_ulong)
-      as u32;
+      .wrapping_mul(::std::mem::size_of::<vfat_dir_entry>() as libc::c_ulong) as u32;
     buf = volume_id_get_buffer(
       id,
       (0i32 as u64).wrapping_add(root_start_off),

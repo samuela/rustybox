@@ -1,40 +1,12 @@
 use libc;
-
-
-
-use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
+use libc::close;
+use libc::fchmod;
+use libc::free;
 use libc::printf;
 use libc::puts;
-
 use libc::strchr;
-
-use libc::close;
-use libc::free;
 use libc::unlink;
-
 extern "C" {
 
   #[no_mangle]
@@ -100,9 +72,8 @@ extern "C" {
   fn bb_daemonize_or_rexec(flags: libc::c_int);
 }
 
-use libc::mode_t;
-
 use crate::librb::size_t;
+use libc::mode_t;
 use libc::off_t;
 use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;

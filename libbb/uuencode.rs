@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -75,7 +9,6 @@ extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -83,7 +16,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;

@@ -3,90 +3,28 @@ use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getopt;
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-use libc::lstat;
-use libc::printf;
-use libc::puts;
-
-
-use libc::sprintf;
-
-
-
-
-
-use libc::open;
-
 use libc::close;
 use libc::free;
+use libc::getopt;
+use libc::lstat;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
+use libc::open;
+use libc::printf;
+use libc::puts;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strcpy;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
 
-
   #[no_mangle]
   static mut stdin: *mut FILE;
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -94,7 +32,6 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;

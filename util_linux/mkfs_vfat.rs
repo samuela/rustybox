@@ -2,39 +2,14 @@ use super::mkfs_ext2::BUG_wrong_field_size;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fprintf;
+use libc::ioctl;
 use libc::off_t;
 use libc::stat;
 use libc::strcpy;
 use libc::time;
 use libc::time_t;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -50,8 +25,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

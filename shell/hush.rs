@@ -1,97 +1,44 @@
 use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
-use libc::sigset_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
 use libc;
-use libc::putenv;
-use libc::umask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
+use libc::access;
 use libc::chdir;
-
-
-
-
-
+use libc::clock_t;
+use libc::close;
+use libc::fclose;
+use libc::free;
 use libc::getenv;
-
 use libc::getopt;
 use libc::getpid;
 use libc::isatty;
 use libc::kill;
-
-use libc::sigaddset;
-
-use libc::sigprocmask;
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-use libc::access;
-
-use libc::fclose;
-
-
+use libc::mode_t;
+use libc::open;
+use libc::pid_t;
 use libc::printf;
+use libc::putchar_unlocked;
+use libc::putenv;
 use libc::puts;
-
-
+use libc::sigaddset;
+use libc::sigprocmask;
+use libc::sigset_t;
 use libc::sprintf;
+use libc::sscanf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
-
-
-
-use libc::open;
-
-use libc::close;
-use libc::free;
-use libc::clock_t;
-
-use libc::mode_t;
-
-use libc::pid_t;
-use libc::stat;
+use libc::strcpy;
 use libc::timeval;
+use libc::umask;
 use libc::FILE;
-
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn glob(
@@ -112,7 +59,6 @@ extern "C" {
   fn times(__buffer: *mut tms) -> clock_t;
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-
 
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
@@ -155,7 +101,6 @@ extern "C" {
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
-
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -173,7 +118,6 @@ extern "C" {
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
 
-
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -182,7 +126,6 @@ extern "C" {
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
@@ -465,7 +408,6 @@ pub struct glob_t {
   pub gl_stat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
 }
 use libc::dirent;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tms {
@@ -2196,8 +2138,7 @@ unsafe extern "C" fn set_local_var(
   if 1i32 != 0 && eq_sign.is_null() {
     bb_simple_error_msg_and_die(b"BUG in setvar\x00" as *const u8 as *const libc::c_char);
   }
-  name_len =
-    (eq_sign.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_int;
+  name_len = (eq_sign.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_int;
   cur_pp = &mut (*ptr_to_globals).top_var;
   loop {
     cur = *cur_pp;
@@ -8578,9 +8519,7 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
       /* If we are in "big" script
        * (not in `cmd` or something similar)...
        */
-      if pipe_list == 1 as *mut libc::c_void as *mut pipe
-        && end_trigger == ';' as i32
-      {
+      if pipe_list == 1 as *mut libc::c_void as *mut pipe && end_trigger == ';' as i32 {
         /* Discard cached input (rest of line) */
         let mut ch: libc::c_int = (*inp).last_char;
         while ch != -1i32 && ch != '\n' as i32 {
@@ -9127,9 +9066,7 @@ unsafe extern "C" fn setup_redirects(
               /* if newfd is a script fd or saved fd, simulate EBADF */
               if internally_opened_fd(
                 newfd,
-                if !sqp.is_null()
-                  && sqp != 1 as *mut libc::c_void as *mut *mut squirrel
-                {
+                if !sqp.is_null() && sqp != 1 as *mut libc::c_void as *mut *mut squirrel {
                   *sqp
                 } else {
                   0 as *mut squirrel

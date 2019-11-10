@@ -1,46 +1,17 @@
 use libc;
-
-
-
-
-
-
-
-use libc::setsid;
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-use libc::open;
-
 use libc::close;
-
+use libc::ioctl;
+use libc::open;
 use libc::pid_t;
 use libc::ptrdiff_t;
-
+use libc::setsid;
+use libc::sprintf;
 extern "C" {
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

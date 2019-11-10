@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -100,10 +33,7 @@ extern "C" {
 
 }
 
-
 use crate::librb::size_t;
-
-
 pub type uint64 = u64;
 pub type uint32 = u32;
 pub type int32 = i32;

@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -77,7 +10,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -114,7 +46,7 @@ pub unsafe extern "C" fn is_suffixed_with(
 ) -> *mut libc::c_char {
   let mut key_len: size_t = strlen(key);
   let mut len_diff: ssize_t = strlen(string).wrapping_sub(key_len) as ssize_t;
-  if len_diff >=0{
+  if len_diff >= 0 {
     string = string.offset(len_diff as isize);
     if strcmp(string, key) == 0i32 {
       return string as *mut libc::c_char;

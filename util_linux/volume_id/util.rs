@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::sprintf;
 extern "C" {
-
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -86,12 +19,9 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
-use libc::off64_t;
-
 use crate::librb::size_t;
+use libc::off64_t;
 use libc::ssize_t;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -176,8 +106,7 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
         /* 1110yyyy 10yyyyxx 10xxxxxx */
         let fresh0 = j;
         j = j.wrapping_add(1);
-        *str.offset(fresh0 as isize) =
-          (0xe0i32 as libc::c_uint | c >> 12i32) as u8 as libc::c_char;
+        *str.offset(fresh0 as isize) = (0xe0i32 as libc::c_uint | c >> 12i32) as u8 as libc::c_char;
         topbits = 0x80i32 as u8
       }
       /* 110yyyxx 10xxxxxx */

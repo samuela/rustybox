@@ -1,32 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::passwd;
 use libc::strchr;
-
 extern "C" {
 
   #[no_mangle]

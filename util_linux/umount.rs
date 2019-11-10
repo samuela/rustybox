@@ -1,34 +1,12 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-use libc::mount;
-
-
-
-
-
-
 use libc::endmntent;
-use libc::setmntent;
-use libc::umount2;
-
-
-
-
-
 use libc::free;
+use libc::mount;
+use libc::setmntent;
 use libc::strcmp;
+use libc::umount2;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

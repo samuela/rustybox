@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
-
-
-
-
-
-
-
-
 use libc::timespec;
 extern "C" {
   #[no_mangle]
@@ -85,7 +18,6 @@ extern "C" {
 }
 use crate::librb::__syscall_slong_t;
 use libc::time_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

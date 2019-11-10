@@ -1,45 +1,14 @@
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-use libc::getenv;
-
-use libc::sleep;
-
-use libc::strcpy;
-
 use libc::atoi;
-
-use libc::printf;
-
-use libc::strchr;
-
-use libc::strrchr;
-
 use libc::free;
+use libc::getenv;
+use libc::getuid;
+use libc::printf;
+use libc::sleep;
+use libc::strchr;
+use libc::strcpy;
+use libc::strrchr;
 extern "C" {
 
   #[no_mangle]
@@ -113,7 +82,6 @@ extern "C" {
 use crate::librb::size_t;
 use libc::pid_t;
 use libc::uid_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct hostent {
@@ -125,7 +93,6 @@ pub struct hostent {
 }
 
 use crate::libbb::llist::llist_t;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

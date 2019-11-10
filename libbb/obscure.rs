@@ -1,75 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
+use libc::printf;
+use libc::strchr;
 extern "C" {
-
-
 
   #[no_mangle]
   fn strcasestr(
@@ -86,9 +19,8 @@ extern "C" {
   fn nuke_str(str: *mut libc::c_char);
 }
 
-use libc::passwd;
 use crate::librb::size_t;
-
+use libc::passwd;
 /*
  * Mini weak password checker implementation for busybox
  *

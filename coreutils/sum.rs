@@ -1,76 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::printf;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
@@ -86,7 +19,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 
@@ -143,7 +75,7 @@ unsafe extern "C" fn sum_file(
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
     ) as size_t;
-    if bytes_read as ssize_t <=0{
+    if bytes_read as ssize_t <= 0 {
       r = (fd != 0 && close(fd) != 0i32) as libc::c_int;
       if bytes_read == 0 && r == 0 {
         break;

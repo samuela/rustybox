@@ -1,76 +1,15 @@
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::atoi;
 use libc::fclose;
-
-
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
 use libc::free;
+use libc::getpid;
 use libc::pid_t;
 use libc::ptrdiff_t;
+use libc::strchr;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

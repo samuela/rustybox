@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strchr;
-
-
-
-
-
-
-
-
 extern "C" {
 
   /* Search for an entry with a matching user ID.  */
@@ -106,10 +39,10 @@ extern "C" {
 }
 
 use crate::librb::bb_uidgid_t;
+use crate::librb::size_t;
 use libc::gid_t;
 use libc::group;
 use libc::passwd;
-use crate::librb::size_t;
 use libc::uid_t;
 /*
 Copyright (c) 2001-2006, Gerrit Pape

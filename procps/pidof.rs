@@ -1,75 +1,8 @@
 use crate::libbb::llist::llist_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 use libc::pid_t;
-
+use libc::printf;
 extern "C" {
 
   #[no_mangle]

@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -80,8 +13,8 @@ extern "C" {
 
 }
 
-use libc::off_t;
 use crate::librb::size_t;
+use libc::off_t;
 /*
  * Reads and displays CD-ROM volume name
  *

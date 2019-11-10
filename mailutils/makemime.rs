@@ -1,69 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn rand() -> libc::c_int;
@@ -96,11 +33,9 @@ extern "C" {
   fn printfile_base64(fname: *const libc::c_char);
 }
 
+use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use libc::pid_t;
-
-use crate::libbb::llist::llist_t;
-
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

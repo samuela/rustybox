@@ -1,62 +1,33 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-use libc::mount;
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-use libc::umount2;
-
-
-
-
-
-
-use libc::getenv;
-
-use libc::getpid;
-
-use libc::kill;
-
-use libc::time;
-
 use libc::close;
+use libc::closedir;
 use libc::fclose;
 use libc::fprintf;
-
+use libc::getenv;
+use libc::getpid;
+use libc::kill;
+use libc::mount;
+use libc::off_t;
 use libc::open;
-
+use libc::opendir;
+use libc::pid_t;
+use libc::putenv;
+use libc::readdir;
 use libc::rmdir;
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
-
 use libc::strstr;
 use libc::system;
-use libc::unlink;
-
-use libc::off_t;
-use libc::pid_t;
-use libc::ssize_t;
+use libc::time;
 use libc::time_t;
+use libc::umount2;
+use libc::unlink;
 use libc::useconds_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -188,14 +159,11 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 
-
 }
 
 use libc::dirent;
-use libc::DIR;
-
 use libc::tm;
-
+use libc::DIR;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;

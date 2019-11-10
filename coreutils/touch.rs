@@ -1,72 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::open;
-
-
-
+use libc::time;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -101,13 +35,10 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use libc::suseconds_t;
-
-use libc::time_t;
-
-use libc::timeval;
-
 use libc::stat;
+use libc::suseconds_t;
+use libc::time_t;
+use libc::timeval;
 use libc::tm;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_h: C2RustUnnamed = 16;

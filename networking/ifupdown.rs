@@ -1,100 +1,23 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::close;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::fclose;
 use libc::fprintf;
-
+use libc::free;
+use libc::getenv;
+use libc::open;
 use libc::printf;
 use libc::puts;
-
-
+use libc::readdir;
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
-
-
-
-use libc::open;
-
-use libc::close;
-use libc::free;
-
 extern "C" {
-
 
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -114,14 +37,8 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-
-
-
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
@@ -289,26 +206,20 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-
-
-
-
 use crate::librb::size_t;
 use libc::pid_t;
 use libc::useconds_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
   pub s_addr: in_addr_t,
 }
 pub type in_addr_t = u32;
+use crate::libbb::llist::llist_t;
+use crate::librb::fd_pair;
 use crate::librb::smallint;
 use libc::dirent;
 use libc::DIR;
-
-use crate::libbb::llist::llist_t;
-use crate::librb::fd_pair;
 use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]

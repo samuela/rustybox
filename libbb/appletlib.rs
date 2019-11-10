@@ -6,42 +6,16 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::smallint;
 use crate::shell::ash::ash_main;
 use libc;
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
 use libc::group;
-
-
 use libc::mode_t;
-
-
 use libc::passwd;
-
-
-
-
-
-
-
 use libc::ssize_t;
-
 use libc::strcasecmp;
-
-
 use libc::uid_t;
-
-
 use std::ffi::CStr;
 use std::ffi::CString;
 use std::path::Path;
-
 extern "C" {
   #[no_mangle]
   fn setresuid(__ruid: uid_t, __euid: uid_t, __suid: uid_t) -> libc::c_int;

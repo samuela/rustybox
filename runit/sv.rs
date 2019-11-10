@@ -1,76 +1,14 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chdir;
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-use libc::open;
-
 use libc::close;
-
+use libc::getenv;
+use libc::open;
+use libc::printf;
+use libc::strcmp;
+use libc::time;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -92,7 +30,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   /* Some useful definitions */
   /* Macros for min/max.  */
@@ -131,20 +68,13 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
-
-use libc::useconds_t;
-
-use libc::pid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::pid_t;
 use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
-
-
-
-
+use libc::useconds_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
@@ -1000,8 +930,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       }
       usleep(420000i32 as useconds_t);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow =
-        (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64)
-          as u64
+        (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64
     }
   }
   return if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rc > 99i32 as libc::c_uint {

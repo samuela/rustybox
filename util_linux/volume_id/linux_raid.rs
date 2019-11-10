@@ -1,73 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
@@ -80,10 +11,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -212,11 +139,8 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
     return -1i32;
   }
   sboff = (size & !(0x10000i32 - 1i32) as libc::c_ulong).wrapping_sub(0x10000i32 as libc::c_ulong);
-  mdp = volume_id_get_buffer(
-    id,
-    (0i32 as u64).wrapping_add(sboff),
-    0x800i32 as size_t,
-  ) as *mut mdp_super_block;
+  mdp = volume_id_get_buffer(id, (0i32 as u64).wrapping_add(sboff), 0x800i32 as size_t)
+    as *mut mdp_super_block;
   if mdp.is_null() {
     return -1i32;
   }

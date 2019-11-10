@@ -1,72 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   pub type tls_handshake_data;
   #[no_mangle]
@@ -84,10 +16,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tls_aes {

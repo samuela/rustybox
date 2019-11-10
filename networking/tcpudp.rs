@@ -1,78 +1,13 @@
 use crate::librb::size_t;
-use libc::ssize_t;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::getpid;
 use libc::gid_t;
 use libc::pid_t;
+use libc::putenv;
+use libc::ssize_t;
 use libc::uid_t;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -84,8 +19,6 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-
-
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
@@ -240,7 +173,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
-
 use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;

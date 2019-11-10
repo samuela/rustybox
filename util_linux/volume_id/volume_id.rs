@@ -1,74 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::free;
 extern "C" {
-
 
   /* Probe routines */
   /* RAID */
@@ -165,8 +98,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct volume_id {
@@ -210,12 +141,10 @@ pub type probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id) -> libc::c_
  * was not properly added to probe table anyway - ??! */
 /* None of RAIDs have label or uuid, except LinuxRAID: */
 /* These filesystems also have no label or uuid: */
-pub type raid_probe_fptr =
-  Option<unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int>;
+pub type raid_probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int>;
 static mut raid1: [raid_probe_fptr; 1] = {
   [Some(
-    volume_id_probe_linux_raid
-      as unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int,
+    volume_id_probe_linux_raid as unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int,
   )]
 };
 static mut raid2: [probe_fptr; 1] = {
@@ -258,10 +187,7 @@ static mut fs2: [probe_fptr; 17] = {
   ]
 };
 #[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_all(
-  mut id: *mut volume_id,
-  mut size: u64,
-) -> libc::c_int {
+pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u64) -> libc::c_int {
   let mut current_block: u64;
   let mut i: libc::c_uint = 0;
   /* probe for raid first, cause fs probes may be successful on raid members */

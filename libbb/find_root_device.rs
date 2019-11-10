@@ -1,81 +1,13 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
 use libc::lstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::opendir;
+use libc::readdir;
+use libc::strcpy;
 extern "C" {
-
-
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
@@ -87,16 +19,10 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
 use crate::librb::size_t;
 use libc::dirent;
-use libc::DIR;
-
 use libc::stat;
-
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct arena {

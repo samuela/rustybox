@@ -1,76 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::getenv;
+use libc::puts;
+use libc::stat;
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
@@ -79,10 +12,6 @@ extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
-
-
-
-use libc::stat;
 
 /*
  * Mini pwd implementation for busybox

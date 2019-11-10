@@ -1,69 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
 use libc::strchr;
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -106,9 +44,7 @@ extern "C" {
 }
 
 use libc::mode_t;
-
 use libc::stat;
-
 /*
  * Mini chmod implementation for busybox
  *

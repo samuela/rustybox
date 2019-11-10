@@ -1,83 +1,18 @@
 use crate::librb::size_t;
 use libc;
-use libc::putenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getuid;
-
-
-
-
-
-
-
-
-
-
-use libc::geteuid;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
 use libc::fclose;
-
-
-
-use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::geteuid;
+use libc::getuid;
+use libc::putenv;
+use libc::puts;
+use libc::time;
 use libc::time_t;
-
 use libc::FILE;
-
 extern "C" {
-
 
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
-
 
   #[no_mangle]
   static mut stdout: *mut FILE;

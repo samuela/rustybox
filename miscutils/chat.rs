@@ -3,79 +3,16 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sleep;
-
-
-
-
-
-
-
-
 use libc::atoi;
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
 use libc::close;
 use libc::free;
 use libc::pollfd;
+use libc::sleep;
 use libc::ssize_t;
+use libc::strcmp;
 use libc::useconds_t;
-
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -83,8 +20,6 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;

@@ -1,75 +1,10 @@
+use crate::librb::bb_uidgid_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::chown;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-
-
-
-
-
 use libc::gid_t;
+use libc::printf;
 use libc::stat;
 use libc::uid_t;
-
-use crate::librb::bb_uidgid_t;
-
 extern "C" {
 
   #[no_mangle]

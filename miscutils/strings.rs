@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -102,10 +35,8 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use libc::off_t;
 use crate::librb::size_t;
-
-
+use libc::off_t;
 use libc::FILE;
 #[no_mangle]
 pub unsafe extern "C" fn strings_main(

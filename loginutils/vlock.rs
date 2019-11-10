@@ -1,33 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getuid;
-
-
-
-
+use libc::ioctl;
 use libc::printf;
 use libc::puts;
-
 extern "C" {
 
   #[no_mangle]
@@ -71,10 +46,9 @@ extern "C" {
 }
 
 use crate::librb::signal::__sighandler_t;
-use libc::uid_t;
-
 use libc::passwd;
 use libc::termios;
+use libc::uid_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct vt_mode {

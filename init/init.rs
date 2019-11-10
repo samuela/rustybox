@@ -1,68 +1,35 @@
 use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::putenv;
-
-
-
-
-
-use libc::sync;
-use libc::setsid;
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::closelog;
-use libc::dup2;
-
-use libc::getenv;
-
-use libc::getpid;
-
-use libc::kill;
-use libc::openlog;
-
-use libc::sleep;
-
-use libc::strcpy;
-
-use libc::syslog;
-
-use libc::open;
-
-use libc::sprintf;
-
-use libc::strcmp;
-
-use crate::librb::signal::sigaction;
 use libc::cc_t;
 use libc::close;
+use libc::closelog;
+use libc::dup2;
 use libc::free;
+use libc::getenv;
+use libc::getpid;
+use libc::ioctl;
+use libc::kill;
+use libc::open;
+use libc::openlog;
 use libc::pid_t;
+use libc::putenv;
+use libc::setsid;
 use libc::sigset_t;
 use libc::sigval;
+use libc::sleep;
+use libc::sprintf;
 use libc::ssize_t;
+use libc::strcmp;
+use libc::strcpy;
+use libc::sync;
+use libc::syslog;
 use libc::tcflag_t;
 use libc::termios;
 use libc::uid_t;
 use libc::FILE;
-
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;

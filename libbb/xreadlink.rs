@@ -1,72 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strrchr;
-
-
-
-
-
 use libc::free;
+use libc::strcpy;
+use libc::strrchr;
 extern "C" {
 
   #[no_mangle]

@@ -1,74 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::lstat;
-
-
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
+use libc::lstat;
+use libc::strchr;
 extern "C" {
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -127,15 +61,9 @@ extern "C" {
   static e2attr_flags_sname: [libc::c_char; 0];
 }
 
-
-
-
-
 use crate::librb::smallint;
-
 use libc::dirent;
 use libc::stat;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

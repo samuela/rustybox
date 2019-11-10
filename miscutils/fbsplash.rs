@@ -1,79 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
 use libc::atoi;
-use libc::fclose;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
 use libc::close;
+use libc::fclose;
 use libc::free;
+use libc::open;
+use libc::sscanf;
 extern "C" {
-
-
 
   #[no_mangle]
   static mut stdin: *mut FILE;
-
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -152,13 +87,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off64_t;
-
 use crate::librb::size_t;
+use libc::off64_t;
 use libc::ssize_t;
-
-
-
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;

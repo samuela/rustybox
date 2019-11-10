@@ -3,79 +3,23 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-use libc::openlog;
-
-
-
-
-
-use libc::strcasecmp;
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-use libc::strstr;
-
-use libc::open;
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::fstat;
 use libc::off_t;
+use libc::open;
+use libc::openlog;
 use libc::ptrdiff_t;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
-
+use libc::strcasecmp;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
+use libc::strrchr;
+use libc::strstr;
+use libc::unlink;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -87,7 +31,6 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -110,14 +53,8 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-
-
-
-
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -246,7 +183,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
-
 use libc::sockaddr;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -302,9 +238,9 @@ pub struct in_addr {
 }
 pub type in_addr_t = u32;
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
-use libc::passwd;
 use crate::librb::uoff_t;
+use libc::passwd;
+use libc::pollfd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {

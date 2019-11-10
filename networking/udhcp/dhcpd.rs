@@ -1,77 +1,13 @@
+use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::openlog;
-
-
-
-
-
-use libc::strcasecmp;
-
-
-
-
-use libc::time;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::unlink;
 use libc::close;
 use libc::free;
-
-use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
-
+use libc::openlog;
+use libc::strcasecmp;
+use libc::time;
+use libc::unlink;
 extern "C" {
   //extern const int const_int_1;
   /* This struct is deliberately not defined. */
@@ -80,10 +16,8 @@ extern "C" {
   #[no_mangle]
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;
 
-
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -355,16 +289,12 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-
 pub type __socklen_t = libc::c_uint;
 
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc::time_t;
 pub type int64_t = __int64_t;
-
-
-
 
 #[derive(Copy, Clone)]
 #[repr(C, packed)]
@@ -462,7 +392,6 @@ pub type bb__aliased_u32 = u32;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 use crate::librb::smallint;
-
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
@@ -1142,8 +1071,7 @@ unsafe extern "C" fn read_staticlease(
     b" \t\x00" as *const u8 as *const libc::c_char,
     &mut line,
   );
-  if ip_string.is_null()
-    || udhcp_str2nip(ip_string, &mut nip as *mut u32 as *mut libc::c_void) == 0
+  if ip_string.is_null() || udhcp_str2nip(ip_string, &mut nip as *mut u32 as *mut libc::c_void) == 0
   {
     return 0i32;
   }
@@ -1919,8 +1847,7 @@ unsafe extern "C" fn add_server_options(mut packet: *mut dhcp_packet) {
     strncpy(
       (*packet).file.as_mut_ptr() as *mut libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).boot_file,
-      (::std::mem::size_of::<[u8; 128]>() as libc::c_ulong)
-        .wrapping_sub(1i32 as libc::c_ulong),
+      (::std::mem::size_of::<[u8; 128]>() as libc::c_ulong).wrapping_sub(1i32 as libc::c_ulong),
     );
   };
 }

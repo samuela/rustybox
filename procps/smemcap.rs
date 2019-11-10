@@ -1,83 +1,15 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-use libc::open;
-
 use libc::close;
 use libc::free;
+use libc::fstat;
+use libc::open;
+use libc::readdir;
+use libc::sprintf;
+use libc::strcpy;
 extern "C" {
-
-
-
-
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
@@ -93,18 +25,13 @@ extern "C" {
   fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
 }
 
-
-use libc::mode_t;
-
-
-use libc::off_t;
-
 use crate::librb::size_t;
-use libc::ssize_t;
 use libc::dirent;
-use libc::DIR;
-
+use libc::mode_t;
+use libc::off_t;
+use libc::ssize_t;
 use libc::stat;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct tar_header_t {

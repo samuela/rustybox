@@ -1,70 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getopt;
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
-
-
 use libc::fclose;
-
 use libc::free;
-
-
-
-
-
-
+use libc::getopt;
+use libc::putchar_unlocked;
+use libc::sscanf;
 use libc::strchr;
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -78,10 +18,6 @@ extern "C" {
 
   #[no_mangle]
   static mut stdin: *mut FILE;
-
-
-
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
@@ -134,9 +70,7 @@ extern "C" {
 
 use crate::librb::smallint;
 use libc::off_t;
-
 use libc::FILE;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

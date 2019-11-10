@@ -1,74 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -112,7 +45,6 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {

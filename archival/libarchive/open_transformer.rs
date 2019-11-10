@@ -3,79 +3,12 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::open;
-
 use libc::close;
 use libc::free;
 use libc::off_t;
+use libc::open;
 use libc::pid_t;
 use libc::ssize_t;
-
-
 extern "C" {
 
   #[no_mangle]
@@ -148,8 +81,6 @@ extern "C" {
 pub type bb__aliased_u32 = u32;
 
 use crate::archival::libarchive::bb_archive::transformer_state_t;
-
-
 pub const XZ_MAGIC2: C2RustUnnamed_0 = 5920890;
 pub const XZ_MAGIC1: C2RustUnnamed_0 = 14333;
 pub const BZIP2_MAGIC: C2RustUnnamed_0 = 23106;

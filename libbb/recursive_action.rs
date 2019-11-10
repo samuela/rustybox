@@ -1,79 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::lstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
+use libc::lstat;
+use libc::opendir;
+use libc::readdir;
 extern "C" {
-
-
-
-
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -86,14 +17,9 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-
-
-
-
 use libc::dirent;
-use libc::DIR;
 use libc::stat;
-
+use libc::DIR;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

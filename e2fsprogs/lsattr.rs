@@ -1,79 +1,13 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::free;
 use libc::lstat;
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::free;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
@@ -127,18 +61,9 @@ extern "C" {
   fn print_e2flags(f: *mut FILE, flags: libc::c_ulong, options: libc::c_uint);
 }
 
-
-
-
-
-
-
 use libc::dirent;
 use libc::stat;
-
-
 use libc::FILE;
-
 /*
  * lsattr.c		- List file attributes on an ext2 file system
  *

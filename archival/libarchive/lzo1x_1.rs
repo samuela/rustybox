@@ -1,74 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 pub type uintptr_t = libc::c_ulong;
 
 /* implementation of the LZO1[XY]-1 compression algorithm
@@ -257,8 +187,7 @@ unsafe extern "C" fn do_compress(
                   let fresh15 = op;
                   op = op.offset(1);
                   *fresh15 = (m_len.wrapping_sub(1i32 as libc::c_uint) << 5i32
-                    | (m_off & 7i32 as libc::c_uint) << 2i32)
-                    as u8;
+                    | (m_off & 7i32 as libc::c_uint) << 2i32) as u8;
                   let fresh16 = op;
                   op = op.offset(1);
                   *fresh16 = (m_off >> 3i32) as u8;
@@ -319,9 +248,8 @@ unsafe extern "C" fn do_compress(
                     m_len = m_len.wrapping_sub(9i32 as libc::c_uint);
                     let fresh22 = op;
                     op = op.offset(1);
-                    *fresh22 = (16i32 as libc::c_uint
-                      | (m_off & 0x4000i32 as libc::c_uint) >> 11i32)
-                      as u8;
+                    *fresh22 =
+                      (16i32 as libc::c_uint | (m_off & 0x4000i32 as libc::c_uint) >> 11i32) as u8;
                     current_block_67 = 9936362640277870553;
                   }
                 }

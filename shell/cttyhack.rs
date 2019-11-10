@@ -1,44 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::dup2;
-
-use libc::strcpy;
-
-use libc::open;
-
-use libc::puts;
-
-use libc::sprintf;
-
-use libc::strrchr;
-
 use libc::close;
-
+use libc::dup2;
+use libc::ioctl;
+use libc::open;
+use libc::puts;
+use libc::sprintf;
+use libc::strcpy;
+use libc::strrchr;
 extern "C" {
 
   #[no_mangle]
@@ -57,7 +25,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>
  *

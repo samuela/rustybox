@@ -3,36 +3,11 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::ssize_t;
 use libc::time;
 use libc::time_t;
-
 extern "C" {
 
   #[no_mangle]

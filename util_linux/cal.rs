@@ -1,78 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-use libc::time;
-
-
-
-
-
+use libc::free;
 use libc::printf;
 use libc::puts;
-
-
 use libc::sprintf;
-
-
-
-
-
-
-
-
-use libc::free;
+use libc::strcpy;
+use libc::time;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -113,7 +49,6 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::time_t;
-
 use libc::tm;
 /* used in day array */
 static mut days_in_month: [libc::c_uchar; 13] = [

@@ -1,46 +1,21 @@
 use crate::librb::size_t;
 use libc;
-
-
-
-
-
 use libc::free;
-
-
-
-
 use libc::gid_t;
 use libc::group;
-
 use libc::lstat;
-
 use libc::mode_t;
-
-
 use libc::passwd;
-
 use libc::printf;
-
-
 use libc::puts;
-
-
-
-
 use libc::sprintf;
 use libc::stat;
 use libc::statfs;
 use libc::strchr;
-
-
 use libc::time_t;
 use libc::tm;
 use libc::uid_t;
-
-
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]

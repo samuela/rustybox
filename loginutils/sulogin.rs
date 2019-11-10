@@ -1,71 +1,7 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-use libc::openlog;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
-
+use libc::getenv;
+use libc::openlog;
 extern "C" {
 
   #[no_mangle]
@@ -108,7 +44,6 @@ extern "C" {
 use crate::librb::smallint;
 use libc::passwd;
 use libc::uid_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

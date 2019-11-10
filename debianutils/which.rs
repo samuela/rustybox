@@ -1,81 +1,15 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-use libc::puts;
-
-
-
-use libc::strchr;
-
-
-
-
-
-
-
 use libc::free;
+use libc::getenv;
+use libc::puts;
+use libc::strchr;
+use libc::strcpy;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
-
-
 
   #[no_mangle]
   fn file_is_executable(name: *const libc::c_char) -> libc::c_int;
@@ -89,8 +23,6 @@ extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
-
-
 
 /*
  * Copyright (C) 1999-2004 by Erik Andersen <andersen@codepoet.org>

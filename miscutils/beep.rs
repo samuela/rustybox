@@ -1,79 +1,12 @@
 use libc;
-
-
-
-
-
-
-
-
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::getopt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::ioctl;
 extern "C" {
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
 
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-
 
   #[no_mangle]
   fn get_console_fd_or_die() -> libc::c_int;

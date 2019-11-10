@@ -1,75 +1,12 @@
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::pid_t;
 use libc::sigaddset;
 use libc::sigemptyset;
 use libc::sigprocmask;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::pid_t;
 use libc::sigset_t;
 use libc::sigval;
 use libc::uid_t;
-
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
@@ -80,7 +17,6 @@ extern "C" {
 
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
-
 
   #[no_mangle]
   fn sigsuspend(__set: *const sigset_t) -> libc::c_int;
@@ -165,7 +101,6 @@ pub struct C2RustUnnamed_8 {
 }
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
-
 /*
  * Utility routines.
  *

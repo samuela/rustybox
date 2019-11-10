@@ -1,72 +1,9 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::atoi;
-
-
-
 use libc::printf;
 use libc::puts;
-
-
 use libc::sprintf;
 use libc::strchr;
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
@@ -77,8 +14,6 @@ extern "C" {
     __modes: *const libc::c_char,
     __stream: *mut FILE,
   ) -> *mut FILE;
-
-
 
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
@@ -120,14 +55,11 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use libc::off64_t;
-
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::off64_t;
+use libc::off_t;
 use libc::stat;
-
-
 use libc::FILE;
 /* no conversions */
 pub type dump_vflag_t = libc::c_uint;
@@ -685,8 +617,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
          * copy to PR format string, set conversion character
          * pointer, update original.
          */
-        len =
-          (p1.wrapping_offset_from(fmtp) as libc::c_long + 1) as libc::c_uint;
+        len = (p1.wrapping_offset_from(fmtp) as libc::c_long + 1) as libc::c_uint;
         (*pr).fmt = xstrndup(fmtp, len as libc::c_int);
         /* DBU:[dave@cray.com] w/o this, trailing fmt text, space is lost.
          * Skip subsequent text and up to the next % sign and tack the
@@ -697,13 +628,11 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         while *p3 as libc::c_int != 0 && *p3 as libc::c_int != '%' as i32 {
           p3 = p3.offset(1)
         }
-        if p3.wrapping_offset_from(p2) as libc::c_long !=0{
+        if p3.wrapping_offset_from(p2) as libc::c_long != 0 {
           let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
           d = xrealloc(
             (*pr).fmt as *mut libc::c_void,
-            (len as libc::c_long
-              + p3.wrapping_offset_from(p2) as libc::c_long
-              + 1) as size_t,
+            (len as libc::c_long + p3.wrapping_offset_from(p2) as libc::c_long + 1) as size_t,
           ) as *mut libc::c_char;
           (*pr).fmt = d;
           d = d.offset(len as isize);
@@ -841,7 +770,7 @@ unsafe extern "C" fn next(mut dumper: *mut priv_dumper_t) -> libc::c_int {
         },
       );
     }
-    if (*dumper).pub_0.dump_skip ==0{
+    if (*dumper).pub_0.dump_skip == 0 {
       return 1i32;
     }
   }

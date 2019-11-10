@@ -4,74 +4,13 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-use libc::setsid;
-use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-use libc::openlog;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::close;
 use libc::free;
+use libc::getpid;
+use libc::ioctl;
+use libc::openlog;
 use libc::pid_t;
+use libc::setsid;
 use libc::ssize_t;
 use libc::suseconds_t;
 use libc::termios;
@@ -79,7 +18,6 @@ use libc::time_t;
 use libc::timeval;
 use libc::useconds_t;
 use libc::winsize;
-
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -189,7 +127,6 @@ extern "C" {
   fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
-
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -394,7 +331,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-
+      
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

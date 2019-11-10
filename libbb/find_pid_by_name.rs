@@ -1,74 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcmp;
-
-
-
-
-
-
-
 extern "C" {
-
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
@@ -88,10 +20,8 @@ extern "C" {
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 }
 
-use libc::pid_t;
 use crate::librb::size_t;
-
-
+use libc::pid_t;
 use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]

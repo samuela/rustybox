@@ -1,78 +1,11 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcasecmp;
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::strcasecmp;
 extern "C" {
   #[no_mangle]
   fn __libc_current_sigrtmin() -> libc::c_int;
   #[no_mangle]
   fn __libc_current_sigrtmax() -> libc::c_int;
-
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;

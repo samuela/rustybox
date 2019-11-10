@@ -1,79 +1,14 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
-
-
+use libc::free;
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-use libc::free;
+use libc::time;
 extern "C" {
 
   #[no_mangle]
   static mut stdout: *mut FILE;
-
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
@@ -107,13 +42,10 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-
 pub type int64_t = __int64_t;
 use crate::librb::size_t;
 use libc::ssize_t;
 use libc::time_t;
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct in_addr {
@@ -197,7 +129,7 @@ pub unsafe extern "C" fn dumpleases_main(
   fd = xopen(file, 0i32);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
-
+  
   printf(
     b"Mac %-14sIP %-13sHost %-15sExpires %s\n\x00" as *const u8 as *const libc::c_char,
     b"Address\x00" as *const u8 as *const libc::c_char,

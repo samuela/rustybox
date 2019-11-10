@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn ubi_get_volid_by_name(ubi_devnum: libc::c_uint, vol_name: *const libc::c_char) -> libc::c_int;
@@ -93,8 +26,6 @@ extern "C" {
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
 }
-
-
 
 use crate::librb::size_t;
 /* ubirename - port of the ubirename from the mtd-utils package

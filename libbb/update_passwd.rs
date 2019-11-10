@@ -1,83 +1,26 @@
-
-use libc::off64_t;
-use libc::pid_t;
-use libc::useconds_t;
 use crate::librb::size_t;
 use libc;
-
-
-
 use libc::fchmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
 use libc::fclose;
 use libc::fprintf;
-
-
-
+use libc::free;
+use libc::fstat;
+use libc::gid_t;
+use libc::off64_t;
+use libc::open;
+use libc::pid_t;
 use libc::rename;
-
-
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
-
-use libc::open;
-use libc::unlink;
-
-use libc::free;
-use libc::gid_t;
-use libc::stat;
+use libc::time;
 use libc::time_t;
 use libc::uid_t;
+use libc::unlink;
+use libc::useconds_t;
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -87,8 +30,6 @@ extern "C" {
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
@@ -104,8 +45,6 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
@@ -113,8 +52,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

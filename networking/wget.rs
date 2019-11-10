@@ -1,74 +1,19 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
 use libc::alarm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::atoi;
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
-
-
-
-
-
+use libc::free;
+use libc::getenv;
+use libc::open;
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
-
-use libc::open;
-
-use libc::close;
-use libc::free;
 extern "C" {
   pub type tls_handshake_data;
 
@@ -115,7 +60,6 @@ extern "C" {
   #[no_mangle]
   fn fdopen(__fd: libc::c_int, __modes: *const libc::c_char) -> *mut FILE;
 
-
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -135,13 +79,10 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
 
-
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -285,17 +226,12 @@ extern "C" {
 }
 
 use libc::off64_t;
-
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-
-
-
-
 pub type smalluint = libc::c_uchar;
+use crate::librb::size_t;
 use libc::off_t;
 use libc::pid_t;
-use crate::librb::size_t;
 pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -350,11 +286,10 @@ pub struct in_addr {
 }
 pub type in_addr_t = u32;
 use crate::librb::signal::__sighandler_t;
-
 use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
 use crate::librb::uoff_t;
+use libc::pollfd;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct len_and_sockaddr {
@@ -537,7 +472,8 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
     (*ptr_to_globals).beg_range as uoff_t,
     (*ptr_to_globals).transferred as uoff_t,
     if (*ptr_to_globals).chunked as libc::c_int != 0 || (*ptr_to_globals).got_clen == 0 {
-      0     } else {
+      0
+    } else {
       ((*ptr_to_globals).beg_range + (*ptr_to_globals).transferred) + (*ptr_to_globals).content_len
     } as uoff_t,
   );
@@ -1193,7 +1129,7 @@ unsafe extern "C" fn prepare_ftp_session(
             spawn_ssl_client((*target).host, fileno_unlocked(*dfpp), 0i32);
           }
         }
-        if (*ptr_to_globals).beg_range !=0{
+        if (*ptr_to_globals).beg_range != 0 {
           sprintf(
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
             b"REST %lu\x00" as *const u8 as *const libc::c_char,
@@ -1326,7 +1262,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
             (*ptr_to_globals).transferred += n as libc::c_long;
             if (*ptr_to_globals).got_clen != 0 {
               (*ptr_to_globals).content_len -= n as libc::c_long;
-              if (*ptr_to_globals).content_len ==0{
+              if (*ptr_to_globals).content_len == 0 {
                 break;
               }
             }
@@ -1395,7 +1331,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
           ); /* all done! */
         }
-        if (*ptr_to_globals).content_len ==0{
+        if (*ptr_to_globals).content_len == 0 {
           break;
         }
         (*ptr_to_globals).got_clen = 1i32 as smallint;
@@ -1407,7 +1343,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
   (*ptr_to_globals).chunked = 0i32 as smallint; /* makes it show 100% even for chunked download */
   (*ptr_to_globals).got_clen = 1i32 as smallint; /* makes it show 100% even for download of (formerly) unknown size */
   progress_meter(PROGRESS_END as libc::c_int);
-  if (*ptr_to_globals).content_len !=0{
+  if (*ptr_to_globals).content_len != 0 {
     bb_simple_perror_msg_and_die(
       b"connection closed prematurely\x00" as *const u8 as *const libc::c_char,
     );
@@ -1634,7 +1570,8 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             base64enc(server.user),
           );
         }
-        if (*ptr_to_globals).beg_range != 0           && (*ptr_to_globals).user_headers as libc::c_int & HDR_RANGE as libc::c_int == 0
+        if (*ptr_to_globals).beg_range != 0
+          && (*ptr_to_globals).user_headers as libc::c_int & HDR_RANGE as libc::c_int == 0
         {
           fprintf(
             sfp,
@@ -1713,7 +1650,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             }
             206 => {
               /* Partial Content */
-              if !((*ptr_to_globals).beg_range !=0) {
+              if !((*ptr_to_globals).beg_range != 0) {
                 current_block = 7174816550491926890;
                 break 'c_12019;
               }
@@ -1779,7 +1716,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
           (e.g. Boa/0.94.14rc21) simply use code 204 when file size is zero.
           */
           {
-            if (*ptr_to_globals).beg_range !=0{
+            if (*ptr_to_globals).beg_range != 0 {
               /* "Range:..." was not honored by the server.
                * Restart download from the beginning.
                */

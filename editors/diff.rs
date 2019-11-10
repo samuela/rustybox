@@ -1,73 +1,14 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::putchar_unlocked;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::fstat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::printf;
-use libc::puts;
-
-
-
-
-use libc::strcmp;
-use libc::strrchr;
-
-
 use libc::close;
 use libc::free;
+use libc::fstat;
 use libc::open;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::puts;
+use libc::strcmp;
+use libc::strrchr;
 use libc::unlink;
-
 extern "C" {
 
   #[no_mangle]
@@ -84,7 +25,6 @@ extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
 
-
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
@@ -99,7 +39,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -186,15 +125,12 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::off64_t;
-
+use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::off64_t;
 use libc::off_t;
-
 use libc::stat;
-
-use crate::librb::__compar_fn_t;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;

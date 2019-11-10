@@ -1,79 +1,23 @@
 use crate::librb::__compar_fn_t;
-
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
 use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::geteuid;
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
 use libc::fclose;
-
-
+use libc::free;
+use libc::geteuid;
+use libc::opendir;
 use libc::printf;
 use libc::puts;
-
-
+use libc::readdir;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
-
+use libc::strcpy;
 use libc::strstr;
-
 use libc::termios;
-
-use libc::free;
-
 use libc::FILE;
-
 extern "C" {
 
   #[no_mangle]
@@ -90,8 +34,6 @@ extern "C" {
 
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-
-
 
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -200,10 +142,8 @@ extern "C" {
 
 use libc::dirent;
 use libc::DIR;
-
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 #[derive(Copy, Clone)]

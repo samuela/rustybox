@@ -1,76 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::isatty;
-
-
-
-
-
-
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
 use libc::sprintf;
 use libc::strchr;
-
-
-
-
-
-
-
-
+use libc::strcpy;
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -132,14 +66,11 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use libc::gid_t;
-use crate::librb::size_t;
-use libc::uid_t;
-
-
-
-use libc::DIR;
 use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
+use libc::gid_t;
+use libc::uid_t;
+use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct smaprec {

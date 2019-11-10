@@ -4,86 +4,23 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::dup2;
-
-
-
-
-
-
-use libc::kill;
-
-
-
-
-use libc::sleep;
-
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sprintf;
-
-
-
-
-
-use libc::open;
-use libc::unlink;
 use libc::close;
-
+use libc::dup2;
+use libc::kill;
 use libc::mode_t;
+use libc::open;
 use libc::pid_t;
+use libc::sleep;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strcpy;
 use libc::timespec;
-
+use libc::unlink;
 extern "C" {
 
   #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;
@@ -1052,7 +989,8 @@ pub unsafe extern "C" fn runsv_main(
         .rd,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) ==1    {}
+    ) == 1
+    {}
     loop {
       let mut child: pid_t = 0;
       let mut wstat: libc::c_int = 0;
@@ -1155,7 +1093,8 @@ pub unsafe extern "C" fn runsv_main(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svd[0].fdcontrol,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
-    ) ==1    {
+    ) == 1
+    {
       ctrl(
         &mut *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .svd

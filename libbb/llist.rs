@@ -1,79 +1,8 @@
-use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
-use libc::free;
-
 use crate::librb::size_t;
-
+use libc;
+use libc::free;
+use libc::strcmp;
 extern "C" {
-
-
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

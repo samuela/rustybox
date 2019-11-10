@@ -1,76 +1,8 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::winsize;
-
 extern "C" {
-
 
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;

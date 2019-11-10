@@ -1,71 +1,4 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::free;
 extern "C" {
 
@@ -79,10 +12,7 @@ extern "C" {
   fn pstm_clamp(a: *mut pstm_int);
 }
 
-
 use crate::librb::size_t;
-
-
 /* Failure to allocate requested memory */
 /* Failure on sanity/limit tests */
 pub type uint64 = u64;

@@ -1,32 +1,6 @@
 use libc;
-
-
-
-
-
-
-
-
 use libc::ioctl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
 extern "C" {
 
   #[no_mangle]
@@ -42,7 +16,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 pub type C2RustUnnamed = libc::c_uint;
 pub const FL_SCALE512: C2RustUnnamed = 16;
 /* argument is provided by user */

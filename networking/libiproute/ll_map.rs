@@ -1,72 +1,5 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::strcpy;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
   #[no_mangle]
   fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
@@ -118,7 +51,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;

@@ -1,86 +1,19 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::opendir;
-use libc::closedir;
-use libc::readdir;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::isatty;
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::access;
-
-
+use libc::closedir;
 use libc::fprintf;
-use libc::lstat;
-use libc::printf;
-
-
-use libc::rmdir;
-
-
-
-
-
-
-
-use libc::unlink;
-
 use libc::free;
+use libc::isatty;
+use libc::lstat;
+use libc::opendir;
+use libc::printf;
+use libc::readdir;
+use libc::rmdir;
+use libc::unlink;
 extern "C" {
-
-
-
-
-
-
-
 
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -99,15 +32,9 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-
-
-
-
 use libc::dirent;
-use libc::DIR;
 use libc::stat;
-
-
+use libc::DIR;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;

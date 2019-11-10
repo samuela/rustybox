@@ -1,78 +1,10 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
 use libc::puts;
-
-
-
-
-
-
-
-
-
-
-
-
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
@@ -99,10 +31,7 @@ extern "C" {
 
 use crate::librb::size_t;
 use libc::ssize_t;
-
-
 use libc::stat;
-
 /*
  * fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger
  * 5 July 2003 -- modified for Busybox by Erik Andersen

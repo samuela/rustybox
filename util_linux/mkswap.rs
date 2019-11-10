@@ -1,34 +1,8 @@
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::off_t;
 use libc::printf;
-
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
