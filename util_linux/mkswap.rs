@@ -1,51 +1,37 @@
+use crate::librb::size_t;
+use crate::librb::uoff_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
+use libc::off_t;
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
 
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
@@ -83,12 +69,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use libc::off_t;
-use crate::librb::size_t;
-
-
-use crate::librb::uoff_t;
 
 /*
  * mkswap.c - format swap device (Linux v1 only)

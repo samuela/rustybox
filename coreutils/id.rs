@@ -1,43 +1,33 @@
 use libc;
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::geteuid;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use libc::printf;
-
-
-
-
-
-
-
-
-
 
 extern "C" {
 
@@ -81,13 +71,7 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn getuid() -> uid_t;
 
-  #[no_mangle]
-  fn getgid() -> gid_t;
-  #[no_mangle]
-  fn getegid() -> gid_t;
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 }

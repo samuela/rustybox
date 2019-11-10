@@ -1,51 +1,46 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcasecmp;
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-use libc::strchr;
-use libc::strcmp;
-
-use libc::strstr;
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::close;
 use libc::free;
+use libc::printf;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::stat;
+use libc::strcasecmp;
+use libc::strchr;
+use libc::strcmp;
+use libc::strcpy;
+use libc::strstr;
+use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
+
 
   #[no_mangle]
   fn getmntent_r(
@@ -58,17 +53,9 @@ extern "C" {
   #[no_mangle]
   fn addmntent(__stream: *mut FILE, __mnt: *const mntent) -> libc::c_int;
 
-  #[no_mangle]
-  fn endmntent(__stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn mount(
-    __special_file: *const libc::c_char,
-    __dir: *const libc::c_char,
-    __fstype: *const libc::c_char,
-    __rwflag: libc::c_ulong,
-    __data: *const libc::c_void,
-  ) -> libc::c_int;
+
+
 
   #[no_mangle]
   fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
@@ -76,21 +63,11 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
-
-
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
-
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -101,12 +78,8 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-
-
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -224,10 +197,6 @@ extern "C" {
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-
-use libc::FILE;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
@@ -268,14 +237,7 @@ pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __socklen_t = libc::c_uint;
-
 pub type socklen_t = __socklen_t;
-
-use libc::stat;
-
-use libc::sa_family_t;
-
-use libc::sockaddr;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -333,8 +295,6 @@ pub union C2RustUnnamed_1 {
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
-
-use crate::libbb::llist::llist_t;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

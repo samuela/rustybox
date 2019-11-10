@@ -1,4 +1,29 @@
 use libc;
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 
 
@@ -49,8 +74,7 @@ extern "C" {
 
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-  #[no_mangle]
-  fn umask(__mask: mode_t) -> mode_t;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,

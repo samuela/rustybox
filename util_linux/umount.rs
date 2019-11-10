@@ -1,54 +1,35 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::free;
+use libc::strcmp;
+use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn endmntent(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
 
   #[no_mangle]
   fn getmntent_r(
@@ -59,23 +40,7 @@ extern "C" {
   ) -> *mut mntent;
 
   #[no_mangle]
-  fn mount(
-    __special_file: *const libc::c_char,
-    __dir: *const libc::c_char,
-    __fstype: *const libc::c_char,
-    __rwflag: libc::c_ulong,
-    __data: *const libc::c_void,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn umount2(__special_file: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
-
-
-
-  #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -113,10 +78,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-
-use crate::librb::size_t;
-
-use libc::FILE;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -156,8 +117,6 @@ pub const MS_REMOUNT: C2RustUnnamed = 32;
 // pub const MS_NODEV: C2RustUnnamed = 4;
 // pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
-
-
 
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;

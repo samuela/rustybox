@@ -1,43 +1,31 @@
 use libc;
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::chmod;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 use libc::free;
 use libc::gid_t;
@@ -50,10 +38,7 @@ extern "C" {
 
   #[no_mangle]
   fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn getuid() -> uid_t;
-  #[no_mangle]
-  fn getgid() -> gid_t;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]

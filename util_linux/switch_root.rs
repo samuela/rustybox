@@ -1,66 +1,40 @@
 use libc;
-
-
-
-
-
-
-
-
-
-use libc::getpid;
-
-
-
-
-
-
-
-use libc::sscanf;
-
-
-
-
-
-
 use libc::access;
-
-
-
-use libc::lstat;
-
-
-
-use libc::rmdir;
-
-
-
-
-
-
-
-use libc::unlink;
+use libc::alarm;
 use libc::close;
+use libc::closedir;
+use libc::endmntent;
+use libc::endutxent;
+use libc::fchmod;
 use libc::free;
+use libc::fscanf;
+use libc::getegid;
+use libc::getgid;
+use libc::getpid;
+use libc::getuid;
+use libc::ioctl;
+use libc::lstat;
+use libc::mknod;
+use libc::mount;
+use libc::opendir;
+use libc::prctl;
+use libc::putchar_unlocked;
+use libc::putenv;
+use libc::readdir;
+use libc::rmdir;
+use libc::setmntent;
+use libc::setsid;
+use libc::setutxent;
+use libc::sscanf;
 use libc::stat;
+use libc::statfs;
+use libc::strtok;
+use libc::sync;
+use libc::umask;
+use libc::umount2;
+use libc::unlink;
 
 extern "C" {
-
-
-  #[no_mangle]
-  fn statfs(__file: *const libc::c_char, __buf: *mut statfs) -> libc::c_int;
-
-  #[no_mangle]
-  fn mount(
-    __special_file: *const libc::c_char,
-    __dir: *const libc::c_char,
-    __fstype: *const libc::c_char,
-    __rwflag: libc::c_ulong,
-    __data: *const libc::c_void,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
 
   /*
    * Copyright 2005 Rob Landley <rob@landley.net>
@@ -102,42 +76,14 @@ extern "C" {
   #[no_mangle]
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
 
-
-
-
-
-
-
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn opendir(__name: *const libc::c_char) -> *mut DIR;
-
-  #[no_mangle]
-  fn closedir(__dirp: *mut DIR) -> libc::c_int;
-
-  #[no_mangle]
-  fn readdir(__dirp: *mut DIR) -> *mut dirent;
-
-  #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
-
-
-
-
-
-
-
-  #[no_mangle]
-  fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
@@ -204,11 +150,6 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
 }
 
-
-
-
-
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __fsid_t {
@@ -218,23 +159,6 @@ pub struct __fsid_t {
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct statfs {
-  pub f_type: __fsword_t,
-  pub f_bsize: __fsword_t,
-  pub f_blocks: __fsblkcnt64_t,
-  pub f_bfree: __fsblkcnt64_t,
-  pub f_bavail: __fsblkcnt64_t,
-  pub f_files: __fsfilcnt64_t,
-  pub f_ffree: __fsfilcnt64_t,
-  pub f_fsid: __fsid_t,
-  pub f_namelen: __fsword_t,
-  pub f_frsize: __fsword_t,
-  pub f_flags: __fsword_t,
-  pub f_spare: [__fsword_t; 4],
-}
 
 pub type C2RustUnnamed = libc::c_int;
 // pub const MS_NOUSER: C2RustUnnamed = -2147483648;
@@ -448,20 +372,7 @@ pub unsafe extern "C" fn switch_root_main(
   let mut newroot: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut console: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut st: stat = std::mem::zeroed();
-  let mut stfs: statfs = statfs {
-    f_type: 0,
-    f_bsize: 0,
-    f_blocks: 0,
-    f_bfree: 0,
-    f_bavail: 0,
-    f_files: 0,
-    f_ffree: 0,
-    f_fsid: __fsid_t { __val: [0; 2] },
-    f_namelen: 0,
-    f_frsize: 0,
-    f_flags: 0,
-    f_spare: [0; 4],
-  };
+  let mut stfs: statfs = std::mem::zeroed();
   let mut dry_run: libc::c_uint = 0i32 as libc::c_uint;
   let mut rootdev: libc::dev_t = 0;
   // Parse args. '+': stop at first non-option

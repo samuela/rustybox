@@ -5,64 +5,69 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::chdir;
 use libc::chmod;
 use libc::chown;
-
-
-
-use libc::getenv;
-
-
-use libc::getpid;
-
-use libc::kill;
-
-use libc::sigaddset;
-use libc::sigemptyset;
-use libc::sigprocmask;
-use libc::sleep;
-use libc::sscanf;
-
-use libc::strcpy;
-use libc::symlink;
-
-
-
-
-
 use libc::close;
-
-
 use libc::free;
-
-
+use libc::getenv;
+use libc::getpid;
+use libc::kill;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::pid_t;
-
-
-
-
+use libc::sigaddset;
+use libc::sigemptyset;
 use libc::siginfo_t;
+use libc::sigprocmask;
 use libc::sigset_t;
 use libc::sigtimedwait;
 use libc::sigval;
+use libc::sleep;
 use libc::sprintf;
+use libc::sscanf;
 use libc::ssize_t;
 use libc::stat;
 use libc::strchr;
 use libc::strcmp;
+use libc::strcpy;
 use libc::strrchr;
 use libc::strstr;
+use libc::symlink;
 use libc::system;
 use libc::time_t;
 use libc::timespec;
 use libc::timeval;
 use libc::uid_t;
 use libc::unlink;
+use libc::DIR;
 
 extern "C" {
 
@@ -99,19 +104,10 @@ extern "C" {
   fn atoll(__nptr: *const libc::c_char) -> libc::c_longlong;
 
   #[no_mangle]
-  fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn umask(__mask: mode_t) -> mode_t;
-
-  #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -347,7 +343,6 @@ extern "C" {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-use libc::DIR;
 pub type smalluint = libc::c_uchar;
 
 #[derive(Copy, Clone)]

@@ -1,59 +1,49 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::openlog;
 
-
-
-
-
-
-
-
-
 use libc::syslog;
-
-
-
-
-
 
 use libc::printf;
 use libc::puts;
 
-
-
-
 use libc::strcmp;
-
-
-
 
 extern "C" {
 
-  #[no_mangle]
-  fn getuid() -> uid_t;
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
 
-
-
   #[no_mangle]
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;
-  #[no_mangle]
-  fn umask(__mask: mode_t) -> mode_t;
+
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
   #[no_mangle]
@@ -117,7 +107,6 @@ extern "C" {
     data: *const libc::c_char,
     member: *const libc::c_char,
   ) -> libc::c_int;
-
 
 }
 

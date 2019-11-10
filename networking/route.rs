@@ -1,52 +1,41 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::fclose;
 
-
 use libc::printf;
-
-
-
 
 use libc::strchr;
 use libc::strcmp;
 
-
-
-
-
-
 use libc::free;
 extern "C" {
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -55,8 +44,7 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn feof_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -66,7 +54,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
@@ -136,11 +123,8 @@ extern "C" {
   fn INET6_resolve(name: *const libc::c_char, sin6: *mut sockaddr_in6) -> libc::c_int;
   /* These return malloced string */
   #[no_mangle]
-  fn INET_rresolve(
-    s_in: *mut sockaddr_in,
-    numeric: libc::c_int,
-    netmask: u32,
-  ) -> *mut libc::c_char;
+  fn INET_rresolve(s_in: *mut sockaddr_in, numeric: libc::c_int, netmask: u32)
+    -> *mut libc::c_char;
   #[no_mangle]
   fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
 }
@@ -180,7 +164,6 @@ pub union C2RustUnnamed {
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
-
 
 pub type in_port_t = u16;
 #[derive(Copy, Clone)]

@@ -2,48 +2,43 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::getpid;
 
-
-
-
-
-
-
-
-
 use libc::strcpy;
-
-
-
-
-
-
-
-
 
 use libc::printf;
 
-
-
 use libc::sprintf;
 
-
-
-
-
-use libc::open;
 use libc::close;
 use libc::mode_t;
+use libc::open;
 use libc::pid_t;
 use libc::pollfd;
 use libc::ssize_t;
@@ -54,8 +49,7 @@ extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
 
-  #[no_mangle]
-  fn setsid() -> pid_t;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
@@ -70,8 +64,6 @@ extern "C" {
 
 
   #[no_mangle]
-  fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
@@ -83,10 +75,8 @@ extern "C" {
 
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn mknod(__path: *const libc::c_char, __mode: mode_t, __dev: libc::dev_t) -> libc::c_int;
+
+
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
   #[no_mangle]

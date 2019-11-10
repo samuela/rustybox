@@ -1,54 +1,51 @@
 use crate::librb::bb_uidgid_t;
-use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
+use libc::passwd;
+use libc::ssize_t;
 
 use libc::kill;
 
-
-
-
-
-
-
 use libc::strcpy;
-
-
-
-
-
 
 use libc::fclose;
 
-
 use libc::printf;
 use libc::puts;
-
 
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 
-
-
-
-
 use libc::free;
 use libc::gid_t;
-
 
 use libc::pid_t;
 use libc::stat;
@@ -57,29 +54,15 @@ use libc::FILE;
 
 extern "C" {
 
-
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn setsid() -> pid_t;
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn closedir(__dirp: *mut DIR) -> libc::c_int;
-  #[no_mangle]
-  fn readdir(__dirp: *mut DIR) -> *mut dirent;
-
-
-
-
-  #[no_mangle]
-  fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-
 
 
 
@@ -244,7 +227,7 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_cmpbuf as *mut libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_sizeof as size_t,
   );
-  if bytes >0{
+  if bytes > 0 {
     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .execname_cmpbuf
       .offset(bytes as isize) = '\u{0}' as i32 as libc::c_char;
@@ -270,7 +253,8 @@ unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
-  ) < 0   {
+  ) < 0
+  {
     return 0i32;
   }
   buf[(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)

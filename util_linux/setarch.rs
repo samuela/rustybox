@@ -1,47 +1,29 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 extern "C" {
   #[no_mangle]
@@ -68,8 +50,6 @@ extern "C" {
   #[no_mangle]
   fn personality(__persona: libc::c_ulong) -> libc::c_int;
 }
-
-
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const PER_MASK: C2RustUnnamed = 255;

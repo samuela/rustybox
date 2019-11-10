@@ -1,44 +1,29 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::close;
 
@@ -49,8 +34,7 @@ extern "C" {
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn syncfs(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sync();
+
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
 
@@ -61,7 +45,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
-
 
 pub const OPT_DATASYNC: C2RustUnnamed = 1;
 pub const OPT_SYNCFS: C2RustUnnamed = 2;

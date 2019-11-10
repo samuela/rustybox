@@ -1,45 +1,46 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::lstat;
-use libc::printf;
-use libc::puts;
-
-
-use libc::sprintf;
-use libc::strchr;
-
-
-
-
-
+use libc::alarm;
+use libc::closedir;
+use libc::endmntent;
+use libc::endutxent;
+use libc::fchmod;
 use libc::free;
+use libc::fscanf;
+use libc::getegid;
+use libc::getgid;
+use libc::getuid;
+use libc::gid_t;
+use libc::group;
+use libc::ioctl;
+use libc::lstat;
+use libc::mknod;
+use libc::mode_t;
+use libc::mount;
+use libc::opendir;
+use libc::passwd;
+use libc::prctl;
+use libc::printf;
+use libc::putchar_unlocked;
+use libc::putenv;
+use libc::puts;
+use libc::readdir;
+use libc::setmntent;
+use libc::setsid;
+use libc::setutxent;
+use libc::sprintf;
+use libc::stat;
+use libc::statfs;
+use libc::strchr;
+use libc::strtok;
+use libc::sync;
+use libc::time_t;
+use libc::tm;
+use libc::uid_t;
+use libc::umask;
+use libc::umount2;
+use libc::FILE;
+
 extern "C" {
 
   #[no_mangle]
@@ -74,8 +75,7 @@ extern "C" {
   ) -> size_t;
   #[no_mangle]
   fn localtime(_: *const time_t) -> *mut tm;
-  #[no_mangle]
-  fn statfs(__file: *const libc::c_char, __buf: *mut statfs) -> libc::c_int;
+
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
@@ -104,44 +104,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __fsid_t {
-  pub __val: [libc::c_int; 2],
-}
-
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
 pub type __fsword_t = libc::c_long;
 
-use crate::librb::size_t;
-use libc::gid_t;
-use libc::mode_t;
-use libc::time_t;
-
-use libc::stat;
-use libc::uid_t;
-
-use libc::group;
-use libc::passwd;
-use libc::tm;
-use libc::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct statfs {
-  pub f_type: __fsword_t,
-  pub f_bsize: __fsword_t,
-  pub f_blocks: __fsblkcnt64_t,
-  pub f_bfree: __fsblkcnt64_t,
-  pub f_bavail: __fsblkcnt64_t,
-  pub f_files: __fsfilcnt64_t,
-  pub f_ffree: __fsfilcnt64_t,
-  pub f_fsid: __fsid_t,
-  pub f_namelen: __fsword_t,
-  pub f_frsize: __fsword_t,
-  pub f_flags: __fsword_t,
-  pub f_spare: [__fsword_t; 4],
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 
@@ -388,29 +354,28 @@ unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
   }
   return nth_string(humanname.as_ptr(), i);
 }
+
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
 /* coreutils treats it as an array of ints, most significant first */
 unsafe extern "C" fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglong {
   let mut p: *const libc::c_uint =
-    &(*statfsbuf).f_fsid as *const __fsid_t as *const libc::c_void as *const libc::c_uint;
-  let mut sz: libc::c_uint = (::std::mem::size_of::<__fsid_t>() as libc::c_ulong)
-    .wrapping_div(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
+    &(*statfsbuf).f_fsid as *const libc::fsid_t as *const libc::c_void as *const libc::c_uint;
+  let mut sz: libc::c_uint = (::std::mem::size_of::<libc::fsid_t>())
+    .wrapping_div(::std::mem::size_of::<libc::c_uint>())
     as libc::c_uint;
-  let mut r: libc::c_ulonglong = 0i32 as libc::c_ulonglong;
+  let mut r: libc::c_ulonglong = 0;
   loop {
     let fresh0 = p;
     p = p.offset(1);
-    r = r
-      << (::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
-        .wrapping_mul(8i32 as libc::c_ulong)
-      | *fresh0 as libc::c_ulonglong;
+    r = r << (::std::mem::size_of::<libc::c_uint>()).wrapping_mul(8) | *fresh0 as libc::c_ulonglong;
     sz = sz.wrapping_sub(1);
-    if !(sz > 0i32 as libc::c_uint) {
+    if !(sz > 0) {
       break;
     }
   }
   return r;
 }
+
 /* FEATURE_STAT_FILESYSTEM */
 unsafe extern "C" fn strcatc(mut str: *mut libc::c_char, mut c: libc::c_char) {
   let mut len: libc::c_int = strlen(str) as libc::c_int;
@@ -716,20 +681,7 @@ unsafe extern "C" fn do_statfs(
   mut filename: *const libc::c_char,
   mut format: *const libc::c_char,
 ) -> bool {
-  let mut statfsbuf: statfs = statfs {
-    f_type: 0,
-    f_bsize: 0,
-    f_blocks: 0,
-    f_bfree: 0,
-    f_bavail: 0,
-    f_files: 0,
-    f_ffree: 0,
-    f_fsid: __fsid_t { __val: [0; 2] },
-    f_namelen: 0,
-    f_frsize: 0,
-    f_flags: 0,
-    f_spare: [0; 4],
-  };
+  let mut statfsbuf: statfs = std::mem::zeroed();
   if statfs(filename, &mut statfsbuf) != 0i32 {
     bb_perror_msg(
       b"can\'t read file system information for \'%s\'\x00" as *const u8 as *const libc::c_char,

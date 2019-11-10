@@ -1,47 +1,43 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::getenv;
 
-
-
-
 use libc::kill;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 use libc::printf;
 use libc::puts;
-
-
 
 use libc::strchr;
 use libc::strcmp;
 
 use libc::strstr;
-
-
-
 
 use libc::free;
 use libc::pid_t;
@@ -49,15 +45,10 @@ use libc::FILE;
 
 extern "C" {
 
-
-
   #[no_mangle]
   static mut stdout: *mut FILE;
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
-
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -66,8 +57,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn setmntent(__file: *const libc::c_char, __mode: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   fn getmntent_r(
     __stream: *mut FILE,
@@ -75,8 +65,7 @@ extern "C" {
     __buffer: *mut libc::c_char,
     __bufsize: libc::c_int,
   ) -> *mut mntent;
-  #[no_mangle]
-  fn endmntent(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

@@ -1,47 +1,32 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
+use libc::gid_t;
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::uid_t;
 
 extern "C" {
   /*
@@ -127,11 +112,6 @@ extern "C" {
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
 
   #[no_mangle]
-  fn prctl(__option: libc::c_int, _: ...) -> libc::c_int;
-
-
-
-  #[no_mangle]
   fn getresuid(__ruid: *mut uid_t, __euid: *mut uid_t, __suid: *mut uid_t) -> libc::c_int;
 
   #[no_mangle]
@@ -139,11 +119,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-  #[no_mangle]
-  fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
@@ -210,10 +185,6 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-
-
-use libc::gid_t;
-use libc::uid_t;
 
 // so for bbox, let's just repeat the declarations.
 // This way, libcap needs not be installed in build environment.

@@ -2,63 +2,47 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::time;
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
+use libc::close;
 use libc::fprintf;
-
+use libc::pid_t;
+use libc::pollfd;
 use libc::printf;
-
-
-
-
-
-
-
-
-
-
 use libc::ssize_t;
 use libc::termios;
-use libc::winsize;
-
-use libc::close;
-
-use libc::pid_t;
+use libc::time;
 use libc::time_t;
 use libc::timeval;
+use libc::winsize;
 use libc::FILE;
 
 extern "C" {
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn setsid() -> pid_t;
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
@@ -76,9 +60,6 @@ extern "C" {
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
 
   #[no_mangle]
@@ -93,8 +74,6 @@ extern "C" {
 
   #[no_mangle]
   fn cfmakeraw(__termios_p: *mut termios);
-
-
 
   /* Some useful definitions */
   /* Macros for min/max.  */
@@ -161,8 +140,6 @@ extern "C" {
 }
 
 pub type nfds_t = libc::c_ulong;
-
-use libc::pollfd;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

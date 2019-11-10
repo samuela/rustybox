@@ -1,39 +1,45 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::getenv;
-
 
 use libc::getpid;
 
 use libc::kill;
 
-
-
-
-
-
-
-
-
-
-
 use libc::time;
-
 
 use libc::close;
 use libc::fclose;
 use libc::fprintf;
 
 use libc::open;
-
-
 
 use libc::rmdir;
 use libc::sprintf;
@@ -57,8 +63,6 @@ extern "C" {
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
 
   #[no_mangle]
-  fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
   fn mkdtemp(__template: *mut libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
@@ -71,12 +75,6 @@ extern "C" {
 
   #[no_mangle]
   fn acct(__name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn opendir(__name: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn closedir(__dirp: *mut DIR) -> libc::c_int;
-  #[no_mangle]
-  fn readdir(__dirp: *mut DIR) -> *mut dirent;
 
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
@@ -189,16 +187,8 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-  #[no_mangle]
-  fn mount(
-    __special_file: *const libc::c_char,
-    __dir: *const libc::c_char,
-    __fstype: *const libc::c_char,
-    __rwflag: libc::c_ulong,
-    __data: *const libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn umount2(__special_file: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
+
+
 }
 
 use libc::dirent;

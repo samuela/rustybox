@@ -1,52 +1,38 @@
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::free;
+use libc::off_t;
 use libc::stat;
+use libc::strcmp;
+use libc::swapoff;
+use libc::swapon;
 use libc::FILE;
 
 extern "C" {
-
 
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
@@ -54,18 +40,11 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
-
-
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn getmntent(__stream: *mut FILE) -> *mut mntent;
-
-  #[no_mangle]
-  fn endmntent(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
   fn hasmntopt(__mnt: *const mntent, __opt: *const libc::c_char) -> *mut libc::c_char;
@@ -107,12 +86,6 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn swapon(__path: *const libc::c_char, __flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn swapoff(__path: *const libc::c_char) -> libc::c_int;
-
   /* Returns:
    * 0: no UUID= or LABEL= prefix found
    * 1: UUID= or LABEL= prefix found. In this case,
@@ -121,9 +94,6 @@ extern "C" {
   #[no_mangle]
   fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
 }
-
-use libc::off_t;
-
 
 #[derive(Copy, Clone)]
 #[repr(C)]

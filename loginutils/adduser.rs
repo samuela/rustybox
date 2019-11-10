@@ -1,4 +1,29 @@
 use libc;
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::chmod;
 use libc::chown;
@@ -57,8 +82,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
 
-  #[no_mangle]
-  fn umask(__mask: mode_t) -> mode_t;
+
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 

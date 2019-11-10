@@ -6,6 +6,31 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc;
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::chdir;
 
 
@@ -65,8 +90,7 @@ extern "C" {
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
+
 
 
   #[no_mangle]
@@ -149,8 +173,7 @@ extern "C" {
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
 
-  #[no_mangle]
-  fn putenv(__string: *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -180,8 +203,7 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn umask(__mask: mode_t) -> mode_t;
+
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]

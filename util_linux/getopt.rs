@@ -1,46 +1,37 @@
 use libc;
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 
 use libc::getenv;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 use libc::printf;
 use libc::puts;
 
-
-
 use libc::strchr;
 use libc::strcmp;
-
-
-
-
-
-
 
 extern "C" {
   #[no_mangle]
@@ -66,14 +57,9 @@ extern "C" {
     __longind: *mut libc::c_int,
   ) -> libc::c_int;
 
-
-
-
-
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -115,7 +101,6 @@ pub struct option {
 
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-
 
 /*
  * getopt.c - Enhanced implementation of BSD getopt(1)

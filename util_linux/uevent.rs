@@ -1,56 +1,40 @@
+use crate::librb::size_t;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
+use libc::off64_t;
 use libc::puts;
-
-
-
+use libc::ssize_t;
 use libc::strchr;
 
-
-
-
-
-
-
-
 extern "C" {
-  #[no_mangle]
-  fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
+
   #[no_mangle]
   fn mmap(
     __addr: *mut libc::c_void,
@@ -79,14 +63,12 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
-use libc::off64_t;
 
-use crate::librb::size_t;
-use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MAX_ENV: C2RustUnnamed = 127;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const RCVBUF: C2RustUnnamed_0 = 2097152;
+
 #[no_mangle]
 pub unsafe extern "C" fn uevent_main(
   mut _argc: libc::c_int,

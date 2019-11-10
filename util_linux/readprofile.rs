@@ -1,47 +1,39 @@
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use libc::sscanf;
-
-use libc::strcpy;
-
-
-
-
-
-
-
-
-
-use libc::printf;
-
-
-
-
-
-use libc::strcmp;
-
-
-
-
+use libc::putenv;
+use libc::umask;
+use libc::mknod;
+use libc::fchmod;
+use libc::fscanf;
+use libc::alarm;
+use libc::sync;
+use libc::setsid;
+use libc::ioctl;
+use libc::statfs;
+use libc::mount;
+use libc::prctl;
+use libc::opendir;
+use libc::closedir;
+use libc::readdir;
+use libc::strtok;
+use libc::putchar_unlocked;
+use libc::endmntent;
+use libc::setmntent;
+use libc::umount2;
+use libc::getegid;
+use libc::getuid;
+use libc::getgid;
+use libc::setutxent;
+use libc::endutxent;
 use libc::close;
+use libc::printf;
+use libc::sscanf;
+use libc::ssize_t;
+use libc::strcmp;
+use libc::strcpy;
+use libc::FILE;
 
 extern "C" {
 
@@ -80,11 +72,6 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 
 }
-
-use crate::librb::size_t;
-use libc::ssize_t;
-
-use libc::FILE;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_v: C2RustUnnamed = 512;
