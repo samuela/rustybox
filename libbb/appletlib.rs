@@ -245,7 +245,7 @@ unsafe fn parse_config_file() {
   {
     return;
   }
-  suid_cfg_readable = 1;
+  suid_cfg_readable = true;
   sct_head = 0 as *mut suid_config_t;
   lc = 0;
   section = 0;
