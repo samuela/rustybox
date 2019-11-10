@@ -1,3 +1,4 @@
+use libc::DIR;
 use crate::librb::__compar_fn_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
@@ -240,8 +241,6 @@ extern "C" {
   #[no_mangle]
   fn xfunc_die() -> !;
   #[no_mangle]
-  fn get_script_content(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
   static bb_msg_memory_exhausted: [libc::c_char; 0];
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
@@ -340,7 +339,6 @@ pub struct __va_list_tag {
 }
 
 pub type smalluint = libc::c_uchar;
-use libc::DIR;
 pub type uintptr_t = libc::c_ulong;
 pub type va_list = __builtin_va_list;
 
@@ -15176,10 +15174,6 @@ pub unsafe extern "C" fn ash_main(
     (*ash_ptr_to_globals_misc).rootpid = getpid();
     init();
     setstackmark(&mut smark);
-    if argc < 0i32 {
-      /* Non-NULL minusc tells procargs that an embedded script is being run */
-      (*ash_ptr_to_globals_misc).minusc = get_script_content((-argc - 1i32) as libc::c_uint)
-    }
     login_sh = procargs(argv);
     if login_sh != 0 {
       hp = 0 as *const libc::c_char;
