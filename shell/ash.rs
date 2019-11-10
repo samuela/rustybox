@@ -15075,18 +15075,8 @@ pub unsafe extern "C" fn ash_main(
   let mut hp: *const libc::c_char = 0 as *const libc::c_char;
   let mut current_block: u64;
   let mut state: smallint = 0;
-  let mut jmploc: jmploc = jmploc {
-    loc: [__jmp_buf_tag {
-      __jmpbuf: [0; 8],
-      __mask_was_saved: 0,
-      __saved_mask: std::mem::zeroed(),
-    }; 1],
-  };
-  let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
-    stacknxt: 0 as *mut libc::c_char,
-    stacknleft: 0,
-  };
+  let mut jmploc: jmploc = std::mem::zeroed();
+  let mut smark: stackmark = std::mem::zeroed();
   let mut login_sh: libc::c_int = 0;
   /* Initialize global data */
   let ref mut fresh118 =
