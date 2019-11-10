@@ -1,5 +1,29 @@
 use crate::librb::size_t;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -31,8 +55,7 @@ extern "C" {
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn getuid() -> uid_t;
-  #[no_mangle]
-  fn geteuid() -> uid_t;
+
   #[no_mangle]
   static mut stdout: *mut FILE;
 
@@ -43,8 +66,7 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn strftime(
     __s: *mut libc::c_char,

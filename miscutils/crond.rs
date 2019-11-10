@@ -2,6 +2,30 @@ use libc::passwd;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -39,8 +63,7 @@ extern "C" {
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn setpgrp() -> libc::c_int;
   #[no_mangle]
@@ -69,12 +92,9 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn chdir(__path: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
+
+
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -87,12 +107,10 @@ extern "C" {
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
   /* Search for an entry with a matching username.  */
@@ -165,8 +183,7 @@ extern "C" {
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
+
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]

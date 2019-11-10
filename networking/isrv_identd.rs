@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -39,8 +63,7 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
   #[no_mangle]
@@ -68,8 +91,7 @@ extern "C" {
   static mut applet_name: *const libc::c_char;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
+
   /* callbacks */
   #[no_mangle]
   fn isrv_want_rd(state: *mut isrv_state_t, fd: libc::c_int);

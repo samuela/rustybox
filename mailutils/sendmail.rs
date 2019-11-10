@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -19,8 +43,6 @@ use libc::free;
 extern "C" {
 
   #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
@@ -29,13 +51,9 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;

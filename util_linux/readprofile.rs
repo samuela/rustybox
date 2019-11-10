@@ -1,6 +1,30 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -17,22 +41,9 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-
 use libc::close;
 
-
 extern "C" {
-
-
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-
-
-
-
-  #[no_mangle]
-  fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -40,8 +51,6 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
@@ -69,7 +78,6 @@ extern "C" {
 
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
 
 }
 

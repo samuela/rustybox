@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -14,9 +38,6 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-
-
-
 
 extern "C" {
 
@@ -62,8 +83,7 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
   fn getuid() -> uid_t;
-  #[no_mangle]
-  fn geteuid() -> uid_t;
+
   #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]

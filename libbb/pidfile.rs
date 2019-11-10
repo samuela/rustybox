@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -19,8 +43,7 @@ use libc::unlink;
 use libc::close;
 
 extern "C" {
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
 
 
   #[no_mangle]
@@ -31,8 +54,7 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]

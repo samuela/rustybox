@@ -9,6 +9,30 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -39,8 +63,7 @@ extern "C" {
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memrchr(__s: *const libc::c_void, __c: libc::c_int, __n: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
@@ -49,12 +72,7 @@ extern "C" {
   static mut optarg: *mut libc::c_char;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn getopt(
-    ___argc: libc::c_int,
-    ___argv: *const *mut libc::c_char,
-    __shortopts: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
 
@@ -86,16 +104,14 @@ extern "C" {
     _: *const libc::c_char,
     _: ::std::ffi::VaList,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
@@ -104,12 +120,10 @@ extern "C" {
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

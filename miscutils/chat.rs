@@ -3,6 +3,30 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -34,8 +58,7 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
 

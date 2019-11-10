@@ -10,6 +10,30 @@ use libc::ssize_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -55,12 +79,10 @@ extern "C" {
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
   fn pipe(__pipedes: *mut libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn chdir(__path: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn getcwd(__buf: *mut libc::c_char, __size: size_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut environ: *mut *mut libc::c_char;
   #[no_mangle]
@@ -71,8 +93,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn getppid() -> pid_t;
   #[no_mangle]
@@ -81,8 +102,7 @@ extern "C" {
   fn setpgid(__pid: pid_t, __pgid: pid_t) -> libc::c_int;
   #[no_mangle]
   fn fork() -> pid_t;
-  #[no_mangle]
-  fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn tcgetpgrp(__fd: libc::c_int) -> pid_t;
   #[no_mangle]
@@ -108,8 +128,7 @@ extern "C" {
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
+
   #[no_mangle]
   fn sigsuspend(__set: *const sigset_t) -> libc::c_int;
   #[no_mangle]
@@ -173,8 +192,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
 
 
   #[no_mangle]
@@ -201,8 +219,7 @@ extern "C" {
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
 
   #[no_mangle]
   fn umask(__mask: mode_t) -> mode_t;

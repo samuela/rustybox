@@ -1,10 +1,38 @@
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
+use libc::gid_t;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -15,11 +43,7 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
 use libc::unlink;
-use libc::close;
-use libc::free;
-use libc::gid_t;
 
 use libc::mode_t;
 
@@ -32,13 +56,10 @@ use libc::FILE;
 
 extern "C" {
 
-
   #[no_mangle]
   fn lchown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   fn opendir(__name: *const libc::c_char) -> *mut DIR;
@@ -50,16 +71,9 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-
-  #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
-
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
 
-
-  #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn umask(__mask: mode_t) -> mode_t;
   #[no_mangle]

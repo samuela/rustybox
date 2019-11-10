@@ -1,5 +1,29 @@
 use crate::librb::size_t;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -16,8 +40,6 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-
-
 use libc::free;
 use libc::gid_t;
 use libc::sigset_t;
@@ -33,19 +55,14 @@ extern "C" {
   ) -> libc::c_longlong;
 
   #[no_mangle]
-  fn geteuid() -> uid_t;
-  #[no_mangle]
   fn getgid() -> gid_t;
   #[no_mangle]
   fn getegid() -> gid_t;
-  #[no_mangle]
-  fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
-
-
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

@@ -3,6 +3,30 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -49,12 +73,9 @@ extern "C" {
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
-  #[no_mangle]
-  fn sigemptyset(__set: *mut sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn sigaddset(__set: *mut sigset_t, __signo: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
+
+
+
   #[no_mangle]
   static mut stderr: *mut FILE;
 
@@ -84,8 +105,7 @@ extern "C" {
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -104,8 +124,7 @@ extern "C" {
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
+
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]

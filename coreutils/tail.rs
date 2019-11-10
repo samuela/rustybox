@@ -1,9 +1,34 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -14,7 +39,6 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
 
 use libc::close;
 
@@ -27,16 +51,12 @@ extern "C" {
 
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -73,10 +93,9 @@ extern "C" {
 
 use libc::off64_t;
 
-use libc::off_t;
 use crate::librb::size_t;
+use libc::off_t;
 use libc::ssize_t;
-
 
 use libc::stat;
 #[derive(Copy, Clone)]
@@ -243,7 +262,7 @@ pub unsafe extern "C" fn tail_main(
       }
       if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
         let mut current: off_t = lseek(fd_0, 0i32 as off64_t, 2i32);
-        if current >0{
+        if current > 0 {
           let mut off: libc::c_uint = 0;
           if opt & 0x2i32 != 0 {
             /* Optimizing count-bytes case if the file is seekable.
@@ -461,7 +480,7 @@ pub unsafe extern "C" fn tail_main(
           {
             let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
-            if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size >0{
+            if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size > 0 {
               let mut current_0: off_t = lseek(fd_1, 0i32 as off64_t, 1i32);
               if sbuf_0.st_size < current_0 {
                 xlseek(fd_1, 0i32 as off_t, 0i32);

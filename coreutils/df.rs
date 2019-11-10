@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -15,8 +39,6 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-
-
 use libc::free;
 extern "C" {
   #[no_mangle]
@@ -29,10 +51,7 @@ extern "C" {
   fn statvfs(__file: *const libc::c_char, __buf: *mut statvfs) -> libc::c_int;
 
   #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;

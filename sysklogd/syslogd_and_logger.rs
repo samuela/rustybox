@@ -3,32 +3,58 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
+use libc::gid_t;
 use libc::lstat;
+use libc::mode_t;
+use libc::open;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::rename;
 use libc::rmdir;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::sprintf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
-use libc::unlink;
-use libc::close;
-use libc::free;
-use libc::gid_t;
-use libc::mode_t;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::stat;
 use libc::time_t;
 use libc::uid_t;
+use libc::unlink;
 use libc::FILE;
 
 extern "C" {
@@ -41,20 +67,18 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn geteuid() -> uid_t;
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -68,12 +92,12 @@ extern "C" {
     __addr: __CONST_SOCKADDR_ARG,
     __addr_len: socklen_t,
   ) -> ssize_t;
+
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -82,6 +106,7 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
@@ -89,20 +114,12 @@ extern "C" {
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
 
-
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
-  #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   /* Some useful definitions */
@@ -229,12 +246,8 @@ extern "C" {
   static ptr_to_globals: *mut globals;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn closelog();
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
-  #[no_mangle]
-  fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
+
+  // TODO these are also in libc but we need to get rid of the structs first.
   #[no_mangle]
   fn shmctl(__shmid: libc::c_int, __cmd: libc::c_int, __buf: *mut shmid_ds) -> libc::c_int;
   #[no_mangle]
@@ -283,8 +296,7 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;

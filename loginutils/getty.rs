@@ -1,13 +1,37 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::termios;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -18,7 +42,7 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
+use libc::termios;
 
 use libc::close;
 
@@ -35,8 +59,7 @@ use libc::useconds_t;
 extern "C" {
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn setsid() -> pid_t;
   #[no_mangle]
@@ -60,8 +83,7 @@ extern "C" {
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
@@ -161,8 +183,7 @@ extern "C" {
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
+
 }
 
 pub type sighandler_t = __sighandler_t;

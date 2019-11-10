@@ -4,6 +4,30 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -33,8 +57,7 @@ extern "C" {
 
   #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
+
 
 
   #[no_mangle]
@@ -47,12 +70,10 @@ extern "C" {
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
@@ -60,8 +81,7 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

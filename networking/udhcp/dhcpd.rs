@@ -1,6 +1,30 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -30,8 +54,7 @@ extern "C" {
   pub type globals;
   #[no_mangle]
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
+
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -53,12 +76,10 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
-  #[no_mangle]
-  fn strcasecmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
   /* Some useful definitions */

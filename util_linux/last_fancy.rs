@@ -1,32 +1,53 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
 use libc::lstat;
+use libc::off_t;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::rename;
 use libc::rmdir;
 use libc::sprintf;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
+use libc::time_t;
 
-
-
-use libc::free;
 extern "C" {
-
-
-  #[no_mangle]
-  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn snprintf(
@@ -36,21 +57,8 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-
-
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-
-
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
-
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
 
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
@@ -99,21 +107,6 @@ extern "C" {
   );
 }
 
-
-
-use libc::pid_t;
-
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-
-
-
-
-use libc::stat;
-
-use libc::time_t;
-
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {
@@ -143,8 +136,6 @@ pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,
 }
-
-use crate::libbb::llist::llist_t;
 
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const GONE: C2RustUnnamed_0 = 5;
@@ -428,7 +419,7 @@ pub unsafe extern "C" fn last_main(
           }
           if show != 0 {
             let mut state: libc::c_int = boot_down as libc::c_int;
-            if boot_time ==0{
+            if boot_time == 0 {
               state = LOGGED as libc::c_int;
               /* Check if the process is alive */
               if ut.ut_pid > 0i32 && kill(ut.ut_pid, 0i32) != 0i32 && *bb_errno == 3i32 {

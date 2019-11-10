@@ -1,5 +1,29 @@
 use crate::librb::size_t;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -16,7 +40,6 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-use libc::unlink;
 use libc::close;
 use libc::free;
 use libc::off_t;
@@ -24,13 +47,10 @@ use libc::pid_t;
 use libc::ssize_t;
 use libc::stat;
 use libc::uid_t;
+use libc::unlink;
 
 extern "C" {
 
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getpid() -> pid_t;
   #[no_mangle]
   fn getuid() -> uid_t;
 
@@ -42,12 +62,8 @@ extern "C" {
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
   #[no_mangle]

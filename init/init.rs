@@ -2,11 +2,36 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -17,7 +42,6 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
 
 use crate::librb::signal::sigaction;
 use libc::cc_t;
@@ -35,21 +59,15 @@ use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn dup2(__fd: libc::c_int, __fd2: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn setsid() -> pid_t;
   #[no_mangle]
@@ -61,8 +79,7 @@ extern "C" {
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-  #[no_mangle]
-  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
   #[no_mangle]
@@ -76,8 +93,6 @@ extern "C" {
     _: ::std::ffi::VaList,
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -191,12 +206,7 @@ extern "C" {
   static bb_default_login_shell: [libc::c_char; 0];
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn closelog();
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
-  #[no_mangle]
-  fn syslog(__pri: libc::c_int, __fmt: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn reboot(__howto: libc::c_int) -> libc::c_int;
 }

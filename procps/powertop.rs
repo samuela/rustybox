@@ -1,11 +1,32 @@
 use crate::librb::__compar_fn_t;
 
-
 use crate::librb::size_t;
 use crate::librb::smallint;
-use libc::ssize_t;
-use libc::termios;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -16,13 +37,13 @@ use libc::puts;
 use libc::rename;
 use libc::rmdir;
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-
-
+use libc::termios;
 
 use libc::free;
 use libc::uid_t;
@@ -41,8 +62,7 @@ extern "C" {
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn geteuid() -> uid_t;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -57,7 +77,6 @@ extern "C" {
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
 
-
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
@@ -71,10 +90,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -811,7 +826,8 @@ pub unsafe extern "C" fn powertop_main(
         0i32,
         &mut c as *mut libc::c_uchar as *mut libc::c_void,
         1i32 as size_t,
-      ) !=1      {
+      ) != 1
+      {
         break;
       }
       if c as libc::c_int == (*ptr_to_globals).init_settings.c_cc[0] as libc::c_int {

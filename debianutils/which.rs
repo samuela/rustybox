@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -20,15 +44,13 @@ use libc::system;
 use libc::free;
 extern "C" {
 
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn file_is_executable(name: *const libc::c_char) -> libc::c_int;

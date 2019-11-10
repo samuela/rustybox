@@ -4,6 +4,30 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -35,8 +59,7 @@ extern "C" {
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
@@ -73,8 +96,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
@@ -86,16 +108,14 @@ extern "C" {
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn tcsetattr(
     __fd: libc::c_int,
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn time(__timer: *mut time_t) -> time_t;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]
@@ -150,8 +170,7 @@ extern "C" {
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
 
 
-  #[no_mangle]
-  fn isatty(__fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 

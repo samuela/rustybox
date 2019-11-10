@@ -1,5 +1,29 @@
 use libc::passwd;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -26,14 +50,12 @@ use libc::stat;
 use libc::uid_t;
 
 extern "C" {
-  #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn execlp(__file: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
   #[no_mangle]
   fn getuid() -> uid_t;
   #[no_mangle]
@@ -45,8 +67,7 @@ extern "C" {
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
   #[no_mangle]

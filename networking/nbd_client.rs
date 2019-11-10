@@ -1,11 +1,36 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
 use libc::lstat;
+use libc::open;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -16,14 +41,11 @@ use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
 use libc::system;
-use libc::open;
 
 use libc::close;
 
 extern "C" {
 
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
   #[no_mangle]
   fn fork() -> pid_t;
   #[no_mangle]
@@ -32,7 +54,6 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn daemon(__nochdir: libc::c_int, __noclose: libc::c_int) -> libc::c_int;
-
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -77,10 +98,8 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::pid_t;
 use crate::librb::size_t;
-
-
+use libc::pid_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;

@@ -1,8 +1,33 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
 use libc::lstat;
 use libc::printf;
 use libc::puts;
@@ -15,12 +40,7 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-
-
-use libc::free;
-
 extern "C" {
-
 
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
@@ -32,24 +52,12 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn getopt(
-    ___argc: libc::c_int,
-    ___argv: *const *mut libc::c_char,
-    __shortopts: *const libc::c_char,
-  ) -> libc::c_int;
-
-  #[no_mangle]
   static mut stdin: *mut FILE;
 
 
 
   #[no_mangle]
-  fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
@@ -100,8 +108,8 @@ extern "C" {
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
 
-use libc::off_t;
 use crate::librb::smallint;
+use libc::off_t;
 
 use libc::FILE;
 

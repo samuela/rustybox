@@ -1,9 +1,37 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
 use libc::fprintf;
+use libc::free;
 use libc::lstat;
+use libc::off_t;
 use libc::printf;
 use libc::puts;
 use libc::rename;
@@ -15,17 +43,10 @@ use libc::strrchr;
 use libc::strstr;
 use libc::system;
 
-
-
-use libc::free;
-
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-
 
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
@@ -61,11 +82,6 @@ extern "C" {
   #[no_mangle]
   fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
-
-use libc::off_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-
 
 /* %_A */
 /* rep count set, not default */

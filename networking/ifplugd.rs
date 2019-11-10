@@ -1,6 +1,30 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -32,8 +56,7 @@ extern "C" {
     __n: size_t,
     __flags: libc::c_int,
   ) -> ssize_t;
-  #[no_mangle]
-  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
@@ -145,8 +168,7 @@ extern "C" {
   static bb_banner: [libc::c_char; 0];
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-  #[no_mangle]
-  fn openlog(__ident: *const libc::c_char, __option: libc::c_int, __facility: libc::c_int);
+
 }
 
 /* NB: unaligned parameter should be a pointer, aligned one -

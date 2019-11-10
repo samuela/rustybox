@@ -1,4 +1,28 @@
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -78,8 +102,7 @@ extern "C" {
   #[no_mangle]
   fn capset(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn getpid() -> pid_t;
+
 
 
 
@@ -100,8 +123,7 @@ extern "C" {
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;

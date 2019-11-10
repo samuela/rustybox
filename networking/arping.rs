@@ -2,6 +2,30 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
 use libc::fclose;
@@ -59,10 +83,8 @@ extern "C" {
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn sigaddset(__set: *mut sigset_t, __signo: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
+
+
 
 
   #[no_mangle]

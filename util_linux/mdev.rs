@@ -5,34 +5,59 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::chdir;
+use libc::chmod;
+use libc::chown;
+use libc::closelog;
+use libc::dup2;
+use libc::fstat;
+use libc::getenv;
+use libc::geteuid;
+use libc::getopt;
+use libc::getpid;
+use libc::isatty;
+use libc::kill;
+use libc::openlog;
+use libc::sigaddset;
+use libc::sigemptyset;
+use libc::sigprocmask;
+use libc::sleep;
+use libc::sscanf;
+use libc::strcasecmp;
+use libc::strcpy;
+use libc::symlink;
+use libc::syscall;
+use libc::syslog;
+use libc::time;
 use libc::access;
 use libc::atoi;
+use libc::close;
 use libc::fclose;
 use libc::fprintf;
-use libc::lstat;
-use libc::printf;
-use libc::puts;
-use libc::rename;
-use libc::rmdir;
-use libc::sprintf;
-use libc::strchr;
-use libc::strcmp;
-use libc::strrchr;
-use libc::strstr;
-use libc::system;
-use libc::close;
 use libc::free;
 use libc::gid_t;
+use libc::lstat;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::pid_t;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
 use libc::siginfo_t;
 use libc::sigset_t;
+use libc::sigtimedwait;
 use libc::sigval;
+use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::time_t;
 use libc::timespec;
 use libc::timeval;
@@ -45,12 +70,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
@@ -68,25 +88,6 @@ extern "C" {
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
-  fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn sigemptyset(__set: *mut sigset_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn sigaddset(__set: *mut sigset_t, __signo: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn sigtimedwait(
-    __set: *const sigset_t,
-    __info: *mut siginfo_t,
-    __timeout: *const timespec,
-  ) -> libc::c_int;
-
-  #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
     _: libc::c_ulong,
@@ -95,29 +96,16 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn atoll(__nptr: *const libc::c_char) -> libc::c_longlong;
 
   #[no_mangle]
-  fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-
-
-
-
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
   fn umask(__mask: mode_t) -> mode_t;
@@ -319,12 +307,6 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn sleep(__seconds: libc::c_uint) -> libc::c_uint;
-
-  #[no_mangle]
   fn pread(
     __fd: libc::c_int,
     __buf: *mut libc::c_void,
@@ -333,16 +315,7 @@ extern "C" {
   ) -> ssize_t;
 
   #[no_mangle]
-  fn chdir(__path: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn symlink(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn getpid() -> pid_t;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
