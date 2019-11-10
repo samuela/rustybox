@@ -1,6 +1,8 @@
 use libc;
 use libc::chmod;
+use libc::mode_t;
 use libc::printf;
+use libc::stat;
 use libc::strchr;
 extern "C" {
   #[no_mangle]
@@ -43,8 +45,6 @@ extern "C" {
   fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
 }
 
-use libc::mode_t;
-use libc::stat;
 /*
  * Mini chmod implementation for busybox
  *
@@ -104,54 +104,52 @@ unsafe extern "C" fn fileAction(
   let mut current_block: u64;
   let mut newmode: mode_t = 0;
   /* match coreutils behavior */
-  if depth == 0i32 {
+  if depth == 0 {
     if stat(fileName, statbuf) != 0 {
       current_block = 18130555599396617792; /* depth > 0: skip links */
     } else {
       current_block = 6873731126896040597;
     }
   } else {
-    if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
-      return 1i32;
+    if (*statbuf).st_mode & 0o170000 == 0o120000 {
+      return 1;
     }
     current_block = 6873731126896040597;
   }
   match current_block {
     6873731126896040597 => {
       newmode = bb_parse_mode(param as *mut libc::c_char, (*statbuf).st_mode) as mode_t;
-      if newmode == -1i32 as mode_t {
+      if newmode == -1 as mode_t {
         bb_error_msg_and_die(
           b"invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
           param as *mut libc::c_char,
         );
       }
-      if chmod(fileName, newmode) == 0i32 {
-        if option_mask32 & 2i32 as libc::c_uint != 0
-          || option_mask32 & 4i32 as libc::c_uint != 0 && (*statbuf).st_mode != newmode
-        {
+      if chmod(fileName, newmode) == 0 {
+        if option_mask32 & 2 != 0 || option_mask32 & 4 != 0 && (*statbuf).st_mode != newmode {
           printf(
             b"mode of \'%s\' changed to %04o (%s)\n\x00" as *const u8 as *const libc::c_char,
             fileName,
-            newmode & 0o7777i32 as libc::c_uint,
+            newmode & 0o7777 as libc::c_uint,
             bb_mode_string(newmode).offset(1),
           );
         }
-        return 1i32;
+        return 1;
       }
     }
     _ => {}
   }
-  if option_mask32 & 8i32 as libc::c_uint == 0 {
+  if option_mask32 & 8 == 0 {
     bb_simple_perror_msg(fileName);
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn chmod_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut argp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut smode: *mut libc::c_char = 0 as *mut libc::c_char;
