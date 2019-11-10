@@ -119,7 +119,7 @@ unsafe extern "C" fn fileAction(
   match current_block {
     6873731126896040597 => {
       newmode = bb_parse_mode(param as *mut libc::c_char, (*statbuf).st_mode) as mode_t;
-      if newmode == -1 as mode_t {
+      if newmode == -1i32 as mode_t {
         bb_error_msg_and_die(
           b"invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
           param as *mut libc::c_char,
