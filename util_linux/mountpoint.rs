@@ -1,7 +1,19 @@
 use libc;
-
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 use libc::stat;
 
@@ -14,12 +26,6 @@ extern "C" {
 
   #[no_mangle]
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
-
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;

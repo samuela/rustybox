@@ -1,5 +1,20 @@
 use crate::librb::size_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -29,11 +44,9 @@ extern "C" {
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

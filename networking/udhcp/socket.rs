@@ -1,6 +1,21 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 use libc::close;
@@ -11,8 +26,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
   #[no_mangle]

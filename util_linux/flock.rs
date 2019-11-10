@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 
 
@@ -9,8 +24,7 @@ extern "C" {
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

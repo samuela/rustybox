@@ -1,11 +1,25 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::unlink;
 extern "C" {
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strtol(
     __nptr: *const libc::c_char,
@@ -19,16 +33,11 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -83,14 +92,12 @@ extern "C" {
     flags: libc::c_int,
   ) -> libc::c_int;
 
-
 }
 
 use libc::mode_t;
 
-use libc::off_t;
 use crate::librb::size_t;
-
+use libc::off_t;
 
 use libc::stat;
 
@@ -600,7 +607,7 @@ pub unsafe extern "C" fn patch_main(
           newlen = strtol(s_0.offset(1), &mut s_0, 10i32);
           (*ptr_to_globals).newlen = newlen
         }
-        if oldlen <1&& newlen <1{
+        if oldlen < 1 && newlen < 1 {
           bb_error_msg_and_die(
             b"Really? %s\x00" as *const u8 as *const libc::c_char,
             patchline,

@@ -1,5 +1,20 @@
 use crate::librb::size_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -17,8 +32,7 @@ extern "C" {
   fn msgctl(__msqid: libc::c_int, __cmd: libc::c_int, __buf: *mut msqid_ds) -> libc::c_int;
   #[no_mangle]
   fn shmctl(__shmid: libc::c_int, __cmd: libc::c_int, __buf: *mut shmid_ds) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   /* Search for an entry with a matching user ID.  */

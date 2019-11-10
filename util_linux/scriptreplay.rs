@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -8,8 +23,7 @@ extern "C" {
   fn atof(__nptr: *const libc::c_char) -> libc::c_double;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
 

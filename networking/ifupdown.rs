@@ -1,6 +1,21 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 
 use libc::close;
@@ -25,20 +40,15 @@ extern "C" {
 
 
 
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
+
+
+
+
 
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -60,14 +70,12 @@ extern "C" {
 
 
 
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;

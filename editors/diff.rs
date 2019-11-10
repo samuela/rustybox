@@ -1,8 +1,23 @@
 use libc;
-use libc::open;
-use libc::unlink;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
+use libc::open;
+use libc::unlink;
 
 extern "C" {
 
@@ -16,14 +31,12 @@ extern "C" {
   static mut stdin: *mut FILE;
   #[no_mangle]
   fn fdopen(__fd: libc::c_int, __modes: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
@@ -35,10 +48,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
@@ -131,11 +141,9 @@ extern "C" {
 
 use libc::off64_t;
 
-use libc::off_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
-
+use libc::off_t;
 
 use libc::stat;
 
@@ -660,7 +668,8 @@ unsafe extern "C" fn create_J(
       - (*nfile[i as usize].offset((*nlen.offset(i as isize) - 1i32) as isize))
         .c2rust_unnamed
         .offset
-      ==1    {
+      == 1
+    {
       let ref mut fresh7 = *nlen.offset(i as isize);
       *fresh7 -= 1
     }

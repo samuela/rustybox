@@ -9,6 +9,21 @@ use crate::librb::size_t;
 use libc::ssize_t;
 use libc::stat;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 use libc::close;
 use libc::free;
@@ -28,8 +43,7 @@ extern "C" {
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   static mut optarg: *mut libc::c_char;
@@ -56,10 +70,8 @@ extern "C" {
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut stdout: *mut FILE;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -76,8 +88,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
@@ -85,12 +96,10 @@ extern "C" {
 
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn system(__command: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]

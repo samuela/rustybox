@@ -1,62 +1,37 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::open;
-use libc::unlink;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
+use libc::open;
 use libc::ssize_t;
 use libc::stat;
+use libc::unlink;
 use libc::FILE;
 
 extern "C" {
 
   #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-
-
-
-
-
-  #[no_mangle]
-  fn rmdir(__path: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   static mut optind: libc::c_int;
-
-
-
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
-
-
-
-  #[no_mangle]
-  fn system(__command: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
@@ -65,19 +40,10 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
 
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strtok_r(
@@ -88,9 +54,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -284,7 +247,6 @@ pub struct edge_s {
   pub c2rust_padding_0: [u8; 2],
 }
 
-use crate::archival::libarchive::bb_archive::archive_handle_t;
 /* Even numbers are for 'extras', like ored dependencies or null */
 pub type edge_type_e = libc::c_uint;
 pub const EDGE_ENHANCES: edge_type_e = 15;

@@ -5,6 +5,21 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 use libc::close;
@@ -37,8 +52,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
 
   #[no_mangle]
   fn bsearch(
@@ -48,8 +62,7 @@ extern "C" {
     __size: size_t,
     __compar: __compar_fn_t,
   ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -63,8 +76,7 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn strftime(
     __s: *mut libc::c_char,

@@ -4,6 +4,21 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 use libc::close;
 use libc::free;
@@ -27,14 +42,10 @@ extern "C" {
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
+
+
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -64,8 +75,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
@@ -138,8 +148,7 @@ extern "C" {
   fn bb_show_usage() -> !;
   #[no_mangle]
   fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;

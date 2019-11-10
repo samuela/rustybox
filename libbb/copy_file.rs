@@ -1,5 +1,20 @@
 use crate::librb::smallint;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 use libc::unlink;
 use libc::close;
@@ -34,18 +49,15 @@ extern "C" {
 
   #[no_mangle]
   static mut stderr: *mut FILE;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
+
   #[no_mangle]
   fn chown(__file: *const libc::c_char, __owner: uid_t, __group: gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
 
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   #[no_mangle]
   fn chmod(__file: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]

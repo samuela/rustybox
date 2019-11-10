@@ -1,11 +1,25 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
 
 extern "C" {
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;

@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -15,10 +30,8 @@ extern "C" {
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]

@@ -2,6 +2,21 @@ use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 use libc::close;
@@ -48,10 +63,8 @@ extern "C" {
   fn sigaddset(__set: *mut sigset_t, __signo: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sigprocmask(__how: libc::c_int, __set: *const sigset_t, __oset: *mut sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
+
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
 

@@ -1,6 +1,21 @@
 use crate::librb::size_t;
 use libc::time_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -20,8 +35,7 @@ extern "C" {
     ___argv: *const *mut libc::c_char,
     __shortopts: *const libc::c_char,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

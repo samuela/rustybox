@@ -1,8 +1,23 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-use libc::termios;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
+use libc::termios;
 
 use libc::close;
 
@@ -35,10 +50,7 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -49,19 +61,15 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn alarm(__seconds: libc::c_uint) -> libc::c_uint;
 
   #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
   #[no_mangle]

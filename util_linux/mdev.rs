@@ -1,31 +1,45 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
-use libc::sigval;
-use libc::siginfo_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
-use libc::open;
-use libc::unlink;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
+use libc::open;
 use libc::pid_t;
+use libc::siginfo_t;
 use libc::sigset_t;
+use libc::sigval;
 use libc::ssize_t;
 use libc::stat;
 use libc::time_t;
 use libc::timespec;
 use libc::timeval;
 use libc::uid_t;
+use libc::unlink;
 
 extern "C" {
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -36,8 +50,7 @@ extern "C" {
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
@@ -47,8 +60,6 @@ extern "C" {
 
   #[no_mangle]
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
-
-
 
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
@@ -76,9 +87,6 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
     _: libc::c_ulong,
@@ -92,22 +100,15 @@ extern "C" {
   #[no_mangle]
   fn atoll(__nptr: *const libc::c_char) -> libc::c_longlong;
 
-
-
   #[no_mangle]
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn system(__command: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -126,9 +127,6 @@ extern "C" {
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
@@ -334,12 +332,8 @@ extern "C" {
     __offset: off64_t,
   ) -> ssize_t;
 
-
-
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn readlink(__path: *const libc::c_char, __buf: *mut libc::c_char, __len: size_t) -> ssize_t;

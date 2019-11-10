@@ -1,11 +1,23 @@
 use libc;
-
-
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
 use libc::suseconds_t;
+use libc::system;
 use libc::time_t;
 use libc::timeval;
+use libc::tm;
 
 extern "C" {
   #[no_mangle]
@@ -15,9 +27,6 @@ extern "C" {
     argp: *mut libc::c_void,
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
-
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -57,7 +66,6 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
-
   /*
    * Common defines/structures/etc... for applets that need to work with the RTC.
    *
@@ -84,7 +92,7 @@ pub struct timezone {
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-use libc::tm;
+
 /*
  * Everything below this point has been copied from linux/rtc.h
  * to eliminate the kernel header dependency
@@ -148,7 +156,7 @@ unsafe extern "C" fn read_rtc(
   mut pp_rtcname: *mut *const libc::c_char,
   mut utc: libc::c_int,
 ) -> time_t {
-  let mut tm_time: tm =std::mem::zeroed();
+  let mut tm_time: tm = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = rtc_xopen(pp_rtcname, 0i32);
   rtc_read_tm(&mut tm_time, fd);
@@ -192,7 +200,7 @@ unsafe extern "C" fn from_sys_clock(
     tv_sec: 0,
     tv_usec: 0,
   };
-  let mut tm_time: tm =std::mem::zeroed();
+  let mut tm_time: tm = std::mem::zeroed();
   let mut rtc: libc::c_int = 0;
   rtc = rtc_xopen(pp_rtcname, 0o1i32);
   gettimeofday(&mut tv, 0 as *mut timezone);

@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 use libc::close;
@@ -9,25 +24,19 @@ extern "C" {
   fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn system(__command: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn isatty(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
+
 
   #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

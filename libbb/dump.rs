@@ -1,11 +1,25 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
 
 extern "C" {
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
@@ -14,12 +28,9 @@ extern "C" {
     __modes: *const libc::c_char,
     __stream: *mut FILE,
   ) -> *mut FILE;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
+
+
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
@@ -32,8 +43,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

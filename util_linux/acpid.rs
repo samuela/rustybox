@@ -2,9 +2,24 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::open;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
+use libc::open;
 use libc::pid_t;
 use libc::pollfd;
 use libc::ssize_t;
@@ -14,11 +29,6 @@ use libc::unlink;
 use libc::FILE;
 
 extern "C" {
-
-
-
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

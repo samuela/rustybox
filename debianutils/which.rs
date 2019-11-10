@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -11,12 +26,10 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn file_is_executable(name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

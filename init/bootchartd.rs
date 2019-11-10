@@ -1,9 +1,24 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
+use libc::close;
 use libc::open;
 use libc::unlink;
-use libc::close;
 
 use libc::off_t;
 use libc::pid_t;
@@ -23,8 +38,7 @@ extern "C" {
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn mkdtemp(__template: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn system(__command: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -34,8 +48,6 @@ extern "C" {
   #[no_mangle]
   fn vfork() -> libc::c_int;
 
-  #[no_mangle]
-  fn rmdir(__path: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn acct(__name: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -49,14 +61,10 @@ extern "C" {
   fn kill(__pid: pid_t, __sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -66,14 +74,11 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]

@@ -1,7 +1,21 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 use libc::close;
 
@@ -13,8 +27,6 @@ extern "C" {
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -22,8 +34,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn fstat(__fd: libc::c_int, __buf: *mut stat) -> libc::c_int;
   #[no_mangle]
@@ -558,7 +569,8 @@ pub unsafe extern "C" fn dd_main(
           ifd as libc::c_int,
           (Z.skip as libc::c_ulong).wrapping_mul(blocksz_0) as off64_t,
           1i32,
-        ) < 0         {
+        ) < 0
+        {
           loop {
             let mut n_0: ssize_t = 0;
             if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags
@@ -578,7 +590,7 @@ pub unsafe extern "C" fn dd_main(
               break;
             }
             Z.skip -= 1;
-            if !(Z.skip !=0) {
+            if !(Z.skip != 0) {
               current_block = 1658462350791934405;
               break;
             }
@@ -604,7 +616,8 @@ pub unsafe extern "C" fn dd_main(
               ofd as libc::c_int,
               (Z.seek as libc::c_ulong).wrapping_mul(blocksz_1) as off64_t,
               1i32,
-            ) < 0             {
+            ) < 0
+            {
               current_block = 17215991467164075883;
             } else {
               current_block = 17372050596571538954;
@@ -677,7 +690,7 @@ pub unsafe extern "C" fn dd_main(
                   n2 = n_1 >> 1i32;
                   loop {
                     n2 -= 1;
-                    if !(n2 >=0) {
+                    if !(n2 >= 0) {
                       break;
                     }
                     *p16 = {

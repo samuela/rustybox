@@ -3,6 +3,21 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 use libc::unlink;
 use libc::close;
@@ -34,8 +49,7 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
@@ -58,12 +72,9 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
+
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -77,11 +88,9 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,4 +1,19 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 
 use libc::close;
@@ -21,24 +36,18 @@ extern "C" {
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
 
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
   static mut stdout: *mut FILE;
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
+
+
+
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -47,12 +56,10 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
@@ -66,19 +73,15 @@ extern "C" {
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
 
   /* Copyright (C) 1991,92,95,96,97,98,99,2001 Free Software Foundation, Inc.
   This file is part of the GNU C Library.
@@ -219,10 +222,6 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-
-
-
-
 use libc::pid_t;
 
 pub type int64_t = __int64_t;
@@ -239,15 +238,15 @@ pub type int64_t = __int64_t;
 /* add other arches which benefit from this... */
 use crate::librb::size_t;
 use crate::librb::smallint;
+use libc::dirent;
 use libc::off_t;
 use libc::ssize_t;
 use libc::uid_t;
-use libc::dirent;
 
-use libc::DIR;
 use libc::sigval;
 use libc::stat;
 use libc::time_t;
+use libc::DIR;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

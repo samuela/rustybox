@@ -3,6 +3,21 @@ use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 
 use libc::close;
@@ -27,18 +42,15 @@ extern "C" {
 
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -50,8 +62,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
   /* Some useful definitions */
   /* Macros for min/max.  */
   /* buffer allocation schemes */

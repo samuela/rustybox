@@ -3,15 +3,30 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::open;
-use libc::unlink;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
 use libc::mode_t;
 use libc::off_t;
+use libc::open;
 use libc::pid_t;
 use libc::stat;
 use libc::time_t;
+use libc::unlink;
 
 extern "C" {
   pub type sockaddr_x25;
@@ -33,8 +48,6 @@ extern "C" {
   fn vfork() -> libc::c_int;
 
   #[no_mangle]
-  fn rmdir(__path: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   fn chroot(__path: *const libc::c_char) -> libc::c_int;
@@ -47,12 +60,9 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
+
   #[no_mangle]
   fn getpid() -> pid_t;
   #[no_mangle]
@@ -66,12 +76,9 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
+
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
@@ -323,9 +330,9 @@ pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
 use crate::librb::signal::__sighandler_t;
 
-use libc::FILE;
-use libc::tm;
 use libc::passwd;
+use libc::tm;
+use libc::FILE;
 /* In this form code with pipes is much more readable */
 use crate::librb::fd_pair;
 #[derive(Copy, Clone)]
@@ -457,8 +464,7 @@ unsafe extern "C" fn escape_text(
   strcpy(ret, prepend);
   loop {
     found = strchrnul(str, escapee as libc::c_int);
-    chunklen =
-      (found.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_uint;
+    chunklen = (found.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_uint;
     /* Copy chunk up to and including escapee (or NUL) to ret */
     memcpy(
       ret.offset(retlen as isize) as *mut libc::c_void,
@@ -953,7 +959,7 @@ unsafe extern "C" fn handle_retr() {
      */
     ndelay_off(local_file_fd);
     /* Set the download offset (from REST) if any */
-    if offset !=0{
+    if offset != 0 {
       xlseek(local_file_fd, offset, 0i32);
     }
     response = xasprintf(
@@ -1167,7 +1173,7 @@ unsafe extern "C" fn handle_stat_file() {
  */
 unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
   let mut statbuf: stat = std::mem::zeroed();
-  let mut broken_out: tm =std::mem::zeroed();
+  let mut broken_out: tm = std::mem::zeroed();
   let mut buf: [libc::c_char; 55] = [0; 55];
   if (*ptr_to_globals).ftp_arg.is_null()
     || stat((*ptr_to_globals).ftp_arg, &mut statbuf) != 0i32

@@ -1,20 +1,29 @@
 use libc;
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 use libc::free;
 extern "C" {
 
   #[no_mangle]
   static mut stdout: *mut FILE;
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

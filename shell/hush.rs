@@ -6,6 +6,21 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc::ssize_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::open;
 
 use libc::close;
@@ -20,20 +35,16 @@ use libc::timeval;
 use libc::FILE;
 
 extern "C" {
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
 
   #[no_mangle]
   fn glob(
@@ -54,8 +65,7 @@ extern "C" {
   fn times(__buffer: *mut tms) -> clock_t;
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-  #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
+
 
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
@@ -140,12 +150,10 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]

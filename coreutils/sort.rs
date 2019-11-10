@@ -2,6 +2,21 @@ use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
@@ -24,14 +39,11 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
+
+
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -42,8 +54,7 @@ extern "C" {
     __fmt: *const libc::c_char,
     __tp: *mut tm,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

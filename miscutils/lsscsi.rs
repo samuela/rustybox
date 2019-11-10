@@ -1,5 +1,20 @@
 use crate::librb::size_t;
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 use libc::dirent;
@@ -14,10 +29,8 @@ extern "C" {
   fn closedir(__dirp: *mut DIR) -> libc::c_int;
   #[no_mangle]
   fn readdir(__dirp: *mut DIR) -> *mut dirent;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
+
   #[no_mangle]
   static bb_errno: *mut libc::c_int;
   #[no_mangle]

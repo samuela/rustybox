@@ -1,15 +1,24 @@
 use libc;
-
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 extern "C" {
   #[no_mangle]
   fn getuid() -> uid_t;
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
   #[no_mangle]
@@ -55,8 +64,8 @@ extern "C" {
 use crate::librb::signal::__sighandler_t;
 use libc::uid_t;
 
-use libc::termios;
 use libc::passwd;
+use libc::termios;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct vt_mode {

@@ -4,12 +4,27 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
-use libc::open;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 use libc::close;
 use libc::free;
 use libc::gid_t;
 use libc::off64_t;
 use libc::off_t;
+use libc::open;
 use libc::passwd;
 use libc::pid_t;
 use libc::pollfd;
@@ -31,9 +46,6 @@ extern "C" {
   pub type sockaddr_dl;
   pub type sockaddr_ax25;
   pub type sockaddr_at;
-
-  #[no_mangle]
-  fn access(__name: *const libc::c_char, __type: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -58,8 +70,6 @@ extern "C" {
 
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-
-
 
   #[no_mangle]
   fn socket(__domain: libc::c_int, __type: libc::c_int, __protocol: libc::c_int) -> libc::c_int;
@@ -86,15 +96,6 @@ extern "C" {
   static mut stderr: *mut FILE;
 
   #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
     _: libc::c_ulong,
@@ -113,13 +114,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   fn putenv(__string: *mut libc::c_char) -> libc::c_int;
@@ -138,22 +133,12 @@ extern "C" {
   fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;

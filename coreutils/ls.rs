@@ -3,8 +3,21 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 use libc::free;
 use libc::gid_t;
@@ -49,9 +62,6 @@ extern "C" {
   static mut stdout: *mut FILE;
 
   #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn putchar_unlocked(__c: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
@@ -61,13 +71,9 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn strcoll(__s1: *const libc::c_char, __s2: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -75,8 +81,7 @@ extern "C" {
   #[no_mangle]
   fn strverscmp(__s1: *const libc::c_char, __s2: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn lstat(__file: *const libc::c_char, __buf: *mut stat) -> libc::c_int;
+
 
   #[no_mangle]
   fn time(__timer: *mut time_t) -> time_t;

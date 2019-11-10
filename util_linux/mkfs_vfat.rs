@@ -1,8 +1,19 @@
 use libc;
-
-
-
-
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 use super::mkfs_ext2::BUG_wrong_field_size;
 
@@ -10,18 +21,11 @@ extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-
-
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
   static mut stderr: *mut FILE;
-
-  #[no_mangle]
-  fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
@@ -76,11 +80,8 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use libc::off_t;
 use crate::librb::size_t;
-
-
-
+use libc::off_t;
 
 use libc::stat;
 
@@ -522,12 +523,12 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     // against MAX_CLUST_32, but against a bigger const:
     if !(tcl > 0x80ffffffu32 as libc::c_ulong) {
       total_clust = tcl as u32; // fits in u32
-                                     // Every cluster needs 4 bytes in FAT. +2 entries since
-                                     // FAT has space for non-existent clusters 0 and 1.
-                                     // Let's see how many sectors that needs.
-                                     //May overflow at "*4":
-                                     //spf_adj = ((total_clust+2) * 4 + bytes_per_sect-1) / bytes_per_sect - sect_per_fat;
-                                     //Same in the more obscure, non-overflowing form:
+                                // Every cluster needs 4 bytes in FAT. +2 entries since
+                                // FAT has space for non-existent clusters 0 and 1.
+                                // Let's see how many sectors that needs.
+                                //May overflow at "*4":
+                                //spf_adj = ((total_clust+2) * 4 + bytes_per_sect-1) / bytes_per_sect - sect_per_fat;
+                                //Same in the more obscure, non-overflowing form:
       spf_adj = total_clust
         .wrapping_add(2i32 as libc::c_uint)
         .wrapping_add(bytes_per_sect.wrapping_div(4i32 as libc::c_uint))

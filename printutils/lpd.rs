@@ -1,30 +1,33 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
-use libc::unlink;
 use libc::close;
 use libc::free;
+use libc::unlink;
 
 extern "C" {
-
 
   #[no_mangle]
   fn chdir(__path: *const libc::c_char) -> libc::c_int;
 
-
-
-  #[no_mangle]
-  fn printf(__format: *const libc::c_char, _: ...) -> libc::c_int;
-
-  #[no_mangle]
-  fn puts(__s: *const libc::c_char) -> libc::c_int;
-
-
-
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+
 
   #[no_mangle]
   fn fchmod(__fd: libc::c_int, __mode: mode_t) -> libc::c_int;
@@ -91,8 +94,8 @@ extern "C" {
 
 use libc::mode_t;
 
-use libc::off_t;
 use crate::librb::size_t;
+use libc::off_t;
 use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
@@ -436,7 +439,8 @@ pub unsafe extern "C" fn lpd_main(
                   0i32,
                   &mut *s.offset(1) as *mut libc::c_char as *mut libc::c_void,
                   1i32 as size_t,
-                ) !=1                  || *s.offset(1) as libc::c_int != 0i32
+                ) != 1
+                  || *s.offset(1) as libc::c_int != 0i32
                 {
                   current_block = 12481496603591474651;
                   break;

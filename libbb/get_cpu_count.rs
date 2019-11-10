@@ -1,11 +1,25 @@
 use libc;
+use libc::access;
+use libc::atoi;
+use libc::fclose;
+use libc::fprintf;
+use libc::lstat;
+use libc::printf;
+use libc::puts;
+use libc::rename;
+use libc::rmdir;
+use libc::sprintf;
+use libc::strchr;
+use libc::strcmp;
+use libc::strrchr;
+use libc::strstr;
+use libc::system;
 
 
 
 
 extern "C" {
-  #[no_mangle]
-  fn fclose(__stream: *mut FILE) -> libc::c_int;
+
   #[no_mangle]
   fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
