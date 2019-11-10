@@ -10,6 +10,8 @@ use libc::gid_t;
 use libc::group;
 use libc::mode_t;
 use libc::passwd;
+use libc::setresgid;
+use libc::setresuid;
 use libc::ssize_t;
 use libc::strcasecmp;
 use libc::uid_t;
@@ -17,11 +19,6 @@ use std::ffi::CStr;
 use std::ffi::CString;
 use std::path::Path;
 extern "C" {
-  #[no_mangle]
-  fn setresuid(__ruid: uid_t, __euid: uid_t, __suid: uid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn setresgid(__rgid: gid_t, __egid: gid_t, __sgid: gid_t) -> libc::c_int;
 
   #[no_mangle]
   fn fgets_unlocked(
@@ -157,136 +154,6 @@ pub static mut applet_numbers: [u16; 1] = [218i32 as u16];
  *    4473      52      72    4597    11f5 busybox
  *
  * FEATURE_INSTALLER or FEATURE_SUID will still link printf routines in. :(
- */
-
-/* Declare <applet>_main() */
-/* Include generated applet names, pointers to <applet>_main, etc */
-/* ...and if applet_tables generator says we have only one applet... */
-static mut packed_scripts: [libc::c_char; 111] = [
-  104i32 as libc::c_char,
-  0o61i32 as libc::c_char,
-  0o61i32 as libc::c_char,
-  0o101i32 as libc::c_char,
-  0o131i32 as libc::c_char,
-  0o46i32 as libc::c_char,
-  0o123i32 as libc::c_char,
-  0o131i32 as libc::c_char,
-  0o71i32 as libc::c_char,
-  0o173i32 as libc::c_char,
-  0o333i32 as libc::c_char,
-  0o14i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0o20i32 as libc::c_char,
-  0o133i32 as libc::c_char,
-  128i32 as libc::c_char,
-  0o100i32 as libc::c_char,
-  0o20i32 as libc::c_char,
-  0o100i32 as libc::c_char,
-  0o1i32 as libc::c_char,
-  0o262i32 as libc::c_char,
-  0o1i32 as libc::c_char,
-  0o4i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0o76i32 as libc::c_char,
-  0o345i32 as libc::c_char,
-  0o317i32 as libc::c_char,
-  0o104i32 as libc::c_char,
-  0o40i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0o124i32 as libc::c_char,
-  82i32 as libc::c_char,
-  0o171i32 as libc::c_char,
-  0o46i32 as libc::c_char,
-  0o151i32 as libc::c_char,
-  0o66i32 as libc::c_char,
-  0o243i32 as libc::c_char,
-  0o324i32 as libc::c_char,
-  0o300i32 as libc::c_char,
-  0o214i32 as libc::c_char,
-  0o320i32 as libc::c_char,
-  0o315i32 as libc::c_char,
-  0o350i32 as libc::c_char,
-  0o211i32 as libc::c_char,
-  0o204i32 as libc::c_char,
-  0o144i32 as libc::c_char,
-  0o321i32 as libc::c_char,
-  140i32 as libc::c_char,
-  0o221i32 as libc::c_char,
-  0o240i32 as libc::c_char,
-  0o163i32 as libc::c_char,
-  0o350i32 as libc::c_char,
-  0o254i32 as libc::c_char,
-  0o104i32 as libc::c_char,
-  0o123i32 as libc::c_char,
-  0o320i32 as libc::c_char,
-  0o45i32 as libc::c_char,
-  0o315i32 as libc::c_char,
-  0o147i32 as libc::c_char,
-  0o177i32 as libc::c_char,
-  0o211i32 as libc::c_char,
-  0o236i32 as libc::c_char,
-  0o15i32 as libc::c_char,
-  193i32 as libc::c_char,
-  0o264i32 as libc::c_char,
-  0o257i32 as libc::c_char,
-  0o36i32 as libc::c_char,
-  0o312i32 as libc::c_char,
-  0o216i32 as libc::c_char,
-  0o264i32 as libc::c_char,
-  0o36i32 as libc::c_char,
-  0o32i32 as libc::c_char,
-  0o151i32 as libc::c_char,
-  0o152i32 as libc::c_char,
-  0o342i32 as libc::c_char,
-  0o21i32 as libc::c_char,
-  0o134i32 as libc::c_char,
-  0o361i32 as libc::c_char,
-  0o243i32 as libc::c_char,
-  214i32 as libc::c_char,
-  0o256i32 as libc::c_char,
-  0o246i32 as libc::c_char,
-  0o344i32 as libc::c_char,
-  0o47i32 as libc::c_char,
-  0o4i32 as libc::c_char,
-  0o113i32 as libc::c_char,
-  0o14i32 as libc::c_char,
-  0o356i32 as libc::c_char,
-  0o144i32 as libc::c_char,
-  0o317i32 as libc::c_char,
-  0o120i32 as libc::c_char,
-  0o74i32 as libc::c_char,
-  0o70i32 as libc::c_char,
-  0o75i32 as libc::c_char,
-  0o100i32 as libc::c_char,
-  69i32 as libc::c_char,
-  0o374i32 as libc::c_char,
-  0o133i32 as libc::c_char,
-  0o364i32 as libc::c_char,
-  0o330i32 as libc::c_char,
-  0o273i32 as libc::c_char,
-  0o222i32 as libc::c_char,
-  0o51i32 as libc::c_char,
-  0o302i32 as libc::c_char,
-  0o204i32 as libc::c_char,
-  0o201i32 as libc::c_char,
-  0o313i32 as libc::c_char,
-  0o336i32 as libc::c_char,
-  0o330i32 as libc::c_char,
-  0o140i32 as libc::c_char,
-];
-
-/* "Do not compress usage text if uncompressed text is small
- *  and we don't include bunzip2 code for other reasons"
- *
- * Useful for mass one-applet rebuild (bunzip2 code is ~2.7k).
- *
- * Unlike BUNZIP2, if FEATURE_SEAMLESS_BZ2 is on, bunzip2 code is built but
- * still may be unused if none of the selected applets calls open_zipped()
- * or its friends; we test for (FEATURE_SEAMLESS_BZ2 && <APPLET>) instead.
- * For example, only if TAR and FEATURE_SEAMLESS_BZ2 are both selected,
- * then bunzip2 code will be linked in anyway, and disabling help compression
- * would be not optimal:
  */
 
 #[no_mangle]
@@ -755,29 +622,6 @@ pub unsafe extern "C" fn scripted_main(
   ::std::process::exit(exitcode)
 }
 
-/* Embedded script support */
-#[no_mangle]
-pub unsafe extern "C" fn get_script_content(mut n: libc::c_uint) -> *mut libc::c_char {
-  let mut t: *mut libc::c_char = unpack_bz2_data(
-    packed_scripts.as_ptr(),
-    ::std::mem::size_of::<[libc::c_char; 111]>() as libc::c_ulong as libc::c_int,
-    87i32,
-  );
-  if !t.is_null() {
-    while n != 0i32 as libc::c_uint {
-      loop {
-        let fresh4 = t;
-        t = t.offset(1);
-        if !(*fresh4 as libc::c_int != '\u{0}' as i32) {
-          break;
-        }
-      }
-      n = n.wrapping_sub(1)
-    }
-  }
-  return t;
-}
-
 unsafe fn print_rustybox_help() {
   /* -1 prevent last comma to be in the very last pos */
   let output_width = get_terminal_width(2) - 1;
@@ -794,7 +638,6 @@ the developers of the BusyBox and c2rust projects!
 
 Usage: rustybox [function [arguments]...]
    or: rustybox --list[-full]
-   or: rustybox --show SCRIPT
    or: rustybox --install [-s] [DIR]
    or: function [arguments]...
 
@@ -831,26 +674,6 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
     print_rustybox_help();
     return 0;
   } else {
-    if argv[1] == "--show" {
-      if argv.len() < 3 {
-        bb_error_msg_and_die(
-          bb_msg_requires_arg.as_ptr(),
-          b"--show\x00" as *const u8 as *const libc::c_char,
-        );
-      }
-      match find_script_by_name(&argv[2]) {
-        None => bb_error_msg_and_die(
-          b"script \'%s\' not found\x00" as *const u8 as *const libc::c_char,
-          str_to_ptr(&argv[2]),
-        ),
-
-        Some(n) => {
-          full_write1_str(get_script_content(n as libc::c_uint));
-          return 0;
-        }
-      }
-    }
-
     if argv[1] == "--list" {
       for applet in applets.iter() {
         println!("{}", applet.name);
