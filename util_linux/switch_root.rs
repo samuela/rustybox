@@ -1,37 +1,37 @@
 use libc;
 use libc::access;
-use libc::alarm;
+
 use libc::close;
 use libc::closedir;
-use libc::endmntent;
-use libc::endutxent;
-use libc::fchmod;
+
+
+
 use libc::free;
-use libc::fscanf;
-use libc::getegid;
-use libc::getgid;
+
+
+
 use libc::getpid;
-use libc::getuid;
-use libc::ioctl;
+
+
 use libc::lstat;
-use libc::mknod;
+
 use libc::mount;
 use libc::opendir;
 use libc::prctl;
-use libc::putchar_unlocked;
-use libc::putenv;
+
+
 use libc::readdir;
 use libc::rmdir;
-use libc::setmntent;
-use libc::setsid;
-use libc::setutxent;
+
+
+
 use libc::sscanf;
 use libc::stat;
 use libc::statfs;
 use libc::strtok;
-use libc::sync;
-use libc::umask;
-use libc::umount2;
+
+
+
 use libc::unlink;
 
 extern "C" {
