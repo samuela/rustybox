@@ -229,26 +229,26 @@ unsafe fn parse_config_file() {
   let mut section: smallint = 0;
   let mut st: libc::stat = std::mem::zeroed();
   ruid = libc::getuid();
-  if ruid == 0i32 as libc::c_uint {
+  if ruid == 0 {
     /* run by root - don't need to even read config file */
     return;
   }
-  if libc::stat(str_to_ptr(config_file), &mut st) != 0i32
-    || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
-    || st.st_uid != 0i32 as libc::c_uint
-    || st.st_mode & (0o200i32 >> 3i32 | 0o200i32 >> 3i32 >> 3i32) as libc::c_uint != 0
+  if libc::stat(str_to_ptr(config_file), &mut st) != 0      /* No config file? */
+    || !(st.st_mode & 0o170000 == 0o100000)                 /* Not a regular file? */
+    || st.st_uid != 0                                       /* Not owned by root? */
+    || st.st_mode & (0o200 >> 3 | 0o200 >> 3 >> 3) != 0     /* Writable by non-root? */
     || {
+      /* Cannot open? */
       f = fopen_for_read(str_to_ptr(config_file));
       f.is_null()
     }
   {
-    /* Cannot open? */
     return;
-  } /* while (1) */
-  suid_cfg_readable = 1i32 != 0;
+  }
+  suid_cfg_readable = 1;
   sct_head = 0 as *mut suid_config_t;
-  lc = 0i32 as libc::c_uint;
-  section = lc as smallint;
+  lc = 0;
+  section = 0;
   's_65: loop {
     let mut buffer: [libc::c_char; 256] = [0; 256];
     let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -265,12 +265,12 @@ unsafe fn parse_config_file() {
       //	errmsg = "reading";
       //	goto pe_label;
       //}
-      libc::fclose(f); /* Success, so set the pointer. */
-      suid_config = sct_head; /* Got a (partial) line. */
+      libc::fclose(f);
+      suid_config = sct_head; /* Success, so set the pointer. */
       return;
     }
     s = buffer.as_mut_ptr();
-    lc = lc.wrapping_add(1);
+    lc = lc.wrapping_add(1); /* Got a (partial) line. */
     /* If a line is too long for our buffer, we consider it an error.
      * The following test does mistreat one corner case though.
      * If the final line of the file does not end with a newline and
