@@ -64,7 +64,7 @@ pub unsafe extern "C" fn basename_main(
     && strcmp(
       *argv.offset(1),
       b"--\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
   {
     argv = argv.offset(1)
   }
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn basename_main(
       bb_show_usage();
     }
     n = strlen(*argv);
-    if m > n && strcmp(s.offset(m as isize).offset(-(n as isize)), *argv) == 0i32 {
+    if m > n && strcmp(s.offset(m as isize).offset(-(n as isize)), *argv) == 0 {
       m = (m as libc::c_ulong).wrapping_sub(n) as size_t as size_t
       /*s[m] = '\0'; - redundant */
     }
@@ -91,5 +91,5 @@ pub unsafe extern "C" fn basename_main(
   m = m.wrapping_add(1);
   *s.offset(fresh0 as isize) = '\n' as i32 as libc::c_char;
   /* NB: != is correct here: */
-  return (full_write(1i32, s as *const libc::c_void, m) != m as ssize_t) as libc::c_int;
+  return (full_write(1, s as *const libc::c_void, m) != m as ssize_t) as libc::c_int;
 }
