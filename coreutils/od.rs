@@ -212,80 +212,16 @@ pub const OPT_A: C2RustUnnamed = 1;
 pub type longdouble_t = f128::f128;
 pub type ulonglong_t = libc::c_ulonglong;
 static mut bytes_to_oct_digits: [u8; 17] = [
-  0i32 as u8,
-  3i32 as u8,
-  6i32 as u8,
-  8i32 as u8,
-  11i32 as u8,
-  14i32 as u8,
-  16i32 as u8,
-  19i32 as u8,
-  22i32 as u8,
-  25i32 as u8,
-  27i32 as u8,
-  30i32 as u8,
-  32i32 as u8,
-  35i32 as u8,
-  38i32 as u8,
-  41i32 as u8,
-  43i32 as u8,
+  0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43,
 ];
 static mut bytes_to_signed_dec_digits: [u8; 17] = [
-  1i32 as u8,
-  4i32 as u8,
-  6i32 as u8,
-  8i32 as u8,
-  11i32 as u8,
-  13i32 as u8,
-  16i32 as u8,
-  18i32 as u8,
-  20i32 as u8,
-  23i32 as u8,
-  25i32 as u8,
-  28i32 as u8,
-  30i32 as u8,
-  33i32 as u8,
-  35i32 as u8,
-  37i32 as u8,
-  40i32 as u8,
+  1, 4, 6, 8, 11, 13, 16, 18, 20, 23, 25, 28, 30, 33, 35, 37, 40,
 ];
 static mut bytes_to_unsigned_dec_digits: [u8; 17] = [
-  0i32 as u8,
-  3i32 as u8,
-  5i32 as u8,
-  8i32 as u8,
-  10i32 as u8,
-  13i32 as u8,
-  15i32 as u8,
-  17i32 as u8,
-  20i32 as u8,
-  22i32 as u8,
-  25i32 as u8,
-  27i32 as u8,
-  29i32 as u8,
-  32i32 as u8,
-  34i32 as u8,
-  37i32 as u8,
-  39i32 as u8,
+  0, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25, 27, 29, 32, 34, 37, 39,
 ];
 static mut bytes_to_hex_digits: [u8; 17] = [
-  0i32 as u8,
-  2i32 as u8,
-  4i32 as u8,
-  6i32 as u8,
-  8i32 as u8,
-  10i32 as u8,
-  12i32 as u8,
-  14i32 as u8,
-  16i32 as u8,
-  18i32 as u8,
-  20i32 as u8,
-  22i32 as u8,
-  24i32 as u8,
-  26i32 as u8,
-  28i32 as u8,
-  30i32 as u8,
-  32i32 as u8,
+  0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32,
 ];
 static mut width_bytes: [libc::c_schar; 9] = [
   -1i32 as libc::c_schar,
@@ -330,7 +266,7 @@ static mut fp_type_size: [libc::c_uchar; 17] = [
 ];
 unsafe extern "C" fn gcd(mut u: libc::c_uint, mut v: libc::c_uint) -> libc::c_uint {
   let mut t: libc::c_uint = 0;
-  while v != 0i32 as libc::c_uint {
+  while v != 0 {
     t = u.wrapping_rem(v);
     u = v;
     v = t
@@ -340,8 +276,8 @@ unsafe extern "C" fn gcd(mut u: libc::c_uint, mut v: libc::c_uint) -> libc::c_ui
 /* Compute the least common multiple of U and V.  */
 unsafe extern "C" fn lcm(mut u: libc::c_uint, mut v: libc::c_uint) -> libc::c_uint {
   let mut t: libc::c_uint = gcd(u, v);
-  if t == 0i32 as libc::c_uint {
-    return 0i32 as libc::c_uint;
+  if t == 0 {
+    return 0;
   }
   return u.wrapping_mul(v).wrapping_div(t);
 }
