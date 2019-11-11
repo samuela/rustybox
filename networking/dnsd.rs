@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
 use libc::openlog;
@@ -80,8 +81,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
 }
 

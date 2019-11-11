@@ -3,6 +3,7 @@ use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -142,8 +143,7 @@ extern "C" {
   fn bb_info_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]

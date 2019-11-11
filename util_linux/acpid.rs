@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -155,9 +156,6 @@ extern "C" {
 
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
-
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.

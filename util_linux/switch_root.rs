@@ -1,4 +1,4 @@
-
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::access;
 use libc::close;
@@ -128,8 +128,6 @@ extern "C" {
   #[no_mangle]
   fn getcaps(caps: *mut libc::c_void);
 
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 }
 
 #[derive(Copy, Clone)]

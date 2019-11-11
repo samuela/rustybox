@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::ioctl;
 use libc::openlog;
@@ -67,8 +68,7 @@ extern "C" {
     fmt: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
   #[no_mangle]
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;

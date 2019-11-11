@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::off64_t;
 use libc::off_t;
@@ -11,8 +12,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;

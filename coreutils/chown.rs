@@ -1,5 +1,6 @@
 use crate::librb::bb_uidgid_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chown;
 use libc::gid_t;

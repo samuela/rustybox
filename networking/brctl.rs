@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::closedir;
 use libc::open;
@@ -83,8 +84,7 @@ extern "C" {
     fmt: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
   #[no_mangle]

@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::getenv;
@@ -7,8 +8,7 @@ extern "C" {
 
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
 

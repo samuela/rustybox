@@ -1,4 +1,4 @@
-
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::isatty;
 use libc::printf;
@@ -72,9 +72,6 @@ extern "C" {
 
   #[no_mangle]
   fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   #[no_mangle]
   static bb_banner: [libc::c_char; 0];

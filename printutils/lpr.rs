@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -66,8 +67,7 @@ extern "C" {
   fn bb_simple_error_msg(s: *const libc::c_char);
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }

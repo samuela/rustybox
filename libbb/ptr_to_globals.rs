@@ -1,3 +1,4 @@
+use crate::libbb::appletlib::applet_name;
 use libc;
 extern "C" {
   pub type globals;

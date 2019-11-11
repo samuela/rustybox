@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
 use libc::getpid;
@@ -31,8 +32,7 @@ extern "C" {
   fn print_signames();
   #[no_mangle]
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,

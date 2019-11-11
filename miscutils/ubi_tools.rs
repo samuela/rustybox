@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::sprintf;
 use libc::sscanf;
@@ -54,8 +55,7 @@ extern "C" {
   fn ubi_devnum_from_devname(str: *const libc::c_char) -> libc::c_uint;
   #[no_mangle]
   fn ubi_get_volid_by_name(ubi_devnum: libc::c_uint, vol_name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 
 pub type __int64_t = libc::c_long;

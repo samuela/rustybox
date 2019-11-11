@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 extern "C" {
 
@@ -14,8 +15,7 @@ extern "C" {
     fmt: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 #[no_mangle]
 pub unsafe extern "C" fn freeramdisk_main(

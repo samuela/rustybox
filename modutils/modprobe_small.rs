@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::fclose;
@@ -125,8 +126,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */

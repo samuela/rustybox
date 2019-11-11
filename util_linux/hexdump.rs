@@ -1,4 +1,4 @@
-
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -7,9 +7,6 @@ use libc::putchar_unlocked;
 use libc::sscanf;
 use libc::strchr;
 extern "C" {
-
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   #[no_mangle]
   static mut optarg: *mut libc::c_char;

@@ -1,6 +1,7 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::access;
 use libc::alarm;
@@ -134,8 +135,7 @@ extern "C" {
   fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 

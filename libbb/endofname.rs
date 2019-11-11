@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 /* !RETURNS_MALLOC: it's a realloc-like function */
 /* bb_signals(BB_FATAL_SIGS, handler) catches all signals which

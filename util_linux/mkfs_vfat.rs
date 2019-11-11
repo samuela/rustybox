@@ -2,6 +2,7 @@ use super::mkfs_ext2::BUG_wrong_field_size;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::fprintf;
 use libc::ioctl;

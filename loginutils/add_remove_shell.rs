@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -32,8 +33,7 @@ extern "C" {
   fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
   #[no_mangle]
   fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 
 use libc::mode_t;

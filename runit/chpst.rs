@@ -1,5 +1,6 @@
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::closedir;
@@ -19,8 +20,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   #[no_mangle]
   fn getrlimit(__resource: __rlimit_resource_t, __rlimits: *mut rlimit) -> libc::c_int;

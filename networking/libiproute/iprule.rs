@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::printf;
 extern "C" {
@@ -21,8 +22,7 @@ extern "C" {
   fn bb_warn_ignoring_args(arg: *mut libc::c_char);
   #[no_mangle]
   fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn rtnl_rtrealm_n2a(id: libc::c_int) -> *const libc::c_char;
   #[no_mangle]

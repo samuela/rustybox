@@ -2,10 +2,10 @@ use crate::applets::applet_tables::applets;
 use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::bb_uidgid_t;
 use crate::librb::smallint;
 use crate::shell::ash::ash_main;
-use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::gid_t;
 use libc::group;
@@ -180,7 +180,6 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
  * This makes (shared busybox) + libbusybox smaller.
  * (--gc-sections would be even better....)
  */
-#[no_mangle]
 pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
 
 static mut ruid: uid_t = 0; /* real uid */

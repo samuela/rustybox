@@ -1,8 +1,9 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::cc_t;
 use libc::close;
@@ -159,8 +160,7 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   /* allow default system PATH to be extended via CFLAGS */
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];

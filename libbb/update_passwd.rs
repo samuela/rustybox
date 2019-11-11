@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::fchmod;
 use libc::fclose;
@@ -77,8 +78,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn bb_perror_nomsg();
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 
 #[derive(Copy, Clone)]

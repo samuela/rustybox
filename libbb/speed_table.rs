@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;

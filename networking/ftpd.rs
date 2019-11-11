@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::alarm;
 use libc::chdir;
@@ -203,8 +204,7 @@ extern "C" {
   fn change_identity(pw: *const passwd);
   #[no_mangle]
   fn check_password(pw: *const passwd, plaintext: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */

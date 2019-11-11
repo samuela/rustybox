@@ -1,10 +1,11 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chdir;
 use libc::chmod;
@@ -56,9 +57,6 @@ extern "C" {
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 
   #[no_mangle]
-  static mut applet_name: *const libc::c_char;
-
-  #[no_mangle]
   fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 
   #[no_mangle]
@@ -89,8 +87,6 @@ extern "C" {
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

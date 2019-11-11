@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 extern "C" {
   #[no_mangle]

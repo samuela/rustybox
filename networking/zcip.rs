@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::openlog;
 use libc::putenv;
@@ -84,8 +85,7 @@ extern "C" {
     argp: *mut libc::c_void,
     ioctl_name: *const libc::c_char,
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static const_int_0: libc::c_int;
   #[no_mangle]

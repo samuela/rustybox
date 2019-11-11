@@ -1,5 +1,6 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 /*
  * Copyright (C) 2002 by Glenn McGrath

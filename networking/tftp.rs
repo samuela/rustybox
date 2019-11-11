@@ -3,6 +3,7 @@ use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -162,8 +163,7 @@ extern "C" {
     transferred: uoff_t,
     totalsize: uoff_t,
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 

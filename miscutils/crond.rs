@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chdir;
 use libc::close;
@@ -54,8 +55,6 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;

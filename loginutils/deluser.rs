@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::geteuid;
 use libc::group;
@@ -37,8 +38,7 @@ extern "C" {
     data: *const libc::c_char,
     member: *const libc::c_char,
   ) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }

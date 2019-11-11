@@ -1,6 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::fprintf;
@@ -67,8 +68,7 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]
   fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }

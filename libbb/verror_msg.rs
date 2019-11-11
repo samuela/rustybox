@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
 use libc::strcpy;
@@ -31,8 +32,7 @@ extern "C" {
   fn fflush_all() -> libc::c_int;
   #[no_mangle]
   fn xfunc_die() -> !;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
 }
 pub type __builtin_va_list = [__va_list_tag; 1];

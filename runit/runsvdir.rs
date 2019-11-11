@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chdir;
 use libc::closedir;

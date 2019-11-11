@@ -5,6 +5,7 @@ use crate::librb::sha3_ctx_t;
 use crate::librb::sha512_ctx_t;
 use crate::librb::size_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -100,8 +101,7 @@ extern "C" {
   #[no_mangle]
   fn sha3_end(ctx: *mut sha3_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
 
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 
 pub type C2RustUnnamed = libc::c_uint;

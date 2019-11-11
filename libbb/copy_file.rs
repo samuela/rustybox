@@ -1,5 +1,6 @@
 use crate::librb::smallint;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -197,8 +198,7 @@ extern "C" {
   fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn bb_ask_y_confirmation() -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
   #[no_mangle]

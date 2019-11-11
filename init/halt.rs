@@ -1,6 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::access;
 use libc::kill;
@@ -34,8 +35,7 @@ extern "C" {
   fn bb_perror_nomsg_and_die() -> !;
   #[no_mangle]
   fn find_pid_by_name(procName: *const libc::c_char) -> *mut pid_t;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_path_wtmp_file: [libc::c_char; 0];
   #[no_mangle]

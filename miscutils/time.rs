@@ -1,6 +1,7 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::signal::__sighandler_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::getenv;
 use libc::pid_t;

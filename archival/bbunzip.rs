@@ -2,7 +2,7 @@ use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::fprintf;
 use libc::free;
@@ -88,9 +88,6 @@ extern "C" {
 
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
 
   #[no_mangle]
   fn init_transformer_state(xstate: *mut transformer_state_t);

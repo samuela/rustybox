@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::access;
 use libc::closedir;
@@ -21,8 +22,7 @@ extern "C" {
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]
   fn bb_ask_y_confirmation() -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   fn concat_subpath_file(
     path: *const libc::c_char,

@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::printf;
 use libc::puts;
@@ -46,8 +47,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 }
 
 use crate::librb::size_t;

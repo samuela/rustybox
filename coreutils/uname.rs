@@ -1,11 +1,10 @@
-
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::printf;
 use libc::puts;
 use libc::strcpy;
 extern "C" {
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static mut optind: libc::c_int;
 

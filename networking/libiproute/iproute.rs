@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::fprintf;
@@ -42,8 +43,7 @@ extern "C" {
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
   #[no_mangle]

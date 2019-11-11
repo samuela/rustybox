@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
 use libc::off_t;
@@ -9,8 +10,7 @@ use libc::swapon;
 use libc::FILE;
 extern "C" {
 
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
   #[no_mangle]
   static mut optind: libc::c_int;

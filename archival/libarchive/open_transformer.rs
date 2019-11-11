@@ -3,6 +3,7 @@ use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;

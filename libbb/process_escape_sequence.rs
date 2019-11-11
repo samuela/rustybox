@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 /* Usual "this only works for ascii compatible encodings" disclaimer. */
 #[no_mangle]

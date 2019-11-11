@@ -1,6 +1,7 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::strchr;
 use libc::strcmp;

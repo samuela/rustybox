@@ -1,6 +1,7 @@
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::alarm;
 use libc::free;

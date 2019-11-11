@@ -1,4 +1,5 @@
 
+use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::closelog;
 use libc::getenv;
@@ -10,8 +11,7 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  static mut applet_name: *const libc::c_char;
+
 
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
