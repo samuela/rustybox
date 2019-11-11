@@ -1,7 +1,7 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 use libc::fclose;
 use libc::fscanf;

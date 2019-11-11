@@ -1,6 +1,6 @@
 use crate::libbb::llist::llist_t;
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 use libc::strcmp;
 use libc::strrchr;

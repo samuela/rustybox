@@ -1,6 +1,6 @@
 use crate::librb::smallint;
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 use libc::free;
 use libc::printf;

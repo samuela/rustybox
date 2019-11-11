@@ -1,7 +1,7 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 extern "C" {
   #[no_mangle]

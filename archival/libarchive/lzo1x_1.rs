@@ -1,5 +1,5 @@
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 pub type uintptr_t = libc::c_ulong;
 

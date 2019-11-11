@@ -1,5 +1,5 @@
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -

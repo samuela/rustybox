@@ -1,5 +1,5 @@
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 use libc::printf;
 use libc::putchar_unlocked;

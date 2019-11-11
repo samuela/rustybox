@@ -1,6 +1,6 @@
 /* Print string that matches bit masked flags */
 
-use crate::libbb::appletlib::applet_name;
+
 use libc;
 use libc::printf;
 extern "C" {
