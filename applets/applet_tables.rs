@@ -1088,12 +1088,6 @@ pub struct bb_applet {
 }
 
 /*
- * applets.h - a listing of all busybox applets.
- *
- * If you write a new applet, you need to add an entry to this list to make
- * busybox aware of it.
- */
-/*
 name  - applet name as it is typed on command line
 help  - applet name, converted to C (ether-wake: help = ether_wake)
 main  - corresponding <applet>_main to call (bzcat: main = bunzip2)

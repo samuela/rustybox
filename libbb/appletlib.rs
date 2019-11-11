@@ -228,11 +228,13 @@ unsafe fn parse_config_file() {
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
   let mut st: libc::stat = std::mem::zeroed();
+
   ruid = libc::getuid();
   if ruid == 0 {
     /* run by root - don't need to even read config file */
     return;
   }
+
   if libc::stat(str_to_ptr(config_file), &mut st) != 0      /* No config file? */
     || !(st.st_mode & 0o170000 == 0o100000)                 /* Not a regular file? */
     || st.st_uid != 0                                       /* Not owned by root? */
@@ -245,10 +247,12 @@ unsafe fn parse_config_file() {
   {
     return;
   }
+
   suid_cfg_readable = true;
   sct_head = 0 as *mut suid_config_t;
   lc = 0;
   section = 0;
+
   's_65: loop {
     let mut buffer: [libc::c_char; 256] = [0; 256];
     let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -269,8 +273,10 @@ unsafe fn parse_config_file() {
       suid_config = sct_head; /* Success, so set the pointer. */
       return;
     }
+
     s = buffer.as_mut_ptr();
     lc = lc.wrapping_add(1); /* Got a (partial) line. */
+
     /* If a line is too long for our buffer, we consider it an error.
      * The following test does mistreat one corner case though.
      * If the final line of the file does not end with a newline and
