@@ -1,6 +1,6 @@
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::free;
 use libc::ssize_t;

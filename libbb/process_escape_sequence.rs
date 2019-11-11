@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 /* Usual "this only works for ascii compatible encodings" disclaimer. */
 #[no_mangle]

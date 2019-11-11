@@ -1,5 +1,5 @@
 use crate::libbb::llist::llist_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::free;
 use libc::pid_t;

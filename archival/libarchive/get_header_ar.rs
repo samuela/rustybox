@@ -1,7 +1,7 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::off64_t;
 use libc::off_t;

@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::speed_t;
 pub const NUM_SPEEDS: C2RustUnnamed = 31;

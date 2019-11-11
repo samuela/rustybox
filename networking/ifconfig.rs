@@ -1,6 +1,6 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::strchr;
 use libc::strcmp;

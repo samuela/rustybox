@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::putchar_unlocked;
 use libc::FILE;

@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.

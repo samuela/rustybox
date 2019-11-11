@@ -1,5 +1,5 @@
 use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::free;
 use libc::gid_t;

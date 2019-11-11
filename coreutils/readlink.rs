@@ -1,5 +1,5 @@
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::free;
 use libc::printf;

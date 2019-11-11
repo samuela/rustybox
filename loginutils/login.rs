@@ -1,6 +1,6 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::access;
 use libc::alarm;

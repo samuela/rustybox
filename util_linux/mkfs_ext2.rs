@@ -1,6 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::uoff_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::off_t;
 use libc::printf;

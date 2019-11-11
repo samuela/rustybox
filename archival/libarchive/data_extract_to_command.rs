@@ -1,7 +1,7 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::signal::__sighandler_t;
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::close;
 use libc::off_t;

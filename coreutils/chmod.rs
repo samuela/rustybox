@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 use libc::chmod;
 use libc::mode_t;

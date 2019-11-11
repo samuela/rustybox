@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+
 use libc;
 /* implementation of the LZO1X decompression algorithm
 
