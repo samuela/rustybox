@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::access;
 use libc::fprintf;
@@ -16,8 +17,7 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   #[no_mangle]

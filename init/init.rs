@@ -2,6 +2,7 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::cc_t;
 use libc::close;
@@ -78,8 +79,7 @@ extern "C" {
   fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

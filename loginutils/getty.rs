@@ -1,6 +1,7 @@
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 use libc::cc_t;
@@ -63,8 +64,7 @@ extern "C" {
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn tcgetsid(__fd: libc::c_int) -> pid_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

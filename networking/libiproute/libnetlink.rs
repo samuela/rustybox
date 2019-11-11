@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::time;
@@ -21,8 +22,7 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

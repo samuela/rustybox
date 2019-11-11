@@ -1,5 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::sprintf;
@@ -18,8 +19,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::ino_t;
 use libc::lstat;
@@ -13,8 +14,7 @@ extern "C" {
   #[no_mangle]
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;

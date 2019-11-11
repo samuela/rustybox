@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fchmod;
 use libc::fclose;
@@ -53,8 +54,7 @@ extern "C" {
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::open;
 use libc::time;
@@ -12,8 +13,7 @@ extern "C" {
 
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xstat(pathname: *const libc::c_char, buf: *mut stat);
   #[no_mangle]

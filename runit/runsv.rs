@@ -3,6 +3,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::dup2;
@@ -55,8 +56,7 @@ extern "C" {
   fn mkfifo(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
   #[no_mangle]
   fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn ndelay_on(fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::cc_t;
 use libc::ioctl;
@@ -50,8 +51,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn ndelay_off(fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

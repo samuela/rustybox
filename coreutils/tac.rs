@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 extern "C" {
 
@@ -5,8 +6,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
   #[no_mangle]

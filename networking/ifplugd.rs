@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::ioctl;
@@ -39,8 +40,7 @@ extern "C" {
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;
   #[no_mangle]

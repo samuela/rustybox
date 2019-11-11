@@ -1,6 +1,7 @@
 use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::free;
@@ -46,8 +47,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;
   #[no_mangle]

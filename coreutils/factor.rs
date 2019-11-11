@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::printf;
@@ -6,8 +7,7 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
   #[no_mangle]

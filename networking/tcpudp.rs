@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::free;
@@ -48,8 +49,7 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn close_on_exec_on(fd: libc::c_int);
   #[no_mangle]

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::passwd;
 use libc::strchr;
@@ -10,8 +11,7 @@ extern "C" {
   /* Search for an entry with a matching username.  */
   #[no_mangle]
   fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xatoi_range(str: *const libc::c_char, l: libc::c_int, u: libc::c_int) -> libc::c_int;
   #[no_mangle]

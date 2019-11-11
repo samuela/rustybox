@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::openlog;
 use libc::syslog;
@@ -14,8 +15,7 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn klogctl(type_0: libc::c_int, b: *mut libc::c_char, len: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_signals_recursive_norestart(
     sigs: libc::c_int,

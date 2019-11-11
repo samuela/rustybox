@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::lstat;
@@ -14,8 +15,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

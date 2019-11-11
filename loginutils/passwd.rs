@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getuid;
 use libc::openlog;
@@ -26,8 +27,7 @@ extern "C" {
     __buflen: size_t,
     __result: *mut *mut spwd,
   ) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

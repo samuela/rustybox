@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 use libc::free;
@@ -27,8 +28,7 @@ extern "C" {
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
   #[no_mangle]
   fn strpbrk(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

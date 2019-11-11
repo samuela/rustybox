@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::printf;
 use libc::rmdir;
@@ -8,8 +9,7 @@ extern "C" {
 
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn getopt32long(
     argv: *mut *mut libc::c_char,

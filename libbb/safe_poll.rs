@@ -1,10 +1,10 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::pollfd;
 extern "C" {
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }

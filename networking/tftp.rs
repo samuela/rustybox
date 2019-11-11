@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::free;
@@ -56,8 +57,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

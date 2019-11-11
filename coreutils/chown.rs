@@ -1,4 +1,5 @@
 use crate::librb::bb_uidgid_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chown;
 use libc::gid_t;

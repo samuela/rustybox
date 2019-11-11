@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 use libc::chdir;
@@ -83,8 +84,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;
   #[no_mangle]
@@ -573,7 +573,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-  
+
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

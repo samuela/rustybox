@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -20,8 +21,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xchdir(path: *const libc::c_char);
   #[no_mangle]

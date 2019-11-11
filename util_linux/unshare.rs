@@ -1,5 +1,6 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::getegid;

@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getegid;
 use libc::geteuid;
@@ -26,8 +27,7 @@ extern "C" {
     __groups: *mut gid_t,
     __ngroups: *mut libc::c_int,
   ) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

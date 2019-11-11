@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::access;
 use libc::closedir;
@@ -15,8 +16,7 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);
   #[no_mangle]

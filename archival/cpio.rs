@@ -4,6 +4,7 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::fprintf;

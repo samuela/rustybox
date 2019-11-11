@@ -4,6 +4,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chdir;
 use libc::chmod;
@@ -89,8 +90,7 @@ extern "C" {
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

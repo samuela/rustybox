@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::off_t;
@@ -23,8 +24,7 @@ extern "C" {
   #[no_mangle]
   fn hasmntopt(__mnt: *const mntent, __opt: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;

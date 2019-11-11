@@ -1,9 +1,9 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn ndelay_on(fd: libc::c_int) -> libc::c_int;
   #[no_mangle]

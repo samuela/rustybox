@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::ioctl;
@@ -13,8 +14,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn console_make_active(fd: libc::c_int, vt_num: libc::c_int);
   #[no_mangle]

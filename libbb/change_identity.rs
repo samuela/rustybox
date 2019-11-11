@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getuid;
 extern "C" {
@@ -37,8 +38,7 @@ extern "C" {
   of which USER is a member.  Also include GROUP.  */
   #[no_mangle]
   fn bb_internal_initgroups(__user: *const libc::c_char, __group: gid_t) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xsetgid(gid: gid_t);
   #[no_mangle]

@@ -2,6 +2,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::close;
@@ -90,8 +91,7 @@ extern "C" {
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;
   #[no_mangle]

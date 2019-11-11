@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::closedir;
@@ -27,8 +28,7 @@ extern "C" {
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xopendir(path: *const libc::c_char) -> *mut DIR;
   #[no_mangle]

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 extern "C" {
   #[no_mangle]
@@ -28,8 +29,7 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 }
 
 #[inline(always)]

@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::getpid;
@@ -34,8 +35,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn tcsendbreak(__fd: libc::c_int, __duration: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
   #[no_mangle]

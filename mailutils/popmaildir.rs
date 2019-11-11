@@ -1,5 +1,6 @@
 use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 use libc::atoi;

@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::dup2;
@@ -18,8 +19,7 @@ extern "C" {
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

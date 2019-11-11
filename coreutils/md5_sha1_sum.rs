@@ -4,6 +4,7 @@ use crate::librb::sha256_ctx_t;
 use crate::librb::sha3_ctx_t;
 use crate::librb::sha512_ctx_t;
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::free;

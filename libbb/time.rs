@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::sscanf;
 use libc::strchr;
@@ -30,8 +31,7 @@ extern "C" {
   fn localtime(__timer: *const time_t) -> *mut tm;
   #[no_mangle]
   fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]

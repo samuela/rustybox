@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fclose;
 use libc::getenv;
@@ -24,8 +25,7 @@ extern "C" {
   fn mktime(__tp: *mut tm) -> time_t;
   #[no_mangle]
   fn tzset();
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

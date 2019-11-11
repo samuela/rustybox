@@ -1,5 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fprintf;
 use libc::free;
@@ -28,8 +29,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

@@ -1,4 +1,5 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::off_t;
 extern "C" {

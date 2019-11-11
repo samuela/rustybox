@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fclose;
 extern "C" {
@@ -6,8 +7,7 @@ extern "C" {
 
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 }
 
 use libc::FILE;

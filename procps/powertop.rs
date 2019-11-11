@@ -1,6 +1,7 @@
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::closedir;
 use libc::fclose;
@@ -57,8 +58,7 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);
   #[no_mangle]

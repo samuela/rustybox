@@ -1,4 +1,5 @@
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -34,8 +35,7 @@ extern "C" {
   /* Search for an entry with a matching group name.  */
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

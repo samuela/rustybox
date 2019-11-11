@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chdir;
 use libc::close;
@@ -12,8 +13,7 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);

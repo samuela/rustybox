@@ -1,11 +1,11 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   fn posix_fallocate(__fd: libc::c_int, __offset: off64_t, __len: off64_t) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
   #[no_mangle]

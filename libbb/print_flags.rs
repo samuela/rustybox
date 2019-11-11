@@ -1,4 +1,5 @@
 /* Print string that matches bit masked flags */
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::printf;
 extern "C" {

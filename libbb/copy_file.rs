@@ -1,4 +1,5 @@
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -39,8 +40,7 @@ extern "C" {
 
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   // Reads one line a-la fgets (but doesn't save terminating '\n').
   // Reads byte-by-byte. Useful when it is important to not read ahead.
   // Bytes are appended to pfx (which must be malloced, or NULL).

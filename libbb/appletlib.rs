@@ -5,6 +5,7 @@ use crate::libbb::llist::llist_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::smallint;
 use crate::shell::ash::ash_main;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::gid_t;
 use libc::group;
@@ -40,9 +41,6 @@ extern "C" {
   /* Search for an entry with a matching group ID. */
   #[no_mangle]
   fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
-
-  #[no_mangle]
-  static mut bb_errno: *mut libc::c_int;
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

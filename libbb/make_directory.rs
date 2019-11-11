@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::mode_t;
@@ -9,8 +10,7 @@ extern "C" {
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn bb_perror_msg(s: *const libc::c_char, _: ...);

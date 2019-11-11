@@ -1,6 +1,7 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -40,8 +41,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
   #[no_mangle]

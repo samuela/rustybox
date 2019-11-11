@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::printf;
 extern "C" {
@@ -17,8 +18,7 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   #[no_mangle]

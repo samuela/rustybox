@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::closedir;
@@ -79,8 +80,7 @@ extern "C" {
   ) -> size_t;
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,5 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chdir;
 use libc::close;
@@ -36,8 +37,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   /* NB: can violate const-ness (similarly to strchr) */
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;

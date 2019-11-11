@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::printf;
@@ -9,8 +10,7 @@ extern "C" {
 
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

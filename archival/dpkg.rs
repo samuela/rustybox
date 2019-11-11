@@ -4,6 +4,7 @@ use crate::librb::md5_ctx_t;
 use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::access;
 use libc::atoi;
@@ -54,8 +55,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

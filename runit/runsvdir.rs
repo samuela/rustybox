@@ -1,4 +1,5 @@
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::chdir;
 use libc::closedir;
@@ -37,8 +38,7 @@ extern "C" {
   #[no_mangle]
   fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;

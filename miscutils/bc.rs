@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -52,8 +53,7 @@ extern "C" {
   static bb_hexdigits_upcase: [libc::c_char; 0];
   #[no_mangle]
   static mut applet_name: *const libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

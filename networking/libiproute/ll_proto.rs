@@ -1,5 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::strcasecmp;
 extern "C" {
@@ -15,8 +16,7 @@ extern "C" {
 
   #[no_mangle]
   fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn bb_strtou(
     arg: *const libc::c_char,

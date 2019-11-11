@@ -1,5 +1,6 @@
 use crate::librb::__syscall_slong_t;
 use crate::librb::signal::__sighandler_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getenv;
 use libc::pid_t;
@@ -20,8 +21,7 @@ extern "C" {
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn wait3(__stat_loc: *mut libc::c_int, __options: libc::c_int, __usage: *mut rusage) -> pid_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn monotonic_ms() -> libc::c_ulonglong;
   #[no_mangle]

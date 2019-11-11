@@ -1,5 +1,6 @@
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -17,8 +18,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -932,7 +932,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;

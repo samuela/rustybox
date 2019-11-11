@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getopt;
 use libc::gid_t;
@@ -11,8 +12,7 @@ extern "C" {
   static mut optarg: *mut libc::c_char;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
   #[no_mangle]

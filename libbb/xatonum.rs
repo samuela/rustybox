@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::strcmp;
 extern "C" {
@@ -14,8 +15,7 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   /* These parse entries in /etc/passwd and /etc/group.  This is desirable
    * for BusyBox since we want to avoid using the glibc NSS stuff, which
    * increases target size and is often not needed on embedded systems.  */

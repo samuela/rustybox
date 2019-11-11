@@ -2,6 +2,7 @@ use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::free;
@@ -48,8 +49,7 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);
   #[no_mangle]

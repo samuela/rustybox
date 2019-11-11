@@ -1,4 +1,5 @@
 use crate::librb::size_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -27,8 +28,7 @@ extern "C" {
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
   #[no_mangle]

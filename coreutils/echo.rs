@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 extern "C" {
@@ -6,8 +7,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

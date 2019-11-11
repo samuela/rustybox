@@ -1,5 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::endmntent;
 use libc::free;
@@ -36,8 +37,7 @@ extern "C" {
     __bufsize: libc::c_int,
   ) -> *mut mntent;
 
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

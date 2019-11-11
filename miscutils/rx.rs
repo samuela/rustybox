@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 extern "C" {
@@ -17,8 +18,7 @@ extern "C" {
   fn cfmakeraw(__termios_p: *mut termios);
   #[no_mangle]
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
   #[no_mangle]
   fn signal_no_SA_RESTART_empty_mask(
     sig: libc::c_int,

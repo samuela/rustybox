@@ -1,3 +1,4 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::open;
@@ -5,8 +6,7 @@ extern "C" {
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  static bb_errno: *mut libc::c_int;
+
 }
 
 use crate::librb::size_t;
