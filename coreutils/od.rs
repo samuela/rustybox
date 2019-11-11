@@ -1,3 +1,4 @@
+use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
@@ -142,7 +143,7 @@ pub struct suffix_mult {
   pub suffix: [libc::c_char; 4],
   pub mult: libc::c_uint,
 }
-use crate::libbb::llist::llist_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
