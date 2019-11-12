@@ -127,33 +127,6 @@ static mut suid_cfg_readable: bool = false;
 #[no_mangle]
 pub static mut applet_numbers: [u16; 1] = [218i32 as u16];
 
-/*
- * Utility routines.
- *
- * Copyright (C) tons of folks.  Tracking down who wrote what
- * isn't something I'm going to worry about...  If you wrote something
- * here, please feel free to acknowledge your work.
- *
- * Based in part on code from sash, Copyright (c) 1999 by David I. Bell
- * Permission has been granted to redistribute this code under GPL.
- *
- * Licensed under GPLv2 or later, see file LICENSE in this source tree.
- */
-/* We are trying to not use printf, this benefits the case when selected
- * applets are really simple. Example:
- *
- * $ ./busybox
- * ...
- * Currently defined functions:
- *         basename, false, true
- *
- * $ size busybox
- *    text    data     bss     dec     hex filename
- *    4473      52      72    4597    11f5 busybox
- *
- * FEATURE_INSTALLER or FEATURE_SUID will still link printf routines in. :(
- */
-
 #[no_mangle]
 pub unsafe extern "C" fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint {
   let mut start: *mut *mut libc::c_char = argv;

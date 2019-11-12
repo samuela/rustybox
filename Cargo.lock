@@ -23,6 +23,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "libc"
 version = "0.2.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -49,6 +54,7 @@ version = "0.0.0"
 dependencies = [
  "c2rust-asm-casts 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "c2rust-bitfields 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -71,6 +77,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum c2rust-asm-casts 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "61da1bee28b8e078a668885d6424a14fd0ea6a6b2646fdf4e44bda702df3fad8"
 "checksum c2rust-bitfields 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "eb34f0c0ace43530b2df7f18bc69ee0c4082158aa451ece29602f8c841e73764"
 "checksum c2rust-bitfields-derive 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e435559e4c01dc6a7b59afe1a9f3a30446954426347dc20dfb32950d303ed3b5"
+"checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)" = "1a31a0627fdf1f6a39ec0dd577e101440b7db22672c0901fe00a9a6fbb5c24e8"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
 "checksum quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)" = "6ce23b6b870e8f94f81fb0a363d65d86675884b34a09043c81e5562f11c1f8e1"

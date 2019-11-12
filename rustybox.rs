@@ -10,6 +10,9 @@
 #![feature(label_break_value)]
 #![feature(ptr_wrapping_offset_from)]
 
+#[macro_use]
+extern crate lazy_static;
+
 pub mod applets {
   pub mod applet_tables;
 } // mod applets
