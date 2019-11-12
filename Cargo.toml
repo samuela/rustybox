@@ -1,6 +1,3 @@
-[workspace]
-members = []
-
 [package]
 name = "rustybox"
 authors = ["Samuel Ainsworth"]
