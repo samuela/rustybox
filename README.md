@@ -2,6 +2,8 @@
 
 RustyBox is a free-range, non-GMO fork of [BusyBox](https://busybox.net/) written entirely in [Rust](https://www.rust-lang.org/). It includes all your favorite commands like `ls`, `mount`, and `top`, but without a single line of C code! Like BusyBox, rustybox weighs in at just under 1 megabyte and includes all the basic utilities you need to set up a small Linux OS.
 
+![screenshot](https://i.ibb.co/fnJG4K3/carbon-1.png)
+
 ## Contributing to rustybox
 Contributing to rustybox is a great way to get started with rust, dig into the bowels of UNIX, or to help to free the world from the diabolical tyranny of C.
 
