@@ -5,7 +5,7 @@ RustyBox is a free-range, non-GMO fork of [BusyBox](https://busybox.net/) writte
 ![screenshot](https://i.ibb.co/fnJG4K3/carbon-1.png)
 
 ## Contributing to rustybox
-Contributing to rustybox is a great way to get started with rust, dig into the bowels of UNIX, or to help to free the world from the diabolical tyranny of C.
+Contributing to rustybox is a great way to get started with rust, dig into the bowels of linux, or to help to free the world from the diabolical tyranny of C.
 
 There's lots to be done, so we're happy to have you! Here are just a few ideas:
 * Replace some `extern "C"` includes with more idiomatic `use`s. Pretty straightforward find/replace-all usually does the trick.
