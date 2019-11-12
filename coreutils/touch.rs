@@ -1,8 +1,12 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::open;
+use libc::stat;
+use libc::suseconds_t;
 use libc::time;
+use libc::time_t;
+use libc::timeval;
+use libc::tm;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -36,11 +40,6 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use libc::stat;
-use libc::suseconds_t;
-use libc::time_t;
-use libc::timeval;
-use libc::tm;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_h: C2RustUnnamed = 16;
 pub type C2RustUnnamed = libc::c_uint;
