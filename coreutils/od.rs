@@ -211,12 +211,8 @@ pub const OPT_b: C2RustUnnamed = 8;
 pub const OPT_a: C2RustUnnamed = 4;
 pub const OPT_N: C2RustUnnamed = 2;
 pub const OPT_A: C2RustUnnamed = 1;
-
-// f128 is 16 bytes. This way we can avoid the dependency.
-const SIZEOF_LONG_DOUBLE: u8 = 16;
-
+pub type longdouble_t = f128::f128;
 pub type ulonglong_t = libc::c_ulonglong;
-
 static mut bytes_to_oct_digits: [u8; 17] = [
   0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43,
 ];
@@ -238,7 +234,7 @@ static mut width_bytes: [libc::c_schar; 9] = [
   ::std::mem::size_of::<ulonglong_t>() as libc::c_ulong as libc::c_schar,
   ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as libc::c_schar,
   ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as libc::c_schar,
-  SIZEOF_LONG_DOUBLE as i8,
+  ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as libc::c_schar,
 ];
 static mut integral_type_size: [libc::c_uchar; 9] = [
   0,
@@ -438,18 +434,18 @@ unsafe extern "C" fn print_long_double(
   mut block: *const libc::c_char,
   mut fmt_string: *const libc::c_char,
 ) {
-  n_bytes = n_bytes.wrapping_div(SIZEOF_LONG_DOUBLE as u64) as size_t;
+  n_bytes = (n_bytes as libc::c_ulong)
+    .wrapping_div(::std::mem::size_of::<longdouble_t>() as libc::c_ulong) as size_t
+    as size_t;
   loop {
     let fresh8 = n_bytes;
     n_bytes = n_bytes.wrapping_sub(1);
     if !(fresh8 != 0) {
       break;
     }
-    // This cast is sketchy... Is it correct? Do we actually need to be using
-    // f128 here instead?
-    // let mut tmp: longdouble_t = *(block as *mut longdouble_t);
-    printf(fmt_string, *(block as *mut libc::c_double));
-    block = block.offset(SIZEOF_LONG_DOUBLE as isize)
+    let mut tmp: longdouble_t = *(block as *mut longdouble_t);
+    printf(fmt_string, tmp);
+    block = block.offset(::std::mem::size_of::<longdouble_t>() as libc::c_ulong as isize)
   }
 }
 /* print_[named]_ascii are optimized for speed.
@@ -829,7 +825,7 @@ unsafe extern "C" fn decode_one_format(
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
           size = bb_strtou(s, &mut end, 0i32);
           if *bb_errno == 34i32
-            || size > SIZEOF_LONG_DOUBLE as u32
+            || size as libc::c_ulong > ::std::mem::size_of::<longdouble_t>() as libc::c_ulong
             || fp_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
           {
             bb_error_msg_and_die(
@@ -846,7 +842,7 @@ unsafe extern "C" fn decode_one_format(
         static mut FDL_sizeof: [u8; 3] = [
           ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as u8,
           ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as u8,
-          SIZEOF_LONG_DOUBLE as u8,
+          ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as u8,
         ];
         size =
           FDL_sizeof[p.wrapping_offset_from(FDL.as_ptr()) as libc::c_long as usize] as libc::c_uint;
