@@ -4,32 +4,61 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 
-
 use libc;
 use libc::fchmod;
+use libc::fchown;
 use libc::fclose;
 use libc::fprintf;
 use libc::free;
-use libc::gid_t;
 use libc::puts;
 use libc::stat;
+use libc::strcat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
-use libc::uid_t;
+use libc::strcspn;
+use libc::strpbrk;
+use libc::strspn;
+use libc::strtol;
+use libc::ungetc;
 use libc::unlink;
 use libc::FILE;
+
+use crate::libbb::common_bufsiz::bb_common_bufsiz1;
+use crate::libbb::default_error_retval::xfunc_error_retval;
+use crate::libbb::getopt32::getopt32long;
+use crate::libbb::messages::bb_msg_requires_arg;
+use crate::libbb::messages::bb_msg_standard_input;
+use crate::libbb::xfunc_die::die_func;
+
+use crate::libbb::appletlib::bb_show_usage;
+use crate::libbb::fclose_nonstdin::fclose_if_not_stdin;
+use crate::libbb::get_line_from_file::bb_get_chunk_from_file;
+use crate::libbb::get_line_from_file::xmalloc_fgetline;
+use crate::libbb::llist::llist_add_to_end;
+use crate::libbb::llist::llist_pop;
+use crate::libbb::perror_msg::bb_simple_perror_msg;
+use crate::libbb::safe_strncpy::overlapping_strcpy;
+use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::verror_msg::bb_error_msg_and_die;
+use crate::libbb::verror_msg::bb_simple_error_msg_and_die;
+use crate::libbb::wfopen::fopen_for_read;
+use crate::libbb::wfopen::fopen_or_warn;
+use crate::libbb::wfopen::xfdopen_for_write;
+use crate::libbb::wfopen::xfopen_for_write;
+use crate::libbb::wfopen_input::xfopen_stdin;
+use crate::libbb::xfuncs_printf::xasprintf;
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::libbb::xfuncs_printf::xmkstemp;
+use crate::libbb::xfuncs_printf::xrealloc;
+use crate::libbb::xfuncs_printf::xrename;
+use crate::libbb::xfuncs_printf::xstrdup;
+use crate::libbb::xfuncs_printf::xstrndup;
+use crate::libbb::xfuncs_printf::xzalloc;
+use crate::libbb::xregcomp::regex_t;
+use crate::libbb::xregcomp::xregcomp;
+
 extern "C" {
-  #[no_mangle]
-  fn strtol(
-    __nptr: *const libc::c_char,
-    __endptr: *mut *mut libc::c_char,
-    __base: libc::c_int,
-  ) -> libc::c_long;
-
-  #[no_mangle]
-  fn atexit(__func: Option<unsafe extern "C" fn() -> ()>) -> libc::c_int;
-
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
@@ -43,101 +72,15 @@ extern "C" {
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn ungetc(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
-  fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn strpbrk(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  /* Reads a line from a text file, up to a newline or NUL byte, inclusive.
-   * Returns malloc'ed char*. If end is NULL '\n' isn't considered
-   * end of line. If end isn't NULL, length of the chunk is stored in it.
-   * Returns NULL if EOF/error.
-   */
-  #[no_mangle]
-  fn bb_get_chunk_from_file(file: *mut FILE, end: *mut size_t) -> *mut libc::c_char;
-  /* Chops off '\n' from the end, unlike fgets: */
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  /* Prints warning to stderr and returns NULL on failure: */
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  /* "Opens" stdin if filename is special, else just opens file: */
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  static bb_msg_requires_arg: [libc::c_char; 0];
-  #[no_mangle]
-  static bb_msg_standard_input: [libc::c_char; 0];
-  #[no_mangle]
-  static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,
@@ -146,10 +89,6 @@ extern "C" {
     __pmatch: *mut regmatch_t,
     __eflags: libc::c_int,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
-  #[no_mangle]
-  fn sed_free_and_close_stuff();
 }
 
 /* BSD-derived getopt() functions require that optind be set to 1 in
@@ -205,11 +144,10 @@ pub struct pipeline {
   pub idx: libc::c_int,
   pub len: libc::c_int,
 }
-pub type sed_cmd_t = sed_cmd_s;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
-pub struct sed_cmd_s {
-  pub next: *mut sed_cmd_s,
+pub struct sed_cmd_t {
+  pub next: *mut sed_cmd_t,
   pub beg_match: *mut regex_t,
   pub end_match: *mut regex_t,
   pub sub_match: *mut regex_t,
@@ -227,29 +165,7 @@ pub struct sed_cmd_s {
   pub sw_last_char: libc::c_char,
   pub cmd: libc::c_char,
 }
-pub type regex_t = re_pattern_buffer;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
-pub type reg_syntax_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct regmatch_t {
@@ -324,7 +240,9 @@ pub const IDX_a: C2RustUnnamed_1 = 1;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const LAST_IS_NUL: C2RustUnnamed_2 = 2;
 pub const NO_EOL_CHAR: C2RustUnnamed_2 = 1;
-static mut semicolon_whitespace: [libc::c_char; 7] = [59, 32, 10, 13, 9, 11, 0];
+
+static semicolon_whitespace: [libc::c_char; 7] = [59, 32, 10, 13, 9, 11, 0];
+
 /* If something bad happens during -i operation, delete temp file */
 unsafe extern "C" fn cleanup_outname() {
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
