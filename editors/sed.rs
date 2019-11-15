@@ -119,50 +119,86 @@ extern "C" {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {
+  // options
   pub be_quiet: libc::c_int,
   pub regex_type: libc::c_int,
+
   pub nonstdout: *mut FILE,
   pub outname: *mut libc::c_char,
   pub hold_space: *mut libc::c_char,
   pub exitcode: smallint,
+
+  /// list of input files
   pub current_input_file: libc::c_int,
   pub last_input_file: libc::c_int,
   pub input_file_list: *mut *mut libc::c_char,
   pub current_fp: *mut FILE,
+
   pub regmatch: [regmatch_t; 10],
   pub previous_regex_ptr: *mut regex_t,
+
+  /// linked list of sed commands
   pub sed_cmd_head: *mut sed_cmd_t,
   pub sed_cmd_tail: *mut *mut sed_cmd_t,
+
+  /// linked list of append lines
   pub append_head: *mut llist_t,
+
   pub add_cmd_line: *mut libc::c_char,
   pub pipeline: pipeline,
 }
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct pipeline {
+  /// Space to hold string
   pub buf: *mut libc::c_char,
+  /// Space used
   pub idx: libc::c_int,
+  /// Space allocated
   pub len: libc::c_int,
 }
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]
+/// Each sed command turns into one of these structures.
 pub struct sed_cmd_t {
+  /// Next command (linked list, NULL terminated)
   pub next: *mut sed_cmd_t,
+
+  // address storage
+  /// sed -e '/match/cmd'
   pub beg_match: *mut regex_t,
+  /// sed -e '/match/,/end_match/cmd'
   pub end_match: *mut regex_t,
+  /// For 's/sub_match/string/'
   pub sub_match: *mut regex_t,
+  /// 'sed 1p'   0 == apply commands to all lines
   pub beg_line: libc::c_int,
+  /// copy of the above, needed for -i
   pub beg_line_orig: libc::c_int,
+  /// 'sed 1,3p' 0 == one line only. -1 = last line ($). -2-N = +N
   pub end_line: libc::c_int,
   pub end_line_orig: libc::c_int,
+  /// File (sw) command writes to, NULL for none.
   pub sw_file: *mut FILE,
+  /// Data string for (saicytb) commands.
   pub string: *mut libc::c_char,
+  /// (s) Which match to replace (0 for all)
   pub which_match: libc::c_uint,
+
+  // Bitfields (gcc won't group them if we don't)
+  /// the '!' after the address
   #[bitfield(name = "invert", ty = "libc::c_uint", bits = "0..=0")]
+  /// Next line also included in match?
   #[bitfield(name = "in_match", ty = "libc::c_uint", bits = "1..=1")]
+  /// (s) print option
   #[bitfield(name = "sub_p", ty = "libc::c_uint", bits = "2..=2")]
   pub invert_in_match_sub_p: [u8; 1],
+  /// Last line written by (sw) had no '\n'
   pub sw_last_char: libc::c_char,
+
+  // GENERAL FIELDS
+  /// The current command char
   pub cmd: libc::c_char,
 }
 
