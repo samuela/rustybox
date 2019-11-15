@@ -279,7 +279,7 @@ pub const NO_EOL_CHAR: C2RustUnnamed_2 = 1;
 
 static semicolon_whitespace: [libc::c_char; 7] = [59, 32, 10, 13, 9, 11, 0];
 
-/* If something bad happens during -i operation, delete temp file */
+/// If something bad happens during -i operation, delete temp file
 unsafe extern "C" fn cleanup_outname() {
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .outname
@@ -288,8 +288,9 @@ unsafe extern "C" fn cleanup_outname() {
     unlink((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname);
   };
 }
-/* strcpy, replacing "\from" with 'to'. If to is NUL, replacing "\any" with 'any' */
-unsafe extern "C" fn parse_escapes(
+
+/// strcpy, replacing "\from" with 'to'. If to is NUL, replacing "\any" with 'any'
+unsafe fn parse_escapes(
   mut dest: *mut libc::c_char,
   mut string: *const libc::c_char,
   mut len: libc::c_int,
@@ -334,7 +335,8 @@ unsafe extern "C" fn parse_escapes(
   *d = '\u{0}' as i32 as libc::c_char;
   return d.wrapping_offset_from(dest) as libc::c_long as libc::c_uint;
 }
-unsafe extern "C" fn copy_parsing_escapes(
+
+unsafe fn copy_parsing_escapes(
   mut string: *const libc::c_char,
   mut len: libc::c_int,
 ) -> *mut libc::c_char {
@@ -350,13 +352,12 @@ unsafe extern "C" fn copy_parsing_escapes(
   }
   return dest;
 }
-/*
- * index_of_next_unescaped_regexp_delim - walks left to right through a string
- * beginning at a specified index and returns the index of the next regular
- * expression delimiter (typically a forward slash ('/')) not preceded by
- * a backslash ('\').  A negative delimiter disables square bracket checking.
- */
-unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
+
+/// walks left to right through a string beginning at a specified index and
+/// returns the index of the next regular expression delimiter (typically a
+/// forward slash ('/')) not preceded by a backslash ('\').  A negative
+/// delimiter disables square bracket checking.
+unsafe fn index_of_next_unescaped_regexp_delim(
   mut delimiter: libc::c_int,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
@@ -398,10 +399,9 @@ unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
     delimiter,
   );
 }
-/*
- *  Returns the index of the third delimiter
- */
-unsafe extern "C" fn parse_regex_delim(
+
+/// Returns the index of the third delimiter
+unsafe fn parse_regex_delim(
   mut cmdstr: *const libc::c_char,
   mut match_0: *mut *mut libc::c_char,
   mut replace: *mut *mut libc::c_char,
@@ -429,10 +429,9 @@ unsafe extern "C" fn parse_regex_delim(
   return (cmdstr_ptr.wrapping_offset_from(cmdstr) as libc::c_long + idx as libc::c_long)
     as libc::c_int;
 }
-/*
- * returns the index in the string just past where the address ends.
- */
-unsafe extern "C" fn get_address(
+
+/// returns the index in the string just past where the address ends.
+unsafe fn get_address(
   mut my_str: *const libc::c_char,
   mut linenum: *mut libc::c_int,
   mut regex: *mut *mut regex_t,
@@ -484,8 +483,9 @@ unsafe extern "C" fn get_address(
   }
   return pos.wrapping_offset_from(my_str) as libc::c_long as libc::c_int;
 }
-/* Grab a filename.  Whitespace at start is skipped, then goes to EOL. */
-unsafe extern "C" fn parse_file_cmd(
+
+/// Grab a filename.  Whitespace at start is skipped, then goes to EOL.
+unsafe fn parse_file_cmd(
   mut filecmdstr: *const libc::c_char,
   mut retval: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -511,7 +511,8 @@ unsafe extern "C" fn parse_file_cmd(
   }
   return eol.wrapping_offset_from(filecmdstr) as libc::c_long as libc::c_int;
 }
-unsafe extern "C" fn parse_subst_cmd(
+
+unsafe fn parse_subst_cmd(
   mut sed_cmd: *mut sed_cmd_t,
   mut substr: *const libc::c_char,
 ) -> libc::c_int {
@@ -615,10 +616,9 @@ unsafe extern "C" fn parse_subst_cmd(
   free(match_0 as *mut libc::c_void);
   return idx;
 }
-/*
- *  Process the commands arguments
- */
-unsafe extern "C" fn parse_cmd_args(
+
+/// Process the commands arguments
+unsafe fn parse_cmd_args(
   mut sed_cmd: *mut sed_cmd_t,
   mut cmdstr: *const libc::c_char,
 ) -> *const libc::c_char {
@@ -748,8 +748,9 @@ unsafe extern "C" fn parse_cmd_args(
   /* give back whatever's left over */
   return cmdstr;
 }
-/* Parse address+command sets, skipping comment lines. */
-unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
+
+/// Parse address+command sets, skipping comment lines.
+unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
   let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
   let mut len: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
@@ -890,7 +891,8 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
   *fresh10 = 0 as *mut libc::c_char;
 }
-unsafe extern "C" fn pipe_putc(mut c: libc::c_char) {
+
+unsafe fn pipe_putc(mut c: libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .pipeline
     .idx
@@ -924,10 +926,8 @@ unsafe extern "C" fn pipe_putc(mut c: libc::c_char) {
     .buf
     .offset(fresh13 as isize) = c;
 }
-unsafe extern "C" fn do_subst_w_backrefs(
-  mut line: *mut libc::c_char,
-  mut replace: *mut libc::c_char,
-) {
+
+unsafe fn do_subst_w_backrefs(mut line: *mut libc::c_char, mut replace: *mut libc::c_char) {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   /* go through the replacement string */
@@ -974,7 +974,8 @@ unsafe extern "C" fn do_subst_w_backrefs(
     i += 1
   }
 }
-unsafe extern "C" fn do_subst_command(
+
+unsafe fn do_subst_command(
   mut sed_cmd: *mut sed_cmd_t,
   mut line_p: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -1121,8 +1122,9 @@ unsafe extern "C" fn do_subst_command(
     .buf;
   return altered as libc::c_int;
 }
-/* Set command pointer to point to this label.  (Does not handle null label.) */
-unsafe extern "C" fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
+
+/// Set command pointer to point to this label.  (Does not handle null label.)
+unsafe fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
   let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
   sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
   while !sed_cmd.is_null() {
@@ -1139,13 +1141,15 @@ unsafe extern "C" fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
     label,
   );
 }
-unsafe extern "C" fn append(mut s: *mut libc::c_char) {
+
+unsafe fn append(mut s: *mut libc::c_char) {
   llist_add_to_end(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head,
     s as *mut libc::c_void,
   );
 }
-unsafe extern "C" fn puts_maybe_newline(
+
+unsafe fn puts_maybe_newline(
   mut s: *mut libc::c_char,
   mut file: *mut FILE,
   mut last_puts_char: *mut libc::c_char,
@@ -1179,7 +1183,8 @@ unsafe extern "C" fn puts_maybe_newline(
   }
   *last_puts_char = lpc;
 }
-unsafe extern "C" fn flush_append(mut last_puts_char: *mut libc::c_char) {
+
+unsafe fn flush_append(mut last_puts_char: *mut libc::c_char) {
   let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
   loop
   /* Output appended lines. */
@@ -1207,10 +1212,10 @@ unsafe extern "C" fn flush_append(mut last_puts_char: *mut libc::c_char) {
     free(data as *mut libc::c_void);
   }
 }
-/* Get next line of input from G.input_file_list, flushing append buffer and
- * noting if we ran out of files without a newline on the last line we read.
- */
-unsafe extern "C" fn get_next_line(
+
+/// Get next line of input from G.input_file_list, flushing append buffer and
+/// noting if we ran out of files without a newline on the last line we read.
+unsafe fn get_next_line(
   mut gets_char: *mut libc::c_char,
   mut last_puts_char: *mut libc::c_char,
 ) -> *mut libc::c_char {
@@ -1298,7 +1303,8 @@ unsafe extern "C" fn get_next_line(
   *gets_char = gc;
   return temp;
 }
-unsafe extern "C" fn beg_match(
+
+unsafe fn beg_match(
   mut sed_cmd: *mut sed_cmd_t,
   mut pattern_space: *const libc::c_char,
 ) -> libc::c_int {
@@ -1316,8 +1322,9 @@ unsafe extern "C" fn beg_match(
   }
   return retval;
 }
-/* Process all the lines in all the files */
-unsafe extern "C" fn process_files() {
+
+/// Process all the lines in all the files
+unsafe fn process_files() {
   let mut current_block: u64;
   let mut pattern_space: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut next_line: *mut libc::c_char = 0 as *mut libc::c_char;
@@ -9032,12 +9039,12 @@ unsafe extern "C" fn process_files() {
     free(pattern_space as *mut libc::c_void);
   }
 }
-/* It is possible to have a command line argument with embedded
- * newlines.  This counts as multiple command lines.
- * However, newline can be escaped: 's/e/z\<newline>z/'
- * add_cmd() handles this.
- */
-unsafe extern "C" fn add_cmd_block(mut cmdstr: *mut libc::c_char) {
+
+/// It is possible to have a command line argument with embedded
+/// newlines.  This counts as multiple command lines.
+/// However, newline can be escaped: 's/e/z\<newline>z/'
+/// add_cmd() handles this.
+unsafe fn add_cmd_block(mut cmdstr: *mut libc::c_char) {
   let mut sv: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut eol: *mut libc::c_char = 0 as *mut libc::c_char;
   sv = xstrdup(cmdstr);
@@ -9105,7 +9112,7 @@ pub unsafe extern "C" fn sed_main(
   argv = argv.offset(optind as isize);
   if opt & OPT_in_place as libc::c_int as libc::c_uint != 0 {
     // -i
-    die_func = Some(cleanup_outname as unsafe extern "C" fn() -> ())
+    die_func = Some(cleanup_outname)
   } // -r or -E
   if opt & (2i32 | 4i32) as libc::c_uint != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type |= 1i32
