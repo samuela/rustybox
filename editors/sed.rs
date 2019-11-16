@@ -199,7 +199,7 @@ pub struct sed_cmd_t {
 
   // GENERAL FIELDS
   /// The current command char
-  pub cmd: libc::c_char,
+  pub cmd: char,
 }
 
 #[derive(Copy, Clone)]
@@ -318,15 +318,13 @@ unsafe fn parse_escapes(
         continue;
       } else {
         i += 1;
-        let fresh0 = d;
+        *d = '\\' as i32 as libc::c_char;
         d = d.offset(1);
-        *fresh0 = '\\' as i32 as libc::c_char
       }
       /* fall through: copy next char verbatim */
     }
-    let fresh1 = i;
-    i = i + 1;
-    *d = *string.offset(fresh1 as isize);
+    *d = *string.offset(i as isize);
+    i += 1;
     if *d as libc::c_int == '\u{0}' as i32 {
       return d.wrapping_offset_from(dest) as libc::c_long as libc::c_uint;
     }
@@ -416,9 +414,8 @@ unsafe fn parse_regex_delim(
       b"bad format in substitution expression\x00" as *const u8 as *const libc::c_char,
     );
   }
-  let fresh2 = cmdstr_ptr;
+  delimiter = *cmdstr_ptr as libc::c_uchar;
   cmdstr_ptr = cmdstr_ptr.offset(1);
-  delimiter = *fresh2 as libc::c_uchar;
   /* save the match string */
   idx = index_of_next_unescaped_regexp_delim(delimiter as libc::c_int, cmdstr_ptr);
   *match_0 = copy_parsing_escapes(cmdstr_ptr, idx);
@@ -435,6 +432,7 @@ unsafe fn get_address(
   mut linenum: *mut libc::c_int,
   mut regex: *mut *mut regex_t,
 ) -> libc::c_int {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut pos: *const libc::c_char = my_str;
   if (*my_str as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
     *linenum = strtol(
@@ -460,20 +458,12 @@ unsafe fn get_address(
     if next != 0i32 {
       temp = copy_parsing_escapes(pos, next);
       *regex = xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong) as *mut regex_t;
-      let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
-      *fresh3 = *regex;
-      xregcomp(
-        *regex,
-        temp,
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type,
-      );
+      G.previous_regex_ptr = *regex;
+      xregcomp(*regex, temp, G.regex_type);
       free(temp as *mut libc::c_void);
     } else {
-      *regex = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .previous_regex_ptr
-        .is_null()
-      {
+      *regex = G.previous_regex_ptr;
+      if G.previous_regex_ptr.is_null() {
         bb_simple_error_msg_and_die(b"no previous regexp\x00" as *const u8 as *const libc::c_char);
       }
     }
@@ -515,7 +505,8 @@ unsafe fn parse_subst_cmd(
   mut sed_cmd: *mut sed_cmd_t,
   mut substr: *const libc::c_char,
 ) -> libc::c_int {
-  let mut cflags: libc::c_int = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type;
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
+  let mut cflags: libc::c_int = G.regex_type;
   let mut match_0: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut idx: libc::c_int = 0;
   /*
@@ -562,18 +553,18 @@ unsafe fn parse_subst_cmd(
       {
         continue;
       }
-      match *substr.offset(idx as isize) as libc::c_int {
-        103 => {
+      match *substr.offset(idx as isize) as u8 as char {
+        'g' => {
           /* Replace all occurrences */
           if *match_0.offset(0) as libc::c_int != '^' as i32 {
             (*sed_cmd).which_match = 0i32 as libc::c_uint
           }
         }
-        112 => {
+        'p' => {
           /* Print pattern space */
           (*sed_cmd).set_sub_p(1i32 as libc::c_uint)
         }
-        119 => {
+        'w' => {
           /* Write to file */
           let mut fname: *mut libc::c_char = 0 as *mut libc::c_char;
           idx += parse_file_cmd(substr.offset(idx as isize).offset(1), &mut fname);
@@ -581,18 +572,18 @@ unsafe fn parse_subst_cmd(
           (*sed_cmd).sw_last_char = '\n' as i32 as libc::c_char;
           free(fname as *mut libc::c_void);
         }
-        105 | 73 => {
+        'i' | 'I' => {
           /* Ignore case (gnu extension) */
           cflags |= 1i32 << 1i32
         }
-        35 => {
+        '#' => {
           /* Comment */
           idx = (idx as libc::c_ulong).wrapping_add(strlen(substr.offset(idx as isize)))
             as libc::c_int as libc::c_int; // same
                                            // while (substr[++idx]) continue;
           break;
         }
-        59 | 125 => {
+        ';' | '}' => {
           break;
         }
         _ => {
@@ -750,23 +741,20 @@ unsafe fn parse_cmd_args(
 
 /// Parse address+command sets, skipping comment lines.
 unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
   let mut len: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
   /* Append this line to any unfinished line from last time. */
-  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .add_cmd_line
-    .is_null()
-  {
+  if !G.add_cmd_line.is_null() {
     let mut tp: *mut libc::c_char = xasprintf(
       b"%s\n%s\x00" as *const u8 as *const libc::c_char,
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line,
+      G.add_cmd_line,
       cmdstr,
     );
-    free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line as *mut libc::c_void);
-    let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
-    *fresh4 = tp;
-    cmdstr = *fresh4
+    free(G.add_cmd_line as *mut libc::c_void);
+    G.add_cmd_line = tp;
+    cmdstr = tp;
   }
   /* If this line ends with unescaped backslash, request next line. */
   len = strlen(cmdstr) as libc::c_uint;
@@ -778,15 +766,10 @@ unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
   }
   if len.wrapping_sub(n) & 1i32 as libc::c_uint != 0 {
     /* if odd number of trailing backslashes */
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-      .add_cmd_line
-      .is_null()
-    {
-      let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
-      *fresh5 = xstrdup(cmdstr)
+    if G.add_cmd_line.is_null() {
+      G.add_cmd_line = xstrdup(cmdstr)
     }
-    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-      .add_cmd_line
+    *G.add_cmd_line
       .offset(len.wrapping_sub(1i32 as libc::c_uint) as isize) = '\u{0}' as i32 as libc::c_char;
     return;
   }
@@ -802,8 +785,7 @@ unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
     if *cmdstr as libc::c_int == '#' as i32 {
       /* "#n" is the same as using -n on the command line */
       if *cmdstr.offset(1) as libc::c_int == 'n' as i32 {
-        let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet;
-        *fresh6 += 1
+        G.be_quiet += 1;
       }
       cmdstr = strpbrk(cmdstr, b"\n\r\x00" as *const u8 as *const libc::c_char);
       if cmdstr.is_null() {
@@ -869,9 +851,8 @@ unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
       if *cmdstr == 0 {
         bb_simple_error_msg_and_die(b"missing command\x00" as *const u8 as *const libc::c_char);
       }
-      let fresh7 = cmdstr;
+      (*sed_cmd).cmd = *cmdstr as u8 as char;
       cmdstr = cmdstr.offset(1);
-      (*sed_cmd).cmd = *fresh7;
       cmdstr = parse_cmd_args(sed_cmd, cmdstr);
       /* cmdstr now points past args.
        * GNU sed requires a separator, if there are more commands,
@@ -879,54 +860,28 @@ unsafe fn add_cmd(mut cmdstr: *const libc::c_char) {
        * Example: "sed 'p;d'". We also allow "sed 'pd'".
        */
       /* Add the command to the command array */
-      let ref mut fresh8 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_tail;
-      *fresh8 = sed_cmd;
-      let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_tail;
-      *fresh9 = &mut (*sed_cmd).next
+      *G.sed_cmd_tail = sed_cmd;
+      G.sed_cmd_tail = &mut (*sed_cmd).next;
     }
   }
   /* If we glued multiple lines together, free the memory. */
-  free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line as *mut libc::c_void);
-  let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
-  *fresh10 = 0 as *mut libc::c_char;
+  free(G.add_cmd_line as *mut libc::c_void);
+  G.add_cmd_line = 0 as *mut libc::c_char;
 }
 
 unsafe fn pipe_putc(mut c: libc::c_char) {
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .idx
-    == (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-      .pipeline
-      .len
-  {
-    let ref mut fresh11 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-      .pipeline
-      .buf;
-    *fresh11 = xrealloc(
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .pipeline
-        .buf as *mut libc::c_void,
-      ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .pipeline
-        .len
-        + 64i32) as size_t,
-    ) as *mut libc::c_char;
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-      .pipeline
-      .len += 64i32
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
+  if G.pipeline.idx == G.pipeline.len {
+    let buf = G.pipeline.buf as *mut libc::c_void;
+    G.pipeline.buf = xrealloc(buf, (G.pipeline.len + 64i32) as size_t) as *mut libc::c_char;
+    G.pipeline.len += 64i32
   }
-  let ref mut fresh12 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .idx;
-  let fresh13 = *fresh12;
-  *fresh12 = *fresh12 + 1;
-  *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .buf
-    .offset(fresh13 as isize) = c;
+  *G.pipeline.buf.offset(G.pipeline.idx as isize) = c;
+  G.pipeline.idx += 1;
 }
 
 unsafe fn do_subst_w_backrefs(mut line: *mut libc::c_char, mut replace: *mut libc::c_char) {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   /* go through the replacement string */
@@ -939,16 +894,11 @@ unsafe fn do_subst_w_backrefs(mut line: *mut libc::c_char, mut replace: *mut lib
         (*replace.offset(i as isize) as libc::c_int - '0' as i32) as libc::c_uint;
       if backref <= 9i32 as libc::c_uint {
         /* print out the text held in G.regmatch[backref] */
-        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[backref as usize].rm_so
-          != -1i32
-        {
-          j = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[backref as usize].rm_so;
-          while j
-            < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[backref as usize].rm_eo
-          {
-            let fresh14 = j;
-            j = j + 1;
-            pipe_putc(*line.offset(fresh14 as isize));
+        if G.regmatch[backref as usize].rm_so != -1i32 {
+          j = G.regmatch[backref as usize].rm_so;
+          while j < G.regmatch[backref as usize].rm_eo {
+            pipe_putc(*line.offset(j as isize));
+            j += 1;
           }
         }
       } else {
@@ -959,11 +909,10 @@ unsafe fn do_subst_w_backrefs(mut line: *mut libc::c_char, mut replace: *mut lib
         pipe_putc(*replace.offset(i as isize));
       }
     } else if *replace.offset(i as isize) as libc::c_int == '&' as i32 {
-      j = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_so;
-      while j < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_eo {
-        let fresh15 = j;
-        j = j + 1;
-        pipe_putc(*line.offset(fresh15 as isize));
+      j = G.regmatch[0].rm_so;
+      while j < G.regmatch[0].rm_eo {
+        pipe_putc(*line.offset(j as isize));
+        j += 1;
       }
     } else {
       /* if we find an unescaped '&' print out the whole matched text. */
@@ -978,6 +927,7 @@ unsafe fn do_subst_command(
   mut sed_cmd: *mut sed_cmd_t,
   mut line_p: *mut *mut libc::c_char,
 ) -> libc::c_int {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut line: *mut libc::c_char = *line_p;
   let mut match_count: libc::c_uint = 0i32 as libc::c_uint;
   let mut altered: bool = 0i32 != 0;
@@ -987,45 +937,33 @@ unsafe fn do_subst_command(
   current_regex = (*sed_cmd).sub_match;
   /* Handle empty regex. */
   if current_regex.is_null() {
-    current_regex = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
+    current_regex = G.previous_regex_ptr;
     if current_regex.is_null() {
       bb_simple_error_msg_and_die(b"no previous regexp\x00" as *const u8 as *const libc::c_char);
     }
   }
-  let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
-  *fresh16 = current_regex;
+  G.previous_regex_ptr = current_regex;
   /* Find the first match */
   if REG_NOMATCH as libc::c_int
     == regexec(
       current_regex,
       line,
       10i32 as size_t,
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .regmatch
-        .as_mut_ptr(),
+      G.regmatch.as_mut_ptr(),
       0i32,
     )
   {
     return 0i32;
   }
   /* Initialize temporary output buffer. */
-  let ref mut fresh17 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .buf;
-  *fresh17 = xmalloc(64i32 as size_t) as *mut libc::c_char;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .len = 64i32;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .idx = 0i32;
+  G.pipeline.buf = xmalloc(64i32 as size_t) as *mut libc::c_char;
+  G.pipeline.len = 64i32;
+  G.pipeline.idx = 0i32;
   loop
   /* Now loop through, substituting for matches */
   {
-    let mut start: libc::c_int =
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_so;
-    let mut end: libc::c_int =
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_eo;
+    let mut start: libc::c_int = G.regmatch[0].rm_so;
+    let mut end: libc::c_int = G.regmatch[0].rm_eo;
     let mut i: libc::c_int = 0;
     match_count = match_count.wrapping_add(1);
     /* If we aren't interested in this match, output old line to
@@ -1033,16 +971,14 @@ unsafe fn do_subst_command(
     if (*sed_cmd).which_match != 0 && (*sed_cmd).which_match != match_count {
       i = 0i32;
       while i < end {
-        let fresh18 = line;
+        pipe_putc(*line);
         line = line.offset(1);
-        pipe_putc(*fresh18);
         i += 1
       }
       /* Null match? Print one more char */
       if start == end && *line as libc::c_int != 0 {
-        let fresh19 = line;
+        pipe_putc(*line);
         line = line.offset(1);
-        pipe_putc(*fresh19);
       }
     } else {
       /* Print everything before the match */
@@ -1094,9 +1030,7 @@ unsafe fn do_subst_command(
       current_regex,
       line,
       10i32 as size_t,
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .regmatch
-        .as_mut_ptr(),
+      G.regmatch.as_mut_ptr(),
       1i32,
     ) != REG_NOMATCH as libc::c_int)
     {
@@ -1107,25 +1041,23 @@ unsafe fn do_subst_command(
   loop
   /* Copy rest of string into output pipeline */
   {
-    let fresh20 = line;
+    let mut c: libc::c_char = *line;
     line = line.offset(1);
-    let mut c: libc::c_char = *fresh20;
     pipe_putc(c);
     if c as libc::c_int == '\u{0}' as i32 {
       break;
     }
   }
   free(*line_p as *mut libc::c_void);
-  *line_p = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-    .pipeline
-    .buf;
+  *line_p = G.pipeline.buf;
   altered as libc::c_int
 }
 
 /// Set command pointer to point to this label.  (Does not handle null label.)
 unsafe fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
-  sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
+  sed_cmd = G.sed_cmd_head;
   while !sed_cmd.is_null() {
     if (*sed_cmd).cmd as libc::c_int == ':' as i32
       && !(*sed_cmd).string.is_null()
@@ -1142,10 +1074,8 @@ unsafe fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
 }
 
 unsafe fn append(mut s: *mut libc::c_char) {
-  llist_add_to_end(
-    &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head,
-    s as *mut libc::c_void,
-  );
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
+  llist_add_to_end(&mut G.append_head, s as *mut libc::c_void);
 }
 
 unsafe fn puts_maybe_newline(
@@ -1184,12 +1114,12 @@ unsafe fn puts_maybe_newline(
 }
 
 unsafe fn flush_append(mut last_puts_char: *mut libc::c_char) {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
   loop
   /* Output appended lines. */
   {
-    data = llist_pop(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head)
-      as *mut libc::c_char;
+    data = llist_pop(&mut G.append_head) as *mut libc::c_char;
     if data.is_null() {
       break;
     }
@@ -1204,7 +1134,7 @@ unsafe fn flush_append(mut last_puts_char: *mut libc::c_char) {
      */
     puts_maybe_newline(
       data,
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
+      G.nonstdout,
       last_puts_char,
       '\n' as i32 as libc::c_char,
     );
@@ -1218,6 +1148,7 @@ unsafe fn get_next_line(
   mut gets_char: *mut libc::c_char,
   mut last_puts_char: *mut libc::c_char,
 ) -> *mut libc::c_char {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut temp: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut len: size_t = 0;
   let mut gc: libc::c_char = 0;
@@ -1225,79 +1156,57 @@ unsafe fn get_next_line(
   /* will be returned if last line in the file
    * doesn't end with either '\n' or '\0' */
   gc = NO_EOL_CHAR as libc::c_int as libc::c_char;
-  let mut current_block_17: u64;
-  while (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file
-    <= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).last_input_file
-  {
-    let mut fp: *mut FILE = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_fp;
+  while G.current_input_file <= G.last_input_file {
+    let mut fp: *mut FILE = G.current_fp;
     if fp.is_null() {
-      let mut path: *const libc::c_char = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-        .input_file_list
-        .offset((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file as isize);
+      let mut path: *const libc::c_char = *G.input_file_list.offset(G.current_input_file as isize);
       fp = stdin;
       if path != bb_msg_standard_input.as_ptr() {
         fp = fopen_or_warn(path, b"r\x00" as *const u8 as *const libc::c_char);
         if fp.is_null() {
-          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 as smallint;
-          current_block_17 = 17179679302217393232;
+          G.exitcode = 1i32 as smallint; // EXIT_FAILURE
+          continue;
         } else {
-          current_block_17 = 1841672684692190573;
+          G.current_fp = fp;
         }
       } else {
-        current_block_17 = 1841672684692190573;
+        G.current_fp = fp;
       }
-      match current_block_17 {
-        17179679302217393232 => {}
-        _ => {
-          let ref mut fresh21 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_fp;
-          *fresh21 = fp;
-          current_block_17 = 3512920355445576850;
-        }
-      }
-    } else {
-      current_block_17 = 3512920355445576850;
     }
-    match current_block_17 {
-      3512920355445576850 => {
-        /* Read line up to a newline or NUL byte, inclusive,
-         * return malloc'ed char[]. length of the chunk read
-         * is stored in len. NULL if EOF/error */
-        temp = bb_get_chunk_from_file(fp, &mut len);
-        if !temp.is_null() {
-          /* len > 0 here, it's ok to do temp[len-1] */
-          let mut c: libc::c_char = *temp.offset(len.wrapping_sub(1i32 as libc::c_ulong) as isize);
-          if c as libc::c_int == '\n' as i32 || c as libc::c_int == '\u{0}' as i32 {
-            *temp.offset(len.wrapping_sub(1i32 as libc::c_ulong) as isize) =
-              '\u{0}' as i32 as libc::c_char;
-            gc = c;
-            if c as libc::c_int == '\u{0}' as i32 {
-              let mut ch: libc::c_int = getc_unlocked(fp);
-              if ch != -1i32 {
-                ungetc(ch, fp);
-              } else {
-                gc = LAST_IS_NUL as libc::c_int as libc::c_char
-              }
-            }
+    /* Read line up to a newline or NUL byte, inclusive,
+     * return malloc'ed char[]. length of the chunk read
+     * is stored in len. NULL if EOF/error */
+    temp = bb_get_chunk_from_file(fp, &mut len);
+    if !temp.is_null() {
+      /* len > 0 here, it's ok to do temp[len-1] */
+      let mut c: libc::c_char = *temp.offset(len.wrapping_sub(1i32 as libc::c_ulong) as isize);
+      if c as libc::c_int == '\n' as i32 || c as libc::c_int == '\u{0}' as i32 {
+        *temp.offset(len.wrapping_sub(1i32 as libc::c_ulong) as isize) =
+          '\u{0}' as i32 as libc::c_char;
+        gc = c;
+        if c as libc::c_int == '\u{0}' as i32 {
+          let mut ch: libc::c_int = getc_unlocked(fp);
+          if ch != -1i32 {
+            ungetc(ch, fp);
+          } else {
+            gc = LAST_IS_NUL as libc::c_int as libc::c_char
           }
-          break;
-        /* NB: I had the idea of peeking next file(s) and returning
-         * NO_EOL_CHAR only if it is the *last* non-empty
-         * input file. But there is a case where this won't work:
-         * file1: "a woo\nb woo"
-         * file2: "c no\nd no"
-         * sed -ne 's/woo/bang/p' input1 input2 => "a bang\nb bang"
-         * (note: *no* newline after "b bang"!) */
-        } else {
-          /* Close this file and advance to next one */
-          fclose_if_not_stdin(fp);
-          let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_fp;
-          *fresh22 = 0 as *mut FILE
         }
       }
-      _ => {}
+      break;
+    /* NB: I had the idea of peeking next file(s) and returning
+     * NO_EOL_CHAR only if it is the *last* non-empty
+     * input file. But there is a case where this won't work:
+     * file1: "a woo\nb woo"
+     * file2: "c no\nd no"
+     * sed -ne 's/woo/bang/p' input1 input2 => "a bang\nb bang"
+     * (note: *no* newline after "b bang"!) */
+    } else {
+      /* Close this file and advance to next one */
+      fclose_if_not_stdin(fp);
+      G.current_fp = 0 as *mut FILE
     }
-    let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file;
-    *fresh23 += 1
+    G.current_input_file += 1;
   }
   *gets_char = gc;
   temp
@@ -1307,6 +1216,7 @@ unsafe fn beg_match(
   mut sed_cmd: *mut sed_cmd_t,
   mut pattern_space: *const libc::c_char,
 ) -> libc::c_int {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut retval: libc::c_int = (!(*sed_cmd).beg_match.is_null()
     && regexec(
       (*sed_cmd).beg_match,
@@ -1316,29 +1226,26 @@ unsafe fn beg_match(
       0i32,
     ) == 0) as libc::c_int;
   if retval != 0 {
-    let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
-    *fresh24 = (*sed_cmd).beg_match
+    G.previous_regex_ptr = (*sed_cmd).beg_match
   }
   retval
 }
 
 /// Process all the lines in all the files
 unsafe fn process_files() {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut current_block: u64;
   let mut pattern_space: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut next_line: *mut libc::c_char = 0 as *mut libc::c_char;
   let mut linenum: libc::c_int = 0i32;
   let mut last_puts_char: libc::c_char = '\n' as i32 as libc::c_char;
   let mut last_gets_char: libc::c_char = 0;
   let mut next_gets_char: libc::c_char = 0;
   let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
-  let mut substituted: libc::c_int = 0;
   /* Prime the pump */
-  next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-  loop
-  /* Go through every line in each file */
-  {
-    substituted = 0i32;
+  let mut next_line: *mut libc::c_char = get_next_line(&mut next_gets_char, &mut last_puts_char);
+  // Go through every line in each file
+  loop {
+    let mut substituted: libc::c_int = 0;
     /* Advance to next line.  Stop if out of lines. */
     pattern_space = next_line;
     if pattern_space.is_null() {
@@ -1349,14 +1256,14 @@ unsafe fn process_files() {
      * the '$' address */
     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
     linenum += 1;
-    's_54: loop
     /* For every line, go through all the commands */
-    {
-      sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head; /* for each cmd */
+    'restart: loop {
+      sed_cmd = G.sed_cmd_head; /* for each cmd */
       loop {
         if sed_cmd.is_null() {
+          // goto discard_commands;
           current_block = 8563197331115798083;
-          break 's_54;
+          break 'restart;
         }
         let mut old_matched: libc::c_int = 0;
         let mut matched: libc::c_int = 0;
@@ -1453,7587 +1360,365 @@ unsafe fn process_files() {
           /* no */
           /* Update last used regex in case a blank substitute BRE is found */
           if !(*sed_cmd).beg_match.is_null() {
-            let ref mut fresh25 =
-              (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
-            *fresh25 = (*sed_cmd).beg_match
+            G.previous_regex_ptr = (*sed_cmd).beg_match
           }
           /* actual sedding */
-          match (*sed_cmd).cmd as libc::c_int {
-            61 => {
-              current_block = 332836909292088582;
-              match current_block {
-                11227437541145425351 =>
-                /* Append newline and pattern space to hold space */
-                {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  /* Replace hold space with pattern space */
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 =>
-                /* Append newline and hold space to pattern space */
-                {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  /* Replace pattern space with hold space */
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 =>
-                /* Transliterate characters */
-                {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 =>
-                /* Test/branch if substitution occurred */
-                {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 =>
-                /* Append the next line to the current line */
-                {
-                  let mut len: libc::c_int = 0;
-                  /* If no next line, jump to end of script and exit. */
-                  /* http://www.gnu.org/software/sed/manual/sed.html:
-                   * "Most versions of sed exit without printing anything
-                   * when the N command is issued on the last line of
-                   * a file. GNU sed prints pattern space before exiting
-                   * unless of course the -n command switch has been
-                   * specified. This choice is by design."
-                   */
-                  if next_line.is_null() {
-                    //goto discard_line;
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  /* GNU behavior */
-                  } else {
-                    /* Append next_line, read new next_line. */
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 =>
-                /* Read next line from input */
-                {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    /* If no next line, jump to end of script and exit. */
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 =>
-                /* Read file, append contents to output */
-                {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 =>
-                /* Substitute with regex */
-                {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    /* handle p option */
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    /* handle w option */
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    /* Fall Through */
-                    /* TODO: explain why '\n' below */
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 =>
-                /* Delete up through first newline */
-                {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    /* discard this line. */
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 =>
-                /* Quit.  End of script, end of input. */
-                /* Exit the outer while loop */
-                {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 =>
-                /* Exchange hold and pattern space */
-                {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 =>
-                /* Print line number */
-                {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 =>
-                /* Append line to linked list to be printed later */
-                {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 =>
-                /* Insert text before this line */
-                {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 =>
-                /* Cut and paste text (replace) */
-                /* Only triggers on last line of a matching range. */
-                {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 =>
-                /* Write pattern space to file. */
-                {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 =>
-                    /* Write the current pattern space to output */
-                    /* NB: we print this _before_ the last line
-                     * (of current file) is printed. Even if
-                     * that line is nonterminated, we print
-                     * '\n' here (gnu sed does the same) */
-                    {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 =>
-                    /* Fall through */
-                    /* Test/branch if substitution didn't occur */
-                    {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ =>
-                    /* Fall through */
-                    /* Branch to label */
-                    {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+          match (*sed_cmd).cmd {
+            /* Print line number */
+            '=' => {
+              fprintf(
+                G.nonstdout,
+                b"%d\n\x00" as *const u8 as *const libc::c_char,
+                linenum,
+              );
+              current_block = 17965632435239708295; // TODO: Delete me
             }
-            80 => {
-              current_block = 2290177392965769716;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+            /* Write the current pattern space up to the first newline */
+            'P' => {
+              let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
+              if !tmp.is_null() {
+                *tmp = '\u{0}' as i32 as libc::c_char;
+                puts_maybe_newline(
+                  pattern_space,
+                  G.nonstdout,
+                  &mut last_puts_char,
+                  '\n' as i32 as libc::c_char,
+                );
+                *tmp = '\n' as i32 as libc::c_char;
+              } else {
+                puts_maybe_newline(
+                  pattern_space,
+                  G.nonstdout,
+                  &mut last_puts_char,
+                  '\n' as i32 as libc::c_char,
+                );
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+              current_block = 17965632435239708295;
             }
-            112 => {
-              current_block = 7330787439563864000;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+            /* Write the current pattern space to output */
+            'p' => {
+              puts_maybe_newline(
+                pattern_space,
+                G.nonstdout,
+                &mut last_puts_char,
+                '\n' as i32 as libc::c_char,
+              );
+              current_block = 17965632435239708295;
             }
-            68 => {
+            /* Delete up through first newline */
+            'D' => {
               current_block = 3546145585875536353;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
+              let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
+              if !tmp_0.is_null() {
+                overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                break;
+              } else {
+                // goto discard_line;
+                current_block = 4142149688065477410;
+                break 'restart;
               }
             }
-            100 => {
+            /* discard this line. */
+            'd' => {
+              // goto discard_line;
               current_block = 4142149688065477410;
-              break 's_54;
+              break 'restart;
             }
-            115 => {
-              current_block = 13714184482889841412;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
+            /* Substitute with regex */
+            's' => {
+              if do_subst_command(sed_cmd, &mut pattern_space) != 0 {
+                substituted |= 1i32;
+                if (*sed_cmd).sub_p() != 0 {
                   puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
+                    pattern_space,
+                    G.nonstdout,
                     &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
+                    last_gets_char,
                   );
-                  current_block = 17965632435239708295;
                 }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
+                if !(*sed_cmd).sw_file.is_null() {
                   puts_maybe_newline(
                     pattern_space,
                     (*sed_cmd).sw_file,
                     &mut (*sed_cmd).sw_last_char,
                     last_gets_char,
                   );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
                 }
               }
+              current_block = 17965632435239708295;
             }
-            97 => {
-              current_block = 17152203569385922329;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+            /* Append line to linked list to be printed later */
+            'a' => {
+              append(xstrdup((*sed_cmd).string));
+              current_block = 17965632435239708295;
+            }
+            /* Insert text before this line */
+            'i' => {
+              puts_maybe_newline(
+                (*sed_cmd).string,
+                G.nonstdout,
+                &mut last_puts_char,
+                '\n' as i32 as libc::c_char,
+              );
+              current_block = 17965632435239708295;
+            }
+            /* Cut and paste text (replace) */
+            'c' => {
+              if (*sed_cmd).in_match() == 0 {
+                puts_maybe_newline(
+                  (*sed_cmd).string,
+                  G.nonstdout,
+                  &mut last_puts_char,
+                  '\n' as i32 as libc::c_char,
+                );
+              }
+              // goto discard_line;
+              current_block = 4142149688065477410;
+              break 'restart;
+            }
+            /* Read file, append contents to output */
+            'r' => {
+              let mut rfile: *mut FILE = 0 as *mut FILE;
+              rfile = fopen_for_read((*sed_cmd).string);
+              if !rfile.is_null() {
+                let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                loop {
+                  line = xmalloc_fgetline(rfile);
+                  if line.is_null() {
                     break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
                   }
+                  append(line);
                 }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+                fclose(rfile);
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
+              current_block = 17965632435239708295;
+            }
+            /* Write pattern space to file. */
+            'w' => {
+              puts_maybe_newline(
+                pattern_space,
+                (*sed_cmd).sw_file,
+                &mut (*sed_cmd).sw_last_char,
+                last_gets_char,
+              );
+              current_block = 17965632435239708295;
+            }
+            /* Read next line from input */
+            'n' => {
+              if G.be_quiet == 0 {
+                puts_maybe_newline(
+                  pattern_space,
+                  G.nonstdout,
+                  &mut last_puts_char,
+                  last_gets_char,
+                );
+              }
+              if next_line.is_null() {
+                // goto discard_line;
+                current_block = 4142149688065477410;
+                break 'restart;
+              } else {
+                free(pattern_space as *mut libc::c_void);
+                pattern_space = next_line;
+                last_gets_char = next_gets_char;
+                next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
+                substituted = 0i32;
+                linenum += 1
+              }
+              current_block = 17965632435239708295;
+            }
+            /* Quit.  End of script, end of input. */
+            'q' => {
+              free(next_line as *mut libc::c_void);
+              next_line = 0 as *mut libc::c_char;
+              // goto discard_commands;
+              current_block = 8563197331115798083;
+              break 'restart;
+            }
+            /* Append the next line to the current line */
+            'N' => {
+              let mut len: libc::c_int = 0;
+              if next_line.is_null() {
+                // goto discard_commands;
+                current_block = 8563197331115798083;
+                break 'restart;
+              } else {
+                len = strlen(pattern_space) as libc::c_int;
+                pattern_space = xrealloc(
+                  pattern_space as *mut libc::c_void,
+                  (len as libc::c_ulong)
+                    .wrapping_add(strlen(next_line))
+                    .wrapping_add(2i32 as libc::c_ulong),
+                ) as *mut libc::c_char;
+                *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
+                strcpy(pattern_space.offset(len as isize).offset(1), next_line);
+                last_gets_char = next_gets_char;
+                next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
+                linenum += 1
+              }
+              current_block = 17965632435239708295;
+            }
+            /* Test/branch if substitution occurred */
+            't' => {
+              if substituted == 0 {
+                current_block = 17965632435239708295;
+              } else {
+                substituted = 0i32;
+                current_block = 2887315643959147419;
+                if (*sed_cmd).string.is_null() {
+                  current_block = 8563197331115798083;
+                  break 'restart;
                 }
+                sed_cmd = branch_to((*sed_cmd).string)
               }
             }
-            105 => {
-              current_block = 14487425527653873875;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            99 => {
-              current_block = 2782169280456925021;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            114 => {
-              current_block = 726525485109251713;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            119 => {
-              current_block = 5622786547828025790;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            110 => {
-              current_block = 1534452661327725232;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            113 => {
-              current_block = 10499578865704240760;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            78 => {
-              current_block = 7297078374430259003;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            116 => {
-              current_block = 17611301398573303352;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
-            }
-            84 => {
+            /* Test/branch if substitution didn't occur */
+            'T' => {
               current_block = 13861430101487131366;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+              if substituted != 0 {
+                // goto discard_commands;
+                current_block = 17965632435239708295;
+              } else {
+                if (*sed_cmd).string.is_null() {
+                  // goto discard_commands;
                   current_block = 8563197331115798083;
-                  break 's_54;
+                  break 'restart;
                 }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
+                sed_cmd = branch_to((*sed_cmd).string)
               }
             }
-            98 => {
+            /* Branch to label */
+            'b' => {
               current_block = 2887315643959147419;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+              if (*sed_cmd).string.is_null() {
+                // goto discard_commands;
+                current_block = 8563197331115798083;
+                break 'restart;
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+              sed_cmd = branch_to((*sed_cmd).string)
             }
-            121 => {
+            /* Transliterate characters */
+            'y' => {
               current_block = 1739363794695357236;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
+              let mut i: libc::c_int = 0;
+              let mut j: libc::c_int = 0;
+              i = 0i32;
+              while *pattern_space.offset(i as isize) != 0 {
+                j = 0i32;
+                while *(*sed_cmd).string.offset(j as isize) != 0 {
+                  if *pattern_space.offset(i as isize) as libc::c_int
+                    == *(*sed_cmd).string.offset(j as isize) as libc::c_int
                   {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    *pattern_space.offset(i as isize) =
+                      *(*sed_cmd).string.offset((j + 1i32) as isize);
                     break;
                   } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
+                    j += 2i32
                   }
                 }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+                i += 1
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+              current_block = 17965632435239708295;
             }
-            103 => {
-              current_block = 14127364983570718321;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+            /* Replace pattern space with hold space */
+            'g' => {
+              free(pattern_space as *mut libc::c_void);
+              pattern_space = xstrdup(if !G.hold_space.is_null() {
+                G.hold_space
+              } else {
+                b"\x00" as *const u8 as *const libc::c_char
+              });
+              current_block = 17965632435239708295;
             }
-            71 => {
-              current_block = 10468276026569382870;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+            /* Append newline and hold space to pattern space */
+            'G' => {
+              let mut pattern_space_size: libc::c_int = 2i32;
+              let mut hold_space_size: libc::c_int = 0i32;
+              if !pattern_space.is_null() {
+                pattern_space_size = (pattern_space_size as libc::c_ulong)
+                  .wrapping_add(strlen(pattern_space))
+                  as libc::c_int as libc::c_int
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
+              if !G.hold_space.is_null() {
+                hold_space_size = strlen(G.hold_space) as libc::c_int
               }
+              pattern_space = xrealloc(
+                pattern_space as *mut libc::c_void,
+                (pattern_space_size + hold_space_size) as size_t,
+              ) as *mut libc::c_char;
+              if pattern_space_size == 2i32 {
+                *pattern_space.offset(0) = 0i32 as libc::c_char
+              }
+              strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
+              if !G.hold_space.is_null() {
+                strcat(pattern_space, G.hold_space);
+              }
+              last_gets_char = '\n' as i32 as libc::c_char;
+              current_block = 17965632435239708295;
             }
-            104 => {
-              current_block = 17838047945882858323;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+            /* Replace hold space with pattern space */
+            'h' => {
+              free(G.hold_space as *mut libc::c_void);
+              G.hold_space = xstrdup(pattern_space);
+              current_block = 17965632435239708295;
             }
-            72 => {
-              current_block = 11227437541145425351;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
+            /* Append newline and pattern space to hold space */
+            'H' => {
+              let mut hold_space_size_0: libc::c_int = 2i32;
+              let mut pattern_space_size_0: libc::c_int = 0i32;
+              if !G.hold_space.is_null() {
+                hold_space_size_0 = (hold_space_size_0 as libc::c_ulong)
+                  .wrapping_add(strlen(G.hold_space))
+                  as libc::c_int as libc::c_int
               }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
+              if !pattern_space.is_null() {
+                pattern_space_size_0 = strlen(pattern_space) as libc::c_int
               }
+              let hold_space = G.hold_space as *mut libc::c_void;
+              G.hold_space = xrealloc(
+                hold_space,
+                (hold_space_size_0 + pattern_space_size_0) as size_t,
+              ) as *mut libc::c_char;
+              if hold_space_size_0 == 2i32 {
+                *G.hold_space = 0i32 as libc::c_char
+              }
+              strcat(G.hold_space, b"\n\x00" as *const u8 as *const libc::c_char);
+              if !pattern_space.is_null() {
+                strcat(G.hold_space, pattern_space);
+              }
+              current_block = 17965632435239708295;
             }
-            120 => {
-              current_block = 13665239467142187023;
-              match current_block {
-                11227437541145425351 => {
-                  let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size_0 = (hold_space_size_0 as libc::c_ulong).wrapping_add(strlen(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    )) as libc::c_int as libc::c_int
-                  }
-                  if !pattern_space.is_null() {
-                    pattern_space_size_0 = strlen(pattern_space) as libc::c_int
-                  }
-                  let ref mut fresh27 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                    (hold_space_size_0 + pattern_space_size_0) as size_t,
-                  ) as *mut libc::c_char;
-                  if hold_space_size_0 == 2i32 {
-                    *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
-                  }
-                  strcat(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                  );
-                  if !pattern_space.is_null() {
-                    strcat(
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                      pattern_space,
-                    );
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17838047945882858323 => {
-                  free(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void,
-                  );
-                  let ref mut fresh26 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
-                  current_block = 17965632435239708295;
-                }
-                10468276026569382870 => {
-                  let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
-                  if !pattern_space.is_null() {
-                    pattern_space_size = (pattern_space_size as libc::c_ulong)
-                      .wrapping_add(strlen(pattern_space))
-                      as libc::c_int as libc::c_int
-                  }
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    hold_space_size =
-                      strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
-                        as libc::c_int
-                  }
-                  pattern_space = xrealloc(
-                    pattern_space as *mut libc::c_void,
-                    (pattern_space_size + hold_space_size) as size_t,
-                  ) as *mut libc::c_char;
-                  if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
-                  }
-                  strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
-                  if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    strcat(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
-                    );
-                  }
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  current_block = 17965632435239708295;
-                }
-                14127364983570718321 => {
-                  free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
-                    if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                      .hold_space
-                      .is_null()
-                    {
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                    } else {
-                      b"\x00" as *const u8 as *const libc::c_char
-                    },
-                  );
-                  current_block = 17965632435239708295;
-                }
-                1739363794695357236 => {
-                  let mut i: libc::c_int = 0;
-                  let mut j: libc::c_int = 0;
-                  i = 0i32;
-                  while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
-                    while *(*sed_cmd).string.offset(j as isize) != 0 {
-                      if *pattern_space.offset(i as isize) as libc::c_int
-                        == *(*sed_cmd).string.offset(j as isize) as libc::c_int
-                      {
-                        *pattern_space.offset(i as isize) =
-                          *(*sed_cmd).string.offset((j + 1i32) as isize);
-                        break;
-                      } else {
-                        j += 2i32
-                      }
-                    }
-                    i += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                17611301398573303352 => {
-                  if substituted == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted = 0i32;
-                    current_block = 13861430101487131366;
-                  }
-                }
-                7297078374430259003 => {
-                  let mut len: libc::c_int = 0;
-                  if next_line.is_null() {
-                    current_block = 8563197331115798083;
-                    break 's_54;
-                  } else {
-                    len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
-                      pattern_space as *mut libc::c_void,
-                      (len as libc::c_ulong)
-                        .wrapping_add(strlen(next_line))
-                        .wrapping_add(2i32 as libc::c_ulong),
-                    ) as *mut libc::c_char;
-                    *pattern_space.offset(len as isize) = '\n' as i32 as libc::c_char;
-                    strcpy(pattern_space.offset(len as isize).offset(1), next_line);
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                1534452661327725232 => {
-                  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      last_gets_char,
-                    );
-                  }
-                  if next_line.is_null() {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  } else {
-                    free(pattern_space as *mut libc::c_void);
-                    pattern_space = next_line;
-                    last_gets_char = next_gets_char;
-                    next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
-                    linenum += 1
-                  }
-                  current_block = 17965632435239708295;
-                }
-                726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
-                  if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-                    loop {
-                      line = xmalloc_fgetline(rfile);
-                      if line.is_null() {
-                        break;
-                      }
-                      append(line);
-                    }
-                    fclose(rfile);
-                  }
-                  current_block = 17965632435239708295;
-                }
-                13714184482889841412 => {
-                  if do_subst_command(sed_cmd, &mut pattern_space) == 0 {
-                    current_block = 17965632435239708295;
-                  } else {
-                    substituted |= 1i32;
-                    if (*sed_cmd).sub_p() != 0 {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        last_gets_char,
-                      );
-                    }
-                    if !(*sed_cmd).sw_file.is_null() {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*sed_cmd).sw_file,
-                        &mut (*sed_cmd).sw_last_char,
-                        last_gets_char,
-                      );
-                    }
-                    current_block = 17965632435239708295;
-                  }
-                }
-                2290177392965769716 => {
-                  let mut tmp: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp.is_null() {
-                    *tmp = '\u{0}' as i32 as libc::c_char;
-                    puts_maybe_newline(
-                      pattern_space,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                    *tmp = '\n' as i32 as libc::c_char;
-                    current_block = 17965632435239708295;
-                  } else {
-                    current_block = 7330787439563864000;
-                  }
-                }
-                3546145585875536353 => {
-                  let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
-                  if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
-                    break;
-                  } else {
-                    current_block = 4142149688065477410;
-                    break 's_54;
-                  }
-                }
-                10499578865704240760 => {
-                  free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
-                  current_block = 8563197331115798083;
-                  break 's_54;
-                }
-                13665239467142187023 => {
-                  let mut tmp_1: *mut libc::c_char = pattern_space;
-                  pattern_space = if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
-                    .hold_space
-                    .is_null()
-                  {
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
-                      as *mut libc::c_void
-                  } else {
-                    xzalloc(1i32 as size_t)
-                  } as *mut libc::c_char;
-                  last_gets_char = '\n' as i32 as libc::c_char;
-                  let ref mut fresh28 =
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh28 = tmp_1;
-                  current_block = 17965632435239708295;
-                }
-                332836909292088582 => {
-                  fprintf(
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    b"%d\n\x00" as *const u8 as *const libc::c_char,
-                    linenum,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
-                  current_block = 17965632435239708295;
-                }
-                14487425527653873875 => {
-                  puts_maybe_newline(
-                    (*sed_cmd).string,
-                    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                    &mut last_puts_char,
-                    '\n' as i32 as libc::c_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                2782169280456925021 => {
-                  if (*sed_cmd).in_match() == 0 {
-                    puts_maybe_newline(
-                      (*sed_cmd).string,
-                      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                      &mut last_puts_char,
-                      '\n' as i32 as libc::c_char,
-                    );
-                  }
-                  current_block = 4142149688065477410;
-                  break 's_54;
-                }
-                5622786547828025790 => {
-                  puts_maybe_newline(
-                    pattern_space,
-                    (*sed_cmd).sw_file,
-                    &mut (*sed_cmd).sw_last_char,
-                    last_gets_char,
-                  );
-                  current_block = 17965632435239708295;
-                }
-                _ => {}
-              }
-              match current_block {
-                17965632435239708295 => {}
-                _ => {
-                  match current_block {
-                    7330787439563864000 => {
-                      puts_maybe_newline(
-                        pattern_space,
-                        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-                        &mut last_puts_char,
-                        '\n' as i32 as libc::c_char,
-                      );
-                      current_block = 17965632435239708295;
-                    }
-                    13861430101487131366 => {
-                      if substituted != 0 {
-                        current_block = 17965632435239708295;
-                      } else {
-                        current_block = 2887315643959147419;
-                      }
-                    }
-                    _ => {}
-                  }
-                  match current_block {
-                    17965632435239708295 => {}
-                    _ => {
-                      if (*sed_cmd).string.is_null() {
-                        current_block = 8563197331115798083;
-                        break 's_54;
-                      }
-                      sed_cmd = branch_to((*sed_cmd).string)
-                    }
-                  }
-                }
-              }
+            /* Exchange hold and pattern space */
+            'x' => {
+              let mut tmp_1: *mut libc::c_char = pattern_space;
+              pattern_space = if !G.hold_space.is_null() {
+                G.hold_space as *mut libc::c_void
+              } else {
+                xzalloc(1i32 as size_t)
+              } as *mut libc::c_char;
+              last_gets_char = '\n' as i32 as libc::c_char;
+              G.hold_space = tmp_1;
+              current_block = 17965632435239708295;
             }
             _ => {}
           }
         }
         sed_cmd = (*sed_cmd).next
       }
-    }
-    match current_block {
-      8563197331115798083 =>
-      /*
-      * Exit point from sedding...
-      */
-               /* we will print the line unless we were told to be quiet ('-n')
-        or if the line was suppressed (ala 'd'elete) */
-      {
-        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet == 0 {
-          puts_maybe_newline(
-            pattern_space,
-            (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout,
-            &mut last_puts_char,
-            last_gets_char,
-          );
-        }
-      }
-      _ => {}
+    } // Exit point from sedding...
+      // discard_commands:
+      // we will print the line unless we were told to be quiet ('-n')
+      // or if the line was suppressed (ala 'd'elete)
+    if current_block == 8563197331115798083 && G.be_quiet == 0 {
+      puts_maybe_newline(
+        pattern_space,
+        G.nonstdout,
+        &mut last_puts_char,
+        last_gets_char,
+      );
     }
     /* Delete and such jump here. */
+    // discard_line:
     flush_append(&mut last_puts_char);
     free(pattern_space as *mut libc::c_void);
   }
@@ -9061,11 +1746,13 @@ unsafe fn add_cmd_block(mut cmdstr: *mut libc::c_char) {
   }
   free(sv as *mut libc::c_void);
 }
+
 #[no_mangle]
 pub unsafe extern "C" fn sed_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
+  let ref mut G: globals = *(bb_common_bufsiz1.as_mut_ptr() as *mut globals);
   let mut opt: libc::c_uint = 0;
   let mut opt_e: *mut llist_t = 0 as *mut llist_t;
   let mut opt_f: *mut llist_t = 0 as *mut llist_t;
@@ -9076,8 +1763,7 @@ pub unsafe extern "C" fn sed_main(
     101, 110, 116, 0, 0, 110, 101, 120, 112, 114, 101, 115, 115, 105, 111, 110, 0, 1, 101, 102,
     105, 108, 101, 0, 1, 102, 0,
   ];
-  let ref mut fresh29 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_tail;
-  *fresh29 = &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
+  G.sed_cmd_tail = &mut G.sed_cmd_head;
   /* destroy command strings on exit */
   /* Lie to autoconf when it starts asking stupid questions. */
   if !(*argv.offset(1)).is_null()
@@ -9105,7 +1791,7 @@ pub unsafe extern "C" fn sed_main(
     &mut opt_i as *mut *mut libc::c_char,
     &mut opt_e as *mut *mut llist_t,
     &mut opt_f as *mut *mut llist_t,
-    &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).be_quiet as *mut libc::c_int,
+    &mut G.be_quiet as *mut libc::c_int,
   ); /* counter for -n */
   //argc -= optind;
   argv = argv.offset(optind as isize);
@@ -9114,7 +1800,7 @@ pub unsafe extern "C" fn sed_main(
     die_func = Some(cleanup_outname)
   } // -r or -E
   if opt & (2i32 | 4i32) as libc::c_uint != 0 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type |= 1i32
+    G.regex_type |= 1i32
   }
   //if (opt & 8)
   //	G.be_quiet++; // -n (implemented with a counter instead)
@@ -9142,20 +1828,17 @@ pub unsafe extern "C" fn sed_main(
     if (*argv).is_null() {
       bb_show_usage();
     }
-    let fresh30 = argv;
+    add_cmd_block(*argv);
     argv = argv.offset(1);
-    add_cmd_block(*fresh30);
   }
   /* Flush any unfinished commands. */
   add_cmd(b"\x00" as *const u8 as *const libc::c_char);
   /* By default, we write to stdout */
-  let ref mut fresh31 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout;
-  *fresh31 = stdout;
+  G.nonstdout = stdout;
   /* argv[0..(argc-1)] should be names of file to process. If no
    * files were specified or '-' was specified, take input from stdin.
    * Otherwise, we process all the files specified. */
-  let ref mut fresh32 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).input_file_list;
-  *fresh32 = argv;
+  G.input_file_list = argv;
   if (*argv.offset(0)).is_null() {
     if opt & OPT_in_place as libc::c_int as libc::c_uint != 0 {
       bb_error_msg_and_die(
@@ -9163,8 +1846,7 @@ pub unsafe extern "C" fn sed_main(
         b"-i\x00" as *const u8 as *const libc::c_char,
       );
     }
-    let ref mut fresh33 = *argv.offset(0);
-    *fresh33 = bb_msg_standard_input.as_ptr() as *mut libc::c_char
+    *argv.offset(0) = bb_msg_standard_input.as_ptr() as *mut libc::c_char;
   /* G.last_input_file = 0; - already is */
   } else {
     let mut statbuf: stat = std::mem::zeroed();
@@ -9178,16 +1860,12 @@ pub unsafe extern "C" fn sed_main(
         }
       } else if stat(*argv, &mut statbuf) != 0i32 {
         bb_simple_perror_msg(*argv);
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 as smallint;
-        let ref mut fresh35 =
-          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file;
-        *fresh35 += 1
+        G.exitcode = 1i32 as smallint;
+        G.current_input_file += 1;
       } else {
-        let ref mut fresh36 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname;
-        *fresh36 = xasprintf(b"%sXXXXXX\x00" as *const u8 as *const libc::c_char, *argv);
-        nonstdoutfd = xmkstemp((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname);
-        let ref mut fresh37 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout;
-        *fresh37 = xfdopen_for_write(nonstdoutfd);
+        G.outname = xasprintf(b"%sXXXXXX\x00" as *const u8 as *const libc::c_char, *argv);
+        nonstdoutfd = xmkstemp(G.outname);
+        G.nonstdout = xfdopen_for_write(nonstdoutfd);
         /* -i: process each FILE separately: */
         /* Set permissions/owner of output file */
         /* chmod'ing AFTER chown would preserve suid/sgid bits,
@@ -9195,9 +1873,8 @@ pub unsafe extern "C" fn sed_main(
         fchmod(nonstdoutfd, statbuf.st_mode);
         fchown(nonstdoutfd, statbuf.st_uid, statbuf.st_gid);
         process_files();
-        fclose((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout);
-        let ref mut fresh38 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout;
-        *fresh38 = stdout;
+        fclose(G.nonstdout);
+        G.nonstdout = stdout;
         if !opt_i.is_null() {
           let mut backupname: *mut libc::c_char = xasprintf(
             b"%s%s\x00" as *const u8 as *const libc::c_char,
@@ -9208,19 +1885,15 @@ pub unsafe extern "C" fn sed_main(
           free(backupname as *mut libc::c_void);
         }
         /* else unlink(*argv); - rename below does this */
-        xrename(
-          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname,
-          *argv,
-        ); //TODO: rollback backup on error?
-        free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname as *mut libc::c_void);
-        let ref mut fresh39 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname;
-        *fresh39 = 0 as *mut libc::c_char;
+        xrename(G.outname, *argv); //TODO: rollback backup on error?
+        free(G.outname as *mut libc::c_void);
+        G.outname = 0 as *mut libc::c_char;
         /* Fix disabled range matches and mangled ",+N" ranges */
-        sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
+        sed_cmd = G.sed_cmd_head;
         while !sed_cmd.is_null() {
           (*sed_cmd).beg_line = (*sed_cmd).beg_line_orig;
           (*sed_cmd).end_line = (*sed_cmd).end_line_orig;
-          sed_cmd = (*sed_cmd).next
+          sed_cmd = (*sed_cmd).next;
         }
       }
       argv = argv.offset(1);
@@ -9230,8 +1903,7 @@ pub unsafe extern "C" fn sed_main(
       statbuf = std::mem::zeroed();
       nonstdoutfd = 0;
       sed_cmd = 0 as *mut sed_cmd_t;
-      let ref mut fresh34 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).last_input_file;
-      *fresh34 += 1
+      G.last_input_file += 1;
       /* Here, to handle "sed 'cmds' nonexistent_file" case we did:
        * if (G.current_input_file[G.current_input_file] == NULL)
        *	return G.exitcode;
@@ -9240,5 +1912,5 @@ pub unsafe extern "C" fn sed_main(
     }
   }
   process_files();
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode as libc::c_int
+  G.exitcode as libc::c_int
 }
