@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::closedir;
 use libc::lstat;

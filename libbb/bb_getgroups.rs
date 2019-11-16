@@ -1,13 +1,11 @@
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 
 use libc;
 use libc::gid_t;
 extern "C" {
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;

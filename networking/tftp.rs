@@ -1,9 +1,9 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -57,7 +57,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

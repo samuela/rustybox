@@ -1,5 +1,3 @@
-
-
 use libc;
 /*
  * Utility routines.

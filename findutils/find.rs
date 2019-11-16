@@ -1,6 +1,6 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::access;
@@ -30,7 +30,6 @@ extern "C" {
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

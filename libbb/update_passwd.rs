@@ -1,6 +1,6 @@
-use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 use libc;
 use libc::fchmod;
 use libc::fclose;
@@ -54,7 +54,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;

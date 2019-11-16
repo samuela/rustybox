@@ -1,5 +1,3 @@
-
-
 use libc;
 /* implementation of the LZO1X decompression algorithm
 

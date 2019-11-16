@@ -1,6 +1,6 @@
-use crate::librb::size_t;
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 use libc;
 use libc::getegid;
 use libc::geteuid;
@@ -11,7 +11,6 @@ use libc::passwd;
 use libc::printf;
 use libc::uid_t;
 extern "C" {
-
 
   #[no_mangle]
   static mut optind: libc::c_int;

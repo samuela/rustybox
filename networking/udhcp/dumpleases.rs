@@ -1,7 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
-
 use libc;
 use libc::free;
 use libc::printf;
@@ -131,7 +130,7 @@ pub unsafe extern "C" fn dumpleases_main(
   fd = xopen(file, 0i32);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
-
+  
   printf(
     b"Mac %-14sIP %-13sHost %-15sExpires %s\n\x00" as *const u8 as *const libc::c_char,
     b"Address\x00" as *const u8 as *const libc::c_char,

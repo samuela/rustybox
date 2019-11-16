@@ -1,7 +1,7 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::closedir;

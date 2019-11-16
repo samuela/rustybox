@@ -1,5 +1,5 @@
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 
 use libc;
 use libc::close;
@@ -11,7 +11,6 @@ use libc::pollfd;
 use libc::ssize_t;
 use libc::stat;
 extern "C" {
-
 
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;

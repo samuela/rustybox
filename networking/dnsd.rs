@@ -82,7 +82,6 @@ extern "C" {
   #[no_mangle]
   fn config_close(parser: *mut parser_t);
 
-
 }
 
 pub type __socklen_t = libc::c_uint;

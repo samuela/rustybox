@@ -7,7 +7,6 @@ use libc::open;
 use libc::ptrdiff_t;
 extern "C" {
 
-
   #[no_mangle]
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
   #[no_mangle]

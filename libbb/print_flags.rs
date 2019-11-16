@@ -1,6 +1,5 @@
 /* Print string that matches bit masked flags */
 
-
 use libc;
 use libc::printf;
 extern "C" {

@@ -1,6 +1,6 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::access;
@@ -36,7 +36,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

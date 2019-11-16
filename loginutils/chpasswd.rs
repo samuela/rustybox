@@ -1,6 +1,5 @@
 use crate::librb::smallint;
 
-
 use libc;
 use libc::free;
 use libc::getuid;

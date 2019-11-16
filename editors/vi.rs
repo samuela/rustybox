@@ -1,7 +1,7 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::access;
@@ -92,7 +92,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

@@ -25,7 +25,6 @@ extern "C" {
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
-
   #[no_mangle]
   fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

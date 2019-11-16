@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::ptrdiff_t;
 extern "C" {

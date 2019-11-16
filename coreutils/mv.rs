@@ -18,7 +18,6 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-
   #[no_mangle]
   fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   #[no_mangle]

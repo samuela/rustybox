@@ -1,6 +1,6 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 
 use libc;
 use libc::close;
@@ -54,8 +54,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

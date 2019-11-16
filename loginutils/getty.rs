@@ -1,8 +1,8 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::alarm;
 use libc::cc_t;
@@ -140,7 +140,6 @@ extern "C" {
   fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-
 
 }
 

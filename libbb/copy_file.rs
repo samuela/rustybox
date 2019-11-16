@@ -1,6 +1,6 @@
-use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::smallint;
 use libc;
 use libc::chmod;
 use libc::chown;

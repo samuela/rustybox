@@ -1,5 +1,5 @@
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::free;
 use libc::off_t;
@@ -9,8 +9,6 @@ use libc::swapoff;
 use libc::swapon;
 use libc::FILE;
 extern "C" {
-
-
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -23,8 +21,6 @@ extern "C" {
 
   #[no_mangle]
   fn hasmntopt(__mnt: *const mntent, __opt: *const libc::c_char) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;

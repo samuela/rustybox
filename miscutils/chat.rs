@@ -3,7 +3,6 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 
-
 use libc;
 use libc::alarm;
 use libc::atoi;

@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::chdir;
 use libc::getenv;

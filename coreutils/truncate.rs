@@ -9,8 +9,6 @@ extern "C" {
   #[no_mangle]
   fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
 
-
-
   /* Close fd, but check for failures (some types of write errors) */
   #[no_mangle]
   fn xclose(fd: libc::c_int);

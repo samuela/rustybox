@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::cc_t;
 use libc::free;

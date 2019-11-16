@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::chmod;
 use libc::free;

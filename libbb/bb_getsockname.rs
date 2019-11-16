@@ -1,5 +1,3 @@
-
-
 use libc;
 extern "C" {
   pub type sockaddr_x25;

@@ -1,6 +1,5 @@
 use crate::librb::signal::__sighandler_t;
 
-
 use libc;
 use libc::close;
 use libc::dup2;

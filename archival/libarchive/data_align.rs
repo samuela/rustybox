@@ -1,6 +1,5 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 
-
 use libc;
 use libc::off_t;
 #[no_mangle]

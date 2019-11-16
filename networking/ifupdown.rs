@@ -1,7 +1,7 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::closedir;
@@ -50,8 +50,6 @@ extern "C" {
 
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
-
-
 
   #[no_mangle]
   fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
@@ -192,8 +190,6 @@ extern "C" {
 
   #[no_mangle]
   fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

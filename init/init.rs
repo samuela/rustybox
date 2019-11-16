@@ -1,9 +1,9 @@
+use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::cc_t;
 use libc::close;

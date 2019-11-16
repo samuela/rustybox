@@ -1,8 +1,8 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::chmod;

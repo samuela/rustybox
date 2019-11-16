@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::kill;
 use libc::pid_t;

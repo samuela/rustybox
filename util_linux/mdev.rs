@@ -1,3 +1,4 @@
+use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
@@ -5,7 +6,6 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::chdir;
 use libc::chmod;

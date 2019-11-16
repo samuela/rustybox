@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::mode_t;
 use libc::umask;

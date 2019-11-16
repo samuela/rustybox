@@ -16,7 +16,6 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
 
-
   /* These parse entries in /etc/passwd and /etc/group.  This is desirable
    * for BusyBox since we want to avoid using the glibc NSS stuff, which
    * increases target size and is often not needed on embedded systems.  */

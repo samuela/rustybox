@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::getopt;
 use libc::ioctl;

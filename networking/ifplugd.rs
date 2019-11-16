@@ -1,7 +1,7 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
 use libc::ioctl;
@@ -40,7 +40,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
-
 
   #[no_mangle]
   fn monotonic_sec() -> libc::c_uint;

@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::FILE;
 extern "C" {

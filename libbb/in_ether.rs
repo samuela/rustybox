@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::sa_family_t;
 use libc::sockaddr;

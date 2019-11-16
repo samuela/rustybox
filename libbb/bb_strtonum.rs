@@ -30,7 +30,6 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulonglong;
 
-
 }
 
 #[inline(always)]

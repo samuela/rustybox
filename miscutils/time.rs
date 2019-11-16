@@ -1,6 +1,6 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__syscall_slong_t;
 use crate::librb::signal::__sighandler_t;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::getenv;

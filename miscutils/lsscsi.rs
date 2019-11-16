@@ -1,5 +1,5 @@
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 
 use libc;
 use libc::chdir;
@@ -10,7 +10,6 @@ use libc::ssize_t;
 use libc::strchr;
 use libc::DIR;
 extern "C" {
-
 
   #[no_mangle]
   fn trim(s: *mut libc::c_char) -> *mut libc::c_char;

@@ -128,8 +128,6 @@ extern "C" {
     filename: *const libc::c_char,
   ) -> *mut libc::c_char;
 
-
-
   #[no_mangle]
   fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 

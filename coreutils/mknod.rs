@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::mknod;
 use libc::mode_t;

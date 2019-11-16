@@ -1,5 +1,5 @@
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getuid;
 use libc::openlog;
@@ -12,7 +12,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
 
   #[no_mangle]
   fn setrlimit(__resource: __rlimit_resource_t, __rlimits: *const rlimit) -> libc::c_int;

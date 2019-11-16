@@ -8,7 +8,6 @@ use libc::opendir;
 use libc::readdir;
 extern "C" {
 
-
   #[no_mangle]
   fn bb_simple_perror_msg(s: *const libc::c_char);
   #[no_mangle]

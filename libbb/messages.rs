@@ -1,5 +1,3 @@
-
-
 use libc;
 // TODO: fix all of these magic numbers
 

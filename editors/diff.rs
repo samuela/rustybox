@@ -42,7 +42,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-
   #[no_mangle]
   fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
   #[no_mangle]

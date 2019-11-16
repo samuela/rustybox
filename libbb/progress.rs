@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::fprintf;
 use libc::isatty;

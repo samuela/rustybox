@@ -1,9 +1,9 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::access;
@@ -84,7 +84,6 @@ extern "C" {
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
-
 
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;

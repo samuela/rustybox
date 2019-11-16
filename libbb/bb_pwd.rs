@@ -18,8 +18,6 @@ extern "C" {
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
 
-
-
   #[no_mangle]
   fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 

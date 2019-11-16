@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::chmod;
 use libc::mode_t;

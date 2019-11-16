@@ -1,4 +1,3 @@
-
 use libc;
 extern "C" {
   pub type globals;

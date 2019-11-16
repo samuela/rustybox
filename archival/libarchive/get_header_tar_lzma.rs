@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::off_t;
 extern "C" {

@@ -1,7 +1,6 @@
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 
-
 use libc;
 use libc::close;
 use libc::getegid;

@@ -1,5 +1,5 @@
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::close;
 use libc::fclose;
@@ -38,7 +38,6 @@ extern "C" {
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-
 
   #[no_mangle]
   fn strrstr(haystack: *const libc::c_char, needle: *const libc::c_char) -> *mut libc::c_char;

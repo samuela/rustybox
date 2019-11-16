@@ -1,9 +1,9 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-use crate::libbb::ptr_to_globals::bb_errno;
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::alarm;
 use libc::chdir;
@@ -573,7 +573,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-
+  
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,

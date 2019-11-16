@@ -1,5 +1,5 @@
-use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::alarm;
 use libc::free;

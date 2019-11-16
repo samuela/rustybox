@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::endmntent;
 use libc::free;

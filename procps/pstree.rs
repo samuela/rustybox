@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::putchar_unlocked;
 use libc::sprintf;

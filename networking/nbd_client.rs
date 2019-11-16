@@ -1,6 +1,6 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::close;
@@ -27,7 +27,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;

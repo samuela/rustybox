@@ -10,7 +10,6 @@ extern "C" {
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
 
-
   #[no_mangle]
   fn concat_path_file(
     path: *const libc::c_char,

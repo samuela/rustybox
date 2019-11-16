@@ -1,7 +1,6 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
 
-
 use libc;
 use libc::mode_t;
 extern "C" {

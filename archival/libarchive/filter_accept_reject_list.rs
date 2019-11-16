@@ -1,6 +1,5 @@
 use crate::libbb::llist::llist_t;
 
-
 use libc;
 extern "C" {
 

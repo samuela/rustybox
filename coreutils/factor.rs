@@ -8,7 +8,6 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-
   #[no_mangle]
   fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
   #[no_mangle]

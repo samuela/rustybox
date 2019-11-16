@@ -1,5 +1,5 @@
-use crate::librb::size_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 
 use libc;
 use libc::chdir;
@@ -136,7 +136,6 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;

@@ -15,8 +15,6 @@ extern "C" {
   #[no_mangle]
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
-
-
   #[no_mangle]
   fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;
 

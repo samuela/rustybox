@@ -1,6 +1,5 @@
 use crate::librb::size_t;
 
-
 use libc;
 use libc::printf;
 use libc::ssize_t;

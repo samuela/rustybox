@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::close;
 use libc::sync;

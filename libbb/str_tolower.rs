@@ -1,5 +1,3 @@
-
-
 use libc;
 /* Returns a pointer past the formatted number, does NOT null-terminate */
 /* Intelligent formatters of bignums */

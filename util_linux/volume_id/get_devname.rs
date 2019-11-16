@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::ioctl;
 use libc::open;

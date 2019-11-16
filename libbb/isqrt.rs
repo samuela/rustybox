@@ -1,5 +1,3 @@
-
-
 use libc;
 /*
  * Busybox main internal header file

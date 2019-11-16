@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::strchr;
 use libc::strcmp;

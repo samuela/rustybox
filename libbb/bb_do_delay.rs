@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::sleep;
 use libc::time;

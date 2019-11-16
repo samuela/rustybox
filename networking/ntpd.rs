@@ -1,4 +1,5 @@
 use crate::libbb::llist::llist_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__compar_fn_t;
 use crate::librb::__syscall_slong_t;
 use crate::librb::md5_ctx_t;
@@ -10,7 +11,6 @@ use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::alarm;

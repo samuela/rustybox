@@ -1,4 +1,4 @@
-use libc::DIR;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__compar_fn_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
@@ -6,7 +6,7 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use crate::libbb::ptr_to_globals::bb_errno;
+use libc::DIR;
 
 use libc;
 use libc::atoi;

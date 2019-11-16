@@ -1,7 +1,6 @@
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
-
 use libc;
 use libc::close;
 use libc::strrchr;

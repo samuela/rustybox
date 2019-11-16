@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::pid_t;
 use libc::printf;

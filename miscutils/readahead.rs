@@ -1,5 +1,3 @@
-
-
 use libc;
 use libc::close;
 extern "C" {

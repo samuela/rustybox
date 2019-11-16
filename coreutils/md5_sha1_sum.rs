@@ -101,7 +101,6 @@ extern "C" {
   #[no_mangle]
   fn sha3_end(ctx: *mut sha3_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
 
-
 }
 
 pub type C2RustUnnamed = libc::c_uint;

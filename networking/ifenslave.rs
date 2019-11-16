@@ -12,7 +12,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

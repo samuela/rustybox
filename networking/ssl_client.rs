@@ -1,5 +1,3 @@
-
-
 use libc;
 extern "C" {
   pub type tls_handshake_data;

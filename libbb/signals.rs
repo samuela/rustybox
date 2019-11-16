@@ -1,6 +1,5 @@
 use crate::librb::smallint;
 
-
 use libc;
 use libc::pid_t;
 use libc::sigaddset;

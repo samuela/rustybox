@@ -1,5 +1,3 @@
-
-
 use libc;
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -

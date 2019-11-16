@@ -10,7 +10,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-
   #[no_mangle]
   fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
   #[no_mangle]

@@ -20,7 +20,6 @@ extern "C" {
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
 
-
   #[no_mangle]
   fn xdup2(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

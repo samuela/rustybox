@@ -1,7 +1,7 @@
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::close;
@@ -58,7 +58,6 @@ extern "C" {
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
-
 
   /* more than enough for "/dev/ttyXXX" */
   #[no_mangle]

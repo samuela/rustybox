@@ -1,7 +1,7 @@
 use crate::libbb::llist::llist_t;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::libbb::ptr_to_globals::bb_errno;
 
 use libc;
 use libc::free;
@@ -31,8 +31,6 @@ extern "C" {
 
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
-
-
 
   #[no_mangle]
   fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
