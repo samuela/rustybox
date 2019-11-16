@@ -333,7 +333,7 @@ unsafe fn parse_escapes(
     d = d.offset(1)
   }
   *d = '\u{0}' as i32 as libc::c_char;
-  return d.wrapping_offset_from(dest) as libc::c_long as libc::c_uint;
+  d.wrapping_offset_from(dest) as libc::c_long as libc::c_uint
 }
 
 unsafe fn copy_parsing_escapes(
@@ -350,7 +350,7 @@ unsafe fn copy_parsing_escapes(
     string = dest;
     s = s.offset(2)
   }
-  return dest;
+  dest
 }
 
 /// walks left to right through a string beginning at a specified index and
@@ -426,8 +426,7 @@ unsafe fn parse_regex_delim(
   cmdstr_ptr = cmdstr_ptr.offset((idx + 1i32) as isize);
   idx = index_of_next_unescaped_regexp_delim(-(delimiter as libc::c_int), cmdstr_ptr);
   *replace = copy_parsing_escapes(cmdstr_ptr, idx);
-  return (cmdstr_ptr.wrapping_offset_from(cmdstr) as libc::c_long + idx as libc::c_long)
-    as libc::c_int;
+  (cmdstr_ptr.wrapping_offset_from(cmdstr) as libc::c_long + idx as libc::c_long) as libc::c_int
 }
 
 /// returns the index in the string just past where the address ends.
@@ -481,7 +480,7 @@ unsafe fn get_address(
     /* Move position to next character after last delimiter */
     pos = pos.offset((next + 1i32) as isize)
   }
-  return pos.wrapping_offset_from(my_str) as libc::c_long as libc::c_int;
+  pos.wrapping_offset_from(my_str) as libc::c_long as libc::c_int
 }
 
 /// Grab a filename.  Whitespace at start is skipped, then goes to EOL.
@@ -509,7 +508,7 @@ unsafe fn parse_file_cmd(
     /* eol is NUL */
     *retval = xstrdup(start)
   }
-  return eol.wrapping_offset_from(filecmdstr) as libc::c_long as libc::c_int;
+  eol.wrapping_offset_from(filecmdstr) as libc::c_long as libc::c_int
 }
 
 unsafe fn parse_subst_cmd(
@@ -614,7 +613,7 @@ unsafe fn parse_subst_cmd(
     xregcomp((*sed_cmd).sub_match, match_0, cflags);
   }
   free(match_0 as *mut libc::c_void);
-  return idx;
+  idx
 }
 
 /// Process the commands arguments
@@ -746,7 +745,7 @@ unsafe fn parse_cmd_args(
     );
   }
   /* give back whatever's left over */
-  return cmdstr;
+  cmdstr
 }
 
 /// Parse address+command sets, skipping comment lines.
@@ -1120,7 +1119,7 @@ unsafe fn do_subst_command(
   *line_p = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .pipeline
     .buf;
-  return altered as libc::c_int;
+  altered as libc::c_int
 }
 
 /// Set command pointer to point to this label.  (Does not handle null label.)
@@ -1301,7 +1300,7 @@ unsafe fn get_next_line(
     *fresh23 += 1
   }
   *gets_char = gc;
-  return temp;
+  temp
 }
 
 unsafe fn beg_match(
@@ -1320,7 +1319,7 @@ unsafe fn beg_match(
     let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
     *fresh24 = (*sed_cmd).beg_match
   }
-  return retval;
+  retval
 }
 
 /// Process all the lines in all the files
@@ -9241,5 +9240,5 @@ pub unsafe extern "C" fn sed_main(
     }
   }
   process_files();
-  return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode as libc::c_int;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode as libc::c_int
 }
