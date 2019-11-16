@@ -29,7 +29,7 @@ jobs:
           command: |
             rustc --version --verbose
             cargo --version --verbose
-            cargo build
+            cargo build -j1
       - run:
           name: clippy
           # See https://github.com/rust-lang/rust-clippy#travis-ci.
