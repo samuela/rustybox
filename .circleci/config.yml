@@ -43,7 +43,7 @@ jobs:
       - save_cache:
           key: cargo-cache
           paths:
-            - "~/.cargo"
+            - "~/.cargo/"
             - "./target/"
 
 workflows:
