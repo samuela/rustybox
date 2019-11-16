@@ -15,6 +15,7 @@ jobs:
       - run:
           name: rustfmt
           command: |
+            rustup component add rustfmt --toolchain nightly
             rustfmt --version
             cargo fmt --all -- --check
       - run:
