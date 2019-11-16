@@ -2,6 +2,10 @@
 
 Hello and thanks for your interest in rustybox! We're happy to have you here.
 
+## Removing `unsafe`s
+
+A broad metric for how well the rustybox project is progressing is the number of `unsafe`s across the codebase. Because rustybox started out as a c2rust transpile of busybox, we've inherited a lot of these. If you're interested in contributing but not quite sure where to start, playing `unsafe`-golf is one option. Pick a command that you find interesting and see if you can remove an `unsafe` somewhere in that module. Sometimes this can be done with "local" thinking, and other times it requires a more "global" understanding of the code.
+
 ## Imports
 
 Prefer
