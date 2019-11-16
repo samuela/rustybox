@@ -6,6 +6,13 @@ jobs:
       - image: circleci/rust
     working_directory: ~/workdir
     steps:
+      - run:
+          name: rustup nightly
+          command: |
+            rustup toolchain install nightly
+            rustup component add rustfmt --toolchain nightly
+            rustup default nightly
+
       - checkout
       - restore_cache:
           # Cargo should be smart enough to not require hashing Cargo.lock.
@@ -15,8 +22,7 @@ jobs:
       - run:
           name: rustfmt
           command: |
-            rustup component add rustfmt --toolchain nightly
-            rustfmt --version
+            cargo fmt --version
             cargo fmt --all -- --check
       - run:
           name: build
