@@ -38,4 +38,4 @@ After building, you can remove unnecessary debug sections with `strip`. This is 
 
 ## Acknowledgements
 
-There's simply no way this project would be possible without the hard work from the wonderful [busybox](https://busybox.net/) and [c2rust](https://github.com/immunant/c2rust) teams. Both projects are dope, and you should check them out.
+There's simply no way this project would be possible without the hard work from the wonderful [busybox](https://busybox.net/) and [c2rust](https://github.com/immunant/c2rust) teams. Both projects are dope, and you should check them out. Much of the code you find in this repo is transpiled from the work of the busybox [AUTHORS](https://github.com/mirror/busybox/blob/master/AUTHORS).
