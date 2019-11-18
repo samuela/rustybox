@@ -1,7 +1,9 @@
 use crate::libbb::appletlib::bb_show_usage;
 use crate::libbb::bb_pwd::xuid2uname;
 use crate::libbb::xfuncs_printf::fflush_all;
-use libc::{c_char, c_int, geteuid};
+use libc::c_char;
+use libc::c_int;
+use libc::geteuid;
 
 /*
  * Mini whoami implementation for busybox
