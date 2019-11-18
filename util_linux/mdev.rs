@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
@@ -87,9 +88,6 @@ extern "C" {
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;

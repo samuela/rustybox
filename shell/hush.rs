@@ -1,10 +1,10 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::fd_pair;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::access;
 use libc::chdir;
@@ -158,8 +158,6 @@ extern "C" {
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

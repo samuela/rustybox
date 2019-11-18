@@ -1,3 +1,4 @@
+use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::close;
 use libc::free;
@@ -14,8 +15,7 @@ extern "C" {
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

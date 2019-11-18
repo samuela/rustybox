@@ -1,6 +1,6 @@
+use crate::libbb::skip_whitespace::skip_whitespace;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-
 use libc;
 use libc::close;
 use libc::fclose;
@@ -81,8 +81,7 @@ extern "C" {
   ) -> *const libc::c_char;
   #[no_mangle]
   fn monotonic_ms() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use

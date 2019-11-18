@@ -1,13 +1,12 @@
+use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::size_t;
 use libc;
 extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 }
-use crate::librb::size_t;
 /*
  * Utility routines.
  *

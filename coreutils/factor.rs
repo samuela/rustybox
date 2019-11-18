@@ -1,5 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::free;
 use libc::printf;
@@ -10,8 +10,7 @@ extern "C" {
 
   #[no_mangle]
   fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.

@@ -3,6 +3,7 @@ use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::bb_uidgid_t;
@@ -35,9 +36,6 @@ extern "C" {
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn xzalloc(size: libc::size_t) -> *mut libc::c_void;

@@ -1,8 +1,8 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::closedir;
 use libc::fclose;
@@ -62,8 +62,7 @@ extern "C" {
 
   #[no_mangle]
   fn chomp(s: *mut libc::c_char);
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

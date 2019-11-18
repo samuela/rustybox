@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -73,8 +74,6 @@ extern "C" {
   fn localtime(__timer: *const time_t) -> *mut tm;
   /* Search for an entry with a matching username.  */
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

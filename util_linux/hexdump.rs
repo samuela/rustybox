@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -16,9 +17,6 @@ extern "C" {
 
   #[no_mangle]
   static mut stdin: *mut FILE;
-
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;

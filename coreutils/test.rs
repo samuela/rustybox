@@ -1,6 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::size_t;
-
 use libc;
 use libc::free;
 use libc::getegid;
@@ -25,8 +25,6 @@ extern "C" {
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

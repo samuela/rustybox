@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-
 use libc;
 use libc::fclose;
 use libc::free;
@@ -20,8 +20,6 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

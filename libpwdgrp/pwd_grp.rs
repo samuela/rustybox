@@ -1,6 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::size_t;
-
 use libc;
 use libc::fclose;
 use libc::free;
@@ -32,8 +32,7 @@ extern "C" {
 
   #[no_mangle]
   fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn bb_strtoll(
     arg: *const libc::c_char,

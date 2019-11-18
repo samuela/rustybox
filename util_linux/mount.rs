@@ -1,7 +1,7 @@
 use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::size_t;
-
 use libc;
 use libc::close;
 use libc::endmntent;
@@ -54,9 +54,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

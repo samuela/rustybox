@@ -1,3 +1,4 @@
+use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::access;
 use libc::close;
@@ -20,8 +21,7 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
    * at least v[idx] and v[idx+1], for all idx values.
    * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)

@@ -1,5 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::close;
 use libc::closedir;
@@ -46,8 +46,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

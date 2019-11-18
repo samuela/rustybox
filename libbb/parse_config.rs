@@ -1,5 +1,5 @@
+use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::librb::size_t;
-
 use libc;
 use libc::fclose;
 use libc::free;
@@ -21,8 +21,7 @@ extern "C" {
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn skip_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
