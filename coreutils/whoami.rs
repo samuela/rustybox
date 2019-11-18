@@ -1,17 +1,9 @@
-use libc;
+use crate::libbb::appletlib::bb_show_usage;
+use crate::libbb::bb_pwd::xuid2uname;
+use libc::c_char;
+use libc::c_int;
 use libc::geteuid;
-use libc::puts;
-extern "C" {
 
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xuid2uname(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-}
-
-use libc::uid_t;
 /*
  * Mini whoami implementation for busybox
  *
@@ -33,14 +25,13 @@ use libc::uid_t;
 //usage:#define whoami_full_usage "\n\n"
 //usage:       "Print the user name associated with the current effective user id"
 #[no_mangle]
-pub unsafe extern "C" fn whoami_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe extern "C" fn whoami_main(mut _argc: c_int, mut argv: *mut *mut c_char) -> c_int {
   if !(*argv.offset(1)).is_null() {
     bb_show_usage();
   }
   /* Will complain and die if username not found */
-  puts(xuid2uname(geteuid()));
-  return fflush_all();
+  let euid = geteuid();
+  let user_name = xuid2uname(euid);
+  println!("{}", *user_name);
+  0
 }
