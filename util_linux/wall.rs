@@ -5,9 +5,9 @@ use libc::free;
 use libc::getgid;
 use libc::getuid;
 use libc::gid_t;
-
 use libc::setutxent;
 use libc::uid_t;
+use libc::utmpx;
 extern "C" {
   #[no_mangle]
   fn getutxent() -> *mut utmpx;
@@ -35,7 +35,7 @@ pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
-use libc::utmpx;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {

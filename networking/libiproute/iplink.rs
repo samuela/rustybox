@@ -653,7 +653,7 @@ unsafe extern "C" fn get_address(
   me.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x60i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -950,7 +950,7 @@ unsafe extern "C" fn vlan_parse_opt(
         proto = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8100i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -968,7 +968,7 @@ unsafe extern "C" fn vlan_parse_opt(
         proto = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x88a8i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {

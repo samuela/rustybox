@@ -721,7 +721,7 @@ pub unsafe extern "C" fn bb_lookup_port(
         port_nr = ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = (*tserv).s_port as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -980,7 +980,7 @@ unsafe extern "C" fn str2sockaddr(
         ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = port as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -1111,7 +1111,7 @@ unsafe extern "C" fn create_and_bind_or_die(
       ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {

@@ -208,7 +208,7 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
         == ({
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = 0xfd187e20u32;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
             == ({
               let mut __v: libc::c_uint = 0;
               let mut __x: libc::c_uint = 0x2b5544i32 as libc::c_uint;
-              if 0 != 0 {
+              if false {
                 __v = (__x & 0xff000000u32) >> 24i32
                   | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                   | (__x & 0xff00i32 as libc::c_uint) << 8i32

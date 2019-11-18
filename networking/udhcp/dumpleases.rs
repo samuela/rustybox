@@ -130,7 +130,7 @@ pub unsafe extern "C" fn dumpleases_main(
   fd = xopen(file, 0i32);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
-  
+
   printf(
     b"Mac %-14sIP %-13sHost %-15sExpires %s\n\x00" as *const u8 as *const libc::c_char,
     b"Address\x00" as *const u8 as *const libc::c_char,
@@ -150,7 +150,7 @@ pub unsafe extern "C" fn dumpleases_main(
   written_at = ({
     let mut __v: u64 = 0;
     let mut __x: u64 = written_at as u64;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -201,7 +201,7 @@ pub unsafe extern "C" fn dumpleases_main(
     expires_abs = ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = lease.expires;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

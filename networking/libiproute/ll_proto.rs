@@ -107,7 +107,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
   id = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = id;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
   *id = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = i as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {

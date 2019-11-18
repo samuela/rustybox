@@ -219,7 +219,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
     let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .svstatus
       .time_be64;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -428,7 +428,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .svstatus
               .time_be64;
-            if 0 != 0 {
+            if false {
               __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
                 | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
                 | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -466,7 +466,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
           let mut __x: u64 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .svstatus
             .time_be64;
-          if 0 != 0 {
+          if false {
             __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
               | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
               | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32

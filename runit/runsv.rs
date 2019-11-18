@@ -316,7 +316,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
     let mut __v: u64 = 0;
     let mut __x: u64 =
       ((*s).start.tv_sec as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -338,7 +338,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
   status.time_nsec_be32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*s).start.tv_nsec as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32

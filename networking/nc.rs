@@ -813,7 +813,7 @@ unsafe extern "C" fn udptest() -> libc::c_int {
       ({
         let mut __v: libc::c_ushort = 0; /* enough that we'll notice?? */
         let mut __x: libc::c_ushort = SLEAZE_PORT as libc::c_int as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1305,7 +1305,7 @@ pub unsafe extern "C" fn nc_main(
         ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = o_lport as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {

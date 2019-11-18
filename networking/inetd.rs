@@ -1413,7 +1413,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
             port = {
               let mut __v: libc::c_ushort = 0;
               let mut __x: libc::c_ushort = n as libc::c_ushort;
-              if 0 != 0 {
+              if false {
                 __v = (__x as libc::c_int >> 8i32 & 0xffi32
                   | (__x as libc::c_int & 0xffi32) << 8i32) as libc::c_ushort
               } else {
@@ -1464,7 +1464,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
                     ({
                       let mut __v: libc::c_ushort = 0;
                       let mut __x: libc::c_ushort = port;
-                      if 0 != 0 {
+                      if false {
                         __v = (__x as libc::c_int >> 8i32 & 0xffi32
                           | (__x as libc::c_int & 0xffi32) << 8i32)
                           as libc::c_ushort
@@ -2426,7 +2426,7 @@ unsafe extern "C" fn machtime() -> u32 {
   return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (tv.tv_sec + 2208988800u32 as libc::c_long) as u32;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32

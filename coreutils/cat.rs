@@ -99,7 +99,7 @@ unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_ch
           i += 1
         }
       }
-      if 0 != 0 && fd != 0 {
+      if false && fd != 0 {
         close(fd);
       }
     }

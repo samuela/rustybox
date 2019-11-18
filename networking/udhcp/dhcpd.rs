@@ -976,7 +976,7 @@ unsafe extern "C" fn find_free_or_expired_nip(
         nip = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = addr;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1383,7 +1383,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1401,7 +1401,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).end_ip = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).end_ip;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1434,7 +1434,7 @@ unsafe extern "C" fn write_leases() {
   written_at = ({
     let mut __v: u64 = 0;
     let mut __x: u64 = written_at as u64;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -1477,7 +1477,7 @@ unsafe extern "C" fn write_leases() {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint =
           (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1545,7 +1545,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
     written_at = ({
       let mut __v: u64 = 0;
       let mut __x: u64 = written_at as u64;
-      if 0 != 0 {
+      if false {
         __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
           | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
           | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -1581,7 +1581,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         let mut y: u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = lease.lease_nip;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1605,7 +1605,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         let mut expires: signed_leasetime_t = ({
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = lease.expires;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1689,7 +1689,7 @@ unsafe extern "C" fn send_packet_to_client(
       & ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1860,7 +1860,7 @@ unsafe extern "C" fn select_lease_time(mut packet: *mut dhcp_packet) -> u32 {
     lease_time_sec = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = lease_time_sec;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1931,7 +1931,7 @@ unsafe extern "C" fn send_offer(
       && ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = requested_nip;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1950,7 +1950,7 @@ unsafe extern "C" fn send_offer(
       && ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = requested_nip;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2007,7 +2007,7 @@ unsafe extern "C" fn send_offer(
   udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lease_time_sec;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2089,7 +2089,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
   udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lease_time_sec;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2246,7 +2246,7 @@ pub unsafe extern "C" fn udhcpd_main(
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint =
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_lease_sec;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

@@ -1062,7 +1062,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   rawkey0 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = *(key as *const u32);
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1080,7 +1080,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   rawkey1 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = *(key.offset(4) as *const u32);
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32

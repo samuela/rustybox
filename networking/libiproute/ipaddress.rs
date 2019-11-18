@@ -1934,7 +1934,7 @@ unsafe extern "C" fn ipaddr_modify(
           brd.data[0] |= {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = (1i32 << 31i32 - i) as libc::c_uint;
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1954,7 +1954,7 @@ unsafe extern "C" fn ipaddr_modify(
           brd.data[0] &= !({
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = (1i32 << 31i32 - i) as libc::c_uint;
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32

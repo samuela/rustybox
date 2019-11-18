@@ -339,7 +339,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
       v32 = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*m).ip;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -386,7 +386,7 @@ unsafe extern "C" fn table_lookup(
       == ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = REQ_A as libc::c_int as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -623,7 +623,7 @@ unsafe extern "C" fn process_packet(
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -648,7 +648,7 @@ unsafe extern "C" fn process_packet(
   outr_flags = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x8000i32 | 4i32) as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -680,7 +680,7 @@ unsafe extern "C" fn process_packet(
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x7800i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -703,7 +703,7 @@ unsafe extern "C" fn process_packet(
       != ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -726,7 +726,7 @@ unsafe extern "C" fn process_packet(
         != ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = REQ_A as libc::c_int as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -744,7 +744,7 @@ unsafe extern "C" fn process_packet(
           != ({
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = REQ_PTR as libc::c_int as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -771,7 +771,7 @@ unsafe extern "C" fn process_packet(
             == ({
               let mut __v: libc::c_ushort = 0;
               let mut __x: libc::c_ushort = REQ_PTR as libc::c_int as libc::c_ushort;
-              if 0 != 0 {
+              if false {
                 __v = (__x as libc::c_int >> 8i32 & 0xffi32
                   | (__x as libc::c_int & 0xffi32) << 8i32) as libc::c_ushort
               } else {
@@ -805,7 +805,7 @@ unsafe extern "C" fn process_packet(
           outr_flags = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 3i32) as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -831,7 +831,7 @@ unsafe extern "C" fn process_packet(
           *(answb as *mut u32 as *mut bb__aliased_u32) = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = conf_ttl;
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -851,7 +851,7 @@ unsafe extern "C" fn process_packet(
           *(answb as *mut u16 as *mut bb__aliased_u16) = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = outr_rlen;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -886,7 +886,7 @@ unsafe extern "C" fn process_packet(
           outr_flags = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0i32) as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -905,7 +905,7 @@ unsafe extern "C" fn process_packet(
           (*head).nansw = {
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -928,7 +928,7 @@ unsafe extern "C" fn process_packet(
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0xfi32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -966,7 +966,7 @@ unsafe extern "C" fn process_packet(
   (*head).nquer = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {

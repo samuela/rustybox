@@ -693,7 +693,7 @@ unsafe extern "C" fn sendping4(mut _junk: libc::c_int) {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -744,7 +744,7 @@ unsafe extern "C" fn sendping6(mut _junk: libc::c_int) {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -896,7 +896,7 @@ unsafe extern "C" fn unpack4(
     let mut recv_seq: u16 = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp_hun.ih_idseq.icd_seq;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -959,7 +959,7 @@ unsafe extern "C" fn unpack6(
     let mut recv_seq: u16 = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp6_dataun.icmp6_un_data16[1];
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {

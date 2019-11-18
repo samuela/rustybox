@@ -321,7 +321,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       .s_addr = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = !(0xffffffffu64 >> prefix_len) as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -474,7 +474,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     mask_0 = !({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = mask_0;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

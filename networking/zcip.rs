@@ -262,7 +262,7 @@ unsafe extern "C" fn pick_nip() -> u32 {
       .localnet_ip
       .wrapping_add(0x100i32 as libc::c_uint)
       .wrapping_add(tmp);
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -321,7 +321,7 @@ unsafe extern "C" fn send_arp_request(
   p.eth.ether_type = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -350,7 +350,7 @@ unsafe extern "C" fn send_arp_request(
   p.arp.ea_hdr.ar_hrd = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -367,7 +367,7 @@ unsafe extern "C" fn send_arp_request(
   p.arp.ea_hdr.ar_pro = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -386,7 +386,7 @@ unsafe extern "C" fn send_arp_request(
   p.arp.ea_hdr.ar_op = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = op as libc::c_int as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -548,7 +548,7 @@ pub unsafe extern "C" fn zcip_main(
       ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -578,7 +578,7 @@ pub unsafe extern "C" fn zcip_main(
       & ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 0xffff0000u32;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -601,7 +601,7 @@ pub unsafe extern "C" fn zcip_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).localnet_ip = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = net.s_addr;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -624,7 +624,7 @@ pub unsafe extern "C" fn zcip_main(
       || ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = ip.s_addr;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -919,7 +919,7 @@ pub unsafe extern "C" fn zcip_main(
                 != ({
                   let mut __v: libc::c_ushort = 0;
                   let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort;
-                  if 0 != 0 {
+                  if false {
                     __v = (__x as libc::c_int >> 8i32 & 0xffi32
                       | (__x as libc::c_int & 0xffi32) << 8i32)
                       as libc::c_ushort
@@ -942,7 +942,7 @@ pub unsafe extern "C" fn zcip_main(
                 != ({
                   let mut __v: libc::c_ushort = 0;
                   let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-                  if 0 != 0 {
+                  if false {
                     __v = (__x as libc::c_int >> 8i32 & 0xffi32
                       | (__x as libc::c_int & 0xffi32) << 8i32)
                       as libc::c_ushort
@@ -962,7 +962,7 @@ pub unsafe extern "C" fn zcip_main(
                   != ({
                     let mut __v: libc::c_ushort = 0;
                     let mut __x: libc::c_ushort = 2i32 as libc::c_ushort;
-                    if 0 != 0 {
+                    if false {
                       __v = (__x as libc::c_int >> 8i32 & 0xffi32
                         | (__x as libc::c_int & 0xffi32) << 8i32)
                         as libc::c_ushort
@@ -1002,7 +1002,7 @@ pub unsafe extern "C" fn zcip_main(
                   == ({
                     let mut __v: libc::c_ushort = 0;
                     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-                    if 0 != 0 {
+                    if false {
                       __v = (__x as libc::c_int >> 8i32 & 0xffi32
                         | (__x as libc::c_int & 0xffi32) << 8i32)
                         as libc::c_ushort

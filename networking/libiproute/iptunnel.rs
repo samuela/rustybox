@@ -470,7 +470,7 @@ unsafe extern "C" fn parse_args(
   (*p).iph.frag_off = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x4000i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -532,7 +532,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -550,7 +550,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -572,7 +572,7 @@ unsafe extern "C" fn parse_args(
         (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -597,7 +597,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -618,7 +618,7 @@ unsafe extern "C" fn parse_args(
         (*p).i_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_0;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -642,7 +642,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -663,7 +663,7 @@ unsafe extern "C" fn parse_args(
         (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_1;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -685,7 +685,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -703,7 +703,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -722,7 +722,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -741,7 +741,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -760,7 +760,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -778,7 +778,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -797,7 +797,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -816,7 +816,7 @@ unsafe extern "C" fn parse_args(
         | ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -836,7 +836,7 @@ unsafe extern "C" fn parse_args(
       (*p).iph.frag_off = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x4000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -962,7 +962,7 @@ unsafe extern "C" fn parse_args(
       & ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -981,7 +981,7 @@ unsafe extern "C" fn parse_args(
         & ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -1009,7 +1009,7 @@ unsafe extern "C" fn parse_args(
     && ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*p).iph.daddr;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1032,7 +1032,7 @@ unsafe extern "C" fn parse_args(
       | ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1051,7 +1051,7 @@ unsafe extern "C" fn parse_args(
     && ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*p).iph.daddr;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1074,7 +1074,7 @@ unsafe extern "C" fn parse_args(
       | ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1092,7 +1092,7 @@ unsafe extern "C" fn parse_args(
   if ({
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*p).iph.daddr;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1253,7 +1253,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x4000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1287,7 +1287,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1306,7 +1306,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
       & ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1332,7 +1332,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
       & ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1357,7 +1357,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
       & ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x2000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1383,7 +1383,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1408,7 +1408,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1433,7 +1433,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x1000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1458,7 +1458,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
     & ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {

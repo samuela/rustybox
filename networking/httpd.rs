@@ -2445,7 +2445,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     remote_ip = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*fromAddr).u.sin.sin_addr.s_addr;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2468,7 +2468,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     && ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[2];
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2488,7 +2488,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     remote_ip = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[3];
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

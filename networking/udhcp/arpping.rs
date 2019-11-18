@@ -352,7 +352,7 @@ pub unsafe extern "C" fn arpping(
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -395,7 +395,7 @@ pub unsafe extern "C" fn arpping(
     arp.h_proto = {
       let mut __v: libc::c_ushort = 0; /* hardware type */
       let mut __x: libc::c_ushort = 0x806i32 as libc::c_ushort; /* protocol type (ARP message) */
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -412,7 +412,7 @@ pub unsafe extern "C" fn arpping(
     arp.htype = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn arpping(
     arp.ptype = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -448,7 +448,7 @@ pub unsafe extern "C" fn arpping(
     arp.operation = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -527,7 +527,7 @@ pub unsafe extern "C" fn arpping(
               == ({
                 let mut __v: libc::c_ushort = 0;
                 let mut __x: libc::c_ushort = 2i32 as libc::c_ushort;
-                if 0 != 0 {
+                if false {
                   __v = (__x as libc::c_int >> 8i32 & 0xffi32
                     | (__x as libc::c_int & 0xffi32) << 8i32)
                     as libc::c_ushort

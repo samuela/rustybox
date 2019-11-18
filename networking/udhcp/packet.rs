@@ -273,7 +273,7 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
   (*packet).cookie = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = 0x63825363i32 as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -348,7 +348,7 @@ pub unsafe extern "C" fn udhcp_recv_kernel_packet(
       != ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 0x63825363i32 as libc::c_uint;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -450,7 +450,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -484,7 +484,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
     dest_sll.sll_protocol = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -542,7 +542,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.source = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = source_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -559,7 +559,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.dest = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -578,7 +578,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort =
           (UDP_DHCP_SIZE as libc::c_int as libc::c_uint).wrapping_sub(padding) as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -603,7 +603,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort =
           (IP_UDP_DHCP_SIZE as libc::c_int as libc::c_uint).wrapping_sub(padding) as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -835,7 +835,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
     sa.sin_port = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = source_port as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -869,7 +869,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
       sa.sin_port = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {

@@ -373,7 +373,7 @@ pub unsafe extern "C" fn nbdclient_main(
       size_blocks = ({
         let mut __v: u64 = 0;
         let mut __x: u64 = old_nbd_header.devsize;
-        if 0 != 0 {
+        if false {
           __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
             | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
             | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -421,7 +421,7 @@ pub unsafe extern "C" fn nbdclient_main(
         & ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 2i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -458,7 +458,7 @@ pub unsafe extern "C" fn nbdclient_main(
       nbd_opts.opt = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 1i32 as libc::c_uint;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -478,7 +478,7 @@ pub unsafe extern "C" fn nbdclient_main(
       nbd_opts.len = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = namelen;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -512,7 +512,7 @@ pub unsafe extern "C" fn nbdclient_main(
       size_blocks = ({
         let mut __v: u64 = 0;
         let mut __x: u64 = new_nbd_header.devsize;
-        if 0 != 0 {
+        if false {
           __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
             | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
             | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -565,7 +565,7 @@ pub unsafe extern "C" fn nbdclient_main(
         ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = new_nbd_header.transmission_flags;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -584,7 +584,7 @@ pub unsafe extern "C" fn nbdclient_main(
         & ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = 2i32 as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {

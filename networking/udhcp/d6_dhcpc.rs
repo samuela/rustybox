@@ -1106,7 +1106,7 @@ unsafe extern "C" fn random_xid() -> u32 {
     & ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffffffi32 as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1147,7 +1147,7 @@ unsafe extern "C" fn init_d6_packet(
   *(ptr as *mut u32) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ((8i32 << 16i32) + 2i32) as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1202,7 +1202,7 @@ unsafe extern "C" fn init_d6_packet(
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = secs as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -2043,7 +2043,7 @@ unsafe extern "C" fn d6_recv_raw_packet(
                                                      0;
                                                  let mut __x: libc::c_ushort =
                                                      packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_plen;
-                                                 if 0 != 0 {
+                                                 if false {
                                                      __v =
                                                          (__x as libc::c_int
                                                               >> 8i32 &
@@ -2082,7 +2082,7 @@ unsafe extern "C" fn d6_recv_raw_packet(
                                               let mut __v: libc::c_ushort = 0;
                                               let mut __x: libc::c_ushort =
                                                   packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_plen;
-                                              if 0 != 0 {
+                                              if false {
                                                   __v =
                                                       (__x as libc::c_int >>
                                                            8i32 & 0xffi32 |
@@ -2111,7 +2111,7 @@ unsafe extern "C" fn d6_recv_raw_packet(
       != ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 546i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -2211,7 +2211,7 @@ unsafe extern "C" fn d6_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -2235,7 +2235,7 @@ unsafe extern "C" fn d6_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
   sock.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -3330,7 +3330,7 @@ pub unsafe extern "C" fn udhcpc6_main(
             & ({
               let mut __v: libc::c_uint = 0;
               let mut __x: libc::c_uint = 0xffffffi32 as libc::c_uint;
-              if 0 != 0 {
+              if false {
                 __v = (__x & 0xff000000u32) >> 24i32
                   | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                   | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -3355,7 +3355,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   & ({
                     let mut __v: libc::c_uint = 0;
                     let mut __x: libc::c_uint = 0xffffffi32 as libc::c_uint;
-                    if 0 != 0 {
+                    if false {
                       __v = (__x & 0xff000000u32) >> 24i32
                         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -3712,7 +3712,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                         lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;
-                          if 0 != 0 {
+                          if false {
                             __v = (__x & 0xff000000u32) >> 24i32
                               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -3854,7 +3854,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                         lease_seconds = {
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = lease_seconds;
-                          if 0 != 0 {
+                          if false {
                             __v = (__x & 0xff000000u32) >> 24i32
                               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                               | (__x & 0xff00i32 as libc::c_uint) << 8i32

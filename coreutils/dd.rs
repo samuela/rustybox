@@ -679,7 +679,7 @@ pub unsafe extern "C" fn dd_main(
                     *p16 = {
                       let mut __v: libc::c_ushort = 0;
                       let mut __x: libc::c_ushort = *p16;
-                      if 0 != 0 {
+                      if false {
                         __v = (__x as libc::c_int >> 8i32 & 0xffi32
                           | (__x as libc::c_int & 0xffi32) << 8i32)
                           as libc::c_ushort

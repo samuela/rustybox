@@ -126,7 +126,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
   ipaddr = ({
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ipaddr as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -145,7 +145,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
     return ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffffff00u32;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -165,7 +165,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
     return ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffff0000u32;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -185,7 +185,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
     return ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xff000000u32;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -211,7 +211,7 @@ unsafe extern "C" fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
   netmask = ({
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = netmask as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn ipcalc_main(
         s_netmask.s_addr = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = s_netmask.s_addr;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32

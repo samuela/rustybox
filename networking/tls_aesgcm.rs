@@ -33,7 +33,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   let mut tt: libc::c_ulong = {
     let mut __v: u64 = 0; // zero, or 0x800..00
     let mut __x: u64 = *(x as *mut libc::c_ulong).offset(0);
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -57,7 +57,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   *(x as *mut libc::c_ulong).offset(0) = {
     let mut __v: u64 = 0;
     let mut __x: u64 = tt;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -79,7 +79,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   tt = {
     let mut __v: u64 = 0;
     let mut __x: u64 = *(x as *mut libc::c_ulong).offset(1);
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -102,7 +102,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   *(x as *mut libc::c_ulong).offset(1) = {
     let mut __v: u64 = 0;
     let mut __x: u64 = tt;
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -244,7 +244,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
   *fresh16 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (13i32 * 8i32) as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -265,7 +265,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
   *fresh20 ^= {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = cSz.wrapping_mul(8i32 as libc::c_uint);
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32

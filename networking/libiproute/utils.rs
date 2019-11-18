@@ -287,7 +287,7 @@ unsafe extern "C" fn get_prefix_1(
           let mut mask: u32 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = netmask_pfx.data[0];
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -468,7 +468,7 @@ pub unsafe extern "C" fn inet_addr_match(
     mask = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xffffffffu32 << 0x20i32 - bits;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

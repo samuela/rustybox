@@ -676,7 +676,7 @@ unsafe extern "C" fn tftp_protocol(
                 *(cp as *mut u16) = {
                   let mut __v: libc::c_ushort = 0;
                   let mut __x: libc::c_ushort = block_nr;
-                  if 0 != 0 {
+                  if false {
                     __v = (__x as libc::c_int >> 8i32 & 0xffi32
                       | (__x as libc::c_int & 0xffi32) << 8i32)
                       as libc::c_ushort
@@ -727,7 +727,7 @@ unsafe extern "C" fn tftp_protocol(
                 *(xbuf as *mut u16) = {
                   let mut __v: libc::c_ushort = 0; /* fill in opcode part */
                   let mut __x: libc::c_ushort = opcode;
-                  if 0 != 0 {
+                  if false {
                     __v = (__x as libc::c_int >> 8i32 & 0xffi32
                       | (__x as libc::c_int & 0xffi32) << 8i32)
                       as libc::c_ushort
@@ -825,7 +825,7 @@ unsafe extern "C" fn tftp_protocol(
                           opcode = {
                             let mut __v: libc::c_ushort = 0;
                             let mut __x: libc::c_ushort = *(rbuf as *mut u16).offset(0);
-                            if 0 != 0 {
+                            if false {
                               __v = (__x as libc::c_int >> 8i32 & 0xffi32
                                 | (__x as libc::c_int & 0xffi32) << 8i32)
                                 as libc::c_ushort
@@ -849,7 +849,7 @@ unsafe extern "C" fn tftp_protocol(
                           recv_blk = {
                             let mut __v: libc::c_ushort = 0;
                             let mut __x: libc::c_ushort = *(rbuf as *mut u16).offset(1);
-                            if 0 != 0 {
+                            if false {
                               __v = (__x as libc::c_int >> 8i32 & 0xffi32
                                 | (__x as libc::c_int & 0xffi32) << 8i32)
                                 as libc::c_ushort
@@ -1298,7 +1298,7 @@ pub unsafe extern "C" fn tftpd_main(
     let mut __x: libc::c_ushort = *((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .block_buf
       .as_mut_ptr() as *mut u16);
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {

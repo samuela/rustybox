@@ -366,7 +366,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       alloc_block_size = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*hfs).al_blk_size;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       alloc_first_block = ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (*hfs).al_bl_st;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -402,7 +402,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       embed_first_block = ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (*hfs).embed_startblock;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -449,7 +449,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       blocksize = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*hfsplus).blocksize;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -473,7 +473,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       cat_block = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = extents[0].start_block;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -501,7 +501,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         leaf_node_head = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = (*bnode).leaf_head;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -520,7 +520,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         leaf_node_size = ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = (*bnode).node_size;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         leaf_node_count = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = (*bnode).leaf_count;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -567,7 +567,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
             ext_block_start = {
               let mut __v: libc::c_uint = 0;
               let mut __x: libc::c_uint = extents[ext as usize].start_block;
-              if 0 != 0 {
+              if false {
                 __v = (__x & 0xff000000u32) >> 24i32
                   | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                   | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -586,7 +586,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
             ext_block_count = {
               let mut __v: libc::c_uint = 0;
               let mut __x: libc::c_uint = extents[ext as usize].block_count;
-              if 0 != 0 {
+              if false {
                 __v = (__x & 0xff000000u32) >> 24i32
                   | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                   | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -628,7 +628,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                   record_count = ({
                     let mut __v: libc::c_ushort = 0;
                     let mut __x: libc::c_ushort = (*descr).num_recs;
-                    if 0 != 0 {
+                    if false {
                       __v = (__x as libc::c_int >> 8i32 & 0xffi32
                         | (__x as libc::c_int & 0xffi32) << 8i32)
                         as libc::c_ushort
@@ -654,7 +654,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                         != ({
                           let mut __v: libc::c_uint = 0;
                           let mut __x: libc::c_uint = 1i32 as libc::c_uint;
-                          if 0 != 0 {
+                          if false {
                             __v = (__x & 0xff000000u32) >> 24i32
                               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -677,7 +677,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                         label_len = (({
                           let mut __v: libc::c_ushort = 0;
                           let mut __x: libc::c_ushort = (*key).unicode_len;
-                          if 0 != 0 {
+                          if false {
                             __v = (__x as libc::c_int >> 8i32 & 0xffi32
                               | (__x as libc::c_int & 0xffi32) << 8i32)
                               as libc::c_ushort

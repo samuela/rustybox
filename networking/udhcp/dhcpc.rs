@@ -648,7 +648,7 @@ unsafe extern "C" fn mton(mut mask: u32) -> libc::c_int {
   mask = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = mask;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -793,7 +793,7 @@ unsafe extern "C" fn xmalloc_optname_optval(
                                              let mut __v: libc::c_ushort = 0;
                                              let mut __x: libc::c_ushort =
                                                  val_u16;
-                                             if 0 != 0 {
+                                             if false {
                                                  __v =
                                                      (__x as libc::c_int >>
                                                           8i32 & 0xffi32 |
@@ -833,7 +833,7 @@ unsafe extern "C" fn xmalloc_optname_optval(
                                              let mut __v: libc::c_uint = 0;
                                              let mut __x: libc::c_uint =
                                                  val_u32;
-                                             if 0 != 0 {
+                                             if false {
                                                  __v =
                                                      (__x & 0xff000000u32) >>
                                                          24i32 |
@@ -1386,7 +1386,7 @@ unsafe extern "C" fn init_packet(mut packet: *mut dhcp_packet, mut type_0: libc:
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = secs as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1440,7 +1440,7 @@ unsafe extern "C" fn add_client_options(mut packet: *mut dhcp_packet) {
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = IP_UDP_DHCP_SIZE as libc::c_int as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1537,7 +1537,7 @@ unsafe extern "C" fn add_client_options(mut packet: *mut dhcp_packet) {
       | ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 0x8000i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1954,7 +1954,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
     < ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = packet.ip.tot_len;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -1980,7 +1980,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
   bytes = ({
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = packet.ip.tot_len;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -2002,7 +2002,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
       != ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 68i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -2019,7 +2019,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
     || ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -2114,7 +2114,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
     != ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0x63825363i32 as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2175,7 +2175,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -2203,7 +2203,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
   sock.sll_protocol = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x800i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -3499,7 +3499,7 @@ pub unsafe extern "C" fn udhcpc_main(
                       lease_seconds = {
                         let mut __v: libc::c_uint = 0;
                         let mut __x: libc::c_uint = lease_seconds;
-                        if 0 != 0 {
+                        if false {
                           __v = (__x & 0xff000000u32) >> 24i32
                             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                             | (__x & 0xff00i32 as libc::c_uint) << 8i32

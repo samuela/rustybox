@@ -1097,7 +1097,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         *result_u16 = {
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = tmp as libc::c_ushort;
-          if 0 != 0 {
+          if false {
             __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
               as libc::c_ushort
           } else {
@@ -1125,7 +1125,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_0;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1149,7 +1149,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         *result_u32 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = tmp_1 as libc::c_uint;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32

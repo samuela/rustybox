@@ -550,7 +550,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
     (*pkt).ident6 = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*ptr_to_globals).ident;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -569,7 +569,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
     (*pkt).seq6 = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = seq as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -598,7 +598,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
         .icd_seq = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = seq as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -658,7 +658,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort =
           ((*ptr_to_globals).port as libc::c_int + seq) as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -790,7 +790,7 @@ unsafe extern "C" fn packet4_ok(
     (*ptr_to_globals).pmtu = ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icp).icmp_hun.ih_pmtu.ipm_nextmtu;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -821,7 +821,7 @@ unsafe extern "C" fn packet4_ok(
           == ({
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (*ptr_to_globals).ident as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -839,7 +839,7 @@ unsafe extern "C" fn packet4_ok(
           == ({
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = seq as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -863,7 +863,7 @@ unsafe extern "C" fn packet4_ok(
           == ({
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = (*ptr_to_globals).ident as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -881,7 +881,7 @@ unsafe extern "C" fn packet4_ok(
           == ({
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort = seq as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -911,7 +911,7 @@ unsafe extern "C" fn packet4_ok(
             let mut __v: libc::c_ushort = 0;
             let mut __x: libc::c_ushort =
               ((*ptr_to_globals).port as libc::c_int + seq) as libc::c_ushort;
-            if 0 != 0 {
+            if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
             } else {
@@ -994,7 +994,7 @@ unsafe extern "C" fn packet_ok(
       if ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = (*pkt).ident6;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1013,7 +1013,7 @@ unsafe extern "C" fn packet_ok(
         && ({
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = (*pkt).seq6;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1351,7 +1351,7 @@ unsafe extern "C" fn common_traceroute_main(
         .icd_id = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (*ptr_to_globals).ident as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1421,7 +1421,7 @@ unsafe extern "C" fn common_traceroute_main(
       ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = 1025i32 as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -1447,7 +1447,7 @@ unsafe extern "C" fn common_traceroute_main(
       ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = (*ptr_to_globals).port;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {

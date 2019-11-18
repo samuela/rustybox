@@ -796,7 +796,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
   lfp.int_partl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.int_partl;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -814,7 +814,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
   lfp.fractionl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.fractionl;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -842,7 +842,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
   sfp.int_parts = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.int_parts;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -859,7 +859,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
   sfp.fractions = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.fractions;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -891,7 +891,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
   lfp.int_partl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.int_partl;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -910,7 +910,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
   lfp.fractionl = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lfp.fractionl;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -939,7 +939,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
   sfp.int_parts = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.int_parts;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -956,7 +956,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
   sfp.fractions = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = sfp.fractions;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1236,7 +1236,7 @@ unsafe extern "C" fn hash_peer(mut p: *mut peer_t) {
   (*p).p_xmt_msg.m_keyid = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*(*p).key_entry).id;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32

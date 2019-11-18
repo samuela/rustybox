@@ -793,7 +793,7 @@ unsafe extern "C" fn read32() -> u32 {
   return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -832,7 +832,7 @@ unsafe extern "C" fn f_read32() -> u32 {
   return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -853,7 +853,7 @@ unsafe extern "C" fn write32(mut v: u32) {
   v = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -934,7 +934,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       *fresh73 = {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = src_len;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -992,7 +992,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         *fresh77 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = dst_len;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1015,7 +1015,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         *fresh81 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = src_len;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1039,7 +1039,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         *fresh85 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = d_adler32;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1062,7 +1062,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         *fresh89 = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = d_crc32;
-          if 0 != 0 {
+          if false {
             __v = (__x & 0xff000000u32) >> 24i32
               | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
               | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1087,7 +1087,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           *fresh93 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = lzo_adler32(1i32 as u32, b2, dst_len);
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1110,7 +1110,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           *fresh97 = {
             let mut __v: libc::c_uint = 0;
             let mut __x: libc::c_uint = lzo_crc32(0i32 as u32, b2, dst_len);
-            if 0 != 0 {
+            if false {
               __v = (__x & 0xff000000u32) >> 24i32
                 | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
                 | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1386,7 +1386,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
   (*h).flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*h).flags32;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1428,7 +1428,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   h_version = ({
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (*h).version_be16;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1448,7 +1448,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   h_version_needed_to_extract = ({
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (*h).version_needed_to_extract_be16;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1494,7 +1494,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   (*h).flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*h).flags32;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1594,7 +1594,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   header.version_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x1010i32 & 0xffffi32) as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1611,7 +1611,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   header.version_needed_to_extract_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 0x940i32 as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1628,7 +1628,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   header.lib_version_be16 = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = (0x2030i32 & 0xffffi32) as libc::c_ushort;
-    if 0 != 0 {
+    if false {
       __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
         as libc::c_ushort
     } else {
@@ -1645,7 +1645,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   header.flags32 = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (0x3000000i64 & 0xff000000i64 | 0i64 & 0xf00000i64) as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1667,7 +1667,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
     header.flags32 |= {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0x1i64 as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1687,7 +1687,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       header.flags32 |= {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = 0x2i64 as libc::c_uint;
-        if 0 != 0 {
+        if false {
           __v = (__x & 0xff000000u32) >> 24i32
             | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
             | (__x & 0xff00i32 as libc::c_uint) << 8i32

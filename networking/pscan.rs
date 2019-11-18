@@ -173,7 +173,7 @@ unsafe extern "C" fn port_name(mut port: libc::c_uint) -> *const libc::c_char {
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = port as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn pscan_main(
       ({
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {

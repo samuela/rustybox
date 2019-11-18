@@ -1172,7 +1172,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
                                                        let mut __x_0:
                                                                u64 =
                                                            (*tls).write_seq64_be;
-                                                       if 0 != 0 {
+                                                       if false {
                                                            __v_0 =
                                                                ((__x_0 as
                                                                      libc::c_ulonglong
@@ -1243,7 +1243,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
                                                        }
                                                        __v_0
                                                    });
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -1442,7 +1442,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
                                                        let mut __x_0:
                                                                u64 =
                                                            t64;
-                                                       if 0 != 0 {
+                                                       if false {
                                                            __v_0 =
                                                                ((__x_0 as
                                                                      libc::c_ulonglong
@@ -1515,7 +1515,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
                                                        }
                                                        __v_0
                                                    });
-    if 0 != 0 {
+    if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
         | (__x as libc::c_ulonglong & 0xff0000000000u64) >> 24i32
@@ -1543,7 +1543,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
     *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1587,7 +1587,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = 1i32 as libc::c_uint;
-    if 0 != 0 {
+    if false {
       __v = (__x & 0xff000000u32) >> 24i32
         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
         | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -1737,7 +1737,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
     *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = cnt;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32
@@ -2640,7 +2640,7 @@ unsafe extern "C" fn process_server_key(mut tls: *mut tls_state_t, mut len: libc
     != ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0x3001d20i32 as libc::c_uint;
-      if 0 != 0 {
+      if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
           | (__x & 0xff00i32 as libc::c_uint) << 8i32

@@ -401,7 +401,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -435,7 +435,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
     dest_sll.sll_protocol = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = 0x86ddi32 as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -476,7 +476,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.source = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = source_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -493,7 +493,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.dest = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -513,7 +513,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         let mut __x: libc::c_ushort = (::std::mem::size_of::<udphdr>() as libc::c_ulong)
           .wrapping_add(d6_pkt_size as libc::c_ulong)
           as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
@@ -614,7 +614,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
     sa.sin6_port = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = source_port as libc::c_ushort;
-      if 0 != 0 {
+      if false {
         __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
           as libc::c_ushort
       } else {
@@ -648,7 +648,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
       sa.sin6_port = {
         let mut __v: libc::c_ushort = 0;
         let mut __x: libc::c_ushort = dest_port as libc::c_ushort;
-        if 0 != 0 {
+        if false {
           __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
             as libc::c_ushort
         } else {
