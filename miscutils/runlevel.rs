@@ -9,7 +9,7 @@ extern "C" {
   #[no_mangle]
   fn utmpxname(__file: *const libc::c_char) -> libc::c_int;
 }
-use libc::pid_t;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {

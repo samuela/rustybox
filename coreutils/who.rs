@@ -29,7 +29,7 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::pid_t;
+
 use libc::stat;
 use libc::time_t;
 #[derive(Copy, Clone)]

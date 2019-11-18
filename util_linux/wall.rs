@@ -5,7 +5,7 @@ use libc::free;
 use libc::getgid;
 use libc::getuid;
 use libc::gid_t;
-use libc::pid_t;
+
 use libc::setutxent;
 use libc::uid_t;
 extern "C" {

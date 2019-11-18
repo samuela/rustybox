@@ -7,7 +7,7 @@ use libc::free;
 use libc::fstat;
 use libc::kill;
 use libc::off_t;
-use libc::pid_t;
+
 use libc::printf;
 use libc::sprintf;
 use libc::stat;
