@@ -1,4 +1,5 @@
 # rustybox
+[![](https://github.com/samuela/rustybox/workflows/Rust/badge.svg)](https://github.com/samuela/rustybox/actions)
 
 RustyBox is a free-range, non-GMO fork of [BusyBox](https://busybox.net/) written entirely in [Rust](https://www.rust-lang.org/). It includes all your favorite commands like `ls`, `mount`, and `top`, but without a single line of C code! Like BusyBox, rustybox weighs in at just under 1 megabyte and includes all the basic utilities you need to set up a small Linux OS.
 
