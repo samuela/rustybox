@@ -308,7 +308,7 @@ pub unsafe extern "C" fn install_main(
       }
       _ => {}
     }
-    if 0i32 != 0 && isdir != 0 {
+    if false && isdir != 0 {
       free(dest as *mut libc::c_void);
     }
   }

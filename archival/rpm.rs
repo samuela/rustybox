@@ -1029,7 +1029,7 @@ pub unsafe extern "C" fn rpm2cpio_main(
   if bb_copyfd_eof(rpm_fd, 1i32) < 0 {
     bb_simple_error_msg_and_die(b"error unpacking\x00" as *const u8 as *const libc::c_char);
   }
-  if 0i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0i32 != 0 {
+  if false || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0i32 != 0 {
     check_errors_in_children(0i32);
     return bb_got_signal as libc::c_int;
   }

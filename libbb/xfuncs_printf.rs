@@ -350,7 +350,7 @@ pub unsafe extern "C" fn xstrndup(
 ) -> *mut libc::c_char {
   let mut m: libc::c_int = 0;
   let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  if 0i32 != 0 && s.is_null() {
+  if false && s.is_null() {
     bb_simple_error_msg_and_die(b"xstrndup bug\x00" as *const u8 as *const libc::c_char);
   }
   /* We can just xmalloc(n+1) and strncpy into it, */

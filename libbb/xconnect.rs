@@ -1217,7 +1217,7 @@ unsafe extern "C" fn sockaddr2str(
   let mut serv: [libc::c_char; 16] = [0; 16];
   let mut rc: libc::c_int = 0;
   let mut salen: socklen_t = 0;
-  if 0i32 != 0 && (*sa).sa_family as libc::c_int == 1i32 {
+  if false && (*sa).sa_family as libc::c_int == 1i32 {
     let mut sun: *mut sockaddr_un = sa as *mut sockaddr_un;
     return xasprintf(
       b"local:%.*s\x00" as *const u8 as *const libc::c_char,

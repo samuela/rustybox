@@ -1512,7 +1512,7 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
     (*id).cur_cyls as libc::c_int,
     (*id).cur_heads as libc::c_int,
     (*id).cur_sectors as libc::c_int,
-    if 0i32 != 0 {
+    if false {
       ((((*id).cur_capacity0 as libc::c_int) << 16i32) as libc::c_ulong)
         | (*id).cur_capacity1 as libc::c_ulong
     } else {

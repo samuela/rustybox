@@ -543,7 +543,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
         current_block = 6651542264556950584;
       } else {
         w = bb_wcwidth(wc as libc::c_uint);
-        if 0i32 != 0 && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
+        if false && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
           current_block = 6651542264556950584;
         } else {
           current_block = 12199444798915819164;

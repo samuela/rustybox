@@ -208,7 +208,7 @@ pub unsafe extern "C" fn su_main(
     bb_do_delay(3i32);
     bb_simple_error_msg_and_die(b"incorrect password\x00" as *const u8 as *const libc::c_char);
   }
-  if 0i32 != 0 && 1i32 != 0 {
+  if false && 1i32 != 0 {
     closelog();
   }
   if opt_shell.is_null() && flags & 3i32 as libc::c_uint != 0 {

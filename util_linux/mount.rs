@@ -612,7 +612,7 @@ unsafe extern "C" fn mount_it_now(
       );
       // If mount failed, try
       // helper program mount.<mnt_type>
-      if 0i32 != 0 && rc != 0 && !(*mp).mnt_type.is_null() {
+      if false && rc != 0 && !(*mp).mnt_type.is_null() {
         let mut args: [*mut libc::c_char; 8] = [0 as *mut libc::c_char; 8];
         let mut errno_save: libc::c_int = *bb_errno;
         args[0] = xasprintf(
@@ -625,7 +625,7 @@ unsafe extern "C" fn mount_it_now(
           rc = rc + 1;
           args[fresh1 as usize] = b"-f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
         }
-        if 0i32 != 0 && 0i32 == 0 {
+        if false && 0i32 == 0 {
           let fresh2 = rc;
           rc = rc + 1;
           args[fresh2 as usize] = b"-n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
@@ -674,7 +674,7 @@ unsafe extern "C" fn mount_it_now(
   }
   // If the mount was successful, and we're maintaining an old-style
   // mtab file by hand, add the new entry to it now.
-  if 0i32 != 0 && rc == 0 && vfsflags & MS_REMOUNT as libc::c_int as libc::c_ulong == 0 {
+  if false && rc == 0 && vfsflags & MS_REMOUNT as libc::c_int as libc::c_ulong == 0 {
     let mut fsname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut mountTable: *mut FILE = setmntent(
       b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
@@ -789,7 +789,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     (*mp).mnt_type = std::ptr::null_mut::<libc::c_char>()
   }
   // Might this be a virtual filesystem?
-  if 0i32 != 0 && !strchr((*mp).mnt_fsname, '#' as i32).is_null() {
+  if false && !strchr((*mp).mnt_fsname, '#' as i32).is_null() {
     let mut args: [*mut libc::c_char; 35] = [0 as *mut libc::c_char; 35];
     let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut n: libc::c_int = 0;

@@ -98,7 +98,7 @@ pub unsafe extern "C" fn wall_main(
     fd = xopen_as_uid_gid(*argv.offset(1), 0i32, getuid(), getgid())
   }
   msg = xmalloc_read(fd, 0 as *mut size_t) as *mut libc::c_char;
-  if 0i32 != 0 && !(*argv.offset(1)).is_null() {
+  if false && !(*argv.offset(1)).is_null() {
     close(fd);
   }
   setutxent();

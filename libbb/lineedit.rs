@@ -510,7 +510,7 @@ unsafe extern "C" fn adjust_width_and_validate_wc(mut wc: wchar_t) -> wchar_t {
       current_block_2 = 15232977139320167099;
     } else {
       w = bb_wcwidth(wc as libc::c_uint);
-      if 0i32 != 0 && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
+      if false && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
         current_block_2 = 15232977139320167099;
       } else {
         current_block_2 = 7815301370352969686;

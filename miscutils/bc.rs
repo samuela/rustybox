@@ -841,7 +841,7 @@ unsafe extern "C" fn bc_error_fmt(mut fmt: *const libc::c_char, mut args: ...) -
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   bc_verror_msg(fmt, p.as_va_list());
-  if 0i32 != 0 || (*ptr_to_globals).ttyin as libc::c_int != 0 {
+  if false || (*ptr_to_globals).ttyin as libc::c_int != 0 {
     return BC_STATUS_FAILURE as libc::c_int;
   }
   exit(1i32);
@@ -859,7 +859,7 @@ unsafe extern "C" fn zbc_posix_error_fmt(mut fmt: *const libc::c_char, mut args:
   if option_mask32 & (1i32 << 2i32) as libc::c_uint == 0 {
     return BC_STATUS_SUCCESS;
   } // no, it's a warning
-  if 0i32 != 0 || (*ptr_to_globals).ttyin as libc::c_int != 0 {
+  if false || (*ptr_to_globals).ttyin as libc::c_int != 0 {
     return BC_STATUS_FAILURE;
   }
   exit(1i32);
@@ -8547,7 +8547,7 @@ unsafe extern "C" fn zxc_vm_exec() -> BcStatus {
     // We know that internal library is not buggy,
     // thus error checking is normally disabled.
     s = zxc_vm_process(bc_lib.as_ptr());
-    if 0i32 != 0 && s as libc::c_uint != 0 {
+    if false && s as libc::c_uint != 0 {
       return s;
     }
   }
@@ -8558,7 +8558,7 @@ unsafe extern "C" fn zxc_vm_exec() -> BcStatus {
     let fresh20 = fname;
     fname = fname.offset(1);
     s = zxc_vm_file(*fresh20);
-    if 0i32 != 0 && (*ptr_to_globals).ttyin == 0 && s as libc::c_uint != 0 {
+    if false && (*ptr_to_globals).ttyin == 0 && s as libc::c_uint != 0 {
       // Debug config, non-interactive mode:
       // return all the way back to main.
       // Non-debug builds do not come here

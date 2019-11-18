@@ -2043,7 +2043,7 @@ unsafe extern "C" fn lookupvar(mut name: *const libc::c_char) -> *const libc::c_
   return 0 as *const libc::c_char;
 }
 unsafe extern "C" fn reinit_unicode_for_ash() {
-  if 0i32 != 0 || 0i32 != 0 {
+  if false || 0i32 != 0 {
     let mut s: *const libc::c_char = lookupvar(b"LC_ALL\x00" as *const u8 as *const libc::c_char);
     if s.is_null() {
       s = lookupvar(b"LC_CTYPE\x00" as *const u8 as *const libc::c_char)

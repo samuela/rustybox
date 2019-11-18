@@ -1297,7 +1297,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   // --------  -----------  ----------  --------------
   // SHA       HMAC-SHA1       20            20
   // SHA256    HMAC-SHA256     32            32
-  if 0i32 != 0 && (*tls).cipher_id as libc::c_int == 0x3bi32 {
+  if false && (*tls).cipher_id as libc::c_int == 0x3bi32 {
     /* No encryption, only signing */
     (*xhdr).len16_hi = (size >> 8i32) as u8;
     (*xhdr).len16_lo = (size & 0xffi32 as libc::c_uint) as u8;
@@ -2505,7 +2505,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
       /* Odd numbered C0xx use AES128 (even ones use AES256) */
       (*tls).key_size = AES128_KEYSIZE as libc::c_int as libc::c_uint
     }
-    if 0i32 != 0 && cipherid1 as libc::c_int <= 0x19i32 {
+    if false && cipherid1 as libc::c_int <= 0x19i32 {
       (*tls).MAC_size = SHA1_OUTSIZE as libc::c_int as libc::c_uint
     } else if cipherid1 as libc::c_int >= 0x2bi32 && cipherid1 as libc::c_int <= 0x30i32 {
       /* C02B,2C,2F,30 are AES-GCM */
@@ -2515,13 +2515,13 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
     }
   } else {
     /* All 00xx are RSA */
-    if 0i32 != 0 && cipherid1 as libc::c_int == 0x2fi32
+    if false && cipherid1 as libc::c_int == 0x2fi32
       || cipherid1 as libc::c_int == 0x3ci32
       || cipherid1 as libc::c_int == 0x9ci32
     {
       (*tls).key_size = AES128_KEYSIZE as libc::c_int as libc::c_uint
     }
-    if 0i32 != 0 && cipherid1 as libc::c_int <= 0x35i32 {
+    if false && cipherid1 as libc::c_int <= 0x35i32 {
       (*tls).MAC_size = SHA1_OUTSIZE as libc::c_int as libc::c_uint
     } else if cipherid1 as libc::c_int == 0x9ci32 {
       /*|| cipherid1 == 0x9D*/
@@ -3066,7 +3066,7 @@ pub unsafe extern "C" fn tls_handshake(mut tls: *mut tls_state_t, mut sni: *cons
       len,
     );
   }
-  if 0i32 != 0 && (*tls).cipher_id as libc::c_int == 0x3bi32 {
+  if false && (*tls).cipher_id as libc::c_int == 0x3bi32 {
     (*tls).min_encrypted_len_on_read = (*tls).MAC_size
   } else if (*tls).flags & ENCRYPTION_AESGCM as libc::c_int as libc::c_uint == 0 {
     let mut mac_blocks: libc::c_uint = ((SHA256_OUTSIZE as libc::c_int + 16i32 - 1i32)

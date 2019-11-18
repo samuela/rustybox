@@ -3079,7 +3079,7 @@ unsafe extern "C" fn print_raw() {
     b"Device: %s\n\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).disk_device,
   );
-  if 0i32 != 0 || 0i32 != 0 {
+  if false || 0i32 != 0 {
     print_buffer((*ptr_to_globals).MBRbuffer.as_mut_ptr());
   } else {
     i = 3i32;

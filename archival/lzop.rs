@@ -1779,11 +1779,11 @@ pub unsafe extern "C" fn lzop_main(
     option_mask32 |= OPT_KEEP as libc::c_int as libc::c_uint
   }
   /* lzopcat? */
-  if 0i32 != 0 && *applet_name.offset(4) as libc::c_int == 'c' as i32 {
+  if false && *applet_name.offset(4) as libc::c_int == 'c' as i32 {
     option_mask32 |= (OPT_STDOUT as libc::c_int | OPT_DECOMPRESS as libc::c_int) as libc::c_uint
   }
   /* unlzop? */
-  if 0i32 != 0 && *applet_name.offset(4) as libc::c_int == 'o' as i32 {
+  if false && *applet_name.offset(4) as libc::c_int == 'o' as i32 {
     option_mask32 |= OPT_DECOMPRESS as libc::c_int as libc::c_uint
   }
   global_crc32_new_table_le();
