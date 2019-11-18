@@ -42,21 +42,7 @@ pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct utmpx {
-  pub ut_type: libc::c_short,
-  pub ut_pid: pid_t,
-  pub ut_line: [libc::c_char; 32],
-  pub ut_id: [libc::c_char; 4],
-  pub ut_user: [libc::c_char; 32],
-  pub ut_host: [libc::c_char; 256],
-  pub ut_exit: __exit_status,
-  pub ut_session: i32,
-  pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [i32; 4],
-  pub __glibc_reserved: [libc::c_char; 20],
-}
+use libc::utmpx;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
@@ -84,25 +70,7 @@ pub unsafe extern "C" fn write_new_utmp(
   mut username: *const libc::c_char,
   mut hostname: *const libc::c_char,
 ) {
-  let mut utent: utmpx = utmpx {
-    ut_type: 0,
-    ut_pid: 0,
-    ut_line: [0; 32],
-    ut_id: [0; 4],
-    ut_user: [0; 32],
-    ut_host: [0; 256],
-    ut_exit: __exit_status {
-      e_termination: 0,
-      e_exit: 0,
-    },
-    ut_session: 0,
-    ut_tv: C2RustUnnamed {
-      tv_sec: 0,
-      tv_usec: 0,
-    },
-    ut_addr_v6: [0; 4],
-    __glibc_reserved: [0; 20],
-  };
+  let mut utent: utmpx = std::mem::zeroed();
   let mut id: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut width: libc::c_uint = 0;
   memset(
@@ -170,25 +138,7 @@ pub unsafe extern "C" fn update_utmp(
   mut username: *const libc::c_char,
   mut hostname: *const libc::c_char,
 ) {
-  let mut utent: utmpx = utmpx {
-    ut_type: 0,
-    ut_pid: 0,
-    ut_line: [0; 32],
-    ut_id: [0; 4],
-    ut_user: [0; 32],
-    ut_host: [0; 256],
-    ut_exit: __exit_status {
-      e_termination: 0,
-      e_exit: 0,
-    },
-    ut_session: 0,
-    ut_tv: C2RustUnnamed {
-      tv_sec: 0,
-      tv_usec: 0,
-    },
-    ut_addr_v6: [0; 4],
-    __glibc_reserved: [0; 20],
-  };
+  let mut utent: utmpx = std::mem::zeroed();
   let mut utp: *mut utmpx = 0 as *mut utmpx;
   touch(b"/var/run/utmp\x00" as *const u8 as *const libc::c_char);
   //utmpxname(_PATH_UTMPX);

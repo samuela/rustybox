@@ -2,7 +2,6 @@ use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::free;
 use libc::fstat;
@@ -80,21 +79,7 @@ pub struct __exit_status {
   pub e_exit: libc::c_short,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct utmpx {
-  pub ut_type: libc::c_short,
-  pub ut_pid: pid_t,
-  pub ut_line: [libc::c_char; 32],
-  pub ut_id: [libc::c_char; 4],
-  pub ut_user: [libc::c_char; 32],
-  pub ut_host: [libc::c_char; 256],
-  pub ut_exit: __exit_status,
-  pub ut_session: i32,
-  pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [i32; 4],
-  pub __glibc_reserved: [libc::c_char; 20],
-}
+use libc::utmpx;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -260,25 +245,7 @@ pub unsafe extern "C" fn last_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ut: utmpx = utmpx {
-    ut_type: 0,
-    ut_pid: 0,
-    ut_line: [0; 32],
-    ut_id: [0; 4],
-    ut_user: [0; 32],
-    ut_host: [0; 256],
-    ut_exit: __exit_status {
-      e_termination: 0,
-      e_exit: 0,
-    },
-    ut_session: 0,
-    ut_tv: C2RustUnnamed {
-      tv_sec: 0,
-      tv_usec: 0,
-    },
-    ut_addr_v6: [0; 4],
-    __glibc_reserved: [0; 20],
-  };
+  let mut ut: utmpx = std::mem::zeroed();
   let mut filename: *const libc::c_char = b"/var/log/wtmp\x00" as *const u8 as *const libc::c_char;
   let mut zlist: *mut llist_t = 0 as *mut llist_t;
   let mut pos: off_t = 0;

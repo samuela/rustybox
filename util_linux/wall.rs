@@ -35,21 +35,7 @@ pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct utmpx {
-  pub ut_type: libc::c_short,
-  pub ut_pid: pid_t,
-  pub ut_line: [libc::c_char; 32],
-  pub ut_id: [libc::c_char; 4],
-  pub ut_user: [libc::c_char; 32],
-  pub ut_host: [libc::c_char; 256],
-  pub ut_exit: __exit_status,
-  pub ut_session: i32,
-  pub ut_tv: C2RustUnnamed,
-  pub ut_addr_v6: [i32; 4],
-  pub __glibc_reserved: [libc::c_char; 20],
-}
+use libc::utmpx;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {
