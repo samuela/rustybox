@@ -6,6 +6,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v1
+
+      - name: cargo build
+        run: |
+          rustc --version --verbose
+          cargo --version --verbose
+          cargo build --verbose
+
+      - name: cargo test
+        run: cargo test --verbose
+
+      - name: rustfmt
+        run: |
+          cargo fmt --version
+          cargo fmt --all -- --check
+
+      # See https://github.com/rust-lang/rust-clippy#travis-ci.
+      # Right now we have way too many warnings to turn on -D warnings, but this
+      # should be a goal in the future. We should also figure out a way to turn
+      # on -D warnings on select modules.
+      - name: clippy
+        run: |
+          rustup component add clippy
+          cargo clippy --version
+          cargo clippy --all-targets --all-features # -- -D warnings
