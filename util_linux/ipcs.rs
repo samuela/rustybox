@@ -1,5 +1,5 @@
+use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use crate::librb::size_t;
-
 use libc;
 use libc::gid_t;
 use libc::pid_t;
@@ -21,8 +21,7 @@ extern "C" {
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
   /* Search for an entry with a matching group ID.  */
-  #[no_mangle]
-  fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
+
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
   #[no_mangle]

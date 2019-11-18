@@ -1,8 +1,7 @@
+use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use crate::librb::size_t;
-
 use libc;
 use libc::free;
-use libc::gid_t;
 use libc::group;
 use libc::lstat;
 use libc::mode_t;
@@ -56,8 +55,7 @@ extern "C" {
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
   /* Search for an entry with a matching group ID.  */
-  #[no_mangle]
-  fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
+
   #[no_mangle]
   fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

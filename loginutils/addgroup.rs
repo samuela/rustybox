@@ -1,3 +1,4 @@
+use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use libc;
 use libc::geteuid;
 use libc::gid_t;
@@ -12,8 +13,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   /* Search for an entry with a matching group ID.  */
-  #[no_mangle]
-  fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;
+
   /* Search for an entry with a matching group name.  */
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
