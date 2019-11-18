@@ -1,7 +1,7 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::access;
 use libc::alarm;
@@ -65,8 +65,7 @@ extern "C" {
   #[no_mangle]
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   #[no_mangle]
   fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

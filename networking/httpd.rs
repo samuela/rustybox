@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -149,8 +150,6 @@ extern "C" {
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
   /* Search for an entry with a matching username.  */
 
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
 

@@ -3,6 +3,7 @@ use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::bb_uidgid_t;
 use crate::librb::smallint;
 use crate::shell::ash::ash_main;
@@ -35,8 +36,6 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   /* Search for an entry with a matching username. */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
 
   /* Search for an entry with a matching group ID. */
   #[no_mangle]

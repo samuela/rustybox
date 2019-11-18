@@ -2,7 +2,7 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -32,8 +32,7 @@ extern "C" {
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   /* Search for an entry with a matching group name.  */
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;

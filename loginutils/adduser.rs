@@ -1,6 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::smallint;
-
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -28,8 +28,7 @@ extern "C" {
   #[no_mangle]
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   /* Search for an entry with a matching group ID.  */
   #[no_mangle]
   fn bb_internal_getgrgid(__gid: gid_t) -> *mut group;

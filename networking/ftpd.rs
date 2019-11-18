@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
@@ -78,8 +79,7 @@ extern "C" {
   #[no_mangle]
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   /* Some useful definitions */
   /* Macros for min/max.  */
   /* buffer allocation schemes */

@@ -1,10 +1,10 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::chown;
 use libc::close;
@@ -64,8 +64,7 @@ extern "C" {
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
+
   /* Search for an entry with a matching group name.  */
   #[no_mangle]
   fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;

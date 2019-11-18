@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::__compar_fn_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
@@ -194,8 +195,6 @@ extern "C" {
   #[no_mangle]
   fn waitpid(__pid: pid_t, __stat_loc: *mut libc::c_int, __options: libc::c_int) -> pid_t;
   /* Search for an entry with a matching username.  */
-  #[no_mangle]
-  fn bb_internal_getpwnam(__name: *const libc::c_char) -> *mut passwd;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
