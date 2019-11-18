@@ -173,7 +173,8 @@ unsafe extern "C" fn run_pipe(
      */
     xstat(man_filename, &mut sb);
     if !(sb.st_size > 300i32 as libc::c_long) {
-      line = xmalloc_open_zipped_read_close(man_filename, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+      line = xmalloc_open_zipped_read_close(man_filename, std::ptr::null_mut::<size_t>())
+        as *mut libc::c_char;
       if line.is_null()
         || is_prefixed_with(line, b".so \x00" as *const u8 as *const libc::c_char).is_null()
       {

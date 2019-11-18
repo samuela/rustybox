@@ -314,7 +314,8 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
       _ =>
       //FIXME: this performs 1-byte reads:
       {
-        let mut data: *mut libc::c_char = xmalloc_reads((*ptr_to_globals).filein, std::ptr::null_mut::<size_t>());
+        let mut data: *mut libc::c_char =
+          xmalloc_reads((*ptr_to_globals).filein, std::ptr::null_mut::<size_t>());
         (*ptr_to_globals).linenum += 1;
         // Figure out which line of hunk to compare with next.  (Skip lines
         // of the hunk we'd be adding.)

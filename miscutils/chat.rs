@@ -464,7 +464,8 @@ pub unsafe extern "C" fn chat_main(
         // skip the @ and any following white-space
         buf_0 = buf_0.offset(1);
         trim(buf_0);
-        loaded = xmalloc_xopen_read_close(buf_0, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+        loaded =
+          xmalloc_xopen_read_close(buf_0, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
         buf_0 = loaded
       }
       // expand escape sequences in command

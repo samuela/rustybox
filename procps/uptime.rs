@@ -13,7 +13,6 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-
 use libc::time_t;
 use libc::tm;
 #[derive(Copy, Clone)]

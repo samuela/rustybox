@@ -1001,7 +1001,8 @@ unsafe extern "C" fn process_module(
       b"/etc/modules/%s\x00" as *const u8 as *const libc::c_char,
       name,
     );
-    options = xmalloc_open_read_close(opt_filename, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+    options =
+      xmalloc_open_read_close(opt_filename, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
     if !options.is_null() {
       replace(
         options,
