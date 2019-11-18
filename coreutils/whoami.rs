@@ -1,6 +1,5 @@
 use crate::libbb::appletlib::bb_show_usage;
 use crate::libbb::bb_pwd::xuid2uname;
-use crate::libbb::xfuncs_printf::fflush_all;
 use libc::c_char;
 use libc::c_int;
 use libc::geteuid;
@@ -34,5 +33,5 @@ pub unsafe extern "C" fn whoami_main(mut _argc: c_int, mut argv: *mut *mut c_cha
   let euid = geteuid();
   let user_name = xuid2uname(euid);
   println!("{}", *user_name);
-  fflush_all()
+  0
 }
