@@ -358,7 +358,12 @@ pub unsafe extern "C" fn xmalloc_read(
   mut fd: libc::c_int,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {
-  return xmalloc_read_with_initial_buf(fd, maxsz_p, std::ptr::null_mut::<libc::c_char>(), 0i32 as size_t);
+  return xmalloc_read_with_initial_buf(
+    fd,
+    maxsz_p,
+    std::ptr::null_mut::<libc::c_char>(),
+    0i32 as size_t,
+  );
 }
 // Read (potentially big) files in one go. File size is estimated
 // by stat.

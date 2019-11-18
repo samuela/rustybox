@@ -1811,7 +1811,8 @@ unsafe extern "C" fn remember_in_history(mut str: *mut libc::c_char) {
       [(*(*lineedit_ptr_to_statics).state).max_history as usize] as *mut libc::c_void,
   ); /* redundant, paranoia */
   (*(*lineedit_ptr_to_statics).state).history
-    [(*(*lineedit_ptr_to_statics).state).max_history as usize] = std::ptr::null_mut::<libc::c_char>();
+    [(*(*lineedit_ptr_to_statics).state).max_history as usize] =
+    std::ptr::null_mut::<libc::c_char>();
   /* If history[] is full, remove the oldest command */
   /* we need to keep history[state->max_history] empty, hence >=, not > */
   if i >= (*(*lineedit_ptr_to_statics).state).max_history {
@@ -2012,7 +2013,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     /* /home/user[/something] -> ~[/something] */
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
@@ -2140,7 +2142,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2254,7 +2257,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2368,7 +2372,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2482,7 +2487,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2596,7 +2602,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2710,7 +2717,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2824,7 +2832,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()
@@ -2938,7 +2947,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
-                    let mut after_home_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+                    let mut after_home_user: *mut libc::c_char =
+                      std::ptr::null_mut::<libc::c_char>();
                     after_home_user =
                       is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
                     if !after_home_user.is_null()

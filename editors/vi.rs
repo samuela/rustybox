@@ -2542,7 +2542,8 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
             }
             /*if (YDreg < 28) - always true*/
             free((*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] as *mut libc::c_void); //   free default yank/delete register
-            (*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] = std::ptr::null_mut::<libc::c_char>();
+            (*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] =
+              std::ptr::null_mut::<libc::c_char>();
             // how many lines in text[]?
             li = count_lines((*ptr_to_globals).text, (*ptr_to_globals).end.offset(-1));
             status_line(
