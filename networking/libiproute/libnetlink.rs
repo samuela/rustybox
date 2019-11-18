@@ -1,5 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::free;
 use libc::time;
@@ -23,8 +23,6 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
   #[no_mangle]

@@ -1,7 +1,7 @@
 use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
-
 use libc;
 use libc::free;
 use libc::ssize_t;
@@ -11,9 +11,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

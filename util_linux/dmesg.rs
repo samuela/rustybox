@@ -1,11 +1,12 @@
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::putchar_unlocked;
+use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn klogctl(__type: libc::c_int, __bufp: *mut libc::c_char, __len: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn bb_putchar(ch: libc::c_int) -> libc::c_int;
   #[no_mangle]
@@ -16,8 +17,6 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 pub const OPT_r: C2RustUnnamed = 8;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_s: C2RustUnnamed = 2;

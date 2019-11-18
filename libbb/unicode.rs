@@ -1,3 +1,5 @@
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 extern "C" {
   #[no_mangle]
@@ -6,8 +8,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
@@ -18,7 +19,6 @@ extern "C" {
   fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
 }
 
-use crate::librb::size_t;
 pub type wchar_t = libc::c_int;
 #[derive(Copy, Clone)]
 #[repr(C)]

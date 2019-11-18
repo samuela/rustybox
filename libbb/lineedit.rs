@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use libc;
 use libc::atoi;
@@ -104,8 +105,6 @@ extern "C" {
   fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
   /* Search for an entry with a matching username.  */
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

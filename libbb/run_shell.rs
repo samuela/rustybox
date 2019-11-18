@@ -1,9 +1,9 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 extern "C" {
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -13,7 +13,6 @@ extern "C" {
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
-use crate::librb::size_t;
 /*
  * Busybox main internal header file
  *

@@ -1,6 +1,8 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::printf;
 use libc::strchr;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn rand() -> libc::c_int;
@@ -11,8 +13,7 @@ extern "C" {
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc_vector_helper(
     vector: *mut libc::c_void,
@@ -42,8 +43,6 @@ extern "C" {
 }
 
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::size_t;
-use libc::FILE;
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.
  */

@@ -1,8 +1,8 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::closedir;
 use libc::fclose;
@@ -47,8 +47,6 @@ extern "C" {
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]

@@ -1,6 +1,6 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
 use crate::librb::uoff_t;
-
 use libc;
 use libc::off_t;
 use libc::printf;
@@ -15,9 +15,6 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

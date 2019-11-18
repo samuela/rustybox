@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::free;
 use libc::getpid;
@@ -71,8 +71,6 @@ extern "C" {
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::close;
 use libc::fclose;
@@ -41,8 +42,7 @@ extern "C" {
 
   #[no_mangle]
   fn strrstr(haystack: *const libc::c_char, needle: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

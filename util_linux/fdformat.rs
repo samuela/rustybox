@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::printf;
 use libc::puts;
@@ -6,8 +7,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xstat(pathname: *const libc::c_char, buf: *mut stat);
   #[no_mangle]

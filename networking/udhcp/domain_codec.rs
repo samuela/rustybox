@@ -1,3 +1,5 @@
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::free;
 extern "C" {
@@ -14,11 +16,9 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
 }
 
-use crate::librb::size_t;
 /* name compression pointer flag */
 /* Expand a RFC1035-compressed list of domain names "cstr", of length "clen";
  * returns a newly allocated string containing the space-separated domains,

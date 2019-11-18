@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::sprintf;
 use libc::sscanf;
@@ -13,8 +14,7 @@ extern "C" {
 
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

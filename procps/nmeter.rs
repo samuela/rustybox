@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::close;
 use libc::sprintf;
@@ -42,8 +43,7 @@ extern "C" {
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

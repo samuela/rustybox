@@ -1,18 +1,17 @@
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
+use libc::ino_t;
+use libc::stat;
 use libc::strcpy;
 extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
 
 }
-
-use crate::librb::size_t;
-use libc::ino_t;
-use libc::stat;
 /*
  * Utility routines.
  *

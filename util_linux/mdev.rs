@@ -1,6 +1,7 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
@@ -91,9 +92,6 @@ extern "C" {
 
   #[no_mangle]
   fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

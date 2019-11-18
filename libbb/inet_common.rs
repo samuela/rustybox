@@ -1,6 +1,10 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::strcmp;
 use libc::strcpy;
 extern "C" {
@@ -31,8 +35,6 @@ extern "C" {
   /* We can just memorize it once - no multithreading in busybox :) */
 
   #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
   fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   /* This one doesn't append :PORTNUM */
   #[no_mangle]
@@ -44,11 +46,8 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use crate::librb::smallint;
 pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct sockaddr_in6 {

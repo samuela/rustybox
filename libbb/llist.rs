@@ -1,12 +1,9 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
-
 use libc;
 use libc::free;
 use libc::strcmp;
 extern "C" {
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

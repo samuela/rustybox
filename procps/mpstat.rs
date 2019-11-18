@@ -1,4 +1,5 @@
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::alarm;
 use libc::fclose;
@@ -54,8 +55,6 @@ extern "C" {
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

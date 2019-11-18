@@ -1,6 +1,6 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
 use libc::fprintf;
@@ -24,8 +24,7 @@ extern "C" {
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
   #[no_mangle]

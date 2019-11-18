@@ -1,4 +1,5 @@
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::atoi;
 use libc::printf;
@@ -29,8 +30,6 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

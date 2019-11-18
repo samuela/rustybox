@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::printf;
 use libc::putchar_unlocked;
@@ -30,8 +31,7 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

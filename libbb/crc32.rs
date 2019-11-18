@@ -1,10 +1,5 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
-}
-
-use crate::librb::size_t;
 /*
  * CRC32 table fill function
  * Copyright (C) 2006 by Rob Sullivan <cogito.ergo.cogito@gmail.com>

@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::__compar_fn_t;
 use crate::librb::signal::__sighandler_t;
@@ -7,8 +8,6 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-use libc::DIR;
-
 use libc;
 use libc::atoi;
 use libc::chdir;
@@ -43,6 +42,7 @@ use libc::strstr;
 use libc::strtok;
 use libc::timeval;
 use libc::umask;
+use libc::DIR;
 use libc::FILE;
 extern "C" {
 
@@ -280,8 +280,7 @@ extern "C" {
     command: *mut libc::c_char,
     maxsize: libc::c_int,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   /* Number of unicode chars. Falls back to strlen() on invalid unicode */
   #[no_mangle]
   fn unicode_strlen(string: *const libc::c_char) -> size_t;

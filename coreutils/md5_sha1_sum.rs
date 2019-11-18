@@ -1,11 +1,11 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::md5_ctx_t;
 use crate::librb::sha1_ctx_t;
 use crate::librb::sha256_ctx_t;
 use crate::librb::sha3_ctx_t;
 use crate::librb::sha512_ctx_t;
 use crate::librb::size_t;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
 use libc::free;
@@ -18,9 +18,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;

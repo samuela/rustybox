@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::free;
 use libc::strcpy;
@@ -14,8 +15,6 @@ extern "C" {
   #[no_mangle]
   fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   #[no_mangle]

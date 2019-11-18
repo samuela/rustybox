@@ -298,8 +298,7 @@ pub unsafe extern "C" fn malloc_or_warn(mut size: size_t) -> *mut libc::c_void {
   return ptr;
 }
 // Die if we can't allocate size bytes of memory.
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc(mut size: size_t) -> *mut libc::c_void {
+pub unsafe fn xmalloc(mut size: size_t) -> *mut libc::c_void {
   let mut ptr: *mut libc::c_void = malloc(size);
   if ptr.is_null() && size != 0i32 as libc::c_ulong {
     bb_die_memory_exhausted();

@@ -1,6 +1,5 @@
-use crate::librb::size_t;
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::smallint;
-
 use libc;
 use libc::free;
 use libc::off_t;
@@ -12,9 +11,6 @@ extern "C" {
 
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
 
   #[no_mangle]
   fn xstrtoull_range(

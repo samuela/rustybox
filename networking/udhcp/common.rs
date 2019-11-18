@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfuncs_printf::xmalloc;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::free;
 use libc::sprintf;
@@ -23,8 +23,7 @@ extern "C" {
 
   #[no_mangle]
   fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

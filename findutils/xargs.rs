@@ -1,10 +1,12 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
 use libc::fclose;
 use libc::fprintf;
 use libc::free;
+use libc::pid_t;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -126,9 +128,7 @@ extern "C" {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::FILE;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

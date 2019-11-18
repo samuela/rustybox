@@ -1,5 +1,5 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
-
 use libc;
 use libc::fclose;
 use libc::free;
@@ -23,8 +23,7 @@ extern "C" {
   fn feof_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
   #[no_mangle]

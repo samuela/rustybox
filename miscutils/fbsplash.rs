@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::atoi;
 use libc::close;
@@ -30,8 +31,7 @@ extern "C" {
     __fd: libc::c_int,
     __offset: off64_t,
   ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

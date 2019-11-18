@@ -1,3 +1,4 @@
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::putchar_unlocked;
 use libc::sprintf;
@@ -10,8 +11,6 @@ extern "C" {
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]
   fn xzalloc(size: size_t) -> *mut libc::c_void;
   #[no_mangle]

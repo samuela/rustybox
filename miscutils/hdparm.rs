@@ -1,5 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::close;
 use libc::free;
@@ -43,8 +43,7 @@ extern "C" {
 
   #[no_mangle]
   fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xmalloc(size: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn xmove_fd(_: libc::c_int, _: libc::c_int);
   #[no_mangle]
