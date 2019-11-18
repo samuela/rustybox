@@ -336,7 +336,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
         }
       } else {
         let mut c: libc::c_char = 0;
-        cptr = xmalloc_read(fd, 0 as *mut size_t) as *mut libc::c_char;
+        cptr = xmalloc_read(fd, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
         value = cptr;
         close(fd);
         if value.is_null() {

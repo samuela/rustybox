@@ -1,5 +1,4 @@
 use crate::librb::size_t;
-
 use libc;
 use libc::close;
 use libc::free;
@@ -10,7 +9,6 @@ use libc::pid_t;
 use libc::setutxent;
 use libc::uid_t;
 extern "C" {
-
   #[no_mangle]
   fn getutxent() -> *mut utmpx;
   #[no_mangle]
@@ -97,7 +95,7 @@ pub unsafe extern "C" fn wall_main(
      */
     fd = xopen_as_uid_gid(*argv.offset(1), 0i32, getuid(), getgid())
   }
-  msg = xmalloc_read(fd, 0 as *mut size_t) as *mut libc::c_char;
+  msg = xmalloc_read(fd, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
   if false && !(*argv.offset(1)).is_null() {
     close(fd);
   }

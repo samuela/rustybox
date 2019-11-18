@@ -208,7 +208,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut st: stat = std::mem::zeroed();
     line = if option_mask32 & OPT_NUL_TERMINATED as libc::c_int as libc::c_uint != 0 {
-      bb_get_chunk_from_file(stdin, 0 as *mut size_t)
+      bb_get_chunk_from_file(stdin, std::ptr::null_mut::<size_t>())
     } else {
       xmalloc_fgetline(stdin)
     };

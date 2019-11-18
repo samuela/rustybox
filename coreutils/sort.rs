@@ -724,7 +724,7 @@ pub unsafe extern "C" fn sort_main(
     loop {
       let mut line: *mut libc::c_char =
         if option_mask32 & FLAG_z as libc::c_int as libc::c_uint != 0 {
-          bb_get_chunk_from_file(fp, 0 as *mut size_t)
+          bb_get_chunk_from_file(fp, std::ptr::null_mut::<size_t>())
         } else {
           xmalloc_fgetline(fp)
         };

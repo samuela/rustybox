@@ -294,7 +294,7 @@ pub unsafe extern "C" fn lpd_main(
         // (we exit 127 if helper cannot be executed)
         var[1] = '\u{0}' as i32 as libc::c_char;
         // read and delete ctrlfile
-        q = xmalloc_xopen_read_close(filenames[0], 0 as *mut size_t) as *mut libc::c_char;
+        q = xmalloc_xopen_read_close(filenames[0], std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
         unlink(filenames[0]);
         // provide datafile name
         // we can use leaky setenv since we are about to exec or exit

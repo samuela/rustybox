@@ -538,7 +538,7 @@ unsafe extern "C" fn finalize(
   //system.cpu = `grep '^model name' /proc/cpuinfo | head -1` ($cpucount)
   kcmdline = xmalloc_open_read_close(
     b"/proc/cmdline\x00" as *const u8 as *const libc::c_char,
-    0 as *mut size_t,
+    std::ptr::null_mut::<size_t>(),
   ) as *mut libc::c_char;
   /* kcmdline includes trailing "\n" */
   fprintf(

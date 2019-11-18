@@ -314,8 +314,8 @@ pub unsafe extern "C" fn get_cred_or_die(mut fd: libc::c_int) {
       b"Password: \x00" as *const u8 as *const libc::c_char,
     )
   } else {
-    (*ptr_to_globals).user = xmalloc_reads(fd, 0 as *mut size_t);
-    (*ptr_to_globals).pass = xmalloc_reads(fd, 0 as *mut size_t)
+    (*ptr_to_globals).user = xmalloc_reads(fd, std::ptr::null_mut::<size_t>());
+    (*ptr_to_globals).pass = xmalloc_reads(fd, std::ptr::null_mut::<size_t>())
   }
   if (*ptr_to_globals).user.is_null()
     || *(*ptr_to_globals).user == 0

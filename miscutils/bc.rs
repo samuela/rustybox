@@ -6962,7 +6962,7 @@ unsafe extern "C" fn zxc_program_assign(mut inst: libc::c_char) -> BcStatus {
       b"bad obase; must be [2,999]\x00" as *const u8 as *const libc::c_char,
       b"bad scale; must be [0,4294967295]\x00" as *const u8 as *const libc::c_char,
     ];
-    let mut ptr: *mut size_t = 0 as *mut size_t;
+    let mut ptr: *mut size_t = std::ptr::null_mut::<size_t>();
     let mut max: size_t = 0;
     let mut val: libc::c_ulong = 0;
     s = zbc_num_ulong(l, &mut val);

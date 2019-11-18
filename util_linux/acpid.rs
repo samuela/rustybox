@@ -658,7 +658,7 @@ pub unsafe extern "C" fn acpid_main(
         if option_mask32 & OPT_e as libc::c_int as libc::c_uint != 0 {
           let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut len: libc::c_int = 0;
-          buf = xmalloc_reads((*pfd.offset(i as isize)).fd, 0 as *mut size_t);
+          buf = xmalloc_reads((*pfd.offset(i as isize)).fd, std::ptr::null_mut::<size_t>());
           /* buf = "button/power PWRB 00000080 00000000" */
           len = strlen(buf).wrapping_sub(9i32 as libc::c_ulong) as libc::c_int;
           if len >= 0i32 {
