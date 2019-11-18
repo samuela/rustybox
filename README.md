@@ -7,7 +7,7 @@ RustyBox is a free-range, non-GMO fork of [BusyBox](https://busybox.net/) writte
 
 ## Status
 
-rustybox is a work-in-progress! It started out life as a direct [c2rust](https://github.com/immunant/c2rust) transpile of the busybox project, and has been steadily improving since then. This has the benefit of ensuring that rustybox is "bug-for-bug" compatible with busybox, but it does mean that we have inherited the raw pointers and `unsafe`s that come from C land. If making essential software memory-safe is your cup of tea join the party with a PR!
+rustybox is a work-in-progress! It started out life as a direct [c2rust](https://github.com/immunant/c2rust) transpile of the busybox project, and has been steadily improving since then. This has the benefit of ensuring that rustybox is "bug-for-bug" compatible with busybox, but it does mean that we have inherited the raw pointers and `unsafe`s that come from C land. If making essential software memory-safe is your cup of tea then join the party with a PR!
 
 ## Contributing to rustybox
 
