@@ -178,18 +178,18 @@ pub unsafe extern "C" fn ubi_tools_main(
     },
   ];
   let mut opts: libc::c_uint = 0;
-  let mut ubi_ctrl: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ubi_ctrl: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   let mut mtd_num: libc::c_int = 0;
   let mut dev_num: libc::c_int = -1i32;
   let mut vol_id: libc::c_int = -1i32;
   let mut vid_hdr_offset: libc::c_int = 0i32;
-  let mut vol_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut vol_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut size_bytes: libc::c_ulonglong = 0;
   size_bytes = size_bytes;
-  let mut size_bytes_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut size_bytes_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut alignment: libc::c_int = 1i32;
-  let mut type_0: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut type_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut req_structs: C2RustUnnamed_0 = C2RustUnnamed_0 {
     attach_req: ubi_attach_req {
       ubi_num: 0,
@@ -323,7 +323,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       let mut leb_avail: libc::c_uint = 0;
       let mut leb_size: libc::c_uint = 0;
       let mut num: libc::c_uint = 0;
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       num = ubi_devnum_from_devname(ubi_ctrl);
       p = path
         .as_mut_ptr()
@@ -507,7 +507,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       let mut ubinum: libc::c_uint = 0;
       let mut volnum: libc::c_uint = 0;
       let mut leb_size_0: libc::c_uint = 0;
-      let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       /* Assume that device is in normal format. */
       /* Removes need for scanning sysfs tree as full libubi does. */
       if sscanf(

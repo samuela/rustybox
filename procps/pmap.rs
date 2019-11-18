@@ -112,7 +112,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
     smap_size: 0,
     smap_start: 0,
     smap_mode: [0; 5],
-    smap_name: 0 as *mut libc::c_char,
+    smap_name: std::ptr::null_mut::<libc::c_char>(),
   };
   let mut ret: libc::c_int = 0;
   let mut buf: [libc::c_char; 256] = [0; 256];

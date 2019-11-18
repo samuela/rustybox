@@ -62,7 +62,7 @@ pub unsafe extern "C" fn create_or_remember_link(
 #[no_mangle]
 pub unsafe extern "C" fn create_links_from_list(mut list: *mut llist_t) {
   while !list.is_null() {
-    let mut target: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     target = (*list)
       .data
       .offset(1)

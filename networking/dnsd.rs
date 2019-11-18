@@ -434,7 +434,7 @@ unsafe extern "C" fn table_lookup(
     }
     d = (*d).next
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 /* search by IP-address */
 /*
@@ -605,8 +605,8 @@ unsafe extern "C" fn process_packet(
   let mut head: *mut dns_head = 0 as *mut dns_head;
   let mut unaligned_type_class: *mut type_and_class = 0 as *mut type_and_class;
   let mut err_msg: *const libc::c_char = 0 as *const libc::c_char;
-  let mut query_string: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut answstr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut query_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut answstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut answb: *mut u8 = 0 as *mut u8;
   let mut outr_rlen: u16 = 0;
   let mut outr_flags: u16 = 0;
@@ -992,8 +992,8 @@ pub unsafe extern "C" fn dnsd_main(
   let mut fileconf: *const libc::c_char = b"/etc/dnsd.conf\x00" as *const u8 as *const libc::c_char;
   let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
   let mut conf_ttl: u32 = DEFAULT_TTL as libc::c_int as u32;
-  let mut sttl: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut sport: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sttl: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut sport: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut from: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;

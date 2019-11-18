@@ -226,7 +226,7 @@ unsafe extern "C" fn nameif_parse_selector(
   let mut lmac: *mut ether_addr = 0 as *mut ether_addr;
   let mut found_selector: libc::c_int = 0i32;
   while *selector != 0 {
-    let mut next: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     selector = skip_whitespace(selector);
     (*ch).phy_address = -1i32;
     if *selector as libc::c_int == '\u{0}' as i32 {

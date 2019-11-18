@@ -603,7 +603,7 @@ pub unsafe extern "C" fn acpid_main(
   nfd = 0i32;
   loop {
     let mut fd: libc::c_int = 0;
-    let mut dev_event: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut dev_event: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     dev_event = xasprintf(
       if opts & OPT_e as libc::c_int != 0 {
         b"%s\x00" as *const u8 as *const libc::c_char
@@ -656,7 +656,7 @@ pub unsafe extern "C" fn acpid_main(
       } else {
         event = 0 as *const libc::c_char;
         if option_mask32 & OPT_e as libc::c_int as libc::c_uint != 0 {
-          let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut len: libc::c_int = 0;
           buf = xmalloc_reads((*pfd.offset(i as isize)).fd, 0 as *mut size_t);
           /* buf = "button/power PWRB 00000080 00000000" */

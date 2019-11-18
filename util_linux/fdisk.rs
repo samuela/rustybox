@@ -601,7 +601,7 @@ unsafe extern "C" fn partname(
   let mut w: libc::c_int = 0;
   let mut wp: libc::c_int = 0;
   let mut bufsiz: libc::c_int = 0;
-  let mut bufp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut bufp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   bufp = auto_string(xzalloc(80i32 as size_t) as *mut libc::c_char);
   bufsiz = 80i32;
   w = strlen(dev) as libc::c_int;

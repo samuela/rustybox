@@ -80,7 +80,7 @@ pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut lib
     lo_encrypt_key: [0; 32],
     lo_init: [0; 2],
   };
-  let mut dev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   fd = open(device, 0i32);
   if fd >= 0i32 {
     if ioctl(
@@ -542,7 +542,7 @@ pub unsafe extern "C" fn set_loop(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut dev: [libc::c_char; 23] = [0; 23];
-  let mut try_0: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut try_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut loopinfo: bb_loop_info = bb_loop_info {
     lo_device: 0,
     lo_inode: 0,

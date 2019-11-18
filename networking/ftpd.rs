@@ -429,8 +429,8 @@ unsafe extern "C" fn escape_text(
   let mut retlen: libc::c_uint = 0;
   let mut remainlen: libc::c_uint = 0;
   let mut chunklen: libc::c_uint = 0;
-  let mut ret: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut found: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut found: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut append: libc::c_char = 0;
   append = escapee as libc::c_char;
   escapee >>= 8i32;
@@ -491,7 +491,7 @@ unsafe extern "C" fn verbose_log(mut str: *const libc::c_char) {
 }
 /* NB: status_str is char[4] packed into u32 */
 unsafe extern "C" fn cmdio_write(mut status_str: u32, mut str: *const libc::c_char) {
-  let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   /* FTP uses telnet protocol for command link.
    * In telnet, 0xff is an escape char, and needs to be escaped: */
@@ -566,14 +566,14 @@ unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
 }
 /* Simple commands */
 unsafe extern "C" fn handle_pwd() {
-  let mut cwd: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cwd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   cwd = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
   if cwd.is_null() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-  
+
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,
@@ -779,8 +779,8 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
 /* Exits on error */
 unsafe extern "C" fn handle_pasv() {
   let mut port: libc::c_uint = 0;
-  let mut addr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   port = bind_for_passive_mode();
   if (*(*ptr_to_globals).local_addr).u.sa.sa_family as libc::c_int == 2i32 {
     addr = xmalloc_sockaddr2dotted_noport(&mut (*(*ptr_to_globals).local_addr).u.sa)
@@ -802,7 +802,7 @@ unsafe extern "C" fn handle_pasv() {
 /* Exits on error */
 unsafe extern "C" fn handle_epsv() {
   let mut port: libc::c_uint = 0;
-  let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   port = bind_for_passive_mode();
   response = xasprintf(
     b"229 EPSV ok (|||%u|)\r\n\x00" as *const u8 as *const libc::c_char,
@@ -814,8 +814,8 @@ unsafe extern "C" fn handle_epsv() {
 unsafe extern "C" fn handle_port() {
   let mut port: libc::c_uint = 0;
   let mut port_hi: libc::c_uint = 0;
-  let mut raw: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut comma: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut raw: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut comma: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   port_pasv_cleanup();
   raw = (*ptr_to_globals).ftp_arg;
   /* PORT command format makes sense only over IPv4 */
@@ -901,7 +901,7 @@ unsafe extern "C" fn handle_retr() {
   let mut remote_fd: libc::c_int = 0;
   let mut local_file_fd: libc::c_int = 0;
   let mut offset: off_t = (*ptr_to_globals).restart_pos;
-  let mut response: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*ptr_to_globals).restart_pos = 0i32 as off_t;
   if port_or_pasv_was_seen() == 0 {
     return;
@@ -1032,7 +1032,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
 }
 unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
   let mut ls_fp: *mut FILE = 0 as *mut FILE;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ls_fd: libc::c_int = 0;
   if opts & USE_CTRL_CONN as libc::c_int == 0 && port_or_pasv_was_seen() == 0 {
     return;
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn handle_rnto() {
   }
   retval = rename((*ptr_to_globals).rnfr_filename, (*ptr_to_globals).ftp_arg);
   free((*ptr_to_globals).rnfr_filename as *mut libc::c_void);
-  (*ptr_to_globals).rnfr_filename = 0 as *mut libc::c_char;
+  (*ptr_to_globals).rnfr_filename = std::ptr::null_mut::<libc::c_char>();
   if retval != 0 {
     cmdio_write_error(
       (0i32
@@ -1291,7 +1291,7 @@ unsafe extern "C" fn handle_rnto() {
 }
 unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_unique: libc::c_int) {
   let mut statbuf: stat = std::mem::zeroed();
-  let mut tempname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tempname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bytes_transferred: off_t = 0;
   let mut offset: off_t = 0;
   let mut local_file_fd: libc::c_int = 0;
@@ -1301,7 +1301,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
   if port_or_pasv_was_seen() == 0 {
     return;
   }
-  tempname = 0 as *mut libc::c_char;
+  tempname = std::ptr::null_mut::<libc::c_char>();
   local_file_fd = -1i32;
   if is_unique != 0 {
     tempname = xstrdup(b" FILE: uniq.XXXXXX\x00" as *const u8 as *const libc::c_char);
@@ -1382,7 +1382,7 @@ unsafe extern "C" fn handle_stou() {
 unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   let mut len: libc::c_int = 0;
   let mut cmdval: u32 = 0;
-  let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   alarm((*ptr_to_globals).timeout);
   free((*ptr_to_globals).ftp_cmd as *mut libc::c_void);
   /* Paranoia. Peer may send 1 gigabyte long cmd... */
@@ -1494,7 +1494,7 @@ pub unsafe extern "C" fn ftpd_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pw: *mut passwd = 0 as *mut passwd;
-  let mut anon_opt: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut anon_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut abs_timeout: libc::c_uint = 0;
   let mut verbose_S: libc::c_uint = 0;
   let mut opts: smallint = 0;

@@ -51,7 +51,7 @@ pub unsafe extern "C" fn which_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut env_path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut env_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status: libc::c_int = 0i32;
   /* This sizeof(): bb_default_root_path is shorter than BB_PATH_ROOT_PATH */
   let mut buf: [libc::c_char; 35] = [0; 35];
@@ -76,8 +76,8 @@ pub unsafe extern "C" fn which_main(
         puts(*argv);
       }
     } else {
-      let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       path = env_path;
       loop
       /* NOFORK NB: xmalloc inside find_executable(), must have no allocs above! */

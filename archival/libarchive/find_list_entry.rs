@@ -39,7 +39,7 @@ pub unsafe extern "C" fn find_list_entry2(
   let mut buf: [libc::c_char; 4096] = [0; 4096];
   let mut pattern_slash_cnt: libc::c_int = 0;
   let mut c: *const libc::c_char = 0 as *const libc::c_char;
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   while !list.is_null() {
     c = (*list).data;
     pattern_slash_cnt = 0i32;

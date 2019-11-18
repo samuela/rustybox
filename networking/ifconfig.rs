@@ -465,16 +465,16 @@ pub unsafe extern "C" fn ifconfig_main(
   let mut did_flags: libc::c_uint = 0;
   let mut sai_hostname: libc::c_uint = 0;
   let mut sai_netmask: libc::c_uint = 0;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /*char host[128];*/
   let mut host: *const libc::c_char = 0 as *const libc::c_char; /* make gcc happy */
-  let mut show_all_param: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut show_all_param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   did_flags = 0i32 as libc::c_uint;
   sai_hostname = 0i32 as libc::c_uint;
   sai_netmask = 0i32 as libc::c_uint;
   /* skip argv[0] */
   argv = argv.offset(1);
-  show_all_param = 0 as *mut libc::c_char;
+  show_all_param = std::ptr::null_mut::<libc::c_char>();
   if !(*argv.offset(0)).is_null()
     && *(*argv.offset(0)).offset(0) as libc::c_int == '-' as i32
     && *(*argv.offset(0)).offset(1) as libc::c_int == 'a' as i32
@@ -601,7 +601,7 @@ pub unsafe extern "C" fn ifconfig_main(
               sai.sin_addr.s_addr = !sai_netmask | sai_hostname & sai_netmask
             } else {
               let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-              let mut prefix: *mut libc::c_char = 0 as *mut libc::c_char;
+              let mut prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
               let mut prefix_len: libc::c_int = 0i32;
               prefix = strchr(host, '/' as i32);
               if !prefix.is_null() {
@@ -740,7 +740,7 @@ pub unsafe extern "C" fn ifconfig_main(
            * Should really use regex.h here, not sure though how well
            * it'll go with the cross-platform support etc.
            */
-          let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut found_colon: libc::c_short = 0i32 as libc::c_short;
           ptr = ifr.ifr_ifrn.ifrn_name.as_mut_ptr();
           while *ptr != 0 {

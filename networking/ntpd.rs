@@ -1378,17 +1378,17 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
  */
 unsafe extern "C" fn run_script(mut action: *const libc::c_char, mut offset: libc::c_double) {
   let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
-  let mut env1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env2: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env3: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env4: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut env1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env3: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env4: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*ptr_to_globals).last_script_run = (*ptr_to_globals).cur_time;
   if (*ptr_to_globals).script_name.is_null() {
     return;
   }
   argv[0] = (*ptr_to_globals).script_name;
   argv[1] = action as *mut libc::c_char;
-  argv[2] = 0 as *mut libc::c_char;
+  argv[2] = std::ptr::null_mut::<libc::c_char>();
   if 3i32 != 0 && (*ptr_to_globals).verbose != 0 {
     bb_error_msg(
       b"executing \'%s %s\'\x00" as *const u8 as *const libc::c_char,
@@ -2753,7 +2753,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     && size != NTP_MSGSIZE_MD5_AUTH as isize
     && size != NTP_MSGSIZE_SHA1_AUTH as isize
   {
-    let mut addr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if size < 0 {
       if !(*bb_errno == 11i32) {
         bb_simple_perror_msg_and_die(b"recv\x00" as *const u8 as *const libc::c_char);
@@ -2932,7 +2932,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   let mut opts: libc::c_uint = 0;
   let mut peers: *mut llist_t = 0 as *mut llist_t;
   let mut key_entries: *mut llist_t = 0 as *mut llist_t;
-  let mut key_file_path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut key_file_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(getpid() as libc::c_uint);
   if getuid() != 0 {
     bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
@@ -3004,7 +3004,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       let mut hash_type: smalluint = 0;
       let mut msg_size: smalluint = 0;
       let mut key_length: smalluint = 0;
-      let mut key: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut key: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       if *tokens[1].offset(0) as libc::c_int | 0x20i32 == 'm' as i32 {
         /* supports 'M' and 'md5' formats */
         hash_type = HASH_MD5 as libc::c_int as smalluint
@@ -3093,7 +3093,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         6i32 as libc::c_ulong,
       ) == 0i32
       {
-        let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut key_id: libc::c_int = 0;
         peer = peer.offset(6);
         end = strchr(peer, ':' as i32);
@@ -3190,10 +3190,10 @@ pub unsafe extern "C" fn ntpd_main(
     reftime: 0.,
     rootdisp: 0.,
     last_script_run: 0.,
-    script_name: 0 as *mut libc::c_char,
+    script_name: std::ptr::null_mut::<libc::c_char>(),
     ntp_peers: 0 as *mut llist_t,
     listen_fd: 0,
-    if_name: 0 as *mut libc::c_char,
+    if_name: std::ptr::null_mut::<libc::c_char>(),
     verbose: 0,
     peer_cnt: 0,
     refid: 0,

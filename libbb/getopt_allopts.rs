@@ -98,7 +98,7 @@ pub unsafe extern "C" fn make_all_argv_opts(mut argv: *mut *mut libc::c_char) {
     if (*argv).is_null() {
       break;
     }
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if *(*argv.offset(0)).offset(0) as libc::c_int == '-' as i32 {
       continue;
     }

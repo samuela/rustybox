@@ -62,7 +62,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
   mut timeout: libc::c_int,
   mut prompt: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut ret: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut sa: sigaction = std::mem::zeroed();
   let mut oldsa: sigaction = std::mem::zeroed();
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     sigaction_set(14i32, &mut sa);
     alarm(timeout as libc::c_uint);
   }
-  ret = 0 as *mut libc::c_char;
+  ret = std::ptr::null_mut::<libc::c_char>();
   i = 0i32;
   loop {
     let mut r: libc::c_int = 0;
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
       *ret.offset(i as isize) = '\u{0}' as i32 as libc::c_char; /* paranoia */
       nuke_str(ret); /* paranoia */
       free(ret as *mut libc::c_void);
-      ret = 0 as *mut libc::c_char;
+      ret = std::ptr::null_mut::<libc::c_char>();
       break;
     } else {
       if !(r == 0i32

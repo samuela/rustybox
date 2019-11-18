@@ -139,7 +139,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
   if statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
     let mut dir: *mut DIR = 0 as *mut DIR;
     let mut entry: *mut dirent = 0 as *mut dirent;
-    let mut newfile: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut newfile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     dir = warn_opendir(filename);
     if dir.is_null() {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;

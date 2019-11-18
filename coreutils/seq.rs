@@ -77,7 +77,7 @@ pub unsafe extern "C" fn seq_main(
   first = increment;
   *bb_errno = 0i32;
   's_87: {
-    let mut pp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut pp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut current_block_10: u64;
     match argc {
       3 => {

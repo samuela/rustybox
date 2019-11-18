@@ -787,8 +787,8 @@ pub unsafe extern "C" fn ifenslave_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut master_ifname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut slave_ifname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut master_ifname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut slave_ifname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rv: libc::c_int = 0;
   let mut res: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;

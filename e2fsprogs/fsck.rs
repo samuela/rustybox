@@ -157,8 +157,8 @@ static mut ignored_types: [libc::c_char; 46] = [
  * be freed.
  */
 unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::c_char {
-  let mut str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   str = xstrdup(device);
   /* Skip over "/dev/"; if it's not present, give up */
   cp = skip_dev_pfx(str);
@@ -202,7 +202,7 @@ unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::
     }
   }
   free(str as *mut libc::c_void);
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn free_instance(mut p: *mut fsck_instance) {
   free((*p).prog as *mut libc::c_void);
@@ -251,10 +251,10 @@ unsafe extern "C" fn create_fs_device(
 unsafe extern "C" fn load_fs_info(mut filename: *const libc::c_char) {
   let mut fstab: *mut FILE = 0 as *mut FILE;
   let mut mte: mntent = mntent {
-    mnt_fsname: 0 as *mut libc::c_char,
-    mnt_dir: 0 as *mut libc::c_char,
-    mnt_type: 0 as *mut libc::c_char,
-    mnt_opts: 0 as *mut libc::c_char,
+    mnt_fsname: std::ptr::null_mut::<libc::c_char>(),
+    mnt_dir: std::ptr::null_mut::<libc::c_char>(),
+    mnt_type: std::ptr::null_mut::<libc::c_char>(),
+    mnt_opts: std::ptr::null_mut::<libc::c_char>(),
     mnt_freq: 0,
     mnt_passno: 0,
   };
@@ -586,7 +586,7 @@ unsafe extern "C" fn fsck_device(mut fs: *mut fs_info)
  */
 unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> libc::c_int {
   let mut inst: *mut fsck_instance = 0 as *mut fsck_instance;
-  let mut base: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut base: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).force_all_parallel != 0 {
     return 0i32;
   }
@@ -631,7 +631,7 @@ unsafe extern "C" fn opt_in_list(
   mut opt: *mut libc::c_char,
   mut optlist: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   if optlist.is_null() {
     return 0i32;
@@ -661,7 +661,7 @@ unsafe extern "C" fn fs_match(mut fs: *mut fs_info) -> libc::c_int {
   let mut n: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
   let mut checked_type: libc::c_int = 0;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .fs_type_list
     .is_null()
@@ -871,7 +871,7 @@ unsafe extern "C" fn check_all() -> libc::c_int {
  * Why here we require "-t novfat,nonfs" ??
  */
 unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char; /* not yet known is it negated or not */
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* not yet known is it negated or not */
   let mut num: libc::c_int = 2i32;
   let mut negate: smallint = 0;
   s = fs_type;
@@ -897,7 +897,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
   s = fs_type;
   let mut current_block_28: u64;
   loop {
-    let mut comma: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut comma: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     negate = 0i32 as smallint;
     if *s.offset(0) as libc::c_int == 'n' as i32 && *s.offset(1) as libc::c_int == 'o' as i32 {
       /* "no.." */
@@ -981,7 +981,7 @@ pub unsafe extern "C" fn fsck_main(
   /*int interactive;*/
   let mut fs: *mut fs_info = 0 as *mut fs_info;
   let mut fstab: *const libc::c_char = 0 as *const libc::c_char;
-  let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut devices: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut num_devices: libc::c_int = 0;
   let mut opts_for_fsck: smallint = 0;
@@ -996,7 +996,7 @@ pub unsafe extern "C" fn fsck_main(
     15i32,
     Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  setbuf(stdout, 0 as *mut libc::c_char);
+  setbuf(stdout, std::ptr::null_mut::<libc::c_char>());
   notitle = 0i32 as smallint;
   doall = notitle;
   opts_for_fsck = doall;
@@ -1012,7 +1012,7 @@ pub unsafe extern "C" fn fsck_main(
     }
     let mut j: libc::c_int = 0;
     let mut optpos: libc::c_int = 0;
-    let mut options: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut arg: *mut libc::c_char = *argv;
     /* "/dev/blk" or "/path" or "UUID=xxx" or "LABEL=xxx" */
     if *arg.offset(0) as libc::c_int == '/' as i32 && opts_for_fsck == 0
@@ -1040,7 +1040,7 @@ pub unsafe extern "C" fn fsck_main(
       opts_for_fsck = 1i32 as smallint
     } else {
       optpos = 0i32;
-      options = 0 as *mut libc::c_char;
+      options = std::ptr::null_mut::<libc::c_char>();
       j = 1i32;
       while *arg.offset(j as isize) != 0 {
         match *arg.offset(j as isize) as libc::c_int {

@@ -496,7 +496,7 @@ unsafe extern "C" fn get_address(
   } else if *my_str as libc::c_int == '/' as i32 || *my_str as libc::c_int == '\\' as i32 {
     let mut next: libc::c_int = 0;
     let mut delimiter: libc::c_char = 0;
-    let mut temp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut temp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     delimiter = '/' as i32 as libc::c_char;
     if *my_str as libc::c_int == '\\' as i32 {
       pos = pos.offset(1);
@@ -561,7 +561,7 @@ unsafe extern "C" fn parse_subst_cmd(
   mut substr: *const libc::c_char,
 ) -> libc::c_int {
   let mut cflags: libc::c_int = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type;
-  let mut match_0: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut match_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut idx: libc::c_int = 0;
   /*
    * A substitution command should look something like this:
@@ -620,7 +620,7 @@ unsafe extern "C" fn parse_subst_cmd(
         }
         119 => {
           /* Write to file */
-          let mut fname: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           idx += parse_file_cmd(substr.offset(idx as isize).offset(1), &mut fname);
           (*sed_cmd).sw_file = xfopen_for_write(fname);
           (*sed_cmd).sw_last_char = '\n' as i32 as libc::c_char;
@@ -745,8 +745,8 @@ unsafe extern "C" fn parse_cmd_args(
       cmdstr = cmdstr.offset(length as isize)
     }
   } else if idx == IDX_y as libc::c_int as libc::c_uint {
-    let mut match_0: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut replace: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut match_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut replace: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut i: libc::c_int = *cmdstr.offset(0) as libc::c_int;
     cmdstr = cmdstr.offset((parse_regex_delim(cmdstr, &mut match_0, &mut replace) + 1i32) as isize);
     /* translation command */
@@ -883,7 +883,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
            * We don't (we check for isdigit, see above), think
            * about the "+-3" case.
            */
-          let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           /* code is smaller compared to using &cmdstr here: */
           idx = strtol(cmdstr.offset(1), &mut end, 10i32) as libc::c_int;
           (*sed_cmd).end_line = -2i32 - idx;
@@ -933,7 +933,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
   /* If we glued multiple lines together, free the memory. */
   free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line as *mut libc::c_void);
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
-  *fresh10 = 0 as *mut libc::c_char;
+  *fresh10 = std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn pipe_putc(mut c: libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1225,7 +1225,7 @@ unsafe extern "C" fn puts_maybe_newline(
   *last_puts_char = lpc;
 }
 unsafe extern "C" fn flush_append(mut last_puts_char: *mut libc::c_char) {
-  let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop
   /* Output appended lines. */
   {
@@ -1259,7 +1259,7 @@ unsafe extern "C" fn get_next_line(
   mut gets_char: *mut libc::c_char,
   mut last_puts_char: *mut libc::c_char,
 ) -> *mut libc::c_char {
-  let mut temp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut temp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: size_t = 0;
   let mut gc: libc::c_char = 0;
   flush_append(last_puts_char);
@@ -1364,8 +1364,8 @@ unsafe extern "C" fn beg_match(
 /* Process all the lines in all the files */
 unsafe extern "C" fn process_files() {
   let mut current_block: u64;
-  let mut pattern_space: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut next_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pattern_space: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut next_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linenum: libc::c_int = 0i32;
   let mut last_puts_char: libc::c_char = '\n' as i32 as libc::c_char;
   let mut last_gets_char: libc::c_char = 0;
@@ -1702,7 +1702,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -1778,7 +1778,7 @@ unsafe extern "C" fn process_files() {
                 /* Exit the outer while loop */
                 {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -2079,7 +2079,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -2143,7 +2143,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -2419,7 +2419,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -2483,7 +2483,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -2759,7 +2759,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -2823,7 +2823,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -3103,7 +3103,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -3167,7 +3167,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -3443,7 +3443,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -3507,7 +3507,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -3783,7 +3783,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -3847,7 +3847,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -4123,7 +4123,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -4187,7 +4187,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -4463,7 +4463,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -4527,7 +4527,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -4803,7 +4803,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -4867,7 +4867,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -5143,7 +5143,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -5207,7 +5207,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -5483,7 +5483,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -5547,7 +5547,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -5823,7 +5823,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -5887,7 +5887,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -6163,7 +6163,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -6227,7 +6227,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -6503,7 +6503,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -6567,7 +6567,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -6843,7 +6843,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -6907,7 +6907,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -7183,7 +7183,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -7247,7 +7247,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -7523,7 +7523,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -7587,7 +7587,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -7863,7 +7863,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -7927,7 +7927,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -8203,7 +8203,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -8267,7 +8267,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -8543,7 +8543,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -8607,7 +8607,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -8883,7 +8883,7 @@ unsafe extern "C" fn process_files() {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
                   rfile = fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
-                    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+                    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
                       line = xmalloc_fgetline(rfile);
                       if line.is_null() {
@@ -8947,7 +8947,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10499578865704240760 => {
                   free(next_line as *mut libc::c_void);
-                  next_line = 0 as *mut libc::c_char;
+                  next_line = std::ptr::null_mut::<libc::c_char>();
                   current_block = 8563197331115798083;
                   break 's_54;
                 }
@@ -9083,8 +9083,8 @@ unsafe extern "C" fn process_files() {
  * add_cmd() handles this.
  */
 unsafe extern "C" fn add_cmd_block(mut cmdstr: *mut libc::c_char) {
-  let mut sv: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut eol: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sv: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut eol: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sv = xstrdup(cmdstr);
   cmdstr = sv;
   loop {
@@ -9108,7 +9108,7 @@ pub unsafe extern "C" fn sed_main(
   let mut opt: libc::c_uint = 0;
   let mut opt_e: *mut llist_t = 0 as *mut llist_t;
   let mut opt_f: *mut llist_t = 0 as *mut llist_t;
-  let mut opt_i: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   static mut sed_longopts: [libc::c_char; 67] = [
     105, 110, 45, 112, 108, 97, 99, 101, 0, 2, 105, 114, 101, 103, 101, 120, 112, 45, 101, 120,
     116, 101, 110, 100, 101, 100, 0, 0, 114, 113, 117, 105, 101, 116, 0, 0, 110, 115, 105, 108,
@@ -9131,7 +9131,7 @@ pub unsafe extern "C" fn sed_main(
   /* do normal option parsing */
   opt_f = 0 as *mut llist_t;
   opt_e = opt_f;
-  opt_i = 0 as *mut libc::c_char;
+  opt_i = std::ptr::null_mut::<libc::c_char>();
   /* -i must be first, to match OPT_in_place definition */
   /* -E is a synonym of -r:
    * GNU sed 4.2.1 mentions it in neither --help
@@ -9163,7 +9163,7 @@ pub unsafe extern "C" fn sed_main(
   }
   while !opt_f.is_null() {
     // -f
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut cmdfile: *mut FILE = 0 as *mut FILE;
     cmdfile = xfopen_stdin(llist_pop(&mut opt_f) as *const libc::c_char);
     loop {
@@ -9253,7 +9253,7 @@ pub unsafe extern "C" fn sed_main(
         ); //TODO: rollback backup on error?
         free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname as *mut libc::c_void);
         let ref mut fresh39 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname;
-        *fresh39 = 0 as *mut libc::c_char;
+        *fresh39 = std::ptr::null_mut::<libc::c_char>();
         /* Fix disabled range matches and mangled ",+N" ranges */
         sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
         while !sed_cmd.is_null() {

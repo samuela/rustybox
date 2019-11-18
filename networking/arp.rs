@@ -222,7 +222,7 @@ static mut options: [libc::c_char; 46] = [
 /* Called only from main, once */
 unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
-  let mut host: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut req: arpreq = arpreq {
     arp_pa: sockaddr {
       sa_family: 0,
@@ -472,7 +472,7 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
 /* Set an entry in the ARP cache. */
 /* Called only from main, once */
 unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
-  let mut host: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut req: arpreq = arpreq {
     arp_pa: sockaddr {
       sa_family: 0,

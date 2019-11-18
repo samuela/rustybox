@@ -92,7 +92,7 @@ pub unsafe extern "C" fn mkdir_main(
   let mut status: libc::c_int = 0i32;
   let mut flags: libc::c_int = 0i32;
   let mut opt: libc::c_uint = 0;
-  let mut smode: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32long(
     argv,
     b"m:pv\x00" as *const u8 as *const libc::c_char,

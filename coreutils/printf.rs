@@ -189,7 +189,7 @@ unsafe extern "C" fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut
 }
 
 unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Well, this one allows leading whitespace... so what? */
   /* What I like much less is that "-" accepted too! :( */
   *(result as *mut libc::c_double) = strtod(arg, &mut end);
@@ -277,14 +277,14 @@ unsafe extern "C" fn print_direc(
   let mut llv: libc::c_longlong = 0;
   let mut dv: libc::c_double = 0.;
   let mut saved: libc::c_char = 0;
-  let mut have_prec: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut have_width: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut have_prec: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut have_width: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   saved = *format.offset(fmt_length as isize);
   *format.offset(fmt_length as isize) = '\u{0}' as i32 as libc::c_char;
   have_prec = strstr(format, b".*\x00" as *const u8 as *const libc::c_char);
   have_width = strchr(format, '*' as i32);
   if have_width.offset(-1) == have_prec {
-    have_width = 0 as *mut libc::c_char
+    have_width = std::ptr::null_mut::<libc::c_char>()
   }
   /* multiconvert sets errno = 0, but %s needs it cleared */
   *bb_errno = 0i32; /* switch */
@@ -385,7 +385,7 @@ unsafe extern "C" fn print_formatted(
   mut argv: *mut *mut libc::c_char,
   mut conv_err: *mut libc::c_int,
 ) -> *mut *mut libc::c_char {
-  let mut direc_start: *mut libc::c_char = 0 as *mut libc::c_char; /* Start of % directive.  */
+  let mut direc_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* Start of % directive.  */
   let mut direc_length: libc::c_uint = 0; /* Length of % directive.  */
   let mut field_width: libc::c_int = 0; /* Arg to first '*' */
   let mut precision: libc::c_int = 0; /* Arg to second '*' */
@@ -492,7 +492,7 @@ unsafe extern "C" fn print_formatted(
             direc_length = direc_length.wrapping_add(2);
             direc_start = p
           } else {
-            p = 0 as *mut libc::c_char
+            p = std::ptr::null_mut::<libc::c_char>()
           }
           if !(*argv).is_null() {
             let fresh3 = argv;
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn printf_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut conv_err: libc::c_int = 0;
-  let mut format: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut format: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argv2: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   /* We must check that stdout is not closed.
    * The reason for this is highly non-obvious.

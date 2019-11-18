@@ -146,7 +146,7 @@ unsafe extern "C" fn run_pipe(
   mut level: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Prevent man page link loops */
   if level > 10i32 {
     return 0i32;
@@ -164,9 +164,9 @@ unsafe extern "C" fn run_pipe(
     /* The link has the following on the first line: */
     /* ".so another_man_page" */
     let mut sb: stat = std::mem::zeroed();
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut linkname: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut linkname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* On my system:
      * man1/genhostid.1.gz: 203 bytes - smallest real manpage
      * man2/path_resolution.2.gz: 114 bytes - largest link
@@ -287,7 +287,7 @@ unsafe extern "C" fn add_MANPATH(
   if !path.is_null() {
     let mut current_block_8: u64;
     while *path != 0 {
-      let mut next_path: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut next_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut path_element: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
       next_path = strchr(path, ':' as i32);
       if !next_path.is_null() {
@@ -377,7 +377,7 @@ pub unsafe extern "C" fn man_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut parser: *mut parser_t = 0 as *mut parser_t;
-  let mut sec_list: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sec_list: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut man_path_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut count_mp: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn man_main(
           let mut next_sect: *mut libc::c_char = strchrnul(cur_sect, ':' as i32);
           let mut sect_len: libc::c_int =
             next_sect.wrapping_offset_from(cur_sect) as libc::c_long as libc::c_int;
-          let mut man_filename: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut man_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut cat0man1: libc::c_int = 0i32;
           /* Search for cat, then man page */
           while cat0man1 < 2i32 {

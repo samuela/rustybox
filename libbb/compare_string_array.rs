@@ -27,7 +27,7 @@ pub unsafe extern "C" fn is_prefixed_with(
   /* Open-coded */
   while *key as libc::c_int != '\u{0}' as i32 {
     if *key as libc::c_int != *string as libc::c_int {
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     key = key.offset(1);
     string = string.offset(1)
@@ -52,7 +52,7 @@ pub unsafe extern "C" fn is_suffixed_with(
       return string as *mut libc::c_char;
     }
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 /* returns the array index of the string */
 /* (index of first match is returned, or -1) */

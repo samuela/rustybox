@@ -188,7 +188,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
         (*archive_handle).tar__to_command_shell,
         b"-c\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command,
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
       );
       bb_perror_msg_and_die(
         b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,

@@ -127,9 +127,9 @@ pub unsafe extern "C" fn crontab_main(
   let mut pas: *const passwd = 0 as *const passwd;
   let mut crontab_dir: *const libc::c_char =
     b"/var/spool/cron/crontabs\x00" as *const u8 as *const libc::c_char;
-  let mut tmp_fname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut new_fname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut user_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmp_fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut new_fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut user_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   let mut src_fd: libc::c_int = 0;
   let mut opt_ler: libc::c_int = 0;
@@ -183,14 +183,14 @@ pub unsafe extern "C" fn crontab_main(
   }
   /* cd to our crontab directory */
   xchdir(crontab_dir);
-  tmp_fname = 0 as *mut libc::c_char;
+  tmp_fname = std::ptr::null_mut::<libc::c_char>();
   let mut current_block_48: u64;
   /* Handle requested operation */
   match opt_ler {
     4 => {
       /* switch */
       /* List */
-      let mut args: [*mut libc::c_char; 2] = [(*pas).pw_name, 0 as *mut libc::c_char];
+      let mut args: [*mut libc::c_char; 2] = [(*pas).pw_name, std::ptr::null_mut::<libc::c_char>()];
       return bb_cat(args.as_mut_ptr());
       /* list exits,
        * the rest go play with cron update file */

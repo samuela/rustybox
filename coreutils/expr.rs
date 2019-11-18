@@ -190,7 +190,7 @@ unsafe extern "C" fn tostring(mut v: *mut VALUE) {
 unsafe extern "C" fn toarith(mut v: *mut VALUE) -> bool {
   if (*v).type_0 as libc::c_int == STRING as libc::c_int {
     let mut i: arith_t = 0;
-    let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Don't interpret the empty string as an integer.  */
     /* Currently does not worry about overflow or int/long differences. */
     i = strtoll((*v).u.s, &mut e, 10i32) as arith_t;
@@ -295,7 +295,7 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
     allocated: 0,
     used: 0,
     syntax: 0,
-    fastmap: 0 as *mut libc::c_char,
+    fastmap: std::ptr::null_mut::<libc::c_char>(),
     translate: 0 as *mut libc::c_uchar,
     re_nsub: 0,
     can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],

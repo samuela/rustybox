@@ -38,8 +38,8 @@ extern "C" {
 unsafe extern "C" fn logical_getcwd() -> libc::c_int {
   let mut st1: stat = std::mem::zeroed();
   let mut st2: stat = std::mem::zeroed();
-  let mut wd: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut wd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   wd = getenv(b"PWD\x00" as *const u8 as *const libc::c_char);
   if wd.is_null() || *wd.offset(0) as libc::c_int != '/' as i32 {
     return 0i32;
@@ -85,7 +85,7 @@ pub unsafe extern "C" fn pwd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
    * Rationale:
    * POSIX requires a default of -L, but most scripts expect -P

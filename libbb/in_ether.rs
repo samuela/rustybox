@@ -409,7 +409,7 @@ pub unsafe extern "C" fn in_ether(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
 ) -> libc::c_int {
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut val: libc::c_uchar = 0;

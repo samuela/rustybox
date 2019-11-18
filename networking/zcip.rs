@@ -450,7 +450,7 @@ unsafe extern "C" fn run(
   addr = addr;
   let mut fmt: *const libc::c_char =
     (b"%s %s %s\x00" as *const u8 as *const libc::c_char).offset(3);
-  let mut env_ip: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut env_ip: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   env_ip = env_ip;
   let ref mut fresh15 = *argv.offset(2);
   *fresh15 = param as *mut libc::c_char;
@@ -500,7 +500,7 @@ pub unsafe extern "C" fn zcip_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut r_opt: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut r_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut l_opt: *const libc::c_char = b"169.254.0.0\x00" as *const u8 as *const libc::c_char;
   let mut state: libc::c_int = 0;
   let mut nsent: libc::c_int = 0;

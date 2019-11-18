@@ -41,7 +41,7 @@ pub static mut wrote_pidfile: smallint = 0;
 #[no_mangle]
 pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
   let mut pid_fd: libc::c_int = 0;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: [libc::c_char; 14] = [0; 14];
   let mut sb: stat = std::mem::zeroed();
   if path.is_null() {

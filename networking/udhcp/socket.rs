@@ -420,7 +420,7 @@ pub unsafe extern "C" fn udhcp_listen_socket(
     sin_addr: in_addr { s_addr: 0 },
     sin_zero: [0; 8],
   };
-  let mut colon: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if dhcp_verbose >= 1i32 as libc::c_uint {
     bb_info_msg(
       b"opening listen socket on *:%d %s\x00" as *const u8 as *const libc::c_char,

@@ -82,8 +82,8 @@ unsafe extern "C" fn get_passwd(
     && *pass.offset(1) == 0
   {
     let mut spw: spwd = spwd {
-      sp_namp: 0 as *mut libc::c_char,
-      sp_pwdp: 0 as *mut libc::c_char,
+      sp_namp: std::ptr::null_mut::<libc::c_char>(),
+      sp_pwdp: std::ptr::null_mut::<libc::c_char>(),
       sp_lstchg: 0,
       sp_min: 0,
       sp_max: 0,
@@ -123,7 +123,7 @@ pub unsafe extern "C" fn check_password(
   mut plaintext: *const libc::c_char,
 ) -> libc::c_int {
   let mut buffer: [libc::c_char; 256] = [0; 256];
-  let mut encrypted: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pw_pass: *const libc::c_char = 0 as *const libc::c_char;
   let mut r: libc::c_int = 0;
   pw_pass = get_passwd(pw, buffer.as_mut_ptr());
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
   mut prompt: *const libc::c_char,
 ) -> libc::c_int {
   let mut buffer: [libc::c_char; 256] = [0; 256];
-  let mut plaintext: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut plaintext: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pw_pass: *const libc::c_char = 0 as *const libc::c_char;
   let mut r: libc::c_int = 0;
   pw_pass = get_passwd(pw, buffer.as_mut_ptr());

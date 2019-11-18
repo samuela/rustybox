@@ -1367,7 +1367,7 @@ unsafe extern "C" fn check_magic() {
 // lzop file header
 /* *********************************************************************/
 unsafe extern "C" fn write_header(mut h: *mut header_t) {
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   xwrite(
     1i32,
     lzop_magic.as_ptr() as *const libc::c_void,

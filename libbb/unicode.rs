@@ -465,12 +465,12 @@ unsafe extern "C" fn unicode_conv_to_printable2(
   mut flags: libc::c_int,
 ) -> *mut libc::c_char {
   let mut current_block: u64;
-  let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut dst_len: libc::c_uint = 0;
   let mut uni_count: libc::c_uint = 0;
   let mut uni_width: libc::c_uint = 0;
   if UNICODE_ON as libc::c_int != UNICODE_ON as libc::c_int {
-    let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if flags & UNI_FLAG_PAD as libc::c_int != 0 {
       dst = xmalloc(width.wrapping_add(1i32 as libc::c_uint) as size_t) as *mut libc::c_char;
       d = dst;
@@ -521,7 +521,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     }
     return dst;
   }
-  dst = 0 as *mut libc::c_char;
+  dst = std::ptr::null_mut::<libc::c_char>();
   uni_width = 0i32 as libc::c_uint;
   uni_count = uni_width;
   dst_len = 0i32 as libc::c_uint;

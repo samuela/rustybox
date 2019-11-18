@@ -135,10 +135,10 @@ pub unsafe extern "C" fn adjtimex_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut opt_o: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_f: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut txc: timex =
         timex{modes: 0,
               offset: 0,

@@ -255,7 +255,7 @@ pub unsafe extern "C" fn pgrep_main(
   let mut matched_pid: libc::c_int = 0;
   let mut sid2match: libc::c_int = 0;
   let mut ppid2match: libc::c_int = 0;
-  let mut cmd_last: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cmd_last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_0: *mut procps_status_t = 0 as *mut procps_status_t;
   /* These are initialized to 0 */
   let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
@@ -264,7 +264,7 @@ pub unsafe extern "C" fn pgrep_main(
       allocated: 0,
       used: 0,
       syntax: 0,
-      fastmap: 0 as *mut libc::c_char,
+      fastmap: std::ptr::null_mut::<libc::c_char>(),
       translate: 0 as *mut libc::c_uchar,
       re_nsub: 0,
       can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
@@ -333,14 +333,14 @@ pub unsafe extern "C" fn pgrep_main(
     );
   }
   matched_pid = 0i32;
-  cmd_last = 0 as *mut libc::c_char;
+  cmd_last = std::ptr::null_mut::<libc::c_char>();
   proc_0 = 0 as *mut procps_status_t;
   loop {
     proc_0 = procps_scan(proc_0, scan_mask);
     if proc_0.is_null() {
       break;
     }
-    let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut cmdlen: libc::c_int = 0;
     let mut match_0: libc::c_int = 0;
     if (*proc_0).pid == pid {

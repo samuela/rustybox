@@ -59,7 +59,7 @@ pub unsafe extern "C" fn setlogcons_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut devname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut devname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut arg: C2RustUnnamed = {
     let mut init = C2RustUnnamed {
       fn_0: 11i32 as libc::c_char,

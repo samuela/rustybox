@@ -210,8 +210,8 @@ pub unsafe extern "C" fn lpd_main(
   let mut current_block: u64;
   let mut spooling: libc::c_int = 0;
   spooling = spooling;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut queue: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut queue: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut filenames: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
 
   // goto spool directory
@@ -257,7 +257,7 @@ pub unsafe extern "C" fn lpd_main(
                                     // we don't free(s), we might need "queue" var later
 
     loop {
-      let mut fname: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut fd: libc::c_int = 0; // while (1)
                                    // NB: can do close(-1). Who cares?
                                    // NB: don't do "signal OK" write here, it will be done
@@ -278,8 +278,8 @@ pub unsafe extern "C" fn lpd_main(
       s = xmalloc_read_stdin();
       if s.is_null() {
         // (probably) EOF
-        let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut var: [libc::c_char; 2] = [0; 2];
         // non-spooling mode or no spool helper specified
         if spooling == 0 || (*argv).is_null() {

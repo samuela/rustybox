@@ -102,7 +102,7 @@ pub unsafe extern "C" fn chpasswd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char; /* dies if there is no such user */
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* dies if there is no such user */
   let mut algo: *const libc::c_char = b"des\x00" as *const u8 as *const libc::c_char;
   let mut root: *const libc::c_char = 0 as *const libc::c_char;
   let mut opt: libc::c_int = 0;
@@ -124,8 +124,8 @@ pub unsafe extern "C" fn chpasswd_main(
     if name.is_null() {
       break;
     }
-    let mut free_me: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut pass: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut free_me: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut rc: libc::c_int = 0;
     pass = strchr(name, ':' as i32);
     if pass.is_null() {
@@ -135,7 +135,7 @@ pub unsafe extern "C" fn chpasswd_main(
     pass = pass.offset(1);
     *fresh0 = '\u{0}' as i32 as libc::c_char;
     xuname2uid(name);
-    free_me = 0 as *mut libc::c_char;
+    free_me = std::ptr::null_mut::<libc::c_char>();
     if opt & 1i32 == 0 {
       let mut salt: [libc::c_char; 20] = [0; 20];
       if opt & 2i32 != 0 {

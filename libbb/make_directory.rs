@@ -43,7 +43,7 @@ pub unsafe extern "C" fn bb_make_directory(
   let mut cur_mask: mode_t = 0;
   let mut org_mask: mode_t = 0;
   let mut fail_msg: *const libc::c_char = 0 as *const libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
   let mut st: stat = std::mem::zeroed();
   /* "path" can be a result of dirname().

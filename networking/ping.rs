@@ -1340,8 +1340,8 @@ unsafe extern "C" fn common_ping_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut str_s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_i: *mut libc::c_char =
     b"1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   let mut interval: duration_t = 0.;
@@ -1380,7 +1380,7 @@ unsafe extern "C" fn common_ping_main(
         0i32,
       );
       let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I;
-      *fresh23 = 0 as *mut libc::c_char
+      *fresh23 = std::ptr::null_mut::<libc::c_char>()
       /* don't try to bind to device later */
     }
   }

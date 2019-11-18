@@ -206,9 +206,9 @@ unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
 //usage:       "hd is an alias for hexdump -C"
 /* This is a NOEXEC applet. Be very careful! */
 unsafe extern "C" fn bb_dump_addfile(mut dumper: *mut dumper_t, mut name: *mut libc::c_char) {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   fp = xfopen_for_read(name);
   loop {
     buf = xmalloc_fgetline(fp);
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn hexdump_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut dumper: *mut dumper_t = alloc_dumper();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
@@ -387,7 +387,7 @@ pub unsafe extern "C" fn hexdump_main(
         }
       }
       _ => {
-        buf = 0 as *mut libc::c_char;
+        buf = std::ptr::null_mut::<libc::c_char>();
         fp = xfopen_for_read(*argv);
         current_block = 6590038594373520143;
       }

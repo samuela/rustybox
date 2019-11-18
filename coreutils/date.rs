@@ -257,11 +257,11 @@ pub unsafe extern "C" fn date_main(
   let mut buf_fmt_dt2str: [libc::c_char; 64] = [0; 64];
   let mut opt: libc::c_uint = 0;
   let mut ifmt: libc::c_int = -1i32;
-  let mut date_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fmt_dt2str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fmt_str2dt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut filename: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut isofmt_arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut date_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fmt_dt2str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fmt_str2dt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut isofmt_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32long(
     argv,
     b"^Rs:ud:r:I::D:\x00d--s:s--d:R--I:I--R\x00" as *const u8 as *const libc::c_char,
@@ -288,7 +288,7 @@ pub unsafe extern "C" fn date_main(
       }
     }
   }
-  fmt_dt2str = 0 as *mut libc::c_char;
+  fmt_dt2str = std::ptr::null_mut::<libc::c_char>();
   if !(*argv.offset(0)).is_null() && *(*argv.offset(0)).offset(0) as libc::c_int == '+' as i32 {
     fmt_dt2str = &mut *(*argv.offset(0)).offset(1) as *mut libc::c_char;
     argv = argv.offset(1)

@@ -219,7 +219,7 @@ pub unsafe extern "C" fn remove_file(
       if d.is_null() {
         break;
       }
-      let mut new_path: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut new_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       new_path = concat_subpath_file(path, (*d).d_name.as_mut_ptr());
       if new_path.is_null() {
         continue;

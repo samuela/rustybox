@@ -305,7 +305,7 @@ unsafe extern "C" fn readfile_z(mut pf: *mut proc_file, mut fname: *const libc::
   let mut fd: libc::c_int = 0;
   let mut sz: libc::c_int = 0;
   let mut rdsz: libc::c_int = 0;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sz = (*pf).file_sz;
   buf = (*pf).file;
   if buf.is_null() {
@@ -1099,9 +1099,9 @@ pub unsafe extern "C" fn nmeter_main(
   let mut first: *mut s_stat = 0 as *mut s_stat;
   let mut last: *mut s_stat = 0 as *mut s_stat;
   let mut s: *mut s_stat = 0 as *mut s_stat;
-  let mut opt_d: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut cur: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut prev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut cur: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut prev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh8 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh8 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
@@ -1150,8 +1150,8 @@ pub unsafe extern "C" fn nmeter_main(
   // parameters as seen by e.g. ps. Making a copy...
   cur = xstrdup(*argv.offset(0));
   's_129: loop {
-    let mut param: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     prev = cur;
     loop {
       cur = strchr(cur, '%' as i32);

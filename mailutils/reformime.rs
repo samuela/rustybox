@@ -170,13 +170,13 @@ unsafe extern "C" fn parse(
     getpid() as libc::c_uint,
   ); /* while (1) */
   loop {
-    let mut header: *mut libc::c_char = 0 as *mut libc::c_char; /* 32 is enough */
+    let mut header: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* 32 is enough */
     let mut tokens: [*const libc::c_char; 32] = [0 as *const libc::c_char; 32];
     let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
     /* Read the header (everything up to two \n) */
     let mut header_idx: libc::c_uint = 0i32 as libc::c_uint;
     let mut last_ch: libc::c_int = 0i32;
-    header = 0 as *mut libc::c_char;
+    header = std::ptr::null_mut::<libc::c_char>();
     loop
     /* Support both line endings */
     {
@@ -206,8 +206,8 @@ unsafe extern "C" fn parse(
     }
     *header.offset(header_idx as isize) = '\u{0}' as i32 as libc::c_char;
     /* Split to tokens */
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut ntokens: libc::c_uint = 0;
     let mut delims: *const libc::c_char = b";=\" \t\n\x00" as *const u8 as *const libc::c_char;
     /* Skip to last Content-Type: */
@@ -280,7 +280,7 @@ unsafe extern "C" fn parse(
       );
     } else {
       /* No, process one non-multipart section */
-      let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut pid: pid_t = 0;
       pid = pid;
       let mut fp: *mut FILE = 0 as *mut FILE;
@@ -348,7 +348,7 @@ unsafe extern "C" fn parse(
       }
       free(filename as *mut libc::c_void);
       /* write to fp */
-      end = 0 as *mut libc::c_char;
+      end = std::ptr::null_mut::<libc::c_char>();
       if 0i32 == strcasecmp(encoding, b"base64\x00" as *const u8 as *const libc::c_char) {
         read_base64(stdin, fp, '-' as i32);
       } else if 0i32 != strcasecmp(encoding, b"7bit\x00" as *const u8 as *const libc::c_char)

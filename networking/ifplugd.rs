@@ -839,8 +839,8 @@ unsafe extern "C" fn strstatus(mut status: libc::c_int) -> *const libc::c_char {
   return (b"down\x00up\x00" as *const u8 as *const libc::c_char).offset((status * 5i32) as isize);
 }
 unsafe extern "C" fn run_script(mut action: *const libc::c_char) -> libc::c_int {
-  let mut env_PREVIOUS: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env_CURRENT: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut env_PREVIOUS: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env_CURRENT: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argv: [*mut libc::c_char; 5] = [0 as *mut libc::c_char; 5];
   let mut r: libc::c_int = 0;
   bb_info_msg(
@@ -853,7 +853,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char) -> libc::c_int 
   argv[1] = (*ptr_to_globals).iface as *mut libc::c_char;
   argv[2] = action as *mut libc::c_char;
   argv[3] = (*ptr_to_globals).extra_arg as *mut libc::c_char;
-  argv[4] = 0 as *mut libc::c_char;
+  argv[4] = std::ptr::null_mut::<libc::c_char>();
   env_PREVIOUS = xasprintf(
     b"%s=%s\x00" as *const u8 as *const libc::c_char,
     b"IFPLUGD_PREVIOUS\x00" as *const u8 as *const libc::c_char,
@@ -1179,7 +1179,7 @@ pub unsafe extern "C" fn ifplugd_main(
   }; 1];
   let mut opts: libc::c_uint = 0;
   let mut api_mode_found: *const libc::c_char = 0 as *const libc::c_char;
-  let mut pidfile_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pidfile_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid_from_pidfile: pid_t = 0;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);

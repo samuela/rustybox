@@ -458,7 +458,7 @@ pub unsafe extern "C" fn concat_subpath_file(
     && (*f.offset(0) as libc::c_int == '.' as i32
       && (*f.offset(1) == 0 || *f.offset(1) as libc::c_int == '.' as i32 && *f.offset(2) == 0))
   {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   return concat_path_file(path, f);
 }

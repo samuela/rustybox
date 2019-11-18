@@ -508,7 +508,7 @@ unsafe extern "C" fn func_name(
    * since then "find FILE/ -name FILE"
    * would also work (on non-directories), which is wrong.
    */
-  let mut trunc_slash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut trunc_slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *tmp as libc::c_int == '\u{0}' as i32 {
     /* "foo/bar/[//...]" */
     while tmp != fileName && *tmp.offset(-1i32 as isize) as libc::c_int == '/' as i32 {
@@ -728,10 +728,10 @@ unsafe extern "C" fn do_exec(
     }
     i += 1
   }
-  *pp = 0 as *mut libc::c_char;
+  *pp = std::ptr::null_mut::<libc::c_char>();
   if !(*ap).filelist.is_null() {
     let ref mut fresh3 = *(*ap).filelist.offset(0);
-    *fresh3 = 0 as *mut libc::c_char;
+    *fresh3 = std::ptr::null_mut::<libc::c_char>();
     (*ap).filelist_idx = 0i32;
     (*ap).file_len = 0i32
   }
@@ -1430,7 +1430,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
             {
               continue;
             }
-            *endarg = 0 as *mut libc::c_char;
+            *endarg = std::ptr::null_mut::<libc::c_char>();
             break;
           }
         }
@@ -1897,7 +1897,7 @@ pub unsafe extern "C" fn find_main(
   let mut i: libc::c_int = 0;
   let mut firstopt: libc::c_int = 0;
   let mut past_HLP: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut saved: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut saved: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut globals as *mut libc::c_void,
     0i32,
@@ -1941,7 +1941,7 @@ pub unsafe extern "C" fn find_main(
       break;
     }
   }
-  *past_HLP = 0 as *mut libc::c_char;
+  *past_HLP = std::ptr::null_mut::<libc::c_char>();
   /* "+": stop on first non-option */
   i = getopt32(argv, b"+HLP\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   if i & 1i32 << 0i32 != 0 {
@@ -1986,7 +1986,7 @@ pub unsafe extern "C" fn find_main(
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).actions;
   *fresh19 = parse_params(&mut *argv.offset(firstopt as isize));
   let ref mut fresh20 = *argv.offset(firstopt as isize);
-  *fresh20 = 0 as *mut libc::c_char;
+  *fresh20 = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_on != 0 {
     let mut stbuf: stat = std::mem::zeroed();
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_count = firstopt;

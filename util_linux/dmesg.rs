@@ -83,7 +83,7 @@ pub unsafe extern "C" fn dmesg_main(
 ) -> libc::c_int {
   let mut len: libc::c_int = 0; /* read ring buffer size */
   let mut level: libc::c_int = 0; /* read ring buffer */
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
   opts = getopt32(
     argv,
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn dmesg_main(
   if opts & OPT_n as libc::c_int as libc::c_uint != 0 {
     if klogctl(
       8i32,
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       level as libc::c_long as libc::c_int,
     ) != 0
     {
@@ -103,7 +103,7 @@ pub unsafe extern "C" fn dmesg_main(
     return 0i32;
   }
   if opts & OPT_s as libc::c_int as libc::c_uint == 0 {
-    len = klogctl(10i32, 0 as *mut libc::c_char, 0i32)
+    len = klogctl(10i32, std::ptr::null_mut::<libc::c_char>(), 0i32)
   }
   if len < 16i32 * 1024i32 {
     len = 16i32 * 1024i32

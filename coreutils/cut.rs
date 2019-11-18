@@ -74,7 +74,7 @@ unsafe extern "C" fn cut_file(
   mut nlists: libc::c_uint,
 ) {
   let mut current_block: u64;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linenum: libc::c_uint = 0i32 as libc::c_uint;
   loop
   /* go through every line in the file */
@@ -157,7 +157,7 @@ unsafe extern "C" fn cut_file(
     } else {
       let mut ndelim: libc::c_int = -1i32;
       let mut nfields_printed: libc::c_int = 0i32;
-      let mut field: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut field: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut delimiter: [libc::c_char; 2] = [0; 2];
       delimiter[0] = delim;
       delimiter[1] = 0i32 as libc::c_char;
@@ -229,8 +229,8 @@ pub unsafe extern "C" fn cut_main(
   let mut cut_lists: *mut cut_list = 0 as *mut cut_list; /* number of elements in above list */
   let mut nlists: libc::c_uint = 0i32 as libc::c_uint; /* delimiter, default is tab */
   let mut delim: libc::c_char = '\t' as i32 as libc::c_char;
-  let mut sopt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ltok: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sopt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ltok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
   opt = getopt32(
     argv,
@@ -280,7 +280,7 @@ pub unsafe extern "C" fn cut_main(
    * valid list formats: N, N-, N-M, -M
    * more than one list can be separated by commas
    */
-  let mut ntok: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ntok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: libc::c_int = 0i32;
   let mut e: libc::c_int = 0i32;
   loop

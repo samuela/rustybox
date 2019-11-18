@@ -220,7 +220,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut end_ms: libc::c_uint = 0; /* -n NUM */
   let mut nchars: libc::c_int = 0; /* need to be able to hold -1 */
   let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut buffer: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
   let mut tty: termios = termios {
     c_iflag: 0,
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   if !(*params).opt_t.is_null() && 1i32 != 0 {
     /* bash 4.3 (maybe earlier) supports -t N.NNNNNN */
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Eat up to three fractional digits */
     let mut frac_digits: libc::c_int = 3i32 + 1i32;
     end_ms = bb_strtou((*params).opt_t, &mut p, 10i32);
@@ -396,7 +396,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   if !(*params).opt_t.is_null() {
     end_ms = end_ms.wrapping_add(monotonic_ms() as libc::c_uint)
   }
-  buffer = 0 as *mut libc::c_char;
+  buffer = std::ptr::null_mut::<libc::c_char>();
   bufpos = 0i32;
   delim = if !(*params).opt_d.is_null() {
     *(*params).opt_d.offset(0) as libc::c_int
@@ -904,7 +904,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
   /* Second pass: set or print limits, in order */
   optind = 0i32; /* while (there are options) */
   loop {
-    let mut val_str: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut val_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut opt_char_0: libc::c_int = getopt(argc as libc::c_int, argv, ulimit_opt_string.as_ptr());
     if opt_char_0 == -1i32 {
       break;

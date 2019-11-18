@@ -194,12 +194,12 @@ pub unsafe extern "C" fn INET_rresolve(
   /* addr-to-name cache */
   static mut cache: *mut addr = 0 as *const addr as *mut addr; /* no '+ 1', it's already accounted for */
   let mut pn: *mut addr = 0 as *mut addr;
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nip: u32 = 0;
   let mut is_host: smallint = 0;
   if (*s_in).sin_family as libc::c_int != 2i32 {
     *bb_errno = 97i32;
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   nip = (*s_in).sin_addr.s_addr;
   if numeric & 0xfffi32 != 0 {
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn INET_rresolve(
     }
     pn = (*pn).next
   }
-  name = 0 as *mut libc::c_char;
+  name = std::ptr::null_mut::<libc::c_char>();
   if is_host != 0 {
     name = xmalloc_sockaddr2host_noport(s_in as *mut libc::c_void as *const sockaddr)
   }
@@ -252,7 +252,7 @@ pub unsafe extern "C" fn INET6_resolve(
     ai_protocol: 0,
     ai_addrlen: 0,
     ai_addr: 0 as *mut sockaddr,
-    ai_canonname: 0 as *mut libc::c_char,
+    ai_canonname: std::ptr::null_mut::<libc::c_char>(),
     ai_next: 0 as *mut addrinfo,
   };
   let mut ai: *mut addrinfo = 0 as *mut addrinfo;
@@ -287,7 +287,7 @@ pub unsafe extern "C" fn INET6_rresolve(
 ) -> *mut libc::c_char {
   if (*sin6).sin6_family as libc::c_int != 10i32 {
     *bb_errno = 97i32;
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   if numeric & 0x7fffi32 != 0 {
     return xmalloc_sockaddr2dotted_noport(sin6 as *mut libc::c_void as *const sockaddr);

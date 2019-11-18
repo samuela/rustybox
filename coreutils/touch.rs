@@ -134,8 +134,8 @@ pub unsafe extern "C" fn touch_main(
     0, 1, 114, 100, 97, 116, 101, 0, 1, 100, 110, 111, 45, 100, 101, 114, 101, 102, 101, 114, 101,
     110, 99, 101, 0, 0, 104, 0,
   ];
-  let mut reference_file: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut date_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut reference_file: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut date_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut timebuf: [timeval; 2] = [timeval {
     tv_sec: 0,
     tv_usec: 0,

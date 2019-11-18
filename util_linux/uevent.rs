@@ -64,9 +64,9 @@ pub unsafe extern "C" fn uevent_main(
   // 	find /sys -name uevent -exec sh -c 'echo add >"{}"' ';'
   fd = create_and_bind_to_netlink(15i32, 1i32 << 0i32, RCVBUF as libc::c_int as libc::c_uint);
   loop {
-    let mut netbuf: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut netbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: ssize_t = 0;
     let mut idx: libc::c_int = 0;
     // In many cases, a system sits for *days* waiting
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn uevent_main(
     }
     let ref mut fresh2 =
       *(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize);
-    *fresh2 = 0 as *mut libc::c_char;
+    *fresh2 = std::ptr::null_mut::<libc::c_char>();
     if !(*argv.offset(0)).is_null() {
       idx = 0i32;
       while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize))

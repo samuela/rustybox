@@ -148,8 +148,8 @@ pub unsafe extern "C" fn install_main(
   let mut mode: mode_t = 0;
   let mut uid: uid_t = 0;
   let mut gid: gid_t = 0;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut last: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut gid_str: *const libc::c_char = 0 as *const libc::c_char;
   let mut uid_str: *const libc::c_char = 0 as *const libc::c_char;
   let mut mode_str: *const libc::c_char = 0 as *const libc::c_char;
@@ -208,7 +208,7 @@ pub unsafe extern "C" fn install_main(
     argc -= 1;
     last = *argv.offset(argc as isize);
     let ref mut fresh0 = *argv.offset(argc as isize);
-    *fresh0 = 0 as *mut libc::c_char;
+    *fresh0 = std::ptr::null_mut::<libc::c_char>();
     /* coreutils install resolves link in this case, don't use lstat */
     isdir = if stat(last, &mut statbuf) < 0i32 {
       0i32
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn install_main(
     if arg.is_null() {
       break;
     }
-    let mut dest: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if opts & OPT_DIRECTORY as libc::c_int != 0 {
       dest = arg;
       /* GNU coreutils 6.9 does not set uid:gid
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn install_main(
           args[0] = b"strip\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
           args[1] = b"-p\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
           args[2] = dest;
-          args[3] = 0 as *mut libc::c_char;
+          args[3] = std::ptr::null_mut::<libc::c_char>();
           if spawn_and_wait(args.as_mut_ptr()) != 0 {
             bb_simple_perror_msg(b"strip\x00" as *const u8 as *const libc::c_char);
             ret = 1i32

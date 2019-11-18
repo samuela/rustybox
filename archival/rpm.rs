@@ -489,7 +489,7 @@ unsafe extern "C" fn rpm_getstr(
     ),
   ) as *mut rpm_index;
   if found.is_null() || itemindex as libc::c_uint >= (*found).count {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   if (*found).type_0 == 6i32 as libc::c_uint
     || (*found).type_0 == 9i32 as libc::c_uint
@@ -506,14 +506,14 @@ unsafe extern "C" fn rpm_getstr(
     }
     return tmpstr;
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn rpm_getstr0(mut tag: libc::c_int) -> *mut libc::c_char {
   return rpm_getstr(tag, 0i32);
 }
 unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::c_int {
   let mut found: *mut rpm_index = 0 as *mut rpm_index;
-  let mut tmpint: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmpint: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* gcc throws warnings here when sizeof(void*)!=sizeof(int) ...
    * it's ok to ignore it because tag won't be used as a pointer */
   found = bsearch(
@@ -602,7 +602,7 @@ unsafe extern "C" fn fileaction_dobackup(
 ) {
   let mut oldfile: stat = std::mem::zeroed();
   let mut stat_res: libc::c_int = 0;
-  let mut newname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if rpm_getint(1037i32, fileref) & 1i32 << 0i32 != 0 {
     /* Only need to backup config files */
     stat_res = lstat(filename, &mut oldfile);

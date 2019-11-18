@@ -576,8 +576,8 @@ unsafe extern "C" fn read_mode_db(
   mut mode: *const libc::c_char,
 ) -> libc::c_int {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut parser: *mut parser_t = config_open(fn_0);
   while config_read(
     parser,
@@ -922,8 +922,8 @@ pub unsafe extern "C" fn fbset_main(
   let mut options: libc::c_uint = 0i32 as libc::c_uint;
   let mut fbdev: *const libc::c_char = b"/dev/fb0\x00" as *const u8 as *const libc::c_char;
   let mut modefile: *const libc::c_char = b"/etc/fb.modes\x00" as *const u8 as *const libc::c_char;
-  let mut thisarg: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut mode: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut thisarg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut mode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   mode = mode;
   memset(
     &mut var_set as *mut fb_var_screeninfo as *mut libc::c_void,

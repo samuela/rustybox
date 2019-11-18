@@ -69,9 +69,9 @@ pub unsafe extern "C" fn ts_main(
     tv_usec: 0,
   };
   let mut opt: libc::c_uint = 0;
-  let mut frac: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fmt_dt2str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut frac: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fmt_dt2str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32(argv, b"^is\x00?1\x00" as *const u8 as *const libc::c_char);
   if opt != 0 {
     putenv(b"TZ=UTC0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);

@@ -142,10 +142,10 @@ pub const FLAG_TABLE_FORMAT: C2RustUnnamed_0 = 4;
 pub const FLAG_SHOW_KEY_ERRORS: C2RustUnnamed_0 = 2;
 pub const FLAG_SHOW_KEYS: C2RustUnnamed_0 = 1;
 unsafe extern "C" fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
-  let mut cptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut last_good: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut slash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut last_good: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut end_ch: libc::c_char = 0;
   end = strchrnul(name, '=' as i32);
   slash = strchrnul(name, '/' as i32);
@@ -217,9 +217,9 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
   let mut current_block: u64;
   let mut fd: libc::c_int = 0;
   let mut retval: libc::c_int = 0i32;
-  let mut cptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut outname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut value: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut outname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   value = value;
   let mut writing: bool = option_mask32 & FLAG_WRITE as libc::c_int as libc::c_uint != 0;
   outname = xstrdup(setting);
@@ -449,7 +449,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
     b";#=\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    let mut tp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     trim(token[1]);
     tp = trim(token[0]);
     sysctl_dots_to_slashes(token[0]);

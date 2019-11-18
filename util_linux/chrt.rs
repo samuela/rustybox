@@ -138,8 +138,8 @@ pub unsafe extern "C" fn chrt_main(
   let mut pid: pid_t = 0i32;
   let mut opt: libc::c_uint = 0;
   let mut sp: sched_param = sched_param { sched_priority: 0 };
-  let mut pid_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut priority: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pid_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut priority: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   priority = priority;
   let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
   let mut policy: libc::c_int = 2i32;
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn chrt_main(
            * for the second time (see goto below) */
           return 0i32;
         }
-        *argv = 0 as *mut libc::c_char;
+        *argv = std::ptr::null_mut::<libc::c_char>();
         current_new = current_new.offset(8);
         current_block = 14447253356787937536;
       }

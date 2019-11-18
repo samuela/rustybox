@@ -80,8 +80,8 @@ pub unsafe extern "C" fn watch_main(
   let mut opt: libc::c_uint = 0;
   let mut width: libc::c_uint = 0;
   let mut new_width: libc::c_uint = 0;
-  let mut header: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut cmd: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut header: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // maybe ENABLE_DESKTOP?
   // "+": stop at first non-option (procps 3.x only); -n NUM
   // at least one param
@@ -103,7 +103,7 @@ pub unsafe extern "C" fn watch_main(
   }
   period = parse_duration_str(period_str);
   width = -1i32 as libc::c_uint;
-  header = 0 as *mut libc::c_char;
+  header = std::ptr::null_mut::<libc::c_char>();
   loop {
     /* home; clear to the end of screen */
     printf(b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char);

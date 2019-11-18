@@ -102,9 +102,9 @@ unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c
   let mut in_0: *mut FILE = 0 as *mut FILE; /* for compiler */
   let mut out: *mut FILE = 0 as *mut FILE;
   let mut ch: libc::c_int = 0;
-  let mut temp_fn: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut temp_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   temp_fn = temp_fn;
-  let mut resolved_fn: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut resolved_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   resolved_fn = resolved_fn;
   in_0 = stdin;
   out = stdout;

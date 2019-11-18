@@ -173,7 +173,7 @@ pub unsafe extern "C" fn get_header_cpio(
       (*archive_handle).cpio__blocks =
         ((*archive_handle).offset + 511i32 as libc::c_long) as uoff_t >> 9i32
     } else {
-      (*file_header).link_target = 0 as *mut libc::c_char; /* paranoia: limit names to 8k chars */
+      (*file_header).link_target = std::ptr::null_mut::<libc::c_char>(); /* paranoia: limit names to 8k chars */
       if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
         (*file_header).size &= 0x1fffi32 as libc::c_long;
         (*file_header).link_target =
@@ -234,8 +234,8 @@ pub unsafe extern "C" fn get_header_cpio(
       (*archive_handle).offset += (*file_header).size;
       free((*file_header).link_target as *mut libc::c_void);
       free((*file_header).name as *mut libc::c_void);
-      (*file_header).link_target = 0 as *mut libc::c_char;
-      (*file_header).name = 0 as *mut libc::c_char;
+      (*file_header).link_target = std::ptr::null_mut::<libc::c_char>();
+      (*file_header).name = std::ptr::null_mut::<libc::c_char>();
       return 0i32 as libc::c_char;
     }
   }

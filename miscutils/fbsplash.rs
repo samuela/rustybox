@@ -584,7 +584,7 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
  */
 unsafe extern "C" fn fb_drawimage() {
   let mut theme_file: *mut FILE = 0 as *mut FILE;
-  let mut read_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut read_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pixline: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
@@ -753,7 +753,7 @@ pub unsafe extern "C" fn fbsplash_main(
   let mut fifo_filename: *const libc::c_char = 0 as *const libc::c_char;
   let mut fp: *mut FILE = 0 as *mut FILE;
   fp = fp;
-  let mut num_buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut num_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut num: libc::c_uint = 0;
   let mut bCursorOff: bool = false;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

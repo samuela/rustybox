@@ -73,12 +73,12 @@ pub unsafe extern "C" fn regcomp_or_errmsg(
   let mut ret: libc::c_int = regcomp(preg, regex, cflags);
   if ret != 0 {
     let mut errmsgsz: libc::c_int =
-      regerror(ret, preg, 0 as *mut libc::c_char, 0i32 as size_t) as libc::c_int;
+      regerror(ret, preg, std::ptr::null_mut::<libc::c_char>(), 0i32 as size_t) as libc::c_int;
     let mut errmsg: *mut libc::c_char = xmalloc(errmsgsz as size_t) as *mut libc::c_char;
     regerror(ret, preg, errmsg, errmsgsz as size_t);
     return errmsg;
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 #[no_mangle]
 pub unsafe extern "C" fn xregcomp(

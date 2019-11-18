@@ -98,7 +98,7 @@ pub unsafe extern "C" fn lsscsi_main(
       break;
     }
     let mut buf: [libc::c_char; 256] = [0; 256];
-    let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut bufsize: libc::c_uint = 0;
     let mut vendor: *const libc::c_char = 0 as *const libc::c_char;
     let mut type_str: *const libc::c_char = 0 as *const libc::c_char;

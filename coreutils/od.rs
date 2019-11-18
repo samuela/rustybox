@@ -596,7 +596,7 @@ unsafe extern "C" fn open_next_file() {
   {
     setbuf(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream,
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
     );
   };
 }
@@ -655,8 +655,8 @@ unsafe extern "C" fn decode_one_format(
   let mut size: libc::c_uint = 0;
   let mut fmt: output_format = SIGNED_DECIMAL;
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fmt_string: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fmt_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut print_function: Option<
     unsafe extern "C" fn(_: size_t, _: *const libc::c_char, _: *const libc::c_char) -> (),
   > = None;
@@ -1037,7 +1037,7 @@ unsafe extern "C" fn decode_format_string(mut s: *const libc::c_char) {
       fmt: SIGNED_DECIMAL,
       size: NO_SIZE,
       print_function: None,
-      fmt_string: 0 as *mut libc::c_char,
+      fmt_string: std::ptr::null_mut::<libc::c_char>(),
       hexl_mode_trailer: 0,
       field_width: 0,
     };
@@ -1535,7 +1535,7 @@ unsafe extern "C" fn parse_old_offset(
       init
     },
   ];
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut radix: libc::c_int = 0;
   /* Skip over any leading '+'. */
   if *s.offset(0) as libc::c_int == '+' as i32 {
@@ -1627,7 +1627,7 @@ pub unsafe extern "C" fn od_main(
     ];
     static mut doxn_address_pad_len_char: [u8; 3] =
       ['7' as i32 as u8, '7' as i32 as u8, '6' as i32 as u8];
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut pos: libc::c_int = 0;
     p = strchr(doxn.as_ptr(), *str_A.offset(0) as libc::c_int);
     if p.is_null() {
@@ -1732,7 +1732,7 @@ pub unsafe extern "C" fn od_main(
           /* od --traditional FILE OFFSET */
           n_bytes_to_skip = o2; /* >3 args */
           let ref mut fresh25 = *argv.offset(1);
-          *fresh25 = 0 as *mut libc::c_char
+          *fresh25 = std::ptr::null_mut::<libc::c_char>()
         } else {
           bb_error_msg_and_die(
             b"invalid second argument \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -1748,7 +1748,7 @@ pub unsafe extern "C" fn od_main(
           n_bytes_to_skip = o1;
           pseudo_start = o2;
           let ref mut fresh26 = *argv.offset(1);
-          *fresh26 = 0 as *mut libc::c_char
+          *fresh26 = std::ptr::null_mut::<libc::c_char>()
         } else {
           bb_simple_error_msg_and_die(
             b"the last two arguments must be offsets\x00" as *const u8 as *const libc::c_char,

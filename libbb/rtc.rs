@@ -186,7 +186,7 @@ pub unsafe extern "C" fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtc_tm2time(mut ptm: *mut tm, mut utc: libc::c_int) -> time_t {
-  let mut oldtz: *mut libc::c_char = 0 as *mut libc::c_char; /* for compiler */
+  let mut oldtz: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for compiler */
   oldtz = oldtz;
   let mut t: time_t = 0;
   if utc != 0 {

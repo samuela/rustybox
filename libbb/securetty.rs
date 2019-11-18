@@ -521,7 +521,7 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
     if strcmp(buf, short_tty) == 0i32 {
       break;
     }
-    buf = 0 as *mut libc::c_char
+    buf = std::ptr::null_mut::<libc::c_char>()
   }
   config_close(parser);
   /* buf != NULL here if config file was not found, empty

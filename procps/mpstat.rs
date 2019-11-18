@@ -784,7 +784,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   let mut fp: *mut FILE = 0 as *mut FILE;
   let mut irq_i: *mut stats_irq = 0 as *mut stats_irq;
   let mut ic: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buflen: libc::c_uint = 0;
   let mut cpu: libc::c_uint = 0;
   let mut irq: libc::c_uint = 0;
@@ -813,8 +813,8 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   /* Parse header and determine, which CPUs are online */
   iindex = 0i32;
   while !fgets_unlocked(buf, buflen as libc::c_int, fp).is_null() {
-    let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut next: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     next = buf;
     loop {
       cp = strstr(next, b"CPU\x00" as *const u8 as *const libc::c_char);
@@ -836,7 +836,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   {
     let mut len: libc::c_int = 0;
     let mut last_char: libc::c_char = 0;
-    let mut cp_0: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cp_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Skip over "IRQNAME:" */
     cp_0 = strchr(buf, ':' as i32);
     if cp_0.is_null() {
@@ -854,7 +854,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
     cp_0 = cp_0.offset(1);
     cpu = 0i32 as libc::c_uint;
     while cpu < iindex as libc::c_uint {
-      let mut next_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut next_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       ic = &mut *(*per_cpu_stats.offset(current as isize)).offset(
         ((*cpu_index.as_mut_ptr().offset(cpu as isize) * irqs_per_cpu) as libc::c_uint)
           .wrapping_add(irq) as isize,
@@ -1171,7 +1171,7 @@ unsafe extern "C" fn get_irqcpu_nr(
   mut max_irqs: libc::c_int,
 ) -> libc::c_int {
   let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linelen: libc::c_uint = 0;
   let mut irq: libc::c_uint = 0;
   fp = fopen_for_read(f);
@@ -1209,12 +1209,12 @@ pub unsafe extern "C" fn mpstat_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut opt_irq_fmt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_set_cpu: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_irq_fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_set_cpu: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   /* Dont buffer data if redirected to a pipe */
-  setbuf(stdout, 0 as *mut libc::c_char);
+  setbuf(stdout, std::ptr::null_mut::<libc::c_char>());
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
@@ -1297,7 +1297,7 @@ pub unsafe extern "C" fn mpstat_main(
     (*ptr_to_globals).options |= D_CPU as libc::c_int as libc::c_uint
   }
   if opt & OPT_SETCPU as libc::c_int != 0 {
-    let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     (*ptr_to_globals).p_option = 1i32 as smallint;
     t = strtok(opt_set_cpu, b",\x00" as *const u8 as *const libc::c_char);
     while !t.is_null() {
@@ -1321,7 +1321,7 @@ pub unsafe extern "C" fn mpstat_main(
         *fresh2 = (*fresh2 as libc::c_int | 1i32 << (n & 7i32 as libc::c_uint)) as libc::c_uchar
       }
       t = strtok(
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
         b",\x00" as *const u8 as *const libc::c_char,
       )
     }

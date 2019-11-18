@@ -1169,7 +1169,7 @@ pub unsafe extern "C" fn ipcs_main(
 ) -> libc::c_int {
   let mut format: libc::c_int = 0i32; // -t
   let mut opt: libc::c_uint = 0; // -c
-  let mut opt_i: *mut libc::c_char = 0 as *mut libc::c_char; // -p
+  let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -p
   opt = getopt32(
     argv,
     b"i:aqsmtcplu\x00" as *const u8 as *const libc::c_char,

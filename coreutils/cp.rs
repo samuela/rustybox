@@ -147,7 +147,7 @@ pub unsafe extern "C" fn cp_main(
   let mut d_flags: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut status: libc::c_int = 0;
-  let mut reflink: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut reflink: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   flags =
         getopt32long(argv,
                      b"^pdRfilsLHarPvuT\x00-2:l--s:s--l:Pd:rRd:Rd:apdR\x00" as
@@ -299,8 +299,8 @@ pub unsafe extern "C" fn cp_main(
       }
       _ => {
         if flags & OPT_parents as libc::c_int != 0 {
-          let mut dest_dup: *mut libc::c_char = 0 as *mut libc::c_char;
-          let mut dest_dir: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut dest_dup: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+          let mut dest_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           dest = concat_path_file(last, *argv);
           dest_dup = xstrdup(dest);
           dest_dir = dirname(dest_dup);

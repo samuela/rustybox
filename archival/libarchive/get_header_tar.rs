@@ -148,7 +148,7 @@ unsafe extern "C" fn getOctal(
   mut len: libc::c_int,
 ) -> libc::c_ulonglong {
   let mut v: libc::c_ulonglong = 0;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: leading spaces are allowed. Using strtoull to handle that.
    * The downside is that we accept e.g. "-123" too :(
    */
@@ -201,8 +201,8 @@ unsafe extern "C" fn process_pax_hdr(
   mut global: libc::c_int,
 ) {
   let mut blk_sz: libc::c_uint = sz.wrapping_add(511i32 as libc::c_uint) & !511i32 as libc::c_uint;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   buf = xmalloc(blk_sz.wrapping_add(1i32 as libc::c_uint) as size_t) as *mut libc::c_char;
   p = buf;
   xread(
@@ -214,8 +214,8 @@ unsafe extern "C" fn process_pax_hdr(
   /* prevent bb_strtou from running off the buffer */
   *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
   while sz != 0i32 as libc::c_uint {
-    let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut value: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_uint = 0;
     /* Every record has this format: "LEN NAME=VALUE\n" */
     len = bb_strtou(p, &mut end, 10i32);
@@ -286,7 +286,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
     prefix: [0; 155],
     padding: [0; 12],
   };
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tar_typeflag: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut sum_u: libc::c_int = 0;
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             tar_typeflag = '0' as i32
           }
           parse_names = (tar_typeflag >= '0' as i32 && tar_typeflag <= '7' as i32) as libc::c_int;
-          (*file_header).link_target = 0 as *mut libc::c_char;
+          (*file_header).link_target = std::ptr::null_mut::<libc::c_char>();
           if (*archive_handle).tar__linkname.is_null()
             && parse_names != 0
             && tar.linkname[0] as libc::c_int != 0
@@ -447,7 +447,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
             )
           } else {
-            0 as *mut libc::c_char
+            std::ptr::null_mut::<libc::c_char>()
           };
           (*file_header).tar__gname = if tar.gname[0] as libc::c_int != 0 {
             xstrndup(
@@ -455,7 +455,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
             )
           } else {
-            0 as *mut libc::c_char
+            std::ptr::null_mut::<libc::c_char>()
           };
           (*file_header).mtime = getOctal(
             tar.mtime.as_mut_ptr(),
@@ -479,7 +479,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               tar.mode.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as libc::c_int,
             )) as mode_t;
-          (*file_header).name = 0 as *mut libc::c_char;
+          (*file_header).name = std::ptr::null_mut::<libc::c_char>();
           if (*archive_handle).tar__longname.is_null() && parse_names != 0 {
             /* we trash mode[0] here, it's ok */
             //tar.name[sizeof(tar.name)] = '\0'; - gcc 4.3.0 would complain
@@ -670,11 +670,11 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
   }
   if !(*archive_handle).tar__longname.is_null() {
     (*file_header).name = (*archive_handle).tar__longname;
-    (*archive_handle).tar__longname = 0 as *mut libc::c_char
+    (*archive_handle).tar__longname = std::ptr::null_mut::<libc::c_char>()
   }
   if !(*archive_handle).tar__linkname.is_null() {
     (*file_header).link_target = (*archive_handle).tar__linkname;
-    (*archive_handle).tar__linkname = 0 as *mut libc::c_char
+    (*archive_handle).tar__linkname = std::ptr::null_mut::<libc::c_char>()
   }
   /* Everything up to and including last ".." component is stripped */
   overlapping_strcpy(

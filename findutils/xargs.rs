@@ -520,8 +520,8 @@ unsafe extern "C" fn process_stdin_with_replace(
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Free strings from last invocation, if any */
   i = 0i32; /* empty line */
   while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -617,9 +617,9 @@ pub unsafe extern "C" fn xargs_main(
 ) -> libc::c_int {
   let mut initial_idx: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  let mut max_args: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut max_chars: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut max_args: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut max_chars: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
   let mut n_max_chars: libc::c_int = 0;
   let mut n_max_arg: libc::c_int = 0;
@@ -633,7 +633,7 @@ pub unsafe extern "C" fn xargs_main(
         _: *mut libc::c_char,
       ) -> *mut libc::c_char,
   );
-  let mut opt_a: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_a: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str;
   *fresh9 = 0 as *const libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx = 0i32;
@@ -785,7 +785,7 @@ pub unsafe extern "C" fn xargs_main(
   }
   initial_idx = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx;
   loop {
-    let mut rem: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut rem: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx = initial_idx;
     rem = read_args.expect("non-null function pointer")(n_max_chars, n_max_arg, buf);
     store_param(0 as *mut libc::c_char);

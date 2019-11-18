@@ -160,8 +160,8 @@ pub unsafe extern "C" fn xxd_main(
 ) -> libc::c_int {
   let mut buf: [libc::c_char; 80] = [0; 80];
   let mut dumper: *mut dumper_t = 0 as *mut dumper_t;
-  let mut opt_l: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bytes: libc::c_uint = 2i32 as libc::c_uint;
   let mut cols: libc::c_uint = 0i32 as libc::c_uint;
   let mut opt: libc::c_uint = 0;

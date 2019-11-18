@@ -1002,9 +1002,9 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
   let mut current_block: u64;
   let mut argc: libc::c_int = 0;
   let mut token: [*mut libc::c_char; 26] = [0 as *mut libc::c_char; 26];
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut hostdelim: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut hostdelim: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sep: *mut servtab_t = 0 as *mut servtab_t;
   let mut nsep: *mut servtab_t = 0 as *mut servtab_t;
   loop {
@@ -1074,7 +1074,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
         (*sep).se_family = 1i32 as family_t;
         current_block = 11626999923138678822;
       } else {
-        let mut six: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut six: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         (*sep).se_family = 2i32 as family_t;
         six = last_char_is(arg, '6' as i32);
         if !six.is_null() {
@@ -2274,7 +2274,7 @@ unsafe extern "C" fn init_ring() {
 /* Character generator. MMU arches only. */
 /* ARGSUSED */
 unsafe extern "C" fn chargen_stream(mut s: libc::c_int, mut _sep: *mut servtab_t) {
-  let mut rs: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut rs: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   let mut text: [libc::c_char; 74] = [0; 74];
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))

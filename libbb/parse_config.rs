@@ -129,7 +129,7 @@ pub unsafe extern "C" fn config_close(mut parser: *mut parser_t) {
 unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> libc::c_int {
   let mut len: ssize_t = 0;
   let mut nlen: ssize_t = 0;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   len = getline(&mut (*parser).line, &mut (*parser).line_alloc, (*parser).fp);
   if len <= 0 {
     return len as libc::c_int;
@@ -623,8 +623,8 @@ pub unsafe extern "C" fn config_read(
   mut flags: libc::c_uint,
   mut delims: *const libc::c_char,
 ) -> libc::c_int {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ntokens: libc::c_int = 0;
   let mut mintokens: libc::c_int = 0;
   let mut t: libc::c_int = 0;

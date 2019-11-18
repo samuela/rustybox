@@ -448,7 +448,7 @@ find the next newline in a buffer; return inclusive size of that "line",
 or the entire buffer size, so the caller knows how much to then write().
 Not distinguishing \n vs \r\n for the nonce; it just works as is... */
 unsafe extern "C" fn findline(mut buf: *mut libc::c_char, mut siz: libc::c_uint) -> libc::c_uint {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut x: libc::c_int = 0;
   if buf.is_null() {
     /* various sanity checks... */
@@ -533,7 +533,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
   with it all unless we wanted to see it, although listening quietly on a
   random unknown port is probably not very useful without "netstat". */
   if (*ptr_to_globals).o_verbose != 0 {
-    let mut addr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     getsockname(
       netfd as libc::c_int,
       __SOCKADDR_ARG {
@@ -709,9 +709,9 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     );
   }
   if (*ptr_to_globals).o_verbose != 0 {
-    let mut lcladdr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut remaddr_0: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut remhostname: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut lcladdr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut remaddr_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut remhostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* If we can, look for any IP options.  Useful for testing the receiving end of
     such things, and is a good exercise in dealing with it.  We do this before
     the connect message, to ensure that the connect msg is uniformly the LAST
@@ -941,10 +941,10 @@ unsafe extern "C" fn oprint(
 handle stdin/stdout/network I/O.  Bwahaha!! -- the i/o loop from hell.
 In this instance, return what might become our exit status. */
 unsafe extern "C" fn readwrite() -> libc::c_int {
-  let mut zp: *mut libc::c_char = 0 as *mut libc::c_char; /* gcc */
+  let mut zp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* gcc */
   /* stdin buf ptr */
   zp = zp; /* net-in buf ptr */
-  let mut np: *mut libc::c_char = 0 as *mut libc::c_char; /* net-read retry counter */
+  let mut np: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* net-read retry counter */
   np = np; /* pause *before* sending stuff, too */
   let mut rzleft: libc::c_uint = 0;
   let mut rnleft: libc::c_uint = 0;
@@ -1143,11 +1143,11 @@ pub unsafe extern "C" fn nc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
-  let mut str_p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_i: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_o: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut themdotted: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut themdotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   themdotted = themdotted;
   let mut proggie: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut x: libc::c_int = 0;
@@ -1175,7 +1175,7 @@ pub unsafe extern "C" fn nc_main(
       break;
     }
     if strcmp(*proggie, b"-e\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      *proggie = 0 as *mut libc::c_char;
+      *proggie = std::ptr::null_mut::<libc::c_char>();
       proggie = proggie.offset(1);
       current_block = 10887457417680102994;
       break;
@@ -1195,7 +1195,7 @@ pub unsafe extern "C" fn nc_main(
       *optpos = '\u{0}' as i32 as libc::c_char;
       proggie = proggie.offset(1);
       (*ptr_to_globals).proggie0saved = *proggie;
-      *proggie = 0 as *mut libc::c_char;
+      *proggie = std::ptr::null_mut::<libc::c_char>();
       current_block = 10887457417680102994;
       break;
     }

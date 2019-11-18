@@ -1324,7 +1324,7 @@ unsafe extern "C" fn check_zones2(mut i: libc::c_uint) {
 unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_uint) {
   let mut inode: *mut minix1_inode = 0 as *mut minix1_inode;
   let mut ino: libc::c_int = 0;
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut block: libc::c_int = 0;
   block = map_block(
     dir,
@@ -1411,7 +1411,7 @@ unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_
 unsafe extern "C" fn check_file2(mut dir: *mut minix2_inode, mut offset: libc::c_uint) {
   let mut inode: *mut minix2_inode = 0 as *mut minix2_inode;
   let mut ino: libc::c_int = 0;
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut block: libc::c_int = 0;
   block = map_block2(
     dir,

@@ -216,7 +216,7 @@ pub unsafe extern "C" fn script_main(
   let mut shell: *const libc::c_char = 0 as *const libc::c_char;
   let mut shell_opt: [libc::c_char; 3] =
     *::std::mem::transmute::<&[u8; 3], &mut [libc::c_char; 3]>(b"-i\x00");
-  let mut shell_arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut shell_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   static mut script_longopts: [libc::c_char; 45] = [
     97, 112, 112, 101, 110, 100, 0, 0, 97, 99, 111, 109, 109, 97, 110, 100, 0, 1, 99, 102, 108,
     117, 115, 104, 0, 0, 102, 113, 117, 105, 101, 116, 0, 0, 113, 116, 105, 109, 105, 110, 103, 0,

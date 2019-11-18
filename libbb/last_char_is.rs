@@ -146,5 +146,5 @@ pub unsafe extern "C" fn last_char_is(
       return s as *mut libc::c_char;
     }
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }

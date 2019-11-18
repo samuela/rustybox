@@ -746,14 +746,14 @@ unsafe extern "C" fn die_must_be_on_off(mut msg: *const libc::c_char) -> ! {
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut dev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut mask: u32 = 0i32 as u32;
   let mut flags: u32 = 0i32 as u32;
   let mut qlen: libc::c_int = -1i32;
   let mut mtu: libc::c_int = -1i32;
   let mut master: libc::c_int = -1i32;
-  let mut newaddr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut newbrd: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut newaddr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut newbrd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ifr0: ifreq = ifreq {
     ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
     ifr_ifru: C2RustUnnamed_0 {
@@ -772,7 +772,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       },
     },
   };
-  let mut newname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut htype: libc::c_int = 0;
   let mut halen: libc::c_int = 0;
   /* If you add stuff here, update iplink_full_usage */
@@ -1108,11 +1108,11 @@ unsafe extern "C" fn do_add_or_delete(
     buf: [0; 1024],
   };
   let mut arg: smalluint = 0;
-  let mut name_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut link_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut type_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dev_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut address_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut link_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut type_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dev_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut address_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     &mut req as *mut C2RustUnnamed_10 as *mut libc::c_void,
     0i32,

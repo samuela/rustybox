@@ -109,9 +109,9 @@ pub unsafe extern "C" fn deluser_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* User or group name */
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Username (non-NULL only in "delgroup USER GROUP" case) */
-  let mut member: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut member: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Name of passwd or group file */
   let mut pfile: *const libc::c_char = 0 as *const libc::c_char;
   /* Name of shadow or gshadow file */
@@ -134,7 +134,7 @@ pub unsafe extern "C" fn deluser_main(
     bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   name = *argv.offset(1);
-  member = 0 as *mut libc::c_char;
+  member = std::ptr::null_mut::<libc::c_char>();
   let mut gr: *mut group = 0 as *mut group;
   let mut current_block_45: u64;
   match argc {

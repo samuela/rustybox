@@ -31,7 +31,7 @@ use libc::mode_t;
 #[no_mangle]
 pub unsafe extern "C" fn getopt_mk_fifo_nod(mut argv: *mut *mut libc::c_char) -> mode_t {
   let mut mode: mode_t = 0o666i32 as mode_t;
-  let mut smode: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   opt = getopt32(
     argv,

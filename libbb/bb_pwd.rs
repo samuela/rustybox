@@ -130,7 +130,7 @@ pub unsafe extern "C" fn uid2uname(mut uid: uid_t) -> *mut libc::c_char {
   return if !pw.is_null() {
     (*pw).pw_name
   } else {
-    0 as *mut libc::c_char
+    std::ptr::null_mut::<libc::c_char>()
   };
 }
 #[no_mangle]
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn gid2group(mut gid: gid_t) -> *mut libc::c_char {
   return if !gr.is_null() {
     (*gr).gr_name
   } else {
-    0 as *mut libc::c_char
+    std::ptr::null_mut::<libc::c_char>()
   };
 }
 #[no_mangle]

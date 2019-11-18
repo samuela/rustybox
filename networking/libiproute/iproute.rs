@@ -1181,7 +1181,7 @@ unsafe extern "C" fn iproute_modify(
   let mut mxbuf: [libc::c_char; 256] = [0; 256];
   let mut mxrta: *mut rtattr = mxbuf.as_mut_ptr() as *mut libc::c_void as *mut rtattr;
   let mut mxlock: libc::c_uint = 0i32 as libc::c_uint;
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ok: smalluint = 0i32 as smalluint;
   let mut scope_ok: smalluint = 0i32 as smalluint;
   let mut arg: libc::c_int = 0;
@@ -1615,8 +1615,8 @@ unsafe extern "C" fn iproute_list_or_flush(
     seq: 0,
     dump: 0,
   };
-  let mut id: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut od: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut id: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut od: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   static mut keywords: [libc::c_char; 78] = [
     112, 114, 111, 116, 111, 99, 111, 108, 0, 100, 101, 118, 0, 111, 105, 102, 0, 105, 105, 102, 0,
     118, 105, 97, 0, 116, 97, 98, 108, 101, 0, 99, 97, 99, 104, 101, 0, 102, 114, 111, 109, 0, 116,
@@ -1873,8 +1873,8 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
     },
     buf: [0; 1024],
   };
-  let mut idev: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut odev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut idev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut odev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut connected: bool = 0i32 != 0;
   let mut from_ok: bool = 0i32 != 0;
   static mut options: [libc::c_char; 38] = [

@@ -196,7 +196,7 @@ unsafe extern "C" fn run_login_script(mut pw: *mut passwd, mut full_tty: *mut li
   let mut t_argv: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   t_argv[0] = getenv(b"LOGIN_PRE_SUID_SCRIPT\x00" as *const u8 as *const libc::c_char);
   if !t_argv[0].is_null() {
-    t_argv[1] = 0 as *mut libc::c_char;
+    t_argv[1] = std::ptr::null_mut::<libc::c_char>();
     xsetenv(
       b"LOGIN_TTY\x00" as *const u8 as *const libc::c_char,
       full_tty,
@@ -304,17 +304,17 @@ pub unsafe extern "C" fn login_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut fromhost: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fromhost: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut username: [libc::c_char; 64] = [0; 64];
   let mut run_by_root: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut count: libc::c_int = 0i32;
   let mut pw: *mut passwd = 0 as *mut passwd;
-  let mut opt_host: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_user: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt_user = opt_user;
-  let mut full_tty: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut short_tty: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut full_tty: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut short_tty: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* More of suid paranoia if called by non-root: */
   /* Clear dangerous stuff, set PATH */
   run_by_root = (sanitize_env_if_suid() == 0) as libc::c_int;
@@ -473,7 +473,7 @@ pub unsafe extern "C" fn login_main(
     if run_by_root != 0 {
       opt_host
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     },
   );
   /* We trust environment only if we run by root */

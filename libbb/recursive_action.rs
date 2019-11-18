@@ -321,7 +321,7 @@ pub unsafe extern "C" fn recursive_action(
             if next.is_null() {
               break;
             }
-            let mut nextFile: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut nextFile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             let mut s: libc::c_int = 0;
             nextFile = concat_subpath_file(fileName, (*next).d_name.as_mut_ptr());
             if nextFile.is_null() {

@@ -98,7 +98,7 @@ pub unsafe extern "C" fn bb_strtoull(
   mut base: libc::c_int,
 ) -> libc::c_ulonglong {
   let mut v: libc::c_ulonglong = 0;
-  let mut endptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if endp.is_null() {
     endp = &mut endptr
   }
@@ -120,7 +120,7 @@ pub unsafe extern "C" fn bb_strtoll(
   mut base: libc::c_int,
 ) -> libc::c_longlong {
   let mut v: libc::c_ulonglong = 0;
-  let mut endptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut first: libc::c_char = 0;
   if endp.is_null() {
     endp = &mut endptr
@@ -148,7 +148,7 @@ pub unsafe extern "C" fn bb_strtou(
   mut base: libc::c_int,
 ) -> libc::c_uint {
   let mut v: libc::c_ulong = 0;
-  let mut endptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if endp.is_null() {
     endp = &mut endptr
   }
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn bb_strtoi(
   mut base: libc::c_int,
 ) -> libc::c_int {
   let mut v: libc::c_long = 0;
-  let mut endptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut first: libc::c_char = 0;
   if endp.is_null() {
     endp = &mut endptr

@@ -246,7 +246,7 @@ pub unsafe extern "C" fn makedevs_main(
     let mut start: libc::c_uint = 0i32 as libc::c_uint;
     let mut user: [libc::c_char; 41] = [0; 41];
     let mut group: [libc::c_char; 41] = [0; 41];
-    let mut full_name: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut full_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut name_len: libc::c_int = 0;
     let mut uid: uid_t = 0;
     let mut gid: gid_t = 0;

@@ -332,7 +332,7 @@ unsafe extern "C" fn do_ioctl_get_ifname(mut idx: libc::c_int) -> *mut libc::c_c
   );
   close(fd);
   return if err != 0 {
-    0 as *mut libc::c_char
+    std::ptr::null_mut::<libc::c_char>()
   } else {
     xstrndup(
       ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),
@@ -1543,7 +1543,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
   )
   .is_null()
   {
-    let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /*buf[sizeof(buf) - 1] = 0; - fgets is safe anyway */
     ptr = strchr(buf.as_mut_ptr(), ':' as i32);
     if ptr.is_null() || {

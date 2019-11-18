@@ -757,7 +757,7 @@ unsafe extern "C" fn string_option_to_env(
         bb_simple_error_msg(
           b"option data exceeds option length\x00" as *const u8 as *const libc::c_char,
         );
-        return 0 as *mut libc::c_char;
+        return std::ptr::null_mut::<libc::c_char>();
       }
       return xasprintf(
         b"%s=%.*s\x00" as *const u8 as *const libc::c_char,
@@ -771,7 +771,7 @@ unsafe extern "C" fn string_option_to_env(
         b"can\'t find option name for 0x%x, skipping\x00" as *const u8 as *const libc::c_char,
         *option.offset(1) as libc::c_int,
       );
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
   };
 }
@@ -888,7 +888,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
         current_block_28 = 5141539773904409130;
       }
       23 => {
-        let mut dlist: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut dlist: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         /* Make sure payload-size is a multiple of 16 */
         if *option.offset(3) as libc::c_int & 0xfi32 != 0i32 {
           current_block_28 = 5141539773904409130;
@@ -920,7 +920,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
         }
       }
       24 => {
-        let mut dlist_0: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut dlist_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         dlist_0 = dname_dec(
           option.offset(4),
           (*option.offset(2) as libc::c_int) << 8i32 | *option.offset(3) as libc::c_int,
@@ -935,7 +935,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
         }
       }
       39 => {
-        let mut dlist_1: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut dlist_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if *option.offset(3) as libc::c_int == 0i32 {
           current_block_28 = 5141539773904409130;
         } else {
@@ -1083,7 +1083,7 @@ unsafe extern "C" fn d6_run_script(
     as *mut client_data_t))
     .script as *mut libc::c_char;
   argv[1] = name as *mut libc::c_char;
-  argv[2] = 0 as *mut libc::c_char;
+  argv[2] = std::ptr::null_mut::<libc::c_char>();
   spawn_and_wait(argv.as_mut_ptr());
   curr = envp;
   while !(*curr).is_null() {

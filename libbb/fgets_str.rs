@@ -30,7 +30,7 @@ unsafe extern "C" fn xmalloc_fgets_internal(
   mut chop_off: libc::c_int,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_char {
-  let mut linebuf: *mut libc::c_char = 0 as *mut libc::c_char; /* NULL */
+  let mut linebuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* NULL */
   let term_length: libc::c_int = strlen(terminating_string) as libc::c_int;
   let mut end_string_offset: libc::c_int = 0;
   let mut linebufsz: libc::c_int = 0i32;

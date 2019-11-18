@@ -46,17 +46,17 @@ pub type C2RustUnnamed = libc::c_uint;
 unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::c_char {
   let mut dir: *mut DIR = 0 as *mut DIR;
   let mut entry: *mut dirent = 0 as *mut dirent;
-  let mut retpath: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut retpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   let mut rem: libc::c_int = 0;
   len = strlen((*ap).devpath.as_mut_ptr()) as libc::c_int;
   rem = DEVNAME_MAX as libc::c_int - 2i32 - len;
   if rem <= 0i32 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   dir = opendir((*ap).devpath.as_mut_ptr());
   if dir.is_null() {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   let fresh0 = len;
   len = len + 1;
@@ -216,7 +216,7 @@ pub unsafe extern "C" fn find_block_device(mut path: *const libc::c_char) -> *mu
     devpath: [0; 256],
   };
   if stat(path, &mut a.st) != 0i32 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   a.dev = if a.st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint {
     a.st.st_rdev

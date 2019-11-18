@@ -83,7 +83,7 @@ pub unsafe extern "C" fn rev_main(
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut bufsize: size_t = 0;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {

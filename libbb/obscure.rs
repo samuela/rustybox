@@ -112,7 +112,7 @@ unsafe extern "C" fn obscure_msg(
   let mut c: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* size */
   if new_p.is_null() || {
     length = strlen(new_p) as libc::c_uint;

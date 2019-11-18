@@ -84,7 +84,7 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
     105, 99, 97, 115, 116, 0, 116, 104, 114, 111, 119, 0, 0,
   ];
   let key: smalluint = (index_in_substrings(keywords.as_ptr(), arg) + 1i32) as smalluint;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut res: libc::c_ulong = 0;
   if key as libc::c_int == ARG_local as libc::c_int {
     res = RTN_LOCAL as libc::c_int as libc::c_ulong

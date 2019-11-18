@@ -119,7 +119,7 @@ pub unsafe extern "C" fn get_unsigned(
   mut errmsg: *const libc::c_char,
 ) -> libc::c_uint {
   let mut res: libc::c_ulong = 0;
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0i32);
     //FIXME: "" will be accepted too, is it correct?!
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn get_u32(
   mut errmsg: *const libc::c_char,
 ) -> u32 {
   let mut res: libc::c_ulong = 0;
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0i32);
     //FIXME: "" will be accepted too, is it correct?!
@@ -158,7 +158,7 @@ pub unsafe extern "C" fn get_u16(
   mut errmsg: *const libc::c_char,
 ) -> u16 {
   let mut res: libc::c_ulong = 0;
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0i32);
     //FIXME: "" will be accepted too, is it correct?!
@@ -242,7 +242,7 @@ unsafe extern "C" fn get_prefix_1(
   mut family: libc::c_int,
 ) {
   let mut current_block: u64;
-  let mut slash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     dst as *mut libc::c_void,
     0i32,

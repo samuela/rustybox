@@ -256,7 +256,7 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
   .is_null()
   {
     let mut i: libc::c_int = 0;
-    let mut ibuf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut ibuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Does the line start with "cpu "? */
     if starts_with_cpu(buf.as_mut_ptr()) == 0 || buf[3] as libc::c_int != ' ' as i32 {
       continue;

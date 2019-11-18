@@ -453,7 +453,7 @@ pub unsafe extern "C" fn concat_path_file(
   mut path: *const libc::c_char,
   mut filename: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut lc: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut lc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if path.is_null() {
     path = b"\x00" as *const u8 as *const libc::c_char
   }

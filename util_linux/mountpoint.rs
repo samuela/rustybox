@@ -65,7 +65,7 @@ pub unsafe extern "C" fn mountpoint_main(
 ) -> libc::c_int {
   let mut st: stat = std::mem::zeroed(); /* make perror_msg work as error_msg */
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rc: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   opt = getopt32(argv, b"^qdxn\x00=1\x00" as *const u8 as *const libc::c_char) as libc::c_int;

@@ -597,7 +597,7 @@ unsafe extern "C" fn print_it(
       .wrapping_add(2i32 as libc::c_ulong)
       .wrapping_add(1i32 as libc::c_ulong),
   ) as *mut libc::c_char;
-  let mut b: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   b = format;
   while !b.is_null() {
     /* Each iteration finds next %spec,
@@ -626,7 +626,7 @@ unsafe extern "C" fn print_it(
       let mut current_block_11: u64;
       match *p as libc::c_int {
         0 => {
-          b = 0 as *mut libc::c_char;
+          b = std::ptr::null_mut::<libc::c_char>();
           current_block_11 = 14977033353768631501;
         }
         37 => {
@@ -752,7 +752,7 @@ pub unsafe extern "C" fn stat_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut format: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut format: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut ok: libc::c_int = 0;
   let mut statfunc: statfunc_ptr =

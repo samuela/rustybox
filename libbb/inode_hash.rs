@@ -52,7 +52,7 @@ static mut ino_dev_hashtable: *mut *mut ino_dev_hashtable_bucket_t =
 pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *mut libc::c_char {
   let mut bucket: *mut ino_dev_hashtable_bucket_t = 0 as *mut ino_dev_hashtable_bucket_t;
   if ino_dev_hashtable.is_null() {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   bucket =
     *ino_dev_hashtable.offset(((*statbuf).st_ino as libc::c_uint).wrapping_rem(311u32) as isize);
@@ -67,7 +67,7 @@ pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *m
     }
     bucket = (*bucket).next
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 
 /*

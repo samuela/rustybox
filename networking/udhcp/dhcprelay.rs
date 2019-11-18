@@ -279,7 +279,7 @@ unsafe extern "C" fn make_iface_list(
   mut client_and_server_ifaces: *mut *mut libc::c_char,
   mut client_number: *mut libc::c_int,
 ) -> *mut *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut iface_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut i: libc::c_int = 0;
   let mut cn: libc::c_int = 0;

@@ -205,7 +205,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
   let mut current_block_47: u64;
   loop {
     let mut name: *const libc::c_char = 0 as *const libc::c_char;
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut st: stat = std::mem::zeroed();
     line = if option_mask32 & OPT_NUL_TERMINATED as libc::c_int as libc::c_uint != 0 {
       bb_get_chunk_from_file(stdin, 0 as *mut size_t)
@@ -396,8 +396,8 @@ pub unsafe extern "C" fn cpio_main(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut cpio_filename: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut cpio_owner: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cpio_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut cpio_owner: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cpio_fmt: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut opt: libc::c_uint = 0;
   let mut long_opts: *const libc::c_char =

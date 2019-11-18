@@ -117,12 +117,12 @@ unsafe extern "C" fn read_stduu(
   mut dst_stream: *mut FILE,
   mut _flags: libc::c_int,
 ) {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     let mut encoded_len: libc::c_int = 0;
     let mut str_len: libc::c_int = 0;
-    let mut line_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut line_len: size_t = 0;
     line_len = (64i32 * 1024i32) as size_t;
     line = xmalloc_fgets_str_len(
@@ -219,8 +219,8 @@ pub unsafe extern "C" fn uudecode_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut src_stream: *mut FILE = 0 as *mut FILE;
-  let mut outname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut outname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   getopt32(
     argv,
     b"^o:\x00?1\x00" as *const u8 as *const libc::c_char,
@@ -242,7 +242,7 @@ pub unsafe extern "C" fn uudecode_main(
     let mut decode_fn_ptr: Option<
       unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
     > = None;
-    let mut line_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut dst_stream: *mut FILE = 0 as *mut FILE;
     let mut mode: libc::c_int = 0;
     if !is_prefixed_with(

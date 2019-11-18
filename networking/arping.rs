@@ -817,9 +817,9 @@ pub unsafe extern "C" fn arping_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut device: *const libc::c_char = b"eth0\x00" as *const u8 as *const libc::c_char;
-  let mut source: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut target: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut err_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut err_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh33 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -831,7 +831,7 @@ pub unsafe extern "C" fn arping_main(
   // drop suid root privileges here:
   //xsetuid(getuid());
   let mut opt: libc::c_uint = 0;
-  let mut str_timeout: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_timeout: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32(
     argv,
     b"^UDAqfbc:+w:I:s:\x00=1:Df:AU\x00" as *const u8 as *const libc::c_char,

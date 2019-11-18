@@ -165,11 +165,11 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
   let mut file_header: *mut file_header_t = (*archive_handle).file_header;
   let mut dst_fd: libc::c_int = 0;
   let mut res: libc::c_int = 0;
-  let mut hard_link: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dst_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hard_link: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dst_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Hard links are encoded as regular files of size 0
    * with a nonempty link field */
-  hard_link = 0 as *mut libc::c_char;
+  hard_link = std::ptr::null_mut::<libc::c_char>();
   if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && (*file_header).size == 0
   {
@@ -313,7 +313,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
             match (*file_header).mode & 0o170000i32 as libc::c_uint {
               32768 => {
                 /* Regular file */
-                let mut dst_nameN: *mut libc::c_char = 0 as *mut libc::c_char;
+                let mut dst_nameN: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                 let mut flags: libc::c_int = 0o1i32 | 0o100i32 | 0o200i32;
                 if (*archive_handle).ah_flags & (1i32 << 7i32) as libc::c_uint != 0 {
                   flags = 0o1i32 | 0o100i32 | 0o1000i32

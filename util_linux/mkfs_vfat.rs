@@ -261,8 +261,8 @@ pub unsafe extern "C" fn mkfs_vfat_main(
 ) -> libc::c_int {
   let mut st: stat = std::mem::zeroed();
   let mut volume_label: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut device_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut device_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut volume_size_bytes: uoff_t = 0;
   let mut volume_size_sect: uoff_t = 0;
   let mut total_clust: u32 = 0;

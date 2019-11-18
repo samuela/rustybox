@@ -282,9 +282,9 @@ pub unsafe extern "C" fn display_uuid_cache(mut scan_devices: libc::c_int) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> libc::c_int {
-  let mut uuid: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut uuid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   uuid = uuid;
-  let mut label: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut label: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   label = label;
   let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
   type_0 = type_0;
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn get_devname_from_label(
     }
     uc = (*uc).next
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 #[no_mangle]
 pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) -> *mut libc::c_char {
@@ -327,7 +327,7 @@ pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) ->
     }
     uc = (*uc).next
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 /*
  * volume_id - reads filesystem label and uuid

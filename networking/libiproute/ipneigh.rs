@@ -708,7 +708,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     };
     init
   };
-  let mut filter_dev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut filter_dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut state_given: libc::c_int = 0i32;
   let mut arg: libc::c_int = 0;
   ipneigh_reset_filter();

@@ -254,7 +254,7 @@ pub unsafe extern "C" fn ipcalc_main(
   /* struct in_addr { in_addr_t s_addr; }  and  in_addr_t
    * (which in turn is just a typedef to u32)
    * are essentially the same type. A few macros for less verbosity: */
-  let mut ipstr: *mut libc::c_char = 0 as *mut libc::c_char; /* suppress error_msg() output */
+  let mut ipstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* suppress error_msg() output */
   opt = getopt32long(
     argv,
     b"^mbnphs\x00-1:?2\x00" as *const u8 as *const libc::c_char,
@@ -274,7 +274,7 @@ pub unsafe extern "C" fn ipcalc_main(
   }
   ipstr = *argv.offset(0);
   let mut netprefix: libc::c_ulong = 0i32 as libc::c_ulong;
-  let mut prefixstr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut prefixstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   prefixstr = ipstr;
   while *prefixstr != 0 {
     if *prefixstr as libc::c_int == '/' as i32 {

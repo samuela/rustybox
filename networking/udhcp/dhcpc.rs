@@ -739,8 +739,8 @@ unsafe extern "C" fn xmalloc_optname_optval(
   let mut len: libc::c_int = 0;
   let mut type_0: libc::c_int = 0;
   let mut optlen: libc::c_int = 0;
-  let mut dest: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ret: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* option points to OPT_DATA, need to go back to get OPT_LEN */
   len = *option.offset((-2i32 + 1i32) as isize) as libc::c_int; /* while */
   type_0 = (*optflag).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int; /* switch */
@@ -1325,7 +1325,7 @@ unsafe extern "C" fn udhcp_run_script(mut packet: *mut dhcp_packet, mut name: *c
     as *mut client_data_t))
     .script as *mut libc::c_char;
   argv[1] = name as *mut libc::c_char;
-  argv[2] = 0 as *mut libc::c_char;
+  argv[2] = std::ptr::null_mut::<libc::c_char>();
   spawn_and_wait(argv.as_mut_ptr());
   curr = envp;
   while !(*curr).is_null() {

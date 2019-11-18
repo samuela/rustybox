@@ -244,7 +244,7 @@ pub const ARG_delif: C2RustUnnamed_2 = 3;
 //			hairpin BRIDGE IFACE on|off	Set hairpin on/off
 unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::c_uint {
   let mut dd: libc::c_double = 0.;
-  let mut endptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   dd = strtod(time_str, &mut endptr);
   if endptr == time_str as *mut libc::c_char || dd < 0i32 as libc::c_double {
     bb_error_msg_and_die(
@@ -295,7 +295,7 @@ unsafe extern "C" fn show_bridge(
   let mut tabs: libc::c_int = 0;
   let mut ifaces: *mut DIR = 0 as *mut DIR;
   let mut ent: *mut dirent = 0 as *mut dirent;
-  let mut sfx: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
     pathbuf.as_mut_ptr(),
     b"%.16s/bridge/\x00" as *const u8 as *const libc::c_char,
@@ -528,7 +528,7 @@ unsafe extern "C" fn printf_xstrtou(mut fmt: *const libc::c_char) {
 }
 unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 52] = [0; 52];
-  let mut sfx: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
     pathbuf.as_mut_ptr(),
     b"%.16s/brport/\x00" as *const u8 as *const libc::c_char,
@@ -628,7 +628,7 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
 }
 unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 54] = [0; 54];
-  let mut sfx: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
     pathbuf.as_mut_ptr(),
     b"%.16s/bridge/\x00" as *const u8 as *const libc::c_char,
@@ -757,7 +757,7 @@ pub unsafe extern "C" fn brctl_main(
     119, 0, 0,
   ];
   let mut key: libc::c_int = 0;
-  let mut br: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut br: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   argv = argv.offset(1);
   if (*argv).is_null() {
     /* bare "brctl" shows --help */

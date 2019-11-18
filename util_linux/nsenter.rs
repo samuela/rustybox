@@ -242,7 +242,7 @@ pub unsafe extern "C" fn nsenter_main(
   let mut root_dir_str: *const libc::c_char = 0 as *const libc::c_char;
   let mut wd_str: *const libc::c_char = 0 as *const libc::c_char;
   let mut ns_ctx_list: [namespace_ctx; 6] = [namespace_ctx {
-    path: 0 as *mut libc::c_char,
+    path: std::ptr::null_mut::<libc::c_char>(),
     fd: 0,
   }; 6];
   let mut setgroups_failed: libc::c_int = 0;

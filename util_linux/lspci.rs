@@ -143,8 +143,8 @@ unsafe extern "C" fn fileAction(
 ) -> libc::c_int {
   let mut parser: *mut parser_t = 0 as *mut parser_t;
   let mut tokens: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
-  let mut pci_slot_name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut driver: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pci_slot_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut driver: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pci_class: libc::c_int = 0i32;
   let mut pci_vid: libc::c_int = 0i32;
   let mut pci_did: libc::c_int = 0i32;

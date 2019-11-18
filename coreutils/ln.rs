@@ -46,9 +46,9 @@ pub unsafe extern "C" fn ln_main(
 ) -> libc::c_int {
   let mut status: libc::c_int = 0i32;
   let mut opts: libc::c_int = 0;
-  let mut last: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut src_name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut src: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut src_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut suffix: *mut libc::c_char =
     b"~\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   let mut statbuf: stat = std::mem::zeroed();
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn ln_main(
   }
   let mut current_block_45: u64;
   loop {
-    src_name = 0 as *mut libc::c_char;
+    src_name = std::ptr::null_mut::<libc::c_char>();
     src = last;
     if is_directory(
       src,
@@ -129,7 +129,7 @@ pub unsafe extern "C" fn ln_main(
     match current_block_45 {
       5689316957504528238 => {
         if opts & 1i32 << 3i32 != 0 {
-          let mut backup: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut backup: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           backup = xasprintf(b"%s%s\x00" as *const u8 as *const libc::c_char, src, suffix);
           if rename(src, backup) < 0i32 && *bb_errno != 2i32 {
             bb_simple_perror_msg(src);

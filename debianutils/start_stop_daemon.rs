@@ -169,8 +169,8 @@ pub const CTX_STOP: C2RustUnnamed_1 = 1;
 unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
   let mut bytes: ssize_t = 0;
   let mut buf: [libc::c_char; 29] = [0; 29];
-  let mut procname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut exelink: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut procname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut exelink: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_0: libc::c_int = 0;
   procname = buf
     .as_mut_ptr()
@@ -210,8 +210,8 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
 unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
   /* /proc/PID/stat is "PID (comm_15_bytes_max) ..." */
   let mut buf: [libc::c_char; 32] = [0; 32]; /* should be enough */
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char; /* paranoia */
-  let mut pe: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* paranoia */
+  let mut pe: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sprintf(
     buf.as_mut_ptr(),
     b"/proc/%u/stat\x00" as *const u8 as *const libc::c_char,
@@ -358,7 +358,7 @@ unsafe extern "C" fn do_procinit() {
 }
 unsafe extern "C" fn do_stop() -> libc::c_int {
   let mut current_block: u64;
-  let mut what: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut what: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut pid_list = 0 as *mut pid_list;
   let mut killed: libc::c_int = 0i32;
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -481,12 +481,12 @@ pub unsafe extern "C" fn start_stop_daemon_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut signame: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut startas: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut chuid: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut signame: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut startas: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut chuid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   //	char *retry_arg = NULL;
   //	int retries = -1;
-  let mut opt_N: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_N: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id = -1i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr = 15i32 as smallint;
   opt = getopt32long(

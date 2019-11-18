@@ -136,7 +136,7 @@ unsafe extern "C" fn lsattr_dir_proc(
   mut _private: *mut libc::c_void,
 ) -> libc::c_int {
   let mut st: stat = std::mem::zeroed();
-  let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   path = concat_path_file(dir_name, (*de).d_name.as_mut_ptr());
   if lstat(path, &mut st) != 0i32 {
     bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, path);

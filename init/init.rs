@@ -417,7 +417,7 @@ unsafe extern "C" fn message(
 }
 unsafe extern "C" fn console_init() {
   let mut vtno: libc::c_int = 0;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   s = getenv(b"CONSOLE\x00" as *const u8 as *const libc::c_char);
   if s.is_null() {
     s = getenv(b"console\x00" as *const u8 as *const libc::c_char)
@@ -576,12 +576,12 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
     let ref mut fresh3 = *cmd.as_mut_ptr().offset(2);
     *fresh3 = buf.as_mut_ptr();
     let ref mut fresh4 = *cmd.as_mut_ptr().offset(3);
-    *fresh4 = 0 as *mut libc::c_char;
+    *fresh4 = std::ptr::null_mut::<libc::c_char>();
     command = (b"-/bin/sh\x00" as *const u8 as *const libc::c_char).offset(1)
   } else {
     /* Convert command (char*) into cmd (char**, one word per string) */
-    let mut word: *mut libc::c_char = 0 as *mut libc::c_char; /* command including "-" */
-    let mut next: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* command including "-" */
+    let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut i: libc::c_int = 0i32;
     next = strcpy(buf.as_mut_ptr(), command.offset(-(dash as isize)));
     command = next.offset(dash as isize);
@@ -598,7 +598,7 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
       }
     }
     let ref mut fresh6 = *cmd.as_mut_ptr().offset(i as isize);
-    *fresh6 = 0 as *mut libc::c_char
+    *fresh6 = std::ptr::null_mut::<libc::c_char>()
   }
   /* If we saw leading "-", it is interactive shell.
    * Try harder to give it a controlling tty.

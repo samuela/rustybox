@@ -89,7 +89,7 @@ pub unsafe extern "C" fn uniq_main(
   let mut skip_chars: libc::c_uint = 0;
   let mut max_chars: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
-  let mut cur_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cur_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cur_compare: *const libc::c_char = 0 as *const libc::c_char;
   skip_chars = 0i32 as libc::c_uint;
   skip_fields = skip_chars;
@@ -125,12 +125,12 @@ pub unsafe extern "C" fn uniq_main(
       }
     }
   }
-  cur_line = 0 as *mut libc::c_char;
+  cur_line = std::ptr::null_mut::<libc::c_char>();
   cur_compare = cur_line;
   loop {
     let mut i: libc::c_uint = 0;
     let mut dups: libc::c_ulong = 0;
-    let mut old_line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut old_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut old_compare: *const libc::c_char = 0 as *const libc::c_char;
     old_line = cur_line;
     old_compare = cur_compare;

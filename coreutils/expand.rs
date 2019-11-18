@@ -115,9 +115,9 @@ unsafe extern "C" fn expand(
   mut opt: libc::c_uint,
 ) {
   loop {
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut ptr_strbeg: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut ptr_strbeg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     //commented-out code handles NULs, +90 bytes of code, not tested much
     //		size_t linelen;
     //		unsigned len = 0;
@@ -172,7 +172,7 @@ unsafe extern "C" fn unexpand(
   mut tab_size: libc::c_uint,
   mut opt: libc::c_uint,
 ) {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     line = xmalloc_fgets(file);
     if line.is_null() {

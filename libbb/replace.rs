@@ -265,9 +265,9 @@ pub unsafe extern "C" fn xmalloc_substitute_string(
   mut sub: *const libc::c_char,
   mut repl: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sub_len: size_t = strlen(sub);
   let mut repl_len: size_t = strlen(repl);
   //dbg_msg("subst(s:'%s',count:%d,sub:'%s',repl:'%s'", src, count, sub, repl);

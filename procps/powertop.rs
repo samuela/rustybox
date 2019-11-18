@@ -363,7 +363,7 @@ unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc:
   (*ptr_to_globals).lines_cnt += 1;
 }
 unsafe extern "C" fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   //TODO: optimize
   p = strstr(name, b"hpet\x00" as *const u8 as *const libc::c_char);
   if p.is_null() {
@@ -416,7 +416,7 @@ unsafe extern "C" fn process_irq_counts() {
   .is_null()
   {
     let mut irq_desc: [libc::c_char; 147] = [0; 147];
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut name: *const libc::c_char = 0 as *const libc::c_char;
     let mut nr: libc::c_int = 0;
     let mut count: ullong = 0;
@@ -451,7 +451,7 @@ unsafe extern "C" fn process_irq_counts() {
     /* Sum counts for this IRQ */
     count = 0i32 as ullong;
     loop {
-      let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       p = skip_whitespace(p);
       if !((*p as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
         break;
@@ -540,7 +540,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
       let mut count: *const libc::c_char = 0 as *const libc::c_char; /* deferred */
       let mut process: *const libc::c_char = 0 as *const libc::c_char; /* points to pid now */
       let mut func: *const libc::c_char = 0 as *const libc::c_char;
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut idx: libc::c_int = 0;
       let mut cnt: libc::c_uint = 0;
       count = skip_whitespace(buf.as_mut_ptr());

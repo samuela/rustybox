@@ -164,7 +164,7 @@ pub unsafe extern "C" fn xstrtoull_range_sfx(
   let mut current_block: u64;
   let mut r: libc::c_ulonglong = 0;
   let mut old_errno: libc::c_int = 0;
-  let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Disallow '-' and any leading whitespace. */
   /* Disallow '-' and any leading whitespace. */
   if !(*numstr as libc::c_int == '-' as i32
@@ -284,7 +284,7 @@ pub unsafe extern "C" fn xstrtou_range_sfx(
   let mut current_block: u64;
   let mut r: libc::c_uint = 0;
   let mut old_errno: libc::c_int = 0;
-  let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if !(*numstr as libc::c_int == '-' as i32
     || *numstr as libc::c_int == '+' as i32
     || ({

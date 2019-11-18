@@ -93,7 +93,7 @@ pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> durat
   let mut duration: duration_t = 0.;
   if !strchr(str, '.' as i32).is_null() {
     let mut d: libc::c_double = 0.;
-    let mut pp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut pp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_int =
       strspn(str, b"0123456789.\x00" as *const u8 as *const libc::c_char) as libc::c_int;
     let mut sv: libc::c_char = *str.offset(len as isize);

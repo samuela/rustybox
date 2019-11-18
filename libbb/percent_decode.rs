@@ -609,7 +609,7 @@ pub unsafe extern "C" fn percent_decode_in_place(
         }
       }
       if strict != 0 {
-        return 0 as *mut libc::c_char;
+        return std::ptr::null_mut::<libc::c_char>();
       }
       let fresh3 = dst;
       dst = dst.offset(1);

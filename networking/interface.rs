@@ -436,8 +436,8 @@ static mut inet6_aftype: aftype = {
 /* HAVE_AFINET6 */
 /* Display an UNSPEC address. */
 unsafe extern "C" fn UNSPEC_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_char {
-  let mut buff: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut pos: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut pos: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
   buff = auto_string(xmalloc(
     (::std::mem::size_of::<sockaddr>() as libc::c_ulong)
@@ -569,8 +569,8 @@ unsafe extern "C" fn get_name(
   /* Extract NAME from nul-terminated p of the form "<whitespace>NAME:"
    * If match is not made, set NAME to "" and return unchanged p.
    */
-  let mut nameend: *mut libc::c_char = 0 as *mut libc::c_char; /* interface name too large - return "" */
-  let mut namestart: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut nameend: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* interface name too large - return "" */
+  let mut namestart: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   namestart = skip_whitespace(p);
   nameend = namestart;
   while !(nameend.wrapping_offset_from(namestart) as libc::c_long >= 16i32 as libc::c_long) {
@@ -667,7 +667,7 @@ unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
   let mut ifc: ifconf = ifconf {
     ifc_len: 0,
     ifc_ifcu: C2RustUnnamed_2 {
-      ifcu_buf: 0 as *mut libc::c_char,
+      ifcu_buf: std::ptr::null_mut::<libc::c_char>(),
     },
   };
   let mut ifr: *mut ifreq = 0 as *mut ifreq;
@@ -746,7 +746,7 @@ unsafe extern "C" fn if_readlist_proc(
   )
   .is_null()
   {
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut name: [libc::c_char; 16] = [0; 16];
     s = get_name(name.as_mut_ptr(), buf.as_mut_ptr());
     ife = add_interface(ilist, name.as_mut_ptr());
@@ -892,7 +892,7 @@ static mut loop_hwtype: hwtype = {
 };
 /* Display an Ethernet address in readable format. */
 unsafe extern "C" fn ether_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_char {
-  let mut buff: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   buff = xasprintf(
     b"%02X:%02X:%02X:%02X:%02X:%02X\x00" as *const u8 as *const libc::c_char,
     *ptr.offset(0) as libc::c_int,
@@ -1401,7 +1401,7 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
     if ifname != 1i32 as intptr_t as *mut libc::c_char {
       ifname
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     },
   );
   if ifname.is_null() || ifname == 1i32 as intptr_t as *mut libc::c_char {

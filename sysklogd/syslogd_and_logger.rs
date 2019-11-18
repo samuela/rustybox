@@ -943,7 +943,7 @@ unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -
 }
 unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   let mut current_block: u64;
-  let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pp_rule: *mut *mut logRule_t = 0 as *mut *mut logRule_t;
   /* tok[0] set of selectors */
   /* tok[1] file name */
@@ -985,7 +985,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       current_block = 18383263831861166299;
       break;
     }
-    let mut cur_selector: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cur_selector: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut cur_rule: *mut logRule_t = 0 as *mut logRule_t;
     /* unexpected trailing token? */
     if !tok[2].is_null() {
@@ -999,7 +999,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
     /* iterate through selectors: "kern.info;kern.!err;..." */
     {
       let mut code: *const CODE = 0 as *const CODE; /* "kern.!err" */
-      let mut next_selector: *mut libc::c_char = 0 as *mut libc::c_char; /* "kern.=err" */
+      let mut next_selector: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* "kern.=err" */
       let mut negated_prio: u8 = 0; /* bitmap of enabled facilities */
       let mut single_prio: u8 = 0; /* bitmap of enabled priorities */
       let mut facmap: u32 = 0; /* separate facility from priority */
@@ -1065,7 +1065,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       if *cur_selector as libc::c_int == '*' as i32 {
         facmap = ((1i32 << 24i32) - 1i32) as u32
       } else {
-        let mut next_facility: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut next_facility: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         facmap = 0i32 as u32;
         t = cur_selector;
         loop
@@ -1536,7 +1536,7 @@ unsafe extern "C" fn timestamp_and_log(
   mut msg: *mut libc::c_char,
   mut len: libc::c_int,
 ) {
-  let mut timestamp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut timestamp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut now: time_t = 0;
   /* Jan 18 00:11:22 msg... */
   /* 01234567890123456 */
@@ -1682,7 +1682,7 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
     sun_path: [0; 108],
   };
   let mut sock_fd: libc::c_int = 0;
-  let mut dev_log_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dev_log_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     &mut sunx as *mut sockaddr_un as *mut libc::c_void,
     0i32,
@@ -1739,7 +1739,7 @@ unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c
 unsafe extern "C" fn do_syslogd() -> ! {
   let mut item: *mut llist_t = 0 as *mut llist_t;
   let mut last_sz: libc::c_int = -1i32;
-  let mut last_buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut last_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut recvbuf: *mut libc::c_char = (*ptr_to_globals).recvbuf.as_mut_ptr();
   /* Set up signal handlers (so that they interrupt read()) */
   signal_no_SA_RESTART_empty_mask(
@@ -1906,12 +1906,12 @@ pub unsafe extern "C" fn syslogd_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int = 0;
-  let mut opt_m: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_l: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_b: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_C: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_f: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_m: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_C: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut remoteAddrList: *mut llist_t = 0 as *mut llist_t;
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
@@ -2057,7 +2057,7 @@ unsafe extern "C" fn decode(mut name: *mut libc::c_char, mut codetab: *const COD
  * Original copyright notice is retained at the end of this file.
  */
 unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
-  let mut save: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut save: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lev: libc::c_int = 0;
   let mut fac: libc::c_int = 1i32 << 3i32;
   save = s;
@@ -2095,8 +2095,8 @@ pub unsafe extern "C" fn logger_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut str_p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut i: libc::c_int = 0i32;
   /* Fill out the name string early (may be overwritten later) */
@@ -2141,7 +2141,7 @@ pub unsafe extern "C" fn logger_main(
       }
     }
   } else {
-    let mut message: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut message: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_int = 0i32;
     let mut pos: libc::c_int = 0i32;
     loop {

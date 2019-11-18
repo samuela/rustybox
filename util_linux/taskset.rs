@@ -187,7 +187,7 @@ pub unsafe extern "C" fn taskset_main(
   let mut pid: pid_t = 0i32;
   let mut opt_p: libc::c_uint = 0;
   let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
-  let mut aff: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut aff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: we mimic util-linux's taskset: -p does not take
    * an argument, i.e., "-pN" is NOT valid, only "-p N"!
    * Indeed, util-linux-2.13-pre7 uses:
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn taskset_main(
          * for the second time (see goto below) */
         return 0i32;
       }
-      *argv = 0 as *mut libc::c_char;
+      *argv = std::ptr::null_mut::<libc::c_char>();
       current_new = b"new\x00" as *const u8 as *const libc::c_char
     }
     memset(
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn taskset_main(
       *mask.offset(0) = xstrtoul(aff, 16i32)
     } else {
       let mut i: libc::c_uint = 0;
-      let mut last_char: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut last_char: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       i = 0i32 as libc::c_uint;
       /* aff is ASCII hex string, accept very long masks in this form.
        * Process hex string AABBCCDD... to ulong mask[]

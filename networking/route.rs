@@ -306,7 +306,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   let fresh0 = args;
   args = args.offset(1);
   let mut target: *const libc::c_char = *fresh0;
-  let mut prefix: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* recognize x.x.x.x/mask format. */
   prefix = strchr(target, '/' as i32);
   if !prefix.is_null() {
@@ -592,7 +592,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
       ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
     );
   } else {
-    let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     cp = strchr(target, '/' as i32);
     if !cp.is_null() {
       *cp = '\u{0}' as i32 as libc::c_char;
@@ -742,8 +742,8 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
   let mut current_block: u64;
   let mut devname: [libc::c_char; 64] = [0; 64];
   let mut flags: [libc::c_char; 16] = [0; 16];
-  let mut sdest: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut sgw: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sdest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut sgw: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut d: libc::c_ulong = 0;
   let mut g: libc::c_ulong = 0;
   let mut m: libc::c_ulong = 0;
@@ -872,7 +872,7 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
 }
 unsafe extern "C" fn INET6_displayroutes() {
   let mut addr6: [libc::c_char; 128] = [0; 128];
-  let mut naddr6: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut naddr6: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* In addr6x, we store both 40-byte ':'-delimited ipv6 addresses.
    * We read the non-delimited strings into the tail of the buffer
    * using fscanf and then modify the buffer by shifting forward
@@ -1037,7 +1037,7 @@ pub unsafe extern "C" fn route_main(
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   let mut what: libc::c_int = 0;
-  let mut family: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut family: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   /* First, remap '-net' and '-host' to avoid getopt problems. */
   p = argv;

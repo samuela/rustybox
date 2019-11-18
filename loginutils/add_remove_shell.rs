@@ -46,8 +46,8 @@ pub unsafe extern "C" fn add_remove_shell_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut orig_fp: *mut FILE = 0 as *mut FILE;
-  let mut orig_fn: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut new_fn: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut orig_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut new_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sb: stat = std::mem::zeroed();
   sb.st_mode = 0o666i32 as mode_t;
   argv = argv.offset(1);
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
   */
   if !orig_fp.is_null() {
     /* Copy old file, possibly skipping removed shell names */
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
       line = xmalloc_fgetline(orig_fp);
       if line.is_null() {

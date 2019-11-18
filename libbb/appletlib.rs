@@ -225,7 +225,7 @@ unsafe fn parse_config_file() {
 
   's_65: loop {
     let mut buffer: [libc::c_char; 256] = [0; 256];
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if fgets_unlocked(
       buffer.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_int,

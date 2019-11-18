@@ -109,8 +109,8 @@ pub unsafe extern "C" fn watchdog_main(
   let mut opts: libc::c_uint = 0;
   let mut stimer_duration: libc::c_uint = 0;
   let mut htimer_duration: libc::c_uint = 60000i32 as libc::c_uint;
-  let mut st_arg: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ht_arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut st_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ht_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opts = getopt32(
     argv,
     b"^Ft:T:\x00=1\x00" as *const u8 as *const libc::c_char,

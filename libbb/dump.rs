@@ -151,7 +151,7 @@ unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
   let mut fu: *mut FU = 0 as *mut FU;
   let mut bcnt: libc::c_int = 0;
   let mut cur_size: libc::c_int = 0;
-  let mut fmt: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
   let mut prec: libc::c_int = 0;
   /* figure out the data block size needed for each format unit */
@@ -228,10 +228,10 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
   fu = (*fs).nextfu;
   while !fu.is_null() {
     let mut pr: *mut PR = 0 as *mut PR;
-    let mut p1: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p2: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p3: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut fmtp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p3: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut fmtp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut nconv: libc::c_int = 0i32;
     /*
      * break each format unit into print units; each
@@ -629,7 +629,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
           p3 = p3.offset(1)
         }
         if p3.wrapping_offset_from(p2) as libc::c_long != 0 {
-          let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           d = xrealloc(
             (*pr).fmt as *mut libc::c_void,
             (len as libc::c_long + p3.wrapping_offset_from(p2) as libc::c_long + 1) as size_t,
@@ -697,13 +697,13 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
     }
     if (*fu).reps > 1i32 && !(*fu).nextpr.is_null() {
       let mut pr_0: *mut PR = 0 as *mut PR;
-      let mut p1_0: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut p2_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p1_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut p2_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       pr_0 = (*fu).nextpr;
       while !(*pr_0).nextpr.is_null() {
         pr_0 = (*pr_0).nextpr
       }
-      p2_0 = 0 as *mut libc::c_char;
+      p2_0 = std::ptr::null_mut::<libc::c_char>();
       p1_0 = (*pr_0).fmt;
       while *p1_0 != 0 {
         p2_0 = if ({
@@ -714,7 +714,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         {
           p1_0
         } else {
-          0 as *mut libc::c_char
+          std::ptr::null_mut::<libc::c_char>()
         };
         p1_0 = p1_0.offset(1)
       }
@@ -885,8 +885,8 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
   }
 }
 unsafe extern "C" fn bpad(mut pr: *mut PR) {
-  let mut p1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p2: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /*
    * remove all conversion flags; '-' is the only one valid
    * with %s, and it's not useful here.

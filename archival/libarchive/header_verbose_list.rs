@@ -29,8 +29,8 @@ pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header
   let mut ptm: *mut tm = &mut tm_time;
   let mut uid: [libc::c_char; 14] = [0; 14];
   /*char gid[sizeof(int)*3 + 2];*/
-  let mut user: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut group: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut group: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   localtime_r(&(*file_header).mtime, ptm);
   user = (*file_header).tar__uname;
   if user.is_null() {

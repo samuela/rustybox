@@ -78,13 +78,13 @@ unsafe extern "C" fn query(
   let mut fd: libc::c_int = 0;
   let mut fp: *mut FILE = 0 as *mut FILE;
   let mut success: bool = false;
-  let mut redir: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut redir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pfx: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   /* some .io domains reported to have very long strings in whois
    * responses, 1k was not enough:
    */
   let mut linebuf: [libc::c_char; 2048] = [0; 2048]; /* closes fd too */
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bufpos: libc::c_uint = 0i32 as libc::c_uint;
   loop {
     printf(
@@ -181,7 +181,7 @@ unsafe extern "C" fn query(
   if !redir.is_null() && strcmp(redir, host) == 0i32 {
     /* Redirect to self does not count */
     free(redir as *mut libc::c_void);
-    redir = 0 as *mut libc::c_char
+    redir = std::ptr::null_mut::<libc::c_char>()
   }
   if redir.is_null() || option_mask32 & OPT_i as libc::c_int as libc::c_uint != 0 {
     /* Output saved text */
@@ -203,8 +203,8 @@ unsafe extern "C" fn recursive_query(
   mut port: libc::c_int,
   mut domain: *const libc::c_char,
 ) {
-  let mut free_me: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut redir: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut free_me: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut redir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     redir = query(host, port, domain);
     free(free_me as *mut libc::c_void);

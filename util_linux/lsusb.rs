@@ -124,8 +124,8 @@ unsafe extern "C" fn fileAction(
 ) -> libc::c_int {
   let mut parser: *mut parser_t = 0 as *mut parser_t;
   let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
-  let mut busnum: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut devnum: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut busnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut devnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut product_vid: libc::c_int = 0i32;
   let mut product_did: libc::c_int = 0i32;
   let mut uevent_filename: *mut libc::c_char =

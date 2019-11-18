@@ -44,7 +44,7 @@ pub unsafe extern "C" fn bb_parse_mode(
   let mut op: libc::c_char = 0;
   if ((*s as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int) < 8i32 {
     let mut tmp: libc::c_ulong = 0;
-    let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     tmp = strtoul(s, &mut e, 8i32);
     if *e as libc::c_int != 0 || tmp > 0o7777u32 as libc::c_ulong {
       /* Check range and trailing chars. */

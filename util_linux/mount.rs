@@ -396,7 +396,7 @@ unsafe extern "C" fn append_mount_options(
     // Do not insert options which are already there
     while *newopts.offset(0) != 0 {
       let mut current_block_11: u64;
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len: libc::c_int = strlen(newopts) as libc::c_int;
       p = strchr(newopts, ',' as i32);
       if !p.is_null() {
@@ -543,8 +543,8 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
       47, 112, 114, 111, 99, 47, 102, 105, 108, 101, 115, 121, 115, 116, 101, 109, 115, 0,
     ],
   ];
-  let mut fs: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fs: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list: *mut llist_t = 0 as *mut llist_t;
   let mut i: libc::c_int = 0;
   let mut f: *mut FILE = 0 as *mut FILE;
@@ -645,7 +645,7 @@ unsafe extern "C" fn mount_it_now(
           rc = rc + 1;
           args[fresh6 as usize] = filteropts
         }
-        args[rc as usize] = 0 as *mut libc::c_char;
+        args[rc as usize] = std::ptr::null_mut::<libc::c_char>();
         rc = spawn_and_wait(args.as_mut_ptr());
         free(args[0] as *mut libc::c_void);
         if rc == 0 {
@@ -675,7 +675,7 @@ unsafe extern "C" fn mount_it_now(
   // If the mount was successful, and we're maintaining an old-style
   // mtab file by hand, add the new entry to it now.
   if 0i32 != 0 && rc == 0 && vfsflags & MS_REMOUNT as libc::c_int as libc::c_ulong == 0 {
-    let mut fsname: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut fsname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut mountTable: *mut FILE = setmntent(
       b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
       b"a+\x00" as *const u8 as *const libc::c_char,
@@ -706,7 +706,7 @@ unsafe extern "C" fn mount_it_now(
       }
       // Convert to canonical pathnames as needed
       (*mp).mnt_dir = bb_simplify_path((*mp).mnt_dir);
-      fsname = 0 as *mut libc::c_char;
+      fsname = std::ptr::null_mut::<libc::c_char>();
       if (*mp).mnt_type.is_null() || *(*mp).mnt_type == 0 {
         // bind mount
         fsname = bb_simplify_path((*mp).mnt_fsname);
@@ -733,9 +733,9 @@ unsafe extern "C" fn nfsmount(
   mut filteropts: *mut libc::c_char,
 ) -> libc::c_int {
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut opts: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dotted: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0;
   end = strchr((*mp).mnt_fsname, ']' as i32);
   if !end.is_null() && *end.offset(1) as libc::c_int == ':' as i32 {
@@ -773,8 +773,8 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
   let mut loopfd: libc::c_int = -1i32;
   let mut rc: libc::c_int = -1i32;
   let mut vfsflags: libc::c_ulong = 0;
-  let mut loopFile: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut filteropts: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut loopFile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut filteropts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fl: *mut llist_t = 0 as *mut llist_t;
   let mut st: stat = std::mem::zeroed();
   *bb_errno = 0i32;
@@ -786,12 +786,12 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       b"auto\x00" as *const u8 as *const libc::c_char,
     ) == 0i32
   {
-    (*mp).mnt_type = 0 as *mut libc::c_char
+    (*mp).mnt_type = std::ptr::null_mut::<libc::c_char>()
   }
   // Might this be a virtual filesystem?
   if 0i32 != 0 && !strchr((*mp).mnt_fsname, '#' as i32).is_null() {
     let mut args: [*mut libc::c_char; 35] = [0 as *mut libc::c_char; 35];
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut n: libc::c_int = 0;
     // fsname: "cmd#arg1#arg2..."
     // WARNING: allows execution of arbitrary commands!
@@ -819,7 +819,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     let fresh11 = n;
     n = n + 1;
     args[fresh11 as usize] = (*mp).mnt_dir;
-    args[n as usize] = 0 as *mut libc::c_char;
+    args[n as usize] = std::ptr::null_mut::<libc::c_char>();
     rc = spawn_and_wait(args.as_mut_ptr())
   } else if 1i32 != 0
     && ((*mp).mnt_type.is_null()
@@ -833,8 +833,8 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
   {
     let mut len: libc::c_int = 0;
     let mut c: libc::c_char = 0;
-    let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut share: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut share: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
     // Might this be an CIFS filesystem?
     // Parse mp->mnt_fsname of the form "//hostname/share[/dir1/dir2]"
@@ -875,8 +875,8 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         .is_null()
           && strstr(filteropts, b",ip=\x00" as *const u8 as *const libc::c_char).is_null()
         {
-          let mut dotted: *mut libc::c_char = 0 as *mut libc::c_char;
-          let mut ip: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut dotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+          let mut ip: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           // Insert "ip=..." option into options
           dotted = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
           ip = xasprintf(b"ip=%s\x00" as *const u8 as *const libc::c_char, dotted);
@@ -921,7 +921,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       if 1i32 != 0 && st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {
         loopFile = bb_simplify_path((*mp).mnt_fsname);
         // Autodetect bind mounts
-        (*mp).mnt_fsname = 0 as *mut libc::c_char; // will receive malloced loop dev name
+        (*mp).mnt_fsname = std::ptr::null_mut::<libc::c_char>(); // will receive malloced loop dev name
         loopfd = set_loop(
           &mut (*mp).mnt_fsname,
           loopFile,
@@ -962,12 +962,12 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
           as libc::c_ulong
         != 0
     {
-      let mut next: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       loop {
         next = if !(*mp).mnt_type.is_null() {
           strchr((*mp).mnt_type, ',' as i32)
         } else {
-          0 as *mut libc::c_char
+          std::ptr::null_mut::<libc::c_char>()
         };
         if !next.is_null() {
           *next = '\u{0}' as i32 as libc::c_char
@@ -1115,9 +1115,9 @@ pub unsafe extern "C" fn mount_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut cmdopts: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;
-  let mut fstype: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut O_optmatch: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut storage_path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut O_optmatch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut storage_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lst_o: *mut llist_t = 0 as *mut llist_t;
   let mut fstabname: *const libc::c_char = b"/etc/fstab\x00" as *const u8 as *const libc::c_char;
   let mut fstab: *mut FILE = 0 as *mut FILE;
@@ -1127,10 +1127,10 @@ pub unsafe extern "C" fn mount_main(
   let mut cmdopt_flags: libc::c_ulong = 0;
   let mut opt: libc::c_uint = 0;
   let mut mtpair: [mntent; 2] = [mntent {
-    mnt_fsname: 0 as *mut libc::c_char,
-    mnt_dir: 0 as *mut libc::c_char,
-    mnt_type: 0 as *mut libc::c_char,
-    mnt_opts: 0 as *mut libc::c_char,
+    mnt_fsname: std::ptr::null_mut::<libc::c_char>(),
+    mnt_dir: std::ptr::null_mut::<libc::c_char>(),
+    mnt_type: std::ptr::null_mut::<libc::c_char>(),
+    mnt_opts: std::ptr::null_mut::<libc::c_char>(),
     mnt_freq: 0,
     mnt_passno: 0,
   }; 2];
@@ -1154,7 +1154,7 @@ pub unsafe extern "C" fn mount_main(
     i += 1
   }
   let ref mut fresh15 = *argv.offset(j as isize);
-  *fresh15 = 0 as *mut libc::c_char;
+  *fresh15 = std::ptr::null_mut::<libc::c_char>();
   // Parse remaining options
   // Max 2 params; -o is a list, -v is a counter
   opt = getopt32(
@@ -1215,7 +1215,7 @@ pub unsafe extern "C" fn mount_main(
       }
       return 0i32;
     }
-    storage_path = 0 as *mut libc::c_char
+    storage_path = std::ptr::null_mut::<libc::c_char>()
   } else {
     // When we have two arguments, the second is the directory and we can
     // skip looking at fstab entirely.  We can always abspath() the directory

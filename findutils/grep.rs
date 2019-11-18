@@ -309,7 +309,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
   let mut found: smalluint = 0; /* for gcc */
   let mut linenum: libc::c_int = 0i32; /* while (pattern_ptr) */
   let mut nmatches: libc::c_int = 0i32;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut print_n_lines_after: libc::c_int = 0i32;
   let mut curpos: libc::c_int = 0i32;
   let mut idx: libc::c_int = 0i32;
@@ -327,7 +327,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
     while !pattern_ptr.is_null() {
       gl = (*pattern_ptr).data as *mut grep_list_data_t;
       if option_mask32 & OPT_F as libc::c_int as libc::c_uint != 0 {
-        let mut match_0: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut match_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut str: *mut libc::c_char = line;
         loop {
           match_0 = if option_mask32 & OPT_i as libc::c_int as libc::c_uint != 0 {
@@ -390,7 +390,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
         }
       } else {
         let mut match_flg: libc::c_int = 0;
-        let mut match_at: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut match_at: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if (*gl).flg_mem_allocated_compiled & 2i32 == 0 {
           (*gl).flg_mem_allocated_compiled |= 2i32;
           xregcomp(
@@ -551,7 +551,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
             let ref mut fresh0 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .before_buf
               .offset(idx as isize);
-            *fresh0 = 0 as *mut libc::c_char;
+            *fresh0 = std::ptr::null_mut::<libc::c_char>();
             idx = (idx + 1i32) % (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before;
             first_buf_entry_line_num += 1
           }
@@ -627,7 +627,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
       *fresh1 = line;
       curpos = (curpos + 1i32) % (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before;
       /* avoid free(line) - we took the line */
-      line = 0 as *mut libc::c_char
+      line = std::ptr::null_mut::<libc::c_char>()
     }
     /* ENABLE_FEATURE_GREP_CONTEXT */
     free(line as *mut libc::c_void);
@@ -669,7 +669,7 @@ unsafe extern "C" fn add_grep_list_data(mut pattern: *mut libc::c_char) -> *mut 
 }
 unsafe extern "C" fn load_regexes_from_file(mut fopt: *mut llist_t) {
   while !fopt.is_null() {
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut fp: *mut FILE = 0 as *mut FILE;
     let mut cur: *mut llist_t = fopt;
     let mut ffile: *mut libc::c_char = (*cur).data;
@@ -862,7 +862,7 @@ pub unsafe extern "C" fn grep_main(
     .pattern_head
     .is_null()
   {
-    let mut pattern: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*argv).is_null() {
       bb_show_usage();
     }

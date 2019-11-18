@@ -131,8 +131,8 @@ pub unsafe extern "C" fn cryptpw_main(
 ) -> libc::c_int {
   /* Supports: cryptpw -m sha256 PASS 'rounds=999999999$SALT' */
   let mut salt: [libc::c_char; 38] = [0; 38];
-  let mut salt_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut password: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut salt_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut password: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_m: *const libc::c_char = 0 as *const libc::c_char;
   let mut opt_S: *const libc::c_char = 0 as *const libc::c_char;
   let mut fd: libc::c_int = 0;

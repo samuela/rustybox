@@ -367,7 +367,7 @@ unsafe extern "C" fn get_var(
     }
     i += 1
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) -> libc::c_int {
   //	int result;
@@ -423,7 +423,7 @@ unsafe extern "C" fn parse(
   let mut old_pos: [size_t; 10] = [0i32 as size_t, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let mut okay: [smallint; 10] = [1i32 as smallint, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let mut opt_depth: libc::c_int = 1i32;
-  let mut result: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   while *command != 0 {
     let mut current_block_42: u64;
     match *command as libc::c_int {
@@ -462,14 +462,14 @@ unsafe extern "C" fn parse(
         }
       }
       37 => {
-        let mut nextpercent: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut varvalue: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut nextpercent: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut varvalue: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         command = command.offset(1);
         nextpercent = strchr(command, '%' as i32);
         if nextpercent.is_null() {
           /* Unterminated %var% */
           free(result as *mut libc::c_void);
-          return 0 as *mut libc::c_char;
+          return std::ptr::null_mut::<libc::c_char>();
         }
         varvalue = get_var(
           command,
@@ -539,12 +539,12 @@ unsafe extern "C" fn parse(
   if opt_depth > 1i32 {
     /* Unbalanced bracket */
     free(result as *mut libc::c_void);
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   if okay[0] == 0 {
     /* Undefined variable and we aren't in a bracket */
     free(result as *mut libc::c_void);
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   return result;
 }
@@ -554,7 +554,7 @@ unsafe extern "C" fn execute(
   mut ifd: *mut interface_defn_t,
   mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
-  let mut out: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0;
   out = parse(command, ifd);
   if out.is_null() {
@@ -1137,12 +1137,12 @@ static mut addr_link: address_family_t = address_family_t {
  */
 unsafe extern "C" fn next_word(mut buf: *mut *mut libc::c_char) -> *mut libc::c_char {
   let mut length: libc::c_uint = 0;
-  let mut word: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Skip over leading whitespace */
   word = skip_whitespace(*buf);
   /* Stop on EOL */
   if *word as libc::c_int == '\u{0}' as i32 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   /* Find the length of this word (can't be 0) */
   length = strcspn(word, b" \t\n\x00" as *const u8 as *const libc::c_char) as libc::c_uint;
@@ -1215,9 +1215,9 @@ unsafe extern "C" fn read_interfaces(
   let mut currmap: *mut mapping_defn_t = 0 as *mut mapping_defn_t; /* while (fgets) */
   let mut currif: *mut interface_defn_t = 0 as *mut interface_defn_t;
   let mut f: *mut FILE = 0 as *mut FILE;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut first_word: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut rest_of_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut first_word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut rest_of_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut currently_processing: C2RustUnnamed_0 = NONE;
   if defn.is_null() {
     defn =
@@ -1230,7 +1230,7 @@ unsafe extern "C" fn read_interfaces(
       break;
     }
     /* Trailing "\" concatenates lines */
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
       p = last_char_is(buf, '\\' as i32);
       if p.is_null() {
@@ -1298,9 +1298,9 @@ unsafe extern "C" fn read_interfaces(
             0 as *const address_family_t,
           ]
         };
-        let mut iface_name: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut address_family_name: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut method_name: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut iface_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut address_family_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut method_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         currif = xzalloc(::std::mem::size_of::<interface_defn_t>() as libc::c_ulong)
           as *mut interface_defn_t;
         iface_name = next_word(&mut rest_of_line);
@@ -1383,7 +1383,7 @@ unsafe extern "C" fn read_interfaces(
           if entry.is_null() {
             break;
           }
-          let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           if (*entry).d_name[0] as libc::c_int == '.' as i32 {
             continue;
           }
@@ -1496,9 +1496,9 @@ unsafe extern "C" fn setlocalenv(
   mut name: *const libc::c_char,
   mut value: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut result: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut src: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
   result = xasprintf(format, name, value);
   src = result;
@@ -1752,7 +1752,7 @@ unsafe extern "C" fn popen2(
   mut command: *mut libc::c_char,
   mut param: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut argv: [*mut libc::c_char; 3] = [command, param, 0 as *mut libc::c_char];
+  let mut argv: [*mut libc::c_char; 3] = [command, param, std::ptr::null_mut::<libc::c_char>()];
   let mut infd: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut outfd: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut pid: pid_t = 0;
@@ -1855,8 +1855,8 @@ unsafe extern "C" fn read_iface_state() -> *mut llist_t {
   let mut state_fp: *mut FILE =
     fopen_for_read(b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char);
   if !state_fp.is_null() {
-    let mut start: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut end_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut end_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
       start = xmalloc_fgets(state_fp);
       if start.is_null() {
@@ -1953,9 +1953,9 @@ pub unsafe extern "C" fn ifupdown_main(
   while !target_list.is_null() {
     let mut iface_list: *mut llist_t = 0 as *mut llist_t;
     let mut currif: *mut interface_defn_t = 0 as *mut interface_defn_t;
-    let mut iface: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut liface: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut pch: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut iface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut liface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut pch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut okay: bool = 0i32 != 0;
     let mut cmds_ret: libc::c_int = 0;
     let mut curr_failure: bool = 0i32 != 0;

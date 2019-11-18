@@ -49,7 +49,7 @@ pub unsafe extern "C" fn truncate_main(
   let mut opts: libc::c_uint = 0;
   let mut flags: libc::c_int = 0o1i32 | 0o4000i32;
   let mut ret: libc::c_int = 0i32;
-  let mut size_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut size_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut size: off_t = 0;
   opts = getopt32(
     argv,

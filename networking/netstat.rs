@@ -457,7 +457,7 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
   mut pid_slash_progname: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut linkname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut linkname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut inode: libc::c_long = 0;
   linkname = xmalloc_readlink(fileName);
   if !linkname.is_null() {
@@ -476,7 +476,7 @@ unsafe extern "C" fn dir_act(
   mut depth: libc::c_int,
 ) -> libc::c_int {
   let mut pid: *const libc::c_char = 0 as *const libc::c_char;
-  let mut pid_slash_progname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pid_slash_progname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_pid_fname: [libc::c_char; 41] = [0; 41];
   let mut cmdline_buf: [libc::c_char; 512] = [0; 512];
   let mut n: libc::c_int = 0;
@@ -656,11 +656,11 @@ unsafe extern "C" fn ip_port_str(
   mut proto: *const libc::c_char,
   mut numeric: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut host: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut host_port: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut host_port: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Code which used "*" for INADDR_ANY is removed: it's ambiguous
    * in IPv6, while "0.0.0.0" is not. */
-  host = 0 as *mut libc::c_char;
+  host = std::ptr::null_mut::<libc::c_char>();
   if numeric == 0 {
     host = xmalloc_sockaddr2host_noport(addr)
   }
@@ -1043,7 +1043,7 @@ unsafe extern "C" fn do_info(
 ) {
   let mut lnr: libc::c_int = 0;
   let mut procinfo: *mut FILE = 0 as *mut FILE;
-  let mut buffer: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* _stdin is just to save "r" param */
   procinfo = fopen_or_warn_stdin(file);
   if procinfo.is_null() {

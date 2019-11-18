@@ -165,7 +165,7 @@ pub unsafe extern "C" fn cttyhack_main(
         .wrapping_sub(5i32 as libc::c_ulong),
     ) as libc::c_int;
     if s > 0i32 {
-      let mut last: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       /* Found active console via sysfs (Linux 2.6.38+).
        * It looks like "[tty0 ]ttyS0\n" so zap the newline:
        */

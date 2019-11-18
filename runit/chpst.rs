@@ -304,7 +304,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
   dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {
     let mut buf: [libc::c_char; 256] = [0; 256];
-    let mut tail: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut size: libc::c_int = 0;
     *bb_errno = 0i32;
     d = readdir(dir);
@@ -403,12 +403,12 @@ pub unsafe extern "C" fn chpst_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
-  let mut set_user: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut set_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   set_user = set_user;
-  let mut env_dir: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut env_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   env_dir = env_dir;
-  let mut root: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut nicestr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut root: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut nicestr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut limita: libc::c_uint = 0;
   let mut limitc: libc::c_uint = 0;
   let mut limitd: libc::c_uint = 0;

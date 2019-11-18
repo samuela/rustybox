@@ -802,7 +802,7 @@ unsafe extern "C" fn scan_ip_mask(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut mask: libc::c_uint = 0;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   i = scan_ip(&mut str, ipp, '/' as i32 as libc::c_uchar);
   if i < 0i32 {
     return i;
@@ -912,12 +912,12 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
   {
     let mut strlen_buf: libc::c_uint = 0; /* while (fgets) */
     let mut ch: libc::c_uchar = 0;
-    let mut after_colon: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut after_colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* empty line */
     /* skip assumed "A:*", it is a default anyway */
     /* remove all whitespace, and # comments */
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p0: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     p0 = buf.as_mut_ptr();
     loop
     /* skip non-whitespace beginning. Often the whole line
@@ -1034,9 +1034,9 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         }
       } else if flag == FIRST_PARSE as libc::c_int && ch as libc::c_int == 'P' as i32 {
         /* P:/url:[http://]hostname[:port]/new/path */
-        let mut url_from: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut host_port: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut url_to: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut url_from: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut host_port: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut url_to: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut proxy_entry: *mut Htaccess_Proxy = 0 as *mut Htaccess_Proxy;
         url_from = after_colon;
         host_port = strchr(after_colon, ':' as i32);
@@ -1076,7 +1076,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           || ch as libc::c_int == '*' as i32 && buf[1] as libc::c_int == '.' as i32
         {
           /* "*.php:/path/php" */
-          let mut p_0: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut p_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut cur: *mut Htaccess = 0 as *mut Htaccess;
           cur = xzalloc(
             (::std::mem::size_of::<Htaccess>() as libc::c_ulong)
@@ -1101,7 +1101,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           continue;
         } else if ch as libc::c_int == '/' as i32 {
           /* "/file:user:pass" */
-          let mut p_1: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut p_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut cur_0: *mut Htaccess = 0 as *mut Htaccess;
           let mut file_len: libc::c_uint = 0;
           /* note: path is "" unless we are in SUBDIR parse,
@@ -1809,8 +1809,8 @@ unsafe extern "C" fn send_cgi_and_exit(
 ) -> ! {
   let mut fromCgi: fd_pair = fd_pair { rd: 0, wr: 0 }; /* CGI -> httpd pipe */
   let mut toCgi: fd_pair = fd_pair { rd: 0, wr: 0 }; /* httpd -> CGI pipe */
-  let mut script: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut last_slash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut script: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut last_slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: libc::c_int = 0;
   /* Make a copy. NB: caller guarantees:
    * url[0] == '/', url[1] != '/' */
@@ -1898,7 +1898,7 @@ unsafe extern "C" fn send_cgi_and_exit(
   }; /* delete :PORT */
   let mut cp: *mut libc::c_char = strrchr(p, ':' as i32);
   if 1i32 != 0 && !cp.is_null() && !strchr(cp, ']' as i32).is_null() {
-    cp = 0 as *mut libc::c_char
+    cp = std::ptr::null_mut::<libc::c_char>()
   }
   if !cp.is_null() {
     *cp = '\u{0}' as i32 as libc::c_char
@@ -1969,7 +1969,7 @@ unsafe extern "C" fn send_cgi_and_exit(
         script = script.offset(1);
         /* set argv[0] to name without path */
         argv[0] = script;
-        argv[1] = 0 as *mut libc::c_char;
+        argv[1] = std::ptr::null_mut::<libc::c_char>();
         let mut suffix: *mut libc::c_char = strrchr(script, '.' as i32);
         if !suffix.is_null() {
           let mut cur: *mut Htaccess = 0 as *mut Htaccess;
@@ -1979,7 +1979,7 @@ unsafe extern "C" fn send_cgi_and_exit(
               /* found interpreter name */
               argv[0] = (*cur).after_colon;
               argv[1] = script;
-              argv[2] = 0 as *mut libc::c_char;
+              argv[2] = std::ptr::null_mut::<libc::c_char>();
               break;
             } else {
               cur = (*cur).next
@@ -2024,7 +2024,7 @@ unsafe extern "C" fn send_cgi_and_exit(
 #[inline(never)]
 unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: libc::c_int) -> ! {
   let mut current_block: u64;
-  let mut suffix: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut suffix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   let mut count: ssize_t = 0;
   if (*ptr_to_globals).content_gzip != 0 {
@@ -2257,7 +2257,7 @@ unsafe extern "C" fn check_user_passwd(
   mut path: *const libc::c_char,
   mut user_and_passwd: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut encrypted: *mut libc::c_char = 0 as *mut libc::c_char; /* for */
+  let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for */
   let mut current_block: u64;
   let mut cur: *mut Htaccess = 0 as *mut Htaccess;
   let mut prev: *const libc::c_char = 0 as *const libc::c_char;
@@ -2279,7 +2279,7 @@ unsafe extern "C" fn check_user_passwd(
       {
         /* Path match found */
         prev = dir_prefix;
-        let mut colon_after_user: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut colon_after_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut passwd: *const libc::c_char = 0 as *const libc::c_char;
         let mut sp_buf: [libc::c_char; 256] = [0; 256];
         colon_after_user = strchr(user_and_passwd, ':' as i32);
@@ -2305,8 +2305,8 @@ unsafe extern "C" fn check_user_passwd(
             if *passwd.offset(0) as libc::c_int == '*' as i32 {
               /* Using _r function to avoid pulling in static buffers */
               let mut spw: spwd = spwd {
-                sp_namp: 0 as *mut libc::c_char,
-                sp_pwdp: 0 as *mut libc::c_char,
+                sp_namp: std::ptr::null_mut::<libc::c_char>(),
+                sp_pwdp: std::ptr::null_mut::<libc::c_char>(),
                 sp_lstchg: 0,
                 sp_min: 0,
                 sp_max: 0,
@@ -2348,7 +2348,7 @@ unsafe extern "C" fn check_user_passwd(
               && (*passwd.offset(1) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int
                 <= 9i32
             {
-              encrypted = 0 as *mut libc::c_char;
+              encrypted = std::ptr::null_mut::<libc::c_char>();
               current_block = 15736828544826234929;
             } else {
               /* Else: passwd is from httpd.conf, it is either plaintext or encrypted */
@@ -2426,9 +2426,9 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   let mut current_block: u64;
   static mut request_GET: [libc::c_char; 4] = [71, 69, 84, 0];
   let mut sb: stat = std::mem::zeroed();
-  let mut urlcopy: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut urlp: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut tptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut urlcopy: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut urlp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut tptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut remote_ip: libc::c_uint = 0;
   let mut total_headers_len: libc::c_uint = 0;
   static mut request_HEAD: [libc::c_char; 5] = [72, 69, 65, 68, 0];
@@ -2436,7 +2436,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   let mut length: libc::c_ulong = 0i32 as libc::c_ulong;
   let mut cgi_type: CGI_type = CGI_NONE;
   let mut authorized: smallint = -1i32 as smallint;
-  let mut HTTP_slash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut HTTP_slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Allocation of iobuf is postponed until now
    * (IOW, server process doesn't need to waste 8k) */
   (*ptr_to_globals).iobuf = xmalloc(8192i32 as size_t) as *mut libc::c_char;
@@ -2910,7 +2910,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
           (::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong)
             .wrapping_sub(1i32 as libc::c_ulong),
         ) == 0i32;
-        let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut colon: *mut libc::c_char = strchr((*ptr_to_globals).iobuf, ':' as i32);
         if colon.is_null() {
           continue;
@@ -3098,7 +3098,7 @@ pub unsafe extern "C" fn httpd_main(
   let mut server_socket: libc::c_int = 0;
   server_socket = server_socket;
   let mut opt: libc::c_uint = 0;
-  let mut url_for_decode: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut url_for_decode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut url_for_encode: *const libc::c_char = 0 as *const libc::c_char;
   let mut s_ugid: *const libc::c_char = 0 as *const libc::c_char;
   let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };

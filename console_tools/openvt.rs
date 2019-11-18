@@ -207,7 +207,7 @@ pub unsafe extern "C" fn openvt_main(
     v_signal: 0,
     v_state: 0,
   };
-  let mut str_c: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut vtno: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   /* "+" - stop on first non-option */

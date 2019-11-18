@@ -50,7 +50,7 @@ use libc::FILE;
 unsafe extern "C" fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlines: libc::c_uint) {
   let mut i: libc::c_uint = 0;
   let mut r: libc::c_uint = 0;
-  let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(monotonic_us() as libc::c_uint);
   i = numlines.wrapping_sub(1i32 as libc::c_uint);
   while i > 0i32 as libc::c_uint {
@@ -74,9 +74,9 @@ pub unsafe extern "C" fn shuf_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
-  let mut opt_i_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_n_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_o_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_i_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_n_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_o_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
   let mut lines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut numlines: libc::c_uint = 0;
@@ -97,7 +97,7 @@ pub unsafe extern "C" fn shuf_main(
     lines = argv
   } else if opts & (1i32 << 1i32) as libc::c_uint != 0 {
     /* create a range of numbers */
-    let mut dash: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut dash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut lo: libc::c_uint = 0;
     let mut hi: libc::c_uint = 0;
     dash = strchr(opt_i_str, '-' as i32);

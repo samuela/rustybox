@@ -70,8 +70,8 @@ pub unsafe extern "C" fn find_executable(
    * initial colon preceding the rest of the list, or as a trailing colon
    * following the rest of the list.
    */
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char; /* on loop exit p == NULL */
-  let mut n: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* on loop exit p == NULL */
+  let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   p = *PATHp;
   while !p.is_null() {
     let mut ex: libc::c_int = 0;

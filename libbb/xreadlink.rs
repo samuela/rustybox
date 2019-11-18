@@ -53,7 +53,7 @@ pub type C2RustUnnamed = libc::c_uint;
  */
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char; /* how large we will grow strings by */
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* how large we will grow strings by */
   let mut bufsize: libc::c_int = 0i32;
   let mut readsize: libc::c_int = 0i32;
   loop {
@@ -62,7 +62,7 @@ pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut
     readsize = readlink(path, buf, bufsize as size_t) as libc::c_int;
     if readsize == -1i32 {
       free(buf as *mut libc::c_void);
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     if !(bufsize < readsize + 1i32) {
       break;
@@ -86,9 +86,9 @@ pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut
 pub unsafe extern "C" fn xmalloc_follow_symlinks(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut lpc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut linkpath: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut lpc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut linkpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bufsize: libc::c_int = 0;
   let mut looping: libc::c_int = 20i32 + 1i32;
   buf = xstrdup(path);
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn xmalloc_follow_symlinks(
       }
     }
     free(buf as *mut libc::c_void);
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
 }
 #[no_mangle]
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut
    */
   /* glibc provides a non-standard extension */
   /* new: POSIX.1-2008 specifies this behavior as well */
-  return realpath(path, 0 as *mut libc::c_char);
+  return realpath(path, std::ptr::null_mut::<libc::c_char>());
 }
 
 /*
@@ -278,7 +278,7 @@ pub unsafe extern "C" fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut
 pub unsafe extern "C" fn xmalloc_realpath_coreutils(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   *bb_errno = 0i32;
   buf = xmalloc_realpath(path);
   /*
@@ -311,7 +311,7 @@ pub unsafe extern "C" fn xmalloc_realpath_coreutils(
     } else {
       let mut target: *mut libc::c_char = xmalloc_readlink(path);
       if !target.is_null() {
-        let mut cwd: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut cwd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if *target.offset(0) as libc::c_int == '/' as i32 {
           /*
            * $ ln -s /bin/qwe symlink  # note: /bin is a link to /usr/bin

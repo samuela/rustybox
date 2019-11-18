@@ -286,7 +286,7 @@ unsafe extern "C" fn expand(
             116, 58, 93, 0, 0,
           ];
           let mut j: smalluint = 0;
-          let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           /* xdigit needs 8, not 7 */
           i = (7i32 + (*arg.offset(0) as libc::c_int == 'x' as i32) as libc::c_int) as libc::c_uint;
           tmp = xstrndup(arg, i as libc::c_int);

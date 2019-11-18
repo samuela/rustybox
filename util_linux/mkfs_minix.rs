@@ -1034,9 +1034,9 @@ pub unsafe extern "C" fn mkfs_minix_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_i: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut listfile: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut listfile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh2 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;

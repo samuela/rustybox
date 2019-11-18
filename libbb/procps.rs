@@ -388,7 +388,7 @@ pub unsafe extern "C" fn procps_read_smaps(
     smap_size: 0,
     smap_start: 0,
     smap_mode: [0; 5],
-    smap_name: 0 as *mut libc::c_char,
+    smap_name: std::ptr::null_mut::<libc::c_char>(),
   };
   let mut filename: [libc::c_char; 27] = [0; 27];
   let mut buf: [libc::c_char; 1024] = [0; 1024];
@@ -412,8 +412,8 @@ pub unsafe extern "C" fn procps_read_smaps(
     // Size:                nnn kB
     // Rss:                 nnn kB
     // .....
-    let mut tp: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if cb.is_some() {
       tp = is_prefixed_with(
         buf.as_mut_ptr(),
@@ -560,7 +560,7 @@ pub unsafe extern "C" fn procps_scan(
     let mut pid: libc::c_uint = 0;
     let mut n: libc::c_int = 0;
     let mut filename: [libc::c_char; 49] = [0; 49];
-    let mut filename_tail: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut filename_tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if !(*sp).task_dir.is_null() {
       entry = readdir((*sp).task_dir);
       if !entry.is_null() {
@@ -658,8 +658,8 @@ pub unsafe extern "C" fn procps_scan(
         != 0
       {
         let mut s_idx: libc::c_int = 0;
-        let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut comm1: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut comm1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut tty: libc::c_int = 0;
         let mut vsz: libc::c_ulong = 0;
         let mut rss: libc::c_ulong = 0;
@@ -749,7 +749,7 @@ pub unsafe extern "C" fn procps_scan(
           )
           .is_null()
           {
-            let mut tp: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             tp = is_prefixed_with(
               buf.as_mut_ptr(),
               b"Uid:\x00" as *const u8 as *const libc::c_char,
@@ -801,7 +801,7 @@ pub unsafe extern "C" fn procps_scan(
         break;
       }
       free((*sp).argv0 as *mut libc::c_void);
-      (*sp).argv0 = 0 as *mut libc::c_char;
+      (*sp).argv0 = std::ptr::null_mut::<libc::c_char>();
       strcpy(
         filename_tail,
         b"cmdline\x00" as *const u8 as *const libc::c_char,

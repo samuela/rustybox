@@ -103,7 +103,7 @@ pub unsafe extern "C" fn write_new_utmp(
     ut_addr_v6: [0; 4],
     __glibc_reserved: [0; 20],
   };
-  let mut id: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut id: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut width: libc::c_uint = 0;
   memset(
     &mut utent as *mut utmpx as *mut libc::c_void,

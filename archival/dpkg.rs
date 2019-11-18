@@ -447,11 +447,11 @@ unsafe extern "C" fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> 
   let mut ch_ver2: *mut libc::c_char = (*ptr_to_globals).name_hashtable[ver2 as usize];
   let mut epoch1: libc::c_uint = 0i32 as libc::c_uint;
   let mut epoch2: libc::c_uint = 0i32 as libc::c_uint;
-  let mut colon: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut deb_ver1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut deb_ver2: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut upstream_ver1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut upstream_ver2: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut deb_ver1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut deb_ver2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut upstream_ver1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut upstream_ver2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut result: libc::c_int = 0;
   /* Compare epoch */
   colon = strchr(ch_ver1, ':' as i32);
@@ -619,12 +619,12 @@ unsafe extern "C" fn add_split_dependencies(
   mut edge_type: libc::c_uint,
 ) {
   let mut line: *mut libc::c_char = xstrdup(whole_line);
-  let mut line2: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut line_ptr1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut line_ptr2: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut field: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut field2: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut version: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut line_ptr1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut line_ptr2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut field: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut field2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut version: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut edge: *mut edge_t = 0 as *mut edge_t;
   let mut or_edge: *mut edge_t = 0 as *mut edge_t;
   let mut offset_ch: libc::c_int = 0;
@@ -734,7 +734,7 @@ unsafe extern "C" fn add_split_dependencies(
       }
       add_edge_to_node(parent_node, edge);
       field2 = strtok_r(
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
         b"|\x00" as *const u8 as *const libc::c_char,
         &mut line_ptr2,
       );
@@ -744,7 +744,7 @@ unsafe extern "C" fn add_split_dependencies(
     }
     free(line2 as *mut libc::c_void);
     field = strtok_r(
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       b",\x00" as *const u8 as *const libc::c_char,
       &mut line_ptr1,
     );
@@ -785,8 +785,8 @@ unsafe extern "C" fn read_package_field(
   let mut value_length: libc::c_int = 0;
   let mut exit_flag: libc::c_int = 0i32;
   if package_buffer.is_null() {
-    *field_name = 0 as *mut libc::c_char;
-    *field_value = 0 as *mut libc::c_char;
+    *field_name = std::ptr::null_mut::<libc::c_char>();
+    *field_value = std::ptr::null_mut::<libc::c_char>();
     return -1i32;
   }
   loop {
@@ -853,14 +853,14 @@ unsafe extern "C" fn read_package_field(
     }
     offset += 1
   }
-  *field_name = 0 as *mut libc::c_char;
+  *field_name = std::ptr::null_mut::<libc::c_char>();
   if name_length != 0 {
     *field_name = xstrndup(
       &*package_buffer.offset(offset_name_start as isize),
       name_length,
     )
   }
-  *field_value = 0 as *mut libc::c_char;
+  *field_value = std::ptr::null_mut::<libc::c_char>();
   if value_length > 0i32 {
     *field_value = xstrndup(
       &*package_buffer.offset(offset_value_start as isize),
@@ -879,8 +879,8 @@ unsafe extern "C" fn fill_package_struct(mut control_buffer: *mut libc::c_char) 
   ];
   let mut new_node: *mut common_node_t =
     xzalloc(::std::mem::size_of::<common_node_t>() as libc::c_ulong) as *mut common_node_t;
-  let mut field_name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut field_value: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut field_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut field_value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut field_start: libc::c_int = 0i32;
   let mut num: libc::c_int = -1i32;
   let mut buffer_length: libc::c_int = strlen(control_buffer) as libc::c_int;
@@ -994,7 +994,7 @@ unsafe extern "C" fn fill_package_struct(mut control_buffer: *mut libc::c_char) 
 unsafe extern "C" fn get_status(status_node: libc::c_uint, num: libc::c_int) -> libc::c_uint {
   let mut status_string: *mut libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).status_hashtable[status_node as usize]).status() as usize];
-  let mut state_sub_string: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut state_sub_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut state_sub_num: libc::c_uint = 0;
   let mut len: libc::c_int = 0;
   let mut i: libc::c_int = 0;
@@ -1027,7 +1027,7 @@ unsafe extern "C" fn set_status(
   let mut want: libc::c_uint = get_status(status_node_num, 1i32);
   let mut flag: libc::c_uint = get_status(status_node_num, 2i32);
   let mut status: libc::c_uint = get_status(status_node_num, 3i32);
-  let mut new_status: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut new_status: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   match position {
     1 => want = new_value_num,
     2 => flag = new_value_num,
@@ -1079,8 +1079,8 @@ unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc
 }
 unsafe extern "C" fn index_status_file(mut filename: *const libc::c_char) {
   let mut status_file: *mut FILE = 0 as *mut FILE;
-  let mut control_buffer: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut status_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut status_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
   let mut status_num: libc::c_uint = 0;
   status_file = xfopen_for_read(filename);
@@ -1128,8 +1128,8 @@ unsafe extern "C" fn write_buffer_no_status(
   mut new_status_file: *mut FILE,
   mut control_buffer: *const libc::c_char,
 ) {
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut value: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut start: libc::c_int = 0i32;
   loop {
     start += read_package_field(
@@ -1156,10 +1156,10 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
     xfopen_for_read(b"/var/lib/dpkg/status\x00" as *const u8 as *const libc::c_char);
   let mut new_status_file: *mut FILE =
     xfopen_for_write(b"/var/lib/dpkg/status.udeb\x00" as *const u8 as *const libc::c_char);
-  let mut package_name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut status_from_file: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut control_buffer: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut tmp_string: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut package_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut status_from_file: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut tmp_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_num: libc::c_int = 0;
   let mut field_start: libc::c_int = 0i32;
   let mut write_flag: libc::c_int = 0;
@@ -1203,7 +1203,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
         strcspn(tmp_string, b"\n\x00" as *const u8 as *const libc::c_char) as libc::c_int,
       )
     } else {
-      status_from_file = 0 as *mut libc::c_char
+      status_from_file = std::ptr::null_mut::<libc::c_char>()
     }
     /* Find this package in the status hashtable */
     status_num = search_status_hashtable(package_name) as libc::c_int;
@@ -1279,8 +1279,8 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
             status_from_hashtable,
           );
           loop {
-            let mut field_name: *mut libc::c_char = 0 as *mut libc::c_char;
-            let mut field_value: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut field_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+            let mut field_value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             field_start += read_package_field(
               &mut *control_buffer.offset(field_start as isize),
               &mut field_name,
@@ -1319,8 +1319,8 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
           loop
           /* only change the status line */
           {
-            let mut field_name_0: *mut libc::c_char = 0 as *mut libc::c_char;
-            let mut field_value_0: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut field_name_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+            let mut field_value_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             field_start += read_package_field(
               &mut *control_buffer.offset(field_start as isize),
               &mut field_name_0,
@@ -1759,7 +1759,7 @@ unsafe extern "C" fn check_deps(
 unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut libc::c_char {
   let mut list_stream: *mut FILE = 0 as *mut FILE;
   let mut file_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut count: libc::c_int = 0;
   /* don't use [xw]fopen here, handle error ourself */
   list_stream = fopen_for_read(filename);
@@ -1847,7 +1847,7 @@ unsafe extern "C" fn run_package_script_or_die(
   mut package_name: *const libc::c_char,
   mut script_type: *const libc::c_char,
 ) {
-  let mut script_path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut script_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut result: libc::c_int = 0;
   script_path = xasprintf(
     b"/var/lib/dpkg/info/%s.%s\x00" as *const u8 as *const libc::c_char,
@@ -2239,8 +2239,8 @@ unsafe extern "C" fn append_control_file_to_llist(
   mut ll: *mut *mut llist_t,
 ) {
   let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut filename: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   filename = xasprintf(
     b"/var/lib/dpkg/info/%s.%s\x00" as *const u8 as *const libc::c_char,
     package_name,
@@ -2276,8 +2276,8 @@ unsafe extern "C" fn filter_rename_config(
       total64: 0,
       hash: [0; 8],
     };
-    let mut md5line: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut md5line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut count: libc::c_int = 0;
     /* Calculate MD5 of existing file */
     buf = xmalloc(4096i32 as size_t) as *mut libc::c_char; /* using buf as result storage */
@@ -2360,8 +2360,8 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
   let status_num: libc::c_uint = search_status_hashtable(package_name);
   let status_package_num: libc::c_uint =
     (*(*ptr_to_globals).status_hashtable[status_num as usize]).package();
-  let mut info_prefix: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut list_filename: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut info_prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut list_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
   let mut out_stream: *mut FILE = 0 as *mut FILE;
   let mut accept_list: *mut llist_t = 0 as *mut llist_t;
@@ -2528,7 +2528,7 @@ pub unsafe extern "C" fn dpkg_main(
 ) -> libc::c_int {
   let mut deb_file: *mut *mut deb_file_t = 0 as *mut *mut deb_file_t;
   let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
-  let mut str_f: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut package_num: libc::c_int = 0;
   let mut deb_count: libc::c_int = 0i32;

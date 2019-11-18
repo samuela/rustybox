@@ -450,8 +450,8 @@ pub unsafe extern "C" fn copy_file(
           if d.is_null() {
             break;
           }
-          let mut new_source: *mut libc::c_char = 0 as *mut libc::c_char;
-          let mut new_dest: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut new_source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+          let mut new_dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           new_source = concat_subpath_file(source, (*d).d_name.as_mut_ptr());
           if new_source.is_null() {
             continue;

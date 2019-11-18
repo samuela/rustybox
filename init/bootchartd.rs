@@ -296,7 +296,7 @@ unsafe extern "C" fn dump_procs(
     if !(stat_fd >= 0i32) {
       continue;
     }
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut stat_line: [libc::c_char; 4096] = [0; 4096];
     let mut rd: libc::c_int = safe_read(
       stat_fd,
@@ -416,7 +416,7 @@ unsafe extern "C" fn do_logging(
     if !(count != 0 && bb_got_signal == 0) {
       break;
     }
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_int = open_read_close(
       b"/proc/uptime\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -495,8 +495,8 @@ unsafe extern "C" fn finalize(
     b"version = 0.8\n\x00" as *const u8 as *const libc::c_char,
     header_fp,
   );
-  let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut kcmdline: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut kcmdline: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut t: time_t = 0;
   let mut tm_time: tm = std::mem::zeroed();
   /* x2 for possible localized weekday/month names */
@@ -668,7 +668,7 @@ pub unsafe extern "C" fn bootchartd_main(
   logger_pid = xfork();
   if logger_pid == 0i32 {
     /* child */
-    let mut tempdir: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut tempdir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     bb_signals(
       0i32
         + (1i32 << 10i32)
@@ -696,7 +696,7 @@ pub unsafe extern "C" fn bootchartd_main(
       if cmd as libc::c_int == CMD_START as libc::c_int {
         *argv.offset(2)
       } else {
-        0 as *mut libc::c_char
+        std::ptr::null_mut::<libc::c_char>()
       },
       process_accounting,
     );

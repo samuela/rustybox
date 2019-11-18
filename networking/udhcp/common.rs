@@ -659,8 +659,8 @@ pub unsafe extern "C" fn udhcp_option_idx(
   if n >= 0i32 {
     return n as libc::c_uint;
   }
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
   s = option_strings;
   while *s != 0 {
@@ -893,7 +893,7 @@ unsafe extern "C" fn attach_option(
   mut dhcpv6: bool,
 ) {
   let mut existing: *mut option_set = 0 as *mut option_set; /* more than enough */
-  let mut allocated: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut allocated: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*optflag).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int == OPTION_BIN as libc::c_int
   {
     let mut end: *const libc::c_char = 0 as *const libc::c_char;
@@ -996,8 +996,8 @@ pub unsafe extern "C" fn udhcp_str2optset(
   mut dhcpv6: bool,
 ) -> libc::c_int {
   let mut opt_list: *mut *mut option_set = arg as *mut *mut option_set;
-  let mut opt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut optflag: *const dhcp_optflag = 0 as *const dhcp_optflag;
   let mut userdef_optflag: dhcp_optflag = dhcp_optflag { flags: 0, code: 0 };
   let mut optcode: libc::c_uint = 0;
@@ -1032,10 +1032,10 @@ pub unsafe extern "C" fn udhcp_str2optset(
   retval = 0i32; /* do not split "'q w e'" */
   loop {
     let mut length: libc::c_int = 0; /* new meaning for variable opt */
-    let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*optflag).flags as libc::c_int == OPTION_BIN as libc::c_int {
       val = strtok(
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
         b"\x00" as *const u8 as *const libc::c_char,
       );
       if !val.is_null() {
@@ -1043,7 +1043,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
       }
     } else {
       val = strtok(
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
         b", \t\x00" as *const u8 as *const libc::c_char,
       )
     }
@@ -1064,7 +1064,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
       2 => {
         retval = udhcp_str2nip(val, buffer.as_mut_ptr() as *mut libc::c_void);
         val = strtok(
-          0 as *mut libc::c_char,
+          std::ptr::null_mut::<libc::c_char>(),
           b", \t/-\x00" as *const u8 as *const libc::c_char,
         );
         if val.is_null() {
@@ -1179,7 +1179,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
           mask = bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 10i32);
           buffer[0] = mask as libc::c_char;
           val = strtok(
-            0 as *mut libc::c_char,
+            std::ptr::null_mut::<libc::c_char>(),
             b", \t/-\x00" as *const u8 as *const libc::c_char,
           );
           if val.is_null() || mask > 32i32 as libc::c_uint || *bb_errno != 0 {

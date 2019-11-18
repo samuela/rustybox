@@ -88,7 +88,7 @@ pub unsafe extern "C" fn wall_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ut: *mut utmpx = 0 as *mut utmpx;
-  let mut msg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut msg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   fd = 0i32;
   if !(*argv.offset(1)).is_null() {
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn wall_main(
     if ut.is_null() {
       break;
     }
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*ut).ut_type as libc::c_int != 7i32 {
       continue;
     }

@@ -790,7 +790,7 @@ unsafe extern "C" fn str2sockaddr(
     ai_protocol: 0,
     ai_addrlen: 0,
     ai_addr: 0 as *mut sockaddr,
-    ai_canonname: 0 as *mut libc::c_char,
+    ai_canonname: std::ptr::null_mut::<libc::c_char>(),
     ai_next: 0 as *mut addrinfo,
   };
   if 0i32 != 0
@@ -1242,7 +1242,7 @@ unsafe extern "C" fn sockaddr2str(
     flags | 2i32,
   );
   if rc != 0 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   if flags & 2i32 != 0 {
     return xstrdup(host.as_mut_ptr());

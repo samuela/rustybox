@@ -31,7 +31,7 @@ pub unsafe extern "C" fn rmdir_main(
 ) -> libc::c_int {
   let mut status: libc::c_int = 0i32; /* Match gnu rmdir msg. */
   let mut flags: libc::c_int = 0;
-  let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   flags = getopt32long(
     argv,
     b"pv\x00" as *const u8 as *const libc::c_char,

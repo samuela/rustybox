@@ -240,8 +240,8 @@ pub unsafe extern "C" fn hostname_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut hostname_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut hostname_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* dnsdomainname from net-tools 1.60, hostname 1.100 (2001-04-14),
    * supports hostname's options too (not just -v as manpage says) */
   opts = getopt32(
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn hostname_main(
   if opts & OPT_dfi as libc::c_int as libc::c_uint != 0 {
     /* Cases when we need full hostname (or its part) */
     let mut hp: *mut hostent = 0 as *mut hostent;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     hp = xgethostbyname(buf);
     p = strchrnul((*hp).h_name, '.' as i32);
     if opts & OPT_f as libc::c_int as libc::c_uint != 0 {

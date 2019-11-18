@@ -247,7 +247,7 @@ pub unsafe extern "C" fn decode_base64(
     /* Fetch up to four 6-bit values */
     src_tail = src;
     while count < 4i32 {
-      let mut table_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut table_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut ch: libc::c_int = 0;
       /* Get next _valid_ character.
        * bb_uuenc_tbl_base64[] contains this string:
@@ -878,7 +878,7 @@ pub unsafe extern "C" fn read_base64(
    */
   let mut in_buf: [libc::c_char; 66] = [0; 66];
   let mut out_buf: [libc::c_char; 50] = [0; 50];
-  let mut out_tail: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut out_tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut in_tail: *const libc::c_char = 0 as *const libc::c_char;
   let mut term_seen: libc::c_int = 0i32;
   let mut in_count: libc::c_int = 0i32;

@@ -26,7 +26,7 @@ pub unsafe extern "C" fn bb_get_chunk_from_file(
 ) -> *mut libc::c_char {
   let mut ch: libc::c_int = 0;
   let mut idx: size_t = 0i32 as size_t;
-  let mut linebuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut linebuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     ch = getc_unlocked(file);
     if !(ch != -1i32) {

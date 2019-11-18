@@ -579,7 +579,7 @@ pub unsafe extern "C" fn setfont_main(
   let mut opts: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
   let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut mapfilename: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut mapfilename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_name: *const libc::c_char = b"/dev/tty\x00" as *const u8 as *const libc::c_char;
   opts = getopt32(
     argv,

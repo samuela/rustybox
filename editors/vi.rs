@@ -473,7 +473,7 @@ unsafe extern "C" fn next_line(mut p: *mut libc::c_char) -> *mut libc::c_char
 }
 //----- Text Information Routines ------------------------------
 unsafe extern "C" fn end_screen() -> *mut libc::c_char {
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cnt: libc::c_int = 0;
   // find new bottom line
   q = (*ptr_to_globals).screenbegin;
@@ -490,7 +490,7 @@ unsafe extern "C" fn count_lines(
   mut start: *mut libc::c_char,
   mut stop: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cnt: libc::c_int = 0;
   if stop < start {
     // start and stop are backwards- reverse them
@@ -512,7 +512,7 @@ unsafe extern "C" fn count_lines(
 unsafe extern "C" fn find_line(mut li: libc::c_int) -> *mut libc::c_char
 // find beginning of line #li
 {
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   q = (*ptr_to_globals).text;
   while li > 1i32 {
     q = next_line(q);
@@ -533,7 +533,7 @@ unsafe extern "C" fn screen_erase() {
   // clear new screen
 }
 unsafe extern "C" fn new_screen(mut ro: libc::c_int, mut co: libc::c_int) {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   free((*ptr_to_globals).screen as *mut libc::c_void);
   (*ptr_to_globals).screensize = ro * co + 8i32;
   (*ptr_to_globals).screen = xmalloc((*ptr_to_globals).screensize as size_t) as *mut libc::c_char;
@@ -562,8 +562,8 @@ unsafe extern "C" fn sync_cursor(
   mut row: *mut libc::c_int,
   mut col: *mut libc::c_int,
 ) {
-  let mut beg_cur: *mut libc::c_char = 0 as *mut libc::c_char; // begin and end of "d" line
-  let mut tp: *mut libc::c_char = 0 as *mut libc::c_char; // first char of cur line
+  let mut beg_cur: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // begin and end of "d" line
+  let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // first char of cur line
   let mut cnt: libc::c_int = 0;
   let mut ro: libc::c_int = 0;
   let mut co: libc::c_int = 0;
@@ -575,7 +575,7 @@ unsafe extern "C" fn sync_cursor(
     cnt = count_lines(beg_cur, (*ptr_to_globals).screenbegin); // begin and end of screen
     current_block_16 = 4352155799676625979; // last char of screen
   } else {
-    let mut end_scr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut end_scr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     end_scr = end_screen();
     if beg_cur > end_scr {
       // "d" is after bottom line on screen
@@ -784,8 +784,8 @@ unsafe extern "C" fn format_line(mut src: *mut libc::c_char) -> *mut libc::c_cha
 unsafe extern "C" fn refresh(mut full_screen: libc::c_int) {
   let mut li: libc::c_int = 0; // pointer into text[] and screen[]
   let mut changed: libc::c_int = 0; // where cursor will be (on "dot")
-  let mut tp: *mut libc::c_char = 0 as *mut libc::c_char; // index into text[] of top line
-  let mut sp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // index into text[] of top line
+  let mut sp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if 1i32 != 0 && (*ptr_to_globals).get_rowcol_error == 0 {
     let mut c: libc::c_uint = (*ptr_to_globals).columns;
     let mut r: libc::c_uint = (*ptr_to_globals).rows;
@@ -806,7 +806,7 @@ unsafe extern "C" fn refresh(mut full_screen: libc::c_int) {
     let mut current_block_34: u64;
     let mut cs: libc::c_int = 0;
     let mut ce: libc::c_int = 0;
-    let mut out_buf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut out_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // format current text line
     out_buf = format_line(tp);
     // skip to the end of the current text[] line
@@ -970,7 +970,7 @@ unsafe extern "C" fn get_one_char() -> libc::c_int {
       }
       // read from STDIN:
       free((*ptr_to_globals).ioq_start as *mut libc::c_void);
-      (*ptr_to_globals).ioq_start = 0 as *mut libc::c_char
+      (*ptr_to_globals).ioq_start = std::ptr::null_mut::<libc::c_char>()
     }
     return readit();
   }
@@ -1204,7 +1204,7 @@ unsafe extern "C" fn status_line_bold_errno(mut fn_0: *const libc::c_char) {
 }
 // copy s to buf, convert unprintable
 unsafe extern "C" fn print_literal(mut buf: *mut libc::c_char, mut s: *const libc::c_char) {
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char; // 0x40
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // 0x40
   let mut c: libc::c_uchar = 0;
   *buf.offset(0) = '\u{0}' as i32 as libc::c_char;
   if *s.offset(0) == 0 {
@@ -1318,7 +1318,7 @@ unsafe extern "C" fn check_context(mut cmd: libc::c_char) {
 unsafe extern "C" fn swap_context(mut p: *mut libc::c_char) -> *mut libc::c_char
 // goto new context for '' command make this the current context
 {
-  let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // the current context is in mark[26]
   // the previous context is in mark[27]
   // only swap context if other context is valid
@@ -1350,7 +1350,7 @@ unsafe extern "C" fn text_hole_make(mut p: *mut libc::c_char, mut size: libc::c_
       .text
       .offset((*ptr_to_globals).text_size as isize)
   {
-    let mut new_text: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut new_text: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     (*ptr_to_globals).text_size = ((*ptr_to_globals).text_size as libc::c_long
       + ((*ptr_to_globals).end.wrapping_offset_from(
         (*ptr_to_globals)
@@ -1400,8 +1400,8 @@ unsafe extern "C" fn text_hole_delete(
   mut q: *mut libc::c_char,
   mut undo: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut src: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dest: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cnt: libc::c_int = 0;
   let mut hole_size: libc::c_int = 0;
   // move forwards, from beginning
@@ -1625,8 +1625,8 @@ unsafe extern "C" fn undo_push_insert(
 // Undo the last operation
 unsafe extern "C" fn undo_pop() {
   let mut repeat: libc::c_int = 0;
-  let mut u_start: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut u_end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut u_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut u_end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut undo_entry: *mut undo_object = 0 as *mut undo_object;
   // Commit pending undo queue before popping (should be unnecessary)
   undo_queue_commit();
@@ -1762,7 +1762,7 @@ unsafe extern "C" fn dot_skip_over_ws() {
   }
 }
 unsafe extern "C" fn dot_scroll(mut cnt: libc::c_int, mut dir: libc::c_int) {
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   undo_queue_commit();
   while cnt > 0i32 {
     if dir < 0i32 {
@@ -1830,7 +1830,7 @@ unsafe extern "C" fn yank_delete(
   mut yf: libc::c_int,
   mut undo: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // make sure start <= stop
   if start > stop {
     // they are backwards, reverse them
@@ -1945,7 +1945,7 @@ unsafe extern "C" fn find_pair(mut p: *mut libc::c_char, c: libc::c_char) -> *mu
   loop {
     p = p.offset(dir as isize); // reduce pair level
     if p < (*ptr_to_globals).text || p >= (*ptr_to_globals).end {
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     if *p as libc::c_int == c as libc::c_int {
       level += 1
@@ -1961,8 +1961,8 @@ unsafe extern "C" fn find_pair(mut p: *mut libc::c_char, c: libc::c_char) -> *mu
 }
 // show the matching char of a pair,  ()  []  {}
 unsafe extern "C" fn showmatching(mut p: *mut libc::c_char) {
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut save_dot: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut save_dot: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // we found half of a pair
   q = find_pair(p, *p); // get loc of matching char
   if q.is_null() {
@@ -2048,7 +2048,7 @@ unsafe extern "C" fn char_insert(
     }
     if (*ptr_to_globals).vi_setops as libc::c_int & 1i32 != 0 && c as libc::c_int == '\n' as i32 {
       // auto indent the new line
-      let mut q: *mut libc::c_char = 0 as *mut libc::c_char; // use prev line as template
+      let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // use prev line as template
       let mut len: size_t = 0; // space or tab
       q = prev_line(p);
       len = strspn(q, b" \t\x00" as *const u8 as *const libc::c_char);
@@ -2175,8 +2175,8 @@ unsafe extern "C" fn char_search(
   mut pat: *const libc::c_char,
   mut dir_and_range: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut start: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut stop: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut stop: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   let mut range: libc::c_int = 0;
   len = strlen(pat) as libc::c_int;
@@ -2208,7 +2208,7 @@ unsafe extern "C" fn char_search(
     }
   }
   // pattern not found
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 /* FEATURE_VI_SEARCH */
 //----- The Colon commands -------------------------------------
@@ -2219,9 +2219,9 @@ unsafe extern "C" fn get_one_address(
 // get colon addr, if present
 {
   let mut st: libc::c_int = 0; // assume no addr
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
-  let mut pat: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pat: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   *addr = -1i32;
   if *p as libc::c_int == '.' as i32 {
     // the current line
@@ -2362,10 +2362,10 @@ unsafe extern "C" fn setops(
 unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
   let mut current_block: u64;
   let mut c: libc::c_char = 0;
-  let mut buf1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut r: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fn_0: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut r: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fn_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cmd: [libc::c_char; 128] = [0; 128];
   let mut args: [libc::c_char; 128] = [0; 128];
   let mut i: libc::c_int = 0;
@@ -2374,7 +2374,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
   let mut b: libc::c_int = 0;
   let mut e: libc::c_int = 0;
   let mut useforce: libc::c_int = 0;
-  let mut orig_buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut orig_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // :3154	// if (-e line 3154) goto it  else stay put
   // :4,33w! foo	// write a portion of buffer to file "foo"
   // :w		// write all of buffer to current file
@@ -2538,11 +2538,11 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
             size = init_text_buffer(fn_0); //   free orig line reg- for 'U'
             if 27i32 >= 0i32 && 27i32 < 28i32 {
               free((*ptr_to_globals).reg[27] as *mut libc::c_void);
-              (*ptr_to_globals).reg[27] = 0 as *mut libc::c_char
+              (*ptr_to_globals).reg[27] = std::ptr::null_mut::<libc::c_char>()
             }
             /*if (YDreg < 28) - always true*/
             free((*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] as *mut libc::c_void); //   free default yank/delete register
-            (*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] = 0 as *mut libc::c_char;
+            (*ptr_to_globals).reg[(*ptr_to_globals).YDreg as usize] = std::ptr::null_mut::<libc::c_char>();
             // how many lines in text[]?
             li = count_lines((*ptr_to_globals).text, (*ptr_to_globals).end.offset(-1));
             status_line(
@@ -2779,7 +2779,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
     ) == 0i32
     {
       // set or clear features
-      let mut argp: *mut libc::c_char = 0 as *mut libc::c_char; // offset into args
+      let mut argp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // offset into args
       i = 0i32;
       // only blank is regarded as args delimiter. What about tab '\t'?
       if args[0] == 0
@@ -2877,9 +2877,9 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
     /* FEATURE_VI_SET */
     } else if cmd[0] as libc::c_int == 's' as i32 {
       // substitute a pattern with a replacement pattern
-      let mut F: *mut libc::c_char = 0 as *mut libc::c_char; // global replace flag
-      let mut R: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut flags: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut F: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // global replace flag
+      let mut R: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut flags: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len_F: size_t = 0;
       let mut len_R: size_t = 0;
       let mut gflag: libc::c_int = 0;
@@ -2920,7 +2920,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
           while i <= e {
             // so, :20,23 s \0 find \0 replace \0
             let mut ls: *mut libc::c_char = q; // orig line start
-            let mut found: *mut libc::c_char = 0 as *mut libc::c_char; // search cur line only for "find"
+            let mut found: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // search cur line only for "find"
             loop {
               found = char_search(
                 q,
@@ -3221,10 +3221,10 @@ unsafe extern "C" fn find_range(
   mut stop: *mut *mut libc::c_char,
   mut c: libc::c_char,
 ) -> libc::c_int {
-  let mut save_dot: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut save_dot: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cnt: libc::c_int = 0;
   let mut multiline: libc::c_int = 0i32;
   let mut forward: libc::c_int = 0;
@@ -3384,9 +3384,9 @@ unsafe extern "C" fn find_range(
 unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut current_block: u64;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut save_dot: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut save_dot: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: [libc::c_char; 12] = [0; 12];
   let mut dir: libc::c_int = 0;
   let mut cnt: libc::c_int = 0;
@@ -97734,11 +97734,11 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
   (*ptr_to_globals).offset = 0i32;
   c = '\u{0}' as i32;
   free((*ptr_to_globals).ioq_start as *mut libc::c_void);
-  (*ptr_to_globals).ioq_start = 0 as *mut libc::c_char;
+  (*ptr_to_globals).ioq_start = std::ptr::null_mut::<libc::c_char>();
   (*ptr_to_globals).lmc_len = 0i32;
   (*ptr_to_globals).adding2q = 0i32 as smallint;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut q: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut n: libc::c_int = 0i32;
   loop {
     p = (*ptr_to_globals).initial_cmds[n as usize];
@@ -97763,7 +97763,7 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
       }
     }
     free((*ptr_to_globals).initial_cmds[n as usize] as *mut libc::c_void);
-    (*ptr_to_globals).initial_cmds[n as usize] = 0 as *mut libc::c_char;
+    (*ptr_to_globals).initial_cmds[n as usize] = std::ptr::null_mut::<libc::c_char>();
     n += 1
   }
   redraw(0i32);

@@ -99,7 +99,7 @@ use libc::uid_t;
 /* Return 1 if SHELL is a restricted shell (one not returned by
  * getusershell), else 0, meaning it is a standard shell.  */
 unsafe extern "C" fn restricted_shell(mut shell: *const libc::c_char) -> libc::c_int {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut result: libc::c_int = 1i32;
   loop
   /*setusershell(); - getusershell does it itself*/
@@ -122,8 +122,8 @@ pub unsafe extern "C" fn su_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut flags: libc::c_uint = 0;
-  let mut opt_shell: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_command: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_command: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_username: *const libc::c_char = b"root\x00" as *const u8 as *const libc::c_char;
   let mut pw: *mut passwd = 0 as *mut passwd;
   let mut cur_uid: uid_t = getuid();
@@ -225,7 +225,7 @@ pub unsafe extern "C" fn su_main(
      * compromise the account by allowing access with a standard
      * shell.  */
     bb_simple_error_msg(b"using restricted shell\x00" as *const u8 as *const libc::c_char);
-    opt_shell = 0 as *mut libc::c_char
+    opt_shell = std::ptr::null_mut::<libc::c_char>()
     /* ignore -s PROG */
   }
   /* else: user can run whatever he wants via "su -s PROG USER".

@@ -1055,7 +1055,7 @@ unsafe extern "C" fn vfork_compressor(mut tar_fd: libc::c_int, mut gzip: *const 
       gzip,
       gzip,
       b"-f\x00" as *const u8 as *const libc::c_char,
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
     );
     ::std::ptr::write_volatile(&mut vfork_exec_errno as *mut libc::c_int, *bb_errno);
     _exit(1i32);
@@ -1162,7 +1162,7 @@ unsafe extern "C" fn append_file_list_to_list(mut list: *mut llist_t) -> *mut ll
   let mut newlist: *mut llist_t = 0 as *mut llist_t;
   while !list.is_null() {
     let mut src_stream: *mut FILE = 0 as *mut FILE;
-    let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     src_stream = xfopen_stdin(llist_pop(&mut list) as *const libc::c_char);
     loop {
       line = xmalloc_fgetline(src_stream);
@@ -1203,7 +1203,7 @@ pub unsafe extern "C" fn tar_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut base_dir: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut base_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tar_filename: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
   let mut opt: libc::c_uint = 0;
   let mut verboseFlag: libc::c_int = 0i32;

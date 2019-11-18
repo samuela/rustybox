@@ -448,8 +448,8 @@ unsafe extern "C" fn compare_keys(
 ) -> libc::c_int {
   let mut flags: libc::c_int = option_mask32 as libc::c_int; /* for */
   let mut retval: libc::c_int = 0i32;
-  let mut x: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut y: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut x: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut y: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut key: *mut sort_key = 0 as *mut sort_key;
   key = key_list;
   while retval == 0 && !key.is_null() {
@@ -476,8 +476,8 @@ unsafe extern "C" fn compare_keys(
         retval = strcmp(x, y)
       }
       2 => {
-        let mut xx: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut yy: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut xx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut yy: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut dx: libc::c_double = strtod(x, &mut xx);
         let mut dy: libc::c_double = strtod(y, &mut yy);
         /* not numbers < NaN < -infinity < numbers < +infinity) */
@@ -534,8 +534,8 @@ unsafe extern "C" fn compare_keys(
           tm_zone: 0 as *const libc::c_char,
         };
         let mut dx_0: libc::c_int = 0;
-        let mut xx_0: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut yy_0: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut xx_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut yy_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         xx_0 = strptime(x, b"%b\x00" as *const u8 as *const libc::c_char, &mut thyme);
         dx_0 = thyme.tm_mon;
         yy_0 = strptime(y, b"%b\x00" as *const u8 as *const libc::c_char, &mut thyme);
@@ -583,7 +583,7 @@ unsafe extern "C" fn compare_keys(
       let mut p32: *mut u32 = 0 as *mut u32;
       let mut x32: u32 = 0;
       let mut y32: u32 = 0;
-      let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len: libc::c_uint = 0;
       line = *(xarg as *mut *mut libc::c_char);
       len =
@@ -632,9 +632,9 @@ pub unsafe extern "C" fn sort_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut lines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut str_ignored: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_o: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_ignored: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lst_k: *mut llist_t = 0 as *mut llist_t;
   let mut i: libc::c_int = 0;
   let mut linecount: libc::c_int = 0;
@@ -783,7 +783,7 @@ pub unsafe extern "C" fn sort_main(
     i = 0i32;
     while i < linecount {
       let mut p32: *mut u32 = 0 as *mut u32;
-      let mut line_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut line_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len: libc::c_uint = 0;
       line_0 = *lines.offset(i as isize);
       len = (strlen(line_0).wrapping_add(4i32 as libc::c_ulong) & !3u32 as libc::c_ulong)

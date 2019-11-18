@@ -89,10 +89,10 @@ pub unsafe extern "C" fn fstrim_main(
     len: 0,
     minlen: 0,
   };
-  let mut arg_o: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut arg_l: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut arg_m: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut mp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut arg_l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut arg_m: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut mp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
   static mut fstrim_longopts: [libc::c_char; 39] = [

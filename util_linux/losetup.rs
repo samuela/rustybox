@@ -56,7 +56,7 @@ pub unsafe extern "C" fn losetup_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut opt_o: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut dev: [libc::c_char; 23] = [0; 23];
   opt = getopt32(
     argv,
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn losetup_main(
   argv = argv.offset(optind as isize);
   /* LOOPDEV */
   if opt == 0 && !(*argv.offset(0)).is_null() && (*argv.offset(1)).is_null() {
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     s = query_loop(*argv.offset(0));
     if s.is_null() {
       bb_simple_perror_msg_and_die(*argv.offset(0));
@@ -101,7 +101,7 @@ pub unsafe extern "C" fn losetup_main(
     let mut n: libc::c_int = 0;
     n = 0i32;
     while n < 1023i32 {
-      let mut s_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       sprintf(
         dev.as_mut_ptr(),
         b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn losetup_main(
   }
   /* contains -f */
   if opt & OPT_f as libc::c_int as libc::c_uint != 0 {
-    let mut s_1: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut n_0: libc::c_int = 0;
     n_0 = get_free_loop();
     if n_0 == -1i32 {

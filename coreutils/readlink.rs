@@ -87,8 +87,8 @@ pub unsafe extern "C" fn readlink_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
   /* We need exactly one non-option argument.  */
   opt = getopt32(

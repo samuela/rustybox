@@ -668,7 +668,7 @@ unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc
     .envmatch;
   loop {
     let mut e: *mut envmatch = 0 as *mut envmatch;
-    let mut semicolon: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut semicolon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut eq: *mut libc::c_char = strchr(val, '=' as i32);
     if eq.is_null() {
       /* || eq == val? */
@@ -701,7 +701,7 @@ unsafe extern "C" fn parse_next_rule() {
   /* Note: on entry, G.cur_rule is set to default */
   {
     let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4]; /* while (config_read) */
-    let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* No PARSE_EOL_COMMENTS, because command may contain '#' chars */
     if config_read(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser,
@@ -1011,7 +1011,7 @@ unsafe extern "C" fn build_alias(
   mut alias: *mut libc::c_char,
   mut device_name: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut dest: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* ">bar/": rename to bar/device_name */
   /* ">bar[/]baz": rename to bar[/]baz */
   dest = strrchr(alias, '/' as i32);
@@ -1147,12 +1147,12 @@ unsafe extern "C" fn make_device(
   loop {
     let mut str_to_match: *const libc::c_char = 0 as *const libc::c_char;
     let mut off: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
-    let mut command: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut alias: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut command: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut alias: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* this rule doesn't match */
     let mut aliaslink: libc::c_char = 0; /* for compiler */
     aliaslink = aliaslink;
-    let mut node_name: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut node_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut rule: *const rule = 0 as *const rule;
     str_to_match = device_name;
     rule = next_rule();
@@ -1221,15 +1221,15 @@ unsafe extern "C" fn make_device(
       );
     }
     /* Build alias name */
-    alias = 0 as *mut libc::c_char;
+    alias = std::ptr::null_mut::<libc::c_char>();
     if 1i32 != 0 && !(*rule).ren_mov.is_null() {
       aliaslink = *(*rule).ren_mov.offset(0);
       if aliaslink as libc::c_int == '!' as i32 {
         /* "!": suppress node creation/deletion */
         major = -2i32
       } else if aliaslink as libc::c_int == '>' as i32 || aliaslink as libc::c_int == '=' as i32 {
-        let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut n: libc::c_uint = 0;
         /* substitute %1..9 with off[1..9], if any */
         n = 0i32 as libc::c_uint;
@@ -1267,7 +1267,7 @@ unsafe extern "C" fn make_device(
         }
       }
     }
-    command = 0 as *mut libc::c_char;
+    command = std::ptr::null_mut::<libc::c_char>();
     command = (*rule).r_cmd;
     if !command.is_null() {
       /* Are we running this command now?
@@ -1279,7 +1279,7 @@ unsafe extern "C" fn make_device(
       {
         command = command.offset(1)
       } else {
-        command = 0 as *mut libc::c_char
+        command = std::ptr::null_mut::<libc::c_char>()
       }
     }
     /* "Execute" the line we found */
@@ -1397,7 +1397,7 @@ unsafe extern "C" fn readlink2(mut buf: *mut libc::c_char, mut bufsize: size_t) 
   // Grr... gcc 8.1.1:
   // "passing argument 2 to restrict-qualified parameter aliases with argument 1"
   // dance around that...
-  let mut obuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut obuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   obuf = buf;
   return readlink(buf, obuf, bufsize);
 }
@@ -1445,7 +1445,7 @@ unsafe extern "C" fn fileAction(
     {
       bb_unsetenv_and_free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env);
       let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env;
-      *fresh13 = 0 as *mut libc::c_char
+      *fresh13 = std::ptr::null_mut::<libc::c_char>()
     }
     /* Set G.subsystem and $SUBSYSTEM from symlink's last component */
     let ref mut fresh14 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsystem;
@@ -1729,11 +1729,11 @@ unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
   }
 }
 unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: libc::c_uint) {
-  let mut fw: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut seq: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut action: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env_devname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut env_devpath: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fw: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut seq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut action: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env_devname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut env_devpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut seqnum: libc::c_uint = 0;
   seqnum = seqnum;
   let mut seq_fd: libc::c_int = 0;
@@ -1847,8 +1847,8 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
   loop {
     let mut netbuf: [libc::c_char; 2048] = [0; 2048];
     let mut env: [*mut libc::c_char; 32] = [0 as *mut libc::c_char; 32];
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: ssize_t = 0;
     let mut idx: libc::c_int = 0;
     len = safe_read(

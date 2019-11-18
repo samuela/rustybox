@@ -184,7 +184,7 @@ pub unsafe extern "C" fn send_mail_command(
   mut fmt: *const libc::c_char,
   mut param: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut msg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut msg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*ptr_to_globals).timeout != 0 {
     alarm((*ptr_to_globals).timeout);
   }

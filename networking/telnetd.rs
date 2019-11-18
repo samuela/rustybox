@@ -331,7 +331,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-      
+
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;
@@ -628,7 +628,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   bb_signals((1i32 << 17i32) + (1i32 << 13i32), None);
   pid = getpid();
   let mut lsa: *mut len_and_sockaddr = get_peer_lsa(sock);
-  let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if !lsa.is_null() {
     hostname = xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
     free(lsa as *mut libc::c_void);
@@ -762,8 +762,8 @@ pub unsafe extern "C" fn telnetd_main(
   master_fd = master_fd;
   let mut sec_linger: libc::c_int = 0;
   sec_linger = sec_linger;
-  let mut opt_bindaddr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_portnbr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_bindaddr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_portnbr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).loginpath;
   *fresh1 = b"/bin/login\x00" as *const u8 as *const libc::c_char;
   let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).issuefile;

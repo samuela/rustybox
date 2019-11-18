@@ -1099,7 +1099,7 @@ unsafe extern "C" fn print_inetname(mut from: *const sockaddr) {
   if option_mask32 & OPT_ADDR_NUM as libc::c_int as libc::c_uint != 0 {
     printf(b"  %s\x00" as *const u8 as *const libc::c_char, ina);
   } else {
-    let mut n: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*from).sa_family as libc::c_int != 2i32
       || (*(from as *mut sockaddr_in)).sin_addr.s_addr != 0i32 as in_addr_t
     {
@@ -1162,16 +1162,16 @@ unsafe extern "C" fn common_traceroute_main(
   let mut nprobes: libc::c_int = 3i32;
   let mut first_ttl: libc::c_int = 1i32;
   let mut pausemsecs: libc::c_uint = 0i32 as libc::c_uint;
-  let mut source: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut device: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut tos_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut max_ttl_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut port_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut nprobes_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut waittime_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut pausemsecs_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut first_ttl_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dest_str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut device: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut tos_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut max_ttl_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut port_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut nprobes_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut waittime_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut pausemsecs_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut first_ttl_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dest_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut af: sa_family_t = 0;
   let mut ttl: libc::c_int = 0;
   let mut seq: libc::c_int = 0;

@@ -167,22 +167,22 @@ pub unsafe extern "C" fn bbunpack(
   >,
   mut expected_ext: *const libc::c_char,
 ) -> libc::c_int {
-  let mut del: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut del: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut stat_buf: stat = std::mem::zeroed();
   let mut status: libc::c_longlong = 0i32 as libc::c_longlong;
-  let mut filename: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut new_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut new_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut exitcode: smallint = 0i32 as smallint;
   let mut xstate: transformer_state_t = std::mem::zeroed();
   loop {
     /* NB: new_name is *maybe* malloc'ed! */
-    new_name = 0 as *mut libc::c_char; /* can be NULL - 'streaming' bunzip2 */
+    new_name = std::ptr::null_mut::<libc::c_char>(); /* can be NULL - 'streaming' bunzip2 */
     filename = *argv;
     if !filename.is_null()
       && (*filename.offset(0) as libc::c_int == '-' as i32 && *filename.offset(1) == 0)
     {
-      filename = 0 as *mut libc::c_char
+      filename = std::ptr::null_mut::<libc::c_char>()
     }
     /* Open src */
     if !filename.is_null() {
@@ -241,7 +241,7 @@ pub unsafe extern "C" fn bbunpack(
               xfunc_die();
             }
           }
-          filename = 0 as *mut libc::c_char
+          filename = std::ptr::null_mut::<libc::c_char>()
         }
         /* Open dst if we are going to unpack to file */
         if !filename.is_null() {
@@ -354,7 +354,7 @@ pub unsafe extern "C" fn bbunpack(
                 del = filename;
                 if option_mask32 & BBUNPK_OPT_KEEP as libc::c_int as libc::c_uint != 0 {
                   /* ... unless -k */
-                  del = 0 as *mut libc::c_char
+                  del = std::ptr::null_mut::<libc::c_char>()
                 }
               } /* with error check! */
               if !del.is_null() {
@@ -404,7 +404,7 @@ unsafe extern "C" fn make_new_name_generic(
   if extension.is_null() || strcmp(extension.offset(1), expected_ext) != 0i32 {
     /* Mimic GNU gunzip - "real" bunzip2 tries to */
     /* unpack file anyway, to file.out */
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   *extension = '\u{0}' as i32 as libc::c_char;
   return filename;
@@ -501,7 +501,7 @@ unsafe extern "C" fn make_new_name_gunzip(
 ) -> *mut libc::c_char {
   let mut extension: *mut libc::c_char = strrchr(filename, '.' as i32);
   if extension.is_null() {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   extension = extension.offset(1);
   if strcmp(
@@ -516,7 +516,7 @@ unsafe extern "C" fn make_new_name_gunzip(
     *extension.offset(2) = 'a' as i32 as libc::c_char;
     *extension.offset(3) = 'r' as i32 as libc::c_char
   } else {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   return filename;
 }

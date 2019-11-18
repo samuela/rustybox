@@ -148,7 +148,7 @@ pub unsafe extern "C" fn lsof_main(
     let mut name: [libc::c_char; 35] = [0; 35];
     let mut baseofs: libc::c_uint = 0;
     let mut d_fd: *mut DIR = 0 as *mut DIR;
-    let mut fdlink: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut fdlink: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut entry: *mut dirent = 0 as *mut dirent;
     if getpid() as libc::c_uint == (*proc_0).pid {
       continue;

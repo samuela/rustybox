@@ -324,7 +324,7 @@ pub unsafe extern "C" fn nbdclient_main(
     let mut nbd_0: libc::c_int = 0;
     let mut ro: libc::c_int = 0;
     let mut proto_new: libc::c_int = 0;
-    let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // Make sure BLOCKDEV exists
     nbd_0 = xopen(device, 0o2i32);
     // Find and connect to server

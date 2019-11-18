@@ -282,7 +282,7 @@ unsafe extern "C" fn parse_comma_flags(
   let mut flags: libc::c_int = 0i32;
   loop {
     let mut n: libc::c_int = 0;
-    let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* skip this keyword and ',' */
     /* find ',', replace them with NUL so we can use val for
      * index_in_strings() without copying.
@@ -332,9 +332,9 @@ pub unsafe extern "C" fn dd_main(
   let mut exitcode: smallint = 1i32 as smallint;
   let mut i: libc::c_int = 0;
   let mut ibs: size_t = 512i32 as size_t;
-  let mut ibuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ibuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut obs: size_t = 512i32 as size_t;
-  let mut obuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut obuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* These are all zeroed at once! */
   let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
     ocount: 0,
@@ -359,7 +359,7 @@ pub unsafe extern "C" fn dd_main(
   i = 1i32; /* end of "for (argv[i])" */
   while !(*argv.offset(i as isize)).is_null() {
     let mut what: libc::c_int = 0;
-    let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut arg: *mut libc::c_char = *argv.offset(i as isize);
     /* "dd --". NB: coreutils 6.9 will complain if they see
      * more than one of them. We wouldn't. */

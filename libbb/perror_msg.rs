@@ -39,7 +39,7 @@ pub unsafe extern "C" fn bb_perror_msg(mut s: *const libc::c_char, mut args: ...
     if *bb_errno != 0 {
       strerror(*bb_errno)
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     },
   );
 }
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn bb_perror_msg_and_die(mut s: *const libc::c_char, mut a
     if *bb_errno != 0 {
       strerror(*bb_errno)
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     },
   );
   xfunc_die();

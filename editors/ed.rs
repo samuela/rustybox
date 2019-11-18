@@ -290,7 +290,7 @@ unsafe extern "C" fn getNum(
   mut retHaveNum: *mut smallint,
   mut retNum: *mut libc::c_int,
 ) -> *const libc::c_char {
-  let mut endStr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut endStr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str: [libc::c_char; 1023] = [0; 1023];
   let mut value: libc::c_int = 0;
   let mut num: libc::c_int = 0;
@@ -488,7 +488,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
   let mut len: libc::c_int = 0;
   let mut lineCount: libc::c_int = 0;
   let mut charCount: libc::c_int = 0;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if num < 1i32 || num > (*ptr_to_globals).lastNum + 1i32 {
     bb_simple_error_msg(b"bad line for read\x00" as *const u8 as *const libc::c_char);
     return 0i32;
@@ -765,9 +765,9 @@ unsafe extern "C" fn subCommand(
   mut num1: libc::c_int,
   mut num2: libc::c_int,
 ) {
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut oldStr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut newStr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut oldStr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut newStr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: [libc::c_char; 1023] = [0; 1023];
   let mut delim: libc::c_int = 0;
   let mut oldLen: libc::c_int = 0;

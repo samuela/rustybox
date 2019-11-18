@@ -224,7 +224,7 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
         !(1i32 << (cap & 31i32 as libc::c_uint)) as libc::c_uint
     }
     capstring = strtok(
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       b",\x00" as *const u8 as *const libc::c_char,
     )
   }
@@ -233,7 +233,7 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
   };
 }
 unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
-  let mut cap: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cap: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   cap = strtok(string, b",\x00" as *const u8 as *const libc::c_char);
   while !cap.is_null() {
     let mut idx: libc::c_uint = 0;
@@ -246,7 +246,7 @@ unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
       bb_simple_perror_msg(b"cap_ambient_lower\x00" as *const u8 as *const libc::c_char);
     }
     cap = strtok(
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       b",\x00" as *const u8 as *const libc::c_char,
     )
   }
@@ -387,8 +387,8 @@ pub unsafe extern "C" fn setpriv_main(
     101, 110, 116, 45, 99, 97, 112, 115, 0, 1, -3, 0,
   ];
   let mut opts: libc::c_int = 0;
-  let mut inh_caps: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ambient_caps: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut inh_caps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ambient_caps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opts = getopt32long(
     argv,
     b"+d\xfe:\xfd:\x00" as *const u8 as *const libc::c_char,

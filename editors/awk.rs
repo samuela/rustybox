@@ -921,7 +921,7 @@ unsafe extern "C" fn nextword(mut s: *mut *mut libc::c_char) -> *mut libc::c_cha
 }
 unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
   let mut c: libc::c_char = 0;
-  let mut pps: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let fresh6 = *s;
   *s = (*s).offset(1);
   c = *fresh6;
@@ -933,7 +933,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -1026,7 +1026,7 @@ unsafe extern "C" fn clrvar(mut v: *mut var) -> *mut var {
   }
   (*v).type_0 &= (0x2i32 | 0x400i32 | 0x800i32 | 0x2000i32 | 0x4000i32) as libc::c_uint;
   (*v).type_0 |= 0x4000i32 as libc::c_uint;
-  (*v).string = 0 as *mut libc::c_char;
+  (*v).string = std::ptr::null_mut::<libc::c_char>();
   return v;
 }
 /* assign string value to variable */
@@ -1043,7 +1043,7 @@ unsafe extern "C" fn setvar_s(mut v: *mut var, mut value: *const libc::c_char) -
     if !value.is_null() && *value as libc::c_int != 0 {
       xstrdup(value)
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     },
   );
 }
@@ -1087,7 +1087,7 @@ unsafe extern "C" fn getvar_s(mut v: *mut var) -> *const libc::c_char {
   };
 }
 unsafe extern "C" fn getvar_i(mut v: *mut var) -> libc::c_double {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*v).type_0 & (0x1i32 | 0x100i32) as libc::c_uint == 0i32 as libc::c_uint {
     (*v).number = 0i32 as libc::c_double;
     s = (*v).string;
@@ -1195,7 +1195,7 @@ unsafe extern "C" fn nvalloc(mut n: libc::c_int) -> *mut var {
   *fresh12 = (*fresh12).offset(n as isize);
   while v < (*(*ptr_to_globals.offset(-1i32 as isize)).g_cb).pos {
     (*v).type_0 = 0i32 as libc::c_uint;
-    (*v).string = 0 as *mut libc::c_char;
+    (*v).string = std::ptr::null_mut::<libc::c_char>();
     v = v.offset(1)
   }
   return r;
@@ -1250,8 +1250,8 @@ unsafe extern "C" fn nvfree(mut v: *mut var) {
  */
 unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
   /* Initialized to TC_OPTERM: */
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tl: *const libc::c_char = 0 as *const libc::c_char;
   let mut tc: u32 = 0;
   let mut ti: *const u32 = 0 as *const u32;
@@ -1288,7 +1288,7 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
         let ref mut fresh16 = (*(ptr_to_globals as *mut globals2)).t_string;
         *fresh16 = s;
         while *p as libc::c_int != '\"' as i32 {
-          let mut pp: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut pp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           if *p as libc::c_int == '\u{0}' as i32 || *p as libc::c_int == '\n' as i32 {
             syntax_error(EMSG_UNEXP_EOS.as_ptr());
           }
@@ -2262,7 +2262,7 @@ unsafe extern "C" fn fsrealloc(mut size: libc::c_int) {
         .Fields
         .offset(i as isize))
       .string;
-      *fresh46 = 0 as *mut libc::c_char;
+      *fresh46 = std::ptr::null_mut::<libc::c_char>();
       i += 1
     }
   }
@@ -2286,7 +2286,7 @@ unsafe extern "C" fn awk_split(
   let mut l: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   let mut c: [libc::c_char; 4] = [0; 4];
-  let mut s1: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   /* in worst case, each char would be a separate field */
   s1 = xzalloc(
@@ -2429,7 +2429,7 @@ unsafe extern "C" fn split_f0() {
   /* static char *fstrings; */
   let mut i: libc::c_int = 0;
   let mut n: libc::c_int = 0;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*ptr_to_globals.offset(-1i32 as isize)).is_f0_split != 0 {
     return;
   }
@@ -2472,7 +2472,7 @@ unsafe extern "C" fn split_f0() {
 /* perform additional actions when some internal variables changed */
 unsafe extern "C" fn handle_special(mut v: *mut var) {
   let mut n: libc::c_int = 0;
-  let mut b: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sep: *const libc::c_char = 0 as *const libc::c_char;
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
   let mut sl: libc::c_int = 0;
@@ -2492,7 +2492,7 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
     /* recalculate $0 */
     sep = getvar_s((*(ptr_to_globals as *mut globals2)).intvar[OFS as libc::c_int as usize]);
     sl = strlen(sep) as libc::c_int;
-    b = 0 as *mut libc::c_char;
+    b = std::ptr::null_mut::<libc::c_char>();
     len = 0i32;
     i = 0i32;
     while i < n {
@@ -2635,7 +2635,7 @@ unsafe extern "C" fn ptest(mut pattern: *mut node) -> libc::c_int {
 }
 /* read next record from stream rsm into a variable v */
 unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc::c_int {
-  let mut b: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   let mut size: libc::c_int = 0;
   let mut a: libc::c_int = 0;
@@ -2647,8 +2647,8 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
   let mut r: libc::c_int = 0;
   let mut rp: libc::c_int = 0;
   let mut c: libc::c_char = 0;
-  let mut m: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut m: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* we're using our own buffer since we need access to accumulating
    * characters
    */
@@ -2826,10 +2826,10 @@ unsafe extern "C" fn fmt_num(
 }
 /* formatted output into an allocated buffer, return ptr to buffer */
 unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
-  let mut b: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut fmt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut f: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s1: *const libc::c_char = 0 as *const libc::c_char;
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
@@ -2921,7 +2921,7 @@ unsafe extern "C" fn awk_sub(
   mut subexp: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut resbuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut resbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sp: *const libc::c_char = 0 as *const libc::c_char;
   let mut match_no: libc::c_int = 0;
   let mut residx: libc::c_int = 0;
@@ -2934,14 +2934,14 @@ unsafe extern "C" fn awk_sub(
     allocated: 0,
     used: 0,
     syntax: 0,
-    fastmap: 0 as *mut libc::c_char,
+    fastmap: std::ptr::null_mut::<libc::c_char>(),
     translate: 0 as *mut libc::c_uchar,
     re_nsub: 0,
     can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
     c2rust_padding: [0; 7],
   };
   let mut regex: *mut regex_t = 0 as *mut regex_t;
-  resbuf = 0 as *mut libc::c_char;
+  resbuf = std::ptr::null_mut::<libc::c_char>();
   residx = 0i32;
   match_no = 0i32;
   regexec_flags = 0i32;
@@ -3114,7 +3114,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
     allocated: 0,
     used: 0,
     syntax: 0,
-    fastmap: 0 as *mut libc::c_char,
+    fastmap: std::ptr::null_mut::<libc::c_char>(),
     translate: 0 as *mut libc::c_uchar,
     re_nsub: 0,
     can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
@@ -3158,8 +3158,8 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       setvar_i(res, atan2(getvar_i(av[0]), getvar_i(av[1])));
     }
     3 => {
-      let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut s1: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut s1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       if nargs > 2i32 {
         spl =
           if (*an[2]).info & 0xff00i32 as libc::c_uint == OC_REGEXP as libc::c_int as libc::c_uint {
@@ -3185,7 +3185,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       setvar_i(res, n as libc::c_double);
     }
     4 => {
-      let mut s_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       l = strlen(as_0[0]) as libc::c_int;
       i = (getvar_i(av[1]) - 1i32 as libc::c_double) as libc::c_int;
       if i > l {
@@ -3241,8 +3241,8 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       );
     }
     7 | 8 => {
-      let mut s_1: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut s1_0: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut s_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut s1_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       s_1 = xstrdup(as_0[0]);
       s1_0 = s_1;
       while *s1_0 != 0 {
@@ -21228,7 +21228,7 @@ unsafe extern "C" fn awk_exit(mut r: libc::c_int) -> ! {
   let mut tv: var = var {
     type_0: 0,
     number: 0.,
-    string: 0 as *mut libc::c_char,
+    string: std::ptr::null_mut::<libc::c_char>(),
     x: C2RustUnnamed { aidx: 0 },
   };
   let mut i: libc::c_uint = 0;
@@ -21261,8 +21261,8 @@ unsafe extern "C" fn awk_exit(mut r: libc::c_int) -> ! {
 /* if expr looks like "var=value", perform assignment and return 1,
  * otherwise return 0 */
 unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int {
-  let mut exprc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut exprc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if isalnum_(*expr as libc::c_int) == 0 || {
     val = strchr(expr, '=' as i32);
     val.is_null()
@@ -21344,7 +21344,7 @@ pub unsafe extern "C" fn awk_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut opt_F: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_F: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list_v: *mut llist_t = 0 as *mut llist_t;
   let mut list_f: *mut llist_t = 0 as *mut llist_t;
   let mut list_e: *mut llist_t = 0 as *mut llist_t;
@@ -21354,7 +21354,7 @@ pub unsafe extern "C" fn awk_main(
   let mut tv: var = var {
     type_0: 0,
     number: 0.,
-    string: 0 as *mut libc::c_char,
+    string: std::ptr::null_mut::<libc::c_char>(),
     x: C2RustUnnamed { aidx: 0 },
   };
   let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
@@ -21476,7 +21476,7 @@ pub unsafe extern "C" fn awk_main(
     }
   }
   while !list_f.is_null() {
-    let mut s_0: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut from_file: *mut FILE = 0 as *mut FILE;
     let ref mut fresh77 = (*ptr_to_globals.offset(-1i32 as isize)).g_progname;
     *fresh77 = llist_pop(&mut list_f) as *const libc::c_char;

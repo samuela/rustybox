@@ -732,7 +732,7 @@ pub unsafe extern "C" fn i2cset_main(
   let mut fd: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut block: [libc::c_uchar; 32] = [0; 32];
-  let mut opt_m_arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_m_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
   opts = getopt32(
     argv,
@@ -1177,8 +1177,8 @@ pub unsafe extern "C" fn i2cdump_main(
   let mut last: libc::c_uint = 0xffi32 as libc::c_uint;
   let mut opts: libc::c_uint = 0;
   let mut block: [libc::c_int; 256] = [0; 256];
-  let mut opt_r_str: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dash: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_r_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   let mut res: libc::c_int = 0;
   opts = getopt32(
@@ -1459,7 +1459,7 @@ unsafe extern "C" fn list_i2c_busses_and_exit() -> ! {
   let mut subdir: *mut DIR = 0 as *mut DIR;
   let mut rv: libc::c_int = 0;
   let mut bus: libc::c_int = 0;
-  let mut pos: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pos: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = 0 as *mut FILE;
   /*
    * XXX Upstream i2cdetect also looks for i2c bus info in /proc/bus/i2c,
@@ -1849,10 +1849,10 @@ pub unsafe extern "C" fn i2ctransfer_main(
     if (*argv).is_null() {
       break;
     }
-    let mut arg_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut arg_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_uint = 0;
     let mut flags: u16 = 0;
-    let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if nmsgs >= 42i32 {
       bb_simple_error_msg_and_die(
         b"too many messages, max: 42\x00" as *const u8 as *const libc::c_char,

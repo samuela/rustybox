@@ -371,7 +371,7 @@ unsafe extern "C" fn tftp_get_option(
       k += 1
     }
     match current_block_13 {
-      11006700562992250127 => return 0 as *mut libc::c_char,
+      11006700562992250127 => return std::ptr::null_mut::<libc::c_char>(),
       _ => {
         if opt_val == 0i32 {
           /* it's "name" part */
@@ -388,7 +388,7 @@ unsafe extern "C" fn tftp_get_option(
       }
     }
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn tftp_protocol(
   mut our_lsa: *mut len_and_sockaddr,
@@ -399,7 +399,7 @@ unsafe extern "C" fn tftp_protocol(
   mut blksize: libc::c_int,
 ) -> libc::c_int {
   let mut sz: libc::c_int = 0;
-  let mut res: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut res: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut pfd: [pollfd; 1] = [pollfd {
     fd: 0,
@@ -418,7 +418,7 @@ unsafe extern "C" fn tftp_protocol(
   let mut retries: libc::c_int = 0;
   let mut waittime_ms: libc::c_int = 0;
   let mut io_bufsize: libc::c_int = blksize + 4i32;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Can't use RESERVE_CONFIG_BUFFER here since the allocation
    * size varies meaning BUFFERS_GO_ON_STACK would fail.
    *
@@ -904,7 +904,7 @@ unsafe extern "C" fn tftp_protocol(
                               expect_OACK = 0i32 as smallint;
                               if opcode as libc::c_int == 6i32 {
                                 /* server seems to support options */
-                                res = 0 as *mut libc::c_char;
+                                res = std::ptr::null_mut::<libc::c_char>();
                                 res = tftp_get_option(
                                   b"blksize\x00" as *const u8 as *const libc::c_char,
                                   &mut *rbuf.offset(2),
@@ -1235,9 +1235,9 @@ pub unsafe extern "C" fn tftpd_main(
   let mut current_block: u64;
   let mut our_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut peer_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut mode: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut user_opt: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut local_file: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut mode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut user_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut local_file: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   local_file = local_file;
   let mut error_msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut opt: libc::c_int = 0;
@@ -1347,7 +1347,7 @@ pub unsafe extern "C" fn tftpd_main(
         error_msg = b"mode is not \'octet\'\x00" as *const u8 as *const libc::c_char;
         current_block = 16343923103195422028;
       } else {
-        let mut res: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut res: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut opt_str: *mut libc::c_char =
           mode.offset(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong as isize);
         let mut opt_len: libc::c_int = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))

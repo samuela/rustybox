@@ -178,7 +178,7 @@ pub unsafe extern "C" fn microcom_main(
     c_ispeed: 0,
     c_ospeed: 0,
   };
-  let mut device_lock_file: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut device_lock_file: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut speed: speed_t = 9600i32 as speed_t;
   let mut delay: libc::c_int = -1i32;
   let mut timeout: libc::c_int = -1i32;
@@ -213,7 +213,7 @@ pub unsafe extern "C" fn microcom_main(
       );
     }
     // can't create lock -> don't care
-    device_lock_file = 0 as *mut libc::c_char
+    device_lock_file = std::ptr::null_mut::<libc::c_char>()
   } else {
     // %4d to make concurrent mgetty (if any) happy.
     // Mgetty treats 4-bytes lock files as binary,

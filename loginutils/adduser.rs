@@ -176,7 +176,7 @@ unsafe extern "C" fn addgroup_wrapper(
     argv[1] = b"--\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     argv[2] = (*p).pw_name;
     argv[3] = group_name as *mut libc::c_char;
-    argv[4] = 0 as *mut libc::c_char
+    argv[4] = std::ptr::null_mut::<libc::c_char>()
   } else {
     /* Add user to his own group with the first free gid
      * found in passwd_study.
@@ -185,7 +185,7 @@ unsafe extern "C" fn addgroup_wrapper(
     argv[2] = utoa((*p).pw_gid);
     argv[3] = b"--\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     argv[4] = (*p).pw_name;
-    argv[5] = 0 as *mut libc::c_char
+    argv[5] = std::ptr::null_mut::<libc::c_char>()
   }
   return spawn_and_wait(argv.as_mut_ptr());
 }
@@ -222,18 +222,18 @@ pub unsafe extern "C" fn adduser_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut pw: passwd = passwd {
-    pw_name: 0 as *mut libc::c_char,
-    pw_passwd: 0 as *mut libc::c_char,
+    pw_name: std::ptr::null_mut::<libc::c_char>(),
+    pw_passwd: std::ptr::null_mut::<libc::c_char>(),
     pw_uid: 0,
     pw_gid: 0,
-    pw_gecos: 0 as *mut libc::c_char,
-    pw_dir: 0 as *mut libc::c_char,
-    pw_shell: 0 as *mut libc::c_char,
+    pw_gecos: std::ptr::null_mut::<libc::c_char>(),
+    pw_dir: std::ptr::null_mut::<libc::c_char>(),
+    pw_shell: std::ptr::null_mut::<libc::c_char>(),
   };
   let mut usegroup: *const libc::c_char = 0 as *const libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
-  let mut uid: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut uid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut skel: *const libc::c_char = b"/etc/skel\x00" as *const u8 as *const libc::c_char;
   /* got root? */
   if geteuid() != 0 {
@@ -242,7 +242,7 @@ pub unsafe extern "C" fn adduser_main(
   pw.pw_gecos = b"Linux User,,,\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   /* We assume that newly created users "inherit" root's shell setting */
   pw.pw_shell = xstrdup(get_shell_name()); /* might come from getpwnam(), need to make a copy */
-  pw.pw_dir = 0 as *mut libc::c_char;
+  pw.pw_dir = std::ptr::null_mut::<libc::c_char>();
   opts = getopt32long(
     argv,
     b"^h:g:s:G:DSHu:k:\x00-1:?2:SD\x00" as *const u8 as *const libc::c_char,

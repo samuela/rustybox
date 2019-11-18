@@ -331,9 +331,9 @@ pub unsafe extern "C" fn xzalloc(mut size: size_t) -> *mut libc::c_void {
 // Die if we can't copy a string to freshly allocated memory.
 #[no_mangle]
 pub unsafe extern "C" fn xstrdup(mut s: *const libc::c_char) -> *mut libc::c_char {
-  let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if s.is_null() {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   t = strdup(s);
   if t.is_null() {
@@ -349,7 +349,7 @@ pub unsafe extern "C" fn xstrndup(
   mut n: libc::c_int,
 ) -> *mut libc::c_char {
   let mut m: libc::c_int = 0;
-  let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if 0i32 != 0 && s.is_null() {
     bb_simple_error_msg_and_die(b"xstrndup bug\x00" as *const u8 as *const libc::c_char);
   }
@@ -637,7 +637,7 @@ pub unsafe extern "C" fn xasprintf(
 ) -> *mut libc::c_char {
   let mut p: ::std::ffi::VaListImpl;
   let mut r: libc::c_int = 0;
-  let mut string_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut string_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   p = args.clone();
   r = vasprintf(&mut string_ptr, format, p.as_va_list());
   if r < 0i32 {
@@ -657,7 +657,7 @@ pub unsafe extern "C" fn xsetenv(mut key: *const libc::c_char, mut value: *const
 #[no_mangle]
 pub unsafe extern "C" fn bb_unsetenv(mut var: *const libc::c_char) {
   let mut onstack: [libc::c_char; 112] = [0; 112]; /* smaller stack setup code on x86 */
-  let mut tp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   tp = strchr(var, '=' as i32);
   if !tp.is_null() {
     /* In case var was putenv'ed, we can't replace '='
@@ -674,7 +674,7 @@ pub unsafe extern "C" fn bb_unsetenv(mut var: *const libc::c_char) {
         sz as size_t,
       ) as *mut libc::c_char)
         .offset(0) = '\u{0}' as i32 as libc::c_char;
-      tp = 0 as *mut libc::c_char;
+      tp = std::ptr::null_mut::<libc::c_char>();
       var = onstack.as_mut_ptr()
     } else {
       /* unlikely: very long var name */
@@ -1095,7 +1095,7 @@ pub unsafe extern "C" fn xmalloc_ttyname(mut fd: libc::c_int) -> *mut libc::c_ch
       .wrapping_sub(1i32 as libc::c_ulong),
   );
   if r != 0 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   return xstrdup(buf.as_mut_ptr());
 }

@@ -60,7 +60,7 @@ pub unsafe extern "C" fn basename_main(
 ) -> libc::c_int {
   let mut m: size_t = 0;
   let mut n: size_t = 0;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if !(*argv.offset(1)).is_null()
     && strcmp(
       *argv.offset(1),

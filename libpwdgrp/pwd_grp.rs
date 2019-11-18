@@ -278,7 +278,7 @@ unsafe extern "C" fn parse_common(
   mut key: *const libc::c_char,
   mut field_pos: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     buf = xmalloc_fgetline(fp);
     if buf.is_null() {
@@ -344,7 +344,7 @@ unsafe extern "C" fn parse_file(
   mut key: *const libc::c_char,
   mut field_pos: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = fopen_for_read((*db).filename);
   if !fp.is_null() {
     buf = parse_common(fp, db, key, field_pos);
@@ -413,7 +413,7 @@ unsafe extern "C" fn convert_to_struct(
         }
         buffer = buffer.offset(strlen(buffer).wrapping_add(1i32 as libc::c_ulong) as isize)
       }
-      *members = 0 as *mut libc::c_char
+      *members = std::ptr::null_mut::<libc::c_char>()
     }
     /* def "r" does nothing */
     def = def.offset(1);
@@ -492,7 +492,7 @@ unsafe extern "C" fn getXXnam_r(
   mut buflen: size_t,
   mut result: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
     .db
     .as_mut_ptr()
@@ -574,7 +574,7 @@ pub unsafe extern "C" fn bb_internal_getspnam_r(
 }
 /* ***** getXXent */
 unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
     .db
     .as_mut_ptr()
@@ -598,7 +598,7 @@ unsafe extern "C" fn getXXnam(
   mut name: *const libc::c_char,
   mut db_and_field_pos: libc::c_uint,
 ) -> *mut libc::c_void {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
     .db
     .as_mut_ptr()
@@ -700,7 +700,7 @@ unsafe extern "C" fn getgrouplist_internal(
       .db
       .as_mut_ptr()
       .offset(1) as *mut passdb;
-    let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
       buf = parse_common(fp, db, 0 as *const libc::c_char, -1i32);
       if buf.is_null() {
@@ -708,8 +708,8 @@ unsafe extern "C" fn getgrouplist_internal(
       }
       let mut m: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
       let mut group: group = group {
-        gr_name: 0 as *mut libc::c_char,
-        gr_passwd: 0 as *mut libc::c_char,
+        gr_name: std::ptr::null_mut::<libc::c_char>(),
+        gr_passwd: std::ptr::null_mut::<libc::c_char>(),
         gr_gid: 0,
         gr_mem: 0 as *mut *mut libc::c_char,
       };

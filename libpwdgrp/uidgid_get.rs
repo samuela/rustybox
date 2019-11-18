@@ -79,8 +79,8 @@ pub unsafe extern "C" fn get_uidgid(
 ) -> libc::c_int {
   let mut pwd: *mut passwd = 0 as *mut passwd;
   let mut gr: *mut group = 0 as *mut group;
-  let mut user: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut group: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut group: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut n: libc::c_uint = 0;
   user = ug as *mut libc::c_char;
   group = strchr(ug, ':' as i32);
@@ -437,7 +437,7 @@ pub unsafe extern "C" fn parse_chown_usergroup_or_die(
   mut u: *mut bb_uidgid_t,
   mut user_group: *mut libc::c_char,
 ) {
-  let mut group: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut group: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*u).gid = -1i64 as gid_t;
   (*u).uid = (*u).gid;
   /* Check if there is a group name */

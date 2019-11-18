@@ -498,8 +498,8 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
  * https://issues.apache.org/bugzilla/show_bug.cgi?id=35122
  */
 unsafe extern "C" fn strip_ipv6_scope_id(mut host: *mut libc::c_char) {
-  let mut scope: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut scope: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* bbox wget actually handles IPv6 addresses without [], like
    * wget "http://::1/xxx", but this is not standard.
    * To save code, _here_ we do not support it. */
@@ -629,7 +629,7 @@ unsafe extern "C" fn fgets_trim_sanitize(
   mut fmt: *const libc::c_char,
 ) -> libc::c_char {
   let mut c: libc::c_char = 0;
-  let mut buf_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   set_alarm();
   if fgets_unlocked(
     (*ptr_to_globals).wget_buf.as_mut_ptr(),
@@ -696,9 +696,9 @@ unsafe extern "C" fn ftpcmd(
   return result;
 }
 unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut host_info) {
-  let mut url: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut sp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut url: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut sp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   free((*h).allocated as *mut libc::c_void);
   url = xstrdup(src_url);
   (*h).allocated = url;
@@ -794,14 +794,14 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
    */
 }
 unsafe extern "C" fn get_sanitized_hdr(mut fp: *mut FILE) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut hdrval: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut hdrval: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_int = 0;
   /* retrieve header line */
   c = fgets_trim_sanitize(fp, b"  %s\n\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   /* end of the headers? */
   if (*ptr_to_globals).wget_buf[0] as libc::c_int == '\u{0}' as i32 {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   /* convert the header name to lower case */
   s = (*ptr_to_globals).wget_buf.as_mut_ptr();
@@ -857,8 +857,8 @@ unsafe extern "C" fn spawn_https_helper_openssl(
   mut host: *const libc::c_char,
   mut port: libc::c_uint,
 ) -> libc::c_int {
-  let mut allocated: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut servername: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut allocated: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut servername: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sp: [libc::c_int; 2] = [0; 2];
   let mut pid: libc::c_int = 0;
   let mut child_failed: libc::c_int = 0i32;
@@ -935,8 +935,8 @@ unsafe extern "C" fn spawn_ssl_client(
 ) {
   let mut sp: [libc::c_int; 2] = [0; 2];
   let mut pid: libc::c_int = 0;
-  let mut servername: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut servername: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & WGET_OPT_NO_CHECK_CERT as libc::c_int as libc::c_uint == 0 {
     option_mask32 |= WGET_OPT_NO_CHECK_CERT as libc::c_int as libc::c_uint;
     bb_simple_error_msg(
@@ -989,7 +989,7 @@ unsafe extern "C" fn prepare_ftp_session(
 ) -> *mut FILE {
   let mut current_block: u64;
   let mut sfp: *mut FILE = 0 as *mut FILE;
-  let mut pass: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut port: libc::c_int = 0;
   sfp = open_socket(lsa);
   if (*target).protocol == P_FTPS.as_ptr() {
@@ -1375,7 +1375,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
   };
 }
 unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
-  let mut str: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status: libc::c_int = 0;
   let mut current_block: u64;
   let mut use_proxy: bool = false;
@@ -1383,28 +1383,28 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut sfp: *mut FILE = 0 as *mut FILE;
   let mut dfp: *mut FILE = 0 as *mut FILE;
-  let mut fname_out_alloc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut redirected_path: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fname_out_alloc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut redirected_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut server: host_info = host_info {
-    allocated: 0 as *mut libc::c_char,
+    allocated: std::ptr::null_mut::<libc::c_char>(),
     path: 0 as *const libc::c_char,
-    user: 0 as *mut libc::c_char,
+    user: std::ptr::null_mut::<libc::c_char>(),
     protocol: 0 as *const libc::c_char,
-    host: 0 as *mut libc::c_char,
+    host: std::ptr::null_mut::<libc::c_char>(),
     port: 0,
   };
   let mut target: host_info = host_info {
-    allocated: 0 as *mut libc::c_char,
+    allocated: std::ptr::null_mut::<libc::c_char>(),
     path: 0 as *const libc::c_char,
-    user: 0 as *mut libc::c_char,
+    user: std::ptr::null_mut::<libc::c_char>(),
     protocol: 0 as *const libc::c_char,
-    host: 0 as *mut libc::c_char,
+    host: std::ptr::null_mut::<libc::c_char>(),
     port: 0,
   };
-  server.allocated = 0 as *mut libc::c_char;
-  target.allocated = 0 as *mut libc::c_char;
-  server.user = 0 as *mut libc::c_char;
-  target.user = 0 as *mut libc::c_char;
+  server.allocated = std::ptr::null_mut::<libc::c_char>();
+  target.allocated = std::ptr::null_mut::<libc::c_char>();
+  server.user = std::ptr::null_mut::<libc::c_char>();
+  target.user = std::ptr::null_mut::<libc::c_char>();
   parse_url(url, &mut target);
   /* Use the proxy if necessary */
   use_proxy = strcmp(
@@ -1433,7 +1433,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   }
   strip_ipv6_scope_id(target.host);
   /* If there was no -O FILE, guess output filename */
-  fname_out_alloc = 0 as *mut libc::c_char;
+  fname_out_alloc = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & WGET_OPT_OUTNAME as libc::c_int as libc::c_uint == 0 {
     (*ptr_to_globals).fname_out = bb_get_last_path_component_nostrip(target.path);
     /* handle "wget http://kernel.org//" */
@@ -1486,7 +1486,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
         /*
          *  HTTP session
          */
-        str = 0 as *mut libc::c_char;
+        str = std::ptr::null_mut::<libc::c_char>();
         status = 0;
         /* Open socket to http(s) server */
         /* openssl (and maybe internal TLS) support is configured */
@@ -1801,7 +1801,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
               /* else: lsa stays the same: we use proxy */
               /* server.user remains untouched */
               free(server.allocated as *mut libc::c_void);
-              server.allocated = 0 as *mut libc::c_char;
+              server.allocated = std::ptr::null_mut::<libc::c_char>();
               server.protocol = target.protocol;
               server.host = target.host;
               /* strip_ipv6_scope_id(target.host); - no! */
@@ -1929,7 +1929,7 @@ pub unsafe extern "C" fn wget_main(
   argv = argv.offset(optind as isize);
   if !headers_llist.is_null() {
     let mut size: libc::c_int = 0i32;
-    let mut hdr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut hdr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut ll: *mut llist_t = headers_llist;
     while !ll.is_null() {
       size = (size as libc::c_ulong)

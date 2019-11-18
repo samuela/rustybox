@@ -25,8 +25,8 @@ extern "C" {
 pub unsafe extern "C" fn bb_simplify_abs_path_inplace(
   mut start: *mut libc::c_char,
 ) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   s = start;
   p = s;
   let mut current_block_5: u64;
@@ -515,8 +515,8 @@ pub unsafe extern "C" fn bb_simplify_abs_path_inplace(
 /* Returns NULL on . and .. */
 #[no_mangle]
 pub unsafe extern "C" fn bb_simplify_path(mut path: *const libc::c_char) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *path.offset(0) as libc::c_int == '/' as i32 {
     s = xstrdup(path)
   } else {

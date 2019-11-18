@@ -220,7 +220,7 @@ unsafe extern "C" fn screen_read_close() {
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut vcsa_fd: libc::c_int = 0;
-  let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // Close & re-open vcsa in case they have swapped virtual consoles
   vcsa_fd = xopen((*ptr_to_globals).vcsa_name.as_mut_ptr(), 0i32); // if will catch j < G.x too
   xread(
@@ -309,7 +309,7 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
       let bold_mask: u8 = 0x8i32 as u8;
       let bg_mask: u8 = 0x70i32 as u8;
       let blink_mask: u8 = 0x80i32 as u8;
-      let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       ptr = (*ptr_to_globals).attrbuf.as_mut_ptr();
       // (G.last_attr & ~attr) has 1 only where
       // G.last_attr has 1 but attr has 0.
@@ -500,7 +500,7 @@ pub unsafe extern "C" fn conspy_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut k: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut k: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_name: [libc::c_char; 11] = [0; 11];
   let mut opts: libc::c_uint = 0;
   let mut ttynum: libc::c_uint = 0;
@@ -605,8 +605,8 @@ pub unsafe extern "C" fn conspy_main(
     let mut bytes_read: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
-    let mut data: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut old: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut old: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // in the first loop G.width = G.height = 0: refresh
     i = (*ptr_to_globals).width as libc::c_int;
     j = (*ptr_to_globals).height as libc::c_int;
@@ -662,8 +662,8 @@ pub unsafe extern "C" fn conspy_main(
       data = data.offset((*ptr_to_globals).first_line_offset as isize); // last char which needs updating
       i = (*ptr_to_globals).y; // if will catch j >= G.x too
       while i < (*ptr_to_globals).remote.lines as libc::c_int {
-        let mut first: *mut libc::c_char = 0 as *mut libc::c_char;
-        let mut last: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut first: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+        let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         last = last;
         let mut iy: libc::c_uint = (i - (*ptr_to_globals).y) as libc::c_uint;
         if iy >= (*ptr_to_globals).height {

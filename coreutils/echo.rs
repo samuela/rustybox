@@ -485,8 +485,8 @@ pub unsafe extern "C" fn echo_main(
   let mut current_block: u64; /* not an option arg, echo it */
   let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut arg: *const libc::c_char = 0 as *const libc::c_char;
-  let mut out: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut buffer: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buflen: libc::c_uint = 0;
   let mut nflag: libc::c_char = 1i32 as libc::c_char;
   let mut eflag: libc::c_char = 0i32 as libc::c_char;

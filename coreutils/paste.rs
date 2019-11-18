@@ -67,7 +67,7 @@ unsafe extern "C" fn paste_files(
   mut delims: *mut libc::c_char,
   mut del_cnt: libc::c_int,
 ) {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
   let mut active_files: libc::c_int = file_cnt;
   let mut i: libc::c_int = 0;
@@ -108,14 +108,14 @@ unsafe extern "C" fn paste_files_separate(
   mut delims: *mut libc::c_char,
   mut del_cnt: libc::c_int,
 ) {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut next_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut next_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
   let mut i: libc::c_int = 0;
   i = 0i32;
   while !(*files.offset(i as isize)).is_null() {
     let mut del_idx: libc::c_int = 0i32;
-    line = 0 as *mut libc::c_char;
+    line = std::ptr::null_mut::<libc::c_char>();
     loop {
       next_line = xmalloc_fgetline(*files.offset(i as isize));
       if next_line.is_null() {

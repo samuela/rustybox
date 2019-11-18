@@ -847,7 +847,7 @@ unsafe extern "C" fn add_lease(
       ::std::mem::size_of::<dyn_lease>() as libc::c_ulong,
     );
     if !hostname.is_null() {
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       hostname_len += 1;
       if hostname_len as libc::c_ulong
         > ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong
@@ -1047,10 +1047,10 @@ unsafe extern "C" fn read_staticlease(
   mut const_line: *const libc::c_char,
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut mac_string: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ip_string: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opts: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut mac_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ip_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut mac_bytes: ether_addr = ether_addr {
     ether_addr_octet: [0; 6],
   };
@@ -1067,7 +1067,7 @@ unsafe extern "C" fn read_staticlease(
   }
   /* Read ip */
   ip_string = strtok_r(
-    0 as *mut libc::c_char,
+    std::ptr::null_mut::<libc::c_char>(),
     b" \t\x00" as *const u8 as *const libc::c_char,
     &mut line,
   );
@@ -1076,7 +1076,7 @@ unsafe extern "C" fn read_staticlease(
     return 0i32;
   }
   opts = strtok_r(
-    0 as *mut libc::c_char,
+    std::ptr::null_mut::<libc::c_char>(),
     b" \t\x00" as *const u8 as *const libc::c_char,
     &mut line,
   );
@@ -1514,7 +1514,7 @@ unsafe extern "C" fn write_leases() {
     let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
     argv[0] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).notify_file;
     argv[1] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file;
-    argv[2] = 0 as *mut libc::c_char;
+    argv[2] = std::ptr::null_mut::<libc::c_char>();
     spawn_and_wait(argv.as_mut_ptr());
   };
 }
@@ -2181,7 +2181,7 @@ pub unsafe extern "C" fn udhcpd_main(
   let mut num_ips: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
   let mut option: *mut option_set = 0 as *mut option_set;
-  let mut str_I: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_I: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   str_I = str_I;
   let mut str_a: *const libc::c_char = b"2000\x00" as *const u8 as *const libc::c_char;
   let mut arpping_ms: libc::c_uint = 0;

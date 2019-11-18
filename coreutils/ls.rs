@@ -360,14 +360,14 @@ unsafe extern "C" fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
 #[inline(never)]
 unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
   let mut column: libc::c_uint = 0i32 as libc::c_uint;
-  let mut lpath: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut lpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut statbuf: stat = std::mem::zeroed();
   let mut append: libc::c_char = append_char((*dn).dn_mode);
   opt = option_mask32 as libc::c_int;
   /* Do readlink early, so that if it fails, error message
    * does not appear *inside* the "ls -l" line */
-  lpath = 0 as *mut libc::c_char;
+  lpath = std::ptr::null_mut::<libc::c_char>();
   if opt & OPT_l as libc::c_int != 0 {
     if (*dn).dn_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
       lpath = xmalloc_readlink_or_warn((*dn).fullname)
@@ -882,7 +882,7 @@ unsafe extern "C" fn scan_one_dir(
       break;
       /* if only -A, skip . and .. but show other dotfiles */
     }
-    let mut fullname: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut fullname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* are we going to list the file- it may be . or .. or a hidden file */
     if (*entry).d_name[0] as libc::c_int == '.' as i32 {
       if option_mask32 & (OPT_a as libc::c_int | OPT_A as libc::c_int) as libc::c_uint == 0 {

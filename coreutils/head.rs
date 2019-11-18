@@ -177,7 +177,7 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
   ) as *mut *mut libc::c_char;
   let mut head: libc::c_uint = 0i32 as libc::c_uint;
   loop {
-    let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     c = xmalloc_fgets(fp);
     if c.is_null() {
       current_block = 349542114677786389;
@@ -199,7 +199,7 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
         break;
       }
       _ => {
-        let mut c_0: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut c_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if head == count {
           head = 0i32 as libc::c_uint
         }
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn head_main(
   let mut negative_N: bool = 0i32 != 0;
   let mut fp: *mut FILE = 0 as *mut FILE;
   let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut retval: libc::c_int = 0i32;
   /* Allow legacy syntax of an initial numeric option without -n. */

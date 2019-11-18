@@ -310,7 +310,7 @@ unsafe extern "C" fn ParseField(
       skip = 1i32;
       ptr = ptr.offset(1)
     } else if (*ptr as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-      let mut endp: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut endp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       if n1 < 0i32 {
         n1 = (strtol(ptr, &mut endp, 10i32) + off as libc::c_long) as libc::c_int
       } else {
@@ -353,7 +353,7 @@ unsafe extern "C" fn ParseField(
         n2 = n1
       }
       if *ptr as libc::c_int == '/' as i32 {
-        let mut endp_0: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut endp_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         skip = strtol(ptr.offset(1), &mut endp_0, 10i32) as libc::c_int;
         ptr = endp_0
         /* gcc likes temp var for &endp */
@@ -527,8 +527,8 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   let mut sbuf: stat = std::mem::zeroed();
   let mut maxLines: libc::c_int = 0;
   let mut tokens: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
-  let mut mailTo: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut shell: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut mailTo: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   delete_cronfile(fileName);
   if bb_internal_getpwnam(fileName).is_null() {
     log7(
@@ -593,7 +593,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
           mailTo = if *tokens[0].offset(7) as libc::c_int != 0 {
             xstrdup(&mut *(*tokens.as_mut_ptr().offset(0)).offset(7))
           } else {
-            0 as *mut libc::c_char
+            std::ptr::null_mut::<libc::c_char>()
           }
         } else if !is_prefixed_with(tokens[0], b"SHELL=\x00" as *const u8 as *const libc::c_char)
           .is_null()

@@ -182,7 +182,7 @@ unsafe extern "C" fn bcode(mut s: *const libc::c_char) -> libc::c_int {
 }
 /* parse alternate baud rates */
 unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: at least one iteration is always done */
   loop {
     cp = strsep(&mut arg, b",\x00" as *const u8 as *const libc::c_char);
@@ -204,7 +204,7 @@ unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
 }
 /* parse command-line arguments */
 unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
-  let mut ts: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flags: libc::c_int = 0;
   flags = getopt32(
     argv,
@@ -258,7 +258,7 @@ unsafe extern "C" fn open_tty() {
     fchown(0i32, 0i32 as uid_t, 0i32 as gid_t);
     fchmod(0i32, 0o620i32 as mode_t);
   } else {
-    let mut n: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Open the tty as standard input */
     /* uses fd 0 */
     /* Set proper protections and ownership */
@@ -457,7 +457,7 @@ unsafe extern "C" fn auto_baud() {
   ) as libc::c_int;
   if nread > 0i32 {
     let mut speed: libc::c_int = 0;
-    let mut bp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut bp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     (*ptr_to_globals).line_buf[nread as usize] = '\u{0}' as i32 as libc::c_char;
     bp = (*ptr_to_globals).line_buf.as_mut_ptr();
     while bp
@@ -485,7 +485,7 @@ unsafe extern "C" fn auto_baud() {
  * return NULL on BREAK, logname on success
  */
 unsafe extern "C" fn get_logname() -> *mut libc::c_char {
-  let mut bp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut bp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
   /* Flush pending input (esp. after parsing or switching the baud rate) */
   usleep((100i32 * 1000i32) as useconds_t); /* 0.1 sec */
@@ -553,7 +553,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
           /* BREAK. If we have speeds to try,
            * return NULL (will switch speeds and return here) */
           if (*ptr_to_globals).numspeed > 1i32 {
-            return 0 as *mut libc::c_char;
+            return std::ptr::null_mut::<libc::c_char>();
           }
         }
         _ => {}
@@ -598,7 +598,7 @@ pub unsafe extern "C" fn getty_main(
   let mut n: libc::c_int = 0;
   let mut pid: pid_t = 0;
   let mut tsid: pid_t = 0;
-  let mut logname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut logname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
@@ -747,7 +747,7 @@ pub unsafe extern "C" fn getty_main(
       }
     }
   }
-  logname = 0 as *mut libc::c_char;
+  logname = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & (1i32 << 10i32) as libc::c_uint == 0 {
     /* NB: init_tty_attrs already set line speed
      * to G.speeds[0] */
@@ -780,7 +780,7 @@ pub unsafe extern "C" fn getty_main(
     (*ptr_to_globals).login,
     b"--\x00" as *const u8 as *const libc::c_char,
     logname,
-    0 as *mut libc::c_char,
+    std::ptr::null_mut::<libc::c_char>(),
   );
   bb_error_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,

@@ -81,7 +81,7 @@ pub unsafe extern "C" fn fold_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut line_out: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line_out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w_opt: *const libc::c_char = b"80\x00" as *const u8 as *const libc::c_char;
   let mut width: libc::c_uint = 0;
   let mut exitcode: smallint = 0i32 as smallint;

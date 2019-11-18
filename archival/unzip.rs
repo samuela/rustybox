@@ -487,7 +487,7 @@ unsafe extern "C" fn unzip_extract_symlink(
   mut zip: *mut zip_header_t,
   mut dst_fn: *const libc::c_char,
 ) {
-  let mut target: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   die_if_bad_fnamesize((*zip).fmt.ucmpsize);
   if (*zip).fmt.method as libc::c_int == 0i32 {
     /* Method 0 - stored (not compressed) */
@@ -600,11 +600,11 @@ pub unsafe extern "C" fn unzip_main(
   let mut total_size: libc::c_ulong = 0;
   let mut total_entries: libc::c_uint = 0;
   let mut dst_fd: libc::c_int = -1i32;
-  let mut src_fn: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut dst_fn: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut src_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut dst_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut zaccept: *mut llist_t = 0 as *mut llist_t;
   let mut zreject: *mut llist_t = 0 as *mut llist_t;
-  let mut base_dir: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut base_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut symlink_placeholders: *mut llist_t = 0 as *mut llist_t;
   let mut i: libc::c_int = 0;
   let mut key_buf: [libc::c_char; 80] = [0; 80];

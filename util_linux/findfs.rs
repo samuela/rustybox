@@ -54,7 +54,7 @@ pub unsafe extern "C" fn findfs_main(
     /* Just pass any /dev/xxx name right through.
      * This might aid in some scripts being able
      * to call this unconditionally */
-    dev = 0 as *mut libc::c_char
+    dev = std::ptr::null_mut::<libc::c_char>()
   } else if resolve_mount_spec(argv) == 0 {
     bb_show_usage();
   }

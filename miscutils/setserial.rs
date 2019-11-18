@@ -581,7 +581,7 @@ pub unsafe extern "C" fn setserial_main(
   if opts & 1i32 << 5i32 == 0 {
     serial_set(argv, opts);
     let ref mut fresh0 = *argv.offset(1);
-    *fresh0 = 0 as *mut libc::c_char
+    *fresh0 = std::ptr::null_mut::<libc::c_char>()
   }
   /* -v effect: "after setting params, do not be silent, show them" */
   if opts & (1i32 << 3i32 | 1i32 << 5i32) != 0 {

@@ -505,7 +505,7 @@ unsafe extern "C" fn arith_apply(
           _ => {
             (*top_of_stack).val = rez;
             /* Erase var name, it is just a number now */
-            (*top_of_stack).var = 0 as *mut libc::c_char;
+            (*top_of_stack).var = std::ptr::null_mut::<libc::c_char>();
             return 0 as *const libc::c_char;
           }
         }
@@ -813,7 +813,7 @@ unsafe extern "C" fn evaluate_string(
         expr = p
       } else if (arithval as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
         /* Number */
-        (*numstackptr).var = 0 as *mut libc::c_char; /* bash compat */
+        (*numstackptr).var = std::ptr::null_mut::<libc::c_char>(); /* bash compat */
         *bb_errno = 0i32;
         (*numstackptr).val = strto_arith_t(
           expr,

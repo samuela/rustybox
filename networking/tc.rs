@@ -327,7 +327,7 @@ unsafe extern "C" fn get_qdisc_handle(
   mut str: *const libc::c_char,
 ) -> libc::c_int {
   let mut maj: u32 = 0;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   maj = 0u32;
   if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0i32) {
     maj = strtoul(str, &mut p, 16i32) as u32;
@@ -346,7 +346,7 @@ unsafe extern "C" fn get_qdisc_handle(
 unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
   let mut maj: u32 = 0;
   let mut min: u32 = 0;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   maj = 0xffffffffu32;
   if !(strcmp(str, b"root\x00" as *const u8 as *const libc::c_char) == 0i32) {
     maj = 0u32;
@@ -646,7 +646,7 @@ unsafe extern "C" fn print_qdisc(
   ) as *mut libc::c_void as *mut tcmsg;
   let mut len: libc::c_int = (*hdr).nlmsg_len as libc::c_int;
   let mut tb: [*mut rtattr; 13] = [0 as *mut rtattr; 13];
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*hdr).nlmsg_type as libc::c_int != RTM_NEWQDISC as libc::c_int
     && (*hdr).nlmsg_type as libc::c_int != RTM_DELQDISC as libc::c_int
   {
@@ -761,8 +761,8 @@ unsafe extern "C" fn print_class(
   ) as *mut libc::c_void as *mut tcmsg;
   let mut len: libc::c_int = (*hdr).nlmsg_len as libc::c_int;
   let mut tb: [*mut rtattr; 13] = [0 as *mut rtattr; 13];
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut classid: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut classid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /*XXX Eventually factor out common code */
   if (*hdr).nlmsg_type as libc::c_int != RTM_NEWTCLASS as libc::c_int
     && (*hdr).nlmsg_type as libc::c_int != RTM_DELTCLASS as libc::c_int
@@ -823,7 +823,7 @@ unsafe extern "C" fn print_class(
       .wrapping_add(0i32 as libc::c_ulong) as isize,
   ) as *mut libc::c_void as *mut libc::c_char;
   classid = if (*msg).tcm_handle == 0 {
-    0 as *mut libc::c_char
+    std::ptr::null_mut::<libc::c_char>()
   } else {
     print_tc_classid(
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_qdisc != 0 {
@@ -939,7 +939,7 @@ pub unsafe extern "C" fn tc_main(
   let mut obj: libc::c_int = 0;
   let mut cmd: libc::c_int = 0;
   let mut arg: libc::c_int = 0;
-  let mut dev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   argv = argv.offset(1);
   if (*argv).is_null() {
     bb_show_usage();

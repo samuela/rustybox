@@ -52,8 +52,8 @@ pub unsafe extern "C" fn printenv_main(
     }
   } else {
     /* search for specified variables and print them out if found */
-    let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut env: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut env: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
       argv = argv.offset(1);
       arg = *argv;

@@ -382,7 +382,7 @@ pub unsafe extern "C" fn ether_wake_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ifname: *const libc::c_char = b"eth0\x00" as *const u8 as *const libc::c_char;
-  let mut pass: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flags: libc::c_uint = 0;
   let mut wol_passwd: [libc::c_uchar; 6] = [0; 6];
   let mut wol_passwd_sz: libc::c_int = 0i32;

@@ -331,7 +331,7 @@ pub unsafe extern "C" fn read_key(
             {
               continue;
             }
-            let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             let mut row: libc::c_ulong = 0;
             let mut col: libc::c_ulong = 0;
             row = strtoul(buffer.offset(1), &mut end, 10i32);

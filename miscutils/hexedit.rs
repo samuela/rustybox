@@ -178,7 +178,7 @@ unsafe extern "C" fn format_line(
   mut offset: off_t,
 ) -> libc::c_int {
   let mut ofs_pos: libc::c_int = 0;
-  let mut text: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut text: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut end: *mut u8 = 0 as *mut u8;
   let mut end1: *mut u8 = 0 as *mut u8;
   /* Can be more than 4Gb, thus >8 chars, thus use a variable - don't assume 8! */

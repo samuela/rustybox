@@ -145,7 +145,7 @@ unsafe extern "C" fn next_file(
 ) -> *mut libc::c_char {
   let mut end: size_t = strlen(old);
   let mut i: libc::c_uint = 1i32 as libc::c_uint;
-  let mut curr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut curr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     curr = old.offset(end as isize).offset(-(i as isize));
     if (*curr as libc::c_int) < 'z' as i32 {
@@ -154,7 +154,7 @@ unsafe extern "C" fn next_file(
     } else {
       i = i.wrapping_add(1);
       if i > suffix_len {
-        return 0 as *mut libc::c_char;
+        return std::ptr::null_mut::<libc::c_char>();
       }
       *curr = 'a' as i32 as libc::c_char
     }
@@ -167,15 +167,15 @@ pub unsafe extern "C" fn split_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut suffix_len: libc::c_uint = 2i32 as libc::c_uint;
-  let mut pfx: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut count_p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut pfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut count_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sfx: *const libc::c_char = 0 as *const libc::c_char;
   let mut cnt: off_t = 1000i32 as off_t;
   let mut remaining: off_t = 0i32 as off_t;
   let mut opt: libc::c_uint = 0;
   let mut bytes_read: ssize_t = 0;
   let mut to_write: ssize_t = 0;
-  let mut src: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32(
     argv,
     b"^l:b:a:+\x00?2\x00" as *const u8 as *const libc::c_char,

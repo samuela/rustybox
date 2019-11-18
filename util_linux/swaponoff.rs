@@ -226,7 +226,7 @@ unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
   return err;
 }
 unsafe extern "C" fn do_all_in_proc_swaps() -> libc::c_int {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut err: libc::c_int = 0i32;
   let mut f: *mut FILE = fopen_for_read(b"/proc/swaps\x00" as *const u8 as *const libc::c_char);
   /* Don't complain if missing */
@@ -250,8 +250,8 @@ pub unsafe extern "C" fn swap_on_off_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut prio: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut discard: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut prio: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut discard: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0i32;
   getopt32(
     argv,

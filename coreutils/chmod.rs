@@ -150,9 +150,9 @@ pub unsafe extern "C" fn chmod_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut smode: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* statbuf holds lstat result, but we need stat (follow link) */
   /* Convert first encountered -r into ar, -w into aw etc
    * so that getopt would not eat it */
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn chmod_main(
     /* Mode spec must be the first arg (sans -R etc) */
     /* (protect against mishandling e.g. "chmod 644 -r") */
     if *arg.offset(0) as libc::c_int != '-' as i32 {
-      arg = 0 as *mut libc::c_char;
+      arg = std::ptr::null_mut::<libc::c_char>();
       break;
     } else {
       /* An option. Not a -- or valid option? */

@@ -300,7 +300,7 @@ unsafe extern "C" fn pause2cannot(mut m0: *const libc::c_char, mut m1: *const li
   sleep(3i32 as libc::c_uint);
 }
 unsafe extern "C" fn wstrdup(mut str: *const libc::c_char) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     s = strdup(str);
     if !s.is_null() {
@@ -842,7 +842,7 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
     }
     setvbuf(
       (*ld).filecur,
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       0i32,
       (*ptr_to_globals).linelen as size_t,
     );
@@ -1020,7 +1020,7 @@ unsafe extern "C" fn logdir_close(mut ld: *mut logdir) {
   close((*ld).fdlock);
   (*ld).fdlock = -1i32;
   free((*ld).processor as *mut libc::c_void);
-  (*ld).processor = 0 as *mut libc::c_char;
+  (*ld).processor = std::ptr::null_mut::<libc::c_char>();
 }
 #[inline(never)]
 unsafe extern "C" fn logdir_open(
@@ -1029,9 +1029,9 @@ unsafe extern "C" fn logdir_open(
 ) -> libc::c_uint {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut now: libc::c_uint = 0;
-  let mut new: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut np: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut new: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut np: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut st: stat = std::mem::zeroed();
   now = monotonic_sec();
@@ -1078,9 +1078,9 @@ unsafe extern "C" fn logdir_open(
   (*ld).ppid = 0i32;
   (*ld).match_0 = '+' as i32 as libc::c_char;
   free((*ld).inst as *mut libc::c_void);
-  (*ld).inst = 0 as *mut libc::c_char;
+  (*ld).inst = std::ptr::null_mut::<libc::c_char>();
   free((*ld).processor as *mut libc::c_void);
-  (*ld).processor = 0 as *mut libc::c_char;
+  (*ld).processor = std::ptr::null_mut::<libc::c_char>();
   /* read config */
   i = open_read_close(
     b"config\x00" as *const u8 as *const libc::c_char,
@@ -1281,7 +1281,7 @@ unsafe extern "C" fn logdir_open(
   }
   setvbuf(
     (*ld).filecur,
-    0 as *mut libc::c_char,
+    std::ptr::null_mut::<libc::c_char>(),
     0i32,
     (*ptr_to_globals).linelen as size_t,
   );
@@ -1522,7 +1522,7 @@ unsafe extern "C" fn logmatch(
   mut lineptr: *mut libc::c_char,
   mut lineptr_len: libc::c_int,
 ) {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*ld).match_0 = '+' as i32 as libc::c_char;
   (*ld).matcherr = 'E' as i32 as libc::c_char;
   s = (*ld).inst;
@@ -1548,9 +1548,9 @@ pub unsafe extern "C" fn svlogd_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut r: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut l: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut b: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut r: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut stdin_cnt: ssize_t = 0i32 as ssize_t;
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
@@ -1689,7 +1689,7 @@ pub unsafe extern "C" fn svlogd_main(
   logdirs_reopen();
   setvbuf(
     stderr,
-    0 as *mut libc::c_char,
+    std::ptr::null_mut::<libc::c_char>(),
     0i32,
     (*ptr_to_globals).linelen as size_t,
   );
@@ -1698,9 +1698,9 @@ pub unsafe extern "C" fn svlogd_main(
   /* Each iteration processes one or more lines */
   {
     let mut stamp: [libc::c_char; 30] = [0; 30];
-    let mut lineptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut printptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut np: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut lineptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut printptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut np: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut printlen: libc::c_int = 0;
     let mut ch: libc::c_char = 0;
     lineptr = bb_common_bufsiz1.as_mut_ptr();

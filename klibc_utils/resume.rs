@@ -97,7 +97,7 @@ unsafe extern "C" fn bb_strtoul(
  */
 unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::dev_t {
   let mut devfile: [libc::c_char; 28] = [0; 28];
-  let mut sysname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut sysname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut major_num: libc::c_uint = 0;
   let mut minor_num: libc::c_uint = 0;
   let mut st: stat = std::mem::zeroed();
@@ -108,7 +108,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
     5i32 as libc::c_ulong,
   ) != 0i32
   {
-    let mut cptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     cptr = strchr(devname, ':' as i32);
     if !cptr.is_null() {
       /* Colon-separated decimal device number? */
@@ -175,7 +175,7 @@ pub unsafe extern "C" fn resume_main(
 ) -> libc::c_int {
   let mut ofs: libc::c_ulonglong = 0;
   let mut resume_device: libc::dev_t = 0;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() {

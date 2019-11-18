@@ -90,7 +90,7 @@ pub unsafe extern "C" fn strrstr(
   mut haystack: *const libc::c_char,
   mut needle: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut r: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut r: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *needle.offset(0) == 0 {
     return (haystack as *mut libc::c_char).offset(strlen(haystack) as isize);
   }

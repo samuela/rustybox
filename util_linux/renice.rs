@@ -86,7 +86,7 @@ pub unsafe extern "C" fn renice_main(
   let mut adjustment: libc::c_int = 0;
   let mut new_priority: libc::c_int = 0;
   let mut who: libc::c_uint = 0;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Yes, they are not #defines in glibc 2.4! #if won't work */
   argv = argv.offset(1);
   arg = *argv;

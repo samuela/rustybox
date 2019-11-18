@@ -314,7 +314,7 @@ pub unsafe extern "C" fn unshare_main(
   let mut child: pid_t = 0;
   child = child;
   let mut ns_ctx_list: [namespace_ctx; 6] = [namespace_ctx {
-    path: 0 as *mut libc::c_char,
+    path: std::ptr::null_mut::<libc::c_char>(),
   }; 6];
   memset(
     ns_ctx_list.as_mut_ptr() as *mut libc::c_void,

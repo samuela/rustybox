@@ -1254,12 +1254,12 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     dp[0] = if list[0].s < list[0].e {
       *list[0].dl.offset(list[0].s as isize)
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     };
     dp[1] = if list[1].s < list[1].e {
       *list[1].dl.offset(list[1].s as isize)
     } else {
-      0 as *mut libc::c_char
+      std::ptr::null_mut::<libc::c_char>()
     };
     if dp[0].is_null() && dp[1].is_null() {
       break;
@@ -1398,7 +1398,7 @@ pub unsafe extern "C" fn diff_main(
   let mut gotstdin: libc::c_int = 0i32;
   let mut i: libc::c_int = 0;
   let mut file: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut s_start: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut L_arg: *mut llist_t = 0 as *mut llist_t;
   let ref mut fresh11 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

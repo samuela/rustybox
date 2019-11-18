@@ -342,8 +342,8 @@ pub unsafe extern "C" fn runsvdir_main(
   let mut need_rescan: libc::c_int = 0;
   let mut i_am_init: bool = false;
   let mut opt_s_argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
-  opt_s_argv[0] = 0 as *mut libc::c_char;
-  opt_s_argv[2] = 0 as *mut libc::c_char;
+  opt_s_argv[0] = std::ptr::null_mut::<libc::c_char>();
+  opt_s_argv[2] = std::ptr::null_mut::<libc::c_char>();
   getopt32(
     argv,
     b"^Ps:\x00-1\x00" as *const u8 as *const libc::c_char,

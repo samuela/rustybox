@@ -57,7 +57,7 @@ pub unsafe extern "C" fn pwdx_main(
   loop {
     let mut buf: [libc::c_char; 25] = [0; 25];
     let mut pid: libc::c_uint = 0;
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut arg: *mut libc::c_char = *argv;
     // Allowed on the command line:
     // /proc/NUM

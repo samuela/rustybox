@@ -30,9 +30,9 @@ pub unsafe extern "C" fn dname_dec(
   mut clen: libc::c_int,
   mut pre: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut ret: *mut libc::c_char = 0 as *mut libc::c_char; /* for compiler */
+  let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for compiler */
   ret = ret;
-  let mut dst: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* We make two passes over the cstr string. First, we compute
    * how long the resulting string would be. Then we allocate a
    * new buffer of the required length, and fill it in with the
@@ -59,7 +59,7 @@ pub unsafe extern "C" fn dname_dec(
         /* pointer */
         if crtpos.wrapping_add(2i32 as libc::c_uint) > clen as libc::c_uint {
           /* no offset to jump to? abort */
-          return 0 as *mut libc::c_char;
+          return std::ptr::null_mut::<libc::c_char>();
         }
         if retpos == 0i32 as libc::c_uint {
           /* jump */
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn dname_dec(
           > clen as libc::c_uint
         {
           /* label too long? abort */
-          return 0 as *mut libc::c_char;
+          return std::ptr::null_mut::<libc::c_char>();
         }
         if !dst.is_null() {
           /* \3com ---> "com." */
@@ -110,12 +110,12 @@ pub unsafe extern "C" fn dname_dec(
       }
       if depth > 6i32 as libc::c_uint || len > (1025i32 * 6i32) as libc::c_uint {
         /* result too long? abort */
-        return 0 as *mut libc::c_char;
+        return std::ptr::null_mut::<libc::c_char>();
       }
     }
     if len == 0 {
       /* expanded string has 0 length? abort */
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     if dst.is_null() {
       /* first pass? */

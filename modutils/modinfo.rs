@@ -171,11 +171,11 @@ unsafe extern "C" fn modinfo(
   let mut current_block: u64;
   let mut len: size_t = 0;
   let mut j: libc::c_int = 0;
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut the_module: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut allocated: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut the_module: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut allocated: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tags: libc::c_int = option_mask32 as libc::c_int;
-  allocated = 0 as *mut libc::c_char;
+  allocated = std::ptr::null_mut::<libc::c_char>();
   len = if -1i32 as ssize_t > 0 {
     -1i32 as ssize_t
   } else {
@@ -226,7 +226,7 @@ unsafe extern "C" fn modinfo(
           } else {
             ptr = the_module;
             loop {
-              let mut after_pattern: *mut libc::c_char = 0 as *mut libc::c_char;
+              let mut after_pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
               ptr = memchr(
                 ptr as *const libc::c_void,
                 *pattern as libc::c_int,
@@ -286,7 +286,7 @@ pub unsafe extern "C" fn modinfo_main(
     domainname: [0; 65],
   };
   let mut parser: *mut parser_t = 0 as *mut parser_t;
-  let mut colon: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut opts: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;

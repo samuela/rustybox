@@ -129,12 +129,12 @@ pub const KLOGD_LOGBUF_SIZE: C2RustUnnamed_2 = 1024;
  * messages from _PATH_KLOG. */
 unsafe extern "C" fn klogd_open() {
   /* "Open the log. Currently a NOP" */
-  klogctl(1i32, 0 as *mut libc::c_char, 0i32);
+  klogctl(1i32, std::ptr::null_mut::<libc::c_char>(), 0i32);
 }
 unsafe extern "C" fn klogd_setloglevel(mut lvl: libc::c_int) {
   /* "printk() prints a message on the console only if it has a loglevel
    * less than console_loglevel". Here we set console_loglevel = lvl. */
-  klogctl(8i32, 0 as *mut libc::c_char, lvl);
+  klogctl(8i32, std::ptr::null_mut::<libc::c_char>(), lvl);
 }
 unsafe extern "C" fn klogd_read(mut bufp: *mut libc::c_char, mut len: libc::c_int) -> libc::c_int {
   /* "2 -- Read from the log." */
@@ -143,8 +143,8 @@ unsafe extern "C" fn klogd_read(mut bufp: *mut libc::c_char, mut len: libc::c_in
 unsafe extern "C" fn klogd_close() {
   /* FYI: cmd 7 is equivalent to setting console_loglevel to 7
    * via klogctl(8, NULL, 7). */
-  klogctl(7i32, 0 as *mut libc::c_char, 0i32); /* "7 -- Enable printk's to console" */
-  klogctl(0i32, 0 as *mut libc::c_char, 0i32);
+  klogctl(7i32, std::ptr::null_mut::<libc::c_char>(), 0i32); /* "7 -- Enable printk's to console" */
+  klogctl(0i32, std::ptr::null_mut::<libc::c_char>(), 0i32);
   /* "0 -- Close the log. Currently a NOP" */
 }
 /* TODO: glibc openlog(LOG_KERN) reverts to LOG_USER instead,
@@ -165,7 +165,7 @@ pub unsafe extern "C" fn klogd_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0i32;
-  let mut opt_c: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut used: libc::c_int = 0;
   opt = getopt32(
@@ -240,7 +240,7 @@ pub unsafe extern "C" fn klogd_main(
   while bb_got_signal == 0 {
     let mut n: libc::c_int = 0;
     let mut priority: libc::c_int = 0;
-    let mut start: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     start = bb_common_bufsiz1.as_mut_ptr().offset(used as isize);
     n = klogd_read(start, KLOGD_LOGBUF_SIZE as libc::c_int - 1i32 - used);
     if n < 0i32 {
@@ -265,7 +265,7 @@ pub unsafe extern "C" fn klogd_main(
           }
           /* buffer is full, log it anyway */
           used = 0i32;
-          newline = 0 as *mut libc::c_char
+          newline = std::ptr::null_mut::<libc::c_char>()
         } else {
           let fresh0 = newline;
           newline = newline.offset(1);
@@ -276,7 +276,7 @@ pub unsafe extern "C" fn klogd_main(
         if *start as libc::c_int == '<' as i32 {
           start = start.offset(1);
           if *start != 0 {
-            let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+            let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             priority = strtoul(start, &mut end, 10i32) as libc::c_int;
             if *end as libc::c_int == '>' as i32 {
               end = end.offset(1)

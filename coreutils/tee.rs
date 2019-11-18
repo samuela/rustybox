@@ -122,7 +122,7 @@ pub unsafe extern "C" fn tee_main(
   let ref mut fresh0 = *files.offset(0);
   *fresh0 = stdout;
   'c_8862: loop {
-    setbuf(*fp, 0 as *mut libc::c_char);
+    setbuf(*fp, std::ptr::null_mut::<libc::c_char>());
     fp = fp.offset(1);
     np = np.offset(1);
     loop {

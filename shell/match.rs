@@ -37,8 +37,8 @@ pub unsafe extern "C" fn scan_and_match(
   mut pattern: *const libc::c_char,
   mut flags: libc::c_uint,
 ) -> *mut libc::c_char {
-  let mut loc: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut loc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_uint = strlen(string) as libc::c_uint;
   let mut early_exit: libc::c_int = 0;
   /* We can stop the scan early only if the string part
@@ -104,5 +104,5 @@ pub unsafe extern "C" fn scan_and_match(
       loc = loc.offset(-1)
     }
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }

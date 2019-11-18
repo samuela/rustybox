@@ -213,7 +213,7 @@ pub unsafe extern "C" fn df_main(
     __f_spare: [0; 6],
   };
   let mut disp_units_hdr: *const libc::c_char = 0 as *const libc::c_char;
-  let mut chp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut chp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32(
     argv,
     b"^kPTaiB:hm\x00k-mB:m-Bk:B-km\x00" as *const u8 as *const libc::c_char,

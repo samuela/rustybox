@@ -209,15 +209,15 @@ pub unsafe extern "C" fn factor_main(
     loop
     /* Read from stdin, several numbers per line are accepted */
     {
-      let mut numstr: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut numstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       line = xmalloc_fgetline(stdin);
       if line.is_null() {
         return 0i32;
       }
       numstr = line;
       loop {
-        let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         numstr = skip_whitespace(numstr);
         if *numstr.offset(0) == 0 {
           break;

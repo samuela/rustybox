@@ -435,7 +435,7 @@ pub unsafe extern "C" fn get_linux_version_code() -> libc::c_int {
     machine: [0; 65],
     domainname: [0; 65],
   }; /* never fails */
-  let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   uname(&mut name);
@@ -445,7 +445,7 @@ pub unsafe extern "C" fn get_linux_version_code() -> libc::c_int {
   while i < 3i32 {
     t = strtok(t, b".\x00" as *const u8 as *const libc::c_char);
     r = r * 256i32 + (if !t.is_null() { atoi(t) } else { 0i32 });
-    t = 0 as *mut libc::c_char;
+    t = std::ptr::null_mut::<libc::c_char>();
     i += 1
   }
   return r;

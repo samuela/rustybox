@@ -198,7 +198,7 @@ unsafe extern "C" fn do_line(mut data: *mut libc::c_void) {
 unsafe extern "C" fn finish_oldfile() {
   if !(*ptr_to_globals).tempname.is_null() {
     // Copy the rest of the data and replace the original with the copy.
-    let mut temp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut temp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*ptr_to_globals).filein != -1i32 {
       bb_copyfd_eof((*ptr_to_globals).filein, (*ptr_to_globals).fileout);
       xclose((*ptr_to_globals).filein);
@@ -213,7 +213,7 @@ unsafe extern "C" fn finish_oldfile() {
       free(temp as *mut libc::c_void);
       free((*ptr_to_globals).tempname as *mut libc::c_void);
     }
-    (*ptr_to_globals).tempname = 0 as *mut libc::c_char
+    (*ptr_to_globals).tempname = std::ptr::null_mut::<libc::c_char>()
   }
   (*ptr_to_globals).filein = -1i32;
   (*ptr_to_globals).fileout = (*ptr_to_globals).filein;
@@ -247,7 +247,7 @@ unsafe extern "C" fn fail_hunk() {
     unlink((*ptr_to_globals).tempname);
     free((*ptr_to_globals).tempname as *mut libc::c_void);
   }
-  (*ptr_to_globals).tempname = 0 as *mut libc::c_char;
+  (*ptr_to_globals).tempname = std::ptr::null_mut::<libc::c_char>();
   (*ptr_to_globals).state = 0i32;
 }
 // Given a hunk of a unified diff, make the appropriate change to the file.
@@ -440,10 +440,10 @@ pub unsafe extern "C" fn patch_main(
   let mut opts: libc::c_int = 0; /* for compiler */
   let mut reverse: libc::c_int = 0; /* for compiler */
   let mut state: libc::c_int = 0i32;
-  let mut oldname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut newname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_p: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_i: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut oldname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut oldlen: libc::c_long = 0;
   oldlen = oldlen;
   let mut newlen: libc::c_long = 0;
@@ -487,7 +487,7 @@ pub unsafe extern "C" fn patch_main(
   loop
   // Loop through the lines in the patch
   {
-    let mut patchline: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut patchline: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     patchline = xmalloc_fgetline(stdin);
     if patchline.is_null() {
       break;
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn patch_main(
       if !is_prefixed_with(patchline, b"--- \x00" as *const u8 as *const libc::c_char).is_null()
         || !is_prefixed_with(patchline, b"+++ \x00" as *const u8 as *const libc::c_char).is_null()
       {
-        let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut name: *mut *mut libc::c_char = if reverse != 0 {
           &mut newname
         } else {
@@ -612,7 +612,7 @@ pub unsafe extern "C" fn patch_main(
           let mut oldsum: libc::c_int = 0;
           let mut newsum: libc::c_int = 0;
           let mut empty: libc::c_int = 0i32;
-          let mut name_0: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut name_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           oldsum = ((*ptr_to_globals).oldline + oldlen) as libc::c_int;
           newsum = ((*ptr_to_globals).newline + newlen) as libc::c_int;
           name_0 = if reverse != 0 { oldname } else { newname };

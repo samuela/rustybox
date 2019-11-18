@@ -17,7 +17,7 @@ use crate::librb::smallint;
 pub unsafe extern "C" fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *const libc::c_char {
   let mut cp: *const libc::c_char = str;
   loop {
-    let mut cp2: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut cp2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if *cp as libc::c_int == '/' as i32 {
       cp = cp.offset(1)
     } else if !is_prefixed_with(

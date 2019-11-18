@@ -72,8 +72,8 @@ pub unsafe extern "C" fn bb_verror_msg(
   mut strerr: *const libc::c_char,
 ) {
   let mut current_block: u64; /* some libc don't like printf(NULL) */
-  let mut msg: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut msg1: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut msg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut msg1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut stack_msg: [libc::c_char; 80] = [0; 80];
   let mut applet_len: libc::c_int = 0;
   let mut strerr_len: libc::c_int = 0;

@@ -163,8 +163,8 @@ unsafe extern "C" fn new_peer(mut state: *mut isrv_state_t, mut fd: libc::c_int)
 }
 unsafe extern "C" fn do_rd(mut fd: libc::c_int, mut paramp: *mut *mut libc::c_void) -> libc::c_int {
   let mut buf: *mut identd_buf_t = *paramp as *mut identd_buf_t;
-  let mut cur: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cur: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sz: libc::c_int = 0;
   cur = (*buf).buf.as_mut_ptr().offset((*buf).pos as isize);
   sz = safe_read(

@@ -898,7 +898,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
 ) -> libc::c_longlong {
   let mut total_written: libc::c_longlong = 0i32 as libc::c_longlong;
   let mut bd: *mut bunzip_data = 0 as *mut bunzip_data;
-  let mut outbuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut len: libc::c_uint = 0;
   if check_signature16(xstate, BZIP2_MAGIC as libc::c_int as libc::c_uint) != 0 {
@@ -1002,7 +1002,7 @@ pub unsafe extern "C" fn unpack_bz2_data(
   mut packed_len: libc::c_int,
   mut unpacked_len: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut outbuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bd: *mut bunzip_data = 0 as *mut bunzip_data;
   let mut i: libc::c_int = 0;
   let mut jmpbuf: jmp_buf = [__jmp_buf_tag {

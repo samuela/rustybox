@@ -660,7 +660,7 @@ pub unsafe extern "C" fn time_main(
   } else {
     default_format.as_ptr()
   };
-  let mut output_filename: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut output_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut output_fd: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   let mut ex: libc::c_int = 0;

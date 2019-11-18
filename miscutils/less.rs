@@ -353,7 +353,7 @@ unsafe extern "C" fn re_wrap() {
   let mut old_flines: *mut *const libc::c_char = (*ptr_to_globals).flines;
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
   let mut new_flines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & FLAG_N as libc::c_int as libc::c_uint != 0 {
     w -= 8i32
   }
@@ -477,8 +477,8 @@ unsafe extern "C" fn at_end() -> libc::c_int {
  * "/search on very long input" and "reaching max line count" corner cases.
  */
 unsafe extern "C" fn read_lines() {
-  let mut current_line: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut current_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w: libc::c_int = (*ptr_to_globals).width as libc::c_int;
   let mut last_terminated: libc::c_char = (*ptr_to_globals).terminated as libc::c_char;
   let mut last_time: time_t = 0i32 as time_t;
@@ -883,10 +883,10 @@ unsafe extern "C" fn print_lineno(mut line: *const libc::c_char) {
   printf(fmt, n);
 }
 unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
-  let mut new: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut new: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_status: libc::c_int = 0;
   let mut eflags: libc::c_int = 0;
-  let mut growline: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut growline: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_structs: regmatch_t = regmatch_t { rm_so: 0, rm_eo: 0 };
   let vla = (*ptr_to_globals).width.wrapping_add(1i32 as libc::c_uint) as usize;
   let mut buf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
@@ -915,7 +915,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
    * NB: we regex against line, but insert text
    * from quarantined copy (buf[]) */
   str = buf.as_mut_ptr();
-  growline = 0 as *mut libc::c_char;
+  growline = std::ptr::null_mut::<libc::c_char>();
   eflags = 0i32;
   loop {
     /* Most of the time doesn't find the regex, optimize for that */
@@ -965,7 +965,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
 unsafe extern "C" fn print_ascii(mut str: *const libc::c_char) {
   let vla = (*ptr_to_globals).width.wrapping_add(1i32 as libc::c_uint) as usize;
   let mut buf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut n: size_t = 0;
   while *str != 0 {
     n = strcspn(str, controls.as_ptr());
@@ -1410,7 +1410,7 @@ unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
   }
 }
 unsafe extern "C" fn examine_file() {
-  let mut new_fname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut new_fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   print_statusline(b"Examine: \x00" as *const u8 as *const libc::c_char);
   new_fname = less_gets(
     (::std::mem::size_of::<[libc::c_char; 10]>() as libc::c_ulong)
@@ -1602,8 +1602,8 @@ unsafe extern "C" fn fill_match_lines(mut pos: libc::c_uint) {
   }
 }
 unsafe extern "C" fn regex_process() {
-  let mut uncomp_regex: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut err: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut uncomp_regex: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut err: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Reset variables */
   free((*ptr_to_globals).match_lines as *mut libc::c_void);
   (*ptr_to_globals).match_lines = 0 as *mut libc::c_uint;
@@ -1758,7 +1758,7 @@ unsafe extern "C" fn flag_change() {
 /* ENABLE_FEATURE_LESS_DASHCMD */
 unsafe extern "C" fn save_input_to_file() {
   let mut msg: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
-  let mut current_line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut current_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
   let mut fp: *mut FILE = 0 as *mut FILE;
   print_statusline(b"Log file: \x00" as *const u8 as *const libc::c_char);
@@ -2051,7 +2051,7 @@ pub unsafe extern "C" fn less_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut tty_name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tty_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_fd: libc::c_int = 0;
   let ref mut fresh13 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

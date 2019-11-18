@@ -617,9 +617,9 @@ pub unsafe extern "C" fn update_passwd(
   };
   let mut old_fp: *mut FILE = 0 as *mut FILE;
   let mut new_fp: *mut FILE = 0 as *mut FILE;
-  let mut fnamesfx: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut sfx_char: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut name_colon: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fnamesfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut sfx_char: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut name_colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut old_fd: libc::c_int = 0;
   let mut new_fd: libc::c_int = 0;
   let mut i: libc::c_int = 0;
@@ -723,8 +723,8 @@ pub unsafe extern "C" fn update_passwd(
         /* Read current password file, write updated /etc/passwd+ */
         changed_lines = 0i32;
         loop {
-          let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
-          let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+          let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           line = xmalloc_fgetline(old_fp);
           if line.is_null() {
             break;
@@ -790,7 +790,7 @@ pub unsafe extern "C" fn update_passwd(
               } else {
                 /* && applet_name[0] == 'd' */
                 /* Delete user from group */
-                let mut tmp: *mut libc::c_char = 0 as *mut libc::c_char;
+                let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                 let mut fmt: *const libc::c_char = b"%s\x00" as *const u8 as *const libc::c_char;
                 cp = strrchr(line, ':' as i32);
                 let fresh0 = cp;

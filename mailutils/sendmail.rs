@@ -158,7 +158,7 @@ unsafe extern "C" fn smtp_checkp(
   mut param: *const libc::c_char,
   mut code: libc::c_int,
 ) -> libc::c_int {
-  let mut answer: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut answer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut msg: *mut libc::c_char = send_mail_command(fmt, param);
   loop
   // read stdin
@@ -205,7 +205,7 @@ unsafe extern "C" fn smtp_check(
 }
 // strip argument of bad chars
 unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   trim(str);
   s = str;
   while *s != 0 {
@@ -236,8 +236,8 @@ unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_ch
 }
 // check for an address inside angle brackets, if not found fall back to normal
 unsafe extern "C" fn angle_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   e = trim(str);
   if e != str && {
     e = e.offset(-1);
@@ -300,9 +300,9 @@ pub unsafe extern "C" fn sendmail_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut opt_connect: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut opt_from: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut opt_connect: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut opt_from: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list: *mut llist_t = 0 as *mut llist_t;
   let mut host: *mut libc::c_char = sane_address(safe_gethostname());
   let mut nheaders: libc::c_uint = 0i32 as libc::c_uint;

@@ -347,7 +347,7 @@ unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
  */
 #[no_mangle]
 pub unsafe extern "C" fn str_tolower(mut str: *mut libc::c_char) -> *mut libc::c_char {
-  let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   c = str;
   while *c != 0 {
     *c = bb_ascii_tolower(*c as libc::c_uchar) as libc::c_char;

@@ -339,7 +339,7 @@ pub unsafe extern "C" fn hex2bin(
     } else if c as libc::c_int | 0x20i32 >= 'a' as i32 && c as libc::c_int | 0x20i32 <= 'f' as i32 {
       val = ((c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as u8
     } else {
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     val = ((val as libc::c_int) << 4i32) as u8;
     c = *str as u8;
@@ -350,7 +350,7 @@ pub unsafe extern "C" fn hex2bin(
     } else if c as libc::c_int == ':' as i32 || c as libc::c_int == '\u{0}' as i32 {
       val = (val as libc::c_int >> 4i32) as u8
     } else {
-      return 0 as *mut libc::c_char;
+      return std::ptr::null_mut::<libc::c_char>();
     }
     let fresh6 = dst;
     dst = dst.offset(1);

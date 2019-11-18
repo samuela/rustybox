@@ -431,7 +431,7 @@ pub unsafe extern "C" fn print_numbered_lines(
 ) -> libc::c_int {
   let mut fp: *mut FILE = fopen_or_warn_stdin(filename);
   let mut N: libc::c_uint = 0;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if fp.is_null() {
     return 1i32;
   }

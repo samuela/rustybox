@@ -269,13 +269,13 @@ unsafe extern "C" fn find_keyword(
 ) -> *mut libc::c_char {
   if ptr.is_null() {
     /* happens if xmalloc_open_zipped_read_close cannot read it */
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   len = (len as libc::c_ulong).wrapping_sub(strlen(word).wrapping_sub(1i32 as libc::c_ulong))
     as size_t as size_t;
   while len as ssize_t > 0 {
     let mut old: *mut libc::c_char = ptr;
-    let mut after_word: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut after_word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* search for the first char in word */
     ptr = memchr(
       ptr as *const libc::c_void,
@@ -294,7 +294,7 @@ unsafe extern "C" fn find_keyword(
       .wrapping_sub(ptr.wrapping_offset_from(old) as libc::c_long as libc::c_ulong)
       as size_t as size_t
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn replace(
   mut s: *mut libc::c_char,
@@ -396,7 +396,7 @@ unsafe extern "C" fn load_module(
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   } as size_t;
-  let mut module_image: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut module_image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if options.is_null() {
     options = b"\x00" as *const u8 as *const libc::c_char
   }
@@ -427,8 +427,8 @@ unsafe extern "C" fn parse_module(
   mut pathname: *const libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut module_image: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut module_image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: size_t = 0;
   let mut pos: size_t = 0;
   /* Read (possibly compressed) module */
@@ -479,8 +479,8 @@ unsafe extern "C" fn parse_module(
          */
         if start != 0 {
           /* "if we aren't the first alias" */
-          let mut found: *mut libc::c_char = 0 as *mut libc::c_char;
-          let mut last: *mut libc::c_char = 0 as *mut libc::c_char;
+          let mut found: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+          let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           *(*ptr_to_globals)
             .stringbuf
             .offset((*ptr_to_globals).stringbuf_idx as isize) = '\u{0}' as i32 as libc::c_char;
@@ -588,7 +588,7 @@ unsafe extern "C" fn fileAction(
   return 1i32;
 }
 unsafe extern "C" fn load_dep_bb() -> libc::c_int {
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = fopen_for_read(b"modules.dep.bb\x00" as *const u8 as *const libc::c_char);
   if fp.is_null() {
     return 0i32;
@@ -614,8 +614,8 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
     if line.is_null() {
       break;
     }
-    let mut space: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut linebuf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut space: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut linebuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut cur: libc::c_int = 0;
     if *line.offset(0) == 0 {
       free(line as *mut libc::c_void);
@@ -842,8 +842,8 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
     .pathname
     .is_null()
   {
-    let mut desc: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut desc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*(*ptr_to_globals).modinfo.offset(i as isize))
       .aliases
       .is_null()
@@ -890,7 +890,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
 // TODO: open only once, invent config_rewind()
 unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_int {
   let mut ret: libc::c_int = 0;
-  let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = 0 as *mut FILE;
   ret = 5i32 * 2i32;
   'c_11409: loop {
@@ -903,8 +903,8 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
       if line.is_null() {
         break 'c_11409;
       }
-      let mut live: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut after_name: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut live: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut after_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       // Examples from kernel 3.14.6:
       //pcspkr 12718 0 - Live 0xffffffffa017e000
       //snd_timer 28690 2 snd_seq,snd_pcm, Live 0xffffffffa025e000
@@ -967,9 +967,9 @@ unsafe extern "C" fn process_module(
   mut cmdline_options: *const libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut deps: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut options: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut deps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut infovec: *mut *mut module_info = 0 as *mut *mut module_info;
   let mut info: *mut module_info = 0 as *mut module_info;
   let mut infoidx: libc::c_int = 0;
@@ -995,7 +995,7 @@ unsafe extern "C" fn process_module(
   if !is_remove && already_loaded(name) != 0 {
     return 0i32;
   }
-  options = 0 as *mut libc::c_char;
+  options = std::ptr::null_mut::<libc::c_char>();
   if !is_remove {
     let mut opt_filename: *mut libc::c_char = xasprintf(
       b"/etc/modules/%s\x00" as *const u8 as *const libc::c_char,
@@ -1261,7 +1261,7 @@ pub unsafe extern "C" fn modprobe_main(
     machine: [0; 65],
     domainname: [0; 65],
   };
-  let mut options: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -1370,7 +1370,7 @@ pub unsafe extern "C" fn modprobe_main(
         *arg,
       );
       free(s as *mut libc::c_void);
-      *arg = 0 as *mut libc::c_char
+      *arg = std::ptr::null_mut::<libc::c_char>()
     }
   }
   if 1i32 != 0

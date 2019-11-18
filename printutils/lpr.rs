@@ -194,7 +194,7 @@ pub unsafe extern "C" fn lpqr_main(
   let mut printer_class: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut queue: *const libc::c_char = 0 as *const libc::c_char;
   let mut server: *const libc::c_char = b"localhost\x00" as *const u8 as *const libc::c_char;
-  let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // N.B. IMHO getenv("USER") can be way easily spoofed!
   let mut user: *const libc::c_char = xuid2uname(getuid());
   let mut job: libc::c_uint = 0;
@@ -304,9 +304,9 @@ pub unsafe extern "C" fn lpqr_main(
     let mut cflen: libc::c_uint = 0;
     let mut dfd: libc::c_int = 0;
     let mut st: stat = std::mem::zeroed();
-    let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut remote_filename: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut controlfile: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut remote_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut controlfile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // if data file is stdin, we need to dump it first
     if *(*argv).offset(0) as libc::c_int == '-' as i32 && *(*argv).offset(1) == 0 {
       strcpy(

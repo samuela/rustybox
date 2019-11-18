@@ -249,7 +249,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
   } {
     let mut statbuf: stat = std::mem::zeroed();
     let mut pid: pid_t = 0;
-    let mut subpath: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut subpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     subpath = concat_subpath_file(path, (*d_ent).d_name.as_mut_ptr());
     if subpath.is_null() {
       continue;

@@ -543,8 +543,8 @@ unsafe extern "C" fn find_out_spec(mut name: *const libc::c_char) -> *const ps_o
 unsafe extern "C" fn parse_o(mut opt: *mut libc::c_char) {
   let mut new: *mut ps_out_t = 0 as *mut ps_out_t;
   // POSIX: "-o is blank- or comma-separated list" (FIXME)
-  let mut comma: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut equal: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut comma: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut equal: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     comma = strchr(opt, ',' as i32);
     equal = strchr(opt, '=' as i32);
@@ -623,7 +623,7 @@ unsafe extern "C" fn alloc_line_buffer() {
 unsafe extern "C" fn format_header() {
   let mut i: libc::c_int = 0;
   let mut op: *mut ps_out_t = 0 as *mut ps_out_t;
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_header == 0 {
     return;
   }

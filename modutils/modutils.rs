@@ -153,7 +153,7 @@ pub unsafe extern "C" fn string_to_llist(
   mut llist: *mut *mut llist_t,
   mut delim: *const libc::c_char,
 ) -> libc::c_int {
-  let mut tok: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0i32;
   loop {
     tok = strsep(&mut string, delim);
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn filename2modname(
   let mut i: libc::c_int = 0;
   let mut from: *const libc::c_char = 0 as *const libc::c_char;
   if filename.is_null() {
-    return 0 as *mut libc::c_char;
+    return std::ptr::null_mut::<libc::c_char>();
   }
   if modname.is_null() {
     modname = local_modname.as_mut_ptr()
@@ -210,7 +210,7 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
   mut argv: *mut *mut libc::c_char,
   mut quote_spaces: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut options: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut optlen: libc::c_int = 0;
   options = xzalloc(1i32 as size_t) as *mut libc::c_char;
   optlen = 0i32;
@@ -269,7 +269,7 @@ pub unsafe extern "C" fn bb_init_module(
   mut options: *const libc::c_char,
 ) -> libc::c_int {
   let mut image_size: size_t = 0;
-  let mut image: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rc: libc::c_int = 0;
   let mut mmaped: bool = false;
   if options.is_null() {
@@ -292,7 +292,7 @@ pub unsafe extern "C" fn bb_init_module(
   }
   image_size = (2147483647i32 - 4095i32) as size_t;
   mmaped = 0i32 != 0;
-  image = 0 as *mut libc::c_char;
+  image = std::ptr::null_mut::<libc::c_char>();
   if !image.is_null() {
     mmaped = 1i32 != 0
   } else {

@@ -1309,7 +1309,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
     seq: 0,
     dump: 0,
   };
-  let mut filter_dev: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut filter_dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   ipaddr_reset_filter(oneline as libc::c_int);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).showqueue = 1i32 as smallint;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int == 0i32 {
@@ -1724,8 +1724,8 @@ unsafe extern "C" fn ipaddr_modify(
     },
     buf: [0; 256],
   };
-  let mut d: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut l: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lcl: inet_prefix = inet_prefix {
     family: 0,
     bytelen: 0,

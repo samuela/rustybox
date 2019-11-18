@@ -453,7 +453,7 @@ pub unsafe extern "C" fn chat_main(
         continue; // inhibit terminating command with \r
       } // loaded command
       let mut nocr: libc::c_int = 0i32;
-      let mut loaded: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut loaded: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len_2: size_t = 0;
       let fresh4 = argv;
       argv = argv.offset(1);

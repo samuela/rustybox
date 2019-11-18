@@ -316,7 +316,7 @@ unsafe extern "C" fn drop_usermodehelper(
   close(fd);
 }
 unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
-  let mut cap: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cap: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   cap = strtok(string, b",\x00" as *const u8 as *const libc::c_char);
   while !cap.is_null() {
     let mut cap_idx: libc::c_uint = 0;
@@ -336,7 +336,7 @@ unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
       cap,
     );
     cap = strtok(
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       b",\x00" as *const u8 as *const libc::c_char,
     )
   }
@@ -346,8 +346,8 @@ pub unsafe extern "C" fn switch_root_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut newroot: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut console: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut newroot: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut console: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut st: stat = std::mem::zeroed();
   let mut stfs: statfs = std::mem::zeroed();
   let mut dry_run: libc::c_uint = 0i32 as libc::c_uint;
@@ -376,7 +376,7 @@ pub unsafe extern "C" fn switch_root_main(
     //usage:     "\n	-c DEV	Reopen stdio to DEV after switch"
     //usage:     "\n	-d CAPS	Drop capabilities"
     //usage:     "\n	-n	Dry run"
-    let mut cap_list: *mut libc::c_char = 0 as *mut libc::c_char; // -n
+    let mut cap_list: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -n
     dry_run = getopt32(
       argv,
       b"^+c:d:n\x00-2\x00" as *const u8 as *const libc::c_char,

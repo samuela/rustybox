@@ -513,7 +513,7 @@ pub unsafe extern "C" fn kill_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;
   let mut signo: libc::c_int = 15i32;
   let mut errors: libc::c_int = 0i32;
@@ -766,7 +766,7 @@ pub unsafe extern "C" fn kill_main(
        * and " PID1 PID2 PID3" (with degenerate case "")
        */
       while *arg as libc::c_int != '\u{0}' as i32 {
-        let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if *arg as libc::c_int == ' ' as i32 {
           arg = arg.offset(1)
         }

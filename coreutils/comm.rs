@@ -65,7 +65,7 @@ pub unsafe extern "C" fn comm_main(
     i += 1
   }
   order = 0i32;
-  thisline[0] = 0 as *mut libc::c_char;
+  thisline[0] = std::ptr::null_mut::<libc::c_char>();
   thisline[1] = thisline[0];
   loop {
     if order <= 0i32 {

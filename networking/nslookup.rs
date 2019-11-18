@@ -1150,8 +1150,8 @@ unsafe extern "C" fn parse_resolvconf() {
     )
     .is_null()
     {
-      let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-      let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+      let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       p = strtok(
         line.as_mut_ptr(),
         b" \t\n\x00" as *const u8 as *const libc::c_char,
@@ -1160,7 +1160,7 @@ unsafe extern "C" fn parse_resolvconf() {
         continue;
       }
       arg = strtok(
-        0 as *mut libc::c_char,
+        std::ptr::null_mut::<libc::c_char>(),
         b"\n\x00" as *const u8 as *const libc::c_char,
       );
       if arg.is_null() {
@@ -1215,7 +1215,7 @@ unsafe extern "C" fn parse_resolvconf() {
         == 0)
   {
     let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).search;
-    *fresh6 = 0 as *mut libc::c_char
+    *fresh6 = std::ptr::null_mut::<libc::c_char>()
   };
 }
 unsafe extern "C" fn add_query(mut type_0: libc::c_int, mut dname: *const libc::c_char) {
@@ -1254,7 +1254,7 @@ unsafe extern "C" fn add_query_with_search(
   mut type_0: libc::c_int,
   mut dname: *const libc::c_char,
 ) {
-  let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if type_0 == ns_t_ptr as libc::c_int
     || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .search
@@ -1266,8 +1266,8 @@ unsafe extern "C" fn add_query_with_search(
   }
   s = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).search;
   loop {
-    let mut fullname: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut e: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut fullname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     e = skip_non_whitespace(s);
     fullname = xasprintf(
       b"%s.%.*s\x00" as *const u8 as *const libc::c_char,
@@ -1338,7 +1338,7 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
       addr[0] as libc::c_int,
     );
   }
-  return 0 as *mut libc::c_char;
+  return std::ptr::null_mut::<libc::c_char>();
 }
 #[no_mangle]
 pub unsafe extern "C" fn nslookup_main(
@@ -1361,8 +1361,8 @@ pub unsafe extern "C" fn nslookup_main(
       b"type\x00querytype\x00port\x00retry\x00debug\x00t\x00timeout\x00\x00" as *const u8
         as *const libc::c_char;
     let mut i: libc::c_int = 0;
-    let mut arg: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*argv).is_null() {
       bb_show_usage();
     }
@@ -1444,7 +1444,7 @@ pub unsafe extern "C" fn nslookup_main(
      * we issue A+AAAA queries and switch to an output format
      * mimicking the one of the traditional nslookup applet.
      */
-    let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     ptr = make_ptr(*argv.offset(0));
     if !ptr.is_null() {
       add_query(ns_t_ptr as libc::c_int, ptr);

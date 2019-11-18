@@ -184,7 +184,7 @@ pub unsafe extern "C" fn logread_main(
     let mut len_first_part: libc::c_int = 0;
     let mut len_total: libc::c_int = 0;
     len_total = len_total;
-    let mut copy: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut copy: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     copy = copy;
     if semop(
       log_semid,

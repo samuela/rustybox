@@ -569,7 +569,7 @@ unsafe extern "C" fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
 unsafe extern "C" fn getn(mut s: *const libc::c_char) -> number_t {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut r: libc::c_longlong = 0;
   *bb_errno = 0i32;
   r = strtoll(s, &mut p, 10i32);
@@ -1370,7 +1370,7 @@ pub unsafe extern "C" fn test_main(
       return 2i32;
     }
     let ref mut fresh0 = *argv.offset(argc as isize);
-    *fresh0 = 0 as *mut libc::c_char
+    *fresh0 = std::ptr::null_mut::<libc::c_char>()
   }
   /* argc is unused after this point */
   /* We must do DEINIT_S() prior to returning */
@@ -1443,7 +1443,7 @@ pub unsafe extern "C" fn test_main(
             {
               /* "test [!] ( x y )" */
               let ref mut fresh2 = *argv.offset(3);
-              *fresh2 = 0 as *mut libc::c_char;
+              *fresh2 = std::ptr::null_mut::<libc::c_char>();
               argv = argv.offset(1)
             }
           }

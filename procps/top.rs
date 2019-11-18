@@ -773,7 +773,7 @@ unsafe extern "C" fn display_header(
   mut lines_rem_p: *mut libc::c_int,
 ) -> libc::c_ulong {
   let mut scrbuf: [libc::c_char; 100] = [0; 100];
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut meminfo: [libc::c_ulong; 13] = [0; 13];
   parse_meminfo(meminfo.as_mut_ptr());
   /* Output memory info */
@@ -1087,7 +1087,7 @@ unsafe extern "C" fn display_topmem_process_list(
 ) {
   let mut s: *const topmem_status_t =
     ((*ptr_to_globals).top as *mut topmem_status_t).offset((*ptr_to_globals).scroll_ofs as isize);
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ch: libc::c_char = 0;
   display_topmem_header(scr_width, &mut lines_rem);
   strcpy(
@@ -1434,8 +1434,8 @@ pub unsafe extern "C" fn top_main(
   let mut interval: duration_t = 0.; /* default update interval is 5 seconds */
   let mut iterations: libc::c_int = 0; /* infinite */
   let mut col: libc::c_uint = 0;
-  let mut str_interval: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_iterations: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_interval: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_iterations: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut scan_mask: libc::c_uint = TOP_MASK as libc::c_int as libc::c_uint;
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);

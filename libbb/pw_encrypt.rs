@@ -1320,7 +1320,7 @@ unsafe extern "C" fn md5_crypt(
   mut pw: *const libc::c_uchar,
   mut salt: *const libc::c_uchar,
 ) -> *mut libc::c_char {
-  let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut final_0: [libc::c_uchar; 17] = [0; 17];
   let mut sl: libc::c_int = 0;
   let mut pl: libc::c_int = 0;
@@ -1471,8 +1471,8 @@ unsafe extern "C" fn sha_crypt(
     unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
   > = None;
   let mut _32or64: libc::c_int = 0;
-  let mut result: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut resptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut resptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* btw, sha256 needs [32] and u32 only */
   let mut L: C2RustUnnamed = C2RustUnnamed {
     alt_result: [0; 64],
@@ -1498,7 +1498,7 @@ unsafe extern "C" fn sha_crypt(
   let mut key_len: libc::c_uint = 0;
   let mut cnt: libc::c_uint = 0;
   let mut rounds: libc::c_uint = 0;
-  let mut cp: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Analyze salt, construct already known part of result */
   cnt = strlen(salt_data)
     .wrapping_add(1i32 as libc::c_ulong)
@@ -1525,7 +1525,7 @@ unsafe extern "C" fn sha_crypt(
   salt_data = salt_data.offset(3);
   if strncmp(salt_data, str_rounds.as_ptr(), 7i32 as libc::c_ulong) == 0i32 {
     /* 7 == strlen("rounds=") */
-    let mut endp: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut endp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     cnt = bb_strtou(salt_data.offset(7), &mut endp, 10i32);
     if *endp as libc::c_int == '$' as i32 {
       salt_data = endp.offset(1);
@@ -2434,7 +2434,7 @@ pub unsafe extern "C" fn pw_encrypt(
   mut salt: *const libc::c_char,
   mut cleanup: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut encrypted: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   encrypted = my_crypt(clear, salt);
   if cleanup != 0 {
     my_crypt_cleanup();

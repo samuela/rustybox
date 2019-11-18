@@ -49,12 +49,12 @@ pub unsafe extern "C" fn strings_main(
   let mut count: libc::c_uint = 0;
   let mut offset: off_t = 0;
   let mut file: *mut FILE = 0 as *mut FILE;
-  let mut string: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt: *const libc::c_char = b"%s: \x00" as *const u8 as *const libc::c_char;
   let mut n_arg: *const libc::c_char = b"4\x00" as *const u8 as *const libc::c_char;
   /* default for -o */
   let mut radix: *const libc::c_char = b"o\x00" as *const u8 as *const libc::c_char;
-  let mut radix_fmt: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut radix_fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   getopt32(
     argv,
     b"afon:t:\x00" as *const u8 as *const libc::c_char,

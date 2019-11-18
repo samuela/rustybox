@@ -260,7 +260,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
    * For example, vsftp happily answers
    * "227 Entering Passive Mode (0,0,0,0,n,n)" and proceeds as usual.
    */
-  let mut ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut port: libc::c_int = 0;
   if 1i32 == 0 || *buf.offset(2) as libc::c_int == '7' as i32 {
     /* "227" */

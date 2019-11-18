@@ -348,7 +348,7 @@ unsafe extern "C" fn checkscript() -> libc::c_int {
   }
   /* if (!(s.st_mode & S_IXUSR)) return 1; */
   prog[0] = b"./check\x00" as *const u8 as *const libc::c_char as *mut libc::c_char; /* will also flush the output */
-  prog[1] = 0 as *mut libc::c_char;
+  prog[1] = std::ptr::null_mut::<libc::c_char>();
   pid = spawn(prog.as_mut_ptr());
   if pid <= 0i32 {
     bb_perror_msg(
@@ -586,8 +586,8 @@ unsafe extern "C" fn control(mut a: *const libc::c_char) -> libc::c_int {
 //usage:       "STOP, CONT, HUP, ALRM, INT, QUIT, USR1, USR2, TERM, KILL signal to service"
 unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
-  let mut x: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut action: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut x: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut action: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut varservice: *const libc::c_char = b"/var/service\x00" as *const u8 as *const libc::c_char;
   let mut waitsec: libc::c_uint = 7i32 as libc::c_uint;
   let mut kll: smallint = 0i32 as smallint;

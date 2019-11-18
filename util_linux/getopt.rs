@@ -216,8 +216,8 @@ pub const OPT_q: C2RustUnnamed_0 = 4;
  * each call.
  */
 unsafe extern "C" fn normalize(mut arg: *const libc::c_char) -> *const libc::c_char {
-  let mut bufptr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut BUFFER: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut bufptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut BUFFER: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
     /* Just copy arg */
     BUFFER = xstrdup(arg);
@@ -454,7 +454,7 @@ unsafe extern "C" fn add_long_options(
       long_nr += 1
     }
     tokptr = strtok(
-      0 as *mut libc::c_char,
+      std::ptr::null_mut::<libc::c_char>(),
       b", \t\n\x00" as *const u8 as *const libc::c_char,
     )
   }
@@ -498,11 +498,11 @@ pub unsafe extern "C" fn getopt_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut n: libc::c_int = 0; /* used as yes/no flag */
-  let mut optstr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut optstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
   let mut compatible: *const libc::c_char = 0 as *const libc::c_char;
-  let mut s_arg: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut s_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut long_options: *mut option = 0 as *mut option;
   let mut l_arg: *mut llist_t = 0 as *mut llist_t;
   compatible = getenv(b"GETOPT_COMPATIBLE\x00" as *const u8 as *const libc::c_char);

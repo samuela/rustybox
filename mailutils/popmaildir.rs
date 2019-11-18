@@ -246,9 +246,9 @@ pub unsafe extern "C" fn popmaildir_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nmsg: libc::c_uint = 0;
-  let mut hostname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;
   let mut retr: *const libc::c_char = 0 as *const libc::c_char;
   let mut delivery: *const libc::c_char = 0 as *const libc::c_char;
@@ -370,9 +370,9 @@ pub unsafe extern "C" fn popmaildir_main(
     b"RETR %u\x00" as *const u8 as *const libc::c_char
   };
   while nmsg != 0 {
-    let mut filename: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut target: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut answer: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+    let mut answer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut fp: *mut FILE = 0 as *mut FILE;
     let mut rc: libc::c_int = 0;
     // generate unique filename

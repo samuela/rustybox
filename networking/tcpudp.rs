@@ -352,7 +352,7 @@ unsafe extern "C" fn undo_xsetenv() {
     bb_unsetenv_and_free(var);
     let fresh5 = pp;
     pp = pp.offset(1);
-    *fresh5 = 0 as *mut libc::c_char
+    *fresh5 = std::ptr::null_mut::<libc::c_char>()
   }
 }
 unsafe extern "C" fn sig_term_handler(mut sig: libc::c_int) {
@@ -421,21 +421,21 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut str_C: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut str_t: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut user: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut str_C: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut hccp: *mut hcc = 0 as *mut hcc;
   let mut instructs: *const libc::c_char = 0 as *const libc::c_char;
-  let mut msg_per_host: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut msg_per_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len_per_host: libc::c_uint = 0;
   len_per_host = len_per_host;
   let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
   let mut tcp: bool = false;
   let mut local_port: u16 = 0;
-  let mut preset_local_hostname: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut remote_hostname: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut preset_local_hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut remote_hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   remote_hostname = remote_hostname;
-  let mut remote_addr: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut remote_addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   remote_addr = remote_addr;
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
   let mut local: len_and_sockaddr = len_and_sockaddr {
@@ -723,12 +723,12 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   }
   /* Child: prepare env, log, and exec prog */
   /* vfork alert! every xmalloc in this block should be freed! */
-  let mut local_hostname: *mut libc::c_char = 0 as *mut libc::c_char; /* for compiler */
+  let mut local_hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for compiler */
   local_hostname = local_hostname;
-  let mut local_addr: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut free_me0: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut free_me1: *mut libc::c_char = 0 as *mut libc::c_char;
-  let mut free_me2: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut local_addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut free_me0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut free_me1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
+  let mut free_me2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0
     || opts & OPT_E as libc::c_int as libc::c_uint == 0
   {

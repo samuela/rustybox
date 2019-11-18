@@ -108,7 +108,7 @@ pub unsafe extern "C" fn tail_main(
   let mut sleep_period: libc::c_uint = 1i32 as libc::c_uint;
   let mut str_c: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_n: *const libc::c_char = 0 as *const libc::c_char;
-  let mut tailbuf: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut tailbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tailbufsize: size_t = 0;
   let mut header_threshhold: libc::c_uint = 1i32 as libc::c_uint;
   let mut nfiles: libc::c_uint = 0;
@@ -202,13 +202,13 @@ pub unsafe extern "C" fn tail_main(
   /* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
    * (In fact, it doesn't need ANY memory). So delay allocation.
    */
-  tailbuf = 0 as *mut libc::c_char;
+  tailbuf = std::ptr::null_mut::<libc::c_char>();
   /* tail the files */
   fmt = (b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char).offset(1); /* skip leading newline in the header on the first output */
   i = 0i32; /* may happen with -F */
   let mut current_block_118: u64;
   loop {
-    let mut buf: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut taillen: libc::c_int = 0;
     let mut newlines_seen: libc::c_int = 0;
     let mut seen: libc::c_uint = 0;
@@ -346,7 +346,7 @@ pub unsafe extern "C" fn tail_main(
                 } else {
                   let mut extra: libc::c_int = (*buf.offset((nread - 1i32) as isize) as libc::c_int
                     != '\n' as i32) as libc::c_int;
-                  let mut s_0: *mut libc::c_char = 0 as *mut libc::c_char;
+                  let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                   k = ((newlines_seen + newlines_in_buf + extra) as libc::c_uint)
                     .wrapping_sub(count) as libc::c_int;
                   s_0 = tailbuf;

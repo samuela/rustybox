@@ -113,15 +113,15 @@ pub unsafe extern "C" fn umount_main(
 ) -> libc::c_int {
   let mut doForce: libc::c_int = 0;
   let mut me: mntent = mntent {
-    mnt_fsname: 0 as *mut libc::c_char,
-    mnt_dir: 0 as *mut libc::c_char,
-    mnt_type: 0 as *mut libc::c_char,
-    mnt_opts: 0 as *mut libc::c_char,
+    mnt_fsname: std::ptr::null_mut::<libc::c_char>(),
+    mnt_dir: std::ptr::null_mut::<libc::c_char>(),
+    mnt_type: std::ptr::null_mut::<libc::c_char>(),
+    mnt_opts: std::ptr::null_mut::<libc::c_char>(),
     mnt_freq: 0,
     mnt_passno: 0,
   };
   let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut fstype: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status: libc::c_int = 0i32;
   let mut opt: libc::c_uint = 0;
   let mut mtl: *mut mtab_list = 0 as *mut mtab_list;
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn umount_main(
   {
     let mut curstat: libc::c_int = 0;
     let mut zapit: *mut libc::c_char = *argv;
-    let mut path: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // Do we already know what to umount this time through the loop?
     if !m.is_null() {
       path = xstrdup((*m).dir)

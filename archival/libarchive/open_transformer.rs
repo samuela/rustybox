@@ -139,7 +139,7 @@ pub unsafe extern "C" fn transformer_write(
     size = (*xstate).mem_output_size;
     if size > (*xstate).mem_output_size_max {
       free((*xstate).mem_output_buf as *mut libc::c_void);
-      (*xstate).mem_output_buf = 0 as *mut libc::c_char;
+      (*xstate).mem_output_buf = std::ptr::null_mut::<libc::c_char>();
       bb_perror_msg(
         b"buffer %u too small\x00" as *const u8 as *const libc::c_char,
         (*xstate).mem_output_size_max as libc::c_uint,
@@ -668,13 +668,13 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {
   let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
-  let mut image: *mut libc::c_char = 0 as *mut libc::c_char;
+  let mut image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   xstate = open_transformer(fname, 0i32);
   if xstate.is_null() {
     /* file open error */
     return 0 as *mut libc::c_void;
   }
-  image = 0 as *mut libc::c_char;
+  image = std::ptr::null_mut::<libc::c_char>();
   if (*xstate).xformer.is_some() {
     /* In-memory decompression */
     (*xstate).mem_output_size_max = if !maxsz_p.is_null() {

@@ -362,7 +362,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
   loop {
     if 1i32 != 0 && flags & 2i32 as libc::c_uint != 0 {
       let mut pre_computed_stream: *mut FILE = 0 as *mut FILE;
-      let mut line: *mut libc::c_char = 0 as *mut libc::c_char;
+      let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut count_total: libc::c_int = 0i32;
       let mut count_failed: libc::c_int = 0i32;
       pre_computed_stream = xfopen_stdin(*argv);
@@ -372,7 +372,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
           break;
         }
         let mut hash_value: *mut u8 = 0 as *mut u8;
-        let mut filename_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+        let mut filename_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         count_total += 1;
         filename_ptr = strstr(line, b"  \x00" as *const u8 as *const libc::c_char);
         /* handle format for binary checksums */

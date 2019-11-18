@@ -83,7 +83,7 @@ pub unsafe extern "C" fn ipsvd_perhost_remove(mut cc: *mut hcc, mut pid: libc::c
     if (*cc.offset(i as isize)).pid == pid {
       free((*cc.offset(i as isize)).ip as *mut libc::c_void);
       let ref mut fresh1 = (*cc.offset(i as isize)).ip;
-      *fresh1 = 0 as *mut libc::c_char;
+      *fresh1 = std::ptr::null_mut::<libc::c_char>();
       (*cc.offset(i as isize)).pid = 0i32;
       return;
     }
