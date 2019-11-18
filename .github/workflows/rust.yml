@@ -26,8 +26,8 @@ jobs:
       # Right now we have way too many warnings to turn on -D warnings, but this
       # should be a goal in the future. We should also figure out a way to turn
       # on -D warnings on select modules.
-      - name: clippy
-        run: |
-          rustup component add clippy
-          cargo clippy --version
-          cargo clippy --all-targets --all-features # -- -D warnings
+      # - name: clippy
+      #   run: |
+      #     rustup component add clippy
+      #     cargo clippy --version
+      #     cargo clippy --all-targets --all-features # -- -D warnings
