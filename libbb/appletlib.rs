@@ -538,7 +538,7 @@ unsafe fn check_suid(applet_no: usize) {
 }
 
 /* create (sym)links for each applet */
-unsafe fn install_links(
+fn install_links(
   rustybox_path: &Path,
   use_symbolic_links: bool,
   custom_install_dir: Option<&Path>,
