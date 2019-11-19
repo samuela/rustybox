@@ -7,7 +7,7 @@ Moving to the new format.
 	doesn't interact well with source control systems.  The new test
 	format is command.tests files that use testing.sh.
 
-Every busybox applet needs a corresponding applet.tests.
+Every rustybox applet needs a corresponding applet.tests.
 
 Full SUSv3 test suite.
 	Let's make the Linux Test Project jealous, shall we?  Don't just

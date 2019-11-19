@@ -9,13 +9,13 @@ echo t12esting | tr -d '[:alpha:]' >> logfile.gnu
 echo t12esting | tr -d '[:alpha:' >> logfile.gnu
 echo t12esting | tr -d '[:alpha' >> logfile.gnu
 
-echo t12esting | busybox tr -d '[[:alpha:]]' > logfile.bb
-echo t12esting | busybox tr -d '[:alpha:]'  >> logfile.bb
-echo t12esting | busybox tr -d '[[:alpha:]' >> logfile.bb
-echo t12esting | busybox tr -d '[[:alpha:' >> logfile.bb
-echo t12esting | busybox tr -d '[[:alpha' >> logfile.bb
-echo t12esting | busybox tr -d '[:alpha:]' >> logfile.bb
-echo t12esting | busybox tr -d '[:alpha:' >> logfile.bb
-echo t12esting | busybox tr -d '[:alpha' >> logfile.bb
+echo t12esting | rustybox tr -d '[[:alpha:]]' > logfile.bb
+echo t12esting | rustybox tr -d '[:alpha:]'  >> logfile.bb
+echo t12esting | rustybox tr -d '[[:alpha:]' >> logfile.bb
+echo t12esting | rustybox tr -d '[[:alpha:' >> logfile.bb
+echo t12esting | rustybox tr -d '[[:alpha' >> logfile.bb
+echo t12esting | rustybox tr -d '[:alpha:]' >> logfile.bb
+echo t12esting | rustybox tr -d '[:alpha:' >> logfile.bb
+echo t12esting | rustybox tr -d '[:alpha' >> logfile.bb
 
 diff -u logfile.gnu logfile.bb

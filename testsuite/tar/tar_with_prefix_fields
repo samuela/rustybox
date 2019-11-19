@@ -251,14 +251,14 @@ export TZ=UTC-1
 
 # Case 1: long name, with path in prefix field
 res1='-rw-r--r-- fm3/users      9869 2007-03-12 10:44:54 VirtualBox-1.5.6_OSE/src/libs/xpcom18a4/ipc/ipcd/extensions/transmngr/public/ipcITransactionService.idl'
-t=`tar1_bz2 | bunzip2 | busybox tar tvf -`
+t=`tar1_bz2 | bunzip2 | rustybox tar tvf -`
 test x"$res1" = x"$t"
-t=`tar1_bz2 | bunzip2 | busybox tar tv`
+t=`tar1_bz2 | bunzip2 | rustybox tar tv`
 test x"$res1" = x"$t"
 
 # Case 2: long dir name, with ENTIRE path in prefix field (name = "")
 res2='drwxr-xr-x fm3/users         0 2008-02-19 16:33:20 VirtualBox-1.5.6_OSE/src/VBox/Additions/linux/x11include/4.3/programs/Xserver/hw/xfree86/xf24_32bpp/'
-t=`tar2_bz2 | bunzip2 | busybox tar tvf -`
+t=`tar2_bz2 | bunzip2 | rustybox tar tvf -`
 test x"$res2" = x"$t"
-t=`tar2_bz2 | bunzip2 | busybox tar tv`
+t=`tar2_bz2 | bunzip2 | rustybox tar tv`
 test x"$res2" = x"$t"

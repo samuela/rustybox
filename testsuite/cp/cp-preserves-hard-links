@@ -2,5 +2,5 @@
 touch foo
 ln foo bar
 mkdir baz
-busybox cp -d foo bar baz
+rustybox cp -d foo bar baz
 test baz/foo -ef baz/bar

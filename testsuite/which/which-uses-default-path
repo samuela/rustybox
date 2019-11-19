@@ -1,4 +1,4 @@
-BUSYBOX=$(command -v busybox)
+rustybox=$(command -v rustybox)
 SAVED_PATH=$PATH
 unset PATH
-$BUSYBOX which ls
+$rustybox which ls

@@ -3,59 +3,59 @@ unset LANGUAGE
 unset LC_TIME
 unset LC_ALL
 
-dt=`busybox date -d 1:2 +%T`
+dt=`rustybox date -d 1:2 +%T`
 test x"$dt" = x"01:02:00"
 
-dt=`busybox date -d 1:2:3 +%T`
+dt=`rustybox date -d 1:2:3 +%T`
 test x"$dt" = x"01:02:03"
 
 host_date=/bin/date
 
 # date (GNU coreutils) 6.10 reports:
 #	date: invalid date '1.2-3:4'
-# busybox 1.11.0.svn date reports:
+# rustybox 1.11.0.svn date reports:
 #	date: invalid date '1/2 3:4'
 
 # TODO: (1) compare with strings, not "host date"
 # (2) implement d/m[/y] hh:mm[:ss] fmt in date applet
 #hdt=`$host_date -d '1/2 3:4'`
-#dt=`busybox date -d 1.2-3:4`
+#dt=`rustybox date -d 1.2-3:4`
 #test x"$hdt" = x"$dt"
 
 #hdt=`$host_date -d '1/2 3:4:5'`
-#dt=`busybox date -d 1.2-3:4:5`
+#dt=`rustybox date -d 1.2-3:4:5`
 #test x"$hdt" = x"$dt"
 
 #hdt=`$host_date -d '1/2/1999 3:4'`
-#dt=`busybox date -d 1999.1.2-3:4`
+#dt=`rustybox date -d 1999.1.2-3:4`
 #test x"$hdt" = x"$dt"
 
 #hdt=`$host_date -d '1/2/1999 3:4:5'`
-#dt=`busybox date -d 1999.1.2-3:4:5`
+#dt=`rustybox date -d 1999.1.2-3:4:5`
 #test x"$hdt" = x"$dt"
 
 hdt=`$host_date -d '1999-1-2 3:4:5'`
-dt=`busybox date -d '1999-1-2 3:4:5'`
+dt=`rustybox date -d '1999-1-2 3:4:5'`
 test x"$hdt" = x"$dt"
 
 # Avoiding using week day in this evaluation, as it's mostly different every year
 # date (GNU coreutils) 6.10 reports:
 #	date: invalid date '01231133'
-#dt=`busybox date -d 01231133 +%c`
+#dt=`rustybox date -d 01231133 +%c`
 #dt=`echo "$dt" | cut -b5-19`
 #test x"$dt" = x"Jan 23 11:33:00"
 
 # date (GNU coreutils) 6.10 reports:
 #	date: invalid date '012311332000'
-dt=`busybox date -d 200001231133 +%c`
+dt=`rustybox date -d 200001231133 +%c`
 test x"$dt" = x"Sun Jan 23 11:33:00 2000"
 
 # date (GNU coreutils) 6.10 reports:
 #	date: invalid date '012311332000'
-dt=`busybox date -d 200001231133.30 +%c`
+dt=`rustybox date -d 200001231133.30 +%c`
 test x"$dt" = x"Sun Jan 23 11:33:30 2000"
 
-lcbbd="LC_ALL=C busybox date"
+lcbbd="LC_ALL=C rustybox date"
 wd=$(eval $lcbbd +%a)		# weekday name
 mn=$(eval $lcbbd +%b)		# month name
 dm=$(eval $lcbbd +%e)		# day of month, space padded
@@ -130,5 +130,5 @@ s=${s#0}
 test x"$res" = xOK
 
 # This should error out (by showing usage text). Testing for that
-dt=`busybox date -d 012311332000.30 %+c 2>&1 | head -n 1`
-test x"${dt##BusyBox * multi-call binary*}" = x""
+dt=`rustybox date -d 012311332000.30 %+c 2>&1 | head -n 1`
+test x"${dt##rustybox * multi-call binary*}" = x""

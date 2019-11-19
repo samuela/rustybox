@@ -1,2 +1,2 @@
-busybox mkdir foo
+rustybox mkdir foo
 test -d foo

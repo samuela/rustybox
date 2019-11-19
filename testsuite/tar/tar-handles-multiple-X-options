@@ -6,5 +6,5 @@ tar cf foo.tar foo bar
 echo foo > foo.exclude
 echo bar > bar.exclude
 rm foo bar
-busybox tar xf foo.tar -X foo.exclude -X bar.exclude
+rustybox tar xf foo.tar -X foo.exclude -X bar.exclude
 test ! -f foo -a ! -f bar

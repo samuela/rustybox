@@ -9,90 +9,90 @@
 #   file input will be file called "input"
 #   test can create a file "actual" instead of writing to stdout
 
-# Need to call 'busybox test', otherwise shell builtin is used
+# Need to call 'rustybox test', otherwise shell builtin is used
 
 testing "test: should be false (1)" \
-	"busybox test; echo \$?" \
+	"rustybox test; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test '': should be false (1)" \
-	"busybox test ''; echo \$?" \
+	"rustybox test ''; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test !: should be true (0)" \
-	"busybox test !; echo \$?" \
+	"rustybox test !; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test a: should be true (0)" \
-	"busybox test a; echo \$?" \
+	"rustybox test a; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test --help: should be true (0)" \
-	"busybox test --help; echo \$?" \
+	"rustybox test --help; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test -f: should be true (0)" \
-	"busybox test -f; echo \$?" \
+	"rustybox test -f; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test ! -f: should be false (1)" \
-	"busybox test ! -f; echo \$?" \
+	"rustybox test ! -f; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test a = a: should be true (0)" \
-	"busybox test a = a; echo \$?" \
+	"rustybox test a = a; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test -lt = -gt: should be false (1)" \
-	"busybox test -lt = -gt; echo \$?" \
+	"rustybox test -lt = -gt; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test a -a !: should be true (0)" \
-	"busybox test a -a !; echo \$?" \
+	"rustybox test a -a !; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test -f = a -o b: should be true (0)" \
-	"busybox test -f = a -o b; echo \$?" \
+	"rustybox test -f = a -o b; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test ! a = b -a ! c = c: should be false (1)" \
-	"busybox test ! a = b -a ! c = c; echo \$?" \
+	"rustybox test ! a = b -a ! c = c; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test ! a = b -a ! c = d: should be true (0)" \
-	"busybox test ! a = b -a ! c = d; echo \$?" \
+	"rustybox test ! a = b -a ! c = d; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test '!' = '!': should be true (0)" \
-	"busybox test '!' = '!'; echo \$?" \
+	"rustybox test '!' = '!'; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test '(' = '(': should be true (0)" \
-	"busybox test '(' = '('; echo \$?" \
+	"rustybox test '(' = '('; echo \$?" \
 	"0\n" \
 	"" ""
 
 testing "test '!' '!' = '!': should be false (1)" \
-	"busybox test '!' '!' = '!'; echo \$?" \
+	"rustybox test '!' '!' = '!'; echo \$?" \
 	"1\n" \
 	"" ""
 
 testing "test '!' '(' = '(': should be false (1)" \
-	"busybox test '!' '(' = '('; echo \$?" \
+	"rustybox test '!' '(' = '('; echo \$?" \
 	"1\n" \
 	"" ""
 

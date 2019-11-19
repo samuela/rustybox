@@ -1,1 +1,1 @@
-echo fdhrnzvfu bffvsentr | busybox tr '[a-z]' '[n-z][a-m]'
+echo fdhrnzvfu bffvsentr | rustybox tr '[a-z]' '[n-z][a-m]'

@@ -1,1 +1,1 @@
-test xfubar = x`busybox echo fubar`
+test xfubar = x`rustybox echo fubar`

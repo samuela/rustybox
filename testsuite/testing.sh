@@ -1,8 +1,8 @@
-# Simple test harness infrastructure for BusyBox
+# Simple test harness infrastructure for rustybox
 #
 # Copyright 2005 by Rob Landley
 #
-# License is GPLv2, see LICENSE in the busybox tarball for full license text.
+# License is GPLv2, see LICENSE in the rustybox tarball for full license text.
 
 # This file defines two functions, "testing" and "optional"
 # and a couple more...

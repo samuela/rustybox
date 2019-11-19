@@ -1,1 +1,1 @@
-test `echo i\'m a little teapot | busybox wc -l` -eq 1
+test `echo i\'m a little teapot | rustybox wc -l` -eq 1

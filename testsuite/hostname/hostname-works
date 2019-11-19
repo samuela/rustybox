@@ -1,1 +1,1 @@
-test x$(hostname) = x$(busybox hostname)
+test x$(hostname) = x$(rustybox hostname)

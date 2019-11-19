@@ -1,5 +1,5 @@
 touch foo
 ln -s foo bar
-busybox mv bar baz
+rustybox mv bar baz
 test -L baz
 test xfoo = x`readlink baz`

@@ -1,1 +1,1 @@
-test x$(id -un) = x$(busybox id -un)
+test x$(id -un) = x$(rustybox id -un)

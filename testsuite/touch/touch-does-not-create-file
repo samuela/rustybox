@@ -1,2 +1,2 @@
-busybox touch -c foo
+rustybox touch -c foo
 test ! -f foo

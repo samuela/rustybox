@@ -157,7 +157,7 @@ mount directory (autobind)
 testing "umount with no /proc"
 testing "umount curdir"
 
-# The basic tests.  These should work even with the small busybox.
+# The basic tests.  These should work even with the small rustybox.
 
 testing "sort" "input" "a\nb\nc\n" "c\na\nb\n" ""
 testing "sort #2" "input" "010\n1\n3\n" "3\n1\n010\n" ""

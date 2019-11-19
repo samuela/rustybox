@@ -1,1 +1,1 @@
-test x$(dirname $(pwd)) = x$(busybox dirname $(pwd))
+test x$(dirname $(pwd)) = x$(rustybox dirname $(pwd))

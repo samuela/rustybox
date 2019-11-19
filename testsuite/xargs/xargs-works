@@ -2,5 +2,5 @@
 
 [ -n "$d" ] || d=..
 find "$d" -name \*works -type f -print0 | xargs -0 md5sum > logfile.gnu
-find "$d" -name \*works -type f -print0 | busybox xargs -0 md5sum > logfile.bb
+find "$d" -name \*works -type f -print0 | rustybox xargs -0 md5sum > logfile.bb
 diff -u logfile.gnu logfile.bb

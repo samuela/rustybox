@@ -5,7 +5,7 @@
 . ./testing.sh
 
 # Need this in order to not execute shell builtin
-bb="busybox "
+bb="rustybox "
 
 # testing "test name" "command" "expected result" "file input" "stdin"
 

@@ -3,7 +3,7 @@ echo file number two > file2
 touch file3
 ln -s file2 link1
 mkdir there
-busybox cp -d file1 file2 file3 link1 there
+rustybox cp -d file1 file2 file3 link1 there
 test -f there/file1
 test -f there/file2
 test ! -s there/file3

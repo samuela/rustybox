@@ -1,1 +1,1 @@
-test $(busybox dirname /) = /
+test $(rustybox dirname /) = /

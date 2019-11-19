@@ -1,3 +1,3 @@
 touch foo
-busybox cp foo bar
+rustybox cp foo bar
 test -f foo

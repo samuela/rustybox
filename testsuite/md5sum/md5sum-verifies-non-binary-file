@@ -2,4 +2,4 @@
 
 touch foo
 md5sum foo > bar
-busybox md5sum -c bar
+rustybox md5sum -c bar

@@ -17,9 +17,9 @@ rm -rf mdev.testdir
 mkdir mdev.testdir
 # We need mdev executable to be in chroot jail!
 # (will still fail with dynamically linked one, though...)
-cp ../busybox mdev.testdir/mdev
+cp ../rustybox mdev.testdir/mdev
 mkdir mdev.testdir/bin
-cp ../busybox mdev.testdir/bin/sh 2>/dev/null # for testing cmd feature
+cp ../rustybox mdev.testdir/bin/sh 2>/dev/null # for testing cmd feature
 mkdir mdev.testdir/etc
 mkdir mdev.testdir/dev
 mkdir -p mdev.testdir/sys/block/sda

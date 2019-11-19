@@ -4,7 +4,7 @@ test -f "$bindir/.config" && . "$bindir/.config"
 
 FAILCOUNT=0
 
-bb="busybox "
+bb="rustybox "
 
 unset LC_ALL
 unset LC_MESSAGES

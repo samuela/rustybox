@@ -2,5 +2,5 @@
 
 [ -n "$d" ] || d=..
 LC_ALL=C ls -1 "$d" > logfile.gnu
-LC_ALL=C busybox ls -1 "$d" > logfile.bb
+LC_ALL=C rustybox ls -1 "$d" > logfile.bb
 diff -ubw logfile.gnu logfile.bb

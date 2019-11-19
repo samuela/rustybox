@@ -6,7 +6,7 @@
 
 . ./testing.sh
 
-# The basic tests.  These should work even with the small busybox.
+# The basic tests.  These should work even with the small rustybox.
 
 testing "sort" "sort input" "a\nb\nc\n" "c\na\nb\n" ""
 testing "sort #2" "sort input" "010\n1\n3\n" "3\n1\n010\n" ""

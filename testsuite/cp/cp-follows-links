@@ -1,4 +1,4 @@
 touch foo
 ln -s foo bar
-busybox cp bar baz
+rustybox cp bar baz
 test -f baz

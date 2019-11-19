@@ -3,4 +3,4 @@
 touch foo
 tar cf foo.tar foo
 echo foo >foo.exclude
-busybox tar xf foo.tar -X foo.exclude
+rustybox tar xf foo.tar -X foo.exclude

@@ -1,1 +1,1 @@
-test "$(echo I WANT | busybox dd 2>/dev/null)" = "I WANT"
+test "$(echo I WANT | rustybox dd 2>/dev/null)" = "I WANT"

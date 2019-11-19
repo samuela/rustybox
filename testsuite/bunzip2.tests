@@ -14,7 +14,7 @@ else
     exit 1
 fi
 
-bb="busybox "
+bb="rustybox "
 
 unset LC_ALL
 unset LC_MESSAGES

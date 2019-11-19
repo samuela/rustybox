@@ -1,30 +1,30 @@
 #!/bin/sh
 
-# Tests for busybox applet itself.
+# Tests for rustybox applet itself.
 # Copyright 2005 by Rob Landley <rob@landley.net>
 # Licensed under GPLv2, see file LICENSE in this source tree.
 
 . ./testing.sh
 test -f "$bindir/.config" && . "$bindir/.config"
 
-ln -s `which busybox` unknown
+ln -s `which rustybox` unknown
 
-testing "busybox as unknown name" "./unknown 2>&1" \
+testing "rustybox as unknown name" "./unknown 2>&1" \
 	"unknown: applet not found\n" "" ""
 rm unknown
 
-# We need busybox --help to be enabled for the rest of tests
-test x"$CONFIG_BUSYBOX" = x"y" \
-|| { echo "SKIPPED: busybox --help"; exit 0; }
+# We need rustybox --help to be enabled for the rest of tests
+test x"$CONFIG_rustybox" = x"y" \
+|| { echo "SKIPPED: rustybox --help"; exit 0; }
 
-HELPDUMP=`true | busybox 2>&1 | cat`
+HELPDUMP=`true | rustybox 2>&1 | cat`
 
 optional FEATURE_VERBOSE_USAGE
-testing "busybox --help busybox" "true | busybox --help busybox 2>&1 | cat" "$HELPDUMP\n" "" ""
+testing "rustybox --help rustybox" "true | rustybox --help rustybox 2>&1 | cat" "$HELPDUMP\n" "" ""
 SKIP=
 
-ln -s `which busybox` busybox-suffix
-for i in busybox ./busybox-suffix
+ln -s `which rustybox` rustybox-suffix
+for i in rustybox ./rustybox-suffix
 do
 	testing "$i" "$i 2>&1 | cat" "$HELPDUMP\n" "" ""
 
@@ -42,6 +42,6 @@ do
 	testing "$i --help unknown" "$i --help unknown 2>&1" \
 		"unknown: applet not found\n" "" ""
 done
-rm busybox-suffix
+rm rustybox-suffix
 
 exit $FAILCOUNT

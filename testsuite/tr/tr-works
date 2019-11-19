@@ -24,5 +24,5 @@ tr_test ()
 }
 
 bb=        tr_test > logfile.gnu
-bb=busybox tr_test > logfile.bb
+bb=rustybox tr_test > logfile.bb
 diff -u logfile.gnu logfile.bb

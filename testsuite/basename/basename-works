@@ -1,1 +1,1 @@
-test x$(basename $(pwd)) = x$(busybox basename $(pwd))
+test x$(basename $(pwd)) = x$(rustybox basename $(pwd))
