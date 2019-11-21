@@ -1,16 +1,12 @@
+use crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die;
 use libc;
-use libc::putchar_unlocked;
-extern "C" {
-  #[no_mangle]
-  static mut stdout: *mut FILE;
+use libc::c_char;
+use libc::c_int;
+use std::ffi::CStr;
+use std::io;
+use std::io::Write;
+use std::slice;
 
-  #[no_mangle]
-  fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-}
-
-use libc::FILE;
 /*
  * yes implementation for busybox
  *
@@ -37,29 +33,23 @@ use libc::FILE;
 //usage:#define yes_full_usage "\n\n"
 //usage:       "Repeatedly output a line with STRING, or 'y'"
 #[no_mangle]
-pub unsafe extern "C" fn yes_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let ref mut fresh0 = *argv.offset(0);
-  *fresh0 = b"y\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-  if !(*argv.offset(1)).is_null() {
-    argv = argv.offset(1)
-  }
+pub unsafe extern "C" fn yes_main(mut argc: c_int, mut argv: *const *const c_char) -> c_int {
+  let line = if argc > 1 {
+    slice::from_raw_parts(argv, argc as usize)
+      .iter()
+      .map(|c_char_arg| CStr::from_ptr(*c_char_arg).to_str().unwrap())
+      .collect::<Vec<&str>>()
+      .join(" ")
+  } else {
+    "y".to_string()
+  };
+  let mut stdout = io::stdout();
   loop {
-    pp = argv;
-    loop {
-      fputs_unlocked(*pp, stdout);
-      pp = pp.offset(1);
-      if (*pp).is_null() {
-        break;
-      }
-      putchar_unlocked(' ' as i32);
-    }
-    if !(putchar_unlocked('\n' as i32) != -1i32) {
+    print!("{}", line);
+    if let Err(_) = stdout.write_all(b"\n") {
       break;
     }
   }
   bb_perror_nomsg_and_die();
+  0
 }
