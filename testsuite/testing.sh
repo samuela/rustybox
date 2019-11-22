@@ -39,14 +39,12 @@ export SKIP=
 # Helper for helpers. Oh my...
 
 test x"$ECHO" != x"" || {
-	ECHO="echo"
-	test x"`echo -ne`" = x"" || {
-		# Compile and use a replacement 'echo' which understands -e -n
-		ECHO="$PWD/echo-ne"
-		test -x "$ECHO" || {
-			gcc -Os -o "$ECHO" ../scripts/echo.c || exit 1
-		}
-	}
+  # The busybox testsuite compiles its own version of echo (scripts/echo.c) if
+  # the system version is insufficient. We just use the rustybox version. Most
+  # standard systems will support `echo -ne`, but GitHub Actions does not. In 
+  # order to bring CI and local development closer to parity we always use the 
+  # rustybox version unless $ECHO is defined otherwise.
+  ECHO="$LINKSDIR/echo"
 	export ECHO
 }
 

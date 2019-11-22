@@ -2,6 +2,53 @@
 # Usage:
 # runtest [applet1] [applet2...]
 
+# Build the rustybox binary.
+cargo build --all-features
+
+# The testsuite dir.
+lcwd=$(pwd)
+[ x"$tsdir" != x"" ] || tsdir="$lcwd"
+
+# TODO: figure out a way to avoid hard-coding the target directory.
+bindir="${lcwd%/*}/target/debug"	# one directory up from $lcwd
+
+# Why is this necessary?
+PATH="$bindir:$PATH"
+
+# Which tests require .config and what is it?
+export bindir   # some tests need to look at $bindir/.config
+
+if [ x"$VERBOSE" = x ]; then
+    export VERBOSE=
+fi
+
+if [ x"$1" = x"-v" ]; then
+    export VERBOSE=1
+    shift
+fi
+
+implemented=$(
+    printf "rustybox " # always implemented
+    "$bindir/rustybox" 2>&1 |
+    while read line; do
+        if [ x"$line" = x"Functions:" ]; then
+            xargs | sed 's/,//g'
+            break
+        fi
+    done
+    )
+
+# If no applet names are given we test all of them.
+applets="$implemented"
+# If a list of applet names have been given, we only test those.
+if [ $# -ne 0 ]; then
+    applets="$@"
+fi
+
+# Populate a directory with links to all rustybox applets
+LINKSDIR="$(mktemp -d)"
+"$bindir/rustybox" --install -s "$LINKSDIR"
+
 . ./testing.sh
 
 total_failed=0
@@ -81,53 +128,6 @@ run_oldstyle_applet_tests()
     done
     return $status
 }
-
-# Build the rustybox binary.
-cargo build --all-features
-
-# The testsuite dir.
-lcwd=$(pwd)
-[ x"$tsdir" != x"" ] || tsdir="$lcwd"
-
-# TODO: figure out a way to avoid hard-coding the target directory.
-bindir="${lcwd%/*}/target/debug"	# one directory up from $lcwd
-
-# Why is this necessary?
-PATH="$bindir:$PATH"
-
-# Which tests require .config and what is it?
-export bindir   # some tests need to look at $bindir/.config
-
-if [ x"$VERBOSE" = x ]; then
-    export VERBOSE=
-fi
-
-if [ x"$1" = x"-v" ]; then
-    export VERBOSE=1
-    shift
-fi
-
-implemented=$(
-    printf "rustybox " # always implemented
-    "$bindir/rustybox" 2>&1 |
-    while read line; do
-        if [ x"$line" = x"Functions:" ]; then
-            xargs | sed 's/,//g'
-            break
-        fi
-    done
-    )
-
-# If no applet names are given we test all of them.
-applets="$implemented"
-# If a list of applet names have been given, we only test those.
-if [ $# -ne 0 ]; then
-    applets="$@"
-fi
-
-# Populate a directory with links to all rustybox applets
-LINKSDIR="$(mktemp -d)"
-"$bindir/rustybox" --install -s "$LINKSDIR"
 
 status=0
 for applet in $applets; do
