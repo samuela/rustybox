@@ -128,7 +128,6 @@ jobs:
                                       grep \
                                       groups \
                                       gunzip \
-                                      gzip \
                                       halt \
                                       hd \
                                       hdparm \
