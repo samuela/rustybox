@@ -14,7 +14,7 @@ jobs:
           cargo --version --verbose
           RUSTFLAGS="-D warnings" cargo build
 
-      # Need to be fixed: date, du, gzip, seq, strings, unzip
+      # Need to be fixed: du, gzip, seq, strings, unzip
       - name: test suite
         run: |
           cd testsuite/
@@ -67,6 +67,7 @@ jobs:
                                       cryptpw \
                                       cttyhack \
                                       cut \
+                                      date \
                                       dc \
                                       dd \
                                       deallocvt \
