@@ -1,4 +1,3 @@
-use crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die;
 use libc;
 use libc::c_char;
 use libc::c_int;
@@ -25,6 +24,5 @@ pub unsafe extern "C" fn yes_main(mut argc: c_int, mut argv: *const *const c_cha
       break;
     }
   }
-  bb_perror_nomsg_and_die();
   0
 }
