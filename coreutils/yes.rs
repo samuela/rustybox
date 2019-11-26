@@ -1,19 +1,14 @@
 use libc;
 use libc::c_char;
 use libc::c_int;
-use std::ffi::CStr;
+use std::env;
 use std::io;
 use std::io::Write;
-use std::slice;
 
 #[no_mangle]
-pub unsafe extern "C" fn yes_main(mut argc: c_int, mut argv: *const *const c_char) -> c_int {
-  let line = if argc > 1 {
-    slice::from_raw_parts(argv, argc as usize)
-      .iter()
-      .map(|c_char_arg| CStr::from_ptr(*c_char_arg).to_str().unwrap())
-      .collect::<Vec<&str>>()
-      .join(" ")
+pub unsafe extern "C" fn yes_main(mut _argc: c_int, mut _argv: *const *const c_char) -> c_int {
+  let line = if env::args().count() > 1 {
+    env::args().collect::<Vec<String>>().join(" ")
   } else {
     "y".to_string()
   };
