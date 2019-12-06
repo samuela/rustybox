@@ -71,7 +71,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	uuencode is used to uuencode a file.
-//applet:IF_UUENCODE(APPLET(uuencode, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UUENCODE(APPLET(uuencode, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UUENCODE) += uuencode.o
 //usage:#define uuencode_trivial_usage
 //usage:       "[-m] [FILE] STORED_FILENAME"

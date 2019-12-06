@@ -119,7 +119,7 @@ use crate::librb::size_t;
 //config:	depends on GETOPT && LONG_OPTS
 //config:	help
 //config:	Enable support for long options (option -l).
-//applet:IF_GETOPT(APPLET_NOEXEC(getopt, getopt, BB_DIR_BIN, BB_SUID_DROP, getopt))
+//applet:IF_GETOPT(APPLET_NOEXEC(getopt, getopt, BB_DIR_BIN, SUID_DROP, getopt))
 //kbuild:lib-$(CONFIG_GETOPT) += getopt.o
 //usage:#define getopt_trivial_usage
 //usage:       "[OPTIONS] [--] OPTSTRING PARAMS"

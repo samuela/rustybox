@@ -49,7 +49,7 @@ extern "C" {
 //config:	system and devices connected to them.
 //config:
 //config:	This version uses sysfs (/sys/bus/scsi/devices) only.
-//applet:IF_LSSCSI(APPLET_NOEXEC(lsscsi, lsscsi, BB_DIR_USR_BIN, BB_SUID_DROP, lsscsi))
+//applet:IF_LSSCSI(APPLET_NOEXEC(lsscsi, lsscsi, BB_DIR_USR_BIN, SUID_DROP, lsscsi))
 //kbuild:lib-$(CONFIG_LSSCSI) += lsscsi.o
 //usage:#define lsscsi_trivial_usage NOUSAGE_STR
 //usage:#define lsscsi_full_usage ""

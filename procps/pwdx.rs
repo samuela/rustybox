@@ -41,7 +41,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	Report current working directory of a process
-//applet:IF_PWDX(APPLET_NOFORK(pwdx, pwdx, BB_DIR_USR_BIN, BB_SUID_DROP, pwdx))
+//applet:IF_PWDX(APPLET_NOFORK(pwdx, pwdx, BB_DIR_USR_BIN, SUID_DROP, pwdx))
 //kbuild:lib-$(CONFIG_PWDX) += pwdx.o
 //usage:#define pwdx_trivial_usage
 //usage:       "PID..."

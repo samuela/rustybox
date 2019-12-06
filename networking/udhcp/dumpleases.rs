@@ -80,7 +80,7 @@ pub const OPT_r: C2RustUnnamed = 2;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-//applet:IF_DUMPLEASES(APPLET_NOEXEC(dumpleases, dumpleases, BB_DIR_USR_BIN, BB_SUID_DROP, dumpleases))
+//applet:IF_DUMPLEASES(APPLET_NOEXEC(dumpleases, dumpleases, BB_DIR_USR_BIN, SUID_DROP, dumpleases))
 //kbuild:lib-$(CONFIG_DUMPLEASES) += dumpleases.o
 //usage:#define dumpleases_trivial_usage
 //usage:       "[-r|-a] [-d] [-f LEASEFILE]"
@@ -130,7 +130,7 @@ pub unsafe extern "C" fn dumpleases_main(
   fd = xopen(file, 0i32);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
-  
+
   printf(
     b"Mac %-14sIP %-13sHost %-15sExpires %s\n\x00" as *const u8 as *const libc::c_char,
     b"Address\x00" as *const u8 as *const libc::c_char,

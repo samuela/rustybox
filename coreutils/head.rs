@@ -82,7 +82,7 @@ unsafe extern "C" fn xatoul_sfx(
 //config:	bool "Enable -c, -q, and -v"
 //config:	default y
 //config:	depends on HEAD
-//applet:IF_HEAD(APPLET_NOEXEC(head, head, BB_DIR_USR_BIN, BB_SUID_DROP, head))
+//applet:IF_HEAD(APPLET_NOEXEC(head, head, BB_DIR_USR_BIN, SUID_DROP, head))
 //kbuild:lib-$(CONFIG_HEAD) += head.o
 /* BB_AUDIT SUSv3 compliant */
 /* BB_AUDIT GNU compatible -c, -q, and -v options in 'fancy' configuration. */

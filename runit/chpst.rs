@@ -159,12 +159,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //config:	default y
 //config:	help
 //config:	Sets soft resource limits as specified by options
-//applet:IF_CHPST(    APPLET_NOEXEC(chpst,     chpst, BB_DIR_USR_BIN, BB_SUID_DROP, chpst))
+//applet:IF_CHPST(    APPLET_NOEXEC(chpst,     chpst, BB_DIR_USR_BIN, SUID_DROP, chpst))
 //                    APPLET_NOEXEC:name       main   location        suid_type     help
-//applet:IF_ENVDIR(   APPLET_NOEXEC(envdir,    chpst, BB_DIR_USR_BIN, BB_SUID_DROP, envdir))
-//applet:IF_ENVUIDGID(APPLET_NOEXEC(envuidgid, chpst, BB_DIR_USR_BIN, BB_SUID_DROP, envuidgid))
-//applet:IF_SETUIDGID(APPLET_NOEXEC(setuidgid, chpst, BB_DIR_USR_BIN, BB_SUID_DROP, setuidgid))
-//applet:IF_SOFTLIMIT(APPLET_NOEXEC(softlimit, chpst, BB_DIR_USR_BIN, BB_SUID_DROP, softlimit))
+//applet:IF_ENVDIR(   APPLET_NOEXEC(envdir,    chpst, BB_DIR_USR_BIN, SUID_DROP, envdir))
+//applet:IF_ENVUIDGID(APPLET_NOEXEC(envuidgid, chpst, BB_DIR_USR_BIN, SUID_DROP, envuidgid))
+//applet:IF_SETUIDGID(APPLET_NOEXEC(setuidgid, chpst, BB_DIR_USR_BIN, SUID_DROP, setuidgid))
+//applet:IF_SOFTLIMIT(APPLET_NOEXEC(softlimit, chpst, BB_DIR_USR_BIN, SUID_DROP, softlimit))
 //kbuild:lib-$(CONFIG_CHPST) += chpst.o
 //kbuild:lib-$(CONFIG_ENVDIR) += chpst.o
 //kbuild:lib-$(CONFIG_ENVUIDGID) += chpst.o

@@ -66,7 +66,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:	default y
 //config:	help
 //config:	mktemp is used to create unique temporary files
-//applet:IF_MKTEMP(APPLET_NOEXEC(mktemp, mktemp, BB_DIR_BIN, BB_SUID_DROP, mktemp))
+//applet:IF_MKTEMP(APPLET_NOEXEC(mktemp, mktemp, BB_DIR_BIN, SUID_DROP, mktemp))
 //kbuild:lib-$(CONFIG_MKTEMP) += mktemp.o
 //usage:#define mktemp_trivial_usage
 //usage:       "[-dt] [-p DIR] [TEMPLATE]"

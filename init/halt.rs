@@ -125,10 +125,10 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 //config:	When busybox halt and friends have to call external telinit
 //config:	to facilitate proper shutdown, this path is to be used when
 //config:	locating telinit executable.
-//applet:IF_HALT(APPLET(halt, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_HALT(APPLET(halt, BB_DIR_SBIN, SUID_DROP))
 //                   APPLET_ODDNAME:name      main  location     suid_type     help
-//applet:IF_POWEROFF(APPLET_ODDNAME(poweroff, halt, BB_DIR_SBIN, BB_SUID_DROP, poweroff))
-//applet:IF_REBOOT(  APPLET_ODDNAME(reboot,   halt, BB_DIR_SBIN, BB_SUID_DROP, reboot))
+//applet:IF_POWEROFF(APPLET_ODDNAME(poweroff, halt, BB_DIR_SBIN, SUID_DROP, poweroff))
+//applet:IF_REBOOT(  APPLET_ODDNAME(reboot,   halt, BB_DIR_SBIN, SUID_DROP, reboot))
 //kbuild:lib-$(CONFIG_HALT) += halt.o
 //kbuild:lib-$(CONFIG_POWEROFF) += halt.o
 //kbuild:lib-$(CONFIG_REBOOT) += halt.o

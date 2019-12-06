@@ -40,7 +40,7 @@ pub const OPT_s: C2RustUnnamed = 2;
 //config:	default y
 //config:	help
 //config:	print a sequence of numbers
-//applet:IF_SEQ(APPLET_NOEXEC(seq, seq, BB_DIR_USR_BIN, BB_SUID_DROP, seq))
+//applet:IF_SEQ(APPLET_NOEXEC(seq, seq, BB_DIR_USR_BIN, SUID_DROP, seq))
 /* was NOFORK, but then "seq 1 999999999" can't be ^C'ed if run by hush */
 //kbuild:lib-$(CONFIG_SEQ) += seq.o
 //usage:#define seq_trivial_usage

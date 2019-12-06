@@ -46,7 +46,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 //config:	depends on READLINK
 //config:	help
 //config:	Enable the readlink option (-f).
-//applet:IF_READLINK(APPLET_NOFORK(readlink, readlink, BB_DIR_USR_BIN, BB_SUID_DROP, readlink))
+//applet:IF_READLINK(APPLET_NOFORK(readlink, readlink, BB_DIR_USR_BIN, SUID_DROP, readlink))
 //kbuild:lib-$(CONFIG_READLINK) += readlink.o
 //usage:#define readlink_trivial_usage
 //usage:	IF_FEATURE_READLINK_FOLLOW("[-fnv] ") "FILE"

@@ -65,9 +65,9 @@ use libc::FILE;
 //config:	Encrypts the given password with the crypt(3) libc function
 //config:	using the given salt. Debian has this utility under mkpasswd
 //config:	name. Busybox provides mkpasswd as an alias for cryptpw.
-//applet:IF_CRYPTPW( APPLET_NOEXEC(cryptpw,  cryptpw, BB_DIR_USR_BIN, BB_SUID_DROP, cryptpw))
+//applet:IF_CRYPTPW( APPLET_NOEXEC(cryptpw,  cryptpw, BB_DIR_USR_BIN, SUID_DROP, cryptpw))
 //                   APPLET_NOEXEC:name      main     location        suid_type     help
-//applet:IF_MKPASSWD(APPLET_NOEXEC(mkpasswd, cryptpw, BB_DIR_USR_BIN, BB_SUID_DROP, cryptpw))
+//applet:IF_MKPASSWD(APPLET_NOEXEC(mkpasswd, cryptpw, BB_DIR_USR_BIN, SUID_DROP, cryptpw))
 //kbuild:lib-$(CONFIG_CRYPTPW) += cryptpw.o
 //kbuild:lib-$(CONFIG_MKPASSWD) += cryptpw.o
 //usage:#define cryptpw_trivial_usage

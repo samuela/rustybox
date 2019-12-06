@@ -46,7 +46,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	run a command immune to hangups, with output to a non-tty.
-//applet:IF_NOHUP(APPLET_NOEXEC(nohup, nohup, BB_DIR_USR_BIN, BB_SUID_DROP, nohup))
+//applet:IF_NOHUP(APPLET_NOEXEC(nohup, nohup, BB_DIR_USR_BIN, SUID_DROP, nohup))
 //kbuild:lib-$(CONFIG_NOHUP) += nohup.o
 //usage:#define nohup_trivial_usage
 //usage:       "PROG ARGS"

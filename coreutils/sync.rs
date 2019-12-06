@@ -45,7 +45,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:	sync -d FILE... executes fdatasync() on each FILE.
 //config:	sync -f FILE... executes syncfs() on each FILE.
 //               APPLET_NOFORK:name  main  location    suid_type     help
-//applet:IF_SYNC(APPLET_NOFORK(sync, sync, BB_DIR_BIN, BB_SUID_DROP, sync))
+//applet:IF_SYNC(APPLET_NOFORK(sync, sync, BB_DIR_BIN, SUID_DROP, sync))
 //kbuild:lib-$(CONFIG_SYNC) += sync.o
 /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 //usage:#define sync_trivial_usage
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn sync_main(
 //config:	help
 //config:	fsync is used to flush file-related cached blocks to disk.
 //                APPLET_NOFORK:name   main   location    suid_type     help
-//applet:IF_FSYNC(APPLET_NOFORK(fsync, fsync, BB_DIR_BIN, BB_SUID_DROP, fsync))
+//applet:IF_FSYNC(APPLET_NOFORK(fsync, fsync, BB_DIR_BIN, SUID_DROP, fsync))
 //kbuild:lib-$(CONFIG_FSYNC) += sync.o
 //usage:#define fsync_trivial_usage
 //usage:       "[-d] FILE..."

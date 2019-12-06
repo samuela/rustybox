@@ -86,7 +86,7 @@ use libc::uid_t;
 //config:	default n
 //config:	depends on SU
 //applet:/* Needs to be run by root or be suid root - needs to change uid and gid: */
-//applet:IF_SU(APPLET(su, BB_DIR_BIN, BB_SUID_REQUIRE))
+//applet:IF_SU(APPLET(su, BB_DIR_BIN, SUID_REQUIRE))
 //kbuild:lib-$(CONFIG_SU) += su.o
 //usage:#define su_trivial_usage
 //usage:       "[-lmp] [-] [-s SH] [USER [SCRIPT ARGS / -c 'CMD' ARG0 ARGS]]"

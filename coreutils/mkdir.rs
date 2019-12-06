@@ -61,7 +61,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //config:	default y
 //config:	help
 //config:	mkdir is used to create directories with the specified names.
-//applet:IF_MKDIR(APPLET_NOFORK(mkdir, mkdir, BB_DIR_BIN, BB_SUID_DROP, mkdir))
+//applet:IF_MKDIR(APPLET_NOFORK(mkdir, mkdir, BB_DIR_BIN, SUID_DROP, mkdir))
 //kbuild:lib-$(CONFIG_MKDIR) += mkdir.o
 /* BB_AUDIT SUSv3 compliant */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/mkdir.html */

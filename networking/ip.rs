@@ -149,13 +149,13 @@ extern "C" {
 //config:	"bif" etc, you probably don't need to enable this.
 //config:	Ethernet, wireless, infrared, ppp/slip, ip tunnelling
 //config:	link types are supported without this option selected.
-//applet:IF_IP(      APPLET_NOEXEC(ip      , ip      , BB_DIR_SBIN, BB_SUID_DROP, ip      ))
-//applet:IF_IPADDR(  APPLET_NOEXEC(ipaddr  , ipaddr  , BB_DIR_SBIN, BB_SUID_DROP, ipaddr  ))
-//applet:IF_IPLINK(  APPLET_NOEXEC(iplink  , iplink  , BB_DIR_SBIN, BB_SUID_DROP, iplink  ))
-//applet:IF_IPROUTE( APPLET_NOEXEC(iproute , iproute , BB_DIR_SBIN, BB_SUID_DROP, iproute ))
-//applet:IF_IPRULE(  APPLET_NOEXEC(iprule  , iprule  , BB_DIR_SBIN, BB_SUID_DROP, iprule  ))
-//applet:IF_IPTUNNEL(APPLET_NOEXEC(iptunnel, iptunnel, BB_DIR_SBIN, BB_SUID_DROP, iptunnel))
-//applet:IF_IPNEIGH( APPLET_NOEXEC(ipneigh , ipneigh , BB_DIR_SBIN, BB_SUID_DROP, ipneigh ))
+//applet:IF_IP(      APPLET_NOEXEC(ip      , ip      , BB_DIR_SBIN, SUID_DROP, ip      ))
+//applet:IF_IPADDR(  APPLET_NOEXEC(ipaddr  , ipaddr  , BB_DIR_SBIN, SUID_DROP, ipaddr  ))
+//applet:IF_IPLINK(  APPLET_NOEXEC(iplink  , iplink  , BB_DIR_SBIN, SUID_DROP, iplink  ))
+//applet:IF_IPROUTE( APPLET_NOEXEC(iproute , iproute , BB_DIR_SBIN, SUID_DROP, iproute ))
+//applet:IF_IPRULE(  APPLET_NOEXEC(iprule  , iprule  , BB_DIR_SBIN, SUID_DROP, iprule  ))
+//applet:IF_IPTUNNEL(APPLET_NOEXEC(iptunnel, iptunnel, BB_DIR_SBIN, SUID_DROP, iptunnel))
+//applet:IF_IPNEIGH( APPLET_NOEXEC(ipneigh , ipneigh , BB_DIR_SBIN, SUID_DROP, ipneigh ))
 //kbuild:lib-$(CONFIG_IP) += ip.o
 //kbuild:lib-$(CONFIG_IPADDR) += ip.o
 //kbuild:lib-$(CONFIG_IPLINK) += ip.o

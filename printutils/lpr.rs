@@ -118,8 +118,8 @@ pub const OPT_P: C2RustUnnamed = 1;
 //config:	help
 //config:	lpq is a print spool queue examination and manipulation program.
 //              APPLET_ODDNAME:name main  location        suid_type     help
-//applet:IF_LPQ(APPLET_ODDNAME(lpq, lpqr, BB_DIR_USR_BIN, BB_SUID_DROP, lpq))
-//applet:IF_LPR(APPLET_ODDNAME(lpr, lpqr, BB_DIR_USR_BIN, BB_SUID_DROP, lpr))
+//applet:IF_LPQ(APPLET_ODDNAME(lpq, lpqr, BB_DIR_USR_BIN, SUID_DROP, lpq))
+//applet:IF_LPR(APPLET_ODDNAME(lpr, lpqr, BB_DIR_USR_BIN, SUID_DROP, lpr))
 //kbuild:lib-$(CONFIG_LPR) += lpr.o
 //kbuild:lib-$(CONFIG_LPQ) += lpr.o
 //usage:#define lpr_trivial_usage

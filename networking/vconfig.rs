@@ -47,7 +47,7 @@ pub const SOCK_STREAM: __socket_type = 1;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	Creates, removes, and configures VLAN interfaces
-//applet:IF_VCONFIG(APPLET_NOEXEC(vconfig, vconfig, BB_DIR_SBIN, BB_SUID_DROP, vconfig))
+//applet:IF_VCONFIG(APPLET_NOEXEC(vconfig, vconfig, BB_DIR_SBIN, SUID_DROP, vconfig))
 //kbuild:lib-$(CONFIG_VCONFIG) += vconfig.o
 //usage:#define vconfig_trivial_usage
 //usage:       "COMMAND [OPTIONS]"

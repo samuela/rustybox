@@ -48,7 +48,7 @@ pub const OPT_n: C2RustUnnamed = 8;
 //config:	default y
 //config:	help
 //config:	Overwrite a file to hide its contents, and optionally delete it
-//applet:IF_SHRED(APPLET(shred, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SHRED(APPLET(shred, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SHRED) += shred.o
 //usage:#define shred_trivial_usage
 //usage:       "FILE..."

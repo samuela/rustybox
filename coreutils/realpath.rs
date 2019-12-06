@@ -27,7 +27,7 @@ extern "C" {
 //config:	help
 //config:	Return the canonicalized absolute pathname.
 //config:	This isn't provided by GNU shellutils, but where else does it belong.
-//applet:IF_REALPATH(APPLET_NOFORK(realpath, realpath, BB_DIR_USR_BIN, BB_SUID_DROP, realpath))
+//applet:IF_REALPATH(APPLET_NOFORK(realpath, realpath, BB_DIR_USR_BIN, SUID_DROP, realpath))
 //kbuild:lib-$(CONFIG_REALPATH) += realpath.o
 /* BB_AUDIT SUSv3 N/A -- Apparently a busybox extension. */
 //usage:#define realpath_trivial_usage

@@ -151,7 +151,7 @@ pub struct seminfo {
 //config:	The ipcrm utility allows the removal of System V interprocess
 //config:	communication (IPC) objects and the associated data structures
 //config:	from the system.
-//applet:IF_IPCRM(APPLET_NOEXEC(ipcrm, ipcrm, BB_DIR_USR_BIN, BB_SUID_DROP, ipcrm))
+//applet:IF_IPCRM(APPLET_NOEXEC(ipcrm, ipcrm, BB_DIR_USR_BIN, SUID_DROP, ipcrm))
 //kbuild:lib-$(CONFIG_IPCRM) += ipcrm.o
 /* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */

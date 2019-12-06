@@ -44,7 +44,7 @@ pub type duration_t = libc::c_double;
 //config:	help
 //config:	watch is used to execute a program periodically, showing
 //config:	output to the screen.
-//applet:IF_WATCH(APPLET(watch, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_WATCH(APPLET(watch, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_WATCH) += watch.o
 //usage:#define watch_trivial_usage
 //usage:       "[-n SEC] [-t] PROG ARGS"

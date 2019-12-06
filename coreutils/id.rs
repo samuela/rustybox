@@ -77,8 +77,8 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	Print the group names associated with current user id.
-//applet:IF_GROUPS(APPLET_NOEXEC(groups, id, BB_DIR_USR_BIN, BB_SUID_DROP, groups))
-//applet:IF_ID(    APPLET_NOEXEC(id,     id, BB_DIR_USR_BIN, BB_SUID_DROP, id    ))
+//applet:IF_GROUPS(APPLET_NOEXEC(groups, id, BB_DIR_USR_BIN, SUID_DROP, groups))
+//applet:IF_ID(    APPLET_NOEXEC(id,     id, BB_DIR_USR_BIN, SUID_DROP, id    ))
 //kbuild:lib-$(CONFIG_GROUPS) += id.o
 //kbuild:lib-$(CONFIG_ID)     += id.o
 /* BB_AUDIT SUSv3 compliant. */

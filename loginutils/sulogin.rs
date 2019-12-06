@@ -62,7 +62,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 //config:	help
 //config:	sulogin is invoked when the system goes into single user
 //config:	mode (this is done through an entry in inittab).
-//applet:IF_SULOGIN(APPLET_NOEXEC(sulogin, sulogin, BB_DIR_SBIN, BB_SUID_DROP, sulogin))
+//applet:IF_SULOGIN(APPLET_NOEXEC(sulogin, sulogin, BB_DIR_SBIN, SUID_DROP, sulogin))
 //kbuild:lib-$(CONFIG_SULOGIN) += sulogin.o
 //usage:#define sulogin_trivial_usage
 //usage:       "[-t N] [TTY]"

@@ -20,7 +20,7 @@ use libc::useconds_t;
 //config:	default y
 //config:	help
 //config:	usleep is used to pause for a specified number of microseconds.
-//applet:IF_USLEEP(APPLET_NOFORK(usleep, usleep, BB_DIR_BIN, BB_SUID_DROP, usleep))
+//applet:IF_USLEEP(APPLET_NOFORK(usleep, usleep, BB_DIR_BIN, SUID_DROP, usleep))
 //kbuild:lib-$(CONFIG_USLEEP) += usleep.o
 /* BB_AUDIT SUSv3 N/A -- Apparently a busybox extension. */
 //usage:#define usleep_trivial_usage

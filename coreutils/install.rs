@@ -112,7 +112,7 @@ pub const OPT_c: C2RustUnnamed_0 = 1;
 //config:	bool "Enable long options"
 //config:	default y
 //config:	depends on INSTALL && LONG_OPTS
-//applet:IF_INSTALL(APPLET(install, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_INSTALL(APPLET(install, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_INSTALL) += install.o
 /* -v, -b, -c are ignored */
 //usage:#define install_trivial_usage

@@ -506,7 +506,7 @@ unsafe fn check_suid(applet_no: usize) {
   }
   match current_block {
     7187160828046810477 => {
-      if applets[applet_no].need_suid == SUID::BB_SUID_REQUIRE {
+      if applets[applet_no].need_suid == SUID::SUID_REQUIRE {
         /* Real uid is not 0. If euid isn't 0 too, suid bit
          * is most probably not set on our executable */
         if libc::geteuid() != 0 {
@@ -514,7 +514,7 @@ unsafe fn check_suid(applet_no: usize) {
             b"must be suid to work properly\x00" as *const u8 as *const libc::c_char,
           );
         }
-      } else if applets[applet_no].need_suid == SUID::BB_SUID_DROP {
+      } else if applets[applet_no].need_suid == SUID::SUID_DROP {
         /*
          * Drop all privileges.
          *

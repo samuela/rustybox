@@ -43,7 +43,7 @@ use libc::DIR;
 //config:	default y
 //config:	help
 //config:	Print number of CPUs
-//applet:IF_NPROC(APPLET_NOFORK(nproc, nproc, BB_DIR_USR_BIN, BB_SUID_DROP, nproc))
+//applet:IF_NPROC(APPLET_NOFORK(nproc, nproc, BB_DIR_USR_BIN, SUID_DROP, nproc))
 //kbuild:lib-$(CONFIG_NPROC) += nproc.o
 //usage:#define nproc_trivial_usage
 //usage:	""IF_LONG_OPTS("--all --ignore=N")

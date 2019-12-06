@@ -26,7 +26,7 @@ extern "C" {
   //config:
   //config:	Note: This is for initrd in linux 2.4. Under initramfs (introduced
   //config:	in linux 2.6) use switch_root instead.
-  //applet:IF_PIVOT_ROOT(APPLET_NOFORK(pivot_root, pivot_root, BB_DIR_SBIN, BB_SUID_DROP, pivot_root))
+  //applet:IF_PIVOT_ROOT(APPLET_NOFORK(pivot_root, pivot_root, BB_DIR_SBIN, SUID_DROP, pivot_root))
   //kbuild:lib-$(CONFIG_PIVOT_ROOT) += pivot_root.o
   //usage:#define pivot_root_trivial_usage
   //usage:       "NEW_ROOT PUT_OLD"

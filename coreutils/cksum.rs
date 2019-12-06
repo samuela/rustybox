@@ -47,7 +47,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //config:	default y
 //config:	help
 //config:	cksum is used to calculate the CRC32 checksum of a file.
-//applet:IF_CKSUM(APPLET_NOEXEC(cksum, cksum, BB_DIR_USR_BIN, BB_SUID_DROP, cksum))
+//applet:IF_CKSUM(APPLET_NOEXEC(cksum, cksum, BB_DIR_USR_BIN, SUID_DROP, cksum))
 /* bb_common_bufsiz1 usage here is safe wrt NOEXEC: not expecting it to be zeroed. */
 //kbuild:lib-$(CONFIG_CKSUM) += cksum.o
 //usage:#define cksum_trivial_usage

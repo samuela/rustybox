@@ -124,7 +124,7 @@ pub struct linux_rtc_time {
 //config:	classic /etc/adjtime path.
 //config:
 //config:	pathname.com/fhs/pub/fhs-2.3.html#VARLIBHWCLOCKSTATEDIRECTORYFORHWCLO
-//applet:IF_HWCLOCK(APPLET(hwclock, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_HWCLOCK(APPLET(hwclock, BB_DIR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_HWCLOCK) += hwclock.o
 /* After libbb.h, since it needs sys/types.h on some systems */
 /* diff code is disabled: it's not sys/hw clock diff, it's some useless

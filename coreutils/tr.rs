@@ -130,7 +130,7 @@ use libc::ssize_t;
 //config:	replace all instances of 'a' with 'xyz'. This option is mainly
 //config:	useful for cases when no other way of expressing a character
 //config:	is possible.
-//applet:IF_TR(APPLET(tr, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_TR(APPLET(tr, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_TR) += tr.o
 //usage:#define tr_trivial_usage
 //usage:       "[-cds] STRING1 [STRING2]"

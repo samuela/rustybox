@@ -210,7 +210,7 @@ pub type C2RustUnnamed_2 = libc::c_uint;
 //config:	Enable -d (--decompress) and -t (--test) options for bzip2.
 //config:	This will be automatically selected if bunzip2 or bzcat is
 //config:	enabled.
-//applet:IF_BZIP2(APPLET(bzip2, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_BZIP2(APPLET(bzip2, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_BZIP2) += bzip2.o
 //usage:#define bzip2_trivial_usage
 //usage:       "[OPTIONS] [FILE]..."

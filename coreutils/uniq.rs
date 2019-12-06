@@ -58,7 +58,7 @@ pub const OPT_u: C2RustUnnamed = 4;
 //config:	default y
 //config:	help
 //config:	uniq is used to remove duplicate lines from a sorted file.
-//applet:IF_UNIQ(APPLET(uniq, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UNIQ(APPLET(uniq, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UNIQ) += uniq.o
 /* BB_AUDIT SUSv3 compliant */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/uniq.html */

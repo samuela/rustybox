@@ -31,7 +31,7 @@ extern "C" {
 //config:	help
 //config:	Prints the name of a filesystem with given label or UUID.
 /* Benefits from suid root: better access to /dev/BLOCKDEVs: */
-//applet:IF_FINDFS(APPLET(findfs, BB_DIR_SBIN, BB_SUID_MAYBE))
+//applet:IF_FINDFS(APPLET(findfs, BB_DIR_SBIN, SUID_MAYBE))
 //kbuild:lib-$(CONFIG_FINDFS) += findfs.o
 //usage:#define findfs_trivial_usage
 //usage:       "LABEL=label or UUID=uuid"

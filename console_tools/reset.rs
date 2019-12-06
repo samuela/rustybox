@@ -17,7 +17,7 @@ extern "C" {
   //config:	help
   //config:	This program is used to reset the terminal screen, if it
   //config:	gets messed up.
-  //applet:IF_RESET(APPLET_NOEXEC(reset, reset, BB_DIR_USR_BIN, BB_SUID_DROP, reset))
+  //applet:IF_RESET(APPLET_NOEXEC(reset, reset, BB_DIR_USR_BIN, SUID_DROP, reset))
   //kbuild:lib-$(CONFIG_RESET) += reset.o
   //usage:#define reset_trivial_usage
   //usage:       ""

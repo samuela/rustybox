@@ -59,7 +59,7 @@ pub type __priority_which_t = __priority_which;
 //config:	help
 //config:	Renice alters the scheduling priority of one or more running
 //config:	processes.
-//applet:IF_RENICE(APPLET_NOEXEC(renice, renice, BB_DIR_USR_BIN, BB_SUID_DROP, renice))
+//applet:IF_RENICE(APPLET_NOEXEC(renice, renice, BB_DIR_USR_BIN, SUID_DROP, renice))
 //kbuild:lib-$(CONFIG_RENICE) += renice.o
 //usage:#define renice_trivial_usage
 //usage:       "[-n] PRIORITY [[-p | -g | -u] ID...]..."

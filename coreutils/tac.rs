@@ -45,7 +45,7 @@ use libc::FILE;
 //config:	default y
 //config:	help
 //config:	tac is used to concatenate and print files in reverse.
-//applet:IF_TAC(APPLET_NOEXEC(tac, tac, BB_DIR_USR_BIN, BB_SUID_DROP, tac))
+//applet:IF_TAC(APPLET_NOEXEC(tac, tac, BB_DIR_USR_BIN, SUID_DROP, tac))
 //kbuild:lib-$(CONFIG_TAC) += tac.o
 //usage:#define tac_trivial_usage
 //usage:	"[FILE]..."

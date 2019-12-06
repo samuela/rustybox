@@ -27,7 +27,7 @@ extern "C" {
 //config:	help
 //config:	raidautorun tells the kernel md driver to
 //config:	search and start RAID arrays.
-//applet:IF_RAIDAUTORUN(APPLET_NOEXEC(raidautorun, raidautorun, BB_DIR_SBIN, BB_SUID_DROP, raidautorun))
+//applet:IF_RAIDAUTORUN(APPLET_NOEXEC(raidautorun, raidautorun, BB_DIR_SBIN, SUID_DROP, raidautorun))
 //kbuild:lib-$(CONFIG_RAIDAUTORUN) += raidautorun.o
 //usage:#define raidautorun_trivial_usage
 //usage:       "DEVICE"

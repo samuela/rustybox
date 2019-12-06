@@ -25,7 +25,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	pwd is used to print the current directory.
-//applet:IF_PWD(APPLET_NOFORK(pwd, pwd, BB_DIR_BIN, BB_SUID_DROP, pwd))
+//applet:IF_PWD(APPLET_NOFORK(pwd, pwd, BB_DIR_BIN, SUID_DROP, pwd))
 //kbuild:lib-$(CONFIG_PWD) += pwd.o
 //usage:#define pwd_trivial_usage
 //usage:       ""

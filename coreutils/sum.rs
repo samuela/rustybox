@@ -40,7 +40,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //config:	default y
 //config:	help
 //config:	checksum and count the blocks in a file
-//applet:IF_SUM(APPLET(sum, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SUM(APPLET(sum, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SUM) += sum.o
 //usage:#define sum_trivial_usage
 //usage:       "[-rs] [FILE]..."

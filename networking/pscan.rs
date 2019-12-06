@@ -154,7 +154,7 @@ pub union C2RustUnnamed_0 {
 //config:	default y
 //config:	help
 //config:	Simple network port scanner.
-//applet:IF_PSCAN(APPLET(pscan, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_PSCAN(APPLET(pscan, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_PSCAN) += pscan.o
 //usage:#define pscan_trivial_usage
 //usage:       "[-cb] [-p MIN_PORT] [-P MAX_PORT] [-t TIMEOUT] [-T MIN_RTT] HOST"

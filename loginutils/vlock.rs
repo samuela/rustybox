@@ -83,7 +83,7 @@ pub struct vt_mode {
 //config:	Note that busybox binary must be setuid root for this applet to
 //config:	work properly.
 //applet:/* Needs to be run by root or be suid root - needs to change uid and gid: */
-//applet:IF_VLOCK(APPLET(vlock, BB_DIR_USR_BIN, BB_SUID_REQUIRE))
+//applet:IF_VLOCK(APPLET(vlock, BB_DIR_USR_BIN, SUID_REQUIRE))
 //kbuild:lib-$(CONFIG_VLOCK) += vlock.o
 //usage:#define vlock_trivial_usage
 //usage:       "[-a]"

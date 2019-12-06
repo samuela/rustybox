@@ -26,7 +26,7 @@ extern "C" {
 //config:	only height, or both, in any order. It also does not complain on
 //config:	error, but returns default 80x24.
 //config:	Usage in shell scripts: width=`ttysize w`.
-//applet:IF_TTYSIZE(APPLET_NOFORK(ttysize, ttysize, BB_DIR_USR_BIN, BB_SUID_DROP, ttysize))
+//applet:IF_TTYSIZE(APPLET_NOFORK(ttysize, ttysize, BB_DIR_USR_BIN, SUID_DROP, ttysize))
 //kbuild:lib-$(CONFIG_TTYSIZE) += ttysize.o
 //usage:#define ttysize_trivial_usage
 //usage:       "[w] [h]"

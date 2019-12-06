@@ -48,7 +48,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //config:	default y
 //config:	help
 //config:	rm is used to remove files or directories.
-//applet:IF_RM(APPLET_NOEXEC(rm, rm, BB_DIR_BIN, BB_SUID_DROP, rm))
+//applet:IF_RM(APPLET_NOEXEC(rm, rm, BB_DIR_BIN, SUID_DROP, rm))
 /* was NOFORK, but then "rm -i FILE" can't be ^C'ed if run by hush */
 //kbuild:lib-$(CONFIG_RM) += rm.o
 /* BB_AUDIT SUSv3 compliant */

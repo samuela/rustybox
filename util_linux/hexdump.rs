@@ -174,8 +174,8 @@ unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
 //config:	default y
 //config:	help
 //config:	hd is an alias to hexdump -C.
-//applet:IF_HEXDUMP(APPLET_NOEXEC(hexdump, hexdump, BB_DIR_USR_BIN, BB_SUID_DROP, hexdump))
-//applet:IF_HD(APPLET_NOEXEC(hd, hexdump, BB_DIR_USR_BIN, BB_SUID_DROP, hd))
+//applet:IF_HEXDUMP(APPLET_NOEXEC(hexdump, hexdump, BB_DIR_USR_BIN, SUID_DROP, hexdump))
+//applet:IF_HD(APPLET_NOEXEC(hd, hexdump, BB_DIR_USR_BIN, SUID_DROP, hd))
 //kbuild:lib-$(CONFIG_HEXDUMP) += hexdump.o
 //kbuild:lib-$(CONFIG_HD) += hexdump.o
 //usage:#define hexdump_trivial_usage

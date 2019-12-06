@@ -81,7 +81,7 @@ pub const OPT_r: C2RustUnnamed = 2;
 //config:	depends on TOUCH
 //config:	help
 //config:	Enable touch to use a reference file or a given date/time argument.
-//applet:IF_TOUCH(APPLET_NOFORK(touch, touch, BB_DIR_BIN, BB_SUID_DROP, touch))
+//applet:IF_TOUCH(APPLET_NOFORK(touch, touch, BB_DIR_BIN, SUID_DROP, touch))
 //kbuild:lib-$(CONFIG_TOUCH) += touch.o
 /* BB_AUDIT SUSv3 _NOT_ compliant -- options -a, -m not supported. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/touch.html */

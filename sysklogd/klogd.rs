@@ -116,7 +116,7 @@ pub const KLOGD_LOGBUF_SIZE: C2RustUnnamed_2 = 1024;
 //config:	However, this method requires the file to be available.
 //config:
 //config:	If in doubt, say 'Y'.
-//applet:IF_KLOGD(APPLET(klogd, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_KLOGD(APPLET(klogd, BB_DIR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_KLOGD) += klogd.o
 //usage:#define klogd_trivial_usage
 //usage:       "[-c N] [-n]"

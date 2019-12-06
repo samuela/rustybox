@@ -2009,7 +2009,7 @@ pub unsafe extern "C" fn syslogd_main(
 //config:	messages to the system log (i.e. the 'syslogd' utility) so
 //config:	they can be logged. This is generally used to help locate
 //config:	problems that occur within programs and scripts.
-//applet:IF_LOGGER(APPLET(logger, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_LOGGER(APPLET(logger, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_LOGGER) += syslogd_and_logger.o
 //usage:#define logger_trivial_usage
 //usage:       "[OPTIONS] [MESSAGE]"

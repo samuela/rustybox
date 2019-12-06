@@ -81,7 +81,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //config:	default y
 //config:	help
 //config:	Create MIME-formatted messages.
-//applet:IF_MAKEMIME(APPLET(makemime, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_MAKEMIME(APPLET(makemime, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_MAKEMIME) += makemime.o mail.o
 /*
   makemime -c type [-o file] [-e encoding] [-C charset] [-N name] \

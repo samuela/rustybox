@@ -84,9 +84,9 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	By default, convert only leading sequences of blanks to tabs.
-//applet:IF_EXPAND(APPLET(expand, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_EXPAND(APPLET(expand, BB_DIR_USR_BIN, SUID_DROP))
 //                   APPLET_ODDNAME:name      main    location        suid_type     help
-//applet:IF_UNEXPAND(APPLET_ODDNAME(unexpand, expand, BB_DIR_USR_BIN, BB_SUID_DROP, unexpand))
+//applet:IF_UNEXPAND(APPLET_ODDNAME(unexpand, expand, BB_DIR_USR_BIN, SUID_DROP, unexpand))
 //kbuild:lib-$(CONFIG_EXPAND) += expand.o
 //kbuild:lib-$(CONFIG_UNEXPAND) += expand.o
 //usage:#define expand_trivial_usage

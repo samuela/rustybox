@@ -17,7 +17,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	This program clears the terminal screen.
-//applet:IF_CLEAR(APPLET_NOFORK(clear, clear, BB_DIR_USR_BIN, BB_SUID_DROP, clear))
+//applet:IF_CLEAR(APPLET_NOFORK(clear, clear, BB_DIR_USR_BIN, SUID_DROP, clear))
 //kbuild:lib-$(CONFIG_CLEAR) += clear.o
 //usage:#define clear_trivial_usage
 //usage:       ""

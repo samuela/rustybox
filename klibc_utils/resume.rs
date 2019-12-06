@@ -78,7 +78,7 @@ unsafe extern "C" fn bb_strtoul(
 //config:	default y
 //config:	help
 //config:	Resume from saved "suspend-to-disk" image
-//applet:IF_RESUME(APPLET_NOEXEC(resume, resume, BB_DIR_BIN, BB_SUID_DROP, resume))
+//applet:IF_RESUME(APPLET_NOEXEC(resume, resume, BB_DIR_BIN, SUID_DROP, resume))
 //kbuild:lib-$(CONFIG_RESUME) += resume.o
 /* This is a NOEXEC applet. Be very careful! */
 /* name_to_dev_t() in klibc-utils supports extended device name formats,

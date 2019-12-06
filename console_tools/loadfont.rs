@@ -157,8 +157,8 @@ pub struct console_font_op {
 //config:	bool "Support old (raw) console fonts"
 //config:	default y
 //config:	depends on LOADFONT || SETFONT
-//applet:IF_LOADFONT(APPLET_NOEXEC(loadfont, loadfont, BB_DIR_USR_SBIN, BB_SUID_DROP, loadfont))
-//applet:IF_SETFONT(APPLET_NOEXEC(setfont, setfont, BB_DIR_USR_SBIN, BB_SUID_DROP, setfont))
+//applet:IF_LOADFONT(APPLET_NOEXEC(loadfont, loadfont, BB_DIR_USR_SBIN, SUID_DROP, loadfont))
+//applet:IF_SETFONT(APPLET_NOEXEC(setfont, setfont, BB_DIR_USR_SBIN, SUID_DROP, setfont))
 //kbuild:lib-$(CONFIG_LOADFONT) += loadfont.o
 //kbuild:lib-$(CONFIG_SETFONT) += loadfont.o
 /* KDFONTOP */

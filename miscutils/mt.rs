@@ -52,7 +52,7 @@ pub struct mtpos {
 //config:	mt is used to control tape devices. You can use the mt utility
 //config:	to advance or rewind a tape past a specified number of archive
 //config:	files on the tape.
-//applet:IF_MT(APPLET(mt, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_MT(APPLET(mt, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_MT) += mt.o
 //usage:#define mt_trivial_usage
 //usage:       "[-f device] opcode value"

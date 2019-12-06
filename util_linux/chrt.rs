@@ -88,7 +88,7 @@ unsafe extern "C" fn xatoul_range(
 //config:	help
 //config:	Manipulate real-time attributes of a process.
 //config:	This requires sched_{g,s}etparam support in your libc.
-//applet:IF_CHRT(APPLET_NOEXEC(chrt, chrt, BB_DIR_USR_BIN, BB_SUID_DROP, chrt))
+//applet:IF_CHRT(APPLET_NOEXEC(chrt, chrt, BB_DIR_USR_BIN, SUID_DROP, chrt))
 //kbuild:lib-$(CONFIG_CHRT) += chrt.o
 //usage:#define chrt_trivial_usage
 //usage:       "-m | -p [PRIO] PID | [-rfobi] PRIO PROG [ARGS]"

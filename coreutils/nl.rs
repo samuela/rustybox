@@ -46,7 +46,7 @@ pub const OPT_p: C2RustUnnamed = 1;
 //config:	default y
 //config:	help
 //config:	nl is used to number lines of files.
-//applet:IF_NL(APPLET(nl, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_NL(APPLET(nl, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_NL) += nl.o
 //usage:#define nl_trivial_usage
 //usage:       "[OPTIONS] [FILE]..."

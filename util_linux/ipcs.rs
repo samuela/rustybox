@@ -168,7 +168,7 @@ use libc::passwd;
 //config:	help
 //config:	The ipcs utility is used to provide information on the currently
 //config:	allocated System V interprocess (IPC) objects in the system.
-//applet:IF_IPCS(APPLET_NOEXEC(ipcs, ipcs, BB_DIR_USR_BIN, BB_SUID_DROP, ipcs))
+//applet:IF_IPCS(APPLET_NOEXEC(ipcs, ipcs, BB_DIR_USR_BIN, SUID_DROP, ipcs))
 //kbuild:lib-$(CONFIG_IPCS) += ipcs.o
 /* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */

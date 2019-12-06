@@ -36,7 +36,7 @@ extern "C" {
 //config:	help
 //config:	which is used to find programs in your PATH and
 //config:	print out their pathnames.
-//applet:IF_WHICH(APPLET_NOFORK(which, which, BB_DIR_USR_BIN, BB_SUID_DROP, which))
+//applet:IF_WHICH(APPLET_NOFORK(which, which, BB_DIR_USR_BIN, SUID_DROP, which))
 //kbuild:lib-$(CONFIG_WHICH) += which.o
 //usage:#define which_trivial_usage
 //usage:       "[COMMAND]..."

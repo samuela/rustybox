@@ -116,7 +116,7 @@ use libc::tm;
 //config:	help
 //config:	Attempt to use less memory (by storing only one copy
 //config:	of duplicated lines, and such). Useful if you work on huge files.
-//applet:IF_SORT(APPLET_NOEXEC(sort, sort, BB_DIR_USR_BIN, BB_SUID_DROP, sort))
+//applet:IF_SORT(APPLET_NOEXEC(sort, sort, BB_DIR_USR_BIN, SUID_DROP, sort))
 //kbuild:lib-$(CONFIG_SORT) += sort.o
 //usage:#define sort_trivial_usage
 //usage:       "[-nru"

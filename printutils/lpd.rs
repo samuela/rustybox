@@ -165,7 +165,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
 //config:	default y
 //config:	help
 //config:	lpd is a print spooling daemon.
-//applet:IF_LPD(APPLET(lpd, BB_DIR_USR_SBIN, BB_SUID_DROP))
+//applet:IF_LPD(APPLET(lpd, BB_DIR_USR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_LPD) += lpd.o
 //usage:#define lpd_trivial_usage
 //usage:       "SPOOLDIR [HELPER [ARGS]]"

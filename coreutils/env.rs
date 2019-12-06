@@ -59,7 +59,7 @@ use crate::libbb::llist::llist_t;
 //config:	env is used to set an environment variable and run
 //config:	a command; without options it displays the current
 //config:	environment.
-//applet:IF_ENV(APPLET_NOEXEC(env, env, BB_DIR_USR_BIN, BB_SUID_DROP, env))
+//applet:IF_ENV(APPLET_NOEXEC(env, env, BB_DIR_USR_BIN, SUID_DROP, env))
 //kbuild:lib-$(CONFIG_ENV) += env.o
 /* BB_AUDIT SUSv3 compliant */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/env.html */

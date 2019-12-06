@@ -48,7 +48,7 @@ extern "C" {
   //config:	e.g. "net_admin", or using their index, e.g. "cap_12". Enabling
   //config:	this option allows using the human-readable names in addition to
   //config:	the index-based names.
-  //applet:IF_SETPRIV(APPLET(setpriv, BB_DIR_BIN, BB_SUID_DROP))
+  //applet:IF_SETPRIV(APPLET(setpriv, BB_DIR_BIN, SUID_DROP))
   //kbuild:lib-$(CONFIG_SETPRIV) += setpriv.o
   //usage:#define setpriv_trivial_usage
   //usage:	"[OPTIONS] PROG [ARGS]"

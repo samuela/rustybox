@@ -535,7 +535,7 @@ pub const OPT_i: C2RustUnnamed_9 = 1;
 //config:	help
 //config:	You can request bootfile-url with "-O bootfile_url" and
 //config:	bootfile-params with "-O bootfile_params".
-//applet:IF_UDHCPC6(APPLET(udhcpc6, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UDHCPC6(APPLET(udhcpc6, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UDHCPC6) += d6_dhcpc.o d6_packet.o d6_socket.o common.o socket.o signalpipe.o
 //kbuild:lib-$(CONFIG_FEATURE_UDHCPC6_RFC3646) += domain_codec.o
 //kbuild:lib-$(CONFIG_FEATURE_UDHCPC6_RFC4704) += domain_codec.o

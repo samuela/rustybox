@@ -37,7 +37,7 @@ use libc::ssize_t;
 //config:	help
 //config:	This program dumps the kernel's keyboard translation table to
 //config:	stdout, in binary format. You can then use loadkmap to load it.
-//applet:IF_DUMPKMAP(APPLET_NOEXEC(dumpkmap, dumpkmap, BB_DIR_BIN, BB_SUID_DROP, dumpkmap))
+//applet:IF_DUMPKMAP(APPLET_NOEXEC(dumpkmap, dumpkmap, BB_DIR_BIN, SUID_DROP, dumpkmap))
 /* bb_common_bufsiz1 usage here is safe wrt NOEXEC: not expecting it to be zeroed. */
 //kbuild:lib-$(CONFIG_DUMPKMAP) += dumpkmap.o
 //usage:#define dumpkmap_trivial_usage

@@ -59,7 +59,7 @@ pub const OPT_LENGTH: C2RustUnnamed = 2;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	blkdiscard discards sectors on a given device.
-//applet:IF_BLKDISCARD(APPLET_NOEXEC(blkdiscard, blkdiscard, BB_DIR_USR_BIN, BB_SUID_DROP, blkdiscard))
+//applet:IF_BLKDISCARD(APPLET_NOEXEC(blkdiscard, blkdiscard, BB_DIR_USR_BIN, SUID_DROP, blkdiscard))
 //kbuild:lib-$(CONFIG_BLKDISCARD) += blkdiscard.o
 //usage:#define blkdiscard_trivial_usage
 //usage:       "[-o OFS] [-l LEN] [-s] DEVICE"

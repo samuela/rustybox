@@ -174,7 +174,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //config:	of the message before actual delivery (-F "prog [args...]").
 //config:	Allow to use a custom program for message actual delivery
 //config:	(-M "prog [args...]").
-//applet:IF_POPMAILDIR(APPLET(popmaildir, BB_DIR_USR_SBIN, BB_SUID_DROP))
+//applet:IF_POPMAILDIR(APPLET(popmaildir, BB_DIR_USR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_POPMAILDIR) += popmaildir.o mail.o
 //usage:#define popmaildir_trivial_usage
 //usage:       "[OPTIONS] MAILDIR [CONN_HELPER ARGS]"

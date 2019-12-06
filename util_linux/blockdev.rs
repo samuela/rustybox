@@ -46,7 +46,7 @@ pub union C2RustUnnamed_0 {
 //config:	default y
 //config:	help
 //config:	Performs some ioctls with block devices.
-//applet:IF_BLOCKDEV(APPLET_NOEXEC(blockdev, blockdev, BB_DIR_SBIN, BB_SUID_DROP, blockdev))
+//applet:IF_BLOCKDEV(APPLET_NOEXEC(blockdev, blockdev, BB_DIR_SBIN, SUID_DROP, blockdev))
 //kbuild:lib-$(CONFIG_BLOCKDEV) += blockdev.o
 //usage:#define blocklibc::dev_trivial_usage
 //usage:	"OPTION BLOCKDEV"

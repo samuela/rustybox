@@ -1884,7 +1884,7 @@ pub unsafe extern "C" fn od_main(
 //usage:       "Print FILE (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 //kbuild:lib-$(CONFIG_OD) += od.o
-//applet:IF_OD(APPLET(od, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_OD(APPLET(od, BB_DIR_USR_BIN, SUID_DROP))
 
 /*
  * od implementation for busybox

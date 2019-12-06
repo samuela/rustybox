@@ -435,7 +435,7 @@ use libc::ssize_t;
 //config:	bool "Enable -n and -e options"
 //config:	default y
 //config:	depends on ECHO || ASH_ECHO || HUSH_ECHO
-//applet:IF_ECHO(APPLET_NOFORK(echo, echo, BB_DIR_BIN, BB_SUID_DROP, echo))
+//applet:IF_ECHO(APPLET_NOFORK(echo, echo, BB_DIR_BIN, SUID_DROP, echo))
 //kbuild:lib-$(CONFIG_ECHO) += echo.o
 //kbuild:lib-$(CONFIG_ASH_ECHO)  += echo.o
 //kbuild:lib-$(CONFIG_HUSH_ECHO) += echo.o

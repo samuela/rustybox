@@ -124,7 +124,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //config:	help
 //config:	Accept (for compatibility only) and ignore options
 //config:	other than -x and -X.
-//applet:IF_REFORMIME(APPLET(reformime, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_REFORMIME(APPLET(reformime, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_REFORMIME) += reformime.o mail.o
 unsafe extern "C" fn find_token(
   mut string_array: *const *const libc::c_char,

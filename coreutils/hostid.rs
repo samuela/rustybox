@@ -23,7 +23,7 @@ extern "C" {
 //config:	help
 //config:	hostid prints the numeric identifier (in hexadecimal) for
 //config:	the current host.
-//applet:IF_HOSTID(APPLET_NOFORK(hostid, hostid, BB_DIR_USR_BIN, BB_SUID_DROP, hostid))
+//applet:IF_HOSTID(APPLET_NOFORK(hostid, hostid, BB_DIR_USR_BIN, SUID_DROP, hostid))
 //kbuild:lib-$(CONFIG_HOSTID) += hostid.o
 /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 //usage:#define hostid_trivial_usage

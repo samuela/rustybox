@@ -80,7 +80,7 @@ pub const UNICODE_UNKNOWN: C2RustUnnamed = 0;
 //config:	depends on WC
 //config:	help
 //config:	Use "unsigned long long" for counter variables.
-//applet:IF_WC(APPLET(wc, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_WC(APPLET(wc, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_WC) += wc.o
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */

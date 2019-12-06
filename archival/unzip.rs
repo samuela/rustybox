@@ -260,7 +260,7 @@ pub union C2RustUnnamed_0 {
 //config:	bool "Support compression method 95 (xz)"
 //config:	default y
 //config:	depends on FEATURE_UNZIP_CDF && DESKTOP
-//applet:IF_UNZIP(APPLET(unzip, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UNZIP(APPLET(unzip, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UNZIP) += unzip.o
 //usage:#define unzip_trivial_usage
 //usage:       "[-lnojpq] FILE[.zip] [FILE]... [-x FILE...] [-d DIR]"

@@ -83,7 +83,7 @@ pub const OPT_l: C2RustUnnamed_0 = 8;
 //config:	help
 //config:	This program is used to start a command on an unused
 //config:	virtual terminal.
-//applet:IF_OPENVT(APPLET(openvt, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_OPENVT(APPLET(openvt, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_OPENVT) += openvt.o
 //usage:#define openvt_trivial_usage
 //usage:       "[-c N] [-sw] [PROG ARGS]"

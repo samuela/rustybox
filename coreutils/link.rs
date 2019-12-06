@@ -22,7 +22,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	link creates hard links between files.
-//applet:IF_LINK(APPLET_NOFORK(link, link, BB_DIR_BIN, BB_SUID_DROP, link))
+//applet:IF_LINK(APPLET_NOFORK(link, link, BB_DIR_BIN, SUID_DROP, link))
 //kbuild:lib-$(CONFIG_LINK) += link.o
 //usage:#define link_trivial_usage
 //usage:       "FILE LINK"

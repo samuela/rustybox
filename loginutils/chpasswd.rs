@@ -75,7 +75,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
 //config:	depends on PASSWD || CRYPTPW || CHPASSWD
 //config:	help
 //config:	Possible choices are "d[es]", "m[d5]", "s[ha256]" or "sha512".
-//applet:IF_CHPASSWD(APPLET(chpasswd, BB_DIR_USR_SBIN, BB_SUID_DROP))
+//applet:IF_CHPASSWD(APPLET(chpasswd, BB_DIR_USR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_CHPASSWD) += chpasswd.o
 //usage:#define chpasswd_trivial_usage
 //usage:	IF_LONG_OPTS("[--md5|--encrypted|--crypt-method|--root]") IF_NOT_LONG_OPTS("[-m|-e|-c|-R]")

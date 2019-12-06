@@ -62,7 +62,7 @@ unsafe extern "C" fn xatoul_range(
 //config:	help
 //config:	cmp is used to compare two files and returns the result
 //config:	to standard output.
-//applet:IF_CMP(APPLET(cmp, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_CMP(APPLET(cmp, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_CMP) += cmp.o
 //usage:#define cmp_trivial_usage
 //usage:       "[-l] [-s] FILE1 [FILE2" IF_DESKTOP(" [SKIP1 [SKIP2]]") "]"

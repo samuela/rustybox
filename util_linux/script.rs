@@ -152,7 +152,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 //config:	default y
 //config:	help
 //config:	The script makes typescript of terminal session.
-//applet:IF_SCRIPT(APPLET(script, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SCRIPT(APPLET(script, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SCRIPT) += script.o
 //usage:#define script_trivial_usage
 //usage:       "[-afq] [-t[FILE]] [-c PROG] [OUTFILE]"

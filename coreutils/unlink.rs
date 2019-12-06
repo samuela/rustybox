@@ -20,7 +20,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	unlink deletes a file by calling unlink()
-//applet:IF_UNLINK(APPLET_NOFORK(unlink, unlink, BB_DIR_USR_BIN, BB_SUID_DROP, unlink))
+//applet:IF_UNLINK(APPLET_NOFORK(unlink, unlink, BB_DIR_USR_BIN, SUID_DROP, unlink))
 //kbuild:lib-$(CONFIG_UNLINK) += unlink.o
 //usage:#define unlink_trivial_usage
 //usage:	"FILE"

@@ -46,7 +46,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:	default y
 //config:	help
 //config:	Set/delete extended attributes on files
-//applet:IF_SETFATTR(APPLET_NOEXEC(setfattr, setfattr, BB_DIR_USR_BIN, BB_SUID_DROP, setfattr))
+//applet:IF_SETFATTR(APPLET_NOEXEC(setfattr, setfattr, BB_DIR_USR_BIN, SUID_DROP, setfattr))
 //kbuild:lib-$(CONFIG_SETFATTR) += setfattr.o
 //usage:#define setfattr_trivial_usage
 //usage:       "[-h] -n|-x ATTR [-v VALUE] FILE..."

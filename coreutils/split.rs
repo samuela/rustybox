@@ -83,7 +83,7 @@ unsafe extern "C" fn xatoul_range(
 //config:	Add support for features not required by SUSv3.
 //config:	Supports additional suffixes 'b' for 512 bytes,
 //config:	'g' for 1GiB for the -b option.
-//applet:IF_SPLIT(APPLET(split, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SPLIT(APPLET(split, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SPLIT) += split.o
 /* BB_AUDIT: SUSv3 compliant
  * SUSv3 requirements:

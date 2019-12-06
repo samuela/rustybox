@@ -37,7 +37,7 @@ pub struct C2RustUnnamed {
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	This program redirects the output console of kernel messages.
-//applet:IF_SETLOGCONS(APPLET_NOEXEC(setlogcons, setlogcons, BB_DIR_USR_SBIN, BB_SUID_DROP, setlogcons))
+//applet:IF_SETLOGCONS(APPLET_NOEXEC(setlogcons, setlogcons, BB_DIR_USR_SBIN, SUID_DROP, setlogcons))
 //kbuild:lib-$(CONFIG_SETLOGCONS) += setlogcons.o
 //usage:#define setlogcons_trivial_usage
 //usage:       "[N]"

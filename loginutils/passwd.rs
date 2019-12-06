@@ -168,7 +168,7 @@ pub const OPT_algo: C2RustUnnamed_0 = 1;
 //config:	help
 //config:	With this option passwd will refuse new passwords which are "weak".
 //applet:/* Needs to be run by root or be suid root - needs to change /etc/{passwd,shadow}: */
-//applet:IF_PASSWD(APPLET(passwd, BB_DIR_USR_BIN, BB_SUID_REQUIRE))
+//applet:IF_PASSWD(APPLET(passwd, BB_DIR_USR_BIN, SUID_REQUIRE))
 //kbuild:lib-$(CONFIG_PASSWD) += passwd.o
 //usage:#define passwd_trivial_usage
 //usage:       "[OPTIONS] [USER]"

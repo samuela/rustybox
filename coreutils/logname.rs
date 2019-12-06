@@ -34,7 +34,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	logname is used to print the current user's login name.
-//applet:IF_LOGNAME(APPLET_NOFORK(logname, logname, BB_DIR_USR_BIN, BB_SUID_DROP, logname))
+//applet:IF_LOGNAME(APPLET_NOFORK(logname, logname, BB_DIR_USR_BIN, SUID_DROP, logname))
 //kbuild:lib-$(CONFIG_LOGNAME) += logname.o
 /* BB_AUDIT SUSv3 compliant */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/logname.html */

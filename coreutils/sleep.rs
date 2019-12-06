@@ -47,7 +47,7 @@ pub type duration_t = libc::c_double;
 //config:	help
 //config:	Allow sleep to pause for specified minutes, hours, and days.
 /* Do not make this applet NOFORK. It breaks ^C-ing of pauses in shells */
-//applet:IF_SLEEP(APPLET(sleep, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_SLEEP(APPLET(sleep, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SLEEP) += sleep.o
 /* BB_AUDIT SUSv3 compliant */
 /* BB_AUDIT GNU issues -- fancy version matches except args must be ints. */

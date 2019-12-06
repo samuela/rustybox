@@ -120,7 +120,7 @@ pub struct parser_t {
 //config:	system and devices connected to them.
 //config:
 //config:	This version uses sysfs (/sys/bus/pci/devices) only.
-//applet:IF_LSPCI(APPLET_NOEXEC(lspci, lspci, BB_DIR_USR_BIN, BB_SUID_DROP, lspci))
+//applet:IF_LSPCI(APPLET_NOEXEC(lspci, lspci, BB_DIR_USR_BIN, SUID_DROP, lspci))
 //kbuild:lib-$(CONFIG_LSPCI) += lspci.o
 //usage:#define lspci_trivial_usage
 //usage:       "[-mk]"

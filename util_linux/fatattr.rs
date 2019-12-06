@@ -36,7 +36,7 @@ extern "C" {
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	fatattr lists or changes the file attributes on a fat file system.
-//applet:IF_FATATTR(APPLET_NOEXEC(fatattr, fatattr, BB_DIR_BIN, BB_SUID_DROP, fatattr))
+//applet:IF_FATATTR(APPLET_NOEXEC(fatattr, fatattr, BB_DIR_BIN, SUID_DROP, fatattr))
 //kbuild:lib-$(CONFIG_FATATTR) += fatattr.o
 //usage:#define fatattr_trivial_usage
 //usage:       "[-+rhsvda] FILE..."

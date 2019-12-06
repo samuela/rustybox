@@ -49,7 +49,7 @@ unsafe extern "C" fn xatoul_range(
 //config:	help
 //config:	mknod is used to create FIFOs or block/character special
 //config:	files with the specified names.
-//applet:IF_MKNOD(APPLET_NOEXEC(mknod, mknod, BB_DIR_BIN, BB_SUID_DROP, mknod))
+//applet:IF_MKNOD(APPLET_NOEXEC(mknod, mknod, BB_DIR_BIN, SUID_DROP, mknod))
 //kbuild:lib-$(CONFIG_MKNOD) += mknod.o
 /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 //usage:#define mknod_trivial_usage

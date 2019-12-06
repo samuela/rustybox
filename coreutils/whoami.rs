@@ -17,7 +17,7 @@ use libc::geteuid;
 //config:	help
 //config:	whoami is used to print the username of the current
 //config:	user id (same as id -un).
-//applet:IF_WHOAMI(APPLET_NOFORK(whoami, whoami, BB_DIR_USR_BIN, BB_SUID_DROP, whoami))
+//applet:IF_WHOAMI(APPLET_NOFORK(whoami, whoami, BB_DIR_USR_BIN, SUID_DROP, whoami))
 //kbuild:lib-$(CONFIG_WHOAMI) += whoami.o
 /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 //usage:#define whoami_trivial_usage

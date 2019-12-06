@@ -110,7 +110,7 @@ pub const FILEUTILS_CP_OPTNUM: C2RustUnnamed_0 = 15;
 //config:	bool "Enable --reflink[=auto]"
 //config:	default y
 //config:	depends on FEATURE_CP_LONG_OPTIONS
-//applet:IF_CP(APPLET_NOEXEC(cp, cp, BB_DIR_BIN, BB_SUID_DROP, cp))
+//applet:IF_CP(APPLET_NOEXEC(cp, cp, BB_DIR_BIN, SUID_DROP, cp))
 /* NOEXEC despite cases when it can be a "runner" (cp -r LARGE_DIR NEW_DIR) */
 //kbuild:lib-$(CONFIG_CP) += cp.o
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/cp.html */

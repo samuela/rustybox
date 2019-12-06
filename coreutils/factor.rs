@@ -52,7 +52,7 @@ use libc::FILE;
 //config:	default y
 //config:	help
 //config:	factor factorizes integers
-//applet:IF_FACTOR(APPLET(factor, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_FACTOR(APPLET(factor, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_FACTOR) += factor.o
 //usage:#define factor_trivial_usage
 //usage:       "[NUMBER]..."

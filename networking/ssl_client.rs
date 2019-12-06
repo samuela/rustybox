@@ -73,7 +73,7 @@ unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
 //config:	select TLS
 //config:	help
 //config:	This tool pipes data to/from a socket, TLS-encrypting it.
-//applet:IF_SSL_CLIENT(APPLET(ssl_client, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SSL_CLIENT(APPLET(ssl_client, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SSL_CLIENT) += ssl_client.o
 //usage:#define ssl_client_trivial_usage
 //usage:       "[-e] -s FD [-r FD] [-n SNI]"

@@ -827,7 +827,7 @@ pub unsafe extern "C" fn arping_main(
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).count = -1i32;
   xmove_fd(xsocket(17i32, SOCK_DGRAM as libc::c_int, 0i32), 3i32);
-  // If you ever change BB_SUID_DROP to BB_SUID_REQUIRE,
+  // If you ever change SUID_DROP to SUID_REQUIRE,
   // drop suid root privileges here:
   //xsetuid(getuid());
   let mut opt: libc::c_uint = 0;

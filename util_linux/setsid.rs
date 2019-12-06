@@ -34,7 +34,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	setsid runs a program in a new session
-//applet:IF_SETSID(APPLET(setsid, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SETSID(APPLET(setsid, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SETSID) += setsid.o
 //usage:#define setsid_trivial_usage
 //usage:       "[-c] PROG ARGS"

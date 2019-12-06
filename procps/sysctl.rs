@@ -110,7 +110,7 @@ pub struct parser_t {
 //config:	default y
 //config:	help
 //config:	Configure kernel parameters at runtime.
-//applet:IF_BB_SYSCTL(APPLET_NOEXEC(sysctl, sysctl, BB_DIR_SBIN, BB_SUID_DROP, sysctl))
+//applet:IF_BB_SYSCTL(APPLET_NOEXEC(sysctl, sysctl, BB_DIR_SBIN, SUID_DROP, sysctl))
 //kbuild:lib-$(CONFIG_BB_SYSCTL) += sysctl.o
 //usage:#define sysctl_trivial_usage
 //usage:       "-p [-enq] [FILE...] / [-enqaw] [KEY[=VALUE]]..."

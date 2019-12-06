@@ -32,7 +32,7 @@ extern "C" {
 //config:	select LONG_OPTS
 //config:	help
 //config:	Halt new accesses and flush writes on a mounted filesystem.
-//applet:IF_FSFREEZE(APPLET_NOEXEC(fsfreeze, fsfreeze, BB_DIR_USR_SBIN, BB_SUID_DROP, fsfreeze))
+//applet:IF_FSFREEZE(APPLET_NOEXEC(fsfreeze, fsfreeze, BB_DIR_USR_SBIN, SUID_DROP, fsfreeze))
 //kbuild:lib-$(CONFIG_FSFREEZE) += fsfreeze.o
 //usage:#define fsfreeze_trivial_usage
 //usage:       "--[un]freeze MOUNTPOINT"

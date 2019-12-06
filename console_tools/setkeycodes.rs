@@ -39,7 +39,7 @@ extern "C" {
 //config:	help
 //config:	This program loads entries into the kernel's scancode-to-keycode
 //config:	map, allowing unusual keyboards to generate usable keycodes.
-//applet:IF_SETKEYCODES(APPLET_NOEXEC(setkeycodes, setkeycodes, BB_DIR_USR_BIN, BB_SUID_DROP, setkeycodes))
+//applet:IF_SETKEYCODES(APPLET_NOEXEC(setkeycodes, setkeycodes, BB_DIR_USR_BIN, SUID_DROP, setkeycodes))
 //kbuild:lib-$(CONFIG_SETKEYCODES) += setkeycodes.o
 //usage:#define setkeycodes_trivial_usage
 //usage:       "{ SCANCODE KEYCODE }..."

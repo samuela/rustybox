@@ -121,7 +121,7 @@ pub const OPT_0: C2RustUnnamed_0 = 1;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	Show information about a Linux Kernel module
-//applet:IF_MODINFO(APPLET_NOEXEC(modinfo, modinfo, BB_DIR_SBIN, BB_SUID_DROP, modinfo))
+//applet:IF_MODINFO(APPLET_NOEXEC(modinfo, modinfo, BB_DIR_SBIN, SUID_DROP, modinfo))
 //kbuild:lib-$(CONFIG_MODINFO) += modinfo.o modutils.o
 /* uname() */
 static mut shortcuts: [*const libc::c_char; 13] = [

@@ -71,7 +71,7 @@ extern "C" {
 //config:	depends on MKSWAP
 //config:	help
 //config:	Generate swap spaces with universally unique identifiers.
-//applet:IF_MKSWAP(APPLET(mkswap, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_MKSWAP(APPLET(mkswap, BB_DIR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_MKSWAP) += mkswap.o
 //usage:#define mkswap_trivial_usage
 //usage:       "[-L LBL] BLOCKDEV [KBYTES]"

@@ -247,7 +247,7 @@ pub union C2RustUnnamed_3 {
 //config:	help
 //config:	Setting this will make ifconfig attempt to find the broadcast
 //config:	automatically if the value '+' is used.
-//applet:IF_IFCONFIG(APPLET(ifconfig, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_IFCONFIG(APPLET(ifconfig, BB_DIR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_IFCONFIG) += ifconfig.o interface.o
 //usage:#define ifconfig_trivial_usage
 //usage:	IF_FEATURE_IFCONFIG_STATUS("[-a]") " interface [address]"

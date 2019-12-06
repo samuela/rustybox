@@ -54,7 +54,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //config:config TS
 //config:	bool "ts (450 bytes)"
 //config:	default y
-//applet:IF_TS(APPLET(ts, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_TS(APPLET(ts, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_TS) += ts.o
 //usage:#define ts_trivial_usage
 //usage:       "[-is] [STRFTIME]"

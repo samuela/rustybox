@@ -57,7 +57,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //config:	depends on TEE
 //config:	help
 //config:	Enable this option for a faster tee, at expense of size.
-//applet:IF_TEE(APPLET(tee, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_TEE(APPLET(tee, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_TEE) += tee.o
 /* BB_AUDIT SUSv3 compliant */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/tee.html */

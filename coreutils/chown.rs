@@ -86,7 +86,7 @@ pub type chown_fptr =
 //config:	bool "Enable long options"
 //config:	default y
 //config:	depends on CHOWN && LONG_OPTS
-//applet:IF_CHOWN(APPLET_NOEXEC(chown, chown, BB_DIR_BIN, BB_SUID_DROP, chown))
+//applet:IF_CHOWN(APPLET_NOEXEC(chown, chown, BB_DIR_BIN, SUID_DROP, chown))
 //kbuild:lib-$(CONFIG_CHOWN) += chown.o
 /* BB_AUDIT SUSv3 defects - none? */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/chown.html */

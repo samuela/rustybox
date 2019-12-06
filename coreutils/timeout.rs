@@ -67,7 +67,7 @@ pub type duration_t = libc::c_double;
 //config:	help
 //config:	Runs a program and watches it. If it does not terminate in
 //config:	specified number of seconds, it is sent a signal.
-//applet:IF_TIMEOUT(APPLET(timeout, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_TIMEOUT(APPLET(timeout, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_TIMEOUT) += timeout.o
 //usage:#define timeout_trivial_usage
 //usage:       "[-s SIG] SECS PROG ARGS"

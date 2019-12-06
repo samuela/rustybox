@@ -23,7 +23,7 @@ extern "C" {
 //config:	help
 //config:	chroot is used to change the root directory and run a command.
 //config:	The default command is '/bin/sh'.
-//applet:IF_CHROOT(APPLET_NOEXEC(chroot, chroot, BB_DIR_USR_SBIN, BB_SUID_DROP, chroot))
+//applet:IF_CHROOT(APPLET_NOEXEC(chroot, chroot, BB_DIR_USR_SBIN, SUID_DROP, chroot))
 //kbuild:lib-$(CONFIG_CHROOT) += chroot.o
 /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 //usage:#define chroot_trivial_usage

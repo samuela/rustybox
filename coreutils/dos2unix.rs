@@ -74,8 +74,8 @@ extern "C" {
 //config:	help
 //config:	unix2dos is used to convert a text file from UNIX format to
 //config:	DOS format, and vice versa.
-//applet:IF_DOS2UNIX(APPLET_NOEXEC(dos2unix, dos2unix, BB_DIR_USR_BIN, BB_SUID_DROP, dos2unix))
-//applet:IF_UNIX2DOS(APPLET_NOEXEC(unix2dos, dos2unix, BB_DIR_USR_BIN, BB_SUID_DROP, unix2dos))
+//applet:IF_DOS2UNIX(APPLET_NOEXEC(dos2unix, dos2unix, BB_DIR_USR_BIN, SUID_DROP, dos2unix))
+//applet:IF_UNIX2DOS(APPLET_NOEXEC(unix2dos, dos2unix, BB_DIR_USR_BIN, SUID_DROP, unix2dos))
 //kbuild:lib-$(CONFIG_DOS2UNIX) += dos2unix.o
 //kbuild:lib-$(CONFIG_UNIX2DOS) += dos2unix.o
 //usage:#define dos2unix_trivial_usage

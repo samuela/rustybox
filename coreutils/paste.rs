@@ -47,7 +47,7 @@ extern "C" {
 //config:	help
 //config:	paste is used to paste lines of different files together
 //config:	and write the result to stdout
-//applet:IF_PASTE(APPLET_NOEXEC(paste, paste, BB_DIR_USR_BIN, BB_SUID_DROP, paste))
+//applet:IF_PASTE(APPLET_NOEXEC(paste, paste, BB_DIR_USR_BIN, SUID_DROP, paste))
 //kbuild:lib-$(CONFIG_PASTE) += paste.o
 //usage:#define paste_trivial_usage
 //usage:       "[OPTIONS] [FILE]..."

@@ -73,7 +73,7 @@ use libc::ssize_t;
 //config:	Starting getty on a controlling tty from a shell script:
 //config:
 //config:	# getty 115200 $(cttyhack)
-//applet:IF_CTTYHACK(APPLET_NOEXEC(cttyhack, cttyhack, BB_DIR_BIN, BB_SUID_DROP, cttyhack))
+//applet:IF_CTTYHACK(APPLET_NOEXEC(cttyhack, cttyhack, BB_DIR_BIN, SUID_DROP, cttyhack))
 //kbuild:lib-$(CONFIG_CTTYHACK) += cttyhack.o
 //usage:#define cttyhack_trivial_usage
 //usage:       "[PROG ARGS]"

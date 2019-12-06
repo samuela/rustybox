@@ -100,7 +100,7 @@ pub const DST_BUF_SIZE: C2RustUnnamed_0 = 76;
 //config:	default y
 //config:	help
 //config:	uudecode is used to decode a uuencoded file.
-//applet:IF_UUDECODE(APPLET(uudecode, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UUDECODE(APPLET(uudecode, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UUDECODE) += uudecode.o
 //usage:#define uudecode_trivial_usage
 //usage:       "[-o OUTFILE] [INFILE]"
@@ -299,7 +299,7 @@ pub unsafe extern "C" fn uudecode_main(
   }
   bb_simple_error_msg_and_die(b"no \'begin\' line\x00" as *const u8 as *const libc::c_char);
 }
-//applet:IF_BASE64(APPLET(base64, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_BASE64(APPLET(base64, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //config:config BASE64
 //config:	bool "base64 (4.9 kb)"

@@ -37,7 +37,7 @@ pub type __priority_which_t = __priority_which;
 //config:	default y
 //config:	help
 //config:	nice runs a program with modified scheduling priority.
-//applet:IF_NICE(APPLET_NOEXEC(nice, nice, BB_DIR_BIN, BB_SUID_DROP, nice))
+//applet:IF_NICE(APPLET_NOEXEC(nice, nice, BB_DIR_BIN, SUID_DROP, nice))
 //kbuild:lib-$(CONFIG_NICE) += nice.o
 //usage:#define nice_trivial_usage
 //usage:       "[-n ADJUST] [PROG ARGS]"

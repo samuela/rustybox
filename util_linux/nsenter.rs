@@ -78,7 +78,7 @@ extern "C" {
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	Run program with namespaces of other processes.
-//applet:IF_NSENTER(APPLET(nsenter, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_NSENTER(APPLET(nsenter, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_NSENTER) += nsenter.o
 //usage:#define nsenter_trivial_usage
 //usage:       "[OPTIONS] [PROG [ARGS]]"

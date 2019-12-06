@@ -49,7 +49,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:	default y
 //config:	help
 //config:	Manage locks from shell scripts
-//applet:IF_FLOCK(APPLET(flock, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_FLOCK(APPLET(flock, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_FLOCK) += flock.o
 //usage:#define flock_trivial_usage
 //usage:       "[-sxun] FD|{FILE [-c] PROG ARGS}"

@@ -80,7 +80,7 @@ use libc::FILE;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	lsattr lists the file attributes on a second extended file system.
-//applet:IF_LSATTR(APPLET_NOEXEC(lsattr, lsattr, BB_DIR_BIN, BB_SUID_DROP, lsattr))
+//applet:IF_LSATTR(APPLET_NOEXEC(lsattr, lsattr, BB_DIR_BIN, SUID_DROP, lsattr))
 /* ls is NOEXEC, so we should be too! ;) */
 //kbuild:lib-$(CONFIG_LSATTR) += lsattr.o e2fs_lib.o
 //usage:#define lsattr_trivial_usage

@@ -117,9 +117,9 @@ pub type number_t = int64_t;
 //config:	depends on TEST || TEST1 || TEST2 || ASH_TEST || HUSH_TEST
 //config:	help
 //config:	Enable 64-bit support in test.
-//applet:IF_TEST(APPLET_NOFORK(test, test, BB_DIR_USR_BIN, BB_SUID_DROP, test))
-//applet:IF_TEST1(APPLET_NOFORK([,   test, BB_DIR_USR_BIN, BB_SUID_DROP, test))
-//applet:IF_TEST2(APPLET_NOFORK([[,  test, BB_DIR_USR_BIN, BB_SUID_DROP, test))
+//applet:IF_TEST(APPLET_NOFORK(test, test, BB_DIR_USR_BIN, SUID_DROP, test))
+//applet:IF_TEST1(APPLET_NOFORK([,   test, BB_DIR_USR_BIN, SUID_DROP, test))
+//applet:IF_TEST2(APPLET_NOFORK([[,  test, BB_DIR_USR_BIN, SUID_DROP, test))
 //kbuild:lib-$(CONFIG_TEST)  += test.o test_ptr_hack.o
 //kbuild:lib-$(CONFIG_TEST1) += test.o test_ptr_hack.o
 //kbuild:lib-$(CONFIG_TEST2) += test.o test_ptr_hack.o

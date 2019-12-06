@@ -60,7 +60,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	chmod is used to change the access permission of files.
-//applet:IF_CHMOD(APPLET_NOEXEC(chmod, chmod, BB_DIR_BIN, BB_SUID_DROP, chmod))
+//applet:IF_CHMOD(APPLET_NOEXEC(chmod, chmod, BB_DIR_BIN, SUID_DROP, chmod))
 //kbuild:lib-$(CONFIG_CHMOD) += chmod.o
 /* BB_AUDIT SUSv3 compliant */
 /* BB_AUDIT GNU defects - unsupported long options. */

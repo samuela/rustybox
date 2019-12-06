@@ -45,7 +45,7 @@ pub struct C2RustUnnamed {
 //config:
 //config:	This applet uses utmp but does not rely on busybox supporing
 //config:	utmp on purpose. It is used by e.g. emdebian via /etc/init.d/rc.
-//applet:IF_RUNLEVEL(APPLET_NOEXEC(runlevel, runlevel, BB_DIR_SBIN, BB_SUID_DROP, runlevel))
+//applet:IF_RUNLEVEL(APPLET_NOEXEC(runlevel, runlevel, BB_DIR_SBIN, SUID_DROP, runlevel))
 //kbuild:lib-$(CONFIG_RUNLEVEL) += runlevel.o
 //usage:#define runlevel_trivial_usage
 //usage:       "[FILE]"

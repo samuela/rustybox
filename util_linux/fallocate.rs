@@ -40,7 +40,7 @@ pub struct suffix_mult {
 //config:	default y
 //config:	help
 //config:	Preallocate space for files.
-//applet:IF_FALLOCATE(APPLET(fallocate, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_FALLOCATE(APPLET(fallocate, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_FALLOCATE) += fallocate.o
 //usage:#define fallocate_trivial_usage
 //usage:       "[-o OFS] -l LEN FILE"

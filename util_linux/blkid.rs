@@ -27,7 +27,7 @@ extern "C" {
 //config:	depends on BLKID
 //config:	help
 //config:	Show TYPE="filesystem type"
-//applet:IF_BLKID(APPLET_NOEXEC(blkid, blkid, BB_DIR_SBIN, BB_SUID_DROP, blkid))
+//applet:IF_BLKID(APPLET_NOEXEC(blkid, blkid, BB_DIR_SBIN, SUID_DROP, blkid))
 //kbuild:lib-$(CONFIG_BLKID) += blkid.o
 //usage:#define blkid_trivial_usage
 //usage:       "[BLOCKDEV]..."

@@ -112,7 +112,7 @@ pub struct parser_t {
 //config:	system and devices connected to them.
 //config:
 //config:	This version uses sysfs (/sys/bus/usb/devices) only.
-//applet:IF_LSUSB(APPLET_NOEXEC(lsusb, lsusb, BB_DIR_USR_BIN, BB_SUID_DROP, lsusb))
+//applet:IF_LSUSB(APPLET_NOEXEC(lsusb, lsusb, BB_DIR_USR_BIN, SUID_DROP, lsusb))
 //kbuild:lib-$(CONFIG_LSUSB) += lsusb.o
 //usage:#define lsusb_trivial_usage NOUSAGE_STR
 //usage:#define lsusb_full_usage ""

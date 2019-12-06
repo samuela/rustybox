@@ -62,7 +62,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	Discard unused blocks on a mounted filesystem.
-//applet:IF_FSTRIM(APPLET_NOEXEC(fstrim, fstrim, BB_DIR_SBIN, BB_SUID_DROP, fstrim))
+//applet:IF_FSTRIM(APPLET_NOEXEC(fstrim, fstrim, BB_DIR_SBIN, SUID_DROP, fstrim))
 //kbuild:lib-$(CONFIG_FSTRIM) += fstrim.o
 //usage:#define fstrim_trivial_usage
 //usage:       "[OPTIONS] MOUNTPOINT"

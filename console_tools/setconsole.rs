@@ -35,7 +35,7 @@ extern "C" {
 //config:	bool "Enable long options"
 //config:	default y
 //config:	depends on SETCONSOLE && LONG_OPTS
-//applet:IF_SETCONSOLE(APPLET_NOEXEC(setconsole, setconsole, BB_DIR_SBIN, BB_SUID_DROP, setconsole))
+//applet:IF_SETCONSOLE(APPLET_NOEXEC(setconsole, setconsole, BB_DIR_SBIN, SUID_DROP, setconsole))
 //kbuild:lib-$(CONFIG_SETCONSOLE) += setconsole.o
 //usage:#define setconsole_trivial_usage
 //usage:       "[-r] [DEVICE]"

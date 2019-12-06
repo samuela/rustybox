@@ -32,7 +32,7 @@ use libc::FILE;
 //config:	help
 //config:	This program replays a typescript, using timing information
 //config:	given by script -t.
-//applet:IF_SCRIPTREPLAY(APPLET(scriptreplay, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_SCRIPTREPLAY(APPLET(scriptreplay, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SCRIPTREPLAY) += scriptreplay.o
 //usage:#define scriptreplay_trivial_usage
 //usage:       "TIMINGFILE [TYPESCRIPT [DIVISOR]]"

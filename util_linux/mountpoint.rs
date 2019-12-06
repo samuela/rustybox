@@ -42,7 +42,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	mountpoint checks if the directory is a mountpoint.
-//applet:IF_MOUNTPOINT(APPLET_NOEXEC(mountpoint, mountpoint, BB_DIR_BIN, BB_SUID_DROP, mountpoint))
+//applet:IF_MOUNTPOINT(APPLET_NOEXEC(mountpoint, mountpoint, BB_DIR_BIN, SUID_DROP, mountpoint))
 //kbuild:lib-$(CONFIG_MOUNTPOINT) += mountpoint.o
 //usage:#define mountpoint_trivial_usage
 //usage:       "[-q] <[-dn] DIR | -x DEVICE>"

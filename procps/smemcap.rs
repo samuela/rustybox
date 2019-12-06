@@ -67,7 +67,7 @@ pub struct tar_header_t {
 //config:	help
 //config:	smemcap is a tool for capturing process data for smem,
 //config:	a memory usage statistic tool.
-//applet:IF_SMEMCAP(APPLET(smemcap, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_SMEMCAP(APPLET(smemcap, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SMEMCAP) += smemcap.o
 #[derive(Copy, Clone)]
 #[repr(C)]

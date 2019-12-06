@@ -601,7 +601,7 @@ pub const OPT_C: C2RustUnnamed_7 = 1;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//applet:IF_UDHCPC(APPLET(udhcpc, BB_DIR_SBIN, BB_SUID_DROP))
+//applet:IF_UDHCPC(APPLET(udhcpc, BB_DIR_SBIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UDHCPC) += common.o packet.o signalpipe.o socket.o
 //kbuild:lib-$(CONFIG_UDHCPC) += dhcpc.o
 //kbuild:lib-$(CONFIG_FEATURE_UDHCPC_ARPING) += arpping.o

@@ -993,7 +993,7 @@ pub unsafe extern "C" fn rpm_main(
 //config:	default y
 //config:	help
 //config:	Converts a RPM file into a CPIO archive.
-//applet:IF_RPM2CPIO(APPLET(rpm2cpio, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_RPM2CPIO(APPLET(rpm2cpio, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_RPM2CPIO) += rpm.o
 //usage:#define rpm2cpio_trivial_usage
 //usage:       "PACKAGE.rpm"

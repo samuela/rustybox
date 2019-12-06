@@ -151,7 +151,7 @@ pub const NS_MNT_POS: C2RustUnnamed_1 = 0;
 // needs LONG_OPTS: it is awkward to exclude code which handles --propagation
 // and --setgroups based on LONG_OPTS, so instead applet requires LONG_OPTS.
 // depends on !NOMMU: we need fork()
-//applet:IF_UNSHARE(APPLET(unshare, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_UNSHARE(APPLET(unshare, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_UNSHARE) += unshare.o
 //usage:#define unshare_trivial_usage
 //usage:       "[OPTIONS] [PROG [ARGS]]"

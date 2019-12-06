@@ -109,7 +109,7 @@ pub const PSSCAN_PID: C2RustUnnamed = 1;
 //config:	help
 //config:	Show open files in the format of:
 //config:	PID <TAB> /path/to/executable <TAB> /path/to/opened/file
-//applet:IF_LSOF(APPLET(lsof, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_LSOF(APPLET(lsof, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_LSOF) += lsof.o
 //usage:#define lsof_trivial_usage
 //usage:       ""

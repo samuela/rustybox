@@ -214,7 +214,7 @@ pub const ARG_delif: C2RustUnnamed_2 = 3;
 //config:	help
 //config:	Add support for option which prints the current config:
 //config:		show
-//applet:IF_BRCTL(APPLET_NOEXEC(brctl, brctl, BB_DIR_USR_SBIN, BB_SUID_DROP, brctl))
+//applet:IF_BRCTL(APPLET_NOEXEC(brctl, brctl, BB_DIR_USR_SBIN, SUID_DROP, brctl))
 //kbuild:lib-$(CONFIG_BRCTL) += brctl.o
 //usage:#define brctl_trivial_usage
 //usage:       "COMMAND [BRIDGE [ARGS]]"

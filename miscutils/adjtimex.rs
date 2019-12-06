@@ -86,7 +86,7 @@ unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
 //config:	help
 //config:	Adjtimex reads and optionally sets adjustment parameters for
 //config:	the Linux clock adjustment algorithm.
-//applet:IF_ADJTIMEX(APPLET_NOFORK(adjtimex, adjtimex, BB_DIR_SBIN, BB_SUID_DROP, adjtimex))
+//applet:IF_ADJTIMEX(APPLET_NOFORK(adjtimex, adjtimex, BB_DIR_SBIN, SUID_DROP, adjtimex))
 //kbuild:lib-$(CONFIG_ADJTIMEX) += adjtimex.o
 //usage:#define adjtimex_trivial_usage
 //usage:       "[-q] [-o OFF] [-f FREQ] [-p TCONST] [-t TICK]"

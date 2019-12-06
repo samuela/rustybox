@@ -65,7 +65,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //config:		<5>Linux version 2.6.17.4 .....
 //config:		<6>BIOS-provided physical RAM map:
 //config:		<6> BIOS-e820: 0000000000000000 - 000000000009f000 (usable)
-//applet:IF_DMESG(APPLET(dmesg, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_DMESG(APPLET(dmesg, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_DMESG) += dmesg.o
 //usage:#define dmesg_trivial_usage
 //usage:       "[-c] [-n LEVEL] [-s SIZE]"

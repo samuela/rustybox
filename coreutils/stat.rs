@@ -120,7 +120,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //config:	help
 //config:	Without this, stat will not support the '-f' option to display
 //config:	information about filesystem status.
-//applet:IF_STAT(APPLET_NOEXEC(stat, stat, BB_DIR_BIN, BB_SUID_DROP, stat))
+//applet:IF_STAT(APPLET_NOEXEC(stat, stat, BB_DIR_BIN, SUID_DROP, stat))
 //kbuild:lib-$(CONFIG_STAT) += stat.o
 //usage:#define stat_trivial_usage
 //usage:       "[OPTIONS] FILE..."

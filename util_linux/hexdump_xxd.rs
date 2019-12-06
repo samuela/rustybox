@@ -113,7 +113,7 @@ pub struct dumper_t {
 //config:	help
 //config:	The xxd utility is used to display binary data in a readable
 //config:	way that is comparable to the output from most hex editors.
-//applet:IF_XXD(APPLET_NOEXEC(xxd, xxd, BB_DIR_USR_BIN, BB_SUID_DROP, xxd))
+//applet:IF_XXD(APPLET_NOEXEC(xxd, xxd, BB_DIR_USR_BIN, SUID_DROP, xxd))
 //kbuild:lib-$(CONFIG_XXD) += hexdump_xxd.o
 // $ xxd --version
 // xxd V1.10 27oct98 by Juergen Weigert

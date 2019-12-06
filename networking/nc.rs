@@ -1418,9 +1418,9 @@ pub unsafe extern "C" fn nc_main(
 }
 //kbuild:lib-$(CONFIG_NC) += nc.o
 //kbuild:lib-$(CONFIG_NETCAT) += nc.o
-//applet:IF_NC(APPLET(nc, BB_DIR_USR_BIN, BB_SUID_DROP))
+//applet:IF_NC(APPLET(nc, BB_DIR_USR_BIN, SUID_DROP))
 //                 APPLET_ODDNAME:name    main location        suid_type     help
-//applet:IF_NETCAT(APPLET_ODDNAME(netcat, nc,  BB_DIR_USR_BIN, BB_SUID_DROP, nc))
+//applet:IF_NETCAT(APPLET_ODDNAME(netcat, nc,  BB_DIR_USR_BIN, SUID_DROP, nc))
 
 /*
  * nc: mini-netcat - built from the ground up for LRP

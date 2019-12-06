@@ -40,7 +40,7 @@ pub const SCANCODE: C2RustUnnamed = 1;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	This program reports and sets keyboard mode.
-//applet:IF_KBD_MODE(APPLET_NOEXEC(kbd_mode, kbd_mode, BB_DIR_BIN, BB_SUID_DROP, kbd_mode))
+//applet:IF_KBD_MODE(APPLET_NOEXEC(kbd_mode, kbd_mode, BB_DIR_BIN, SUID_DROP, kbd_mode))
 //kbuild:lib-$(CONFIG_KBD_MODE) += kbd_mode.o
 //usage:#define kbd_mode_trivial_usage
 //usage:       "[-a|k|s|u] [-C TTY]"

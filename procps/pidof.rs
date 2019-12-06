@@ -61,7 +61,7 @@ extern "C" {
 //config:	Support '-o PID' for omitting the given pid(s) in output.
 //config:	The special pid %PPID can be used to name the parent process
 //config:	of the pidof, in other words the calling shell or shell script.
-//applet:IF_PIDOF(APPLET(pidof, BB_DIR_BIN, BB_SUID_DROP))
+//applet:IF_PIDOF(APPLET(pidof, BB_DIR_BIN, SUID_DROP))
 /* can't be noexec: can find _itself_ under wrong name, since after fork only,
  * /proc/PID/cmdline and comm are wrong! Can fix comm (prctl(PR_SET_NAME)),
  * but cmdline?

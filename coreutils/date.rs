@@ -126,7 +126,7 @@ much as possible, missed out a lot of bounds checking */
 //config:	With this option off, 'date DATE' and 'date -s DATE' support
 //config:	the same format. With it on, 'date DATE' additionally supports
 //config:	MMDDhhmm[[YY]YY][.ss] format.
-//applet:IF_DATE(APPLET_NOEXEC(date, date, BB_DIR_BIN, BB_SUID_DROP, date))
+//applet:IF_DATE(APPLET_NOEXEC(date, date, BB_DIR_BIN, SUID_DROP, date))
 /* bb_common_bufsiz1 usage here is safe wrt NOEXEC: not expecting it to be zeroed. */
 //kbuild:lib-$(CONFIG_DATE) += date.o
 /* GNU coreutils 6.9 man page:

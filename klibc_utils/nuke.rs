@@ -32,7 +32,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //config:	default y
 //config:	help
 //config:	Alias to "rm -rf".
-//applet:IF_NUKE(APPLET_NOEXEC(nuke, nuke, BB_DIR_BIN, BB_SUID_DROP, nuke))
+//applet:IF_NUKE(APPLET_NOEXEC(nuke, nuke, BB_DIR_BIN, SUID_DROP, nuke))
 //kbuild:lib-$(CONFIG_NUKE) += nuke.o
 //usage:#define nuke_trivial_usage
 //usage:       "DIR..."

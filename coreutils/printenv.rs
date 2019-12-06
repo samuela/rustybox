@@ -23,7 +23,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	printenv is used to print all or part of environment.
-//applet:IF_PRINTENV(APPLET_NOFORK(printenv, printenv, BB_DIR_BIN, BB_SUID_DROP, printenv))
+//applet:IF_PRINTENV(APPLET_NOFORK(printenv, printenv, BB_DIR_BIN, SUID_DROP, printenv))
 //kbuild:lib-$(CONFIG_PRINTENV) += printenv.o
 //usage:#define printenv_trivial_usage
 //usage:       "[VARIABLE]..."

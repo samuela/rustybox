@@ -79,7 +79,7 @@ pub struct parser_t {
 // //config:			bb_error_msg("TOKENS: '%s''%s''%s'", t[0], t[1], t[2]);
 // //config:		}
 // //config:		config_close(p);
-// //applet:IF_PARSE(APPLET(parse, BB_DIR_USR_BIN, BB_SUID_DROP))
+// //applet:IF_PARSE(APPLET(parse, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-y += parse_config.o
 //usage:#define parse_trivial_usage
 //usage:       "[-x] [-n MAXTOKENS] [-m MINTOKENS] [-d DELIMS] [-f FLAGS] FILE..."

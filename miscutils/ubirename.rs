@@ -42,7 +42,7 @@ use crate::librb::size_t;
 //config:	select PLATFORM_LINUX
 //config:	help
 //config:	Utility to rename UBI volumes
-//applet:IF_UBIRENAME(APPLET(ubirename, BB_DIR_USR_SBIN, BB_SUID_DROP))
+//applet:IF_UBIRENAME(APPLET(ubirename, BB_DIR_USR_SBIN, SUID_DROP))
 /* not NOEXEC: if flash operation stalls, use less memory in "hung" process */
 //kbuild:lib-$(CONFIG_UBIRENAME) += ubirename.o
 //usage:#define ubirename_trivial_usage

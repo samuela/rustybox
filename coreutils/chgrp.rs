@@ -18,7 +18,7 @@ extern "C" {
 //config:	default y
 //config:	help
 //config:	chgrp is used to change the group ownership of files.
-//applet:IF_CHGRP(APPLET_NOEXEC(chgrp, chgrp, BB_DIR_BIN, BB_SUID_DROP, chgrp))
+//applet:IF_CHGRP(APPLET_NOEXEC(chgrp, chgrp, BB_DIR_BIN, SUID_DROP, chgrp))
 //kbuild:lib-$(CONFIG_CHGRP) += chgrp.o chown.o
 /* BB_AUDIT SUSv3 defects - none? */
 /* BB_AUDIT GNU defects - unsupported long options. */
