@@ -636,7 +636,7 @@ Functions:"
   eprintln!();
 }
 
-unsafe fn rustybox_main(argv: &[String]) -> i32 {
+unsafe fn rustybox_main(argv: &[&str]) -> i32 {
   if argv.len() == 1 {
     /* Called without arguments */
     print_rustybox_help();
@@ -700,7 +700,7 @@ unsafe fn rustybox_main(argv: &[String]) -> i32 {
   }
 }
 
-unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) -> ! {
+unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[&str]) -> ! {
   let argc = argv.len() as i32;
 
   /* We do not use argv[0]: do not want to repeat massaging of
@@ -728,7 +728,7 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[String]) 
   xfunc_die();
 }
 
-unsafe fn run_applet_and_exit(name: &str, argv: &[String]) -> ! {
+unsafe fn run_applet_and_exit(name: &str, argv: &[&str]) -> ! {
   if name == "rustybox" {
     ::std::process::exit(rustybox_main(argv));
   } else {
@@ -755,7 +755,10 @@ pub unsafe fn main() {
   let argv: Vec<String> = ::std::env::args().collect();
   applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
-  run_applet_and_exit(&ptr_to_str(applet_name), &argv)
+  run_applet_and_exit(
+    &ptr_to_str(applet_name),
+    &argv.iter().map(String::as_ref).collect::<Vec<&str>>(),
+  )
 }
 
 unsafe fn ptr_to_str(strptr: *const libc::c_char) -> String {
@@ -768,7 +771,7 @@ fn str_to_ptr(string: &str) -> *mut libc::c_char {
     .into_raw()
 }
 
-fn str_vec_to_ptrs(strings: &[String]) -> *mut *mut libc::c_char {
+fn str_vec_to_ptrs(strings: &[&str]) -> *mut *mut libc::c_char {
   let mut ret: Vec<*mut libc::c_char> = Vec::new();
   for arg in strings {
     ret.push(str_to_ptr(arg));
