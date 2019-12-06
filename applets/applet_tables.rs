@@ -1057,7 +1057,7 @@ pub enum InstallLoc {
   DIR_ROOT,
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(PartialEq)]
 pub enum SUID {
   BB_SUID_REQUIRE,
   BB_SUID_MAYBE,
@@ -1066,8 +1066,6 @@ pub enum SUID {
 
 // TODO: it's not clear to me how if at all noexec and nofork are actually used
 // in the code. Should they be removed?
-#[derive(Clone)]
-#[repr(C)]
 pub struct bb_applet {
   pub name: &'static str,
   pub main: &'static str,
