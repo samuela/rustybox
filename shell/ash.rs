@@ -9,6 +9,7 @@ use crate::librb::smallint;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
+use libc::abort;
 use libc::atoi;
 use libc::chdir;
 use libc::clock_t;
@@ -148,8 +149,6 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulong;
 
-  #[no_mangle]
-  fn abort() -> !;
   #[no_mangle]
   fn bsearch(
     __key: *const libc::c_void,
