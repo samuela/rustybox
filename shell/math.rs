@@ -1,5 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::size_t;
 use libc;
 use libc::sprintf;
 use libc::strcmp;
@@ -23,7 +24,6 @@ extern "C" {
     size: size_t,
   ) -> *mut libc::c_char;
 }
-use crate::librb::size_t;
 /* math.h - interface to shell math "library" -- this allows shells to share
  *          the implementation of arithmetic $((...)) expansions.
  *

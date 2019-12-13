@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::dup2;
@@ -5,6 +6,7 @@ use libc::ioctl;
 use libc::open;
 use libc::puts;
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strcpy;
 use libc::strrchr;
 extern "C" {
@@ -23,8 +25,6 @@ extern "C" {
   fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>
  *

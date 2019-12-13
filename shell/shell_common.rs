@@ -1,13 +1,18 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::cc_t;
 use libc::free;
 use libc::getopt;
 use libc::isatty;
+use libc::pollfd;
 use libc::printf;
 use libc::puts;
+use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -94,12 +99,7 @@ extern "C" {
 pub type __rlim64_t = libc::c_ulong;
 
 pub type uintptr_t = libc::c_ulong;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;

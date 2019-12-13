@@ -14,6 +14,7 @@ use libc::chdir;
 use libc::clock_t;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::dup2;
 use libc::fprintf;
 use libc::free;
@@ -369,7 +370,6 @@ pub struct utsname {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::dirent;
 pub type __jmp_buf = [libc::c_long; 8];
 #[derive(Copy, Clone)]
 #[repr(C)]

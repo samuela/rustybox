@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 extern "C" {
   #[no_mangle]
@@ -9,7 +10,6 @@ extern "C" {
     __flags: libc::c_int,
   ) -> libc::c_int;
 }
-use crate::librb::size_t;
 /* match.h - interface to shell ##/%% matching code */
 //TODO! Why ash.c still uses internal version?!
 pub type C2RustUnnamed = libc::c_uint;
