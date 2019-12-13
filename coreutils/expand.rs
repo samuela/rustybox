@@ -1,6 +1,5 @@
-use crate::librb::size_t;
-
 use crate::libbb::appletlib::applet_name;
+use crate::librb::size_t;
 use libc;
 use libc::fclose;
 use libc::free;

@@ -1,5 +1,7 @@
+use crate::librb::smallint;
 use libc;
 use libc::printf;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -24,8 +26,6 @@ extern "C" {
   static bb_msg_standard_input: [libc::c_char; 0];
 }
 
-use crate::librb::smallint;
-use libc::FILE;
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */

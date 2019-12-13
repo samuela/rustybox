@@ -4,6 +4,7 @@ use libc::close;
 use libc::free;
 use libc::printf;
 use libc::puts;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -34,7 +35,6 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use libc::FILE;
 pub const OPT_c: C2RustUnnamed = 1;
 pub const OPT_d: C2RustUnnamed = 2;
 pub const OPT_i: C2RustUnnamed = 64;

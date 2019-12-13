@@ -1,10 +1,13 @@
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::getenv;
 use libc::lstat;
 use libc::printf;
 use libc::readdir;
+use libc::stat;
+use libc::DIR;
 extern "C" {
 
   #[no_mangle]
@@ -41,9 +44,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct globals {

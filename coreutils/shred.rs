@@ -1,7 +1,11 @@
 use libc;
 use libc::chmod;
 use libc::fstat;
+use libc::mode_t;
+use libc::off64_t;
+use libc::off_t;
 use libc::open;
+use libc::stat;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -26,10 +30,6 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use libc::mode_t;
-use libc::off64_t;
-use libc::off_t;
-use libc::stat;
 pub const OPT_u: C2RustUnnamed = 2;
 pub const OPT_z: C2RustUnnamed = 4;
 pub const OPT_f: C2RustUnnamed = 1;

@@ -1,9 +1,8 @@
+use crate::libbb::appletlib::applet_name;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::closedir;
 use libc::dirent;

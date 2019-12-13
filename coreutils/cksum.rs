@@ -1,6 +1,10 @@
+use crate::librb::size_t;
+use crate::librb::uoff_t;
 use libc;
 use libc::close;
+use libc::off_t;
 use libc::printf;
+use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -28,10 +32,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use crate::librb::uoff_t;
-use libc::off_t;
-use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 

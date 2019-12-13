@@ -3,6 +3,7 @@ use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::free;
 use libc::printf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -41,7 +42,6 @@ extern "C" {
   fn bb_show_usage() -> !;
 }
 
-use libc::FILE;
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
  *

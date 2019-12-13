@@ -1,6 +1,8 @@
+use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -24,9 +26,6 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use libc::FILE;
 /*
  * tac implementation for busybox
  * tac - concatenate and print files in reverse

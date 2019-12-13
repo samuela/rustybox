@@ -1,11 +1,18 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::close;
 use libc::fprintf;
 use libc::fstat;
+use libc::off64_t;
+use libc::off_t;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -81,13 +88,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::off64_t;
-use libc::off_t;
-use libc::ssize_t;
-use libc::stat;
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

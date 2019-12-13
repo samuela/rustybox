@@ -3,6 +3,7 @@ use libc::free;
 use libc::putchar_unlocked;
 use libc::puts;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -19,7 +20,6 @@ extern "C" {
   static mut option_mask32: u32;
 }
 
-use libc::FILE;
 /* writeline outputs the input given, appropriately aligned according to class */
 unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
   let mut flags: libc::c_int = option_mask32 as libc::c_int;

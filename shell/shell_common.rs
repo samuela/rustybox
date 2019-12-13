@@ -1,5 +1,4 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::cc_t;
 use libc::free;

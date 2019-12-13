@@ -1,7 +1,9 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::free;
+use libc::ssize_t;
 extern "C" {
 
   #[no_mangle]
@@ -17,8 +19,6 @@ extern "C" {
   fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 /*
  * Busybox main internal header file
  *

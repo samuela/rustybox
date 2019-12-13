@@ -1,11 +1,15 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::size_t;
 use libc;
 use libc::printf;
 use libc::puts;
 use libc::setutxent;
 use libc::sprintf;
+use libc::stat;
 use libc::strcpy;
 use libc::time;
+use libc::time_t;
+use libc::utmpx;
 extern "C" {
 
   #[no_mangle]
@@ -28,17 +32,12 @@ extern "C" {
 
 }
 
-use crate::librb::size_t;
-
-use libc::stat;
-use libc::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
-use libc::utmpx;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct C2RustUnnamed {

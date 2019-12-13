@@ -5,6 +5,7 @@ use libc::getenv;
 use libc::printf;
 use libc::setmntent;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -52,7 +53,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {
