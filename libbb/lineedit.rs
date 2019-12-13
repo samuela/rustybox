@@ -1,10 +1,14 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
+use crate::librb::signal::sigaction;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::atoi;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::fprintf;
 use libc::free;
@@ -12,19 +16,30 @@ use libc::getenv;
 use libc::geteuid;
 use libc::getpid;
 use libc::lstat;
+use libc::off_t;
 use libc::open;
 use libc::opendir;
+use libc::passwd;
+use libc::pid_t;
 use libc::printf;
 use libc::putchar_unlocked;
 use libc::puts;
 use libc::readdir;
 use libc::rename;
+use libc::sigval;
 use libc::sprintf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
 use libc::strrchr;
 use libc::strstr;
+use libc::termios;
+use libc::time_t;
+use libc::uid_t;
+use libc::DIR;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -198,8 +213,6 @@ extern "C" {
 }
 
 pub type __int64_t = libc::c_long;
-
-use libc::pid_t;
 pub type int64_t = __int64_t;
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -212,16 +225,6 @@ pub type int64_t = __int64_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::dirent;
-use libc::off_t;
-use libc::sigval;
-use libc::ssize_t;
-use libc::stat;
-use libc::time_t;
-use libc::uid_t;
-use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union C2RustUnnamed {
@@ -296,12 +299,7 @@ pub struct C2RustUnnamed_8 {
   pub si_uid: uid_t,
 }
 
-use crate::librb::signal::sigaction;
-use libc::FILE;
 pub type wchar_t = libc::c_int;
-
-use libc::passwd;
-use libc::termios;
 pub type C2RustUnnamed_10 = libc::c_int;
 pub const KEYCODE_BUFFER_SIZE: C2RustUnnamed_10 = 16;
 pub const KEYCODE_CURSOR_POS: C2RustUnnamed_10 = -256;

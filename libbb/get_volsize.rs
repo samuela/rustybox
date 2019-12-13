@@ -1,4 +1,8 @@
+use crate::librb::size_t;
+use crate::librb::uoff_t;
 use libc;
+use libc::off64_t;
+use libc::off_t;
 extern "C" {
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
@@ -15,10 +19,6 @@ extern "C" {
     u: libc::c_ulonglong,
   ) -> libc::c_ulonglong;
 }
-use crate::librb::size_t;
-use crate::librb::uoff_t;
-use libc::off64_t;
-use libc::off_t;
 /*
  * ascii-to-numbers implementations for busybox
  *

@@ -1,6 +1,5 @@
 use libc;
 use libc::free;
-extern "C" {}
 
 #[no_mangle]
 pub unsafe extern "C" fn auto_string(mut str: *mut libc::c_char) -> *mut libc::c_char {

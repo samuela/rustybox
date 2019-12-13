@@ -1,4 +1,5 @@
 use libc;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
@@ -6,7 +7,6 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 }
 
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PRINTABLE_META: C2RustUnnamed = 256;
 pub type C2RustUnnamed_0 = libc::c_uint;

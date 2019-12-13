@@ -1,11 +1,13 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::lstat;
 use libc::opendir;
 use libc::readdir;
+use libc::stat;
+use libc::DIR;
 extern "C" {
 
   #[no_mangle]
@@ -17,9 +19,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;

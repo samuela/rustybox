@@ -1,8 +1,12 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::close;
 use libc::fstat;
 use libc::getpid;
 use libc::open;
+use libc::ssize_t;
+use libc::stat;
 use libc::unlink;
 extern "C" {
 
@@ -24,10 +28,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::stat;
 /*
  * pid file routines
  *

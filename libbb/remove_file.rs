@@ -3,6 +3,7 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::access;
 use libc::closedir;
+use libc::dirent;
 use libc::fprintf;
 use libc::free;
 use libc::isatty;
@@ -11,7 +12,10 @@ use libc::opendir;
 use libc::printf;
 use libc::readdir;
 use libc::rmdir;
+use libc::stat;
 use libc::unlink;
+use libc::DIR;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -31,10 +35,6 @@ extern "C" {
   fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;

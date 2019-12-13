@@ -1,7 +1,9 @@
 use libc;
 use libc::endmntent;
 use libc::setmntent;
+use libc::stat;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -9,8 +11,6 @@ extern "C" {
 
 }
 
-use libc::stat;
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct mntent {

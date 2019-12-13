@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 use libc::open;
 extern "C" {
@@ -13,7 +14,7 @@ extern "C" {
   #[no_mangle]
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
-use crate::librb::size_t;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
 

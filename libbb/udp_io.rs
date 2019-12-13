@@ -1,4 +1,6 @@
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -34,8 +36,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
 pub type socklen_t = __socklen_t;
 #[derive(Copy, Clone)]
 #[repr(C)]

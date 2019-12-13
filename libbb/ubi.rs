@@ -1,6 +1,8 @@
+use crate::librb::size_t;
 use libc;
 use libc::sprintf;
 use libc::sscanf;
+use libc::ssize_t;
 use libc::strcmp;
 extern "C" {
 
@@ -16,8 +18,6 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 #[no_mangle]
 pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {
   let mut ubi_devnum: libc::c_uint = 0;

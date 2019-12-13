@@ -1,9 +1,13 @@
+use crate::librb::size_t;
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::lstat;
 use libc::opendir;
 use libc::readdir;
+use libc::stat;
 use libc::strcpy;
+use libc::DIR;
 extern "C" {
 
   #[no_mangle]
@@ -19,10 +23,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use crate::librb::size_t;
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct arena {

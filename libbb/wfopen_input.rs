@@ -1,4 +1,5 @@
 use libc;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
@@ -313,7 +314,6 @@ extern "C" {
   fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
 }
 
-use libc::FILE;
 /*
  * wfopen_input implementation for busybox
  *

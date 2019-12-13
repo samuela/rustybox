@@ -1,7 +1,8 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::__syscall_slong_t;
 use libc;
 use libc::strchr;
+use libc::time_t;
 use libc::timespec;
 extern "C" {
   #[no_mangle]
@@ -17,8 +18,6 @@ extern "C" {
   #[no_mangle]
   fn bb_show_usage() -> !;
 }
-use crate::librb::__syscall_slong_t;
-use libc::time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct suffix_mult {

@@ -1,11 +1,14 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::ioctl;
 use libc::mknod;
+use libc::mode_t;
+use libc::off_t;
 use libc::open;
 use libc::sprintf;
+use libc::stat;
 extern "C" {
 
   #[no_mangle]
@@ -25,10 +28,6 @@ extern "C" {
   fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
-use crate::librb::size_t;
-use libc::mode_t;
-use libc::off_t;
-use libc::stat;
 pub type __u8 = libc::c_uchar;
 
 /*

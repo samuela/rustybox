@@ -2,6 +2,10 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use libc;
+use libc::gid_t;
+use libc::group;
+use libc::passwd;
+use libc::uid_t;
 extern "C" {
   /* Search for an entry with a matching user ID.  */
   #[no_mangle]
@@ -40,10 +44,6 @@ extern "C" {
   fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use libc::gid_t;
-use libc::group;
-use libc::passwd;
-use libc::uid_t;
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,

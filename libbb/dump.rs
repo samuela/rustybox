@@ -1,11 +1,17 @@
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::atoi;
+use libc::off64_t;
+use libc::off_t;
 use libc::printf;
 use libc::puts;
 use libc::sprintf;
+use libc::stat;
 use libc::strchr;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -53,12 +59,6 @@ extern "C" {
   fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::off64_t;
-use libc::off_t;
-use libc::stat;
-use libc::FILE;
 /* no conversions */
 pub type dump_vflag_t = libc::c_uint;
 pub const WAIT: dump_vflag_t = 3;

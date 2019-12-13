@@ -1,9 +1,9 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::access;
 use libc::free;
 use libc::getenv;
+use libc::stat;
 use libc::strchr;
 extern "C" {
 
@@ -27,7 +27,6 @@ extern "C" {
   ) -> !;
 }
 
-use libc::stat;
 /*
  * Utility routines.
  *

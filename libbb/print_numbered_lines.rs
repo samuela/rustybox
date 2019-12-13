@@ -1,7 +1,9 @@
+use crate::librb::smallint;
 use libc;
 use libc::fclose;
 use libc::free;
 use libc::printf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -15,8 +17,6 @@ extern "C" {
   fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
 }
 
-use crate::librb::smallint;
-use libc::FILE;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct number_state {

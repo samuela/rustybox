@@ -1,3 +1,5 @@
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc;
 use libc::strcmp;
 extern "C" {
@@ -5,8 +7,6 @@ extern "C" {
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
 
 }
-use crate::librb::__compar_fn_t;
-use crate::librb::size_t;
 /*
  * Wrapper for common string vector sorting operation
  *

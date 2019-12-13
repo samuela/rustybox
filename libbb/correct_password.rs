@@ -1,5 +1,7 @@
+use crate::librb::size_t;
 use libc;
 use libc::free;
+use libc::passwd;
 use libc::strcmp;
 extern "C" {
 
@@ -29,8 +31,6 @@ extern "C" {
   ) -> *mut libc::c_char;
 }
 
-use crate::librb::size_t;
-use libc::passwd;
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 

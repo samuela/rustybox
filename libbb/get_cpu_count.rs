@@ -1,6 +1,7 @@
 use libc;
 use libc::fclose;
 use libc::sscanf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -13,7 +14,6 @@ extern "C" {
   fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
 }
 
-use libc::FILE;
 /*
  * Factored out of mpstat/iostat.
  *

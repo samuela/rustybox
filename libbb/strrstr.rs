@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 use libc::strstr;
 extern "C" {
@@ -5,7 +6,7 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
-use crate::librb::size_t;
+
 /*
  * Busybox main internal header file
  *

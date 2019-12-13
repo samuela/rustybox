@@ -1,4 +1,5 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
@@ -20,7 +21,7 @@ extern "C" {
     __errbuf_size: size_t,
   ) -> size_t;
 }
-use crate::librb::size_t;
+
 pub type reg_syntax_t = libc::c_ulong;
 #[derive(Copy, Clone, BitfieldStruct)]
 #[repr(C)]

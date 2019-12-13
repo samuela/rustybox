@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::fclose;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
@@ -11,7 +11,6 @@ extern "C" {
 
 }
 
-use libc::FILE;
 /*
  * Busybox main internal header file
  *

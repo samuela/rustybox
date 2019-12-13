@@ -1,4 +1,6 @@
+use crate::librb::size_t;
 use libc;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -8,8 +10,6 @@ extern "C" {
   fn bb_die_memory_exhausted() -> !;
 }
 
-use crate::librb::size_t;
-use libc::FILE;
 /*
  * Utility routines.
  *

@@ -1,3 +1,4 @@
+use crate::librb::smallint;
 use libc;
 use libc::getenv;
 use libc::strcmp;
@@ -6,7 +7,7 @@ extern "C" {
   #[no_mangle]
   static mut logmode: smallint;
 }
-use crate::librb::smallint;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

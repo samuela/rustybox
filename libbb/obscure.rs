@@ -1,5 +1,7 @@
+use crate::librb::size_t;
 use libc;
 use libc::free;
+use libc::passwd;
 use libc::printf;
 use libc::strchr;
 extern "C" {
@@ -19,8 +21,6 @@ extern "C" {
   fn nuke_str(str: *mut libc::c_char);
 }
 
-use crate::librb::size_t;
-use libc::passwd;
 /*
  * Mini weak password checker implementation for busybox
  *

@@ -1,6 +1,5 @@
 use libc;
 use libc::puts;
-extern "C" {}
 
 use crate::archival::libarchive::bb_archive::file_header_t;
 /*

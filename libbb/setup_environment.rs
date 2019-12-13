@@ -1,6 +1,7 @@
 use libc;
 use libc::chdir;
 use libc::getenv;
+use libc::passwd;
 extern "C" {
 
   #[no_mangle]
@@ -18,7 +19,6 @@ extern "C" {
   static bb_default_login_shell: [libc::c_char; 0];
 }
 
-use libc::passwd;
 /*
  * Busybox main internal header file
  *

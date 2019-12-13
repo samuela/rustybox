@@ -1,14 +1,13 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 /*
  * Busybox main internal header file
  *

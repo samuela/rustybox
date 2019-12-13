@@ -1,6 +1,11 @@
+use crate::librb::md5_ctx_t;
+use crate::librb::sha1_ctx_t;
+use crate::librb::sha256_ctx_t;
+use crate::librb::sha3_ctx_t;
+use crate::librb::sha512_ctx_t;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 extern "C" {
   #[no_mangle]
@@ -10,12 +15,6 @@ extern "C" {
 }
 
 pub type bb__aliased_u64 = u64;
-use crate::librb::md5_ctx_t;
-use crate::librb::sha1_ctx_t;
-use crate::librb::sha256_ctx_t;
-use crate::librb::sha3_ctx_t;
-use crate::librb::sha512_ctx_t;
-use crate::librb::size_t;
 /* Constants for SHA512 from FIPS 180-2:4.2.3.
  * SHA256 constants from FIPS 180-2:4.2.2
  * are the most significant half of first 64 elements

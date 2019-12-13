@@ -1,6 +1,9 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::free;
+use libc::ssize_t;
 use libc::strcpy;
 use libc::syslog;
 extern "C" {
@@ -43,9 +46,6 @@ pub struct __va_list_tag {
   pub reg_save_area: *mut libc::c_void,
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
 pub type va_list = __builtin_va_list;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;

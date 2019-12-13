@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
-
 use libc;
 use libc::pollfd;
 use libc::ssize_t;

@@ -1,3 +1,5 @@
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::strcpy;
 extern "C" {
@@ -48,9 +50,6 @@ pub struct option {
   pub flag: *mut libc::c_int,
   pub val: libc::c_int,
 }
-
-use crate::librb::size_t;
-use crate::librb::smallint;
 pub type va_list = __builtin_va_list;
 #[derive(Copy, Clone)]
 #[repr(C)]

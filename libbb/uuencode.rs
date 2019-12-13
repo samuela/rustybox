@@ -1,6 +1,8 @@
+use crate::librb::size_t;
 use libc;
 use libc::strchr;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
@@ -15,8 +17,6 @@ extern "C" {
   fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-use crate::librb::size_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BASE64_FLAG_NO_STOP_CHAR: C2RustUnnamed = 128;
 pub const BASE64_FLAG_UU_STOP: C2RustUnnamed = 256;
