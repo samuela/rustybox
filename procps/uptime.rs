@@ -88,9 +88,9 @@ pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_ch
     print!("{} day{}, ", updays, if updays != 1 { "s" } else { "" },);
   }
 
-  let mut upminutes = info.uptime / 60;
-  let uphours = (upminutes / 60).wrapping_rem(24);
-  upminutes = upminutes.wrapping_rem(60);
+  let upminutes_total = info.uptime / 60;
+  let uphours = (upminutes_total / 60) % 24;
+  let upminutes = upminutes_total % 60;
   if uphours > 0 {
     print!("{:2}:{:02}", uphours, upminutes);
   } else {
@@ -101,11 +101,11 @@ pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_ch
     ",  {} users,  load average: {}.{:02}, {}.{:02}, {}.{:02}",
     get_users(),
     info.loads[0] >> 16,
-    (info.loads[0] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
+    ((info.loads[0] & ((1 << 16) - 1)) * 100) >> 16,
     info.loads[1] >> 16,
-    (info.loads[1] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
+    ((info.loads[1] & ((1 << 16) - 1)) * 100) >> 16,
     info.loads[2] >> 16,
-    (info.loads[2] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
+    ((info.loads[2] & ((1 << 16) - 1)) * 100) >> 16,
   );
 
   0
