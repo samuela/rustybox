@@ -1,33 +1,13 @@
 use libc;
 use libc::getutxent;
 use libc::localtime;
+use libc::sysinfo;
 use libc::time;
 use libc::time_t;
 
 extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
-}
-
-#[derive(Copy, Clone, Default)]
-#[repr(C)]
-pub struct sysinfo {
-  pub uptime: libc::c_long,
-  pub loads: [libc::c_ulong; 3],
-  pub totalram: libc::c_ulong,
-  pub freeram: libc::c_ulong,
-  pub sharedram: libc::c_ulong,
-  pub bufferram: libc::c_ulong,
-  pub totalswap: libc::c_ulong,
-  pub freeswap: libc::c_ulong,
-  pub procs: libc::c_ushort,
-  pub pad: libc::c_ushort,
-  pub totalhigh: libc::c_ulong,
-  pub freehigh: libc::c_ulong,
-  pub mem_unit: libc::c_uint,
-  pub _f: [libc::c_char; 0],
 }
 
 fn get_secs() -> time_t {
@@ -58,10 +38,25 @@ pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_ch
 
   let mut current_secs = get_secs();
 
-  let mut info = Default::default();
+  let mut info = sysinfo {
+    uptime: 0,
+    loads: [0; 3],
+    totalram: 0,
+    freeram: 0,
+    sharedram: 0,
+    bufferram: 0,
+    totalswap: 0,
+    freeswap: 0,
+    procs: 0,
+    pad: 0,
+    totalhigh: 0,
+    freehigh: 0,
+    mem_unit: 0,
+    _f: [0; 0],
+  };
   unsafe {
     sysinfo(&mut info);
-  }
+  };
 
   if opts != 0 {
     // -s
