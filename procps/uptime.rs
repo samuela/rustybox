@@ -3,26 +3,21 @@ use libc::getutxent;
 use libc::localtime;
 use libc::sysinfo;
 use libc::time;
-use libc::time_t;
 
 extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 
-fn get_secs() -> time_t {
-  unsafe { time(std::ptr::null_mut()) }
-}
+// When reading the utmp entries with getuxent, this identifies
+// a user entry.
+const UTMP_USER_PROCESS: libc::c_short = 7;
 
 fn get_users() -> u32 {
   let mut users = 0;
   unsafe {
-    loop {
-      let ut = getutxent();
-      if ut.is_null() {
-        break;
-      }
-      if (*ut).ut_type == 7 && (*ut).ut_user[0] != 0 {
+    while let Some(ut) = getutxent().as_mut() {
+      if ut.ut_type == UTMP_USER_PROCESS && ut.ut_user[0] != 0 {
         users += 1
       }
     }
@@ -36,7 +31,7 @@ fn get_users() -> u32 {
 pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int {
   let opts = unsafe { getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char) };
 
-  let mut current_secs = get_secs();
+  let mut current_secs = unsafe { time(std::ptr::null_mut()) };
 
   let mut info = sysinfo {
     uptime: 0,
