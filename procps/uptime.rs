@@ -1,38 +1,21 @@
 use libc;
+use libc::getutxent;
+use libc::localtime;
 use libc::printf;
 use libc::time;
-extern "C" {
 
-  #[no_mangle]
-  fn localtime(__timer: *const time_t) -> *mut tm;
-  #[no_mangle]
-  fn getutxent() -> *mut utmpx;
+extern "C" {
   #[no_mangle]
   fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use libc::time_t;
-use libc::tm;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __exit_status {
-  pub e_termination: libc::c_short,
-  pub e_exit: libc::c_short,
-}
-use libc::utmpx;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct C2RustUnnamed {
-  pub tv_sec: i32,
-  pub tv_usec: i32,
-}
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct sysinfo {
   pub uptime: __kernel_long_t,
@@ -57,78 +40,63 @@ pub unsafe extern "C" fn uptime_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut updays: libc::c_uint = 0;
-  let mut uphours: libc::c_uint = 0;
-  let mut upminutes: libc::c_uint = 0;
-  let mut opts: libc::c_uint = 0;
-  let mut info: sysinfo = sysinfo {
-    uptime: 0,
-    loads: [0; 3],
-    totalram: 0,
-    freeram: 0,
-    sharedram: 0,
-    bufferram: 0,
-    totalswap: 0,
-    freeswap: 0,
-    procs: 0,
-    pad: 0,
-    totalhigh: 0,
-    freehigh: 0,
-    mem_unit: 0,
-    _f: [0; 0],
-  };
-  let mut current_time: *mut tm = 0 as *mut tm;
-  let mut current_secs: time_t = 0;
-  opts = getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char);
+  let opts = getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char);
+
+  let mut current_secs = 0;
   time(&mut current_secs);
+
+  let mut info = Default::default();
   sysinfo(&mut info);
+
   if opts != 0 {
     // -s
     current_secs -= info.uptime
   }
-  current_time = localtime(&mut current_secs);
+
+  let mut current_time = *localtime(&mut current_secs);
   if opts != 0 {
     // -s
-    printf(
-      b"%04u-%02u-%02u %02u:%02u:%02u\n\x00" as *const u8 as *const libc::c_char,
-      (*current_time).tm_year + 1900i32,
-      (*current_time).tm_mon + 1i32,
-      (*current_time).tm_mday,
-      (*current_time).tm_hour,
-      (*current_time).tm_min,
-      (*current_time).tm_sec,
+    println!(
+      "{:04}-{:02}-{:02} {:02}:{:02}:{:02}",
+      current_time.tm_year + 1900,
+      current_time.tm_mon + 1,
+      current_time.tm_mday,
+      current_time.tm_hour,
+      current_time.tm_min,
+      current_time.tm_sec,
     );
     /* The above way of calculating boot time is wobbly,
      * info.uptime has only 1 second precision, which makes
      * "uptime -s" wander +- one second.
      * /proc/uptime may be better, it has 0.01s precision.
      */
-    return 0i32;
+    return 0;
   }
+
   printf(
     b" %02u:%02u:%02u up \x00" as *const u8 as *const libc::c_char,
-    (*current_time).tm_hour,
-    (*current_time).tm_min,
-    (*current_time).tm_sec,
+    current_time.tm_hour,
+    current_time.tm_min,
+    current_time.tm_sec,
   );
-  updays = (info.uptime as libc::c_uint).wrapping_div((60i32 * 60i32 * 24i32) as libc::c_uint);
-  if updays != 0i32 as libc::c_uint {
+
+  let updays = info.uptime.wrapping_div(60 * 60 * 24);
+  if updays != 0 {
     printf(
       b"%u day%s, \x00" as *const u8 as *const libc::c_char,
       updays,
-      if updays != 1i32 as libc::c_uint {
+      if updays != 1 {
         b"s\x00" as *const u8 as *const libc::c_char
       } else {
         b"\x00" as *const u8 as *const libc::c_char
       },
     );
   }
-  upminutes = (info.uptime as libc::c_uint).wrapping_div(60i32 as libc::c_uint);
-  uphours = upminutes
-    .wrapping_div(60i32 as libc::c_uint)
-    .wrapping_rem(24i32 as libc::c_uint);
-  upminutes = upminutes.wrapping_rem(60i32 as libc::c_uint);
-  if uphours != 0i32 as libc::c_uint {
+
+  let mut upminutes = info.uptime.wrapping_div(60);
+  let uphours = upminutes.wrapping_div(60).wrapping_rem(24);
+  upminutes = upminutes.wrapping_rem(60);
+  if uphours != 0 {
     printf(
       b"%2u:%02u\x00" as *const u8 as *const libc::c_char,
       uphours,
@@ -137,21 +105,23 @@ pub unsafe extern "C" fn uptime_main(
   } else {
     printf(b"%u min\x00" as *const u8 as *const libc::c_char, upminutes);
   }
-  let mut ut: *mut utmpx = 0 as *mut utmpx;
-  let mut users: libc::c_uint = 0i32 as libc::c_uint;
+
+  let mut users = 0;
   loop {
-    ut = getutxent();
+    let ut = getutxent();
     if ut.is_null() {
       break;
     }
-    if (*ut).ut_type as libc::c_int == 7i32 && (*ut).ut_user[0] as libc::c_int != '\u{0}' as i32 {
-      users = users.wrapping_add(1)
+    if (*ut).ut_type == 7 && (*ut).ut_user[0] as libc::c_int != '\u{0}' as i32 {
+      users += 1
     }
   }
+
   printf(
     b",  %u users\x00" as *const u8 as *const libc::c_char,
     users,
   );
+
   printf(
     b",  load average: %u.%02u, %u.%02u, %u.%02u\n\x00" as *const u8 as *const libc::c_char,
     (info.loads[0] >> 16i32) as libc::c_uint,
@@ -167,5 +137,6 @@ pub unsafe extern "C" fn uptime_main(
       .wrapping_mul(100i32 as libc::c_ulong)
       >> 16i32) as libc::c_uint,
   );
-  return 0i32;
+
+  0
 }
