@@ -33,24 +33,10 @@ pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_ch
 
   let mut current_secs = unsafe { time(std::ptr::null_mut()) };
 
-  let mut info = sysinfo {
-    uptime: 0,
-    loads: [0; 3],
-    totalram: 0,
-    freeram: 0,
-    sharedram: 0,
-    bufferram: 0,
-    totalswap: 0,
-    freeswap: 0,
-    procs: 0,
-    pad: 0,
-    totalhigh: 0,
-    freehigh: 0,
-    mem_unit: 0,
-    _f: [0; 0],
-  };
-  unsafe {
+  let mut info = unsafe {
+    let mut info: sysinfo = std::mem::zeroed();
     sysinfo(&mut info);
+    info
   };
 
   if opts != 0 {
