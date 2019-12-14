@@ -1,8 +1,8 @@
 use libc;
 use libc::getutxent;
 use libc::localtime;
-use libc::printf;
 use libc::time;
+use libc::time_t;
 
 extern "C" {
   #[no_mangle]
@@ -11,49 +11,67 @@ extern "C" {
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-pub type __u16 = libc::c_ushort;
-pub type u32 = libc::c_uint;
-pub type __kernel_long_t = libc::c_long;
-pub type __kernel_ulong_t = libc::c_ulong;
 #[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct sysinfo {
-  pub uptime: __kernel_long_t,
-  pub loads: [__kernel_ulong_t; 3],
-  pub totalram: __kernel_ulong_t,
-  pub freeram: __kernel_ulong_t,
-  pub sharedram: __kernel_ulong_t,
-  pub bufferram: __kernel_ulong_t,
-  pub totalswap: __kernel_ulong_t,
-  pub freeswap: __kernel_ulong_t,
-  pub procs: __u16,
-  pub pad: __u16,
-  pub totalhigh: __kernel_ulong_t,
-  pub freehigh: __kernel_ulong_t,
-  pub mem_unit: u32,
+  pub uptime: libc::c_long,
+  pub loads: [libc::c_ulong; 3],
+  pub totalram: libc::c_ulong,
+  pub freeram: libc::c_ulong,
+  pub sharedram: libc::c_ulong,
+  pub bufferram: libc::c_ulong,
+  pub totalswap: libc::c_ulong,
+  pub freeswap: libc::c_ulong,
+  pub procs: libc::c_ushort,
+  pub pad: libc::c_ushort,
+  pub totalhigh: libc::c_ulong,
+  pub freehigh: libc::c_ulong,
+  pub mem_unit: libc::c_uint,
   pub _f: [libc::c_char; 0],
 }
+
+fn get_secs() -> time_t {
+  unsafe { time(std::ptr::null_mut()) }
+}
+
+fn get_users() -> u32 {
+  let mut users = 0;
+  unsafe {
+    loop {
+      let ut = getutxent();
+      if ut.is_null() {
+        break;
+      }
+      if (*ut).ut_type == 7 && (*ut).ut_user[0] != 0 {
+        users += 1
+      }
+    }
+  }
+  users
+}
+
 /* nr of bits of precision */
 /* 1.0 as fixed-point */
 #[no_mangle]
-pub unsafe extern "C" fn uptime_main(
+pub extern "C" fn uptime_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let opts = getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char);
+  let opts = unsafe { getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char) };
 
-  let mut current_secs = 0;
-  time(&mut current_secs);
+  let mut current_secs = get_secs();
 
   let mut info = Default::default();
-  sysinfo(&mut info);
+  unsafe {
+    sysinfo(&mut info);
+  }
 
   if opts != 0 {
     // -s
     current_secs -= info.uptime
   }
 
-  let mut current_time = *localtime(&mut current_secs);
+  let mut current_time = unsafe { *localtime(&mut current_secs) };
   if opts != 0 {
     // -s
     println!(
@@ -73,69 +91,34 @@ pub unsafe extern "C" fn uptime_main(
     return 0;
   }
 
-  printf(
-    b" %02u:%02u:%02u up \x00" as *const u8 as *const libc::c_char,
-    current_time.tm_hour,
-    current_time.tm_min,
-    current_time.tm_sec,
+  print!(
+    " {:02}:{:02}:{:02} up ",
+    current_time.tm_hour, current_time.tm_min, current_time.tm_sec,
   );
 
-  let updays = info.uptime.wrapping_div(60 * 60 * 24);
-  if updays != 0 {
-    printf(
-      b"%u day%s, \x00" as *const u8 as *const libc::c_char,
-      updays,
-      if updays != 1 {
-        b"s\x00" as *const u8 as *const libc::c_char
-      } else {
-        b"\x00" as *const u8 as *const libc::c_char
-      },
-    );
+  let updays = info.uptime / (60 * 60 * 24);
+  if updays > 0 {
+    print!("{} day{}, ", updays, if updays != 1 { "s" } else { "" },);
   }
 
-  let mut upminutes = info.uptime.wrapping_div(60);
-  let uphours = upminutes.wrapping_div(60).wrapping_rem(24);
+  let mut upminutes = info.uptime / 60;
+  let uphours = (upminutes / 60).wrapping_rem(24);
   upminutes = upminutes.wrapping_rem(60);
-  if uphours != 0 {
-    printf(
-      b"%2u:%02u\x00" as *const u8 as *const libc::c_char,
-      uphours,
-      upminutes,
-    );
+  if uphours > 0 {
+    print!("{:2}:{:02}", uphours, upminutes);
   } else {
-    printf(b"%u min\x00" as *const u8 as *const libc::c_char, upminutes);
+    print!("{} min", upminutes);
   }
 
-  let mut users = 0;
-  loop {
-    let ut = getutxent();
-    if ut.is_null() {
-      break;
-    }
-    if (*ut).ut_type == 7 && (*ut).ut_user[0] as libc::c_int != '\u{0}' as i32 {
-      users += 1
-    }
-  }
-
-  printf(
-    b",  %u users\x00" as *const u8 as *const libc::c_char,
-    users,
-  );
-
-  printf(
-    b",  load average: %u.%02u, %u.%02u, %u.%02u\n\x00" as *const u8 as *const libc::c_char,
-    (info.loads[0] >> 16i32) as libc::c_uint,
-    ((info.loads[0] & ((1i32 << 16i32) - 1i32) as libc::c_ulong)
-      .wrapping_mul(100i32 as libc::c_ulong)
-      >> 16i32) as libc::c_uint,
-    (info.loads[1] >> 16i32) as libc::c_uint,
-    ((info.loads[1] & ((1i32 << 16i32) - 1i32) as libc::c_ulong)
-      .wrapping_mul(100i32 as libc::c_ulong)
-      >> 16i32) as libc::c_uint,
-    (info.loads[2] >> 16i32) as libc::c_uint,
-    ((info.loads[2] & ((1i32 << 16i32) - 1i32) as libc::c_ulong)
-      .wrapping_mul(100i32 as libc::c_ulong)
-      >> 16i32) as libc::c_uint,
+  println!(
+    ",  {} users,  load average: {}.{:02}, {}.{:02}, {}.{:02}",
+    get_users(),
+    info.loads[0] >> 16,
+    (info.loads[0] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
+    info.loads[1] >> 16,
+    (info.loads[1] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
+    info.loads[2] >> 16,
+    (info.loads[2] & ((1 << 16) - 1)).wrapping_mul(100) >> 16,
   );
 
   0
