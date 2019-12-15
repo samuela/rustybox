@@ -226,7 +226,7 @@ unsafe extern "C" fn encode_n_base64(
   mut len: size_t,
 ) {
   let mut src: [libc::c_char; 57] = [0; 57];
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   fp = fp;
   let mut dst_buf: [libc::c_char; 77] = [0; 77];
   if !fname.is_null() {

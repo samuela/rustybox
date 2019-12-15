@@ -654,7 +654,7 @@ pub unsafe extern "C" fn dd_main(
                   & FLAG_SWAB as libc::c_int
                   != 0
                 {
-                  let mut p16: *mut u16 = 0 as *mut u16;
+                  let mut p16: *mut u16 = std::ptr::null_mut();
                   let mut n2: ssize_t = 0;
                   /* Our code allows only last read to be odd-sized */
                   if Z.prev_read_size & 1 != 0 {

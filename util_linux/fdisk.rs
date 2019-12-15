@@ -800,7 +800,7 @@ unsafe extern "C" fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
     fdisk_fatal(b"can\'t read from %s\x00" as *const u8 as *const libc::c_char);
   }
   (*pe).changed = 0i32 as libc::c_char;
-  (*pe).ext_pointer = 0 as *mut partition;
+  (*pe).ext_pointer = std::ptr::null_mut();
   (*pe).part_table = (*pe).ext_pointer;
 }
 unsafe extern "C" fn get_partition_start_from_dev_start(mut pe: *const pte) -> sector_t {
@@ -1006,7 +1006,7 @@ unsafe extern "C" fn set_partition(
   mut stop: sector_t,
   mut sysid: libc::c_int,
 ) {
-  let mut p: *mut partition = 0 as *mut partition;
+  let mut p: *mut partition = std::ptr::null_mut();
   let mut offset: sector_t = 0;
   if doext != 0 {
     p = (*ptr_to_globals).ptes[i as usize].ext_pointer;
@@ -1068,9 +1068,9 @@ unsafe extern "C" fn warn_cylinders() {
 }
 unsafe extern "C" fn read_extended(mut ext: libc::c_int) {
   let mut i: libc::c_int = 0;
-  let mut pex: *mut pte = 0 as *mut pte;
-  let mut p: *mut partition = 0 as *mut partition;
-  let mut q: *mut partition = 0 as *mut partition;
+  let mut pex: *mut pte = std::ptr::null_mut();
+  let mut p: *mut partition = std::ptr::null_mut();
+  let mut q: *mut partition = std::ptr::null_mut();
   (*ptr_to_globals).ext_index = ext;
   pex = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(ext as isize) as *mut pte;
   (*pex).ext_pointer = (*pex).part_table;
@@ -1258,7 +1258,7 @@ unsafe extern "C" fn get_kernel_geometry() {
 unsafe extern "C" fn get_partition_table_geometry() {
   let mut bufp: *const libc::c_uchar =
     (*ptr_to_globals).MBRbuffer.as_mut_ptr() as *const libc::c_uchar;
-  let mut p: *mut partition = 0 as *mut partition;
+  let mut p: *mut partition = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut h: libc::c_int = 0;
   let mut s: libc::c_int = 0;
@@ -1377,7 +1377,7 @@ unsafe extern "C" fn get_boot(mut what: action) -> libc::c_int {
         (i as libc::c_ulong).wrapping_mul(::std::mem::size_of::<partition>() as libc::c_ulong)
           as isize,
       ) as *mut partition;
-    (*pe).ext_pointer = 0 as *mut partition;
+    (*pe).ext_pointer = std::ptr::null_mut();
     (*pe).offset_from_dev_start = 0i32 as sector_t;
     (*pe).sectorbuffer = (*ptr_to_globals).MBRbuffer.as_mut_ptr();
     (*pe).changed = (what as libc::c_uint == CREATE_EMPTY_DOS as libc::c_int as libc::c_uint)
@@ -1646,7 +1646,7 @@ unsafe extern "C" fn read_int(
   return value;
 }
 unsafe extern "C" fn get_partition(mut warn: libc::c_int, mut max: libc::c_uint) -> libc::c_uint {
-  let mut pe: *mut pte = 0 as *mut pte;
+  let mut pe: *mut pte = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   i = read_int(
     1i32 as sector_t,
@@ -1872,7 +1872,7 @@ unsafe extern "C" fn change_sysid() {
   let mut i: libc::c_int = 0;
   let mut sys: libc::c_int = 0;
   let mut origsys: libc::c_int = 0;
-  let mut p: *mut partition = 0 as *mut partition;
+  let mut p: *mut partition = std::ptr::null_mut();
   /* If sgi_label then don't use get_existing_partition,
   let the user select a partition, since get_existing_partition()
   only works for Linux like partition tables. */
@@ -2113,8 +2113,8 @@ unsafe extern "C" fn fix_chain_of_logicals() {
   let mut ojj: libc::c_int = 0;
   let mut sj: libc::c_int = 0;
   let mut sjj: libc::c_int = 0;
-  let mut pj: *mut partition = 0 as *mut partition;
-  let mut pjj: *mut partition = 0 as *mut partition;
+  let mut pj: *mut partition = std::ptr::null_mut();
+  let mut pjj: *mut partition = std::ptr::null_mut();
   let mut tmp: partition = partition {
     boot_ind: 0,
     head: 0,
@@ -2203,8 +2203,8 @@ unsafe extern "C" fn fix_chain_of_logicals() {
   }
 }
 unsafe extern "C" fn fix_partition_table_order() {
-  let mut pei: *mut pte = 0 as *mut pte;
-  let mut pek: *mut pte = 0 as *mut pte;
+  let mut pei: *mut pte = std::ptr::null_mut();
+  let mut pek: *mut pte = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut k: libc::c_int = 0;
   if wrong_p_order(0 as *mut libc::c_int) == 0 {
@@ -2218,9 +2218,9 @@ unsafe extern "C" fn fix_partition_table_order() {
     }
     /* partition i should have come earlier, move it */
     /* We have to move data in the MBR */
-    let mut pi: *mut partition = 0 as *mut partition;
-    let mut pk: *mut partition = 0 as *mut partition;
-    let mut pe: *mut partition = 0 as *mut partition;
+    let mut pi: *mut partition = std::ptr::null_mut();
+    let mut pk: *mut partition = std::ptr::null_mut();
+    let mut pe: *mut partition = std::ptr::null_mut();
     let mut pbuf: partition = partition {
       boot_ind: 0,
       head: 0,
@@ -2521,7 +2521,7 @@ unsafe extern "C" fn verify() {
   let mut first: Vec<sector_t> = ::std::vec::from_elem(0, vla);
   let vla_0 = (*ptr_to_globals).g_partitions as usize;
   let mut last: Vec<sector_t> = ::std::vec::from_elem(0, vla_0);
-  let mut p: *mut partition = 0 as *mut partition;
+  let mut p: *mut partition = std::ptr::null_mut();
   if warn_geometry() != 0 {
     return;
   }
@@ -3234,7 +3234,7 @@ unsafe extern "C" fn xselect() {
 }
 /* ADVANCED mode */
 unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> libc::c_int {
-  let mut procf: *mut FILE = 0 as *mut FILE;
+  let mut procf: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 100] = [0; 100];
   let mut statbuf: stat = std::mem::zeroed();
   let mut is_ide: libc::c_int = 0i32;
@@ -3364,7 +3364,7 @@ unsafe extern "C" fn is_whole_disk(mut disk: *const libc::c_char) -> libc::c_int
 /* for fdisk -l: try all things in /proc/partitions
 that look like a partition name (do not end in a digit) */
 unsafe extern "C" fn list_devs_in_proc_partititons() {
-  let mut procpt: *mut FILE = 0 as *mut FILE;
+  let mut procpt: *mut FILE = std::ptr::null_mut();
   let mut line: [libc::c_char; 100] = [0; 100];
   let mut ptname: [libc::c_char; 100] = [0; 100];
   let mut devname: [libc::c_char; 120] = [0; 120];

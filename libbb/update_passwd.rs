@@ -615,8 +615,8 @@ pub unsafe extern "C" fn update_passwd(
     l_len: 0,
     l_pid: 0,
   };
-  let mut old_fp: *mut FILE = 0 as *mut FILE;
-  let mut new_fp: *mut FILE = 0 as *mut FILE;
+  let mut old_fp: *mut FILE = std::ptr::null_mut();
+  let mut new_fp: *mut FILE = std::ptr::null_mut();
   let mut fnamesfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sfx_char: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name_colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

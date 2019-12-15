@@ -218,7 +218,7 @@ pub unsafe extern "C" fn uudecode_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut src_stream: *mut FILE = 0 as *mut FILE;
+  let mut src_stream: *mut FILE = std::ptr::null_mut();
   let mut outname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   getopt32(
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn uudecode_main(
       unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
     > = None;
     let mut line_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut dst_stream: *mut FILE = 0 as *mut FILE;
+    let mut dst_stream: *mut FILE = std::ptr::null_mut();
     let mut mode: libc::c_int = 0;
     if !is_prefixed_with(
       line,
@@ -318,7 +318,7 @@ pub unsafe extern "C" fn base64_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut src_stream: *mut FILE = 0 as *mut FILE;
+  let mut src_stream: *mut FILE = std::ptr::null_mut();
   let mut opts: libc::c_uint = 0;
   opts = getopt32(argv, b"^d\x00?1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);

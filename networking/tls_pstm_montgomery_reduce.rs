@@ -216,9 +216,9 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
   mut paD: *mut pstm_digit,
   mut paDlen: uint32,
 ) -> int32 {
-  let mut c: *mut pstm_digit = 0 as *mut pstm_digit; //bbox: was int16
-  let mut _c: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpm: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut c: *mut pstm_digit = std::ptr::null_mut(); //bbox: was int16
+  let mut _c: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpm: *mut pstm_digit = std::ptr::null_mut();
   let mut mu: pstm_digit = 0;
   let mut oldused: int32 = 0;
   let mut x: int32 = 0;

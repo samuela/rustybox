@@ -80,7 +80,7 @@ unsafe extern "C" fn paste_files(
         if line.is_null() {
           fclose_if_not_stdin(*files.offset(i as isize));
           let ref mut fresh0 = *files.offset(i as isize);
-          *fresh0 = 0 as *mut FILE;
+          *fresh0 = std::ptr::null_mut();
           active_files -= 1
         } else {
           fputs_unlocked(line, stdout);

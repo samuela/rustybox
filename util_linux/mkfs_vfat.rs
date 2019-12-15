@@ -833,7 +833,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   );
   if *volume_label.offset(0) != 0 {
     // create dir entry for volume_label
-    let mut de: *mut msdos_dir_entry = 0 as *mut msdos_dir_entry;
+    let mut de: *mut msdos_dir_entry = std::ptr::null_mut();
     de = buf as *mut libc::c_void as *mut msdos_dir_entry;
     strncpy(
       (*de).name.as_mut_ptr(),

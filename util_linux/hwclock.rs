@@ -233,7 +233,7 @@ unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
     tv_sec: 0,
     tv_usec: 0,
   };
-  let mut broken: *mut tm = 0 as *mut tm;
+  let mut broken: *mut tm = std::ptr::null_mut();
   let mut tz: timezone = timezone {
     tz_minuteswest: 0,
     tz_dsttime: 0,

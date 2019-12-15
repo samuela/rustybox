@@ -168,7 +168,7 @@ pub union C2RustUnnamed_0 {
 //usage:     "\n	-T	Minimum rtt (default 5 ms, increase for congested hosts)"
 /* debugging */
 unsafe extern "C" fn port_name(mut port: libc::c_uint) -> *const libc::c_char {
-  let mut server: *mut servent = 0 as *mut servent;
+  let mut server: *mut servent = std::ptr::null_mut();
   server = getservbyport(
     ({
       let mut __v: libc::c_ushort = 0;
@@ -210,7 +210,7 @@ pub unsafe extern "C" fn pscan_main(
    * will take N seconds at absolute minimum */
   let mut opt_min_rtt: *const libc::c_char = b"5\x00" as *const u8 as *const libc::c_char; /* -T: default min rtt in msec */
   let mut result_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut lsap: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsap: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut port: libc::c_uint = 0;

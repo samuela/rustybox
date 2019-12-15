@@ -289,7 +289,7 @@ unsafe extern "C" fn add_MANPATH(
     let mut current_block_8: u64;
     while *path != 0 {
       let mut next_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      let mut path_element: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+      let mut path_element: *mut *mut libc::c_char = std::ptr::null_mut();
       next_path = strchr(path, ':' as i32);
       if !next_path.is_null() {
         if next_path == path {
@@ -377,9 +377,9 @@ pub unsafe extern "C" fn man_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut sec_list: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut man_path_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut man_path_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut count_mp: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   let mut not_found: libc::c_int = 0;

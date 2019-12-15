@@ -256,7 +256,7 @@ pub unsafe extern "C" fn pgrep_main(
   let mut sid2match: libc::c_int = 0;
   let mut ppid2match: libc::c_int = 0;
   let mut cmd_last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut proc_0: *mut procps_status_t = 0 as *mut procps_status_t;
+  let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   /* These are initialized to 0 */
   let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
     re_buffer: regex_t {
@@ -334,7 +334,7 @@ pub unsafe extern "C" fn pgrep_main(
   }
   matched_pid = 0i32;
   cmd_last = std::ptr::null_mut::<libc::c_char>();
-  proc_0 = 0 as *mut procps_status_t;
+  proc_0 = std::ptr::null_mut();
   loop {
     proc_0 = procps_scan(proc_0, scan_mask);
     if proc_0.is_null() {

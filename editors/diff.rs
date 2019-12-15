@@ -362,7 +362,7 @@ unsafe extern "C" fn stone(
     y: 0,
     pred: 0,
   };
-  let mut q: *mut cand = 0 as *mut cand;
+  let mut q: *mut cand = std::ptr::null_mut();
   let mut klist: *mut libc::c_int = xzalloc(
     ((n + 2i32) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
@@ -567,10 +567,10 @@ unsafe extern "C" fn create_J(
   mut nlen: *mut libc::c_int,
   mut ix: *mut *mut off_t,
 ) -> *mut libc::c_int {
-  let mut J: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut J: *mut libc::c_int = std::ptr::null_mut();
   let mut slen: [libc::c_int; 2] = [0; 2];
-  let mut class: *mut libc::c_int = 0 as *mut libc::c_int;
-  let mut member: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut class: *mut libc::c_int = std::ptr::null_mut();
+  let mut member: *mut libc::c_int = std::ptr::null_mut();
   let mut nfile: [*mut line; 2] = [0 as *mut line; 2];
   let mut sfile: [*mut line; 2] = [0 as *mut line; 2];
   let mut pref: libc::c_int = 0i32;
@@ -805,13 +805,13 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
     ft_fp: 0 as *mut FILE,
     ft_pos: 0,
   }; 2];
-  let mut vec: *mut vec_t = 0 as *mut vec_t;
+  let mut vec: *mut vec_t = std::ptr::null_mut();
   let mut i: libc::c_int = 1i32;
   let mut j: libc::c_int = 0;
   let mut k: libc::c_int = 0;
   let mut idx: libc::c_int = -1i32;
   let mut anychange: bool = false;
-  let mut J: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut J: *mut libc::c_int = std::ptr::null_mut();
   ft[0].ft_fp = *fp.offset(0);
   ft[1].ft_fp = *fp.offset(1);
   /* note that ft[i].ft_pos is unintitalized, create_J()
@@ -1398,7 +1398,7 @@ pub unsafe extern "C" fn diff_main(
   let mut i: libc::c_int = 0;
   let mut file: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut s_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut L_arg: *mut llist_t = 0 as *mut llist_t;
+  let mut L_arg: *mut llist_t = std::ptr::null_mut();
   let ref mut fresh11 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);

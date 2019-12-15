@@ -152,7 +152,7 @@ unsafe extern "C" fn hash_file(
       input_block_bytes: 0,
     },
   };
-  let mut hash_value: *mut u8 = 0 as *mut u8;
+  let mut hash_value: *mut u8 = std::ptr::null_mut();
   let mut update: Option<
     unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
   > = None;
@@ -307,7 +307,7 @@ unsafe extern "C" fn hash_file(
       count as size_t,
     );
   }
-  hash_value = 0 as *mut u8;
+  hash_value = std::ptr::null_mut();
   if count < 0i32 {
     bb_perror_msg(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -358,7 +358,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
   }
   loop {
     if 1i32 != 0 && flags & 2i32 as libc::c_uint != 0 {
-      let mut pre_computed_stream: *mut FILE = 0 as *mut FILE;
+      let mut pre_computed_stream: *mut FILE = std::ptr::null_mut();
       let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut count_total: libc::c_int = 0i32;
       let mut count_failed: libc::c_int = 0i32;
@@ -368,7 +368,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
         if line.is_null() {
           break;
         }
-        let mut hash_value: *mut u8 = 0 as *mut u8;
+        let mut hash_value: *mut u8 = std::ptr::null_mut();
         let mut filename_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         count_total += 1;
         filename_ptr = strstr(line, b"  \x00" as *const u8 as *const libc::c_char);

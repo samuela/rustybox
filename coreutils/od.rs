@@ -623,7 +623,7 @@ unsafe extern "C" fn check_and_close() {
     }
     fclose_if_not_stdin((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream);
     let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream;
-    *fresh16 = 0 as *mut FILE
+    *fresh16 = std::ptr::null_mut()
   }
   if ferror_unlocked(stdout) != 0 {
     bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
@@ -1577,7 +1577,7 @@ pub unsafe extern "C" fn od_main(
   let mut str_N: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_j: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_S: *const libc::c_char = b"3\x00" as *const u8 as *const libc::c_char;
-  let mut lst_t: *mut llist_t = 0 as *mut llist_t;
+  let mut lst_t: *mut llist_t = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut l_c_m: libc::c_int = 0;
   /* The number of input bytes to skip before formatting and writing.  */

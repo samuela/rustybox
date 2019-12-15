@@ -225,7 +225,7 @@ pub unsafe extern "C" fn cut_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* growable array holding a series of lists */
-  let mut cut_lists: *mut cut_list = 0 as *mut cut_list; /* number of elements in above list */
+  let mut cut_lists: *mut cut_list = std::ptr::null_mut(); /* number of elements in above list */
   let mut nlists: libc::c_uint = 0i32 as libc::c_uint; /* delimiter, default is tab */
   let mut delim: libc::c_char = '\t' as i32 as libc::c_char;
   let mut sopt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

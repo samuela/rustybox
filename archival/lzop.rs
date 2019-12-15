@@ -166,13 +166,13 @@ unsafe extern "C" fn lzo1x_optimize(
   mut out_len: *mut libc::c_uint,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut op: *mut u8 = 0 as *mut u8;
-  let mut ip: *mut u8 = 0 as *mut u8;
+  let mut op: *mut u8 = std::ptr::null_mut();
+  let mut ip: *mut u8 = std::ptr::null_mut();
   let mut t: libc::c_uint = 0;
-  let mut m_pos: *mut u8 = 0 as *mut u8;
+  let mut m_pos: *mut u8 = std::ptr::null_mut();
   let ip_end: *mut u8 = in_0.offset(in_len as isize);
   let op_end: *mut u8 = out.offset(*out_len as isize);
-  let mut litp: *mut u8 = 0 as *mut u8;
+  let mut litp: *mut u8 = std::ptr::null_mut();
   let mut lit: libc::c_uint = 0i32 as libc::c_uint;
   let mut next_lit: libc::c_uint = (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
@@ -847,7 +847,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   ) as *mut u8;
   let mut d_adler32: u32 = 1i32 as u32;
   let mut d_crc32: u32 = 0i32 as u32;
-  let mut wrk_mem: *mut u8 = 0 as *mut u8;
+  let mut wrk_mem: *mut u8 = std::ptr::null_mut();
   /* Only these methods are possible, see lzo_set_method():
    * -1:    M_LZO1X_1_15
    * -2..6: M_LZO1X_1
@@ -1138,14 +1138,14 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
   let mut d_adler32: u32 = 1i32 as u32;
   let mut c_crc32: u32 = 0i32 as u32;
   let mut d_crc32: u32 = 0i32 as u32;
-  let mut b1: *mut u8 = 0 as *mut u8;
+  let mut b1: *mut u8 = std::ptr::null_mut();
   let mut mcs_block_size: u32 = block_size
     .wrapping_add(block_size.wrapping_div(16i32 as libc::c_uint))
     .wrapping_add(64i32 as libc::c_uint)
     .wrapping_add(3i32 as libc::c_uint);
-  let mut b2: *mut u8 = 0 as *mut u8;
+  let mut b2: *mut u8 = std::ptr::null_mut();
   loop {
-    let mut dst: *mut u8 = 0 as *mut u8;
+    let mut dst: *mut u8 = std::ptr::null_mut();
     /* read uncompressed block size */
     dst_len = read32();
     /* exit if last block */
@@ -1174,7 +1174,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
     if dst_len > block_size {
       if !b2.is_null() {
         free(b2 as *mut libc::c_void);
-        b2 = 0 as *mut u8
+        b2 = std::ptr::null_mut()
       }
       block_size = dst_len;
       mcs_block_size = block_size

@@ -79,8 +79,8 @@ pub unsafe extern "C" fn devmem_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut map_base: *mut libc::c_void = 0 as *mut libc::c_void; /* for compiler */
-  let mut virt_addr: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut map_base: *mut libc::c_void = std::ptr::null_mut(); /* for compiler */
+  let mut virt_addr: *mut libc::c_void = std::ptr::null_mut();
   let mut read_result: u64 = 0;
   let mut writeval: u64 = 0;
   writeval = writeval;

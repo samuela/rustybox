@@ -543,7 +543,7 @@ unsafe extern "C" fn wait_for_reply(
 unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
   let mut len: libc::c_int = 0;
   let mut res: libc::c_int = 0;
-  let mut out: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut out: *mut libc::c_void = std::ptr::null_mut();
   /* Payload */
   if (*(*ptr_to_globals).dest_lsa).u.sa.sa_family as libc::c_int == 10i32 {
     let mut pkt: *mut outdata6_t = (*ptr_to_globals).outdata as *mut outdata6_t;
@@ -814,7 +814,7 @@ unsafe extern "C" fn packet4_ok(
     hip = &(*icp).icmp_dun.id_ip.idi_ip;
     hlen = ((*hip).ip_hl() as libc::c_int) << 2i32;
     if option_mask32 & OPT_USE_ICMP as libc::c_int as libc::c_uint != 0 {
-      let mut hicmp: *mut icmp = 0 as *mut icmp;
+      let mut hicmp: *mut icmp = std::ptr::null_mut();
       /* XXX */
       if type_0 as libc::c_int == 0i32
         && (*icp).icmp_hun.ih_idseq.icd_id as libc::c_int
@@ -978,8 +978,8 @@ unsafe extern "C" fn packet_ok(
   type_0 = (*icp).icmp6_type;
   code = (*icp).icmp6_code;
   if type_0 as libc::c_int == 3i32 && code as libc::c_int == 0i32 || type_0 as libc::c_int == 1i32 {
-    let mut hip: *mut ip6_hdr = 0 as *mut ip6_hdr;
-    let mut up: *mut udphdr = 0 as *mut udphdr;
+    let mut hip: *mut ip6_hdr = std::ptr::null_mut();
+    let mut up: *mut udphdr = std::ptr::null_mut();
     let mut nexthdr: libc::c_int = 0;
     hip = icp.offset(1) as *mut ip6_hdr;
     up = hip.offset(1) as *mut udphdr;
@@ -989,7 +989,7 @@ unsafe extern "C" fn packet_ok(
       up = up.offset(1)
     }
     if nexthdr == IPPROTO_UDP as libc::c_int {
-      let mut pkt: *mut outdata6_t = 0 as *mut outdata6_t;
+      let mut pkt: *mut outdata6_t = std::ptr::null_mut();
       pkt = up.offset(1) as *mut outdata6_t;
       if ({
         let mut __v: libc::c_uint = 0;
@@ -1039,7 +1039,7 @@ unsafe extern "C" fn packet_ok(
     }
   }
   if option_mask32 & OPT_VERBOSE as libc::c_int as libc::c_uint != 0 {
-    let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+    let mut p: *mut libc::c_uchar = std::ptr::null_mut();
     let mut pa1: [libc::c_char; 64] = [0; 64];
     let mut pa2: [libc::c_char; 64] = [0; 64];
     let mut i: libc::c_int = 0;
@@ -1175,9 +1175,9 @@ unsafe extern "C" fn common_traceroute_main(
   let mut af: sa_family_t = 0;
   let mut ttl: libc::c_int = 0;
   let mut seq: libc::c_int = 0;
-  let mut from_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut lastaddr: *mut sockaddr = 0 as *mut sockaddr;
-  let mut to: *mut sockaddr = 0 as *mut sockaddr;
+  let mut from_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut lastaddr: *mut sockaddr = std::ptr::null_mut();
+  let mut to: *mut sockaddr = std::ptr::null_mut();
   let ref mut fresh37 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -1411,7 +1411,7 @@ unsafe extern "C" fn common_traceroute_main(
     free(source_lsa as *mut libc::c_void);
   } else if af as libc::c_int == 10i32 {
     //TODO: why we don't do it for IPv4?
-    let mut source_lsa_0: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+    let mut source_lsa_0: *mut len_and_sockaddr = std::ptr::null_mut();
     let mut probe_fd: libc::c_int = xsocket(af as libc::c_int, SOCK_DGRAM as libc::c_int, 0i32);
     if op & OPT_DEVICE as libc::c_int != 0 {
       setsockopt_bindtodevice(probe_fd, device);
@@ -1520,7 +1520,7 @@ unsafe extern "C" fn common_traceroute_main(
       let mut t1: libc::c_uint = 0;
       let mut t2: libc::c_uint = 0;
       let mut left_ms: libc::c_int = 0;
-      let mut ip: *mut ip = 0 as *mut ip;
+      let mut ip: *mut ip = std::ptr::null_mut();
       fflush_all();
       if probe != 0i32 && pausemsecs > 0i32 as libc::c_uint {
         usleep(pausemsecs.wrapping_mul(1000i32 as libc::c_uint));

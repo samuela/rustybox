@@ -528,9 +528,9 @@ unsafe extern "C" fn add_interface(
   mut ilist: *mut iface_list,
   mut name: *mut libc::c_char,
 ) -> *mut interface {
-  let mut ife: *mut interface = 0 as *mut interface;
-  let mut nextp: *mut *mut interface = 0 as *mut *mut interface;
-  let mut new: *mut interface = 0 as *mut interface;
+  let mut ife: *mut interface = std::ptr::null_mut();
+  let mut nextp: *mut *mut interface = std::ptr::null_mut();
+  let mut new: *mut interface = std::ptr::null_mut();
   ife = (*ilist).int_last;
   while !ife.is_null() {
     let mut n: libc::c_int = strcmp((*ife).name.as_mut_ptr(), name);
@@ -667,7 +667,7 @@ unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
       ifcu_buf: std::ptr::null_mut::<libc::c_char>(),
     },
   };
-  let mut ifr: *mut ifreq = 0 as *mut ifreq;
+  let mut ifr: *mut ifreq = std::ptr::null_mut();
   let mut n: libc::c_int = 0;
   let mut skfd: libc::c_int = 0;
   ifc.ifc_ifcu.ifcu_buf = 0 as __caddr_t;
@@ -711,9 +711,9 @@ unsafe extern "C" fn if_readlist_proc(
   mut ilist: *mut iface_list,
   mut ifname: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut fh: *mut FILE = 0 as *mut FILE;
+  let mut fh: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 512] = [0; 512];
-  let mut ife: *mut interface = 0 as *mut interface;
+  let mut ife: *mut interface = std::ptr::null_mut();
   let mut procnetdev_vsn: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
   fh = fopen_or_warn(
@@ -1060,7 +1060,7 @@ unsafe extern "C" fn print_bytes_scaled(mut ull: libc::c_ulonglong, mut end: *co
 }
 /* reserved address space */
 unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut addr6: [libc::c_char; 40] = [0; 40];
   let mut devname: [libc::c_char; 21] = [0; 21];
   let mut sap: sockaddr_in6 = sockaddr_in6 {
@@ -1385,14 +1385,14 @@ unsafe extern "C" fn do_if_print(
 #[no_mangle]
 pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
-  let mut ife: *mut interface = 0 as *mut interface;
+  let mut ife: *mut interface = std::ptr::null_mut();
   let mut res: libc::c_int = 0;
   let mut ilist: iface_list = iface_list {
     int_list: 0 as *mut interface,
     int_last: 0 as *mut interface,
   };
-  ilist.int_list = 0 as *mut interface;
-  ilist.int_last = 0 as *mut interface;
+  ilist.int_list = std::ptr::null_mut();
+  ilist.int_last = std::ptr::null_mut();
   if_readlist(
     &mut ilist,
     if ifname != 1i32 as intptr_t as *mut libc::c_char {

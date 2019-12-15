@@ -246,7 +246,7 @@ pub unsafe extern "C" fn last_main(
 ) -> libc::c_int {
   let mut ut: utmpx = std::mem::zeroed();
   let mut filename: *const libc::c_char = b"/var/log/wtmp\x00" as *const u8 as *const libc::c_char;
-  let mut zlist: *mut llist_t = 0 as *mut llist_t;
+  let mut zlist: *mut llist_t = std::ptr::null_mut();
   let mut pos: off_t = 0;
   let mut start_time: time_t = 0;
   let mut boot_time: time_t = 0;
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn last_main(
   time(&mut down_time);
   going_down = 0i32 as smallint;
   boot_down = NORMAL as libc::c_int as smallint;
-  zlist = 0 as *mut llist_t;
+  zlist = std::ptr::null_mut();
   boot_time = 0i32 as time_t;
   /* get file size, rounding down to last full record */
   pos = (xlseek(file, 0i32 as off_t, 2i32) as libc::c_ulong)
@@ -327,8 +327,8 @@ pub unsafe extern "C" fn last_main(
         if !(ut.ut_line[0] == 0) {
           /* find_entry */
           show = 1i32;
-          let mut el: *mut llist_t = 0 as *mut llist_t;
-          let mut next: *mut llist_t = 0 as *mut llist_t;
+          let mut el: *mut llist_t = std::ptr::null_mut();
+          let mut next: *mut llist_t = std::ptr::null_mut();
           el = zlist;
           while !el.is_null() {
             let mut up: *mut utmpx = (*el).data as *mut utmpx;
@@ -378,7 +378,7 @@ pub unsafe extern "C" fn last_main(
         zlist,
         Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
       );
-      zlist = 0 as *mut llist_t;
+      zlist = std::ptr::null_mut();
       going_down = 0i32 as smallint
     }
   }

@@ -350,7 +350,7 @@ unsafe extern "C" fn re_wrap() {
   let mut linebuf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   let mut old_flines: *mut *const libc::c_char = (*ptr_to_globals).flines;
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
-  let mut new_flines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut new_flines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & FLAG_N as libc::c_int as libc::c_uint != 0 {
     w -= 8i32
@@ -1246,7 +1246,7 @@ unsafe extern "C" fn reinitialize() {
       i = i.wrapping_add(1)
     }
     free((*ptr_to_globals).flines as *mut libc::c_void);
-    (*ptr_to_globals).flines = 0 as *mut *const libc::c_char
+    (*ptr_to_globals).flines = std::ptr::null_mut()
   }
   (*ptr_to_globals).max_fline = -1i32 as libc::c_uint;
   (*ptr_to_globals).cur_fline = 0i32;
@@ -1604,7 +1604,7 @@ unsafe extern "C" fn regex_process() {
   let mut err: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Reset variables */
   free((*ptr_to_globals).match_lines as *mut libc::c_void);
-  (*ptr_to_globals).match_lines = 0 as *mut libc::c_uint;
+  (*ptr_to_globals).match_lines = std::ptr::null_mut();
   (*ptr_to_globals).match_pos = 0i32;
   (*ptr_to_globals).num_matches = 0i32;
   if (*ptr_to_globals).pattern_valid != 0 {
@@ -1758,7 +1758,7 @@ unsafe extern "C" fn save_input_to_file() {
   let mut msg: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut current_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   print_statusline(b"Log file: \x00" as *const u8 as *const libc::c_char);
   current_line = less_gets(
     (::std::mem::size_of::<[libc::c_char; 11]>() as libc::c_ulong)

@@ -499,7 +499,7 @@ pub unsafe extern "C" fn isrv_run(
     };
     let mut rd: fd_set = fd_set { fds_bits: [0; 16] };
     let mut wr: fd_set = fd_set { fds_bits: [0; 16] };
-    let mut wrp: *mut fd_set = 0 as *mut fd_set;
+    let mut wrp: *mut fd_set = std::ptr::null_mut();
     let mut n: libc::c_int = 0;
     tv.tv_sec = timeout as time_t;
     if (*state).peer_count <= 1i32 {

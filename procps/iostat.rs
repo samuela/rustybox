@@ -213,7 +213,7 @@ unsafe extern "C" fn print_timestamp() {
   puts(buf.as_mut_ptr());
 }
 unsafe extern "C" fn get_smp_uptime() -> cputime_t {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut sec: libc::c_ulong = 0;
   let mut dec: libc::c_ulong = 0;
   fp = xfopen_for_read(b"/proc/uptime\x00" as *const u8 as *const libc::c_char);
@@ -240,7 +240,7 @@ unsafe extern "C" fn get_smp_uptime() -> cputime_t {
 }
 /* Fetch CPU statistics from /proc/stat */
 unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   memset(
@@ -447,9 +447,9 @@ unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
   let mut dev_name: [libc::c_char; 13] = [0; 13];
   let mut rd_sec_or_dummy: libc::c_ulonglong = 0;
   let mut wr_sec_or_dummy: libc::c_ulonglong = 0;
-  let mut curr_data: *mut stats_dev_data_t = 0 as *mut stats_dev_data_t;
-  let mut stats_dev: *mut stats_dev_t = 0 as *mut stats_dev_t;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut curr_data: *mut stats_dev_data_t = std::ptr::null_mut();
+  let mut stats_dev: *mut stats_dev_t = std::ptr::null_mut();
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut rc: libc::c_int = 0;
   fp = xfopen_for_read(b"/proc/diskstats\x00" as *const u8 as *const libc::c_char);
   /* Read and possibly print stats from /proc/diskstats */

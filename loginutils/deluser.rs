@@ -135,7 +135,7 @@ pub unsafe extern "C" fn deluser_main(
   }
   name = *argv.offset(1);
   member = std::ptr::null_mut::<libc::c_char>();
-  let mut gr: *mut group = 0 as *mut group;
+  let mut gr: *mut group = std::ptr::null_mut();
   let mut current_block_45: u64;
   match argc {
     3 => {
@@ -162,7 +162,7 @@ pub unsafe extern "C" fn deluser_main(
     {
       if do_deluser != 0 {
         /* "deluser USER" */
-        let mut pw: *mut passwd = 0 as *mut passwd; /* bail out if USER is wrong */
+        let mut pw: *mut passwd = std::ptr::null_mut(); /* bail out if USER is wrong */
         pw = xgetpwnam(name);
         pfile = b"/etc/passwd\x00" as *const u8 as *const libc::c_char;
         sfile = b"/etc/shadow\x00" as *const u8 as *const libc::c_char;
@@ -171,7 +171,7 @@ pub unsafe extern "C" fn deluser_main(
         }
         current_block_45 = 15090052786889560393;
       } else {
-        gr = 0 as *mut group;
+        gr = std::ptr::null_mut();
         current_block_45 = 16500901810917105941;
       }
       loop {
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn deluser_main(
             }
             if member.is_null() {
               /* "delgroup GROUP" */
-              let mut pw_0: *mut passwd = 0 as *mut passwd;
+              let mut pw_0: *mut passwd = std::ptr::null_mut();
               loop
               /* Check if the group is in use */
               {

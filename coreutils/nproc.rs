@@ -71,7 +71,7 @@ pub unsafe extern "C" fn nproc_main(
     let mut cpusd: *mut DIR =
       opendir(b"/sys/devices/system/cpu\x00" as *const u8 as *const libc::c_char);
     if !cpusd.is_null() {
-      let mut de: *mut dirent = 0 as *mut dirent;
+      let mut de: *mut dirent = std::ptr::null_mut();
       loop {
         de = readdir(cpusd);
         if de.is_null() {

@@ -142,7 +142,7 @@ pub unsafe extern "C" fn vlock_main(
     c_ispeed: 0,
     c_ospeed: 0,
   };
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   pw = xgetpwuid(getuid());
   getopt32(argv, b"^a\x00=0\x00" as *const u8 as *const libc::c_char);
   /* Ignore some signals so that we don't get killed by them */

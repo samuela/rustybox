@@ -903,7 +903,7 @@ unsafe extern "C" fn xmalloc_optname_optval(
         while len >= 1i32 + 4i32 {
           /* mask + 0-byte ip + router */
           let mut nip: u32 = 0; /* 0 -> 0, 1..8 -> 1, 9..16 -> 2 etc */
-          let mut p: *mut u8 = 0 as *mut u8;
+          let mut p: *mut u8 = std::ptr::null_mut();
           let mut mask: libc::c_uint = 0;
           let mut bytes: libc::c_int = 0;
           let fresh9 = option;
@@ -1076,10 +1076,10 @@ unsafe extern "C" fn xmalloc_optname_optval(
 unsafe extern "C" fn fill_envp(mut packet: *mut dhcp_packet) -> *mut *mut libc::c_char {
   let mut envc: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut curr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut curr: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut opt_name: *const libc::c_char = 0 as *const libc::c_char;
-  let mut temp: *mut u8 = 0 as *mut u8;
+  let mut temp: *mut u8 = std::ptr::null_mut();
   let mut overload: u8 = 0i32 as u8;
   let mut found_opts: [libc::c_uint; 8] = [0; 8];
   memset(
@@ -1303,8 +1303,8 @@ unsafe extern "C" fn fill_envp(mut packet: *mut dhcp_packet) -> *mut *mut libc::
 }
 /* Call a script with a par file and env vars */
 unsafe extern "C" fn udhcp_run_script(mut packet: *mut dhcp_packet, mut name: *const libc::c_char) {
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut curr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut curr: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
   envp = fill_envp(packet);
   /* call script */
@@ -1912,7 +1912,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
     msg_controllen: 0,
     msg_flags: 0,
   };
-  let mut cmsg: *mut cmsghdr = 0 as *mut cmsghdr;
+  let mut cmsg: *mut cmsghdr = std::ptr::null_mut();
   /* used to use just safe_read(fd, &packet, sizeof(packet))
    * but we need to check for TP_STATUS_CSUMNOTREADY :(
    */
@@ -2424,7 +2424,7 @@ unsafe extern "C" fn alloc_dhcp_option(
   mut str: *const libc::c_char,
   mut extra: libc::c_int,
 ) -> *mut u8 {
-  let mut storage: *mut u8 = 0 as *mut u8;
+  let mut storage: *mut u8 = std::ptr::null_mut();
   let mut len: libc::c_int = strnlen(str, 255i32 as size_t) as libc::c_int;
   storage = xzalloc((len + extra + 2i32) as size_t) as *mut u8;
   *storage.offset(0) = code as u8;
@@ -2503,15 +2503,15 @@ pub unsafe extern "C" fn udhcpc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
-  let mut message: *mut u8 = 0 as *mut u8; /* for compiler */
+  let mut message: *mut u8 = std::ptr::null_mut(); /* for compiler */
   let mut str_V: *const libc::c_char = 0 as *const libc::c_char; /* must be signed */
   let mut str_h: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_F: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_r: *const libc::c_char = 0 as *const libc::c_char;
   let mut str_a: *const libc::c_char = b"2000\x00" as *const u8 as *const libc::c_char;
-  let mut clientid_mac_ptr: *mut libc::c_void = 0 as *mut libc::c_void;
-  let mut list_O: *mut llist_t = 0 as *mut llist_t;
-  let mut list_x: *mut llist_t = 0 as *mut llist_t;
+  let mut clientid_mac_ptr: *mut libc::c_void = std::ptr::null_mut();
+  let mut list_O: *mut llist_t = std::ptr::null_mut();
+  let mut list_x: *mut llist_t = std::ptr::null_mut();
   let mut tryagain_timeout: libc::c_int = 20i32;
   let mut discover_timeout: libc::c_int = 3i32;
   let mut discover_retries: libc::c_int = 3i32;
@@ -2688,7 +2688,7 @@ pub unsafe extern "C" fn udhcpc_main(
   {
     return 1i32;
   }
-  clientid_mac_ptr = 0 as *mut libc::c_void;
+  clientid_mac_ptr = std::ptr::null_mut();
   if opt & OPT_C as libc::c_int as libc::c_uint == 0
     && udhcp_find_option(
       (*(&mut *bb_common_bufsiz1
@@ -3428,7 +3428,7 @@ pub unsafe extern "C" fn udhcpc_main(
                 0 => {
                   /* Must be a DHCPOFFER */
                   if *message as libc::c_int == 2i32 {
-                    let mut temp: *mut u8 = 0 as *mut u8;
+                    let mut temp: *mut u8 = std::ptr::null_mut();
                     /* What exactly is server's IP? There are several values.
                      * Example DHCP offer captured with tchdump:
                      *
@@ -3484,7 +3484,7 @@ pub unsafe extern "C" fn udhcpc_main(
                     let mut start: libc::c_uint = 0;
                     let mut lease_seconds: u32 = 0;
                     let mut temp_addr: in_addr = in_addr { s_addr: 0 };
-                    let mut temp_0: *mut u8 = 0 as *mut u8;
+                    let mut temp_0: *mut u8 = std::ptr::null_mut();
                     temp_0 = udhcp_get_option32(&mut packet, 0x33i32);
                     if temp_0.is_null() {
                       bb_simple_info_msg(
@@ -3654,7 +3654,7 @@ pub unsafe extern "C" fn udhcpc_main(
                      */
                     if server_addr != 0i32 as libc::c_uint {
                       let mut svid: u32 = 0;
-                      let mut temp_1: *mut u8 = 0 as *mut u8;
+                      let mut temp_1: *mut u8 = std::ptr::null_mut();
                       temp_1 = udhcp_get_option32(&mut packet, 0x36i32);
                       if temp_1.is_null() {
                         current_block = 13335948699411770265;

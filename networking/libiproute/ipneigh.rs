@@ -482,7 +482,7 @@ unsafe extern "C" fn print_neigh(
     .flushb
     .is_null()
   {
-    let mut fn_0: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut fn_0: *mut nlmsghdr = std::ptr::null_mut();
     if (((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp as libc::c_uint)
       .wrapping_add(4u32)
       .wrapping_sub(1i32 as libc::c_uint)

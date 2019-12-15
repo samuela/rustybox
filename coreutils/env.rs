@@ -76,7 +76,7 @@ pub unsafe extern "C" fn env_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
-  let mut unset_env: *mut llist_t = 0 as *mut llist_t;
+  let mut unset_env: *mut llist_t = std::ptr::null_mut();
   opts = getopt32long(
     argv,
     b"+iu:*\x00" as *const u8 as *const libc::c_char,
@@ -114,7 +114,7 @@ pub unsafe extern "C" fn env_main(
   }
   if !environ.is_null() {
     /* clearenv() may set environ == NULL! */
-    let mut ep: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+    let mut ep: *mut *mut libc::c_char = std::ptr::null_mut();
     ep = environ;
     while !(*ep).is_null() {
       puts(*ep);

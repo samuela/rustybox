@@ -202,8 +202,8 @@ pub struct volume_structure_descriptor {
 pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut vd: *mut volume_descriptor = 0 as *mut volume_descriptor;
-  let mut vsd: *mut volume_structure_descriptor = 0 as *mut volume_structure_descriptor;
+  let mut vd: *mut volume_descriptor = std::ptr::null_mut();
+  let mut vsd: *mut volume_structure_descriptor = std::ptr::null_mut();
   let mut bs: libc::c_uint = 0;
   let mut b: libc::c_uint = 0;
   let mut type_0: libc::c_uint = 0;

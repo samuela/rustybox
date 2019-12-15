@@ -47,8 +47,8 @@ pub unsafe extern "C" fn iterate_on_dir(
   >,
   mut private: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut de: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut de: *mut dirent = std::ptr::null_mut();
   dir = opendir(dir_name);
   if dir.is_null() {
     return -1i32;

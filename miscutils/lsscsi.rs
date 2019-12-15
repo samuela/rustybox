@@ -88,8 +88,8 @@ pub unsafe extern "C" fn lsscsi_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut de: *mut dirent = 0 as *mut dirent;
-  let mut dir: *mut DIR = 0 as *mut DIR;
+  let mut de: *mut dirent = std::ptr::null_mut();
+  let mut dir: *mut DIR = std::ptr::null_mut();
   xchdir(scsi_dir.as_ptr());
   dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {

@@ -123,7 +123,7 @@ unsafe extern "C" fn get_label_uuid(
 ) -> libc::c_int {
   let mut rv: libc::c_int = 1i32;
   let mut size: u64 = 0;
-  let mut vid: *mut volume_id = 0 as *mut volume_id;
+  let mut vid: *mut volume_id = std::ptr::null_mut();
   /* fd is owned by vid now */
   vid = volume_id_open_node(fd); /* also closes fd */
   if ioctl(
@@ -164,7 +164,7 @@ unsafe extern "C" fn uuidcache_addentry(
   mut uuid: *mut libc::c_char,
   mut type_0: *const libc::c_char,
 ) {
-  let mut last: *mut uuidCache_s = 0 as *mut uuidCache_s;
+  let mut last: *mut uuidCache_s = std::ptr::null_mut();
   if uuidCache.is_null() {
     uuidCache = xzalloc(::std::mem::size_of::<uuidCache_s>() as libc::c_ulong) as *mut uuidCache_s;
     last = uuidCache
@@ -254,7 +254,7 @@ unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidC
 /* Used by blkid */
 #[no_mangle]
 pub unsafe extern "C" fn display_uuid_cache(mut scan_devices: libc::c_int) {
-  let mut uc: *mut uuidCache_s = 0 as *mut uuidCache_s; /* for compiler */
+  let mut uc: *mut uuidCache_s = std::ptr::null_mut(); /* for compiler */
   uc = uuidcache_init(scan_devices);
   while !uc.is_null() {
     printf(b"%s:\x00" as *const u8 as *const libc::c_char, (*uc).device);
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
 pub unsafe extern "C" fn get_devname_from_label(
   mut spec: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut uc: *mut uuidCache_s = 0 as *mut uuidCache_s;
+  let mut uc: *mut uuidCache_s = std::ptr::null_mut();
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
     if *(*uc).label.offset(0) as libc::c_int != 0 && strcmp(spec, (*uc).label) == 0i32 {
@@ -318,7 +318,7 @@ pub unsafe extern "C" fn get_devname_from_label(
 }
 #[no_mangle]
 pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) -> *mut libc::c_char {
-  let mut uc: *mut uuidCache_s = 0 as *mut uuidCache_s;
+  let mut uc: *mut uuidCache_s = std::ptr::null_mut();
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
     /* case of hex numbers doesn't matter */

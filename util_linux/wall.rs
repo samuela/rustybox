@@ -71,7 +71,7 @@ pub unsafe extern "C" fn wall_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ut: *mut utmpx = 0 as *mut utmpx;
+  let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut msg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
   fd = 0i32;

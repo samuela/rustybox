@@ -187,7 +187,7 @@ pub unsafe extern "C" fn addgroup_main(
   argv = argv.offset(optind as isize);
   //argc -= optind;
   if !(*argv.offset(1)).is_null() {
-    let mut gr: *mut group = 0 as *mut group;
+    let mut gr: *mut group = std::ptr::null_mut();
     if opts & (1i32 << 0i32) as libc::c_uint != 0 {
       /* -g was there, but "addgroup -g num user group"
        * is a no-no */

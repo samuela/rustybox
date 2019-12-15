@@ -1563,7 +1563,7 @@ unsafe extern "C" fn add_strings_to_strings(
   let mut i: libc::c_int = 0;
   let mut count1: libc::c_uint = 0;
   let mut count2: libc::c_uint = 0;
-  let mut v: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut v: *mut *mut libc::c_char = std::ptr::null_mut();
   v = strings;
   count1 = 0i32 as libc::c_uint;
   if !v.is_null() {
@@ -1613,7 +1613,7 @@ unsafe extern "C" fn add_string_to_strings(
   return add_strings_to_strings(strings, v.as_mut_ptr(), 0i32);
 }
 unsafe extern "C" fn free_strings(mut strings: *mut *mut libc::c_char) {
-  let mut v: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut v: *mut *mut libc::c_char = std::ptr::null_mut();
   if strings.is_null() {
     return;
   }
@@ -1676,7 +1676,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
 }
 /* Manipulating HFILEs */
 unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
-  let mut fp: *mut HFILE = 0 as *mut HFILE;
+  let mut fp: *mut HFILE = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   fd = 0i32;
   if !name.is_null() {
@@ -1690,7 +1690,7 @@ unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
     }
   }
   fp = xmalloc(::std::mem::size_of::<HFILE>() as libc::c_ulong) as *mut HFILE;
-  (*fp).is_stdin = (name == 0 as *mut libc::c_void as *const libc::c_char) as libc::c_int;
+  (*fp).is_stdin = (name == std::ptr::null_mut()) as libc::c_int;
   (*fp).fd = fd;
   (*fp).end = (*fp).buf.as_mut_ptr();
   (*fp).cur = (*fp).end;
@@ -1988,7 +1988,7 @@ unsafe extern "C" fn check_and_run_traps() -> libc::c_int {
           //TODO: why are we doing this? ash and dash don't do this,
           //they have no handler for SIGHUP at all,
           //they rely on kernel to send SIGHUP+SIGCONT to orphaned process groups
-          let mut job: *mut pipe = 0 as *mut pipe;
+          let mut job: *mut pipe = std::ptr::null_mut();
           /* bash is observed to signal whole process groups,
            * not individual processes */
           job = (*ptr_to_globals).job_list;
@@ -2029,8 +2029,8 @@ unsafe extern "C" fn get_ptr_to_local_var(
   mut name: *const libc::c_char,
   mut len: libc::c_uint,
 ) -> *mut *mut variable {
-  let mut pp: *mut *mut variable = 0 as *mut *mut variable;
-  let mut cur: *mut variable = 0 as *mut variable;
+  let mut pp: *mut *mut variable = std::ptr::null_mut();
+  let mut cur: *mut variable = std::ptr::null_mut();
   pp = &mut (*ptr_to_globals).top_var;
   loop {
     cur = *pp;
@@ -2047,7 +2047,7 @@ unsafe extern "C" fn get_ptr_to_local_var(
   return 0 as *mut *mut variable;
 }
 unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *const libc::c_char {
-  let mut vpp: *mut *mut variable = 0 as *mut *mut variable;
+  let mut vpp: *mut *mut variable = std::ptr::null_mut();
   let mut len: libc::c_uint = strlen(name) as libc::c_uint;
   if !(*ptr_to_globals).expanded_assignments.is_null() {
     let mut cpp: *mut *mut libc::c_char = (*ptr_to_globals).expanded_assignments;
@@ -2126,8 +2126,8 @@ unsafe extern "C" fn set_local_var(
   mut flags: libc::c_uint,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut cur_pp: *mut *mut variable = 0 as *mut *mut variable;
-  let mut cur: *mut variable = 0 as *mut variable;
+  let mut cur_pp: *mut *mut variable = std::ptr::null_mut();
+  let mut cur: *mut variable = std::ptr::null_mut();
   let mut free_me: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut eq_sign: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name_len: libc::c_int = 0;
@@ -2290,8 +2290,8 @@ unsafe extern "C" fn unset_local_var_len(
   mut name: *const libc::c_char,
   mut name_len: libc::c_int,
 ) -> libc::c_int {
-  let mut cur: *mut variable = 0 as *mut variable;
-  let mut cur_pp: *mut *mut variable = 0 as *mut *mut variable;
+  let mut cur: *mut variable = std::ptr::null_mut();
+  let mut cur_pp: *mut *mut variable = std::ptr::null_mut();
   cur_pp = &mut (*ptr_to_globals).top_var;
   loop {
     cur = *cur_pp;
@@ -2330,7 +2330,7 @@ unsafe extern "C" fn unset_local_var(mut name: *const libc::c_char) -> libc::c_i
  * Helpers for "var1=val1 var2=val2 cmd" feature
  */
 unsafe extern "C" fn add_vars(mut var: *mut variable) {
-  let mut next: *mut variable = 0 as *mut variable;
+  let mut next: *mut variable = std::ptr::null_mut();
   while !var.is_null() {
     next = (*var).next;
     (*var).next = (*ptr_to_globals).top_var;
@@ -2347,15 +2347,15 @@ unsafe extern "C" fn add_vars(mut var: *mut variable) {
  * The strings[] vector itself is freed.
  */
 unsafe extern "C" fn set_vars_and_save_old(mut strings: *mut *mut libc::c_char) {
-  let mut s: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut s: *mut *mut libc::c_char = std::ptr::null_mut();
   if strings.is_null() {
     return;
   }
   s = strings;
   while !(*s).is_null() {
     let mut current_block_21: u64;
-    let mut var_p: *mut variable = 0 as *mut variable;
-    let mut var_pp: *mut *mut variable = 0 as *mut *mut variable;
+    let mut var_p: *mut variable = std::ptr::null_mut();
+    let mut var_pp: *mut *mut variable = std::ptr::null_mut();
     let mut eq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     eq = strchr(*s, '=' as i32);
     if 1i32 != 0 && eq.is_null() {
@@ -2368,7 +2368,7 @@ unsafe extern "C" fn set_vars_and_save_old(mut strings: *mut *mut libc::c_char) 
     if !var_pp.is_null() {
       var_p = *var_pp;
       if (*var_p).flg_read_only != 0 {
-        let mut p: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+        let mut p: *mut *mut libc::c_char = std::ptr::null_mut();
         bb_error_msg(
           b"%s: readonly variable\x00" as *const u8 as *const libc::c_char,
           *s,
@@ -3234,7 +3234,7 @@ unsafe extern "C" fn o_finalize_list(
   mut o: *mut o_string,
   mut n: libc::c_int,
 ) -> *mut *mut libc::c_char {
-  let mut list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut string_start: libc::c_int = 0;
   list = (*o).data as *mut *mut libc::c_char;
   string_start = ((n + 0xfi32 & !0xfi32) as libc::c_ulong)
@@ -3255,13 +3255,13 @@ unsafe extern "C" fn o_finalize_list(
 }
 /* Returns pi->next - next pipe in the list */
 unsafe extern "C" fn free_pipe(mut pi: *mut pipe) -> *mut pipe {
-  let mut next: *mut pipe = 0 as *mut pipe;
+  let mut next: *mut pipe = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   i = 0i32;
   while i < (*pi).num_cmds {
-    let mut command: *mut command = 0 as *mut command;
-    let mut r: *mut redir_struct = 0 as *mut redir_struct;
-    let mut rnext: *mut redir_struct = 0 as *mut redir_struct;
+    let mut command: *mut command = std::ptr::null_mut();
+    let mut r: *mut redir_struct = std::ptr::null_mut();
+    let mut rnext: *mut redir_struct = std::ptr::null_mut();
     command = &mut *(*pi).cmds.offset(i as isize) as *mut command;
     if !(*command).argv.is_null() {
       free_strings((*command).argv);
@@ -3273,7 +3273,7 @@ unsafe extern "C" fn free_pipe(mut pi: *mut pipe) -> *mut pipe {
     /* not "else if": on syntax error, we may have both! */
     //command->group = NULL;
     } else if !(*command).child_func.is_null() {
-      (*(*command).child_func).parent_cmd = 0 as *mut command
+      (*(*command).child_func).parent_cmd = std::ptr::null_mut()
     }
     r = (*command).redirects;
     while !r.is_null() {
@@ -3306,7 +3306,7 @@ unsafe extern "C" fn free_pipe_list(mut pi: *mut pipe) {
 /* ** Parsing routines ***/
 /* debug_print_tree */
 unsafe extern "C" fn new_pipe() -> *mut pipe {
-  let mut pi: *mut pipe = 0 as *mut pipe;
+  let mut pi: *mut pipe = std::ptr::null_mut();
   pi = xzalloc(::std::mem::size_of::<pipe>() as libc::c_ulong) as *mut pipe;
   /*pi->res_word = RES_NONE; - RES_NONE is 0 anyway */
   return pi;
@@ -3371,8 +3371,8 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
      * "cmd1 && cmd2 &" must spawn both cmds, not only cmd2,
      * in a backgrounded subshell.
      */
-    let mut pi: *mut pipe = 0 as *mut pipe;
-    let mut command: *mut command = 0 as *mut command;
+    let mut pi: *mut pipe = std::ptr::null_mut();
+    let mut command: *mut command = std::ptr::null_mut();
     /* Is this actually this construct, all pipes end with && or ||? */
     pi = (*ctx).list_head; /* close pN _not_ with "&"! */
     loop {
@@ -3425,7 +3425,7 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
     || (*ctx).ctx_res_w as libc::c_int == RES_IN as libc::c_int
     || (*ctx).ctx_res_w as libc::c_int == RES_ESAC as libc::c_int
   {
-    let mut new_p: *mut pipe = 0 as *mut pipe;
+    let mut new_p: *mut pipe = std::ptr::null_mut();
     new_p = new_pipe();
     (*(*ctx).pipe).next = new_p;
     (*ctx).pipe = new_p;
@@ -3441,7 +3441,7 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
     if (*ctx).ctx_res_w as libc::c_int == RES_CASE as libc::c_int {
       (*ctx).ctx_res_w = RES_CASE_IN as libc::c_int as smallint
     }
-    (*ctx).command = 0 as *mut command;
+    (*ctx).command = std::ptr::null_mut();
     done_command(ctx);
   };
 }
@@ -3659,7 +3659,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
     return r;
   }
   if (*r).flag & FLAG_START as libc::c_int != 0 {
-    let mut old: *mut parse_context = 0 as *mut parse_context;
+    let mut old: *mut parse_context = std::ptr::null_mut();
     old = xmemdup(
       ctx as *const libc::c_void,
       ::std::mem::size_of::<parse_context>() as libc::c_ulong as libc::c_int,
@@ -3682,7 +3682,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
   (*ctx).old_flag = (*r).flag;
   (*ctx).is_assignment = (*r).assignment_flag as smallint;
   if (*ctx).old_flag & FLAG_END as libc::c_int != 0 {
-    let mut old_0: *mut parse_context = 0 as *mut parse_context;
+    let mut old_0: *mut parse_context = std::ptr::null_mut();
     done_pipe(ctx, PIPE_SEQ);
     old_0 = (*ctx).stack;
     (*(*old_0).command).group = (*ctx).list_head;
@@ -3739,7 +3739,7 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
         (*(*ctx).pending_redirect).rd_dup |= HEREDOC_QUOTED as libc::c_int
       }
     }
-    (*ctx).pending_redirect = 0 as *mut redir_struct
+    (*ctx).pending_redirect = std::ptr::null_mut()
   } else {
     if (*ctx).ctx_dsemicolon as libc::c_int != 0
       && strcmp(
@@ -3885,8 +3885,8 @@ unsafe extern "C" fn parse_redirect(
   mut input: *mut in_str,
 ) -> libc::c_int {
   let mut command: *mut command = (*ctx).command;
-  let mut redir: *mut redir_struct = 0 as *mut redir_struct;
-  let mut redirp: *mut *mut redir_struct = 0 as *mut *mut redir_struct;
+  let mut redir: *mut redir_struct = std::ptr::null_mut();
+  let mut redirp: *mut *mut redir_struct = std::ptr::null_mut();
   let mut dup_num: libc::c_int = 0;
   dup_num = REDIRFD_TO_FILE as libc::c_int;
   if style as libc::c_int != REDIRECT_HEREDOC as libc::c_int {
@@ -4150,7 +4150,7 @@ unsafe extern "C" fn parse_group(
   /* ctx->word contains characters seen prior to ( or {.
    * Typically it's empty, but for function defs,
    * it contains function name (without '()'). */
-  let mut pipe_list: *mut pipe = 0 as *mut pipe; /* (... */
+  let mut pipe_list: *mut pipe = std::ptr::null_mut(); /* (... */
   let mut heredoc_cnt: libc::c_int = 0i32;
   let mut endch: libc::c_int = 0;
   let mut command: *mut command = (*ctx).command;
@@ -4221,7 +4221,7 @@ unsafe extern "C" fn parse_group(
   }
   /* Convert "f() (cmds)" to "f() {(cmds)}" */
   if (*command).cmd_type as libc::c_int == 3i32 && endch == ')' as i32 {
-    let mut cmd2: *mut command = 0 as *mut command;
+    let mut cmd2: *mut command = std::ptr::null_mut();
     cmd2 = xzalloc(::std::mem::size_of::<command>() as libc::c_ulong) as *mut command;
     (*cmd2).cmd_type = 1i32 as smallint;
     (*cmd2).group = pipe_list;
@@ -6293,7 +6293,7 @@ unsafe extern "C" fn parse_stream(
     let mut redir_style: redir_type = REDIRECT_INPUT;
     ch = i_getch(input);
     if ch == -1i32 {
-      let mut pi: *mut pipe = 0 as *mut pipe;
+      let mut pi: *mut pipe = std::ptr::null_mut();
       if heredoc_cnt != 0 {
         syntax_error_unterm_str(b"here document\x00" as *const u8 as *const libc::c_char);
         current_block = 1907364584679199995;
@@ -6320,7 +6320,7 @@ unsafe extern "C" fn parse_stream(
          * bash says: "syntax error near unexpected token '&'") */
         if (*pi).num_cmds == 0i32 && (*pi).res_word as libc::c_int == RES_NONE as libc::c_int {
           free_pipe_list(pi);
-          pi = 0 as *mut pipe
+          pi = std::ptr::null_mut()
         }
         // heredoc_cnt must be 0 here anyway
         //if (heredoc_cnt_ptr)
@@ -6995,8 +6995,8 @@ unsafe extern "C" fn parse_stream(
     1907364584679199995 => (*ptr_to_globals).last_exitcode = 1i32 as smalluint,
     _ => {}
   }
-  let mut pctx: *mut parse_context = 0 as *mut parse_context;
-  let mut p2: *mut parse_context = 0 as *mut parse_context;
+  let mut pctx: *mut parse_context = std::ptr::null_mut();
+  let mut p2: *mut parse_context = std::ptr::null_mut();
   /* Clean up allocated tree.
    * Sample for finding leaks on syntax error recovery path.
    * Run it from interactive shell, watch pmap `pidof hush`.
@@ -8304,7 +8304,7 @@ unsafe extern "C" fn expand_variables(
   mut expflags: libc::c_uint,
 ) -> *mut *mut libc::c_char {
   let mut n: libc::c_int = 0;
-  let mut list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut output: o_string = {
     let mut init = o_string {
       data: std::ptr::null_mut::<libc::c_char>(),
@@ -8364,7 +8364,7 @@ unsafe extern "C" fn expand_string_to_string(
   mut do_unbackslash: libc::c_int,
 ) -> *mut libc::c_char {
   let mut argv: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut list: *mut *mut libc::c_char = std::ptr::null_mut();
   /* This is generally an optimization, but it also
    * handles "", which otherwise trips over !list[0] check below.
    * (is this ever happens that we actually get str="" here?)
@@ -8401,8 +8401,8 @@ unsafe extern "C" fn expand_assignments(
   mut count: libc::c_int,
 ) -> *mut *mut libc::c_char {
   let mut i: libc::c_int = 0;
-  let mut p: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  p = 0 as *mut *mut libc::c_char;
+  let mut p: *mut *mut libc::c_char = std::ptr::null_mut();
+  p = std::ptr::null_mut();
   (*ptr_to_globals).expanded_assignments = p;
   /* Expand assignments into one string each */
   i = 0i32;
@@ -8418,7 +8418,7 @@ unsafe extern "C" fn expand_assignments(
     (*ptr_to_globals).expanded_assignments = p;
     i += 1
   }
-  (*ptr_to_globals).expanded_assignments = 0 as *mut *mut libc::c_char;
+  (*ptr_to_globals).expanded_assignments = std::ptr::null_mut();
   return p;
 }
 unsafe extern "C" fn switch_off_special_sigs(mut mask: libc::c_uint) {
@@ -8508,7 +8508,7 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
    */
   let mut empty: bool = 1i32 != 0; /* PS1 */
   loop {
-    let mut pipe_list: *mut pipe = 0 as *mut pipe;
+    let mut pipe_list: *mut pipe = std::ptr::null_mut();
     if end_trigger == ';' as i32 {
       (*ptr_to_globals).promptmode = 0i32 as smallint
     }
@@ -8672,7 +8672,7 @@ unsafe extern "C" fn process_command_subs(
   mut dest: *mut o_string,
   mut s: *const libc::c_char,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut pid: pid_t = 0;
   let mut status: libc::c_int = 0;
   let mut ch: libc::c_int = 0;
@@ -8985,7 +8985,7 @@ unsafe extern "C" fn setup_redirects(
   mut prog: *mut command,
   mut sqp: *mut *mut squirrel,
 ) -> libc::c_int {
-  let mut redir: *mut redir_struct = 0 as *mut redir_struct;
+  let mut redir: *mut redir_struct = std::ptr::null_mut();
   let mut current_block_32: u64;
   redir = (*prog).redirects;
   while !redir.is_null() {
@@ -9167,8 +9167,8 @@ unsafe extern "C" fn find_builtin(mut name: *const libc::c_char) -> *const built
   );
 }
 unsafe extern "C" fn remove_nested_vars() {
-  let mut cur: *mut variable = 0 as *mut variable;
-  let mut cur_pp: *mut *mut variable = 0 as *mut *mut variable;
+  let mut cur: *mut variable = std::ptr::null_mut();
+  let mut cur_pp: *mut *mut variable = std::ptr::null_mut();
   cur_pp = &mut (*ptr_to_globals).top_var;
   loop {
     cur = *cur_pp;
@@ -9215,7 +9215,7 @@ unsafe extern "C" fn leave_var_nest_level() {
   remove_nested_vars();
 }
 unsafe extern "C" fn find_function_slot(mut name: *const libc::c_char) -> *mut *mut function {
-  let mut funcp: *mut function = 0 as *mut function;
+  let mut funcp: *mut function = std::ptr::null_mut();
   let mut funcpp: *mut *mut function = &mut (*ptr_to_globals).top_func;
   loop {
     funcp = *funcpp;
@@ -9473,8 +9473,8 @@ unsafe extern "C" fn pseudo_exec_argv(
   mut argv_expanded: *mut *mut libc::c_char,
 ) -> ! {
   let mut x: *const built_in_command = 0 as *const built_in_command;
-  let mut sv_shadowed: *mut *mut variable = 0 as *mut *mut variable;
-  let mut new_env: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut sv_shadowed: *mut *mut variable = std::ptr::null_mut();
+  let mut new_env: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut opt_vV: libc::c_char = 0i32 as libc::c_char;
   let mut funcp: *const function = 0 as *const function;
   new_env = expand_assignments(argv, assignment_cnt);
@@ -9488,7 +9488,7 @@ unsafe extern "C" fn pseudo_exec_argv(
     _exit(0i32);
   }
   sv_shadowed = (*ptr_to_globals).shadowed_vars_pp;
-  (*ptr_to_globals).shadowed_vars_pp = 0 as *mut *mut variable;
+  (*ptr_to_globals).shadowed_vars_pp = std::ptr::null_mut();
   set_vars_and_save_old(new_env);
   (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;
   if !argv_expanded.is_null() {
@@ -9611,7 +9611,7 @@ unsafe extern "C" fn pseudo_exec(
   _exit(0i32);
 }
 unsafe extern "C" fn get_cmdtext(mut pi: *mut pipe) -> *const libc::c_char {
-  let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   /* This is subtle. ->cmdtext is created only on first backgrounding.
@@ -9651,7 +9651,7 @@ unsafe extern "C" fn get_cmdtext(mut pi: *mut pipe) -> *const libc::c_char {
   return (*pi).cmdtext;
 }
 unsafe extern "C" fn remove_job_from_table(mut pi: *mut pipe) {
-  let mut prev_pipe: *mut pipe = 0 as *mut pipe;
+  let mut prev_pipe: *mut pipe = std::ptr::null_mut();
   if pi == (*ptr_to_globals).job_list {
     (*ptr_to_globals).job_list = (*pi).next
   } else {
@@ -9676,8 +9676,8 @@ unsafe extern "C" fn clean_up_last_dead_job() {
   };
 }
 unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
-  let mut job: *mut pipe = 0 as *mut pipe;
-  let mut jobp: *mut *mut pipe = 0 as *mut *mut pipe;
+  let mut job: *mut pipe = std::ptr::null_mut();
+  let mut jobp: *mut *mut pipe = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   clean_up_last_dead_job();
   /* Find the end of the list, and find next job ID to use */
@@ -9700,7 +9700,7 @@ unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
     ::std::mem::size_of::<pipe>() as libc::c_ulong as libc::c_int,
   ) as *mut pipe;
   job = *jobp;
-  (*job).next = 0 as *mut pipe;
+  (*job).next = std::ptr::null_mut();
   (*job).cmds = xzalloc(
     (::std::mem::size_of::<command>() as libc::c_ulong)
       .wrapping_mul((*pi).num_cmds as libc::c_ulong),
@@ -9758,7 +9758,7 @@ unsafe extern "C" fn process_wait_result(
   mut status: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut pi: *mut pipe = 0 as *mut pipe;
+  let mut pi: *mut pipe = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut dead: libc::c_int = 0;
   dead = (status & 0x7fi32 == 0i32
@@ -10025,10 +10025,10 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
   static mut null_ptr: *const libc::c_char = 0 as *const libc::c_char;
   let mut cmd_no: libc::c_int = 0;
   let mut next_infd: libc::c_int = 0;
-  let mut command: *mut command = 0 as *mut command;
-  let mut argv_expanded: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut squirrel: *mut squirrel = 0 as *mut squirrel;
+  let mut command: *mut command = std::ptr::null_mut();
+  let mut argv_expanded: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut squirrel: *mut squirrel = std::ptr::null_mut();
   let mut rcode: libc::c_int = 0;
   /* Testcase: set -- q w e; (IFS='' echo "$*"; IFS=''; echo "$*"); echo "$*"
    * Result should be 3 lines: q w e, qwe, q w e
@@ -10079,7 +10079,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
   (*pi).pgrp = -1i32;
   (*pi).stopped_cmds = 0i32;
   command = &mut *(*pi).cmds.offset(0) as *mut command;
-  argv_expanded = 0 as *mut *mut libc::c_char;
+  argv_expanded = std::ptr::null_mut();
   if !((*pi).num_cmds != 1i32
     || (*pi).followup as libc::c_int == PIPE_BG as libc::c_int
     || (*command).cmd_type as libc::c_int == 1i32)
@@ -10088,11 +10088,11 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     if !(*command).group.is_null() {
       if (*command).cmd_type as libc::c_int == 3i32 {
         /* "executing" func () { list } */
-        let mut funcp: *mut function = 0 as *mut function;
+        let mut funcp: *mut function = std::ptr::null_mut();
         funcp = new_function(*(*command).argv.offset(0));
         /* funcp->name is already set to argv[0] */
         (*funcp).body = (*command).group;
-        (*command).group = 0 as *mut pipe;
+        (*command).group = std::ptr::null_mut();
         let ref mut fresh39 = *(*command).argv.offset(0);
         *fresh39 = std::ptr::null_mut::<libc::c_char>();
         (*funcp).parent_cmd = command;
@@ -10123,8 +10123,8 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     };
     let mut x: *const built_in_command = 0 as *const built_in_command;
     let mut funcp_0: *const function = 0 as *const function;
-    let mut sv_shadowed: *mut *mut variable = 0 as *mut *mut variable;
-    let mut old_vars: *mut variable = 0 as *mut variable;
+    let mut sv_shadowed: *mut *mut variable = std::ptr::null_mut();
+    let mut old_vars: *mut variable = std::ptr::null_mut();
     (*ptr_to_globals).execute_lineno = (*command).lineno;
     if (*argv.offset((*command).assignment_cnt as isize)).is_null() {
       /* Assignments, but no command.
@@ -10149,7 +10149,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         (*ptr_to_globals).expand_exitcode = (*ptr_to_globals).last_exitcode;
         current_block = 17116254691753230924;
       } else {
-        old_vars = 0 as *mut variable;
+        old_vars = std::ptr::null_mut();
         sv_shadowed = (*ptr_to_globals).shadowed_vars_pp;
         /* Check if argv[0] matches any functions (this goes before bltins) */
         funcp_0 = find_function(*argv_expanded.offset(0));
@@ -10438,7 +10438,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
       restore_ttypgrp_and__exit as unsafe extern "C" fn() -> !,
     ));
     free(argv_expanded as *mut libc::c_void);
-    argv_expanded = 0 as *mut *mut libc::c_char;
+    argv_expanded = std::ptr::null_mut();
     if (*command).pid < 0i32 {
       /* [v]fork failed */
       /* Clearly indicate, was it fork or vfork */
@@ -10473,16 +10473,16 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
 unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
   let mut current_block: u64; /* RES_foo */
   let mut case_word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* ditto */
-  let mut loop_top: *mut pipe = 0 as *mut pipe;
-  let mut for_lcur: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut for_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut loop_top: *mut pipe = std::ptr::null_mut();
+  let mut for_lcur: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut for_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut last_followup: smallint = 0;
   let mut rcode: smalluint = 0;
   let mut cond_code: smalluint = 0i32 as smalluint;
   let mut rword: smallint = 0;
   let mut last_rword: smallint = 0;
   /* Check syntax for "for" */
-  let mut cpipe: *mut pipe = 0 as *mut pipe;
+  let mut cpipe: *mut pipe = std::ptr::null_mut();
   cpipe = pi;
   while !cpipe.is_null() {
     if !((*cpipe).res_word as libc::c_int != RES_FOR as libc::c_int
@@ -10598,7 +10598,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                 ]; /* encoded representation of "$@" */
                 static mut encoded_dollar_at_argv: [*const libc::c_char; 2] =
                   unsafe { [encoded_dollar_at.as_ptr(), 0 as *const libc::c_char] }; /* argv list with one element: "$@" */
-                let mut vals: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* else: "for var; do..." -> assume "$@" list */
+                let mut vals: *mut *mut libc::c_char = std::ptr::null_mut(); /* else: "for var; do..." -> assume "$@" list */
                 rcode = 0i32 as smalluint;
                 (*ptr_to_globals).last_exitcode = rcode;
                 vals = encoded_dollar_at_argv.as_ptr() as *mut *mut libc::c_char;
@@ -10616,8 +10616,8 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
               if (*for_lcur).is_null() {
                 /* "for" loop is over, clean up */
                 free(for_list as *mut libc::c_void);
-                for_list = 0 as *mut *mut libc::c_char;
-                for_lcur = 0 as *mut *mut libc::c_char;
+                for_list = std::ptr::null_mut();
+                for_lcur = std::ptr::null_mut();
                 break;
               } else {
                 /* Insert next value from for_lcur */
@@ -10648,7 +10648,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
               );
               current_block = 18377268871191777778;
             } else if rword as libc::c_int == RES_MATCH as libc::c_int {
-              let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+              let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
               if case_word.is_null() {
                 break;
               }
@@ -11031,9 +11031,9 @@ pub unsafe extern "C" fn hush_main(
   let mut current_block: u64;
   let mut flags: libc::c_uint = 0;
   let mut builtin_argc: libc::c_uint = 0;
-  let mut e: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut cur_var: *mut variable = 0 as *mut variable;
-  let mut shell_ver: *mut variable = 0 as *mut variable;
+  let mut e: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut cur_var: *mut variable = std::ptr::null_mut();
+  let mut shell_ver: *mut variable = std::ptr::null_mut();
   let ref mut fresh42 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -11263,7 +11263,7 @@ pub unsafe extern "C" fn hush_main(
       }
       /* If we are login shell... */
       if flags & OPT_login as libc::c_int as libc::c_uint != 0 {
-        let mut input: *mut HFILE = 0 as *mut HFILE;
+        let mut input: *mut HFILE = std::ptr::null_mut();
         input = hfopen(b"/etc/profile\x00" as *const u8 as *const libc::c_char);
         if !input.is_null() {
           install_special_sighandlers();
@@ -11280,7 +11280,7 @@ pub unsafe extern "C" fn hush_main(
       }
       /* -s is: hush -s ARGV1 ARGV2 (no SCRIPT) */
       if (*ptr_to_globals).opt_s == 0 && !(*(*ptr_to_globals).global_argv.offset(1)).is_null() {
-        let mut input_0: *mut HFILE = 0 as *mut HFILE;
+        let mut input_0: *mut HFILE = std::ptr::null_mut();
         /*
          * "bash <script>" (which is never interactive (unless -i?))
          * sources $BASH_ENV here (without scanning $PATH).
@@ -11852,8 +11852,8 @@ unsafe extern "C" fn helper_export_local(
     let mut name: *mut libc::c_char = *argv;
     let mut name_end: *const libc::c_char = endofname(name);
     if *name_end as libc::c_int == '\u{0}' as i32 {
-      let mut var: *mut variable = 0 as *mut variable;
-      let mut vpp: *mut *mut variable = 0 as *mut *mut variable;
+      let mut var: *mut variable = std::ptr::null_mut();
+      let mut vpp: *mut *mut variable = std::ptr::null_mut();
       vpp = get_ptr_to_local_var(
         name,
         name_end.wrapping_offset_from(name) as libc::c_long as libc::c_uint,
@@ -12041,7 +12041,7 @@ unsafe extern "C" fn builtin_readonly(mut argv: *mut *mut libc::c_char) -> libc:
     /* bash: readonly [-p]: list all readonly VARs
      * (-p has no effect in bash)
      */
-    let mut e: *mut variable = 0 as *mut variable;
+    let mut e: *mut variable = std::ptr::null_mut();
     e = (*ptr_to_globals).top_var;
     while !e.is_null() {
       if (*e).flg_read_only != 0 {
@@ -12113,12 +12113,12 @@ unsafe extern "C" fn builtin_unset(mut argv: *mut *mut libc::c_char) -> libc::c_
 unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut n: libc::c_int = 0;
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut g_argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut g_argv: *mut *mut libc::c_char = std::ptr::null_mut();
   argv = argv.offset(1);
   let mut arg: *mut libc::c_char = *argv;
   if arg.is_null() {
-    let mut e: *mut variable = 0 as *mut variable;
+    let mut e: *mut variable = std::ptr::null_mut();
     e = (*ptr_to_globals).top_var;
     while !e.is_null() {
       puts((*e).varstr);
@@ -12391,7 +12391,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
 unsafe extern "C" fn builtin_source(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut arg_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut input: *mut HFILE = 0 as *mut HFILE;
+  let mut input: *mut HFILE = std::ptr::null_mut();
   let mut sv: save_arg_t = save_arg_t {
     sv_argv0: std::ptr::null_mut::<libc::c_char>(),
     sv_g_argv: 0 as *mut *mut libc::c_char,
@@ -12555,7 +12555,7 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
   return ret;
 }
 unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
-  let mut pi: *mut pipe = 0 as *mut pipe;
+  let mut pi: *mut pipe = std::ptr::null_mut();
   let mut jobnum: libc::c_uint = 0;
   if sscanf(
     str,
@@ -12595,7 +12595,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
   return 0 as *mut pipe;
 }
 unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut job: *mut pipe = 0 as *mut pipe;
+  let mut job: *mut pipe = std::ptr::null_mut();
   let mut status_string: *const libc::c_char = 0 as *const libc::c_char;
   checkjobs(0 as *mut pipe, 0i32);
   job = (*ptr_to_globals).job_list;
@@ -12620,7 +12620,7 @@ unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_
 unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut i: libc::c_int = 0;
-  let mut pi: *mut pipe = 0 as *mut pipe;
+  let mut pi: *mut pipe = std::ptr::null_mut();
   if (*ptr_to_globals).interactive_fd == 0 {
     return 1i32;
   }
@@ -12692,7 +12692,7 @@ unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_i
   {
     let mut i: libc::c_int = 1i32;
     loop {
-      let mut pi: *mut pipe = 0 as *mut pipe;
+      let mut pi: *mut pipe = std::ptr::null_mut();
       let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut j: libc::c_int = 0;
       let mut n: libc::c_int = 0;
@@ -12896,7 +12896,7 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
     let mut pid: pid_t = bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as pid_t;
     if *bb_errno != 0 || pid <= 0i32 {
       if *(*argv.offset(0)).offset(0) as libc::c_int == '%' as i32 {
-        let mut wait_pipe: *mut pipe = 0 as *mut pipe;
+        let mut wait_pipe: *mut pipe = std::ptr::null_mut();
         ret = 127i32;
         wait_pipe = parse_jobspec(*argv);
         if !wait_pipe.is_null() {

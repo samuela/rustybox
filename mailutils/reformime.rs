@@ -283,7 +283,7 @@ unsafe extern "C" fn parse(
       let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut pid: pid_t = 0;
       pid = pid;
-      let mut fp: *mut FILE = 0 as *mut FILE;
+      let mut fp: *mut FILE = std::ptr::null_mut();
       let mut charset: *const libc::c_char = find_token(
         tokens.as_mut_ptr() as *const *const libc::c_char,
         b"charset\x00" as *const u8 as *const libc::c_char,

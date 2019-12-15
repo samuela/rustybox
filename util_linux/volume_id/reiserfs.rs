@@ -169,8 +169,8 @@ pub struct reiser4_super_block {
 pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut rs: *mut reiserfs_super_block = 0 as *mut reiserfs_super_block;
-  let mut rs4: *mut reiser4_super_block = 0 as *mut reiser4_super_block;
+  let mut rs: *mut reiserfs_super_block = std::ptr::null_mut();
+  let mut rs4: *mut reiser4_super_block = std::ptr::null_mut();
   rs = volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x10000i32 as libc::c_ulong),

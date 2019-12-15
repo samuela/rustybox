@@ -944,12 +944,12 @@ unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -
 unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   let mut current_block: u64;
   let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pp_rule: *mut *mut logRule_t = 0 as *mut *mut logRule_t;
+  let mut pp_rule: *mut *mut logRule_t = std::ptr::null_mut();
   /* tok[0] set of selectors */
   /* tok[1] file name */
   /* tok[2] has to be NULL */
   let mut tok: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   parser = config_open2(
     if !file.is_null() {
       file
@@ -986,7 +986,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       break;
     }
     let mut cur_selector: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut cur_rule: *mut logRule_t = 0 as *mut logRule_t;
+    let mut cur_rule: *mut logRule_t = std::ptr::null_mut();
     /* unexpected trailing token? */
     if !tok[2].is_null() {
       current_block = 12846980873243673022;
@@ -1585,7 +1585,7 @@ unsafe extern "C" fn timestamp_and_log(
   }
   /* Log message locally (to file or shared mem) */
   let mut match_0: bool = 0i32 != 0;
-  let mut rule: *mut logRule_t = 0 as *mut logRule_t;
+  let mut rule: *mut logRule_t = std::ptr::null_mut();
   let mut facility: u8 = ((pri & 0x3f8i32) >> 3i32) as u8;
   let mut prio_bit: u8 = (1i32 << (pri & 0x7i32)) as u8;
   rule = (*ptr_to_globals).log_rules;
@@ -1737,7 +1737,7 @@ unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c
   );
 }
 unsafe extern "C" fn do_syslogd() -> ! {
-  let mut item: *mut llist_t = 0 as *mut llist_t;
+  let mut item: *mut llist_t = std::ptr::null_mut();
   let mut last_sz: libc::c_int = -1i32;
   let mut last_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut recvbuf: *mut libc::c_char = (*ptr_to_globals).recvbuf.as_mut_ptr();
@@ -1877,7 +1877,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
                 close((*rh).remoteFD); /* ensure it *is* NUL terminated */
                 (*rh).remoteFD = -1i32;
                 free((*rh).remoteAddr as *mut libc::c_void);
-                (*rh).remoteAddr = 0 as *mut len_and_sockaddr
+                (*rh).remoteAddr = std::ptr::null_mut()
               }
               _ => {}
             }
@@ -1912,7 +1912,7 @@ pub unsafe extern "C" fn syslogd_main(
   let mut opt_b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_C: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut remoteAddrList: *mut llist_t = 0 as *mut llist_t;
+  let mut remoteAddrList: *mut llist_t = std::ptr::null_mut();
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh6 = memcpy(

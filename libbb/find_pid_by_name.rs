@@ -173,9 +173,9 @@ unsafe extern "C" fn comm_match(
  */
 #[no_mangle]
 pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> *mut pid_t {
-  let mut pidList: *mut pid_t = 0 as *mut pid_t;
+  let mut pidList: *mut pid_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0i32;
-  let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
+  let mut p: *mut procps_status_t = std::ptr::null_mut();
   pidList = xzalloc(::std::mem::size_of::<pid_t>() as libc::c_ulong) as *mut pid_t;
   loop {
     p = procps_scan(

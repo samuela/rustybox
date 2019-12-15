@@ -129,7 +129,7 @@ pub unsafe extern "C" fn more_main(
   let mut input: libc::c_int = 0i32;
   let mut spaces: libc::c_int = 0i32;
   let mut please_display_more_prompt: libc::c_int = 0;
-  let mut tty: *mut FILE = 0 as *mut FILE;
+  let mut tty: *mut FILE = std::ptr::null_mut();
   /* Parse options */
   /* Accepted but ignored: */
   /* -d	Display help instead of ringing bell */
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn more_main(
   );
   's_75: loop {
     let mut st: stat = std::mem::zeroed();
-    let mut file: *mut FILE = 0 as *mut FILE;
+    let mut file: *mut FILE = std::ptr::null_mut();
     let mut len: libc::c_int = 0;
     let mut lines: libc::c_int = 0;
     file = stdin;

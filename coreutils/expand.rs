@@ -240,7 +240,7 @@ pub unsafe extern "C" fn expand_main(
 ) -> libc::c_int {
   /* Default 8 spaces for 1 tab */
   let mut opt_t: *const libc::c_char = b"8\x00" as *const u8 as *const libc::c_char;
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut tab_size: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
   let mut exit_status: libc::c_int = 0i32;

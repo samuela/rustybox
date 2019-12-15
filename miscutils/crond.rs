@@ -485,7 +485,7 @@ unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
 unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
   let mut pfile: *mut *mut CronFile =
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
-  let mut file: *mut CronFile = 0 as *mut CronFile;
+  let mut file: *mut CronFile = std::ptr::null_mut();
   loop {
     file = *pfile;
     if file.is_null() {
@@ -493,7 +493,7 @@ unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
     }
     if strcmp(userName, (*file).cf_username) == 0i32 {
       let mut pline: *mut *mut CronLine = &mut (*file).cf_lines;
-      let mut line: *mut CronLine = 0 as *mut CronLine;
+      let mut line: *mut CronLine = std::ptr::null_mut();
       (*file).cf_has_running = 0i32 as smallint;
       (*file).cf_deleted = 1i32 as smallint;
       loop {
@@ -521,7 +521,7 @@ unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
   }
 }
 unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut sbuf: stat = std::mem::zeroed();
   let mut maxLines: libc::c_int = 0;
   let mut tokens: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
@@ -548,12 +548,12 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   {
     let mut file: *mut CronFile =
       xzalloc(::std::mem::size_of::<CronFile>() as libc::c_ulong) as *mut CronFile;
-    let mut pline: *mut *mut CronLine = 0 as *mut *mut CronLine;
+    let mut pline: *mut *mut CronLine = std::ptr::null_mut();
     let mut n: libc::c_int = 0;
     (*file).cf_username = xstrdup(fileName);
     pline = &mut (*file).cf_lines;
     's_80: loop {
-      let mut line: *mut CronLine = 0 as *mut CronLine;
+      let mut line: *mut CronLine = std::ptr::null_mut();
       maxLines -= 1;
       if maxLines == 0 {
         bb_error_msg(
@@ -773,7 +773,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
         }
       }
     }
-    *pline = 0 as *mut CronLine;
+    *pline = std::ptr::null_mut();
     (*file).cf_next = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
     *fresh0 = file
@@ -783,7 +783,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   free(shell as *mut libc::c_void);
 }
 unsafe extern "C" fn process_cron_update_file() {
-  let mut fi: *mut FILE = 0 as *mut FILE;
+  let mut fi: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 256] = [0; 256];
   fi = fopen_for_read(b"cron.update\x00" as *const u8 as *const libc::c_char);
   if !fi.is_null() {
@@ -803,7 +803,7 @@ unsafe extern "C" fn process_cron_update_file() {
   };
 }
 unsafe extern "C" fn rescan_crontab_dir() {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
+  let mut file: *mut CronFile = std::ptr::null_mut();
   's_5: loop
   /* Delete all files until we only have ones with running jobs (or none) */
   {
@@ -826,7 +826,7 @@ unsafe extern "C" fn rescan_crontab_dir() {
   xchdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name);
   /* Scan directory and add associated users */
   let mut dir: *mut DIR = opendir(b".\x00" as *const u8 as *const libc::c_char);
-  let mut den: *mut dirent = 0 as *mut dirent;
+  let mut den: *mut dirent = std::ptr::null_mut();
   /* xopendir exists, but "can't open '.'" is not informative */
   if dir.is_null() {
     bb_error_msg_and_die(
@@ -905,7 +905,7 @@ unsafe extern "C" fn fork_job(
   mut run_sendmail: bool,
 ) -> pid_t {
   let mut current_block: u64;
-  let mut pas: *mut passwd = 0 as *mut passwd;
+  let mut pas: *mut passwd = std::ptr::null_mut();
   let mut shell: *const libc::c_char = 0 as *const libc::c_char;
   let mut prog: *const libc::c_char = 0 as *const libc::c_char;
   let mut sv_logmode: smallint = 0;
@@ -1119,9 +1119,9 @@ unsafe extern "C" fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
   /* Find jobs > t1 and <= t2 */
   t = t1 - t1 % 60i32 as libc::c_long;
   while t <= t2 {
-    let mut ptm: *mut tm = 0 as *mut tm;
-    let mut file: *mut CronFile = 0 as *mut CronFile;
-    let mut line: *mut CronLine = 0 as *mut CronLine;
+    let mut ptm: *mut tm = std::ptr::null_mut();
+    let mut file: *mut CronFile = std::ptr::null_mut();
+    let mut line: *mut CronLine = std::ptr::null_mut();
     if !(t <= t1) {
       ptm = localtime(&mut t);
       file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
@@ -1182,8 +1182,8 @@ unsafe extern "C" fn touch_reboot_file() -> libc::c_int {
   return 0i32;
 }
 unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
-  let mut line: *mut CronLine = 0 as *mut CronLine;
+  let mut file: *mut CronFile = std::ptr::null_mut();
+  let mut line: *mut CronLine = std::ptr::null_mut();
   file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
   while !file.is_null() {
     if !((*file).cf_wants_starting == 0) {
@@ -1217,8 +1217,8 @@ unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
  * all done.
  */
 unsafe extern "C" fn check_completions() -> libc::c_int {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
-  let mut line: *mut CronLine = 0 as *mut CronLine;
+  let mut file: *mut CronFile = std::ptr::null_mut();
+  let mut line: *mut CronLine = std::ptr::null_mut();
   let mut num_still_running: libc::c_int = 0i32;
   file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
   while !file.is_null() {

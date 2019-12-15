@@ -656,7 +656,7 @@ unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
 }
 unsafe extern "C" fn init_cpu(mut param: *const libc::c_char) -> *mut s_stat {
   let mut sz: libc::c_int = 0;
-  let mut s: *mut cpu_stat = 0 as *mut cpu_stat;
+  let mut s: *mut cpu_stat = std::ptr::null_mut();
   sz = if *param.offset(0) as libc::c_int != 0 {
     strtoul(param, 0 as *mut *mut libc::c_char, 0i32)
   } else {
@@ -1015,7 +1015,7 @@ unsafe extern "C" fn init_fd(mut _param: *const libc::c_char) -> *mut s_stat {
 }
 unsafe extern "C" fn collect_time(mut s: *mut time_stat) {
   let mut buf: [libc::c_char; 16] = [0; 16];
-  let mut tm: *mut tm = 0 as *mut tm;
+  let mut tm: *mut tm = std::ptr::null_mut();
   let mut us: libc::c_uint = ((*ptr_to_globals).tv.tv_usec
     + (*s).scale.wrapping_div(2i32 as libc::c_uint) as libc::c_long)
     as libc::c_uint;
@@ -1096,9 +1096,9 @@ pub unsafe extern "C" fn nmeter_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut buf: [libc::c_char; 32] = [0; 32];
-  let mut first: *mut s_stat = 0 as *mut s_stat;
-  let mut last: *mut s_stat = 0 as *mut s_stat;
-  let mut s: *mut s_stat = 0 as *mut s_stat;
+  let mut first: *mut s_stat = std::ptr::null_mut();
+  let mut last: *mut s_stat = std::ptr::null_mut();
+  let mut s: *mut s_stat = std::ptr::null_mut();
   let mut opt_d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cur: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut prev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1123,7 +1123,7 @@ pub unsafe extern "C" fn nmeter_main(
     (*ptr_to_globals).is26 = (strstr(
       buf.as_mut_ptr(),
       b" 2.4.\x00" as *const u8 as *const libc::c_char,
-    ) == 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int
+    ) == std::ptr::null_mut()) as libc::c_int
       as smallint
   }
   if getopt32(

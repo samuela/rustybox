@@ -777,7 +777,7 @@ unsafe extern "C" fn free_tab_completion_data() {
       );
     }
     free((*lineedit_ptr_to_statics).matches as *mut libc::c_void);
-    (*lineedit_ptr_to_statics).matches = 0 as *mut *mut libc::c_char
+    (*lineedit_ptr_to_statics).matches = std::ptr::null_mut()
   };
 }
 unsafe extern "C" fn add_match(mut matched: *mut libc::c_char) {
@@ -810,7 +810,7 @@ unsafe extern "C" fn add_match(mut matched: *mut libc::c_char) {
  * unchanged if no user is matched.
  */
 unsafe extern "C" fn username_path_completion(mut ud: *mut libc::c_char) -> *mut libc::c_char {
-  let mut entry: *mut passwd = 0 as *mut passwd; /* skip ~ */
+  let mut entry: *mut passwd = std::ptr::null_mut(); /* skip ~ */
   let mut tilde_name: *mut libc::c_char = ud;
   let mut home: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   ud = ud.offset(1);
@@ -839,7 +839,7 @@ unsafe extern "C" fn username_path_completion(mut ud: *mut libc::c_char) -> *mut
  */
 #[inline(never)]
 unsafe extern "C" fn complete_username(mut ud: *const libc::c_char) -> libc::c_uint {
-  let mut pw: *mut passwd = 0 as *mut passwd; /* skip ~ */
+  let mut pw: *mut passwd = std::ptr::null_mut(); /* skip ~ */
   let mut userlen: libc::c_uint = 0;
   ud = ud.offset(1);
   userlen = strlen(ud) as libc::c_uint;
@@ -864,7 +864,7 @@ unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_i
   let mut npth: libc::c_int = 0;
   let mut pth: *const libc::c_char = 0 as *const libc::c_char;
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut res: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut res: *mut *mut libc::c_char = std::ptr::null_mut();
   if (*(*lineedit_ptr_to_statics).state).flags & WITH_PATH_LOOKUP as libc::c_int != 0 {
     pth = (*(*lineedit_ptr_to_statics).state).path_lookup
   } else {
@@ -958,8 +958,8 @@ unsafe extern "C" fn complete_cmd_dir_file(
   pf_len = strlen(pfind) as libc::c_uint;
   i = 0i32;
   while i < npaths {
-    let mut dir: *mut DIR = 0 as *mut DIR;
-    let mut next: *mut dirent = 0 as *mut dirent;
+    let mut dir: *mut DIR = std::ptr::null_mut();
+    let mut next: *mut dirent = std::ptr::null_mut();
     let mut st: stat = std::mem::zeroed();
     let mut found: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     dir = opendir(*paths.offset(i as isize));
@@ -1642,7 +1642,7 @@ pub unsafe extern "C" fn free_line_input_t(mut n: *mut line_input_t) {
 unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
   let mut temp_h: [*mut libc::c_char; 255] = [0 as *mut libc::c_char; 255];
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut idx: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   let mut line_len: libc::c_uint = 0;
@@ -1745,7 +1745,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     > ((*(*lineedit_ptr_to_statics).state).max_history * 4i32) as libc::c_uint
   {
     let mut new_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut st_temp: *mut line_input_t = 0 as *mut line_input_t;
+    let mut st_temp: *mut line_input_t = std::ptr::null_mut();
     /* we may have concurrently written entries from others.
      * load them */
     st_temp = new_line_input_t((*(*lineedit_ptr_to_statics).state).flags);
@@ -1760,7 +1760,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     );
     fd = open(new_name, 0o1i32 | 0o100i32 | 0o1000i32, 0o600i32);
     if fd >= 0i32 {
-      let mut fp: *mut FILE = 0 as *mut FILE;
+      let mut fp: *mut FILE = std::ptr::null_mut();
       let mut i: libc::c_int = 0;
       fp = xfdopen_for_write(fd);
       i = 0i32;
@@ -3329,7 +3329,7 @@ unsafe extern "C" fn sigaction2(mut sig: libc::c_int, mut act: *mut sigaction) {
   // Grr... gcc 8.1.1:
   // "passing argument 3 to restrict-qualified parameter aliases with argument 2"
   // dance around that...
-  let mut oact: *mut sigaction = 0 as *mut sigaction;
+  let mut oact: *mut sigaction = std::ptr::null_mut();
   oact = act;
   sigaction(sig, act, oact);
 }
@@ -3952,7 +3952,7 @@ pub unsafe extern "C" fn read_line_input(
     (maxsize as libc::c_ulong).wrapping_mul(::std::mem::size_of::<wchar_t>() as libc::c_ulong),
   ) as *mut wchar_t;
   tcsetattr_stdin_TCSANOW(&mut new_settings);
-  let mut entry: *mut passwd = 0 as *mut passwd;
+  let mut entry: *mut passwd = std::ptr::null_mut();
   entry = bb_internal_getpwuid(geteuid());
   if !entry.is_null() {
     (*lineedit_ptr_to_statics).user_buf = xstrdup((*entry).pw_name);

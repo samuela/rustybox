@@ -147,7 +147,7 @@ unsafe extern "C" fn bad_nums(
  * Return a pointer to the specified line number.
  */
 unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
-  let mut lp: *mut LINE = 0 as *mut LINE;
+  let mut lp: *mut LINE = std::ptr::null_mut();
   let mut lnum: libc::c_int = 0;
   if num < 1i32 || num > (*ptr_to_globals).lastNum {
     bb_error_msg(
@@ -379,7 +379,7 @@ unsafe extern "C" fn getNum(
  * Returns TRUE if successful.
  */
 unsafe extern "C" fn setCurNum(mut num: libc::c_int) -> libc::c_int {
-  let mut lp: *mut LINE = 0 as *mut LINE;
+  let mut lp: *mut LINE = std::ptr::null_mut();
   lp = findLine(num);
   if lp.is_null() {
     return 0i32;
@@ -400,8 +400,8 @@ unsafe extern "C" fn insertLine(
   mut data: *const libc::c_char,
   mut len: libc::c_int,
 ) -> libc::c_int {
-  let mut newLp: *mut LINE = 0 as *mut LINE;
-  let mut lp: *mut LINE = 0 as *mut LINE;
+  let mut newLp: *mut LINE = std::ptr::null_mut();
+  let mut lp: *mut LINE = std::ptr::null_mut();
   if num < 1i32 || num > (*ptr_to_globals).lastNum + 1i32 {
     bb_simple_error_msg(b"inserting at bad line number\x00" as *const u8 as *const libc::c_char);
     return 0i32;
@@ -587,7 +587,7 @@ unsafe extern "C" fn writeLines(
   mut num1: libc::c_int,
   mut num2: libc::c_int,
 ) -> libc::c_int {
-  let mut lp: *mut LINE = 0 as *mut LINE;
+  let mut lp: *mut LINE = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   let mut lineCount: libc::c_int = 0;
   let mut charCount: libc::c_int = 0;
@@ -706,9 +706,9 @@ unsafe extern "C" fn printLines(
  * Delete lines from the given range.
  */
 unsafe extern "C" fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
-  let mut lp: *mut LINE = 0 as *mut LINE;
-  let mut nlp: *mut LINE = 0 as *mut LINE;
-  let mut plp: *mut LINE = 0 as *mut LINE;
+  let mut lp: *mut LINE = std::ptr::null_mut();
+  let mut nlp: *mut LINE = std::ptr::null_mut();
+  let mut plp: *mut LINE = std::ptr::null_mut();
   let mut count: libc::c_int = 0;
   if bad_nums(
     num1,
@@ -769,8 +769,8 @@ unsafe extern "C" fn subCommand(
   let mut newLen: libc::c_int = 0;
   let mut deltaLen: libc::c_int = 0;
   let mut offset: libc::c_int = 0;
-  let mut lp: *mut LINE = 0 as *mut LINE;
-  let mut nlp: *mut LINE = 0 as *mut LINE;
+  let mut lp: *mut LINE = std::ptr::null_mut();
+  let mut nlp: *mut LINE = std::ptr::null_mut();
   let mut globalFlag: libc::c_int = 0;
   let mut printFlag: libc::c_int = 0;
   let mut didSub: libc::c_int = 0;
@@ -857,7 +857,7 @@ unsafe extern "C" fn subCommand(
   newLen = strlen(newStr) as libc::c_int;
   deltaLen = newLen - oldLen;
   offset = 0i32;
-  nlp = 0 as *mut LINE;
+  nlp = std::ptr::null_mut();
   while num1 <= num2 {
     offset = findString(lp, oldStr, oldLen, offset);
     if offset < 0i32 {

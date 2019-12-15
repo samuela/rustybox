@@ -303,7 +303,7 @@ pub unsafe extern "C" fn sendmail_main(
   let mut opt_connect: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_from: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut list: *mut llist_t = 0 as *mut llist_t;
+  let mut list: *mut llist_t = std::ptr::null_mut();
   let mut host: *mut libc::c_char = sane_address(safe_gethostname());
   let mut nheaders: libc::c_uint = 0i32 as libc::c_uint;
   let mut code: libc::c_int = 0;

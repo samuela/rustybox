@@ -83,7 +83,7 @@ pub unsafe extern "C" fn ssl_client_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut tls: *mut tls_state_t = 0 as *mut tls_state_t;
+  let mut tls: *mut tls_state_t = std::ptr::null_mut();
   let mut sni: *const libc::c_char = 0 as *const libc::c_char;
   let mut opt: libc::c_int = 0;
   // INIT_G();

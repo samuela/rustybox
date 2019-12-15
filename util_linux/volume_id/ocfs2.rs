@@ -171,7 +171,7 @@ pub struct ocfs2_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut os: *mut ocfs2_super_block = 0 as *mut ocfs2_super_block;
+  let mut os: *mut ocfs2_super_block = std::ptr::null_mut();
   os = volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),

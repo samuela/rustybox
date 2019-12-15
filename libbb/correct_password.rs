@@ -95,7 +95,7 @@ unsafe extern "C" fn get_passwd(
     let mut r: libc::c_int = 0;
     /* getspnam_r may return 0 yet set result to NULL.
      * At least glibc 2.4 does this. Be extra paranoid here. */
-    let mut result: *mut spwd = 0 as *mut spwd;
+    let mut result: *mut spwd = std::ptr::null_mut();
     r = bb_internal_getspnam_r(
       (*pw).pw_name,
       &mut spw,

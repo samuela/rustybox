@@ -640,7 +640,7 @@ pub unsafe extern "C" fn kill_main(
   pid = getpid();
   if 1i32 != 0 && char3 as libc::c_int == 'l' as i32 {
     let mut sid: pid_t = 0;
-    let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
+    let mut p: *mut procps_status_t = std::ptr::null_mut();
     /* compat: exitcode 2 is "no one was signaled" */
     errors = 2i32;
     /* Find out our session id */
@@ -656,7 +656,7 @@ pub unsafe extern "C" fn kill_main(
       if p.is_null() {
         break;
       }
-      let mut args: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+      let mut args: *mut *mut libc::c_char = std::ptr::null_mut();
       if (*p).sid == sid as libc::c_uint
         || (*p).sid == 0i32 as libc::c_uint
         || (*p).pid == pid as libc::c_uint
@@ -721,7 +721,7 @@ pub unsafe extern "C" fn kill_main(
       loop
       /* Looks like they want to do a killall.  Do that */
       {
-        let mut pidList: *mut pid_t = 0 as *mut pid_t;
+        let mut pidList: *mut pid_t = std::ptr::null_mut();
         pidList = find_pid_by_name(arg);
         if *pidList == 0i32 {
           errors += 1;
@@ -732,7 +732,7 @@ pub unsafe extern "C" fn kill_main(
             );
           }
         } else {
-          let mut pl: *mut pid_t = 0 as *mut pid_t;
+          let mut pl: *mut pid_t = std::ptr::null_mut();
           pl = pidList;
           while *pl != 0 {
             if !(*pl == pid) {

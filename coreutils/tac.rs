@@ -62,10 +62,10 @@ pub unsafe extern "C" fn tac_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut name: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut f: *mut FILE = 0 as *mut FILE;
-  let mut line: *mut lstring = 0 as *mut lstring;
-  let mut list: *mut llist_t = 0 as *mut llist_t;
+  let mut name: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut f: *mut FILE = std::ptr::null_mut();
+  let mut line: *mut lstring = std::ptr::null_mut();
+  let mut list: *mut llist_t = std::ptr::null_mut();
   let mut retval: libc::c_int = 0i32;
   /* tac from coreutils 6.9 supports:
          -b, --before
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn tac_main(
           ) as *mut lstring;
           (*line).size = i;
           llist_add_to(&mut list, line as *mut libc::c_void);
-          line = 0 as *mut lstring;
+          line = std::ptr::null_mut();
           i = 0i32
         }
         if !(ch != -1i32) {

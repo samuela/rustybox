@@ -458,7 +458,7 @@ unsafe extern "C" fn addHardLinkInfo(
   mut fileName: *const libc::c_char,
 ) {
   /* Note: hlInfoHeadPtr can never be NULL! */
-  let mut hlInfo: *mut HardLinkInfo = 0 as *mut HardLinkInfo;
+  let mut hlInfo: *mut HardLinkInfo = std::ptr::null_mut();
   hlInfo = xmalloc(
     (::std::mem::size_of::<HardLinkInfo>() as libc::c_ulong).wrapping_add(strlen(fileName)),
   ) as *mut HardLinkInfo;
@@ -932,7 +932,7 @@ unsafe extern "C" fn writeFileToTarball(
    * treating any additional occurrences as hard links.  This is done
    * by adding the file information to the HardLinkInfo linked list.
    */
-  (*tbInfo).hlInfo = 0 as *mut HardLinkInfo;
+  (*tbInfo).hlInfo = std::ptr::null_mut();
   if !((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
     && (*statbuf).st_nlink > 1i32 as libc::c_ulong
   {
@@ -1157,9 +1157,9 @@ unsafe extern "C" fn writeTarFile(
 }
 /* FEATURE_TAR_CREATE */
 unsafe extern "C" fn append_file_list_to_list(mut list: *mut llist_t) -> *mut llist_t {
-  let mut newlist: *mut llist_t = 0 as *mut llist_t;
+  let mut newlist: *mut llist_t = std::ptr::null_mut();
   while !list.is_null() {
-    let mut src_stream: *mut FILE = 0 as *mut FILE;
+    let mut src_stream: *mut FILE = std::ptr::null_mut();
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     src_stream = xfopen_stdin(llist_pop(&mut list) as *const libc::c_char);
     loop {
@@ -1200,12 +1200,12 @@ pub unsafe extern "C" fn tar_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   let mut base_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tar_filename: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
   let mut opt: libc::c_uint = 0;
   let mut verboseFlag: libc::c_int = 0i32;
-  let mut excludes: *mut llist_t = 0 as *mut llist_t;
+  let mut excludes: *mut llist_t = std::ptr::null_mut();
   /* Initialise default values */
   tar_handle = init_handle();
   (*tar_handle).ah_flags = (1i32 << 1i32 | 1i32 << 0i32 | 1i32 << 2i32) as libc::c_uint;
@@ -1426,7 +1426,7 @@ pub unsafe extern "C" fn tar_main(
   }
   /* Create an archive */
   if opt & OPT_CREATE as libc::c_int as libc::c_uint != 0 {
-    let mut tbInfo: *mut TarBallInfo = 0 as *mut TarBallInfo;
+    let mut tbInfo: *mut TarBallInfo = std::ptr::null_mut();
     let mut zipMode: *const libc::c_char = 0 as *const libc::c_char;
     if opt & OPT_COMPRESS as libc::c_int as libc::c_uint != 0 {
       zipMode = b"compress\x00" as *const u8 as *const libc::c_char

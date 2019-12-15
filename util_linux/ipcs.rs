@@ -192,8 +192,8 @@ pub union semun {
   pub __buf: *mut seminfo,
 }
 unsafe extern "C" fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
-  let mut pw: *mut passwd = 0 as *mut passwd;
-  let mut gr: *mut group = 0 as *mut group;
+  let mut pw: *mut passwd = std::ptr::null_mut();
+  let mut gr: *mut group = std::ptr::null_mut();
   printf(
     b"%-10d %-10o\x00" as *const u8 as *const libc::c_char,
     id,
@@ -297,7 +297,7 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
     __glibc_reserved4: 0,
   };
   let mut ipcp: *mut ipc_perm = &mut shmseg.shm_perm;
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   maxid = shmctl(
     0i32,
     14i32,
@@ -551,7 +551,7 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
     semaem: 0,
   };
   let mut ipcp: *mut ipc_perm = &mut semary.sem_perm;
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut arg: semun = semun { val: 0 };
   arg.array = &mut seminfo as *mut seminfo as *mut libc::c_void as *mut libc::c_ushort;
   maxid = semctl(0i32, 0i32, 19i32, arg);
@@ -748,7 +748,7 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
     msgseg: 0,
   };
   let mut ipcp: *mut ipc_perm = &mut msgque.msg_perm;
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   maxid = msgctl(
     0i32,
     12i32,

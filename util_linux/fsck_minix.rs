@@ -1002,7 +1002,7 @@ unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: u16) {
 }
 
 unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
-  let mut inode: *mut minix1_inode = 0 as *mut minix1_inode;
+  let mut inode: *mut minix1_inode = std::ptr::null_mut();
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     return 0 as *mut minix1_inode;
   }
@@ -1014,7 +1014,7 @@ unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
 }
 
 unsafe extern "C" fn get_inode2(mut nr: libc::c_uint) -> *mut minix2_inode {
-  let mut inode: *mut minix2_inode = 0 as *mut minix2_inode;
+  let mut inode: *mut minix2_inode = std::ptr::null_mut();
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     return 0 as *mut minix2_inode;
   }
@@ -1246,7 +1246,7 @@ unsafe extern "C" fn add_zone_tind2(mut znr: *mut u32, mut corrected: *mut small
   };
 }
 unsafe extern "C" fn check_zones(mut i: libc::c_uint) {
-  let mut inode: *mut minix1_inode = 0 as *mut minix1_inode;
+  let mut inode: *mut minix1_inode = std::ptr::null_mut();
   if i == 0 || i > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     return;
   }
@@ -1281,7 +1281,7 @@ unsafe extern "C" fn check_zones(mut i: libc::c_uint) {
   );
 }
 unsafe extern "C" fn check_zones2(mut i: libc::c_uint) {
-  let mut inode: *mut minix2_inode = 0 as *mut minix2_inode;
+  let mut inode: *mut minix2_inode = std::ptr::null_mut();
   if i == 0 || i > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
     return;
   }
@@ -1320,7 +1320,7 @@ unsafe extern "C" fn check_zones2(mut i: libc::c_uint) {
   );
 }
 unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_uint) {
-  let mut inode: *mut minix1_inode = 0 as *mut minix1_inode;
+  let mut inode: *mut minix1_inode = std::ptr::null_mut();
   let mut ino: libc::c_int = 0;
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut block: libc::c_int = 0;
@@ -1407,7 +1407,7 @@ unsafe extern "C" fn check_file(mut dir: *mut minix1_inode, mut offset: libc::c_
   pop_filename();
 }
 unsafe extern "C" fn check_file2(mut dir: *mut minix2_inode, mut offset: libc::c_uint) {
-  let mut inode: *mut minix2_inode = 0 as *mut minix2_inode;
+  let mut inode: *mut minix2_inode = std::ptr::null_mut();
   let mut ino: libc::c_int = 0;
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut block: libc::c_int = 0;
@@ -1495,7 +1495,7 @@ unsafe extern "C" fn check_file2(mut dir: *mut minix2_inode, mut offset: libc::c
 }
 /* Note: do not assume 0/1, it is 0/nonzero */
 unsafe extern "C" fn recursive_check(mut ino: libc::c_uint) {
-  let mut dir: *mut minix1_inode = 0 as *mut minix1_inode; /* trying to check a mounted filesystem? */
+  let mut dir: *mut minix1_inode = std::ptr::null_mut(); /* trying to check a mounted filesystem? */
   let mut offset: libc::c_uint = 0;
   dir = ((*ptr_to_globals).inode_buffer as *mut minix1_inode)
     .offset(-1)
@@ -1517,7 +1517,7 @@ unsafe extern "C" fn recursive_check(mut ino: libc::c_uint) {
   }
 }
 unsafe extern "C" fn recursive_check2(mut ino: libc::c_uint) {
-  let mut dir: *mut minix2_inode = 0 as *mut minix2_inode;
+  let mut dir: *mut minix2_inode = std::ptr::null_mut();
   let mut offset: libc::c_uint = 0;
   dir = ((*ptr_to_globals).inode_buffer as *mut minix2_inode)
     .offset(-1)

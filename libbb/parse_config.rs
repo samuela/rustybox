@@ -90,8 +90,8 @@ pub unsafe extern "C" fn config_open2(
   mut filename: *const libc::c_char,
   mut fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
 ) -> *mut parser_t {
-  let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut fp: *mut FILE = std::ptr::null_mut();
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   fp = fopen_func.expect("non-null function pointer")(filename);
   if fp.is_null() {
     return 0 as *mut parser_t;

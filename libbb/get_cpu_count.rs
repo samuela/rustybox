@@ -573,7 +573,7 @@ pub unsafe extern "C" fn starts_with_cpu(mut str: *const libc::c_char) -> libc::
  */
 #[no_mangle]
 pub unsafe extern "C" fn get_cpu_count() -> libc::c_uint {
-  let mut fp: *mut FILE = 0 as *mut FILE; /* we are past "cpuN..." lines */
+  let mut fp: *mut FILE = std::ptr::null_mut(); /* we are past "cpuN..." lines */
   let mut line: [libc::c_char; 256] = [0; 256];
   let mut proc_nr: libc::c_int = -1i32;
   fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);

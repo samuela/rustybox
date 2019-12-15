@@ -231,12 +231,12 @@ pub unsafe extern "C" fn d6_read_interface(
   mut mac: *mut u8,
 ) -> libc::c_int {
   let mut retval: libc::c_int = 3i32;
-  let mut ifap: *mut ifaddrs = 0 as *mut ifaddrs;
-  let mut ifa: *mut ifaddrs = 0 as *mut ifaddrs;
+  let mut ifap: *mut ifaddrs = std::ptr::null_mut();
+  let mut ifa: *mut ifaddrs = std::ptr::null_mut();
   getifaddrs(&mut ifap);
   ifa = ifap;
   while !ifa.is_null() {
-    let mut sip6: *mut sockaddr_in6 = 0 as *mut sockaddr_in6;
+    let mut sip6: *mut sockaddr_in6 = std::ptr::null_mut();
     if !((*ifa).ifa_addr.is_null() || strcmp((*ifa).ifa_name, interface) != 0i32) {
       if (*(*ifa).ifa_addr).sa_family as libc::c_int == 17i32 {
         let mut sll: *mut sockaddr_ll = (*ifa).ifa_addr as *mut libc::c_void as *mut sockaddr_ll;

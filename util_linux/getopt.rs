@@ -503,8 +503,8 @@ pub unsafe extern "C" fn getopt_main(
   let mut opt: libc::c_uint = 0;
   let mut compatible: *const libc::c_char = 0 as *const libc::c_char;
   let mut s_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut long_options: *mut option = 0 as *mut option;
-  let mut l_arg: *mut llist_t = 0 as *mut llist_t;
+  let mut long_options: *mut option = std::ptr::null_mut();
+  let mut l_arg: *mut llist_t = std::ptr::null_mut();
   compatible = getenv(b"GETOPT_COMPATIBLE\x00" as *const u8 as *const libc::c_char);
   if (*argv.offset(1)).is_null() {
     if !compatible.is_null() {

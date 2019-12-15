@@ -829,7 +829,7 @@ unsafe extern "C" fn print_route(
     .flushb
     .is_null()
   {
-    let mut fn_0: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut fn_0: *mut nlmsghdr = std::ptr::null_mut();
     /* We are creating route flush commands */
     if (*r).rtm_family as libc::c_int == 10i32
       && (*r).rtm_dst_len as libc::c_int == 0i32
@@ -1067,7 +1067,7 @@ unsafe extern "C" fn print_route(
     printf(b"notify \x00" as *const u8 as *const libc::c_char);
   }
   if (*r).rtm_family as libc::c_int == 10i32 {
-    let mut ci: *mut rta_cacheinfo = 0 as *mut rta_cacheinfo;
+    let mut ci: *mut rta_cacheinfo = std::ptr::null_mut();
     if !tb[RTA_CACHEINFO as libc::c_int as usize].is_null() {
       ci = (tb[RTA_CACHEINFO as libc::c_int as usize] as *mut libc::c_char).offset(
         ((::std::mem::size_of::<rtattr>() as libc::c_ulong)

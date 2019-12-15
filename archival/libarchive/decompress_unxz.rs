@@ -828,7 +828,7 @@ unsafe extern "C" fn rc_limit_exceeded(mut rc: *const rc_dec) -> bool {
 }
 /* Decode a literal (one 8-bit byte) */
 unsafe extern "C" fn lzma_literal(mut s: *mut xz_dec_lzma2) {
-  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut probs: *mut u16 = std::ptr::null_mut();
   let mut symbol: u32 = 0;
   let mut match_byte: u32 = 0;
   let mut match_bit: u32 = 0;
@@ -866,7 +866,7 @@ unsafe extern "C" fn lzma_len(
   mut l: *mut lzma_len_dec,
   mut pos_state: u32,
 ) {
-  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut probs: *mut u16 = std::ptr::null_mut();
   let mut limit: u32 = 0;
   if rc_bit(&mut (*s).rc, &mut (*l).choice) == 0 {
     probs = (*l).low[pos_state as usize].as_mut_ptr();
@@ -887,7 +887,7 @@ unsafe extern "C" fn lzma_len(
 }
 /* Decode a match. The distance will be stored in s->lzma.rep0. */
 unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
-  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut probs: *mut u16 = std::ptr::null_mut();
   let mut dist_slot: u32 = 0;
   let mut limit: u32 = 0;
   lzma_state_match(&mut (*s).lzma.state);
@@ -1052,7 +1052,7 @@ unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
  * here, because LZMA state may be reset without resetting the dictionary.
  */
 unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
-  let mut probs: *mut u16 = 0 as *mut u16;
+  let mut probs: *mut u16 = std::ptr::null_mut();
   let mut i: size_t = 0;
   (*s).lzma.state = STATE_LIT_LIT;
   (*s).lzma.rep0 = 0i32 as u32;
@@ -1472,7 +1472,7 @@ unsafe extern "C" fn xz_dec_lzma2_create(
   (*s).dict.mode = mode;
   (*s).dict.size_max = dict_max;
   if mode as libc::c_uint == XZ_DYNALLOC as libc::c_int as libc::c_uint {
-    (*s).dict.buf = 0 as *mut u8;
+    (*s).dict.buf = std::ptr::null_mut();
     (*s).dict.allocated = 0i32 as u32
   }
   return s;
@@ -2403,8 +2403,8 @@ pub unsafe extern "C" fn unpack_xz_stream(
     out_pos: 0,
     out_size: 0,
   };
-  let mut state: *mut xz_dec = 0 as *mut xz_dec;
-  let mut membuf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut state: *mut xz_dec = std::ptr::null_mut();
+  let mut membuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut total: libc::c_longlong = 0i32 as libc::c_longlong;
   if global_crc32_table.is_null() {
     global_crc32_new_table_le();

@@ -745,7 +745,7 @@ pub unsafe extern "C" fn xchroot(mut path: *const libc::c_char) {
 // Print a warning message if opendir() fails, but don't die.
 #[no_mangle]
 pub unsafe extern "C" fn warn_opendir(mut path: *const libc::c_char) -> *mut DIR {
-  let mut dp: *mut DIR = 0 as *mut DIR;
+  let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
     bb_perror_msg(
@@ -758,7 +758,7 @@ pub unsafe extern "C" fn warn_opendir(mut path: *const libc::c_char) -> *mut DIR
 // Die with an error message if opendir() fails.
 #[no_mangle]
 pub unsafe extern "C" fn xopendir(mut path: *const libc::c_char) -> *mut DIR {
-  let mut dp: *mut DIR = 0 as *mut DIR;
+  let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
     bb_perror_msg_and_die(

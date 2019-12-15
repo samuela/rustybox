@@ -405,7 +405,7 @@ unsafe extern "C" fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int
 }
 unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut i: libc::c_int = 0;
-  let mut qopt: *mut tc_prio_qopt = 0 as *mut tc_prio_qopt;
+  let mut qopt: *mut tc_prio_qopt = std::ptr::null_mut();
   let mut tb: [*mut rtattr; 2] = [0 as *mut rtattr; 2];
   if opt.is_null() {
     return 0i32;
@@ -444,11 +444,11 @@ unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
 }
 unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut tb: [*mut rtattr; 8] = [0 as *mut rtattr; 8];
-  let mut r: *mut tc_ratespec = 0 as *mut tc_ratespec;
-  let mut lss: *mut tc_cbq_lssopt = 0 as *mut tc_cbq_lssopt;
-  let mut wrr: *mut tc_cbq_wrropt = 0 as *mut tc_cbq_wrropt;
-  let mut _fopt: *mut tc_cbq_fopt = 0 as *mut tc_cbq_fopt; // assigned to but never used
-  let mut _ovl: *mut tc_cbq_ovl = 0 as *mut tc_cbq_ovl;
+  let mut r: *mut tc_ratespec = std::ptr::null_mut();
+  let mut lss: *mut tc_cbq_lssopt = std::ptr::null_mut();
+  let mut wrr: *mut tc_cbq_wrropt = std::ptr::null_mut();
+  let mut _fopt: *mut tc_cbq_fopt = std::ptr::null_mut(); // assigned to but never used
+  let mut _ovl: *mut tc_cbq_ovl = std::ptr::null_mut();
   let error: *const libc::c_char = b"CBQ: too short %s opt\x00" as *const u8 as *const libc::c_char;
   let mut buf: [libc::c_char; 64] = [0; 64];
   if !opt.is_null() {

@@ -811,7 +811,7 @@ unsafe extern "C" fn unpack_tail(
   mut recv_seq: u16,
   mut ttl: libc::c_int,
 ) {
-  let mut b: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut b: *mut libc::c_uchar = std::ptr::null_mut();
   let mut m: libc::c_uchar = 0;
   let mut dupmsg: *const libc::c_char = b" (DUP!)\x00" as *const u8 as *const libc::c_char;
   let mut triptime: libc::c_uint = 0;
@@ -871,8 +871,8 @@ unsafe extern "C" fn unpack4(
   mut sz: libc::c_int,
   mut from: *mut sockaddr_in,
 ) -> libc::c_int {
-  let mut icmppkt: *mut icmp = 0 as *mut icmp;
-  let mut iphdr: *mut iphdr = 0 as *mut iphdr;
+  let mut icmppkt: *mut icmp = std::ptr::null_mut();
+  let mut iphdr: *mut iphdr = std::ptr::null_mut();
   let mut hlen: libc::c_int = 0;
   /* discard if too short */
   if (sz as libc::c_uint)
@@ -910,7 +910,7 @@ unsafe extern "C" fn unpack4(
       }
       __v
     };
-    let mut tp: *mut u32 = 0 as *mut u32;
+    let mut tp: *mut u32 = std::ptr::null_mut();
     if sz as libc::c_ulong
       >= (8i32 as libc::c_ulong).wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
     {
@@ -940,7 +940,7 @@ unsafe extern "C" fn unpack6(
   mut from: *mut sockaddr_in6,
   mut hoplimit: libc::c_int,
 ) -> libc::c_int {
-  let mut icmppkt: *mut icmp6_hdr = 0 as *mut icmp6_hdr;
+  let mut icmppkt: *mut icmp6_hdr = std::ptr::null_mut();
   let mut buf: [libc::c_char; 46] = [0; 46];
   /* discard if too short */
   if (sz as libc::c_ulong)
@@ -973,7 +973,7 @@ unsafe extern "C" fn unpack6(
       }
       __v
     };
-    let mut tp: *mut u32 = 0 as *mut u32;
+    let mut tp: *mut u32 = std::ptr::null_mut();
     if sz as libc::c_ulong
       >= (::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
         .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
@@ -1229,7 +1229,7 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
     /* listen for replies */
     {
       let mut c: libc::c_int = 0;
-      let mut mp: *mut cmsghdr = 0 as *mut cmsghdr;
+      let mut mp: *mut cmsghdr = std::ptr::null_mut();
       let mut hoplimit: libc::c_int = -1i32;
       msg.msg_controllen = ::std::mem::size_of::<[libc::c_char; 56]>() as libc::c_ulong;
       c = recvmsg(pingsock as libc::c_int, &mut msg, 0i32) as libc::c_int;
@@ -1339,7 +1339,7 @@ unsafe extern "C" fn common_ping_main(
   mut opt: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut str_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_i: *mut libc::c_char =
@@ -1433,7 +1433,7 @@ unsafe extern "C" fn common_ping_main(
   {
     /* leaking it here... */
     let ref mut fresh25 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).source_lsa;
-    *fresh25 = 0 as *mut len_and_sockaddr
+    *fresh25 = std::ptr::null_mut()
   }
   let ref mut fresh26 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dotted;
   *fresh26 = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);

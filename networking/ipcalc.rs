@@ -367,7 +367,7 @@ pub unsafe extern "C" fn ipcalc_main(
     );
   }
   if opt & 0x10i32 as libc::c_uint != 0 {
-    let mut hostinfo: *mut hostent = 0 as *mut hostent;
+    let mut hostinfo: *mut hostent = std::ptr::null_mut();
     hostinfo = gethostbyaddr(
       &mut s_ipaddr.s_addr as *mut in_addr_t as *mut libc::c_char as *const libc::c_void,
       ::std::mem::size_of::<in_addr_t>() as libc::c_ulong as __socklen_t,

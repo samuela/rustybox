@@ -212,8 +212,8 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   let mut attr_len: libc::c_uint = 0;
   let mut val_off: libc::c_uint = 0;
   let mut val_len: libc::c_uint = 0;
-  let mut mftr: *mut master_file_table_record = 0 as *mut master_file_table_record;
-  let mut ns: *mut ntfs_super_block = 0 as *mut ntfs_super_block;
+  let mut mftr: *mut master_file_table_record = std::ptr::null_mut();
+  let mut ns: *mut ntfs_super_block = std::ptr::null_mut();
   let mut buf: *const u8 = 0 as *const u8;
   let mut val: *const u8 = 0 as *const u8;
   ns = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut ntfs_super_block;
@@ -256,7 +256,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
     {
       attr_off = (*mftr).attrs_offset as libc::c_uint;
       loop {
-        let mut attr: *mut file_attribute = 0 as *mut file_attribute;
+        let mut attr: *mut file_attribute = std::ptr::null_mut();
         attr = &*buf.offset(attr_off as isize) as *const u8 as *mut file_attribute;
         attr_type = (*attr).type_0;
         attr_len = (*attr).len;

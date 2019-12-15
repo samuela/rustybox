@@ -533,7 +533,7 @@ unsafe extern "C" fn parse_module(
   free(module_image as *mut libc::c_void);
   (*info).deps = copy_stringbuf();
   (*info).open_read_failed =
-    (module_image == 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int as smallint;
+    (module_image == std::ptr::null_mut()) as libc::c_int as smallint;
   return (*info).open_read_failed as libc::c_int;
 }
 unsafe extern "C" fn fileAction(
@@ -711,7 +711,7 @@ unsafe extern "C" fn start_dep_bb_writeout() -> libc::c_int {
 unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
   let mut current_block: u64;
   let mut i: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   /* We want good error reporting. fdprintf is not good enough. */
   fp = xfdopen_for_write(fd);
   i = 0i32;
@@ -789,7 +789,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
   let mut i: libc::c_int = 0;
   let mut dep_bb_fd: libc::c_int = 0;
   let mut infoidx: libc::c_int = 0;
-  let mut infovec: *mut *mut module_info = 0 as *mut *mut module_info;
+  let mut infovec: *mut *mut module_info = std::ptr::null_mut();
   loop
   /* modprobe.dep.bb appeared? */
   /* First try to find by name (cheaper) */
@@ -837,7 +837,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
   /* Scan all module bodies, extract modinfo (it contains aliases) */
   i = 0i32;
   infoidx = 0i32;
-  infovec = 0 as *mut *mut module_info;
+  infovec = std::ptr::null_mut();
   while !(*(*ptr_to_globals).modinfo.offset(i as isize))
     .pathname
     .is_null()
@@ -891,7 +891,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
 unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   ret = 5i32 * 2i32;
   'c_11409: loop {
     fp = fopen_for_read(b"/proc/modules\x00" as *const u8 as *const libc::c_char);
@@ -970,8 +970,8 @@ unsafe extern "C" fn process_module(
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut deps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut infovec: *mut *mut module_info = 0 as *mut *mut module_info;
-  let mut info: *mut module_info = 0 as *mut module_info;
+  let mut infovec: *mut *mut module_info = std::ptr::null_mut();
+  let mut info: *mut module_info = std::ptr::null_mut();
   let mut infoidx: libc::c_int = 0;
   let mut is_remove: bool = 1i32 != 0 && 1i32 + 1i32 + 1i32 + 1i32 == 1i32
     || (1i32 != 0 || 1i32 != 0) && option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0;
@@ -1378,7 +1378,7 @@ pub unsafe extern "C" fn modprobe_main(
     && (1i32 + 1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'i' as i32)
   {
     let mut len: size_t = 0;
-    let mut map: *mut libc::c_void = 0 as *mut libc::c_void;
+    let mut map: *mut libc::c_void = std::ptr::null_mut();
     len = if -1i32 as ssize_t > 0 {
       -1i32 as ssize_t
     } else {

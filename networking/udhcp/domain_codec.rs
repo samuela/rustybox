@@ -136,9 +136,9 @@ pub unsafe extern "C" fn dname_dec(
  */
 unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
   let mut c: u8 = 0;
-  let mut res: *mut u8 = 0 as *mut u8;
-  let mut lenptr: *mut u8 = 0 as *mut u8;
-  let mut dst: *mut u8 = 0 as *mut u8;
+  let mut res: *mut u8 = std::ptr::null_mut();
+  let mut lenptr: *mut u8 = std::ptr::null_mut();
+  let mut dst: *mut u8 = std::ptr::null_mut();
   let mut len: libc::c_int = 0;
   res = xmalloc(strlen(src).wrapping_add(2i32 as libc::c_ulong)) as *mut u8;
   lenptr = res;
@@ -352,8 +352,8 @@ pub unsafe extern "C" fn dname_enc(
   mut src: *const libc::c_char,
   mut retlen: *mut libc::c_int,
 ) -> *mut u8 {
-  let mut d: *mut u8 = 0 as *mut u8;
-  let mut dname: *mut u8 = 0 as *mut u8;
+  let mut d: *mut u8 = std::ptr::null_mut();
+  let mut dname: *mut u8 = std::ptr::null_mut();
   let mut off: libc::c_int = 0;
   dname = convert_dname(src);
   if dname.is_null() {

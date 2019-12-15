@@ -151,8 +151,8 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   let mut uc: u8 = 0;
   let mut symToByte: [u8; 256] = [0; 256];
   let mut mtfSymbol: [u8; 256] = [0; 256];
-  let mut selectors: *mut u8 = 0 as *mut u8;
-  let mut dbuf: *mut u32 = 0 as *mut u32;
+  let mut selectors: *mut u8 = std::ptr::null_mut();
+  let mut dbuf: *mut u32 = std::ptr::null_mut();
   let mut origPtr: libc::c_uint = 0;
   let mut t: libc::c_uint = 0;
   let mut dbufCount: libc::c_uint = 0;
@@ -272,9 +272,9 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
     let mut length: [u8; 258] = [0; 258];
     /* 8 bits is ALMOST enough for temp[], see below */
     let mut temp: [libc::c_uint; 21] = [0; 21];
-    let mut hufGroup: *mut group_data = 0 as *mut group_data;
-    let mut base: *mut libc::c_int = 0 as *mut libc::c_int;
-    let mut limit: *mut libc::c_int = 0 as *mut libc::c_int;
+    let mut hufGroup: *mut group_data = std::ptr::null_mut();
+    let mut base: *mut libc::c_int = std::ptr::null_mut();
+    let mut limit: *mut libc::c_int = std::ptr::null_mut();
     let mut minLen: libc::c_int = 0;
     let mut maxLen: libc::c_int = 0;
     let mut pp: libc::c_int = 0;
@@ -411,9 +411,9 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   dbufCount = selector as libc::c_uint;
   runPos = dbufCount;
   's_565: loop {
-    let mut hufGroup_0: *mut group_data = 0 as *mut group_data;
-    let mut base_0: *mut libc::c_int = 0 as *mut libc::c_int;
-    let mut limit_0: *mut libc::c_int = 0 as *mut libc::c_int;
+    let mut hufGroup_0: *mut group_data = std::ptr::null_mut();
+    let mut base_0: *mut libc::c_int = std::ptr::null_mut();
+    let mut limit_0: *mut libc::c_int = std::ptr::null_mut();
     let mut nextSym: libc::c_int = 0;
     let mut ngrp: u8 = 0;
     /* Fetch next Huffman coding group from list. */
@@ -790,7 +790,7 @@ unsafe extern "C" fn start_bunzip(
   mut inbuf: *const libc::c_void,
   mut len: libc::c_int,
 ) -> libc::c_int {
-  let mut bd: *mut bunzip_data = 0 as *mut bunzip_data;
+  let mut bd: *mut bunzip_data = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   /* Figure out how much data to allocate */
   i = ::std::mem::size_of::<bunzip_data>() as libc::c_ulong as libc::c_uint;
@@ -857,7 +857,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
   let mut total_written: libc::c_longlong = 0i32 as libc::c_longlong;
-  let mut bd: *mut bunzip_data = 0 as *mut bunzip_data;
+  let mut bd: *mut bunzip_data = std::ptr::null_mut();
   let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut len: libc::c_uint = 0;
@@ -975,7 +975,7 @@ pub unsafe extern "C" fn unpack_bz2_data(
   mut unpacked_len: libc::c_int,
 ) -> *mut libc::c_char {
   let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut bd: *mut bunzip_data = 0 as *mut bunzip_data;
+  let mut bd: *mut bunzip_data = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut jmpbuf: jmp_buf = [__jmp_buf_tag {
     __jmpbuf: [0; 8],

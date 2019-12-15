@@ -571,11 +571,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   let mut timestamp: time_t = 0;
   let mut label: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut st: stat = std::mem::zeroed();
-  let mut sb: *mut ext2_super_block = 0 as *mut ext2_super_block;
-  let mut gd: *mut ext2_group_desc = 0 as *mut ext2_group_desc;
-  let mut inode: *mut ext2_inode = 0 as *mut ext2_inode;
-  let mut dir: *mut ext2_dir = 0 as *mut ext2_dir;
-  let mut buf: *mut u8 = 0 as *mut u8;
+  let mut sb: *mut ext2_super_block = std::ptr::null_mut();
+  let mut gd: *mut ext2_group_desc = std::ptr::null_mut();
+  let mut inode: *mut ext2_inode = std::ptr::null_mut();
+  let mut dir: *mut ext2_dir = std::ptr::null_mut();
+  let mut buf: *mut u8 = std::ptr::null_mut();
   // using global "option_mask32" instead of local "opts":
   // we are register starved here
   /*opts =*/

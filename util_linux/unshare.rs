@@ -271,7 +271,7 @@ unsafe extern "C" fn parse_propagation(mut prop_str: *const libc::c_char) -> lib
 }
 unsafe extern "C" fn mount_namespaces(mut pid: pid_t, mut ns_ctx_list: *mut namespace_ctx) {
   let mut ns: *const namespace_descr = 0 as *const namespace_descr;
-  let mut ns_ctx: *mut namespace_ctx = 0 as *mut namespace_ctx;
+  let mut ns_ctx: *mut namespace_ctx = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   i = 0i32;
   while i < NS_COUNT as libc::c_int {

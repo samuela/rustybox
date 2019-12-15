@@ -159,7 +159,7 @@ pub struct f2fs_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut sb: *mut f2fs_super_block = 0 as *mut f2fs_super_block;
+  let mut sb: *mut f2fs_super_block = std::ptr::null_mut();
   // Go for primary super block (ignore second sb)
   sb = volume_id_get_buffer(
     id,

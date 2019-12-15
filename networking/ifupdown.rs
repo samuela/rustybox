@@ -1210,9 +1210,9 @@ unsafe extern "C" fn read_interfaces(
    * other files, so configuration can be split into many files.
    * The word "source" is followed by the path of file to be sourced.
    */
-  let mut currmap: *mut mapping_defn_t = 0 as *mut mapping_defn_t; /* while (fgets) */
-  let mut currif: *mut interface_defn_t = 0 as *mut interface_defn_t;
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut currmap: *mut mapping_defn_t = std::ptr::null_mut(); /* while (fgets) */
+  let mut currif: *mut interface_defn_t = std::ptr::null_mut();
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut first_word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rest_of_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1372,8 +1372,8 @@ unsafe extern "C" fn read_interfaces(
       .is_null()
       {
         let mut dirpath: *const libc::c_char = 0 as *const libc::c_char;
-        let mut dir: *mut DIR = 0 as *mut DIR;
-        let mut entry: *mut dirent = 0 as *mut dirent;
+        let mut dir: *mut DIR = std::ptr::null_mut();
+        let mut entry: *mut dirent = std::ptr::null_mut();
         dirpath = next_word(&mut rest_of_line);
         dir = xopendir(dirpath);
         loop {
@@ -1528,7 +1528,7 @@ unsafe extern "C" fn set_environ(
   mut opt: *const libc::c_char,
 ) {
   let mut i: libc::c_int = 0;
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .my_environ
     .is_null()
@@ -1676,7 +1676,7 @@ unsafe extern "C" fn execute_all(
   return doit(buf.as_mut_ptr());
 }
 unsafe extern "C" fn check(mut str: *mut libc::c_char) -> libc::c_int {
-  return (str != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int;
+  return (str != std::ptr::null_mut()) as libc::c_int;
 }
 unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
   if (*(*iface).method).up.expect("non-null function pointer")(
@@ -1784,8 +1784,8 @@ unsafe extern "C" fn run_mapping(
   mut physical: *mut libc::c_char,
   mut map: *mut mapping_defn_t,
 ) -> *mut libc::c_char {
-  let mut in_0: *mut FILE = 0 as *mut FILE;
-  let mut out: *mut FILE = 0 as *mut FILE;
+  let mut in_0: *mut FILE = std::ptr::null_mut();
+  let mut out: *mut FILE = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut pid: pid_t = 0;
@@ -1849,7 +1849,7 @@ unsafe extern "C" fn find_iface_state(
 }
 /* read the previous state from the state file */
 unsafe extern "C" fn read_iface_state() -> *mut llist_t {
-  let mut state_list: *mut llist_t = 0 as *mut llist_t;
+  let mut state_list: *mut llist_t = std::ptr::null_mut();
   let mut state_fp: *mut FILE =
     fopen_for_read(b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char);
   if !state_fp.is_null() {
@@ -1912,8 +1912,8 @@ pub unsafe extern "C" fn ifupdown_main(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut cmds: Option<unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int> = None;
-  let mut defn: *mut interfaces_file_t = 0 as *mut interfaces_file_t;
-  let mut target_list: *mut llist_t = 0 as *mut llist_t;
+  let mut defn: *mut interfaces_file_t = std::ptr::null_mut();
+  let mut target_list: *mut llist_t = std::ptr::null_mut();
   let mut interfaces: *const libc::c_char =
     b"/etc/network/interfaces\x00" as *const u8 as *const libc::c_char;
   let mut any_failures: bool = 0i32 != 0;
@@ -1949,8 +1949,8 @@ pub unsafe extern "C" fn ifupdown_main(
   }
   /* Update the interfaces */
   while !target_list.is_null() {
-    let mut iface_list: *mut llist_t = 0 as *mut llist_t;
-    let mut currif: *mut interface_defn_t = 0 as *mut interface_defn_t;
+    let mut iface_list: *mut llist_t = std::ptr::null_mut();
+    let mut currif: *mut interface_defn_t = std::ptr::null_mut();
     let mut iface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut liface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut pch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -2007,7 +2007,7 @@ pub unsafe extern "C" fn ifupdown_main(
         if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
           && option_mask32 & OPT_no_mappings as libc::c_int as libc::c_uint == 0
         {
-          let mut currmap: *mut mapping_defn_t = 0 as *mut mapping_defn_t;
+          let mut currmap: *mut mapping_defn_t = std::ptr::null_mut();
           currmap = (*defn).mappings;
           while !currmap.is_null() {
             let mut i: libc::c_int = 0;
@@ -2068,7 +2068,7 @@ pub unsafe extern "C" fn ifupdown_main(
         } else if option_mask32 & OPT_no_act as libc::c_int as libc::c_uint == 0 {
           /* update the state file */
           let mut new_state_fp: *mut FILE = open_new_state_file();
-          let mut state: *mut llist_t = 0 as *mut llist_t;
+          let mut state: *mut llist_t = std::ptr::null_mut();
           let mut state_list_0: *mut llist_t = read_iface_state();
           let mut iface_state_0: *mut llist_t = find_iface_state(state_list_0, iface);
           if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)

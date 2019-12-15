@@ -180,7 +180,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
   let mut ifr_buf: [libc::c_char; 40] = [0; 40];
   let ifr: *mut ifreq = ifr_buf.as_mut_ptr() as *mut libc::c_void as *mut ifreq;
   let mut fd: libc::c_int = 0;
-  let mut our_ip: *mut sockaddr_in = 0 as *mut sockaddr_in;
+  let mut our_ip: *mut sockaddr_in = std::ptr::null_mut();
   memset(
     ifr as *mut libc::c_void,
     0i32,

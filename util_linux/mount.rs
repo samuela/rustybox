@@ -542,9 +542,9 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
   ];
   let mut fs: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut list: *mut llist_t = 0 as *mut llist_t;
+  let mut list: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   i = 0i32;
   while i < 2i32 {
     f = fopen_for_read(filesystems[i as usize].as_ptr());
@@ -729,7 +729,7 @@ unsafe extern "C" fn nfsmount(
   mut vfsflags: libc::c_ulong,
   mut filteropts: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut opts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut dotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -772,7 +772,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
   let mut vfsflags: libc::c_ulong = 0;
   let mut loopFile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut filteropts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fl: *mut llist_t = 0 as *mut llist_t;
+  let mut fl: *mut llist_t = std::ptr::null_mut();
   let mut st: stat = std::mem::zeroed();
   *bb_errno = 0i32;
   vfsflags = parse_mount_options((*mp).mnt_opts, &mut filteropts);
@@ -832,7 +832,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     let mut c: libc::c_char = 0;
     let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut share: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+    let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
     // Might this be an CIFS filesystem?
     // Parse mp->mnt_fsname of the form "//hostname/share[/dir1/dir2]"
     hostname = (*mp).mnt_fsname.offset(2);
@@ -1115,9 +1115,9 @@ pub unsafe extern "C" fn mount_main(
   let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut O_optmatch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut storage_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut lst_o: *mut llist_t = 0 as *mut llist_t;
+  let mut lst_o: *mut llist_t = std::ptr::null_mut();
   let mut fstabname: *const libc::c_char = b"/etc/fstab\x00" as *const u8 as *const libc::c_char;
-  let mut fstab: *mut FILE = 0 as *mut FILE;
+  let mut fstab: *mut FILE = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut rc: libc::c_int = 0i32;
@@ -1334,7 +1334,7 @@ pub unsafe extern "C" fn mount_main(
       mtcur = mtother
     // If we're mounting all
     } else {
-      let mut mp: *mut mntent = 0 as *mut mntent;
+      let mut mp: *mut mntent = std::ptr::null_mut();
       // No, mount -a won't mount anything,
       // even user mounts, for mere humans
       if nonroot != 0 {

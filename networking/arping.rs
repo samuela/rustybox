@@ -355,7 +355,7 @@ unsafe extern "C" fn send_pack(
   let mut err: libc::c_int = 0;
   let mut buf: [libc::c_uchar; 256] = [0; 256];
   let mut ah: *mut arphdr = buf.as_mut_ptr() as *mut arphdr;
-  let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut p: *mut libc::c_uchar = std::ptr::null_mut();
   (*ah).ar_hrd = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
@@ -889,7 +889,7 @@ pub unsafe extern "C" fn arping_main(
     return (!option_mask32 & DAD as libc::c_int as libc::c_uint) as libc::c_int;
   }
   /* if (!inet_aton(target, &dst)) - not needed */
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa = xhost_and_af2sockaddr(target, 0i32, 2i32 as sa_family_t);
   (*ptr_to_globals).dst = (*lsa).u.sin.sin_addr;
   if !source.is_null() && inet_aton(source, &mut (*ptr_to_globals).src) == 0 {

@@ -124,7 +124,7 @@ pub unsafe extern "C" fn wc_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut s: *const libc::c_char = 0 as *const libc::c_char;
   let mut u: libc::c_uint = 0;
   let mut linepos: libc::c_uint = 0;
@@ -133,7 +133,7 @@ pub unsafe extern "C" fn wc_main(
   let mut start_fmt: *const libc::c_char =
     (b" %9llu\x00" as *const u8 as *const libc::c_char).offset(1);
   let mut fname_fmt: *const libc::c_char = b" %s\n\x00" as *const u8 as *const libc::c_char;
-  let mut pcounts: *mut libc::c_ulonglong = 0 as *mut libc::c_ulonglong;
+  let mut pcounts: *mut libc::c_ulonglong = std::ptr::null_mut();
   let mut counts: [libc::c_ulonglong; 5] = [0; 5];
   let mut totals: [libc::c_ulonglong; 5] = [0; 5];
   let mut num_files: libc::c_int = 0;
@@ -170,7 +170,7 @@ pub unsafe extern "C" fn wc_main(
     argv = argv.offset(1);
     arg = *fresh0;
     if !arg.is_null() {
-      fp = 0 as *mut FILE;
+      fp = std::ptr::null_mut();
       s = 0 as *const libc::c_char;
       u = 0;
       linepos = 0;

@@ -92,7 +92,7 @@ unsafe extern "C" fn decode_arg(
   mut argv: *mut *mut libc::c_char,
   mut gp: *mut globals,
 ) -> *mut *mut libc::c_char {
-  let mut fl: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
+  let mut fl: *mut libc::c_ulong = std::ptr::null_mut();
   let mut arg: *const libc::c_char = *argv;
   let mut opt: libc::c_char = *arg;
   fl = &mut (*gp).af;

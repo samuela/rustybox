@@ -987,8 +987,8 @@ pub unsafe extern "C" fn aes_cbc_decrypt(
 ) {
   let mut iv2: [u8; 16] = [0; 16];
   let mut iv3: [u8; 16] = [0; 16];
-  let mut ivbuf: *mut u8 = 0 as *mut u8;
-  let mut ivnext: *mut u8 = 0 as *mut u8;
+  let mut ivbuf: *mut u8 = std::ptr::null_mut();
+  let mut ivnext: *mut u8 = std::ptr::null_mut();
   let mut ct: *const u8 = data as *const u8;
   let mut pt: *mut u8 = dst as *mut u8;
   ivbuf = memcpy(

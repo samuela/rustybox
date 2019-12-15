@@ -142,7 +142,7 @@ unsafe extern "C" fn setup_alarm(
   mut wakeup: *mut time_t,
   mut rtc_time: time_t,
 ) {
-  let mut ptm: *mut tm = 0 as *mut tm;
+  let mut ptm: *mut tm = std::ptr::null_mut();
   let mut wake: linux_rtc_wkalrm = linux_rtc_wkalrm {
     enabled: 0,
     pending: 0,

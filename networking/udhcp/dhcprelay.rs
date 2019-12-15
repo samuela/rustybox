@@ -200,7 +200,7 @@ unsafe extern "C" fn xid_add(
   mut ip: *mut sockaddr_in,
   mut client: libc::c_int,
 ) -> *mut xid_item {
-  let mut item: *mut xid_item = 0 as *mut xid_item;
+  let mut item: *mut xid_item = std::ptr::null_mut();
   /* create new xid entry */
   item = xmalloc(::std::mem::size_of::<xid_item>() as libc::c_ulong) as *mut xid_item;
   /* add xid entry */
@@ -258,7 +258,7 @@ unsafe extern "C" fn xid_del(mut xid: u32) {
  * returns the message type on success, -1 otherwise
  */
 unsafe extern "C" fn get_dhcp_packet_type(mut p: *mut dhcp_packet) -> libc::c_int {
-  let mut op: *mut u8 = 0 as *mut u8;
+  let mut op: *mut u8 = std::ptr::null_mut();
   /* it must be either a BOOTREQUEST or a BOOTREPLY */
   if (*p).op as libc::c_int != 1i32 && (*p).op as libc::c_int != 2i32 {
     return -1i32;
@@ -279,7 +279,7 @@ unsafe extern "C" fn make_iface_list(
   mut client_number: *mut libc::c_int,
 ) -> *mut *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut iface_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut iface_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut cn: libc::c_int = 0;
   /* get number of items */
@@ -407,7 +407,7 @@ unsafe extern "C" fn pass_to_client(
   mut fds: *mut libc::c_int,
 ) {
   let mut type_0: libc::c_int = 0;
-  let mut item: *mut xid_item = 0 as *mut xid_item;
+  let mut item: *mut xid_item = std::ptr::null_mut();
   /* check xid */
   item = xid_find((*p).xid);
   if item.is_null() {
@@ -484,8 +484,8 @@ pub unsafe extern "C" fn dhcprelay_main(
     sin_addr: in_addr { s_addr: 0 },
     sin_zero: [0; 8],
   };
-  let mut iface_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut fds: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut iface_list: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut fds: *mut libc::c_int = std::ptr::null_mut();
   let mut num_sockets: libc::c_int = 0;
   let mut max_socket: libc::c_int = 0;
   let mut our_nip: u32 = 0;

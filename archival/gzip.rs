@@ -483,7 +483,7 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
   let mut scan: *mut uch = (*ptr_to_globals.offset(-1))
     .window
     .offset((*ptr_to_globals.offset(-1)).strstart as isize); /* current string */
-  let mut match_0: *mut uch = 0 as *mut uch; /* matched string */
+  let mut match_0: *mut uch = std::ptr::null_mut(); /* matched string */
   let mut len: libc::c_int = 0; /* length of current match */
   let mut best_len: libc::c_int = (*ptr_to_globals.offset(-1)).prev_length as libc::c_int; /* best match length so far */
   let mut limit: IPos =

@@ -1495,7 +1495,7 @@ unsafe extern "C" fn isempty_RL(mut s: *mut EState) -> libc::c_int {
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize100k: libc::c_int) {
   let mut n: libc::c_uint = 0;
-  let mut s: *mut EState = 0 as *mut EState;
+  let mut s: *mut EState = std::ptr::null_mut();
   s = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<EState>() as libc::c_ulong)
     as *mut EState;
   (*s).strm = strm;
@@ -1698,7 +1698,7 @@ unsafe extern "C" fn BZ2_bzCompress(
   mut action: libc::c_int,
 ) -> libc::c_int {
   /*Bool progress;*/
-  let mut s: *mut EState = 0 as *mut EState;
+  let mut s: *mut EState = std::ptr::null_mut();
   s = (*strm).state as *mut EState;
   match (*s).mode as libc::c_int {
     2 => {
@@ -1735,7 +1735,7 @@ unsafe extern "C" fn BZ2_bzCompress(
 }
 /*---------------------------------------------------*/
 unsafe extern "C" fn BZ2_bzCompressEnd(mut strm: *mut bz_stream) {
-  let mut s: *mut EState = 0 as *mut EState;
+  let mut s: *mut EState = std::ptr::null_mut();
   s = (*strm).state as *mut EState;
   free((*s).arr1 as *mut libc::c_void);
   free((*s).arr2 as *mut libc::c_void);
@@ -1884,7 +1884,7 @@ unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
  */
 unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
   let mut rtmp: u8 = 0;
-  let mut ryy_j: *mut u8 = 0 as *mut u8;
+  let mut ryy_j: *mut u8 = std::ptr::null_mut();
   rtmp = *yy.offset(1);
   *yy.offset(1) = *yy.offset(0);
   ryy_j = &mut *yy.offset(1) as *mut u8;

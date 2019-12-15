@@ -258,7 +258,7 @@ pub unsafe extern "C" fn hostname_main(
   }
   if opts & OPT_dfi as libc::c_int as libc::c_uint != 0 {
     /* Cases when we need full hostname (or its part) */
-    let mut hp: *mut hostent = 0 as *mut hostent;
+    let mut hp: *mut hostent = std::ptr::null_mut();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     hp = xgethostbyname(buf);
     p = strchrnul((*hp).h_name, '.' as i32);

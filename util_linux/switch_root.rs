@@ -202,8 +202,8 @@ pub struct caps {
 
 // Recursively delete contents of rootfs
 unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut rootdev: libc::dev_t) {
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut d: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut d: *mut dirent = std::ptr::null_mut();
   let mut st: stat = std::mem::zeroed();
   // Don't descend into other filesystems
   if lstat(directory, &mut st) != 0 || st.st_dev != rootdev {

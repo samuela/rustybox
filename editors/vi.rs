@@ -1467,7 +1467,7 @@ unsafe extern "C" fn undo_queue_commit() {
   };
 }
 unsafe extern "C" fn flush_undo_data() {
-  let mut undo_entry: *mut undo_object = 0 as *mut undo_object;
+  let mut undo_entry: *mut undo_object = std::ptr::null_mut();
   while !(*ptr_to_globals).undo_stack_tail.is_null() {
     undo_entry = (*ptr_to_globals).undo_stack_tail;
     (*ptr_to_globals).undo_stack_tail = (*undo_entry).prev;
@@ -1482,7 +1482,7 @@ unsafe extern "C" fn undo_push(
   mut length: libc::c_uint,
   mut u_type: u8,
 ) {
-  let mut undo_entry: *mut undo_object = 0 as *mut undo_object;
+  let mut undo_entry: *mut undo_object = std::ptr::null_mut();
   // "u_type" values
   // UNDO_INS: insertion, undo will remove from buffer
   // UNDO_DEL: deleted text, undo will restore to buffer
@@ -1625,7 +1625,7 @@ unsafe extern "C" fn undo_pop() {
   let mut repeat: libc::c_int = 0;
   let mut u_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut u_end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut undo_entry: *mut undo_object = 0 as *mut undo_object;
+  let mut undo_entry: *mut undo_object = std::ptr::null_mut();
   // Commit pending undo queue before popping (should be unnecessary)
   undo_queue_commit();
   undo_entry = (*ptr_to_globals).undo_stack_tail;
@@ -97849,7 +97849,7 @@ pub unsafe extern "C" fn vi_main(
         // cmd line vi command
         if *optarg != 0 {
           (*ptr_to_globals).initial_cmds[((*ptr_to_globals).initial_cmds[0]
-            != 0 as *mut libc::c_void as *mut libc::c_char)
+            != std::ptr::null_mut())
             as libc::c_int as usize] = xstrndup(optarg, MAX_INPUT_LEN as libc::c_int)
         }
         current_block_18 = 2668756484064249700;

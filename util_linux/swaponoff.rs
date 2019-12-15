@@ -183,7 +183,7 @@ unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
   };
 }
 unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
-  let mut m: *mut mntent = 0 as *mut mntent;
+  let mut m: *mut mntent = std::ptr::null_mut();
   let mut err: libc::c_int = 0i32;
   let mut f: *mut FILE = xfopen_for_read(b"/etc/fstab\x00" as *const u8 as *const libc::c_char);
   loop {

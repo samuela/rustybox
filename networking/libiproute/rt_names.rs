@@ -74,7 +74,7 @@ unsafe extern "C" fn rtnl_tab_initialize(
 ) {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut fullname: [libc::c_char; 33] = [0; 33];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   sprintf(
     fullname.as_mut_ptr(),
     b"/etc/iproute2/rt_%s\x00" as *const u8 as *const libc::c_char,

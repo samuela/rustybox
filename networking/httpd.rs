@@ -725,7 +725,7 @@ unsafe extern "C" fn free_llist(mut pptr: *mut *mut has_next_ptr) {
     cur = (*cur).next;
     free(t as *mut libc::c_void);
   }
-  *pptr = 0 as *mut has_next_ptr;
+  *pptr = std::ptr::null_mut();
 }
 #[inline(always)]
 unsafe extern "C" fn free_Htaccess_list(mut pptr: *mut *mut Htaccess) {
@@ -834,7 +834,7 @@ unsafe extern "C" fn scan_ip_mask(
 }
 unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c_int) {
   /* internally used extra flag state */
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut filename: *const libc::c_char = 0 as *const libc::c_char;
   let mut buf: [libc::c_char; 160] = [0; 160];
   /* discard old rules */
@@ -969,7 +969,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         xchdir((*ptr_to_globals).home_httpd);
         continue;
       } else if ch as libc::c_int == 'A' as i32 || ch as libc::c_int == 'D' as i32 {
-        let mut pip: *mut Htaccess_IP = 0 as *mut Htaccess_IP;
+        let mut pip: *mut Htaccess_IP = std::ptr::null_mut();
         if *after_colon as libc::c_int == '*' as i32 {
           if ch as libc::c_int == 'D' as i32 {
             /* do not allow jumping around using H in subdir's configs */
@@ -1032,7 +1032,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         let mut url_from: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut host_port: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut url_to: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        let mut proxy_entry: *mut Htaccess_Proxy = 0 as *mut Htaccess_Proxy;
+        let mut proxy_entry: *mut Htaccess_Proxy = std::ptr::null_mut();
         url_from = after_colon;
         host_port = strchr(after_colon, ':' as i32);
         if !host_port.is_null() {
@@ -1072,7 +1072,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         {
           /* "*.php:/path/php" */
           let mut p_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          let mut cur: *mut Htaccess = 0 as *mut Htaccess;
+          let mut cur: *mut Htaccess = std::ptr::null_mut();
           cur = xzalloc(
             (::std::mem::size_of::<Htaccess>() as libc::c_ulong)
               .wrapping_add(strlen_buf as libc::c_ulong),
@@ -1097,7 +1097,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         } else if ch as libc::c_int == '/' as i32 {
           /* "/file:user:pass" */
           let mut p_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          let mut cur_0: *mut Htaccess = 0 as *mut Htaccess;
+          let mut cur_0: *mut Htaccess = std::ptr::null_mut();
           let mut file_len: libc::c_uint = 0;
           /* note: path is "" unless we are in SUBDIR parse,
            * otherwise it does NOT start with "/" */
@@ -1125,8 +1125,8 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           (*cur_0).after_colon = p_1;
           /* insert cur into g_auth */
           /* g_auth is sorted by decreased filename length */
-          let mut auth: *mut Htaccess = 0 as *mut Htaccess;
-          let mut authp: *mut *mut Htaccess = 0 as *mut *mut Htaccess;
+          let mut auth: *mut Htaccess = std::ptr::null_mut();
+          let mut authp: *mut *mut Htaccess = std::ptr::null_mut();
           authp = &mut (*ptr_to_globals).g_auth;
           loop {
             auth = *authp;
@@ -1967,7 +1967,7 @@ unsafe extern "C" fn send_cgi_and_exit(
         argv[1] = std::ptr::null_mut::<libc::c_char>();
         let mut suffix: *mut libc::c_char = strrchr(script, '.' as i32);
         if !suffix.is_null() {
-          let mut cur: *mut Htaccess = 0 as *mut Htaccess;
+          let mut cur: *mut Htaccess = std::ptr::null_mut();
           cur = (*ptr_to_globals).script_i;
           while !cur.is_null() {
             if strcmp((*cur).before_colon.as_mut_ptr().offset(1), suffix) == 0i32 {
@@ -2075,7 +2075,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
       46, 109, 105, 100, 105, 0, 97, 117, 100, 105, 111, 47, 109, 105, 100, 105, 0, 46, 109, 112,
       51, 0, 97, 117, 100, 105, 111, 47, 109, 112, 101, 103, 0, 0,
     ];
-    let mut cur: *mut Htaccess = 0 as *mut Htaccess;
+    let mut cur: *mut Htaccess = std::ptr::null_mut();
     /* unpopular */
     /* compiler adds another "\0" here */
     let mut table: *const libc::c_char = suffixTable.as_ptr();
@@ -2223,7 +2223,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
   log_and_exit();
 }
 unsafe extern "C" fn if_ip_denied_send_HTTP_FORBIDDEN_and_exit(mut remote_ip: libc::c_uint) {
-  let mut cur: *mut Htaccess_IP = 0 as *mut Htaccess_IP;
+  let mut cur: *mut Htaccess_IP = std::ptr::null_mut();
   cur = (*ptr_to_globals).ip_a_d;
   while !cur.is_null() {
     if remote_ip & (*cur).mask == (*cur).ip {
@@ -2254,7 +2254,7 @@ unsafe extern "C" fn check_user_passwd(
 ) -> libc::c_int {
   let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for */
   let mut current_block: u64;
-  let mut cur: *mut Htaccess = 0 as *mut Htaccess;
+  let mut cur: *mut Htaccess = std::ptr::null_mut();
   let mut prev: *const libc::c_char = 0 as *const libc::c_char;
   cur = (*ptr_to_globals).g_auth;
   while !cur.is_null() {
@@ -2310,7 +2310,7 @@ unsafe extern "C" fn check_user_passwd(
                 sp_expire: 0,
                 sp_flag: 0,
               };
-              let mut pw: *mut passwd = 0 as *mut passwd;
+              let mut pw: *mut passwd = std::ptr::null_mut();
               *colon_after_user = '\u{0}' as i32 as libc::c_char;
               pw = bb_internal_getpwnam(user_and_passwd);
               *colon_after_user = ':' as i32 as libc::c_char;
@@ -2324,7 +2324,7 @@ unsafe extern "C" fn check_user_passwd(
                 {
                   /* getspnam_r may return 0 yet set result to NULL.
                    * At least glibc 2.4 does this. Be extra paranoid here. */
-                  let mut result: *mut spwd = 0 as *mut spwd;
+                  let mut result: *mut spwd = std::ptr::null_mut();
                   r = bb_internal_getspnam_r(
                     (*pw).pw_name,
                     &mut spw,
@@ -2394,11 +2394,11 @@ unsafe extern "C" fn check_user_passwd(
     cur = (*cur).next
   }
   /* 0(bad) if prev is set: matches were found but passwd was wrong */
-  return (prev == 0 as *mut libc::c_void as *const libc::c_char) as libc::c_int;
+  return (prev == std::ptr::null_mut()) as libc::c_int;
 }
 /* FEATURE_HTTPD_BASIC_AUTH */
 unsafe extern "C" fn find_proxy_entry(mut url: *const libc::c_char) -> *mut Htaccess_Proxy {
-  let mut p: *mut Htaccess_Proxy = 0 as *mut Htaccess_Proxy;
+  let mut p: *mut Htaccess_Proxy = std::ptr::null_mut();
   p = (*ptr_to_globals).proxy;
   while !p.is_null() {
     if !is_prefixed_with(url, (*p).url_from).is_null() {
@@ -2578,7 +2578,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   strcpy(urlcopy, urlp);
   /* NB: urlcopy ptr is never changed after this */
   let mut proxy_fd: libc::c_int = 0;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut proxy_entry: *mut Htaccess_Proxy = find_proxy_entry(urlcopy);
   if !proxy_entry.is_null() {
     if (*ptr_to_globals).verbose > 1i32 {
@@ -2741,7 +2741,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   if stat(tptr, &mut sb) == 0i32 {
     let mut suffix: *mut libc::c_char = strrchr(tptr, '.' as i32);
     if !suffix.is_null() {
-      let mut cur: *mut Htaccess = 0 as *mut Htaccess;
+      let mut cur: *mut Htaccess = std::ptr::null_mut();
       cur = (*ptr_to_globals).script_i;
       while !cur.is_null() {
         if strcmp((*cur).before_colon.as_mut_ptr().offset(1), suffix) == 0i32 {

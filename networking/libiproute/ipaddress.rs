@@ -978,7 +978,7 @@ unsafe extern "C" fn print_addrinfo(
     .flushb
     .is_null()
   {
-    let mut fn_0: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut fn_0: *mut nlmsghdr = std::ptr::null_mut();
     if (((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp as libc::c_uint)
       .wrapping_add(4u32)
       .wrapping_sub(1i32 as libc::c_uint)
@@ -1251,8 +1251,8 @@ unsafe extern "C" fn store_nlmsg(
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut linfo: *mut *mut nlmsg_list = arg as *mut *mut nlmsg_list;
-  let mut h: *mut nlmsg_list = 0 as *mut nlmsg_list;
-  let mut lp: *mut *mut nlmsg_list = 0 as *mut *mut nlmsg_list;
+  let mut h: *mut nlmsg_list = std::ptr::null_mut();
+  let mut lp: *mut *mut nlmsg_list = std::ptr::null_mut();
   h = xzalloc(
     ((*n).nlmsg_len as libc::c_ulong)
       .wrapping_add(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong),
@@ -1289,9 +1289,9 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
     116, 111, 0, 115, 99, 111, 112, 101, 0, 117, 112, 0, 108, 97, 98, 101, 108, 0, 100, 101, 118,
     0, 0,
   ];
-  let mut linfo: *mut nlmsg_list = 0 as *mut nlmsg_list;
-  let mut ainfo: *mut nlmsg_list = 0 as *mut nlmsg_list;
-  let mut l: *mut nlmsg_list = 0 as *mut nlmsg_list;
+  let mut linfo: *mut nlmsg_list = std::ptr::null_mut();
+  let mut ainfo: *mut nlmsg_list = std::ptr::null_mut();
+  let mut l: *mut nlmsg_list = std::ptr::null_mut();
   let mut rth: rtnl_handle = rtnl_handle {
     fd: 0,
     local: sockaddr_nl {
@@ -1456,7 +1456,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int != 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int != 17i32
   {
-    let mut lp: *mut *mut nlmsg_list = 0 as *mut *mut nlmsg_list;
+    let mut lp: *mut *mut nlmsg_list = std::ptr::null_mut();
     lp = &mut linfo;
     loop {
       l = *lp;
@@ -1472,7 +1472,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
             & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int)
           as isize,
       ) as *mut libc::c_void as *mut ifinfomsg;
-      let mut a: *mut nlmsg_list = 0 as *mut nlmsg_list;
+      let mut a: *mut nlmsg_list = std::ptr::null_mut();
       let mut current_block_93: u64;
       a = ainfo;
       while !a.is_null() {

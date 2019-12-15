@@ -344,7 +344,7 @@ static mut border: [u8; 19] = [
  * t: table to free
  */
 unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
-  let mut q: *mut huft_t = 0 as *mut huft_t;
+  let mut q: *mut huft_t = std::ptr::null_mut();
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
   while !p.is_null() {
     p = p.offset(-1);
@@ -356,8 +356,8 @@ unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
 unsafe extern "C" fn huft_free_all(mut state: *mut state_t) {
   huft_free((*state).inflate_codes_tl);
   huft_free((*state).inflate_codes_td);
-  (*state).inflate_codes_tl = 0 as *mut huft_t;
-  (*state).inflate_codes_td = 0 as *mut huft_t;
+  (*state).inflate_codes_tl = std::ptr::null_mut();
+  (*state).inflate_codes_td = std::ptr::null_mut();
 }
 unsafe extern "C" fn abort_unzip(mut state: *mut state_t) -> ! {
   huft_free_all(state);
@@ -420,7 +420,7 @@ unsafe extern "C" fn huft_build(
   let mut j: libc::c_uint = 0; /* bits decoded stack */
   let mut k: libc::c_int = 0; /* bits decoded */
   let mut p: *const libc::c_uint = 0 as *const libc::c_uint; /* bit offsets, then code stack */
-  let mut q: *mut huft_t = 0 as *mut huft_t; /* pointer into x */
+  let mut q: *mut huft_t = std::ptr::null_mut(); /* pointer into x */
   let mut r: huft_t = huft_t {
     e: 0,
     b: 0,
@@ -431,11 +431,11 @@ unsafe extern "C" fn huft_build(
   let mut ws: [libc::c_int; 17] = [0; 17];
   let mut w: libc::c_int = 0;
   let mut x: [libc::c_uint; 17] = [0; 17];
-  let mut xp: *mut libc::c_uint = 0 as *mut libc::c_uint;
+  let mut xp: *mut libc::c_uint = std::ptr::null_mut();
   let mut y: libc::c_int = 0;
   let mut z: libc::c_uint = 0;
-  let mut result: *mut huft_t = 0 as *mut huft_t;
-  let mut t: *mut *mut huft_t = 0 as *mut *mut huft_t;
+  let mut result: *mut huft_t = std::ptr::null_mut();
+  let mut t: *mut *mut huft_t = std::ptr::null_mut();
   /* Length of EOB code, if any */
   eob_len = if n > 256i32 as libc::c_uint {
     *b.offset(256)
@@ -558,8 +558,8 @@ unsafe extern "C" fn huft_build(
   htl = -1i32; /* ditto */
   ws[0] = 0i32; /* ditto */
   w = ws[0];
-  u[0] = 0 as *mut huft_t;
-  q = 0 as *mut huft_t;
+  u[0] = std::ptr::null_mut();
+  q = std::ptr::null_mut();
   z = 0i32 as libc::c_uint;
   /* go through the bit lengths (k already is bits in shortest code) */
   while k <= g {
@@ -713,7 +713,7 @@ unsafe extern "C" fn inflate_codes_setup(
 unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
   let mut current_block: u64; /* table entry flag/number of extra bits */
   let mut e: libc::c_uint = 0; /* pointer to table entry */
-  let mut t: *mut huft_t = 0 as *mut huft_t;
+  let mut t: *mut huft_t = std::ptr::null_mut();
   if (*state).resume_copy != 0 {
     current_block = 2877038400800049082;
   } else {
@@ -1116,7 +1116,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       /* set up data for inflate_codes() */
       /* huft_free code moved into inflate_codes */
       /* Inflate dynamic */
-      let mut td: *mut huft_t = 0 as *mut huft_t; /* bits in base distance lookup table */
+      let mut td: *mut huft_t = std::ptr::null_mut(); /* bits in base distance lookup table */
       let mut i_0: libc::c_uint = 0;
       let mut j: libc::c_uint = 0; /* bits in base literal/length lookup table */
       let mut l: libc::c_uint = 0;
@@ -1415,7 +1415,7 @@ unsafe extern "C" fn inflate_unzip_internal(
 #[no_mangle]
 pub unsafe extern "C" fn inflate_unzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut n: libc::c_longlong = 0;
-  let mut state: *mut state_t = 0 as *mut state_t;
+  let mut state: *mut state_t = std::ptr::null_mut();
   state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
     as *mut state_t;
   (*state).to_read = (*xstate).bytes_in;
@@ -1576,7 +1576,7 @@ pub unsafe extern "C" fn unpack_gz_stream(
   let mut v32: u32 = 0;
   let mut total: libc::c_longlong = 0;
   let mut n: libc::c_longlong = 0;
-  let mut state: *mut state_t = 0 as *mut state_t;
+  let mut state: *mut state_t = std::ptr::null_mut();
   if crate::archival::libarchive::open_transformer::check_signature16(
     xstate,
     GZIP_MAGIC as libc::c_int as libc::c_uint,

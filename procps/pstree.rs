@@ -193,7 +193,7 @@ unsafe extern "C" fn out_newline() {
   (*ptr_to_globals).cur_x = 0i32 as libc::c_uint;
 }
 unsafe extern "C" fn find_proc(mut pid: pid_t) -> *mut PROC {
-  let mut walk: *mut PROC = 0 as *mut PROC;
+  let mut walk: *mut PROC = std::ptr::null_mut();
   walk = (*ptr_to_globals).list;
   while !walk.is_null() {
     if (*walk).pid == pid {
@@ -217,8 +217,8 @@ unsafe extern "C" fn new_proc(
   return (*ptr_to_globals).list;
 }
 unsafe extern "C" fn add_child(mut parent: *mut PROC, mut child: *mut PROC) {
-  let mut new: *mut CHILD = 0 as *mut CHILD;
-  let mut walk: *mut *mut CHILD = 0 as *mut *mut CHILD;
+  let mut new: *mut CHILD = std::ptr::null_mut();
+  let mut walk: *mut *mut CHILD = std::ptr::null_mut();
   let mut cmp: libc::c_int = 0;
   new = xmalloc(::std::mem::size_of::<CHILD>() as libc::c_ulong) as *mut CHILD;
   (*new).child = child;
@@ -247,8 +247,8 @@ unsafe extern "C" fn add_proc(
 )
 /*, char isthread*/
 {
-  let mut this: *mut PROC = 0 as *mut PROC;
-  let mut parent: *mut PROC = 0 as *mut PROC;
+  let mut this: *mut PROC = std::ptr::null_mut();
+  let mut parent: *mut PROC = std::ptr::null_mut();
   this = find_proc(pid);
   if this.is_null() {
     this = new_proc(comm, pid, uid)
@@ -325,9 +325,9 @@ unsafe extern "C" fn dump_tree(
   mut last: libc::c_int,
   mut closing: libc::c_int,
 ) {
-  let mut walk: *mut CHILD = 0 as *mut CHILD;
-  let mut next: *mut CHILD = 0 as *mut CHILD;
-  let mut scan: *mut *mut CHILD = 0 as *mut *mut CHILD;
+  let mut walk: *mut CHILD = std::ptr::null_mut();
+  let mut next: *mut CHILD = std::ptr::null_mut();
+  let mut scan: *mut *mut CHILD = std::ptr::null_mut();
   let mut lvl: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut add: libc::c_int = 0;
@@ -479,7 +479,7 @@ unsafe extern "C" fn handle_thread(
   add_proc(threadname.as_mut_ptr(), pid, ppid, uid);
 }
 unsafe extern "C" fn mread_proc() {
-  let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
+  let mut p: *mut procps_status_t = std::ptr::null_mut();
   let mut parent: pid_t = 0i32;
   let mut flags: libc::c_int = PSSCAN_COMM as libc::c_int
     | PSSCAN_PID as libc::c_int

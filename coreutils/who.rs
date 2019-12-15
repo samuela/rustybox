@@ -155,7 +155,7 @@ pub unsafe extern "C" fn who_main(
   let mut do_who: libc::c_int = (1i32 != 0
     && (1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(1) as libc::c_int == 'h' as i32))
     as libc::c_int;
-  let mut ut: *mut utmpx = 0 as *mut utmpx;
+  let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut fmt: *const libc::c_char = b"%s\x00" as *const u8 as *const libc::c_char;
   opt = getopt32(

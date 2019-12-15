@@ -196,8 +196,8 @@ pub unsafe extern "C" fn df_main(
   let mut df_disp_hr: libc::c_ulong = 1024i32 as libc::c_ulong;
   let mut status: libc::c_int = 0i32;
   let mut opt: libc::c_uint = 0;
-  let mut mount_table: *mut FILE = 0 as *mut FILE;
-  let mut mount_entry: *mut mntent = 0 as *mut mntent;
+  let mut mount_table: *mut FILE = std::ptr::null_mut();
+  let mut mount_entry: *mut mntent = std::ptr::null_mut();
   let mut s: statvfs = statvfs {
     f_bsize: 0,
     f_frsize: 0,
@@ -301,7 +301,7 @@ pub unsafe extern "C" fn df_main(
       b"Use%\x00" as *const u8 as *const libc::c_char
     },
   );
-  mount_table = 0 as *mut FILE;
+  mount_table = std::ptr::null_mut();
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
     mount_table = setmntent(

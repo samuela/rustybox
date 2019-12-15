@@ -206,7 +206,7 @@ pub unsafe extern "C" fn makedevs_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut parser: *mut parser_t = 0 as *mut parser_t; /* ensure root dir exists */
+  let mut parser: *mut parser_t = std::ptr::null_mut(); /* ensure root dir exists */
   let mut line: *mut libc::c_char =
     b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   let mut ret: libc::c_int = 0i32;

@@ -163,7 +163,7 @@ pub const LOGIN_OPT_f: C2RustUnnamed_1 = 1;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const LOGIN_OPT_h: C2RustUnnamed_1 = 2;
 unsafe extern "C" fn die_if_nologin() {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut c: libc::c_int = 0;
   let mut empty: libc::c_int = 1i32;
   fp = fopen_for_read(b"/etc/nologin\x00" as *const u8 as *const libc::c_char);
@@ -308,7 +308,7 @@ pub unsafe extern "C" fn login_main(
   let mut run_by_root: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut count: libc::c_int = 0i32;
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut opt_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt_user = opt_user;

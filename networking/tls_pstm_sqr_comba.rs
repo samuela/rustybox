@@ -95,7 +95,7 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
   let mut c0: pstm_digit = 0;
   let mut c1: pstm_digit = 0;
   let mut c2: pstm_digit = 0;
-  let mut dst: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut dst: *mut pstm_digit = std::ptr::null_mut();
   let mut tt: pstm_word = 0;
   paDfail = 0i32;
   /* get size of output and trim */
@@ -136,8 +136,8 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
     let mut tx: int32 = 0;
     let mut ty: int32 = 0;
     let mut iy: int32 = 0;
-    let mut tmpy: *mut pstm_digit = 0 as *mut pstm_digit;
-    let mut tmpx: *mut pstm_digit = 0 as *mut pstm_digit;
+    let mut tmpy: *mut pstm_digit = std::ptr::null_mut();
+    let mut tmpx: *mut pstm_digit = std::ptr::null_mut();
     /* get offsets into the two bignums */
     ty = if (*A).used - 1i32 < ix {
       ((*A).used) - 1i32
@@ -216,7 +216,7 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
   */
   iz = (*B).used;
   (*B).used = pa;
-  let mut tmpc: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
   tmpc = (*B).dp;
   ix = 0i32;
   while ix < pa {

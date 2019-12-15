@@ -829,7 +829,7 @@ unsafe extern "C" fn check_blocks() {
   );
 }
 unsafe extern "C" fn get_list_blocks(mut filename: *mut libc::c_char) {
-  let mut listfile: *mut FILE = 0 as *mut FILE;
+  let mut listfile: *mut FILE = std::ptr::null_mut();
   let mut blockno: libc::c_ulong = 0;
   listfile = xfopen_for_read(filename);
   while feof_unlocked(listfile) == 0 {

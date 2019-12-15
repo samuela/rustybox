@@ -138,7 +138,7 @@ pub unsafe extern "C" fn update_utmp(
   mut hostname: *const libc::c_char,
 ) {
   let mut utent: utmpx = std::mem::zeroed();
-  let mut utp: *mut utmpx = 0 as *mut utmpx;
+  let mut utp: *mut utmpx = std::ptr::null_mut();
   touch(b"/var/run/utmp\x00" as *const u8 as *const libc::c_char);
   //utmpxname(_PATH_UTMPX);
   setutxent();

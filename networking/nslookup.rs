@@ -532,7 +532,7 @@ static mut v4_mapped: [libc::c_char; 12] = [
   0xffi32 as libc::c_char,
 ];
 unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t) -> libc::c_int {
-  let mut header: *mut HEADER = 0 as *mut HEADER;
+  let mut header: *mut HEADER = std::ptr::null_mut();
   let mut handle: ns_msg = ns_msg {
     _msg: 0 as *const libc::c_uchar,
     _eom: 0 as *const libc::c_uchar,
@@ -850,7 +850,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
   let mut current_block: u64;
   let mut reply: [libc::c_uchar; 512] = [0; 512];
   let mut rcode: u8 = 0;
-  let mut local_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut local_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut pfd: pollfd = pollfd {
     fd: 0,
     events: 0,
@@ -1110,7 +1110,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
   return n_replies;
 }
 unsafe extern "C" fn add_ns(mut addr: *const libc::c_char) {
-  let mut ns: *mut ns = 0 as *mut ns;
+  let mut ns: *mut ns = std::ptr::null_mut();
   let mut count: libc::c_uint = 0;
   let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_count;
   let fresh2 = *fresh1;
@@ -1135,7 +1135,7 @@ unsafe extern "C" fn add_ns(mut addr: *const libc::c_char) {
   /*ns->failures = 0; - already is */
 }
 unsafe extern "C" fn parse_resolvconf() {
-  let mut resolv: *mut FILE = 0 as *mut FILE; /* "search" is defined to be up to 256 chars */
+  let mut resolv: *mut FILE = std::ptr::null_mut(); /* "search" is defined to be up to 256 chars */
   resolv = fopen(
     b"/etc/resolv.conf\x00" as *const u8 as *const libc::c_char,
     b"r\x00" as *const u8 as *const libc::c_char,
@@ -1218,7 +1218,7 @@ unsafe extern "C" fn parse_resolvconf() {
   };
 }
 unsafe extern "C" fn add_query(mut type_0: libc::c_int, mut dname: *const libc::c_char) {
-  let mut new_q: *mut query = 0 as *mut query;
+  let mut new_q: *mut query = std::ptr::null_mut();
   let mut count: libc::c_uint = 0;
   let mut qlen: ssize_t = 0;
   let ref mut fresh7 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query_count;

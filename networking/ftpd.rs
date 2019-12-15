@@ -653,7 +653,7 @@ unsafe extern "C" fn handle_feat(mut status: libc::c_uint) {
 /* Download commands */
 #[inline]
 unsafe extern "C" fn port_active() -> libc::c_int {
-  return ((*ptr_to_globals).port_addr != 0 as *mut libc::c_void as *mut len_and_sockaddr)
+  return ((*ptr_to_globals).port_addr != std::ptr::null_mut())
     as libc::c_int;
 }
 #[inline]
@@ -662,7 +662,7 @@ unsafe extern "C" fn pasv_active() -> libc::c_int {
 }
 unsafe extern "C" fn port_pasv_cleanup() {
   free((*ptr_to_globals).port_addr as *mut libc::c_void);
-  (*ptr_to_globals).port_addr = 0 as *mut len_and_sockaddr;
+  (*ptr_to_globals).port_addr = std::ptr::null_mut();
   if (*ptr_to_globals).pasv_listen_fd > 1i32 {
     close((*ptr_to_globals).pasv_listen_fd);
   }
@@ -1031,7 +1031,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
   return outfd.rd;
 }
 unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
-  let mut ls_fp: *mut FILE = 0 as *mut FILE;
+  let mut ls_fp: *mut FILE = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ls_fd: libc::c_int = 0;
   if opts & USE_CTRL_CONN as libc::c_int == 0 && port_or_pasv_was_seen() == 0 {
@@ -1493,7 +1493,7 @@ pub unsafe extern "C" fn ftpd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut anon_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut abs_timeout: libc::c_uint = 0;
   let mut verbose_S: libc::c_uint = 0;
@@ -1606,7 +1606,7 @@ pub unsafe extern "C" fn ftpd_main(
           break;
         }
         cmdio_write_raw(b"530 Login failed\r\n\x00" as *const u8 as *const libc::c_char);
-        pw = 0 as *mut passwd
+        pw = std::ptr::null_mut()
       } else if cmdval == const_QUIT as libc::c_int as libc::c_uint {
         cmdio_write_ok(
           (0i32

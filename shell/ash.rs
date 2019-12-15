@@ -1411,7 +1411,7 @@ unsafe extern "C" fn stalloc(mut nbytes: size_t) -> *mut libc::c_void {
   if aligned > (*ash_ptr_to_globals_memstack).g_stacknleft {
     let mut len: size_t = 0;
     let mut blocksize: size_t = 0;
-    let mut sp: *mut stack_block = 0 as *mut stack_block;
+    let mut sp: *mut stack_block = std::ptr::null_mut();
     blocksize = aligned;
     if blocksize < MINSIZE as libc::c_int as libc::c_ulong {
       blocksize = MINSIZE as libc::c_int as size_t
@@ -1487,7 +1487,7 @@ unsafe extern "C" fn setstackmark(mut mark: *mut stackmark) {
   );
 }
 unsafe extern "C" fn popstackmark(mut mark: *mut stackmark) {
-  let mut sp: *mut stack_block = 0 as *mut stack_block;
+  let mut sp: *mut stack_block = std::ptr::null_mut();
   if (*mark).stackp.is_null() {
     return;
   }
@@ -1526,8 +1526,8 @@ unsafe extern "C" fn growstackblock() {
     && (*ash_ptr_to_globals_memstack).g_stackp
       != &mut (*ash_ptr_to_globals_memstack).stackbase as *mut stack_block
   {
-    let mut sp: *mut stack_block = 0 as *mut stack_block;
-    let mut prevstackp: *mut stack_block = 0 as *mut stack_block;
+    let mut sp: *mut stack_block = std::ptr::null_mut();
+    let mut prevstackp: *mut stack_block = std::ptr::null_mut();
     let mut grosslen: size_t = 0;
     ::std::ptr::write_volatile(
       &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
@@ -1800,8 +1800,8 @@ unsafe extern "C" fn nextopt(mut optstring: *const libc::c_char) -> libc::c_int 
 }
 unsafe extern "C" fn freeparam(mut param: *mut shparam) {
   if (*param).malloced != 0 {
-    let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-    let mut ap1: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+    let mut ap: *mut *mut libc::c_char = std::ptr::null_mut();
+    let mut ap1: *mut *mut libc::c_char = std::ptr::null_mut();
     ap1 = (*param).p;
     ap = ap1;
     while !(*ap).is_null() {
@@ -1979,9 +1979,9 @@ unsafe extern "C" fn vpcmp(mut a: *const libc::c_void, mut b: *const libc::c_voi
   );
 }
 unsafe extern "C" fn initvar() {
-  let mut vp: *mut var = 0 as *mut var;
-  let mut end: *mut var = 0 as *mut var;
-  let mut vpp: *mut *mut var = 0 as *mut *mut var;
+  let mut vp: *mut var = std::ptr::null_mut();
+  let mut end: *mut var = std::ptr::null_mut();
+  let mut vpp: *mut *mut var = std::ptr::null_mut();
   (*ash_ptr_to_globals_var).varinit[(1i32 * 2i32 + 2i32) as usize].var_text =
     b"PS1=\\w \\$ \x00" as *const u8 as *const libc::c_char;
   vp = (*ash_ptr_to_globals_var).varinit.as_mut_ptr();
@@ -2012,7 +2012,7 @@ unsafe extern "C" fn findvar(
   return vpp;
 }
 unsafe extern "C" fn lookupvar(mut name: *const libc::c_char) -> *const libc::c_char {
-  let mut v: *mut var = 0 as *mut var;
+  let mut v: *mut var = std::ptr::null_mut();
   v = *findvar(hashvar(name), name);
   if !v.is_null() {
     if (*v).flags & 0x200i32 != 0 {
@@ -2056,8 +2056,8 @@ unsafe extern "C" fn bltinlookup(mut name: *const libc::c_char) -> *const libc::
 }
 unsafe extern "C" fn setvareq(mut s: *mut libc::c_char, mut flags: libc::c_int) -> *mut var {
   let mut current_block: u64;
-  let mut vp: *mut var = 0 as *mut var;
-  let mut vpp: *mut *mut var = 0 as *mut *mut var;
+  let mut vp: *mut var = std::ptr::null_mut();
+  let mut vpp: *mut *mut var = std::ptr::null_mut();
   vpp = hashvar(s);
   flags = (flags as libc::c_uint
     | 0x1i32 as libc::c_uint
@@ -2137,7 +2137,7 @@ unsafe extern "C" fn setvar(
   let mut nameeq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut namelen: size_t = 0;
   let mut vallen: size_t = 0;
-  let mut vp: *mut var = 0 as *mut var;
+  let mut vp: *mut var = std::ptr::null_mut();
   q = endofname(name);
   p = strchrnul(q, '=' as i32);
   namelen = p.wrapping_offset_from(name) as libc::c_long as size_t;
@@ -2213,9 +2213,9 @@ unsafe extern "C" fn listvars(
   mut off: libc::c_int,
   mut end: *mut *mut *mut libc::c_char,
 ) -> *mut *mut libc::c_char {
-  let mut vpp: *mut *mut var = 0 as *mut *mut var;
-  let mut vp: *mut var = 0 as *mut var;
-  let mut ep: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut vpp: *mut *mut var = std::ptr::null_mut();
+  let mut vp: *mut var = std::ptr::null_mut();
+  let mut ep: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut mask: libc::c_int = 0;
   ep = (*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void as *mut *mut libc::c_char;
   vpp = (*ash_ptr_to_globals_var).vartab.as_mut_ptr();
@@ -2695,7 +2695,7 @@ unsafe extern "C" fn SIT(mut c: libc::c_int, mut syntax: libc::c_int) -> libc::c
 static mut atab: *mut *mut alias = 0 as *const *mut alias as *mut *mut alias;
 unsafe extern "C" fn __lookupalias(mut name: *const libc::c_char) -> *mut *mut alias {
   let mut hashval: libc::c_uint = 0;
-  let mut app: *mut *mut alias = 0 as *mut *mut alias;
+  let mut app: *mut *mut alias = std::ptr::null_mut();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
   let mut ch: libc::c_uint = 0;
   p = name;
@@ -2726,7 +2726,7 @@ unsafe extern "C" fn lookupalias(
   return ap;
 }
 unsafe extern "C" fn freealias(mut ap: *mut alias) -> *mut alias {
-  let mut next: *mut alias = 0 as *mut alias;
+  let mut next: *mut alias = std::ptr::null_mut();
   if (*ap).flag & 1i32 != 0 {
     (*ap).flag |= 2i32;
     return ap;
@@ -2738,8 +2738,8 @@ unsafe extern "C" fn freealias(mut ap: *mut alias) -> *mut alias {
   return next;
 }
 unsafe extern "C" fn setalias(mut name: *const libc::c_char, mut val: *const libc::c_char) {
-  let mut ap: *mut alias = 0 as *mut alias;
-  let mut app: *mut *mut alias = 0 as *mut *mut alias;
+  let mut ap: *mut alias = std::ptr::null_mut();
+  let mut app: *mut *mut alias = std::ptr::null_mut();
   app = __lookupalias(name);
   ap = *app;
   ::std::ptr::write_volatile(
@@ -2764,7 +2764,7 @@ unsafe extern "C" fn setalias(mut name: *const libc::c_char, mut val: *const lib
   int_on();
 }
 unsafe extern "C" fn unalias(mut name: *const libc::c_char) -> libc::c_int {
-  let mut app: *mut *mut alias = 0 as *mut *mut alias;
+  let mut app: *mut *mut alias = std::ptr::null_mut();
   app = __lookupalias(name);
   if !(*app).is_null() {
     ::std::ptr::write_volatile(
@@ -2781,8 +2781,8 @@ unsafe extern "C" fn unalias(mut name: *const libc::c_char) -> libc::c_int {
   return 1i32;
 }
 unsafe extern "C" fn rmaliases() {
-  let mut ap: *mut alias = 0 as *mut alias;
-  let mut app: *mut *mut alias = 0 as *mut *mut alias;
+  let mut ap: *mut alias = std::ptr::null_mut();
+  let mut app: *mut *mut alias = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
@@ -2820,7 +2820,7 @@ unsafe extern "C" fn aliascmd(
   let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut v: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0i32;
-  let mut ap: *mut alias = 0 as *mut alias;
+  let mut ap: *mut alias = std::ptr::null_mut();
   if (*argv.offset(1)).is_null() {
     let mut i: libc::c_int = 0;
     i = 0i32;
@@ -3019,9 +3019,9 @@ static mut njobs: libc::c_uint = 0;
 static mut curjob: *mut job = 0 as *const job as *mut job;
 static mut jobless: libc::c_int = 0;
 unsafe extern "C" fn set_curjob(mut jp: *mut job, mut mode: libc::c_uint) {
-  let mut jp1: *mut job = 0 as *mut job;
-  let mut jpp: *mut *mut job = 0 as *mut *mut job;
-  let mut curp: *mut *mut job = 0 as *mut *mut job;
+  let mut jp1: *mut job = std::ptr::null_mut();
+  let mut jpp: *mut *mut job = std::ptr::null_mut();
+  let mut curp: *mut *mut job = std::ptr::null_mut();
   curp = &mut curjob;
   jpp = curp;
   loop {
@@ -3065,8 +3065,8 @@ unsafe extern "C" fn jobno(mut jp: *const job) -> libc::c_int {
 }
 unsafe extern "C" fn getjob(mut name: *const libc::c_char, mut getctl: libc::c_int) -> *mut job {
   let mut current_block: u64;
-  let mut jp: *mut job = 0 as *mut job;
-  let mut found: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
+  let mut found: *mut job = std::ptr::null_mut();
   let mut err_msg: *const libc::c_char = b"%s: no such job\x00" as *const u8 as *const libc::c_char;
   let mut num: libc::c_uint = 0;
   let mut c: libc::c_int = 0;
@@ -3141,7 +3141,7 @@ unsafe extern "C" fn getjob(mut name: *const libc::c_char, mut getctl: libc::c_i
                 );
                 p = p.offset(1)
               }
-              found = 0 as *mut job;
+              found = std::ptr::null_mut();
               loop {
                 if jp.is_null() {
                   current_block = 14072441030219150333;
@@ -3205,7 +3205,7 @@ unsafe extern "C" fn getjob(mut name: *const libc::c_char, mut getctl: libc::c_i
   ash_msg_and_raise_error(err_msg, name);
 }
 unsafe extern "C" fn freejob(mut jp: *mut job) {
-  let mut ps: *mut procstat = 0 as *mut procstat;
+  let mut ps: *mut procstat = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
@@ -3351,7 +3351,7 @@ unsafe extern "C" fn killcmd(
     let mut i: libc::c_int = 1i32;
     loop {
       if *(*argv.offset(i as isize)).offset(0) as libc::c_int == '%' as i32 {
-        let mut jp: *mut job = 0 as *mut job;
+        let mut jp: *mut job = std::ptr::null_mut();
         let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut j: libc::c_int = 0;
         let mut n: libc::c_int = 0;
@@ -3396,8 +3396,8 @@ unsafe extern "C" fn killcmd(
   return kill_main(argc, argv);
 }
 unsafe extern "C" fn showpipe(mut jp: *mut job) {
-  let mut ps: *mut procstat = 0 as *mut procstat;
-  let mut psend: *mut procstat = 0 as *mut procstat;
+  let mut ps: *mut procstat = std::ptr::null_mut();
+  let mut psend: *mut procstat = std::ptr::null_mut();
   psend = (*jp).ps.offset((*jp).nprocs as isize);
   ps = (*jp).ps.offset(1);
   while ps < psend {
@@ -3411,7 +3411,7 @@ unsafe extern "C" fn showpipe(mut jp: *mut job) {
   flush_stdout_stderr();
 }
 unsafe extern "C" fn restartjob(mut jp: *mut job, mut mode: libc::c_int) -> libc::c_int {
-  let mut ps: *mut procstat = 0 as *mut procstat;
+  let mut ps: *mut procstat = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut pgid: pid_t = 0;
@@ -3450,7 +3450,7 @@ unsafe extern "C" fn fg_bgcmd(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   let mut mode: libc::c_int = 0;
   let mut retval: libc::c_int = 0;
   mode = if **argv as libc::c_int == 'f' as i32 {
@@ -3573,8 +3573,8 @@ unsafe extern "C" fn dowait(mut block: libc::c_int, mut job: *mut job) -> libc::
   let mut current_block: u64;
   let mut pid: libc::c_int = 0;
   let mut status: libc::c_int = 0;
-  let mut jp: *mut job = 0 as *mut job;
-  let mut thisjob: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
+  let mut thisjob: *mut job = std::ptr::null_mut();
   let mut want_jobexitstatus: bool = block & 0x10i32 != 0;
   block = block & !0x10i32;
   ::std::ptr::write_volatile(
@@ -3596,7 +3596,7 @@ unsafe extern "C" fn dowait(mut block: libc::c_int, mut job: *mut job) -> libc::
     }
     pid = waitpid(-1i32, &mut status, wait_flags)
   }
-  thisjob = 0 as *mut job;
+  thisjob = std::ptr::null_mut();
   if !(pid <= 0i32) {
     jp = curjob;
     loop {
@@ -3605,8 +3605,8 @@ unsafe extern "C" fn dowait(mut block: libc::c_int, mut job: *mut job) -> libc::
         break;
       }
       let mut jobstate: libc::c_int = 0;
-      let mut ps: *mut procstat = 0 as *mut procstat;
-      let mut psend: *mut procstat = 0 as *mut procstat;
+      let mut ps: *mut procstat = std::ptr::null_mut();
+      let mut psend: *mut procstat = std::ptr::null_mut();
       if !((*jp).state() as libc::c_int == 2i32) {
         jobstate = 2i32;
         ps = (*jp).ps;
@@ -3678,8 +3678,8 @@ unsafe extern "C" fn dowait(mut block: libc::c_int, mut job: *mut job) -> libc::
   return pid;
 }
 unsafe extern "C" fn showjob(mut jp: *mut job, mut mode: libc::c_int) {
-  let mut ps: *mut procstat = 0 as *mut procstat;
-  let mut psend: *mut procstat = 0 as *mut procstat;
+  let mut ps: *mut procstat = std::ptr::null_mut();
+  let mut psend: *mut procstat = std::ptr::null_mut();
   let mut col: libc::c_int = 0;
   let mut indent_col: libc::c_int = 0;
   let mut s: [libc::c_char; 80] = [0; 80];
@@ -3772,7 +3772,7 @@ unsafe extern "C" fn showjob(mut jp: *mut job, mut mode: libc::c_int) {
   };
 }
 unsafe extern "C" fn showjobs(mut mode: libc::c_int) {
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   while dowait(0i32, 0 as *mut job) > 0i32 {}
   jp = curjob;
   while !jp.is_null() {
@@ -3817,7 +3817,7 @@ unsafe extern "C" fn jobscmd(
 unsafe extern "C" fn getstatus(mut job: *mut job) -> libc::c_int {
   let mut status: libc::c_int = 0;
   let mut retval: libc::c_int = 0;
-  let mut ps: *mut procstat = 0 as *mut procstat;
+  let mut ps: *mut procstat = std::ptr::null_mut();
   ps = (*job).ps.offset((*job).nprocs as isize).offset(-1);
   status = (*ps).ps_status;
   if (*ash_ptr_to_globals_misc).optlist[15] != 0 {
@@ -3846,9 +3846,9 @@ unsafe extern "C" fn waitcmd(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut job: *mut job = 0 as *mut job;
+  let mut job: *mut job = std::ptr::null_mut();
   let mut retval: libc::c_int = 0;
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   let mut status: libc::c_int = 0;
   let mut one: libc::c_char = nextopt(b"n\x00" as *const u8 as *const libc::c_char) as libc::c_char;
   retval = 0i32;
@@ -3955,8 +3955,8 @@ unsafe extern "C" fn waitcmd(
 unsafe extern "C" fn growjobtab() -> *mut job {
   let mut len: size_t = 0;
   let mut offset: ptrdiff_t = 0;
-  let mut jp: *mut job = 0 as *mut job;
-  let mut jq: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
+  let mut jq: *mut job = std::ptr::null_mut();
   len = (njobs as libc::c_ulong).wrapping_mul(::std::mem::size_of::<job>() as libc::c_ulong);
   jq = jobtab;
   jp = xrealloc(
@@ -4012,7 +4012,7 @@ unsafe extern "C" fn growjobtab() -> *mut job {
 }
 unsafe extern "C" fn makejob(mut nprocs: libc::c_int) -> *mut job {
   let mut i: libc::c_int = 0;
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   i = njobs as libc::c_int;
   jp = jobtab;
   loop {
@@ -4215,8 +4215,8 @@ unsafe extern "C" fn cmdlist(mut np: *mut node, mut sep: libc::c_int) {
 }
 unsafe extern "C" fn cmdtxt(mut n: *mut node) {
   let mut current_block: u64;
-  let mut np: *mut node = 0 as *mut node;
-  let mut lp: *mut nodelist = 0 as *mut nodelist;
+  let mut np: *mut node = std::ptr::null_mut();
+  let mut lp: *mut nodelist = std::ptr::null_mut();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
   if n.is_null() {
     return;
@@ -4418,7 +4418,7 @@ unsafe extern "C" fn commandtext(mut n: *mut node) -> *mut libc::c_char {
   return xstrdup(name);
 }
 unsafe extern "C" fn clear_traps() {
-  let mut tp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut tp: *mut *mut libc::c_char = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -4608,7 +4608,7 @@ unsafe extern "C" fn waitforjob(mut jp: *mut job) -> libc::c_int {
   return st;
 }
 unsafe extern "C" fn stoppedjobs() -> libc::c_int {
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   let mut retval: libc::c_int = 0;
   retval = 0i32;
   if !((*ash_ptr_to_globals_misc).job_warning != 0) {
@@ -4981,11 +4981,11 @@ unsafe extern "C" fn internally_opened_fd(
 }
 /* save previous values of file descriptors */
 unsafe extern "C" fn redirect(mut redir: *mut node, mut flags: libc::c_int) {
-  let mut sv: *mut redirtab = 0 as *mut redirtab;
+  let mut sv: *mut redirtab = std::ptr::null_mut();
   if redir.is_null() {
     return;
   }
-  sv = 0 as *mut redirtab;
+  sv = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -5123,7 +5123,7 @@ unsafe extern "C" fn redirectsafe(mut redir: *mut node, mut flags: libc::c_int) 
   return err;
 }
 unsafe extern "C" fn pushredir(mut redir: *mut node) -> *mut redirtab {
-  let mut sv: *mut redirtab = 0 as *mut redirtab;
+  let mut sv: *mut redirtab = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   if redir.is_null() {
     return (*ash_ptr_to_globals_var).redirlist;
@@ -5162,7 +5162,7 @@ unsafe extern "C" fn pushredir(mut redir: *mut node) -> *mut redirtab {
  * Undo the effects of the last redirection.
  */
 unsafe extern "C" fn popredir(mut drop_0: libc::c_int) {
-  let mut rp: *mut redirtab = 0 as *mut redirtab;
+  let mut rp: *mut redirtab = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   if (*ash_ptr_to_globals_var).redirlist.is_null() {
     return;
@@ -5297,8 +5297,8 @@ unsafe extern "C" fn cvtnum(mut num: arith_t) -> libc::c_int {
  */
 unsafe extern "C" fn ifsbreakup(mut string: *mut libc::c_char, mut arglist: *mut arglist) {
   let mut current_block: u64; /* while */
-  let mut ifsp: *mut ifsregion = 0 as *mut ifsregion;
-  let mut sp: *mut strlist = 0 as *mut strlist;
+  let mut ifsp: *mut ifsregion = std::ptr::null_mut();
+  let mut sp: *mut strlist = std::ptr::null_mut();
   let mut start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -5337,7 +5337,7 @@ unsafe extern "C" fn ifsbreakup(mut string: *mut libc::c_char, mut arglist: *mut
         } else {
           if !(afternul != 0 || nulonly != 0) {
             ifsspc = (strchr(defifsvar.as_ptr().offset(4), *p as libc::c_int)
-              != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int
+              != std::ptr::null_mut()) as libc::c_int
           }
           /* Ignore IFS whitespace at start */
           if q == start && ifsspc != 0 {
@@ -5415,7 +5415,7 @@ unsafe extern "C" fn ifsfree() {
     );
     asm!("" : : : "memory" : "volatile");
     loop {
-      let mut ifsp: *mut ifsregion = 0 as *mut ifsregion;
+      let mut ifsp: *mut ifsregion = std::ptr::null_mut();
       ifsp = (*p).next;
       free(p as *mut libc::c_void);
       p = ifsp;
@@ -5423,10 +5423,10 @@ unsafe extern "C" fn ifsfree() {
         break;
       }
     }
-    ifsfirst.next = 0 as *mut ifsregion;
+    ifsfirst.next = std::ptr::null_mut();
     int_on();
   }
-  ifslastp = 0 as *mut ifsregion;
+  ifslastp = std::ptr::null_mut();
 }
 unsafe extern "C" fn esclen(mut start: *const libc::c_char, mut p: *const libc::c_char) -> size_t {
   let mut esc: size_t = 0i32 as size_t;
@@ -5542,7 +5542,7 @@ unsafe extern "C" fn rmescapes(
           /* stop handling globbing */
           globbing = 0i32 as libc::c_uint;
           *slash_position = q.wrapping_offset_from(r) as libc::c_long as libc::c_int;
-          slash_position = 0 as *mut libc::c_int
+          slash_position = std::ptr::null_mut()
         }
         protect_against_glob = globbing
       }
@@ -5649,7 +5649,7 @@ unsafe extern "C" fn recordregion(
   mut end: libc::c_int,
   mut nulonly: libc::c_int,
 ) {
-  let mut ifsp: *mut ifsregion = 0 as *mut ifsregion;
+  let mut ifsp: *mut ifsregion = std::ptr::null_mut();
   if ifslastp.is_null() {
     ifsp = &mut ifsfirst
   } else {
@@ -5676,7 +5676,7 @@ unsafe extern "C" fn removerecordregions(mut endoff: libc::c_int) {
   }
   if ifsfirst.endoff > endoff {
     while !ifsfirst.next.is_null() {
-      let mut ifsp: *mut ifsregion = 0 as *mut ifsregion;
+      let mut ifsp: *mut ifsregion = std::ptr::null_mut();
       ::std::ptr::write_volatile(
         &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
         ::std::ptr::read_volatile::<libc::c_int>(
@@ -5690,7 +5690,7 @@ unsafe extern "C" fn removerecordregions(mut endoff: libc::c_int) {
       int_on();
     }
     if ifsfirst.begoff > endoff {
-      ifslastp = 0 as *mut ifsregion
+      ifslastp = std::ptr::null_mut()
     } else {
       ifslastp = &mut ifsfirst;
       ifsfirst.endoff = endoff
@@ -5702,7 +5702,7 @@ unsafe extern "C" fn removerecordregions(mut endoff: libc::c_int) {
     ifslastp = (*ifslastp).next
   }
   while !(*ifslastp).next.is_null() {
-    let mut ifsp_0: *mut ifsregion = 0 as *mut ifsregion;
+    let mut ifsp_0: *mut ifsregion = std::ptr::null_mut();
     ::std::ptr::write_volatile(
       &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
       ::std::ptr::read_volatile::<libc::c_int>(
@@ -5727,7 +5727,7 @@ unsafe extern "C" fn exptilde(
   let mut current_block: u64;
   let mut c: libc::c_uchar = 0;
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut home: *const libc::c_char = 0 as *const libc::c_char;
   let mut quotes: libc::c_int = flags & (0x1i32 | 0x10i32);
   name = p.offset(1);
@@ -5790,11 +5790,11 @@ unsafe extern "C" fn evaltreenr(mut n: *mut node, mut flags: libc::c_int) -> ! {
 }
 unsafe extern "C" fn evalbackcmd(mut n: *mut node, mut result: *mut backcmd) {
   let mut pip: [libc::c_int; 2] = [0; 2];
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   (*result).fd = -1i32;
   (*result).buf = std::ptr::null_mut::<libc::c_char>();
   (*result).nleft = 0i32;
-  (*result).jp = 0 as *mut job;
+  (*result).jp = std::ptr::null_mut();
   if !n.is_null() {
     if pipe(pip.as_mut_ptr()) < 0i32 {
       ash_msg_and_raise_error(b"can\'t create pipe: %m\x00" as *const u8 as *const libc::c_char);
@@ -6714,7 +6714,7 @@ unsafe extern "C" fn varvalue(
   mut flags: libc::c_int,
   mut quoted: libc::c_int,
 ) -> ssize_t {
-  let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* number(name) fails on ${N#str} etc */
+  let mut ap: *mut *mut libc::c_char = std::ptr::null_mut(); /* number(name) fails on ${N#str} etc */
   let mut sepc: libc::c_char = 0;
   let mut c: libc::c_char = 0;
   let mut current_block: u64;
@@ -6804,7 +6804,7 @@ unsafe extern "C" fn varvalue(
     14763689060501151050 =>
     /* fall through */
     {
-      ap = 0 as *mut *mut libc::c_char; /* case '*' */
+      ap = std::ptr::null_mut(); /* case '*' */
       sepc = 0;
       c = 0;
       /* We will set c to 0 or ~0 depending on whether
@@ -7072,7 +7072,7 @@ unsafe extern "C" fn evalvar(mut p: *mut libc::c_char, mut flag: libc::c_int) ->
  * Add a file name to the list.
  */
 unsafe extern "C" fn addfname(mut name: *const libc::c_char) {
-  let mut sp: *mut strlist = 0 as *mut strlist;
+  let mut sp: *mut strlist = std::ptr::null_mut();
   sp = stzalloc(::std::mem::size_of::<strlist>() as libc::c_ulong) as *mut strlist;
   (*sp).text = sstrdup(name);
   *exparg.lastp = sp;
@@ -7163,8 +7163,8 @@ unsafe extern "C" fn expmeta(
   let mut endname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut metaflag: libc::c_int = 0;
   let mut statb: stat = std::mem::zeroed();
-  let mut dirp: *mut DIR = 0 as *mut DIR;
-  let mut dp: *mut dirent = 0 as *mut dirent;
+  let mut dirp: *mut DIR = std::ptr::null_mut();
+  let mut dp: *mut dirent = std::ptr::null_mut();
   let mut atend: libc::c_int = 0;
   let mut matchdot: libc::c_int = 0;
   let mut esc: libc::c_int = 0;
@@ -7316,9 +7316,9 @@ unsafe extern "C" fn expmeta(
   };
 }
 unsafe extern "C" fn msort(mut list_0: *mut strlist, mut len: libc::c_int) -> *mut strlist {
-  let mut p: *mut strlist = 0 as *mut strlist;
-  let mut q: *mut strlist = 0 as *mut strlist;
-  let mut lpp: *mut *mut strlist = 0 as *mut *mut strlist;
+  let mut p: *mut strlist = std::ptr::null_mut();
+  let mut q: *mut strlist = std::ptr::null_mut();
+  let mut lpp: *mut *mut strlist = std::ptr::null_mut();
   let mut half: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   if len <= 1i32 {
@@ -7335,7 +7335,7 @@ unsafe extern "C" fn msort(mut list_0: *mut strlist, mut len: libc::c_int) -> *m
     q = p;
     p = (*p).next
   }
-  (*q).next = 0 as *mut strlist;
+  (*q).next = std::ptr::null_mut();
   q = msort(list_0, half);
   p = msort(p, len - half);
   lpp = &mut list_0;
@@ -7369,7 +7369,7 @@ unsafe extern "C" fn msort(mut list_0: *mut strlist, mut len: libc::c_int) -> *m
  */
 unsafe extern "C" fn expsort(mut str: *mut strlist) -> *mut strlist {
   let mut len: libc::c_int = 0;
-  let mut sp: *mut strlist = 0 as *mut strlist;
+  let mut sp: *mut strlist = std::ptr::null_mut();
   len = 0i32;
   sp = str;
   while !sp.is_null() {
@@ -7388,8 +7388,8 @@ unsafe extern "C" fn expandmeta(mut str: *mut strlist)
       dir: std::ptr::null_mut::<libc::c_char>(),
       dir_max: 0,
     };
-    let mut savelastp: *mut *mut strlist = 0 as *mut *mut strlist;
-    let mut sp: *mut strlist = 0 as *mut strlist;
+    let mut savelastp: *mut *mut strlist = std::ptr::null_mut();
+    let mut sp: *mut strlist = std::ptr::null_mut();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_uint = 0;
     if (*ash_ptr_to_globals_misc).optlist[1] != 0 {
@@ -7418,7 +7418,7 @@ unsafe extern "C" fn expandmeta(mut str: *mut strlist)
       if exparg.lastp == savelastp {
         current_block = 4536899987212780243;
       } else {
-        *exparg.lastp = 0 as *mut strlist;
+        *exparg.lastp = std::ptr::null_mut();
         sp = expsort(*savelastp);
         *savelastp = sp;
         while !(*sp).next.is_null() {
@@ -7455,7 +7455,7 @@ unsafe extern "C" fn expandarg(
   mut arglist: *mut arglist,
   mut flag: libc::c_int,
 ) {
-  let mut sp: *mut strlist = 0 as *mut strlist;
+  let mut sp: *mut strlist = std::ptr::null_mut();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   argbackq = (*arg).narg.backquote;
   expdest = (*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void as *mut libc::c_char;
@@ -7472,7 +7472,7 @@ unsafe extern "C" fn expandarg(
      */
     if flag & 0x1i32 != 0 {
       ifsbreakup(p, &mut exparg);
-      *exparg.lastp = 0 as *mut strlist;
+      *exparg.lastp = std::ptr::null_mut();
       exparg.lastp = &mut exparg.list;
       expandmeta(exparg.list);
     } else {
@@ -7481,7 +7481,7 @@ unsafe extern "C" fn expandarg(
       *exparg.lastp = sp;
       exparg.lastp = &mut (*sp).next
     }
-    *exparg.lastp = 0 as *mut strlist;
+    *exparg.lastp = std::ptr::null_mut();
     if !exparg.list.is_null() {
       *(*arglist).lastp = exparg.list;
       (*arglist).lastp = exparg.lastp
@@ -7598,7 +7598,7 @@ unsafe extern "C" fn shellexec(
 ) -> ! {
   let mut cmdname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* used only by FEATURE_SH_STANDALONE */
   let mut e: libc::c_int = 0;
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut exerrno: libc::c_int = 0;
   let mut applet_no: libc::c_int = -1i32;
   envp = listvars(0x1i32, 0x20i32, 0 as *mut *mut *mut libc::c_char);
@@ -7684,9 +7684,9 @@ unsafe extern "C" fn printentry(mut cmdp: *mut tblentry) {
  * PATH which has changed.
  */
 unsafe extern "C" fn clearcmdentry(mut firstchange: libc::c_int) {
-  let mut tblp: *mut *mut tblentry = 0 as *mut *mut tblentry;
-  let mut pp: *mut *mut tblentry = 0 as *mut *mut tblentry;
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut tblp: *mut *mut tblentry = std::ptr::null_mut();
+  let mut pp: *mut *mut tblentry = std::ptr::null_mut();
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -7731,8 +7731,8 @@ unsafe extern "C" fn cmdlookup(
 ) -> *mut tblentry {
   let mut hashval: libc::c_uint = 0;
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
-  let mut pp: *mut *mut tblentry = 0 as *mut *mut tblentry;
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
+  let mut pp: *mut *mut tblentry = std::ptr::null_mut();
   p = name;
   hashval = ((*p as libc::c_uchar as libc::c_int) << 4i32) as libc::c_uint;
   while *p != 0 {
@@ -7766,7 +7766,7 @@ unsafe extern "C" fn cmdlookup(
  * Delete the command entry returned on the last lookup.
  */
 unsafe extern "C" fn delete_cmd_entry() {
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -7787,7 +7787,7 @@ unsafe extern "C" fn delete_cmd_entry() {
  * the same name - except special builtins.
  */
 unsafe extern "C" fn addcmdentry(mut name: *mut libc::c_char, mut entry: *mut cmdentry) {
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   cmdp = cmdlookup(name, 1i32);
   if (*cmdp).cmdtype as libc::c_int == 1i32 {
     freefunc((*cmdp).param.func);
@@ -7800,8 +7800,8 @@ unsafe extern "C" fn hashcmd(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut pp: *mut *mut tblentry = 0 as *mut *mut tblentry;
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut pp: *mut *mut tblentry = std::ptr::null_mut();
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   let mut c: libc::c_int = 0;
   let mut entry: cmdentry = cmdentry {
     cmdtype: 0,
@@ -7859,8 +7859,8 @@ unsafe extern "C" fn hashcmd(
  * are executed they will be rehashed.
  */
 unsafe extern "C" fn hashcd() {
-  let mut pp: *mut *mut tblentry = 0 as *mut *mut tblentry;
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut pp: *mut *mut tblentry = std::ptr::null_mut();
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   pp = cmdtable;
   while pp < &mut *cmdtable.offset(31) as *mut *mut tblentry {
     cmdp = *pp;
@@ -8314,8 +8314,8 @@ unsafe extern "C" fn nodeckstrdup(mut s: *mut libc::c_char) -> *mut libc::c_char
   return strcpy(funcstring_end, s);
 }
 unsafe extern "C" fn copynodelist(mut lp: *mut nodelist) -> *mut nodelist {
-  let mut start: *mut nodelist = 0 as *mut nodelist;
-  let mut lpp: *mut *mut nodelist = 0 as *mut *mut nodelist;
+  let mut start: *mut nodelist = std::ptr::null_mut();
+  let mut lpp: *mut *mut nodelist = std::ptr::null_mut();
   lpp = &mut start;
   while !lp.is_null() {
     *lpp = funcblock as *mut nodelist;
@@ -8328,11 +8328,11 @@ unsafe extern "C" fn copynodelist(mut lp: *mut nodelist) -> *mut nodelist {
     lp = (*lp).next;
     lpp = &mut (**lpp).next
   }
-  *lpp = 0 as *mut nodelist;
+  *lpp = std::ptr::null_mut();
   return start;
 }
 unsafe extern "C" fn copynode(mut n: *mut node) -> *mut node {
-  let mut new: *mut node = 0 as *mut node;
+  let mut new: *mut node = std::ptr::null_mut();
   if n.is_null() {
     return 0 as *mut node;
   }
@@ -8417,7 +8417,7 @@ unsafe extern "C" fn copynode(mut n: *mut node) -> *mut node {
  * Make a copy of a parse tree.
  */
 unsafe extern "C" fn copyfunc(mut n: *mut node) -> *mut funcnode {
-  let mut f: *mut funcnode = 0 as *mut funcnode;
+  let mut f: *mut funcnode = std::ptr::null_mut();
   let mut blocksize: size_t = 0;
   /*funcstringsize = 0;*/
   blocksize = 8u64.wrapping_add(calcsize(0i32, n) as libc::c_ulong);
@@ -8463,7 +8463,7 @@ static mut funcline: libc::c_int = 0;
  * while we are executing a trap handler. [is it a TODO?]
  */
 unsafe extern "C" fn dotrap() {
-  let mut g: *mut u8 = 0 as *mut u8;
+  let mut g: *mut u8 = std::ptr::null_mut();
   let mut sig: libc::c_int = 0;
   let mut last_status: u8 = 0;
   if (*ash_ptr_to_globals_misc).pending_sig == 0 {
@@ -8700,22 +8700,22 @@ unsafe extern "C" fn evalfor(mut n: *mut node, mut flags: libc::c_int) -> libc::
     list: 0 as *const strlist as *mut strlist,
     lastp: 0 as *const *mut strlist as *mut *mut strlist,
   };
-  let mut argp: *mut node = 0 as *mut node;
-  let mut sp: *mut strlist = 0 as *mut strlist;
+  let mut argp: *mut node = std::ptr::null_mut();
+  let mut sp: *mut strlist = std::ptr::null_mut();
   let mut status: libc::c_int = 0i32;
   (*ash_ptr_to_globals_var).lineno = (*n).ncase.linno;
   (*ash_ptr_to_globals_misc).errlinno = (*ash_ptr_to_globals_var).lineno;
   if funcline != 0 {
     (*ash_ptr_to_globals_var).lineno -= funcline - 1i32
   }
-  arglist.list = 0 as *mut strlist;
+  arglist.list = std::ptr::null_mut();
   arglist.lastp = &mut arglist.list;
   argp = (*n).nfor.args;
   while !argp.is_null() {
     expandarg(argp, &mut arglist, 0x1i32 | 0x2i32);
     argp = (*argp).narg.next
   }
-  *arglist.lastp = 0 as *mut strlist;
+  *arglist.lastp = std::ptr::null_mut();
   loopnest += 1;
   flags &= 0o2i32;
   sp = arglist.list;
@@ -8731,8 +8731,8 @@ unsafe extern "C" fn evalfor(mut n: *mut node, mut flags: libc::c_int) -> libc::
   return status;
 }
 unsafe extern "C" fn evalcase(mut n: *mut node, mut flags: libc::c_int) -> libc::c_int {
-  let mut cp: *mut node = 0 as *mut node;
-  let mut patp: *mut node = 0 as *mut node;
+  let mut cp: *mut node = std::ptr::null_mut();
+  let mut patp: *mut node = std::ptr::null_mut();
   let mut arglist: arglist = arglist {
     list: 0 as *const strlist as *mut strlist,
     lastp: 0 as *const *mut strlist as *mut *mut strlist,
@@ -8743,7 +8743,7 @@ unsafe extern "C" fn evalcase(mut n: *mut node, mut flags: libc::c_int) -> libc:
   if funcline != 0 {
     (*ash_ptr_to_globals_var).lineno -= funcline - 1i32
   }
-  arglist.list = 0 as *mut strlist;
+  arglist.list = std::ptr::null_mut();
   arglist.lastp = &mut arglist.list;
   expandarg((*n).ncase.expr, &mut arglist, 0x2i32);
   cp = (*n).ncase.cases;
@@ -8771,7 +8771,7 @@ unsafe extern "C" fn evalcase(mut n: *mut node, mut flags: libc::c_int) -> libc:
  * Kick off a subshell to evaluate a tree.
  */
 unsafe extern "C" fn evalsubshell(mut n: *mut node, mut flags: libc::c_int) -> libc::c_int {
-  let mut jp: *mut job = 0 as *mut job; /* FORK_BG(1) if yes, else FORK_FG(0) */
+  let mut jp: *mut job = std::ptr::null_mut(); /* FORK_BG(1) if yes, else FORK_FG(0) */
   let mut backgnd: libc::c_int = ((*n).type_0 as libc::c_int == 3i32) as libc::c_int;
   let mut status: libc::c_int = 0;
   (*ash_ptr_to_globals_var).lineno = (*n).nredir.linno;
@@ -8815,14 +8815,14 @@ unsafe extern "C" fn evalsubshell(mut n: *mut node, mut flags: libc::c_int) -> l
   evaltreenr((*n).nredir.n, flags);
 }
 unsafe extern "C" fn expredir(mut n: *mut node) {
-  let mut redir: *mut node = 0 as *mut node;
+  let mut redir: *mut node = std::ptr::null_mut();
   redir = n;
   while !redir.is_null() {
     let mut fn_0: arglist = arglist {
       list: 0 as *const strlist as *mut strlist,
       lastp: 0 as *const *mut strlist as *mut *mut strlist,
     };
-    fn_0.list = 0 as *mut strlist;
+    fn_0.list = std::ptr::null_mut();
     fn_0.lastp = &mut fn_0.list;
     let mut current_block_12: u64;
     match (*redir).type_0 as libc::c_int {
@@ -8872,8 +8872,8 @@ unsafe extern "C" fn expredir(mut n: *mut node) {
  * of all the rest.)
  */
 unsafe extern "C" fn evalpipe(mut n: *mut node, mut flags: libc::c_int) -> libc::c_int {
-  let mut jp: *mut job = 0 as *mut job;
-  let mut lp: *mut nodelist = 0 as *mut nodelist;
+  let mut jp: *mut job = std::ptr::null_mut();
+  let mut lp: *mut nodelist = std::ptr::null_mut();
   let mut pipelen: libc::c_int = 0;
   let mut prevfd: libc::c_int = 0;
   let mut pip: [libc::c_int; 2] = [0; 2];
@@ -8974,10 +8974,10 @@ static mut localvar_stack: *mut localvar_list = 0 as *const localvar_list as *mu
  * Interrupts must be off.
  */
 unsafe extern "C" fn poplocalvars(mut keep: libc::c_int) {
-  let mut ll: *mut localvar_list = 0 as *mut localvar_list;
-  let mut lvp: *mut localvar = 0 as *mut localvar;
-  let mut next: *mut localvar = 0 as *mut localvar;
-  let mut vp: *mut var = 0 as *mut var;
+  let mut ll: *mut localvar_list = std::ptr::null_mut();
+  let mut lvp: *mut localvar = std::ptr::null_mut();
+  let mut next: *mut localvar = std::ptr::null_mut();
+  let mut vp: *mut var = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -9040,7 +9040,7 @@ unsafe extern "C" fn poplocalvars(mut keep: libc::c_int) {
  * Create a new localvar environment.
  */
 unsafe extern "C" fn pushlocalvars() -> *mut localvar_list {
-  let mut ll: *mut localvar_list = 0 as *mut localvar_list;
+  let mut ll: *mut localvar_list = std::ptr::null_mut();
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -9073,7 +9073,7 @@ unsafe extern "C" fn evalfun(
     malloced: 0,
     p: 0 as *mut *mut libc::c_char,
   };
-  let mut savehandler: *mut jmploc = 0 as *mut jmploc;
+  let mut savehandler: *mut jmploc = std::ptr::null_mut();
   let mut jmploc: jmploc = jmploc {
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
@@ -9137,9 +9137,9 @@ unsafe extern "C" fn evalfun(
  */
 unsafe extern "C" fn mklocal(mut name: *mut libc::c_char) {
   let mut current_block: u64;
-  let mut lvp: *mut localvar = 0 as *mut localvar;
-  let mut vpp: *mut *mut var = 0 as *mut *mut var;
-  let mut vp: *mut var = 0 as *mut var;
+  let mut lvp: *mut localvar = std::ptr::null_mut();
+  let mut vpp: *mut *mut var = std::ptr::null_mut();
+  let mut vp: *mut var = std::ptr::null_mut();
   let mut eq: *mut libc::c_char = strchr(name, '=' as i32);
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
@@ -9180,7 +9180,7 @@ unsafe extern "C" fn mklocal(mut name: *mut libc::c_char) {
           (*ash_ptr_to_globals_misc).optlist.as_mut_ptr() as *const libc::c_void,
           ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong,
         ) as *const libc::c_char;
-        vp = 0 as *mut var
+        vp = std::ptr::null_mut()
       } else {
         vpp = hashvar(name);
         vp = *findvar(vpp, name);
@@ -9745,7 +9745,7 @@ unsafe extern "C" fn pstrcmp1(
   );
 }
 unsafe extern "C" fn find_builtin(mut name: *const libc::c_char) -> *mut builtincmd {
-  let mut bp: *mut builtincmd = 0 as *mut builtincmd;
+  let mut bp: *mut builtincmd = std::ptr::null_mut();
   bp = bsearch(
     name as *const libc::c_void,
     builtintab.as_ptr() as *const libc::c_void,
@@ -9786,10 +9786,10 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
     };
     init
   };
-  let mut localvar_stop: *mut localvar_list = 0 as *mut localvar_list;
-  let mut file_stop: *mut parsefile = 0 as *mut parsefile;
-  let mut redir_stop: *mut redirtab = 0 as *mut redirtab;
-  let mut argp: *mut node = 0 as *mut node;
+  let mut localvar_stop: *mut localvar_list = std::ptr::null_mut();
+  let mut file_stop: *mut parsefile = std::ptr::null_mut();
+  let mut redir_stop: *mut redirtab = std::ptr::null_mut();
+  let mut argp: *mut node = std::ptr::null_mut();
   let mut arglist: arglist = arglist {
     list: 0 as *const strlist as *mut strlist,
     lastp: 0 as *const *mut strlist as *mut *mut strlist,
@@ -9798,19 +9798,19 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
     list: 0 as *const strlist as *mut strlist,
     lastp: 0 as *const *mut strlist as *mut *mut strlist,
   };
-  let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut argc: libc::c_int = 0;
   let mut sp: *const strlist = 0 as *const strlist;
   let mut cmdentry: cmdentry = cmdentry {
     cmdtype: 0,
     u: param { index: 0 },
   };
-  let mut jp: *mut job = 0 as *mut job;
+  let mut jp: *mut job = std::ptr::null_mut();
   let mut lastarg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut path: *const libc::c_char = 0 as *const libc::c_char;
   let mut spclbltin: libc::c_int = 0;
   let mut status: libc::c_int = 0;
-  let mut nargv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut nargv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut cmd_is_exec: smallint = 0;
   (*ash_ptr_to_globals_var).lineno = (*cmd).ncmd.linno;
   (*ash_ptr_to_globals_misc).errlinno = (*ash_ptr_to_globals_var).lineno;
@@ -9824,19 +9824,19 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
   cmdentry.cmdtype = 2i32 as smallint;
   cmdentry.u.cmd = &null_bltin;
   varlist.lastp = &mut varlist.list;
-  *varlist.lastp = 0 as *mut strlist;
+  *varlist.lastp = std::ptr::null_mut();
   arglist.lastp = &mut arglist.list;
-  *arglist.lastp = 0 as *mut strlist;
+  *arglist.lastp = std::ptr::null_mut();
   argc = 0i32;
   if !(*cmd).ncmd.args.is_null() {
-    let mut bcmd: *mut builtincmd = 0 as *mut builtincmd;
+    let mut bcmd: *mut builtincmd = std::ptr::null_mut();
     let mut pseudovarflag: smallint = 0;
     bcmd = find_builtin((*(*cmd).ncmd.args).narg.text);
     pseudovarflag = (!bcmd.is_null() && *(*bcmd).name.offset(0) as libc::c_int & 4i32 != 0)
       as libc::c_int as smallint;
     argp = (*cmd).ncmd.args;
     while !argp.is_null() {
-      let mut spp: *mut *mut strlist = 0 as *mut *mut strlist;
+      let mut spp: *mut *mut strlist = std::ptr::null_mut();
       spp = arglist.lastp;
       if pseudovarflag as libc::c_int != 0 && isassignment((*argp).narg.text) != 0 {
         expandarg(argp, &mut arglist, 0x4i32);
@@ -9887,7 +9887,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
   path = (*ash_ptr_to_globals_var).varinit[(1i32 * 2i32 + 1i32) as usize].var_text;
   argp = (*cmd).ncmd.assign;
   while !argp.is_null() {
-    let mut spp_0: *mut *mut strlist = 0 as *mut *mut strlist;
+    let mut spp_0: *mut *mut strlist = std::ptr::null_mut();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     spp_0 = varlist.lastp;
     expandarg(argp, &mut varlist, 0x4i32);
@@ -10159,7 +10159,7 @@ unsafe extern "C" fn evalbltin(
   mut flags: libc::c_int,
 ) -> libc::c_int {
   let mut savecmdname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut savehandler: *mut jmploc = 0 as *mut jmploc;
+  let mut savehandler: *mut jmploc = std::ptr::null_mut();
   let mut jmploc: jmploc = jmploc {
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
@@ -10286,7 +10286,7 @@ static mut checkkwd: smallint = 0;
  * We handle aliases this way.
  */
 unsafe extern "C" fn pushstring(mut s: *mut libc::c_char, mut ap: *mut alias) {
-  let mut sp: *mut strpush = 0 as *mut strpush;
+  let mut sp: *mut strpush = std::ptr::null_mut();
   let mut len: libc::c_int = 0;
   len = strlen(s) as libc::c_int;
   ::std::ptr::write_volatile(
@@ -10624,7 +10624,7 @@ unsafe extern "C" fn synstack_pop(mut stack: *mut *mut synstack_t) {
  * adds a new entry to the stack and popfile restores the previous level.
  */
 unsafe extern "C" fn pushfile() {
-  let mut pf: *mut parsefile = 0 as *mut parsefile;
+  let mut pf: *mut parsefile = std::ptr::null_mut();
   pf = xzalloc(::std::mem::size_of::<parsefile>() as libc::c_ulong) as *mut parsefile;
   (*pf).prev = g_parsefile;
   (*pf).pf_fd = -1i32;
@@ -10822,8 +10822,8 @@ unsafe extern "C" fn changemail(mut _val: *const libc::c_char) {
  * Set the shell parameters.
  */
 unsafe extern "C" fn setparam(mut argv: *mut *mut libc::c_char) {
-  let mut newparam: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut newparam: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut ap: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut nparam: libc::c_int = 0;
   nparam = 0i32;
   while !(*argv.offset(nparam as isize)).is_null() {
@@ -11040,8 +11040,8 @@ unsafe extern "C" fn shiftcmd(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut n: libc::c_int = 0;
-  let mut ap1: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut ap2: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut ap1: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut ap2: *mut *mut libc::c_char = std::ptr::null_mut();
   n = 1i32;
   if !(*argv.offset(1)).is_null() {
     n = number(*argv.offset(1))
@@ -11097,8 +11097,8 @@ unsafe extern "C" fn showvars(
   mut off: libc::c_int,
 ) -> libc::c_int {
   let mut sep: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ep: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut epend: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut ep: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut epend: *mut *mut libc::c_char = std::ptr::null_mut();
   ep = listvars(on, off, &mut epend);
   qsort(
     ep as *mut libc::c_void,
@@ -11242,7 +11242,7 @@ unsafe extern "C" fn getopts(
   let mut c: libc::c_char = '?' as i32 as libc::c_char;
   let mut done: libc::c_int = 0i32;
   let mut sbuf: [libc::c_char; 2] = [0; 2];
-  let mut optnext: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut optnext: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut ind: libc::c_int = (*ash_ptr_to_globals_var).shellparam.optind;
   let mut off: libc::c_int = (*ash_ptr_to_globals_var).shellparam.optoff;
   sbuf[1] = '\u{0}' as i32 as libc::c_char;
@@ -11402,7 +11402,7 @@ unsafe extern "C" fn getoptscmd(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut optbase: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut optbase: *mut *mut libc::c_char = std::ptr::null_mut();
   if argc < 3i32 {
     ash_msg_and_raise_error(
       b"usage: getopts optstring var [arg]\x00" as *const u8 as *const libc::c_char,
@@ -11477,11 +11477,11 @@ unsafe extern "C" fn raise_error_unexpected_syntax(mut token: libc::c_int) -> ! 
   /* NOTREACHED */
 }
 unsafe extern "C" fn list(mut nlflag: libc::c_int) -> *mut node {
-  let mut n1: *mut node = 0 as *mut node;
-  let mut n2: *mut node = 0 as *mut node;
-  let mut n3: *mut node = 0 as *mut node;
+  let mut n1: *mut node = std::ptr::null_mut();
+  let mut n2: *mut node = std::ptr::null_mut();
+  let mut n3: *mut node = std::ptr::null_mut();
   let mut tok: libc::c_int = 0;
-  n1 = 0 as *mut node;
+  n1 = std::ptr::null_mut();
   loop {
     match peektoken() {
       1 => {
@@ -11543,9 +11543,9 @@ unsafe extern "C" fn list(mut nlflag: libc::c_int) -> *mut node {
 }
 /* parsing is heavily cross-recursive, need these forward decls */
 unsafe extern "C" fn andor() -> *mut node {
-  let mut n1: *mut node = 0 as *mut node;
-  let mut n2: *mut node = 0 as *mut node;
-  let mut n3: *mut node = 0 as *mut node;
+  let mut n1: *mut node = std::ptr::null_mut();
+  let mut n2: *mut node = std::ptr::null_mut();
+  let mut n3: *mut node = std::ptr::null_mut();
   let mut t: libc::c_int = 0;
   n1 = pipeline();
   loop {
@@ -11568,11 +11568,11 @@ unsafe extern "C" fn andor() -> *mut node {
   }
 }
 unsafe extern "C" fn pipeline() -> *mut node {
-  let mut n1: *mut node = 0 as *mut node;
-  let mut n2: *mut node = 0 as *mut node;
-  let mut pipenode: *mut node = 0 as *mut node;
-  let mut lp: *mut nodelist = 0 as *mut nodelist;
-  let mut prev: *mut nodelist = 0 as *mut nodelist;
+  let mut n1: *mut node = std::ptr::null_mut();
+  let mut n2: *mut node = std::ptr::null_mut();
+  let mut pipenode: *mut node = std::ptr::null_mut();
+  let mut lp: *mut nodelist = std::ptr::null_mut();
+  let mut prev: *mut nodelist = std::ptr::null_mut();
   let mut negate: libc::c_int = 0;
   negate = 0i32;
   if readtoken() == TNOT as libc::c_int {
@@ -11599,7 +11599,7 @@ unsafe extern "C" fn pipeline() -> *mut node {
         break;
       }
     }
-    (*lp).next = 0 as *mut nodelist;
+    (*lp).next = std::ptr::null_mut();
     n1 = pipenode
   }
   tokpushback = 1i32 as smallint;
@@ -11612,7 +11612,7 @@ unsafe extern "C" fn pipeline() -> *mut node {
   return n1;
 }
 unsafe extern "C" fn makename() -> *mut node {
-  let mut n: *mut node = 0 as *mut node;
+  let mut n: *mut node = std::ptr::null_mut();
   n = stzalloc(::std::mem::size_of::<narg>() as libc::c_ulong) as *mut node;
   (*n).type_0 = 15i32 as smallint;
   /*n->narg.next = NULL; - stzalloc did it */
@@ -11630,7 +11630,7 @@ unsafe extern "C" fn fixredir(
 ) {
   let mut fd: libc::c_int = 0;
   if err == 0 {
-    (*n).ndup.vname = 0 as *mut node
+    (*n).ndup.vname = std::ptr::null_mut()
   }
   fd = bb_strtou(text, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
   if *bb_errno == 0 && fd >= 0i32 {
@@ -11654,13 +11654,13 @@ unsafe extern "C" fn parsefname() {
   }
   if (*n).type_0 as libc::c_int == 24i32 {
     let mut here: *mut heredoc = heredoc;
-    let mut p: *mut heredoc = 0 as *mut heredoc;
+    let mut p: *mut heredoc = std::ptr::null_mut();
     if quoteflag as libc::c_int == 0i32 {
       (*n).type_0 = 25i32 as smallint
     }
     rmescapes(wordtext, 0i32, 0 as *mut libc::c_int);
     (*here).eofmark = wordtext;
-    (*here).next = 0 as *mut heredoc;
+    (*here).next = std::ptr::null_mut();
     if heredoclist.is_null() {
       heredoclist = here
     } else {
@@ -11678,22 +11678,22 @@ unsafe extern "C" fn parsefname() {
 }
 unsafe extern "C" fn simplecmd() -> *mut node {
   let mut current_block: u64;
-  let mut args: *mut node = 0 as *mut node;
-  let mut app: *mut *mut node = 0 as *mut *mut node;
-  let mut n: *mut node = 0 as *mut node;
-  let mut vars: *mut node = 0 as *mut node;
-  let mut vpp: *mut *mut node = 0 as *mut *mut node;
-  let mut rpp: *mut *mut node = 0 as *mut *mut node;
-  let mut redir: *mut node = 0 as *mut node;
+  let mut args: *mut node = std::ptr::null_mut();
+  let mut app: *mut *mut node = std::ptr::null_mut();
+  let mut n: *mut node = std::ptr::null_mut();
+  let mut vars: *mut node = std::ptr::null_mut();
+  let mut vpp: *mut *mut node = std::ptr::null_mut();
+  let mut rpp: *mut *mut node = std::ptr::null_mut();
+  let mut redir: *mut node = std::ptr::null_mut();
   let mut savecheckkwd: libc::c_int = 0;
   let mut savelinno: libc::c_int = 0;
   let mut double_brackets_flag: smallint = 0i32 as smallint;
   let mut function_flag: smallint = 0i32 as smallint;
-  args = 0 as *mut node;
+  args = std::ptr::null_mut();
   app = &mut args;
-  vars = 0 as *mut node;
+  vars = std::ptr::null_mut();
   vpp = &mut vars;
-  redir = 0 as *mut node;
+  redir = std::ptr::null_mut();
   rpp = &mut redir;
   savecheckkwd = 0x1i32;
   savelinno = (*g_parsefile).linno;
@@ -11861,7 +11861,7 @@ unsafe extern "C" fn simplecmd() -> *mut node {
           && vars.is_null()
           && redir.is_null()
         {
-          let mut bcmd: *mut builtincmd = 0 as *mut builtincmd;
+          let mut bcmd: *mut builtincmd = std::ptr::null_mut();
           let mut name: *const libc::c_char = 0 as *const libc::c_char;
           /* We have a function */
           if function_flag == 0 && readtoken() != TRP as libc::c_int {
@@ -11889,9 +11889,9 @@ unsafe extern "C" fn simplecmd() -> *mut node {
     tokpushback = 1i32 as smallint;
     break;
   }
-  *app = 0 as *mut node;
-  *vpp = 0 as *mut node;
-  *rpp = 0 as *mut node;
+  *app = std::ptr::null_mut();
+  *vpp = std::ptr::null_mut();
+  *rpp = std::ptr::null_mut();
   n = stzalloc(::std::mem::size_of::<ncmd>() as libc::c_ulong) as *mut node;
   if 0i32 != 0i32 {
     (*n).type_0 = 0i32 as smallint
@@ -11904,18 +11904,18 @@ unsafe extern "C" fn simplecmd() -> *mut node {
 }
 unsafe extern "C" fn parse_command() -> *mut node {
   let mut current_block: u64;
-  let mut n1: *mut node = 0 as *mut node;
-  let mut n2: *mut node = 0 as *mut node;
-  let mut ap: *mut node = 0 as *mut node;
-  let mut app: *mut *mut node = 0 as *mut *mut node;
-  let mut cp: *mut node = 0 as *mut node;
-  let mut cpp: *mut *mut node = 0 as *mut *mut node;
-  let mut redir: *mut node = 0 as *mut node;
-  let mut rpp: *mut *mut node = 0 as *mut *mut node;
-  let mut rpp2: *mut *mut node = 0 as *mut *mut node;
+  let mut n1: *mut node = std::ptr::null_mut();
+  let mut n2: *mut node = std::ptr::null_mut();
+  let mut ap: *mut node = std::ptr::null_mut();
+  let mut app: *mut *mut node = std::ptr::null_mut();
+  let mut cp: *mut node = std::ptr::null_mut();
+  let mut cpp: *mut *mut node = std::ptr::null_mut();
+  let mut redir: *mut node = std::ptr::null_mut();
+  let mut rpp: *mut *mut node = std::ptr::null_mut();
+  let mut rpp2: *mut *mut node = std::ptr::null_mut();
   let mut t: libc::c_int = 0;
   let mut savelinno: libc::c_int = 0;
-  redir = 0 as *mut node;
+  redir = std::ptr::null_mut();
   rpp2 = &mut redir;
   savelinno = (*g_parsefile).linno;
   match readtoken() {
@@ -11942,7 +11942,7 @@ unsafe extern "C" fn parse_command() -> *mut node {
       if lasttoken as libc::c_int == TELSE as libc::c_int {
         (*n2).nif.elsepart = list(0i32)
       } else {
-        (*n2).nif.elsepart = 0 as *mut node;
+        (*n2).nif.elsepart = std::ptr::null_mut();
         tokpushback = 1i32 as smallint
       }
       t = TFI as libc::c_int;
@@ -11988,7 +11988,7 @@ unsafe extern "C" fn parse_command() -> *mut node {
           *app = n2;
           app = &mut (*n2).narg.next
         }
-        *app = 0 as *mut node;
+        *app = std::ptr::null_mut();
         (*n1).nfor.args = ap;
         if lasttoken as libc::c_int != TNL as libc::c_int
           && lasttoken as libc::c_int != TSEMI as libc::c_int
@@ -12080,7 +12080,7 @@ unsafe extern "C" fn parse_command() -> *mut node {
           break;
         }
       }
-      *cpp = 0 as *mut node;
+      *cpp = std::ptr::null_mut();
       current_block = 9438404386301180972;
     }
     9 => {
@@ -12124,7 +12124,7 @@ unsafe extern "C" fn parse_command() -> *mut node {
     parsefname();
   }
   tokpushback = 1i32 as smallint;
-  *rpp = 0 as *mut node;
+  *rpp = std::ptr::null_mut();
   if !redir.is_null() {
     if (*n1).type_0 as libc::c_int != 4i32 {
       n2 = stzalloc(::std::mem::size_of::<nredir>() as libc::c_ulong) as *mut node;
@@ -12246,7 +12246,7 @@ unsafe extern "C" fn readtoken1(
   /* c parameter is an unsigned char or PEOF or PEOA */
   let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* we are expanding a prompt string */
   let mut len: size_t = 0;
-  let mut bqlist: *mut nodelist = 0 as *mut nodelist;
+  let mut bqlist: *mut nodelist = std::ptr::null_mut();
   let mut quotef: smallint = 0;
   let mut oldstyle: smallint = 0;
   let mut pssyntax: smallint = 0;
@@ -12278,7 +12278,7 @@ unsafe extern "C" fn readtoken1(
     (*synstack).set_dblquote(1i32 as u8)
   }
   quotef = 0i32 as smallint;
-  bqlist = 0 as *mut nodelist;
+  bqlist = std::ptr::null_mut();
   out = (*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void as *mut libc::c_char;
   'c_29317: loop
   /* For each line, until end of word */
@@ -12912,8 +12912,8 @@ unsafe extern "C" fn readtoken1(
          * characters on the top of the stack which must be preserved.
          */
         {
-          let mut nlpp: *mut *mut nodelist = 0 as *mut *mut nodelist;
-          let mut n: *mut node = 0 as *mut node;
+          let mut nlpp: *mut *mut nodelist = std::ptr::null_mut();
+          let mut n: *mut node = std::ptr::null_mut();
           let mut str_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut savelen: size_t = 0;
           let mut saveprompt: smallint = 0i32 as smallint;
@@ -13116,7 +13116,7 @@ unsafe extern "C" fn readtoken1(
         } else {
           atoi(out)
         };
-        let mut np: *mut node = 0 as *mut node;
+        let mut np: *mut node = std::ptr::null_mut();
         np = stzalloc(::std::mem::size_of::<nfile>() as libc::c_ulong) as *mut node;
         if c == '>' as i32 {
           (*np).nfile.fd = 1i32;
@@ -13323,7 +13323,7 @@ unsafe extern "C" fn readtoken() -> libc::c_int {
     if !(checkkwd as libc::c_int & 0x1i32 != 0) {
       break;
     }
-    let mut ap: *mut alias = 0 as *mut alias;
+    let mut ap: *mut alias = std::ptr::null_mut();
     ap = lookupalias(wordtext, 1i32);
     if ap.is_null() {
       break;
@@ -13348,7 +13348,7 @@ unsafe extern "C" fn peektoken() -> libc::c_int {
 unsafe extern "C" fn parsecmd(mut interact: libc::c_int) -> *mut node {
   tokpushback = 0i32 as smallint;
   checkkwd = 0i32 as smallint;
-  heredoclist = 0 as *mut heredoc;
+  heredoclist = std::ptr::null_mut();
   doprompt = interact as smallint;
   setprompt_if(doprompt, doprompt as libc::c_int);
   needprompt = 0i32 as smallint;
@@ -13358,10 +13358,10 @@ unsafe extern "C" fn parsecmd(mut interact: libc::c_int) -> *mut node {
  * Input any here documents.
  */
 unsafe extern "C" fn parseheredoc() {
-  let mut here: *mut heredoc = 0 as *mut heredoc;
-  let mut n: *mut node = 0 as *mut node;
+  let mut here: *mut heredoc = std::ptr::null_mut();
+  let mut n: *mut node = std::ptr::null_mut();
   here = heredoclist;
-  heredoclist = 0 as *mut heredoc;
+  heredoclist = std::ptr::null_mut();
   while !here.is_null() {
     tokpushback = 0i32 as smallint;
     setprompt_if(needprompt, 2i32);
@@ -13434,7 +13434,7 @@ unsafe extern "C" fn expandstr(
   /* Try: PS1='`xxx(`' */
   unwindfiles(file_stop);
   n.narg.type_0 = 15i32 as smallint;
-  n.narg.next = 0 as *mut node;
+  n.narg.next = std::ptr::null_mut();
   n.narg.text = wordtext;
   n.narg.backquote = backquotelist;
   /* expandarg() might fail too:
@@ -13474,7 +13474,7 @@ unsafe extern "C" fn parser_eof() -> libc::c_int {
  * Execute a command or commands contained in a string.
  */
 unsafe extern "C" fn evalstring(mut s: *mut libc::c_char, mut flags: libc::c_int) -> libc::c_int {
-  let mut savehandler: *mut jmploc = 0 as *mut jmploc;
+  let mut savehandler: *mut jmploc = std::ptr::null_mut();
   let mut jmploc: jmploc = jmploc {
     loc: [__jmp_buf_tag {
       __jmpbuf: [0; 8],
@@ -13483,7 +13483,7 @@ unsafe extern "C" fn evalstring(mut s: *mut libc::c_char, mut flags: libc::c_int
     }; 1],
   };
   let mut ex: libc::c_int = 0;
-  let mut n: *mut node = 0 as *mut node;
+  let mut n: *mut node = std::ptr::null_mut();
   let mut smark: stackmark = stackmark {
     stackp: 0 as *mut stack_block,
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
@@ -13578,7 +13578,7 @@ unsafe extern "C" fn evalcmd(
  * it turns on prompting if the shell is interactive.
  */
 unsafe extern "C" fn cmdloop(mut top: libc::c_int) -> libc::c_int {
-  let mut n: *mut node = 0 as *mut node;
+  let mut n: *mut node = std::ptr::null_mut();
   let mut smark: stackmark = stackmark {
     stackp: 0 as *mut stack_block,
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
@@ -13678,7 +13678,7 @@ unsafe extern "C" fn dotcmd(
   /* "false; . empty_file; echo $?" should print 0, not 1: */
   let mut status: libc::c_int = 0i32;
   let mut fullname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut args_need_save: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut saveparam: shparam = shparam {
     nparam: 0,
@@ -13766,14 +13766,14 @@ unsafe extern "C" fn find_command(
   mut path: *const libc::c_char,
 ) {
   let mut current_block: u64;
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   let mut idx: libc::c_int = 0;
   let mut prev: libc::c_int = 0;
   let mut fullname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut statb: stat = std::mem::zeroed();
   let mut e: libc::c_int = 0;
   let mut updatetbl: libc::c_int = 0;
-  let mut bcmd: *mut builtincmd = 0 as *mut builtincmd;
+  let mut bcmd: *mut builtincmd = std::ptr::null_mut();
   /* If name contains a slash, don't use PATH or hash table */
   if !strchr(name, '/' as i32).is_null() {
     (*entry).u.index = -1i32;
@@ -13808,7 +13808,7 @@ unsafe extern "C" fn find_command(
     }
     if act & bit != 0 {
       updatetbl = 0i32;
-      cmdp = 0 as *mut tblentry;
+      cmdp = std::ptr::null_mut();
       current_block = 1118134448028020070;
     } else if (*cmdp).rehash as libc::c_int == 0i32 {
       current_block = 12367743889786799597;
@@ -14007,7 +14007,7 @@ unsafe extern "C" fn trapcmd(
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut action: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut ap: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut signo: libc::c_int = 0;
   let mut exitcode: libc::c_int = 0;
   nextopt((*ash_ptr_to_globals_misc).nullstr.as_mut_ptr());
@@ -14139,10 +14139,10 @@ unsafe extern "C" fn exportcmd(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut vp: *mut var = 0 as *mut var;
+  let mut vp: *mut var = std::ptr::null_mut();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut aptr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut aptr: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut opt: libc::c_char = 0;
   let mut flag: libc::c_int = 0;
   let mut flag_off: libc::c_int = 0;
@@ -14209,7 +14209,7 @@ unsafe extern "C" fn exportcmd(
  * Delete a function if it exists.
  */
 unsafe extern "C" fn unsetfunc(mut name: *const libc::c_char) {
-  let mut cmdp: *mut tblentry = 0 as *mut tblentry;
+  let mut cmdp: *mut tblentry = std::ptr::null_mut();
   cmdp = cmdlookup(name, 0i32);
   if !cmdp.is_null() && (*cmdp).cmdtype as libc::c_int == 1i32 {
     delete_cmd_entry();
@@ -14224,7 +14224,7 @@ unsafe extern "C" fn unsetcmd(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ap: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut ap: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut flag: libc::c_int = 0i32;
   loop {
@@ -14545,7 +14545,7 @@ unsafe extern "C" fn init() {
    * Try: "trap '' HUP; bash; echo RET" and type "kill -HUP $$"
    */
   signal(1i32, None);
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
   initvar();
   envp = environ;
@@ -14619,7 +14619,7 @@ unsafe extern "C" fn procargs(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut i: libc::c_int = 0;
   let mut xminusc: *const libc::c_char = 0 as *const libc::c_char;
-  let mut xargv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut xargv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut login_sh: libc::c_int = 0;
   xargv = argv;
   login_sh = (!(*xargv.offset(0)).is_null()

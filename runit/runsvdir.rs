@@ -163,8 +163,8 @@ unsafe extern "C" fn runsv(mut name: *const libc::c_char) -> pid_t {
 /* gcc 4.3.0 does better with NOINLINE */
 #[inline(never)]
 unsafe extern "C" fn do_rescan() -> libc::c_int {
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut d: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut d: *mut dirent = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut s: stat = std::mem::zeroed();
   let mut need_rescan: libc::c_int = 0i32;
@@ -185,7 +185,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
     .isgone = 1i32 as smallint;
     i += 1
   }
-  let mut svnew: *mut service = 0 as *mut service;
+  let mut svnew: *mut service = std::ptr::null_mut();
   let mut current_block_20: u64;
   's_55: loop {
     *bb_errno = 0i32;

@@ -449,7 +449,7 @@ unsafe extern "C" fn compare_keys(
   let mut retval: libc::c_int = 0i32;
   let mut x: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut y: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut key: *mut sort_key = 0 as *mut sort_key;
+  let mut key: *mut sort_key = std::ptr::null_mut();
   key = key_list;
   while retval == 0 && !key.is_null() {
     flags = if (*key).flags != 0 {
@@ -579,7 +579,7 @@ unsafe extern "C" fn compare_keys(
       /* "Stable sort": later line is "greater than",
        * IOW: do not allow qsort() to swap equal lines.
        */
-      let mut p32: *mut u32 = 0 as *mut u32;
+      let mut p32: *mut u32 = std::ptr::null_mut();
       let mut x32: u32 = 0;
       let mut y32: u32 = 0;
       let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -630,11 +630,11 @@ pub unsafe extern "C" fn sort_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut lines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut lines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut str_ignored: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut lst_k: *mut llist_t = 0 as *mut llist_t;
+  let mut lst_k: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut linecount: libc::c_int = 0;
   let mut opts: libc::c_uint = 0;
@@ -715,7 +715,7 @@ pub unsafe extern "C" fn sort_main(
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
   linecount = 0i32;
-  lines = 0 as *mut *mut libc::c_char;
+  lines = std::ptr::null_mut();
   loop {
     /* coreutils 6.9 compat: abort on first open error,
      * do not continue to next file: */
@@ -781,7 +781,7 @@ pub unsafe extern "C" fn sort_main(
   if option_mask32 & FLAG_s as libc::c_int as libc::c_uint != 0 {
     i = 0i32;
     while i < linecount {
-      let mut p32: *mut u32 = 0 as *mut u32;
+      let mut p32: *mut u32 = std::ptr::null_mut();
       let mut line_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len: libc::c_uint = 0;
       line_0 = *lines.offset(i as isize);

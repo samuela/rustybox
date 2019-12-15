@@ -112,7 +112,7 @@ unsafe extern "C" fn pstm_init(mut a: *mut pstm_int) -> int32 {
 #[no_mangle]
 pub unsafe extern "C" fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) -> int32 {
   let mut i: libc::c_int = 0; //bbox: was int16
-  let mut tmp: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmp: *mut pstm_digit = std::ptr::null_mut();
   /*
    If the alloc size is smaller alloc more ram.
   */
@@ -170,8 +170,8 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
   /*
    Zero b and copy the parameters over
   */
-  let mut tmpa: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpb: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpa: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpb: *mut pstm_digit = std::ptr::null_mut();
   /* pointer aliases */
   /* source */
   tmpa = (*a).dp;
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
     /*
        reset members to make debugging easier
     */
-    (*a).dp = 0 as *mut pstm_digit;
+    (*a).dp = std::ptr::null_mut();
     (*a).used = 0i32;
     (*a).alloc = (*a).used;
     (*a).sign = 0i32
@@ -260,7 +260,7 @@ pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
 */
 unsafe extern "C" fn pstm_zero(mut a: *mut pstm_int) {
   let mut n: int32 = 0;
-  let mut tmp: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmp: *mut pstm_digit = std::ptr::null_mut();
   (*a).sign = 0i32;
   (*a).used = 0i32;
   tmp = (*a).dp;
@@ -279,8 +279,8 @@ unsafe extern "C" fn pstm_zero(mut a: *mut pstm_int) {
 #[no_mangle]
 pub unsafe extern "C" fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
   let mut n: libc::c_int = 0; //bbox: was int16
-  let mut tmpa: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpb: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpa: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpb: *mut pstm_digit = std::ptr::null_mut();
   /*
    compare based on # of non-zero digits
   */
@@ -383,7 +383,7 @@ pub unsafe extern "C" fn pstm_read_unsigned_bin(
     32-bit pstm_digits, we can optimize this
   */
   /* But not for both simultaneously */
-  let mut pd: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut pd: *mut libc::c_uchar = std::ptr::null_mut();
   if c as libc::c_uint as libc::c_ulong
     > (4096i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<pstm_digit>() as libc::c_ulong)
   {
@@ -496,8 +496,8 @@ unsafe extern "C" fn pstm_lshd(mut a: *mut pstm_int, mut b: libc::c_int) -> int3
       return res;
     }
   }
-  let mut top: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut bottom: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut top: *mut pstm_digit = std::ptr::null_mut();
+  let mut bottom: *mut pstm_digit = std::ptr::null_mut();
   /*
      Increment the used by the shift amount then copy upwards.
   */
@@ -584,8 +584,8 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
   (*b).used = (*a).used;
   let mut r: pstm_digit = 0;
   let mut rr: pstm_digit = 0;
-  let mut tmpa: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpb: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpa: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpb: *mut pstm_digit = std::ptr::null_mut();
   /* alias for source */
   tmpa = (*a).dp;
   /* alias for dest */
@@ -1120,7 +1120,7 @@ unsafe extern "C" fn pstm_div_2d(
         /* shift any bit count < DIGIT_BIT */
         D = (b % 32i32) as pstm_digit;
         if D != 0i32 as libc::c_uint {
-          let mut tmpc: *mut pstm_digit = 0 as *mut pstm_digit;
+          let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
           let mut mask: pstm_digit = 0;
           let mut shift: pstm_digit = 0;
           /* mask */
@@ -1653,7 +1653,7 @@ pub unsafe extern "C" fn pstm_exptmod(
   };
   let mut buf: pstm_digit = 0;
   let mut mp: pstm_digit = 0;
-  let mut paD: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut paD: *mut pstm_digit = std::ptr::null_mut();
   let mut err: int32 = 0;
   let mut bitbuf: int32 = 0;
   let mut bitcpy: libc::c_int = 0;

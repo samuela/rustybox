@@ -122,7 +122,7 @@ unsafe extern "C" fn fileAction(
   mut _userData: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
   let mut busnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut devnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

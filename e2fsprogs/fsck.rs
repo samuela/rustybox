@@ -217,7 +217,7 @@ unsafe extern "C" fn create_fs_device(
   mut opts: *const libc::c_char,
   mut passno: libc::c_int,
 ) -> *mut fs_info {
-  let mut fs: *mut fs_info = 0 as *mut fs_info;
+  let mut fs: *mut fs_info = std::ptr::null_mut();
   fs = xzalloc(::std::mem::size_of::<fs_info>() as libc::c_ulong) as *mut fs_info;
   (*fs).device = xstrdup(device);
   (*fs).mountpt = xstrdup(mntpnt);
@@ -249,7 +249,7 @@ unsafe extern "C" fn create_fs_device(
 }
 /* Load the filesystem database from /etc/fstab */
 unsafe extern "C" fn load_fs_info(mut filename: *const libc::c_char) {
-  let mut fstab: *mut FILE = 0 as *mut FILE;
+  let mut fstab: *mut FILE = std::ptr::null_mut();
   let mut mte: mntent = mntent {
     mnt_fsname: std::ptr::null_mut::<libc::c_char>(),
     mnt_dir: std::ptr::null_mut::<libc::c_char>(),
@@ -291,7 +291,7 @@ unsafe extern "C" fn load_fs_info(mut filename: *const libc::c_char) {
 }
 /* Lookup filesys in /etc/fstab and return the corresponding entry. */
 unsafe extern "C" fn lookup(mut filesys: *mut libc::c_char) -> *mut fs_info {
-  let mut fs: *mut fs_info = 0 as *mut fs_info;
+  let mut fs: *mut fs_info = std::ptr::null_mut();
   fs = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filesys_info;
   while !fs.is_null() {
     if strcmp(filesys, (*fs).device) == 0i32
@@ -307,7 +307,7 @@ unsafe extern "C" fn lookup(mut filesys: *mut libc::c_char) -> *mut fs_info {
  * Send a signal to all outstanding fsck child processes
  */
 unsafe extern "C" fn kill_all_if_got_signal() {
-  let mut inst: *mut fsck_instance = 0 as *mut fsck_instance;
+  let mut inst: *mut fsck_instance = std::ptr::null_mut();
   if bb_got_signal == 0
     || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).kill_sent as libc::c_int != 0
   {
@@ -330,8 +330,8 @@ unsafe extern "C" fn kill_all_if_got_signal() {
 unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
   let mut status: libc::c_int = 0;
   let mut exitcode: libc::c_int = 0;
-  let mut inst: *mut fsck_instance = 0 as *mut fsck_instance;
-  let mut prev: *mut fsck_instance = 0 as *mut fsck_instance;
+  let mut inst: *mut fsck_instance = std::ptr::null_mut();
+  let mut prev: *mut fsck_instance = std::ptr::null_mut();
   let mut pid: pid_t = 0;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .instance_list
@@ -359,7 +359,7 @@ unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
       }
       bb_simple_perror_msg(b"wait\x00" as *const u8 as *const libc::c_char);
     } else {
-      prev = 0 as *mut fsck_instance;
+      prev = std::ptr::null_mut();
       inst = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list;
       loop {
         if (*inst).pid == pid {
@@ -432,7 +432,7 @@ unsafe extern "C" fn execute(
 /*, int interactive */
 {
   let mut i: libc::c_int = 0;
-  let mut inst: *mut fsck_instance = 0 as *mut fsck_instance;
+  let mut inst: *mut fsck_instance = std::ptr::null_mut();
   let mut pid: pid_t = 0;
   let ref mut fresh5 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .args
@@ -585,7 +585,7 @@ unsafe extern "C" fn fsck_device(mut fs: *mut fs_info)
  * checked.
  */
 unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> libc::c_int {
-  let mut inst: *mut fsck_instance = 0 as *mut fsck_instance;
+  let mut inst: *mut fsck_instance = std::ptr::null_mut();
   let mut base: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).force_all_parallel != 0 {
     return 0i32;
@@ -610,7 +610,7 @@ unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> lib
    */
   if base.is_null() {
     return ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list
-      != 0 as *mut libc::c_void as *mut fsck_instance) as libc::c_int;
+      != std::ptr::null_mut()) as libc::c_int;
   }
   inst = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list;
   while !inst.is_null() {
@@ -736,7 +736,7 @@ unsafe extern "C" fn ignore(mut fs: *mut fs_info) -> libc::c_int {
 }
 /* Check all file systems, using the /etc/fstab table. */
 unsafe extern "C" fn check_all() -> libc::c_int {
-  let mut fs: *mut fs_info = 0 as *mut fs_info;
+  let mut fs: *mut fs_info = std::ptr::null_mut();
   let mut status: libc::c_int = 0i32;
   let mut not_done_yet: smallint = 0;
   let mut pass_done: smallint = 0;
@@ -979,10 +979,10 @@ pub unsafe extern "C" fn fsck_main(
   let mut i: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   /*int interactive;*/
-  let mut fs: *mut fs_info = 0 as *mut fs_info;
+  let mut fs: *mut fs_info = std::ptr::null_mut();
   let mut fstab: *const libc::c_char = 0 as *const libc::c_char;
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut devices: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut devices: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut num_devices: libc::c_int = 0;
   let mut opts_for_fsck: smallint = 0;
   let mut doall: smallint = 0;
@@ -1000,7 +1000,7 @@ pub unsafe extern "C" fn fsck_main(
   notitle = 0i32 as smallint;
   doall = notitle;
   opts_for_fsck = doall;
-  devices = 0 as *mut *mut libc::c_char;
+  devices = std::ptr::null_mut();
   num_devices = 0i32;
   new_args();
   loop

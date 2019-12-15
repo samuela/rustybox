@@ -446,8 +446,8 @@ unsafe extern "C" fn exec_actions(
   let mut cur_group: libc::c_int = 0;
   let mut cur_action: libc::c_int = 0;
   let mut rc: libc::c_int = 0i32;
-  let mut app: *mut *mut action = 0 as *mut *mut action;
-  let mut ap: *mut action = 0 as *mut action;
+  let mut app: *mut *mut action = std::ptr::null_mut();
+  let mut ap: *mut action = std::ptr::null_mut();
   /* "action group" is a set of actions ANDed together.
    * groups are ORed together.
    * We simply evaluate each group until we find one in which all actions
@@ -780,8 +780,8 @@ unsafe extern "C" fn func_exec(
   return do_exec(ap, fileName);
 }
 unsafe extern "C" fn flush_exec_plus() -> libc::c_int {
-  let mut ap: *mut action = 0 as *mut action;
-  let mut app: *mut *mut action = 0 as *mut *mut action;
+  let mut ap: *mut action = std::ptr::null_mut();
+  let mut app: *mut *mut action = std::ptr::null_mut();
   let mut appp: *mut *mut *mut action = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).actions;
   loop {
     let fresh7 = appp;
@@ -931,8 +931,8 @@ unsafe extern "C" fn func_empty(
   mut _ap: *mut action_empty,
 ) -> libc::c_int {
   if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-    let mut dir: *mut DIR = 0 as *mut DIR;
-    let mut dent: *mut dirent = 0 as *mut dirent;
+    let mut dir: *mut DIR = std::ptr::null_mut();
+    let mut dent: *mut dirent = std::ptr::null_mut();
     dir = opendir(fileName);
     if dir.is_null() {
       bb_simple_perror_msg(fileName);
@@ -949,7 +949,7 @@ unsafe extern "C" fn func_empty(
       }
     }
     closedir(dir);
-    return (dent == 0 as *mut libc::c_void as *mut dirent) as libc::c_int;
+    return (dent == std::ptr::null_mut()) as libc::c_int;
   }
   return ((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && (*statbuf).st_size == 0) as libc::c_int;
@@ -1075,7 +1075,7 @@ unsafe extern "C" fn alloc_action(
   mut f: action_fp,
 ) -> *mut action {
   let mut ap: *mut action = xzalloc(sizeof_struct as size_t) as *mut action;
-  let mut app: *mut *mut action = 0 as *mut *mut action;
+  let mut app: *mut *mut action = std::ptr::null_mut();
   let mut group: *mut *mut *mut action =
     &mut *(*ppl).appp.offset((*ppl).cur_group as isize) as *mut *mut *mut action;
   app = xrealloc(
@@ -1089,7 +1089,7 @@ unsafe extern "C" fn alloc_action(
   let ref mut fresh10 = *app.offset(fresh9 as isize);
   *fresh10 = ap;
   let ref mut fresh11 = *app.offset((*ppl).cur_action as isize);
-  *fresh11 = 0 as *mut action;
+  *fresh11 = std::ptr::null_mut();
   (*ap).f = f;
   (*ap).invert = (*ppl).invert_flag;
   (*ppl).invert_flag = 0i32 != 0;
@@ -1177,7 +1177,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         let ref mut fresh14 = *ppl
           .appp
           .offset(ppl.cur_group.wrapping_add(1i32 as libc::c_uint) as isize);
-        *fresh14 = 0 as *mut *mut action;
+        *fresh14 = std::ptr::null_mut();
         ppl.cur_action = 0i32 as libc::c_uint
       } else if parm == PARM_char_not as libc::c_int || parm == PARM_not as libc::c_int {
         /* also handles "find ! ! -name 'foo*'" */
@@ -1321,7 +1321,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         );
       } else if parm == PARM_exec as libc::c_int {
         let mut i: libc::c_int = 0;
-        let mut ap: *mut action_exec = 0 as *mut action_exec;
+        let mut ap: *mut action_exec = std::ptr::null_mut();
         let mut all_subst: libc::c_int = 0i32;
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).need_print = 0i32 as smallint;
         ap = alloc_action(
@@ -1407,8 +1407,8 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           ); /* restore NULLed parameter */
         }
       } else if parm == PARM_char_brace as libc::c_int {
-        let mut ap_0: *mut action_paren = 0 as *mut action_paren;
-        let mut endarg: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+        let mut ap_0: *mut action_paren = std::ptr::null_mut();
+        let mut endarg: *mut *mut libc::c_char = std::ptr::null_mut();
         let mut nested: libc::c_uint = 1i32 as libc::c_uint;
         endarg = argv;
         loop {
@@ -1457,7 +1457,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         *endarg = b")\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
         argv = endarg
       } else if parm == PARM_name as libc::c_int || parm == PARM_iname as libc::c_int {
-        let mut ap_1: *mut action_name = 0 as *mut action_name;
+        let mut ap_1: *mut action_name = std::ptr::null_mut();
         ap_1 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_name>() as libc::c_ulong as libc::c_int,
@@ -1485,7 +1485,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         || parm == PARM_wholename as libc::c_int
         || parm == PARM_ipath as libc::c_int
       {
-        let mut ap_2: *mut action_path = 0 as *mut action_path;
+        let mut ap_2: *mut action_path = std::ptr::null_mut();
         ap_2 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_path>() as libc::c_ulong as libc::c_int,
@@ -1510,7 +1510,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_2).pattern = arg1;
         (*ap_2).ipath = parm == PARM_ipath as libc::c_int
       } else if parm == PARM_regex as libc::c_int {
-        let mut ap_3: *mut action_regex = 0 as *mut action_regex;
+        let mut ap_3: *mut action_regex = std::ptr::null_mut();
         ap_3 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_regex>() as libc::c_ulong as libc::c_int,
@@ -1534,7 +1534,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         ) as *mut action_regex;
         xregcomp(&mut (*ap_3).compiled_pattern, arg1, 0i32);
       } else if parm == PARM_type as libc::c_int {
-        let mut ap_4: *mut action_type = 0 as *mut action_type;
+        let mut ap_4: *mut action_type = std::ptr::null_mut();
         ap_4 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_type>() as libc::c_ulong as libc::c_int,
@@ -1580,7 +1580,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           )),
         );
       } else if parm == PARM_perm as libc::c_int {
-        let mut ap_5: *mut action_perm = 0 as *mut action_perm;
+        let mut ap_5: *mut action_perm = std::ptr::null_mut();
         ap_5 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_perm>() as libc::c_ulong as libc::c_int,
@@ -1622,7 +1622,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           );
         }
       } else if parm == PARM_mtime as libc::c_int {
-        let mut ap_6: *mut action_mtime = 0 as *mut action_mtime;
+        let mut ap_6: *mut action_mtime = std::ptr::null_mut();
         ap_6 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_mtime>() as libc::c_ulong as libc::c_int,
@@ -1647,7 +1647,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_6).mtime_char = *arg1.offset(0);
         (*ap_6).mtime_days = xatoul(plus_minus_num(arg1)) as libc::c_uint
       } else if parm == PARM_mmin as libc::c_int {
-        let mut ap_7: *mut action_mmin = 0 as *mut action_mmin;
+        let mut ap_7: *mut action_mmin = std::ptr::null_mut();
         ap_7 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_mmin>() as libc::c_ulong as libc::c_int,
@@ -1673,7 +1673,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_7).mmin_mins = xatoul(plus_minus_num(arg1)) as libc::c_uint
       } else if parm == PARM_newer as libc::c_int {
         let mut stat_newer: stat = std::mem::zeroed();
-        let mut ap_8: *mut action_newer = 0 as *mut action_newer;
+        let mut ap_8: *mut action_newer = std::ptr::null_mut();
         ap_8 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_newer>() as libc::c_ulong as libc::c_int,
@@ -1698,7 +1698,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         xstat(arg1, &mut stat_newer);
         (*ap_8).newer_mtime = stat_newer.st_mtime
       } else if parm == PARM_inum as libc::c_int {
-        let mut ap_9: *mut action_inum = 0 as *mut action_inum;
+        let mut ap_9: *mut action_inum = std::ptr::null_mut();
         ap_9 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_inum>() as libc::c_ulong as libc::c_int,
@@ -1722,7 +1722,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         ) as *mut action_inum;
         (*ap_9).inode_num = xatoul(arg1)
       } else if parm == PARM_user as libc::c_int {
-        let mut ap_10: *mut action_user = 0 as *mut action_user;
+        let mut ap_10: *mut action_user = std::ptr::null_mut();
         ap_10 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_user>() as libc::c_ulong as libc::c_int,
@@ -1749,7 +1749,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           (*ap_10).uid = xuname2uid(arg1) as uid_t
         }
       } else if parm == PARM_group as libc::c_int {
-        let mut ap_11: *mut action_group = 0 as *mut action_group;
+        let mut ap_11: *mut action_group = std::ptr::null_mut();
         ap_11 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_group>() as libc::c_ulong as libc::c_int,
@@ -1826,7 +1826,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
             init
           },
         ];
-        let mut ap_12: *mut action_size = 0 as *mut action_size;
+        let mut ap_12: *mut action_size = std::ptr::null_mut();
         ap_12 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_size>() as libc::c_ulong as libc::c_int,
@@ -1851,7 +1851,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_12).size_char = *arg1.offset(0);
         (*ap_12).size = xatoull_sfx(plus_minus_num(arg1), find_suffixes.as_ptr()) as off_t
       } else if parm == PARM_links as libc::c_int {
-        let mut ap_13: *mut action_links = 0 as *mut action_links;
+        let mut ap_13: *mut action_links = std::ptr::null_mut();
         ap_13 = alloc_action(
           &mut ppl,
           ::std::mem::size_of::<action_links>() as libc::c_ulong as libc::c_int,
@@ -1894,7 +1894,7 @@ pub unsafe extern "C" fn find_main(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut firstopt: libc::c_int = 0;
-  let mut past_HLP: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut past_HLP: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut saved: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut globals as *mut libc::c_void,

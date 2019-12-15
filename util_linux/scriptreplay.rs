@@ -48,7 +48,7 @@ pub unsafe extern "C" fn scriptreplay_main(
   let mut factor: libc::c_double = 1000000.0f64;
   let mut fd: libc::c_int = 0;
   let mut count: libc::c_ulong = 0;
-  let mut tfp: *mut FILE = 0 as *mut FILE;
+  let mut tfp: *mut FILE = std::ptr::null_mut();
   if (*argv.offset(1)).is_null() {
     bb_show_usage();
   }

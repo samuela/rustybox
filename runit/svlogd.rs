@@ -383,7 +383,7 @@ unsafe extern "C" fn pmatch(
 /* NUL terminated */
 unsafe extern "C" fn fmt_time_human_30nul(mut s: *mut libc::c_char, mut dt_delim: libc::c_char) {
   let mut tm: tm = std::mem::zeroed();
-  let mut ptm: *mut tm = 0 as *mut tm;
+  let mut ptm: *mut tm = std::ptr::null_mut();
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,
@@ -671,8 +671,8 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
   return 1i32 as libc::c_uint;
 }
 unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
-  let mut d: *mut DIR = 0 as *mut DIR;
-  let mut f: *mut dirent = 0 as *mut dirent;
+  let mut d: *mut DIR = std::ptr::null_mut();
+  let mut f: *mut dirent = std::ptr::null_mut();
   let mut oldest: [libc::c_char; 30] = [0; 30];
   let mut n: libc::c_int = 0i32;
   oldest[0] = 'A' as i32 as libc::c_char;
@@ -890,8 +890,8 @@ unsafe extern "C" fn buffer_pwrite(
       break;
     }
     if *bb_errno == 28i32 && (*ld).nmin < (*ld).nmax {
-      let mut d: *mut DIR = 0 as *mut DIR;
-      let mut f: *mut dirent = 0 as *mut dirent;
+      let mut d: *mut DIR = std::ptr::null_mut();
+      let mut f: *mut dirent = std::ptr::null_mut();
       let mut oldest: [libc::c_char; 30] = [0; 30];
       let mut j: libc::c_int = 0i32;
       while fchdir((*ld).fddir) == -1i32 {

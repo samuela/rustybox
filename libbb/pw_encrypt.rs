@@ -848,7 +848,7 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut b: libc::c_uint = 0;
-  let mut cctx: *mut const_des_ctx = 0 as *mut const_des_ctx;
+  let mut cctx: *mut const_des_ctx = std::ptr::null_mut();
   cctx = xmalloc(::std::mem::size_of::<const_des_ctx>() as libc::c_ulong) as *mut const_des_ctx;
   /*
    * Convert the inverted S-boxes into 4 arrays of 8 bits.
@@ -1158,8 +1158,8 @@ unsafe extern "C" fn do_des(
    */
   let mut l: u32 = 0; /* silence gcc */
   let mut r: u32 = 0;
-  let mut kl: *mut u32 = 0 as *mut u32;
-  let mut kr: *mut u32 = 0 as *mut u32;
+  let mut kl: *mut u32 = std::ptr::null_mut();
+  let mut kr: *mut u32 = std::ptr::null_mut();
   let mut f: u32 = 0;
   f = f;
   let mut r48l: u32 = 0;
@@ -1264,7 +1264,7 @@ unsafe extern "C" fn des_crypt(
   let mut r0: u32 = 0;
   let mut r1: u32 = 0;
   let mut keybuf: [u32; 2] = [0; 2];
-  let mut q: *mut u8 = 0 as *mut u8;
+  let mut q: *mut u8 = std::ptr::null_mut();
   /*
    * Copy the key, shifting each character up by one bit
    * and padding with zeros.
@@ -1969,8 +1969,8 @@ unsafe extern "C" fn my_crypt(
 unsafe extern "C" fn my_crypt_cleanup() {
   free(des_cctx as *mut libc::c_void);
   free(des_ctx as *mut libc::c_void);
-  des_cctx = 0 as *mut const_des_ctx;
-  des_ctx = 0 as *mut des_ctx;
+  des_cctx = std::ptr::null_mut();
+  des_ctx = std::ptr::null_mut();
 }
 
 /*

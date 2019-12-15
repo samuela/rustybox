@@ -154,7 +154,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   mut path: *const libc::c_char,
   mut port: libc::c_uint,
 ) -> smallint {
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut line: [libc::c_char; 256] = [0; 256];
   let mut addr: [libc::c_char; 68] = [0; 68];
   let mut major: libc::c_int = 0;
@@ -165,8 +165,8 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   let mut retval: smallint = 0;
   let mut statbuf: stat = std::mem::zeroed();
   let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fag: *mut libc::c_void = 0 as *mut libc::c_void;
-  let mut sag: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut fag: *mut libc::c_void = std::ptr::null_mut();
+  let mut sag: *mut libc::c_void = std::ptr::null_mut();
   f = fopen_for_read(path);
   if f.is_null() {
     return 0i32 as smallint;
@@ -231,8 +231,8 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   return retval;
 }
 unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
-  let mut d: *mut DIR = 0 as *mut DIR;
-  let mut d_ent: *mut dirent = 0 as *mut dirent;
+  let mut d: *mut DIR = std::ptr::null_mut();
+  let mut d_ent: *mut dirent = std::ptr::null_mut();
   let mut stop_scan: smallint = 0;
   let mut retval: smallint = 0;
   d = opendir(path);
@@ -371,7 +371,7 @@ pub unsafe extern "C" fn fuser_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mypid = getpid();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).killsig = 9i32;
   /* Handle -SIGNAL. Oh my... */

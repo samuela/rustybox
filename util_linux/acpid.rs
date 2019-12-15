@@ -435,7 +435,7 @@ unsafe extern "C" fn find_action(
   return action;
 }
 unsafe extern "C" fn parse_conf_file(mut filename: *const libc::c_char) {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   parser = config_open2(
     filename,
@@ -476,7 +476,7 @@ unsafe extern "C" fn parse_conf_file(mut filename: *const libc::c_char) {
   };
 }
 unsafe extern "C" fn parse_map_file(mut filename: *const libc::c_char) {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
   parser = config_open2(
     filename,
@@ -543,7 +543,7 @@ pub unsafe extern "C" fn acpid_main(
 ) -> libc::c_int {
   let mut nfd: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
-  let mut pfd: *mut pollfd = 0 as *mut pollfd;
+  let mut pfd: *mut pollfd = std::ptr::null_mut();
   let mut opt_dir: *const libc::c_char = b"/etc/acpi\x00" as *const u8 as *const libc::c_char;
   let mut opt_input: *const libc::c_char =
     b"/dev/input/event\x00" as *const u8 as *const libc::c_char;
@@ -599,7 +599,7 @@ pub unsafe extern "C" fn acpid_main(
   // make sure while(poll) loop below is still interruptible
   // by SIGTERM et al:
   //bb_signals(BB_FATAL_SIGS, record_signo);
-  pfd = 0 as *mut pollfd; /* this fd has nothing */
+  pfd = std::ptr::null_mut(); /* this fd has nothing */
   nfd = 0i32;
   loop {
     let mut fd: libc::c_int = 0;

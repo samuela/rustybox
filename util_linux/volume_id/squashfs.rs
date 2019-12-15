@@ -130,7 +130,7 @@ pub struct squashfs_superblock {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut sb: *mut squashfs_superblock = 0 as *mut squashfs_superblock;
+  let mut sb: *mut squashfs_superblock = std::ptr::null_mut();
   sb = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut squashfs_superblock;
   if sb.is_null() {
     return -1i32;

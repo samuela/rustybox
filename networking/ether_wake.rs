@@ -281,7 +281,7 @@ pub union C2RustUnnamed_1 {
  *    MAC address string
  */
 unsafe extern "C" fn get_dest_addr(mut hostid: *const libc::c_char, mut eaddr: *mut ether_addr) {
-  let mut eap: *mut ether_addr = 0 as *mut ether_addr; /* 6 */
+  let mut eap: *mut ether_addr = std::ptr::null_mut(); /* 6 */
   eap = ether_aton_r(hostid, eaddr); /* 12 */
   /* Or 0x0806 for ARP, 0x8035 for RARP */
   if eap.is_null() {

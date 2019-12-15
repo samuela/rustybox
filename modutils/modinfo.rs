@@ -285,7 +285,7 @@ pub unsafe extern "C" fn modinfo_main(
     machine: [0; 65],
     domainname: [0; 65],
   };
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut opts: libc::c_uint = 0;
