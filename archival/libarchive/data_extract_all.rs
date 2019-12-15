@@ -1,6 +1,5 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
-use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use libc;
@@ -14,7 +13,6 @@ use libc::group;
 use libc::lstat;
 use libc::mknod;
 use libc::mode_t;
-use libc::off_t;
 use libc::passwd;
 use libc::stat;
 use libc::strchr;
@@ -31,50 +29,7 @@ extern "C" {
 
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
-  /* Search for an entry with a matching username.  */
 
-  /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-  /* Some useful definitions */
-  /* Macros for min/max.  */
-  /* buffer allocation schemes */
-  /* glibc uses __errno_location() to get a ptr to errno */
-  /* We can just memorize it once - no multithreading in busybox :) */
-
-  #[no_mangle]
-  fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
-  #[no_mangle]
-  fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn data_skip(archive_handle: *mut archive_handle_t);
-  #[no_mangle]
-  fn create_or_remember_link(
-    link_placeholders: *mut *mut llist_t,
-    target: *const libc::c_char,
-    linkname: *const libc::c_char,
-    hard_link: libc::c_int,
-  );
 }
 
 /* Busybox does not use threads, we can speed up stdio. */
@@ -180,7 +135,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
     loop {
       dst_name = strchr(dst_name, '/' as i32);
       if dst_name.is_null() || *dst_name.offset(1) as libc::c_int == '\u{0}' as i32 {
-        data_skip(archive_handle);
+        crate::archival::libarchive::data_skip::data_skip(archive_handle);
         current_block = 9521147444787763968;
         break;
       } else {
@@ -197,7 +152,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
           // and continues processing. We silently skip such entries.
           hard_link = strchr(hard_link, '/' as i32);
           if hard_link.is_null() || *hard_link.offset(1) as libc::c_int == '\u{0}' as i32 {
-            data_skip(archive_handle);
+            crate::archival::libarchive::data_skip::data_skip(archive_handle);
             current_block = 9521147444787763968;
             break;
           } else {
@@ -220,7 +175,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
         let mut slash: *mut libc::c_char = strrchr(dst_name, '/' as i32);
         if !slash.is_null() {
           *slash = '\u{0}' as i32 as libc::c_char;
-          bb_make_directory(
+          crate::libbb::make_directory::bb_make_directory(
             dst_name,
             -1i32 as libc::c_long,
             FILEUTILS_RECUR as libc::c_int,
@@ -252,7 +207,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
             _ => {
               /* Proceed with deleting */
               if unlink(dst_name) == -1i32 && *bb_errno != 2i32 {
-                bb_perror_msg_and_die(
+                crate::libbb::perror_msg::bb_perror_msg_and_die(
                   b"can\'t remove old file %s\x00" as *const u8 as *const libc::c_char,
                   dst_name,
                 );
@@ -268,24 +223,24 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
         let mut existing_sb: stat = std::mem::zeroed();
         if lstat(dst_name, &mut existing_sb) == -1i32 {
           if *bb_errno != 2i32 {
-            bb_simple_perror_msg_and_die(
+            crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
               b"can\'t stat old file\x00" as *const u8 as *const libc::c_char,
             );
           }
           current_block = 3689906465960840878;
         } else if existing_sb.st_mtime >= (*file_header).mtime {
           if !((*file_header).mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"%s not created: newer or same age file exists\x00" as *const u8
                 as *const libc::c_char,
               dst_name,
             );
           }
-          data_skip(archive_handle);
+          crate::archival::libarchive::data_skip::data_skip(archive_handle);
           current_block = 9521147444787763968;
         } else {
           if unlink(dst_name) == -1i32 && *bb_errno != 21i32 {
-            bb_perror_msg_and_die(
+            crate::libbb::perror_msg::bb_perror_msg_and_die(
               b"can\'t remove old file %s\x00" as *const u8 as *const libc::c_char,
               dst_name,
             );
@@ -301,7 +256,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
         /* Handle hard links separately */
         {
           if !hard_link.is_null() {
-            create_or_remember_link(
+            crate::archival::libarchive::unsafe_symlink_target::create_or_remember_link(
               &mut (*archive_handle).link_placeholders,
               hard_link,
               dst_name,
@@ -320,24 +275,32 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
                 dst_nameN = dst_name;
                 if (*archive_handle).ah_flags & (1i32 << 9i32) as libc::c_uint != 0 {
                   /* rpm-style temp file name */
-                  dst_nameN = xasprintf(
+                  dst_nameN = crate::libbb::xfuncs_printf::xasprintf(
                     b"%s;%x\x00" as *const u8 as *const libc::c_char,
                     dst_name,
                     getpid(),
                   )
                 }
-                dst_fd = xopen3(dst_nameN, flags, (*file_header).mode as libc::c_int);
-                bb_copyfd_exact_size((*archive_handle).src_fd, dst_fd, (*file_header).size);
+                dst_fd = crate::libbb::xfuncs_printf::xopen3(
+                  dst_nameN,
+                  flags,
+                  (*file_header).mode as libc::c_int,
+                );
+                crate::libbb::copyfd::bb_copyfd_exact_size(
+                  (*archive_handle).src_fd,
+                  dst_fd,
+                  (*file_header).size,
+                );
                 close(dst_fd);
                 if (*archive_handle).ah_flags & (1i32 << 9i32) as libc::c_uint != 0 {
-                  xrename(dst_nameN, dst_name);
+                  crate::libbb::xfuncs_printf::xrename(dst_nameN, dst_name);
                   free(dst_nameN as *mut libc::c_void);
                 }
               }
               16384 => {
                 res = mkdir(dst_name, (*file_header).mode);
                 if res != 0i32 && *bb_errno != 21i32 && *bb_errno != 17i32 {
-                  bb_perror_msg(
+                  crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t make dir %s\x00" as *const u8 as *const libc::c_char,
                     dst_name,
                   );
@@ -367,7 +330,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
                  *
                  * Untarring bug.tar would otherwise place evil.py in '/tmp'.
                  */
-                create_or_remember_link(
+                crate::archival::libarchive::unsafe_symlink_target::create_or_remember_link(
                   &mut (*archive_handle).link_placeholders,
                   (*file_header).link_target,
                   dst_name,
@@ -377,14 +340,14 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
               49152 | 24576 | 8192 | 4096 => {
                 res = mknod(dst_name, (*file_header).mode, (*file_header).device);
                 if res != 0i32 {
-                  bb_perror_msg(
+                  crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t create node %s\x00" as *const u8 as *const libc::c_char,
                     dst_name,
                   );
                 }
               }
               _ => {
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"unrecognized file type\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -402,7 +365,8 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
                     }
                   }
                   if !(*file_header).tar__gname.is_null() {
-                    let mut grp: *mut group = bb_internal_getgrnam((*file_header).tar__gname);
+                    let mut grp: *mut group =
+                      crate::libpwdgrp::pwd_grp::bb_internal_getgrnam((*file_header).tar__gname);
                     if !grp.is_null() {
                       gid = (*grp).gr_gid
                     }
