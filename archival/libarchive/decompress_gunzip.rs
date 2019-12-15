@@ -21,31 +21,6 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn crc32_new_table_le() -> *mut u32;
-  #[no_mangle]
-  fn crc32_block_endian0(
-    val: u32,
-    buf: *const libc::c_void,
-    len: libc::c_uint,
-    crc_table: *mut u32,
-  ) -> u32;
-  #[no_mangle]
-  fn transformer_write(
-    xstate: *mut transformer_state_t,
-    buf: *const libc::c_void,
-    bufsize: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
 pub type uintptr_t = libc::c_ulong;
@@ -53,8 +28,9 @@ pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
 
 pub type __jmp_buf = [libc::c_long; 8];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -71,15 +47,16 @@ pub const BZIP2_MAGIC: C2RustUnnamed = 23106;
 pub const GZIP_MAGIC: C2RustUnnamed = 35615;
 pub const COMPRESS_MAGIC: C2RustUnnamed = 40223;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub b: [u8; 8],
   pub b16: [u16; 4],
   pub b32: [u32; 2],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct state_t {
   pub gunzip_bytes_out: off_t,
   pub gunzip_crc: u32,
@@ -115,15 +92,17 @@ pub struct state_t {
   pub error_msg: *const libc::c_char,
   pub error_jmp: jmp_buf,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct huft_t {
   pub e: libc::c_uchar,
   pub b: libc::c_uchar,
   pub v: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub n: libc::c_uint,
   pub t: *mut huft_t,
@@ -131,8 +110,9 @@ pub union C2RustUnnamed_1 {
 /* Put lengths/offsets and extra bits in a struct of arrays
  * to make calls to huft_build() have one fewer parameter.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cp_ext {
   pub cp: [u16; 31],
   pub ext: [u8; 31],
@@ -146,8 +126,9 @@ pub const dbits: C2RustUnnamed_3 = 6;
 pub const lbits: C2RustUnnamed_2 = 9;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub type C2RustUnnamed_3 = libc::c_uint;
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub gz_method: u8,
   pub flags: u8,
@@ -155,8 +136,9 @@ pub struct C2RustUnnamed_4 {
   pub xtra_flags_UNUSED: u8,
   pub os_flags_UNUSED: u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_5 {
   pub raw: [libc::c_uchar; 8],
   pub formatted: C2RustUnnamed_4,
@@ -396,7 +378,7 @@ unsafe extern "C" fn fill_bitbuffer(
       }
       /* Leave the first 4 bytes empty so we can always unwind the bitbuffer
        * to the front of the bytebuffer */
-      (*state).bytebuffer_size = safe_read(
+      (*state).bytebuffer_size = crate::libbb::read::safe_read(
         (*state).gunzip_src_fd,
         &mut *(*state).bytebuffer.offset(4) as *mut libc::c_uchar as *mut libc::c_void,
         sz as size_t,
@@ -479,7 +461,7 @@ unsafe extern "C" fn huft_build(
   }
   if c[0] == n {
     /* null input - all zero length codes */
-    q = xzalloc(
+    q = crate::libbb::xfuncs_printf::xzalloc(
       (3i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<huft_t>() as libc::c_ulong),
     ) as *mut huft_t;
     //q[0].v.t = NULL;
@@ -626,7 +608,7 @@ unsafe extern "C" fn huft_build(
         z = (1i32 << j) as libc::c_uint; /* set bits decoded in stack */
         ws[(htl + 1i32) as usize] = (w as libc::c_uint).wrapping_add(j) as libc::c_int;
         /* allocate and link in new table */
-        q = xzalloc(
+        q = crate::libbb::xfuncs_printf::xzalloc(
           (z.wrapping_add(1i32 as libc::c_uint) as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<huft_t>() as libc::c_ulong),
         ) as *mut huft_t; /* link to list for huft_free() */
@@ -1316,7 +1298,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
 /* huft_free code moved into inflate_codes */
 /* Two callsites, both in inflate_get_next_window */
 unsafe extern "C" fn calculate_gunzip_crc(mut state: *mut state_t) {
-  (*state).gunzip_crc = crc32_block_endian0(
+  (*state).gunzip_crc = crate::libbb::crc32::crc32_block_endian0(
     (*state).gunzip_crc,
     (*state).gunzip_window as *const libc::c_void,
     (*state).gunzip_outbuf_count,
@@ -1378,17 +1360,17 @@ unsafe extern "C" fn inflate_unzip_internal(
   (*state).gunzip_bk = 0i32 as libc::c_uchar;
   (*state).gunzip_bb = 0i32 as libc::c_uint;
   /* Create the crc table */
-  (*state).gunzip_crc_table = crc32_new_table_le();
+  (*state).gunzip_crc_table = crate::libbb::crc32::crc32_new_table_le();
   (*state).gunzip_crc = !0i32 as u32;
   (*state).error_msg = b"corrupted data\x00" as *const u8 as *const libc::c_char;
   if _setjmp((*state).error_jmp.as_mut_ptr()) != 0 {
     /* Error from deep inside zip machinery */
-    bb_simple_error_msg((*state).error_msg);
+    crate::libbb::verror_msg::bb_simple_error_msg((*state).error_msg);
     n = -1i32 as libc::c_longlong
   } else {
     loop {
       let mut r: libc::c_int = inflate_get_next_window(state);
-      nwrote = transformer_write(
+      nwrote = crate::archival::libarchive::open_transformer::transformer_write(
         xstate,
         (*state).gunzip_window as *const libc::c_void,
         (*state).gunzip_outbuf_count as size_t,
@@ -1434,7 +1416,8 @@ unsafe extern "C" fn inflate_unzip_internal(
 pub unsafe extern "C" fn inflate_unzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut n: libc::c_longlong = 0;
   let mut state: *mut state_t = 0 as *mut state_t;
-  state = xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong) as *mut state_t;
+  state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
+    as *mut state_t;
   (*state).to_read = (*xstate).bytes_in;
   //	bytebuffer_max = 0x8000;
   (*state).bytebuffer_offset = 4i32 as libc::c_uint;
@@ -1463,13 +1446,15 @@ unsafe extern "C" fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> lib
       count as libc::c_ulong,
     );
     (*state).bytebuffer_offset = 0i32 as libc::c_uint;
-    (*state).bytebuffer_size = full_read(
+    (*state).bytebuffer_size = crate::libbb::read::full_read(
       (*state).gunzip_src_fd,
       &mut *(*state).bytebuffer.offset(count as isize) as *mut libc::c_uchar as *mut libc::c_void,
       (0x4000i32 - count) as size_t,
     ) as libc::c_uint;
     if ((*state).bytebuffer_size as libc::c_int) < 0i32 {
-      bb_simple_error_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"read error\x00" as *const u8 as *const libc::c_char,
+      );
       return 0i32;
     }
     (*state).bytebuffer_size = (*state).bytebuffer_size.wrapping_add(count as libc::c_uint);
@@ -1592,18 +1577,25 @@ pub unsafe extern "C" fn unpack_gz_stream(
   let mut total: libc::c_longlong = 0;
   let mut n: libc::c_longlong = 0;
   let mut state: *mut state_t = 0 as *mut state_t;
-  if check_signature16(xstate, GZIP_MAGIC as libc::c_int as libc::c_uint) != 0 {
+  if crate::archival::libarchive::open_transformer::check_signature16(
+    xstate,
+    GZIP_MAGIC as libc::c_int as libc::c_uint,
+  ) != 0
+  {
     return -1i32 as libc::c_longlong;
   }
   total = 0i32 as libc::c_longlong;
-  state = xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong) as *mut state_t;
+  state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
+    as *mut state_t;
   (*state).to_read = -1i32 as off_t;
   //	bytebuffer_max = 0x8000;
   (*state).bytebuffer = xmalloc(0x4000i32 as size_t) as *mut libc::c_uchar;
   (*state).gunzip_src_fd = (*xstate).src_fd;
   loop {
     if check_header_gzip(state, xstate) == 0 {
-      bb_simple_error_msg(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"corrupted data\x00" as *const u8 as *const libc::c_char,
+      );
       total = -1i32 as libc::c_longlong;
       break;
     } else {
@@ -1614,21 +1606,27 @@ pub unsafe extern "C" fn unpack_gz_stream(
       } else {
         total += n;
         if top_up(state, 8i32 as libc::c_uint) == 0 {
-          bb_simple_error_msg(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"corrupted data\x00" as *const u8 as *const libc::c_char,
+          );
           total = -1i32 as libc::c_longlong;
           break;
         } else {
           /* Validate decompression - crc */
           v32 = buffer_read_le_u32(state);
           if !(*state).gunzip_crc != v32 {
-            bb_simple_error_msg(b"crc error\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::verror_msg::bb_simple_error_msg(
+              b"crc error\x00" as *const u8 as *const libc::c_char,
+            );
             total = -1i32 as libc::c_longlong;
             break;
           } else {
             /* Validate decompression - size */
             v32 = buffer_read_le_u32(state); /* EOF */
             if (*state).gunzip_bytes_out as u32 != v32 {
-              bb_simple_error_msg(b"incorrect length\x00" as *const u8 as *const libc::c_char);
+              crate::libbb::verror_msg::bb_simple_error_msg(
+                b"incorrect length\x00" as *const u8 as *const libc::c_char,
+              );
               total = -1i32 as libc::c_longlong
             }
             if top_up(state, 2i32 as libc::c_uint) == 0 {
