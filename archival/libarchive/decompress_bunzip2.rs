@@ -1,14 +1,11 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
-use crate::librb::smallint;
 use libc;
 use libc::free;
-use libc::off_t;
 use libc::sigset_t;
 use libc::ssize_t;
-use libc::time_t;
 extern "C" {
-
   #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]
@@ -17,35 +14,12 @@ extern "C" {
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn malloc_or_warn(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
-  #[no_mangle]
-  fn transformer_write(
-    xstate: *mut transformer_state_t,
-    buf: *const libc::c_void,
-    bufsize: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn check_signature16(xstate: *mut transformer_state_t, magic16: libc::c_uint) -> libc::c_int;
 }
 
 pub type __jmp_buf = [libc::c_long; 8];
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -69,8 +43,9 @@ pub const COMPRESS_MAGIC: C2RustUnnamed = 40223;
  *  | grep 'bd->' | sed 's/^.*bd->/bd->/' | sort | $PAGER
  * and moved it (inbufBitCount) to offset 0.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct bunzip_data {
   pub inbufBitCount: libc::c_uint,
   pub inbufBits: libc::c_uint,
@@ -96,8 +71,9 @@ pub struct bunzip_data {
   /* Huffman coding tables */
 }
 /* This is what we know about each Huffman coding group */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct group_data {
   pub limit: [libc::c_int; 21],
   pub base: [libc::c_int; 20],
@@ -108,24 +84,9 @@ pub struct group_data {
 pub const h0: C2RustUnnamed_0 = 26672;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const BZh0: C2RustUnnamed_0 = 1113221168;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct transformer_state_t {
-  pub signature_skipped: smallint,
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-  pub src_fd: libc::c_int,
-  pub dst_fd: libc::c_int,
-  pub mem_output_size_max: size_t,
-  pub mem_output_size: size_t,
-  pub mem_output_buf: *mut libc::c_char,
-  pub bytes_out: off_t,
-  pub bytes_in: off_t,
-  pub crc32: u32,
-  pub mtime: time_t,
-  pub magic: C2RustUnnamed_1,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub b: [u8; 8],
   pub b16: [u16; 4],
@@ -837,7 +798,7 @@ unsafe extern "C" fn start_bunzip(
     i = i.wrapping_add(4096i32 as libc::c_uint)
   }
   /* Allocate bunzip_data.  Most fields initialize to zero. */
-  *bdp = xzalloc(i as size_t) as *mut bunzip_data;
+  *bdp = crate::libbb::xfuncs_printf::xzalloc(i as size_t) as *mut bunzip_data;
   bd = *bdp;
   (*bd).jmpbuf = jmpbuf as *mut jmp_buf;
   /* Setup input buffer */
@@ -856,7 +817,7 @@ unsafe extern "C" fn start_bunzip(
   }
   (*bd).inbufCount = len;
   /* Init the CRC32 table (big endian) */
-  crc32_filltable((*bd).crc32Table.as_mut_ptr(), 1i32);
+  crate::libbb::crc32::crc32_filltable((*bd).crc32Table.as_mut_ptr(), 1i32);
   /* Ensure that file starts with "BZh['1'-'9']." */
   /* Update: now caller verifies 1st two bytes, makes .gz/.bz2
    * integration easier */
@@ -877,12 +838,12 @@ unsafe extern "C" fn start_bunzip(
   (*bd).dbufSize =
     (100000i32 as libc::c_uint).wrapping_mul(i.wrapping_sub(h0 as libc::c_int as libc::c_uint));
   /* Cannot use xmalloc - may leak bd in NOFORK case! */
-  (*bd).dbuf = malloc_or_warn(
+  (*bd).dbuf = crate::libbb::xfuncs_printf::malloc_or_warn(
     ((*bd).dbufSize as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
   ) as *mut u32;
   if (*bd).dbuf.is_null() {
     free(bd as *mut libc::c_void);
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   }
   return 0i32;
 }
@@ -900,7 +861,11 @@ pub unsafe extern "C" fn unpack_bz2_stream(
   let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut len: libc::c_uint = 0;
-  if check_signature16(xstate, BZIP2_MAGIC as libc::c_int as libc::c_uint) != 0 {
+  if crate::archival::libarchive::open_transformer::check_signature16(
+    xstate,
+    BZIP2_MAGIC as libc::c_int as libc::c_uint,
+  ) != 0
+  {
     return -1i32 as libc::c_longlong;
   }
   outbuf = xmalloc(4096i32 as size_t) as *mut libc::c_char;
@@ -936,7 +901,13 @@ pub unsafe extern "C" fn unpack_bz2_stream(
           if i == 0i32 {
             break;
           }
-          if i as isize != transformer_write(xstate, outbuf as *const libc::c_void, i as size_t) {
+          if i as isize
+            != crate::archival::libarchive::open_transformer::transformer_write(
+              xstate,
+              outbuf as *const libc::c_void,
+              i as size_t,
+            )
+          {
             i = -4;
             break 's_36;
           } else {
@@ -947,13 +918,15 @@ pub unsafe extern "C" fn unpack_bz2_stream(
     }
     /* EOF? */
     if i != -1 && i != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"bunzip error %d\x00" as *const u8 as *const libc::c_char,
         i,
       );
       break;
     } else if (*bd).headerCRC != (*bd).totalCRC {
-      bb_simple_error_msg(b"CRC error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"CRC error\x00" as *const u8 as *const libc::c_char,
+      );
       break;
     } else {
       /* Successfully unpacked one BZ stream */
@@ -968,7 +941,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
         len as libc::c_ulong,
       );
       if len < 2 {
-        if safe_read(
+        if crate::libbb::read::safe_read(
           (*xstate).src_fd,
           outbuf.offset(len as isize) as *mut libc::c_void,
           (2 as libc::c_uint).wrapping_sub(len) as size_t,
@@ -1024,7 +997,8 @@ pub unsafe extern "C" fn unpack_bz2_data(
    * on read data errors! Not trivial */
   if i == 0i32 {
     /* Cannot use xmalloc: will leak bd in NOFORK case! */
-    outbuf = malloc_or_warn(unpacked_len as size_t) as *mut libc::c_char;
+    outbuf =
+      crate::libbb::xfuncs_printf::malloc_or_warn(unpacked_len as size_t) as *mut libc::c_char;
     if !outbuf.is_null() {
       read_bunzip(bd, outbuf, unpacked_len);
     }

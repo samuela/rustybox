@@ -1,10 +1,8 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::archival::libarchive::bb_archive::hardlinks_t;
-use crate::libbb::llist::llist_t;
 use crate::libbb::xfuncs_printf::xmalloc;
-use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
-use crate::librb::smallint;
 use crate::librb::uoff_t;
 use libc;
 use libc::free;
@@ -12,7 +10,6 @@ use libc::gid_t;
 use libc::mode_t;
 use libc::off_t;
 use libc::sscanf;
-use libc::ssize_t;
 use libc::strcmp;
 use libc::strcpy;
 use libc::time_t;
@@ -23,56 +20,9 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
-  #[no_mangle]
   static cpio_TRAILER: [libc::c_char; 0];
-  #[no_mangle]
-  fn data_skip(archive_handle: *mut archive_handle_t);
-  #[no_mangle]
-  fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
 }
 
-#[repr(C)]
-pub struct archive_handle_t {
-  pub ah_flags: libc::c_uint,
-  pub src_fd: libc::c_int,
-  pub filter: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
-  pub accept: *mut llist_t,
-  pub reject: *mut llist_t,
-  pub passed: *mut llist_t,
-  pub file_header: *mut file_header_t,
-  pub link_placeholders: *mut llist_t,
-  pub action_header: Option<unsafe extern "C" fn(_: *const file_header_t) -> ()>,
-  pub action_data: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> ()>,
-  pub seek: Option<unsafe extern "C" fn(_: libc::c_int, _: off_t) -> ()>,
-  pub offset: off_t,
-  pub tar__strip_components: libc::c_uint,
-  pub tar__end: smallint,
-  pub tar__longname: *mut libc::c_char,
-  pub tar__linkname: *mut libc::c_char,
-  pub tar__to_command: *mut libc::c_char,
-  pub tar__to_command_shell: *const libc::c_char,
-  pub cpio__blocks: uoff_t,
-  pub cpio__owner: bb_uidgid_t,
-  pub cpio__hardlinks_to_create: *mut hardlinks_t,
-  pub cpio__created_hardlinks: *mut hardlinks_t,
-  pub dpkg__buffer: *mut libc::c_char,
-  pub dpkg__action_data_subarchive:
-    Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
-  pub dpkg__sub_archive: *mut archive_handle_t,
-}
 #[no_mangle]
 pub unsafe extern "C" fn get_header_cpio(
   mut archive_handle: *mut archive_handle_t,
@@ -90,25 +40,27 @@ pub unsafe extern "C" fn get_header_cpio(
   let mut gid: libc::c_uint = 0;
   let mut mtime: libc::c_uint = 0;
   /* There can be padding before archive header */
-  data_align(archive_handle, 4i32 as libc::c_uint);
-  size = full_read(
+  crate::archival::libarchive::data_align::data_align(archive_handle, 4i32 as libc::c_uint);
+  size = crate::libbb::read::full_read(
     (*archive_handle).src_fd,
     cpio_header.as_mut_ptr() as *mut libc::c_void,
     110i32 as size_t,
   ) as libc::c_uint;
   if !(size == 0i32 as libc::c_uint) {
     if size != 110i32 as libc::c_uint {
-      bb_simple_error_msg_and_die(b"short read\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"short read\x00" as *const u8 as *const libc::c_char,
+      );
     }
     (*archive_handle).offset += 110i32 as libc::c_long;
-    if is_prefixed_with(
+    if crate::libbb::compare_string_array::is_prefixed_with(
       &mut *cpio_header.as_mut_ptr().offset(0),
       b"07070\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
       || cpio_header[5] as libc::c_int != '1' as i32 && cpio_header[5] as libc::c_int != '2' as i32
     {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"unsupported cpio format, use newc or crc\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -127,7 +79,9 @@ pub unsafe extern "C" fn get_header_cpio(
       &mut namesize as *mut libc::c_int,
     ) != 10i32
     {
-      bb_simple_error_msg_and_die(b"damaged cpio file\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"damaged cpio file\x00" as *const u8 as *const libc::c_char,
+      );
     }
     (*file_header).mode = mode as mode_t;
     /* "cpio -R USER:GRP" support: */
@@ -142,9 +96,10 @@ pub unsafe extern "C" fn get_header_cpio(
     (*file_header).mtime = mtime as time_t;
     (*file_header).size = size as off_t;
     namesize &= 0x1fffi32;
-    (*file_header).name = xzalloc((namesize + 1i32) as size_t) as *mut libc::c_char;
+    (*file_header).name =
+      crate::libbb::xfuncs_printf::xzalloc((namesize + 1i32) as size_t) as *mut libc::c_char;
     /* Read in filename */
-    xread(
+    crate::libbb::read_printf::xread(
       (*archive_handle).src_fd,
       (*file_header).name as *mut libc::c_void,
       namesize as size_t,
@@ -161,11 +116,11 @@ pub unsafe extern "C" fn get_header_cpio(
           break;
         }
       }
-      overlapping_strcpy((*file_header).name, p);
+      crate::libbb::safe_strncpy::overlapping_strcpy((*file_header).name, p);
     }
     (*archive_handle).offset += namesize as libc::c_long;
     /* Update offset amount and skip padding before file contents */
-    data_align(archive_handle, 4i32 as libc::c_uint);
+    crate::archival::libarchive::data_align::data_align(archive_handle, 4i32 as libc::c_uint);
     if strcmp((*file_header).name, cpio_TRAILER.as_ptr()) == 0i32 {
       /* Always round up. ">> 9" divides by 512 */
       (*archive_handle).cpio__blocks =
@@ -175,8 +130,9 @@ pub unsafe extern "C" fn get_header_cpio(
       if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
         (*file_header).size &= 0x1fffi32 as libc::c_long;
         (*file_header).link_target =
-          xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
-        xread(
+          crate::libbb::xfuncs_printf::xzalloc(((*file_header).size + 1) as size_t)
+            as *mut libc::c_char;
+        crate::libbb::read_printf::xread(
           (*archive_handle).src_fd,
           (*file_header).link_target as *mut libc::c_void,
           (*file_header).size as size_t,
@@ -212,7 +168,8 @@ pub unsafe extern "C" fn get_header_cpio(
         (*archive_handle).cpio__created_hardlinks = new
       }
       (*file_header).device =
-        bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
+        crate::libbb::makedev::bb_makedev(major as libc::c_uint, minor as libc::c_uint)
+          as libc::dev_t;
       if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
         == 0i32
       {
@@ -227,7 +184,7 @@ pub unsafe extern "C" fn get_header_cpio(
           .action_header
           .expect("non-null function pointer")(file_header);
       } else {
-        data_skip(archive_handle);
+        crate::archival::libarchive::data_skip::data_skip(archive_handle);
       }
       (*archive_handle).offset += (*file_header).size;
       free((*file_header).link_target as *mut libc::c_void);
