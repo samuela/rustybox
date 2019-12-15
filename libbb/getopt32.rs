@@ -395,10 +395,10 @@ unsafe extern "C" fn vgetopt32(
   }; 33];
   let mut dont_die_flag: libc::c_char = 0;
   let mut c: libc::c_int = 0;
-  let mut s: *const libc::c_uchar = 0 as *const libc::c_uchar;
-  let mut opt_complementary: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_uchar = std::ptr::null();
+  let mut opt_complementary: *const libc::c_char = std::ptr::null();
   let mut on_off: *mut t_complementary = std::ptr::null_mut();
-  let mut l_o: *const option = 0 as *const option;
+  let mut l_o: *const option = std::ptr::null();
   let mut long_options: *mut option = &bb_null_long_options as *const [option; 1] as *mut option;
   let mut trigger: libc::c_uint = 0;
   let mut min_arg: libc::c_int = 0i32;
@@ -412,7 +412,7 @@ unsafe extern "C" fn vgetopt32(
   );
   len = strlen(applet_opts) as libc::c_uint;
   /* skip bbox extension */
-  opt_complementary = 0 as *const libc::c_char;
+  opt_complementary = std::ptr::null();
   if *applet_opts.offset(0) as libc::c_int == '^' as i32 {
     applet_opts = applet_opts.offset(1);
     /* point it past terminating NUL */
@@ -468,7 +468,7 @@ unsafe extern "C" fn vgetopt32(
     c += 1
   }
   if !applet_long_options.is_null() {
-    let mut optstr: *const libc::c_char = 0 as *const libc::c_char;
+    let mut optstr: *const libc::c_char = std::ptr::null();
     let mut i: libc::c_uint = 0;
     let mut count: libc::c_uint = 0;
     count = 1i32 as libc::c_uint;

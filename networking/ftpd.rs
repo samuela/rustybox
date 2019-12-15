@@ -984,7 +984,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
   argv[1] = opt;
   argv[2] = b"--\x00" as *const u8 as *const libc::c_char;
   argv[3] = (*ptr_to_globals).ftp_arg;
-  argv[4] = 0 as *const libc::c_char;
+  argv[4] = std::ptr::null();
   /* Improve compatibility with non-RFC conforming FTP clients
    * which send e.g. "LIST -l", "LIST -la", "LIST -aL".
    * See https://bugs.kde.org/show_bug.cgi?id=195578 */

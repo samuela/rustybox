@@ -169,7 +169,7 @@ pub unsafe extern "C" fn split_main(
   let mut suffix_len: libc::c_uint = 2i32 as libc::c_uint;
   let mut pfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut count_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut sfx: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sfx: *const libc::c_char = std::ptr::null();
   let mut cnt: off_t = 1000i32 as off_t;
   let mut remaining: off_t = 0i32 as off_t;
   let mut opt: libc::c_uint = 0;

@@ -175,7 +175,7 @@ pub unsafe extern "C" fn filename2modname(
 ) -> *mut libc::c_char {
   let mut local_modname: [libc::c_char; 256] = [0; 256];
   let mut i: libc::c_int = 0;
-  let mut from: *const libc::c_char = 0 as *const libc::c_char;
+  let mut from: *const libc::c_char = std::ptr::null();
   if filename.is_null() {
     return std::ptr::null_mut::<libc::c_char>();
   }
@@ -219,9 +219,9 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
     if (*argv).is_null() {
       break;
     }
-    let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-    let mut var: *const libc::c_char = 0 as *const libc::c_char;
-    let mut val: *const libc::c_char = 0 as *const libc::c_char;
+    let mut fmt: *const libc::c_char = std::ptr::null();
+    let mut var: *const libc::c_char = std::ptr::null();
+    let mut val: *const libc::c_char = std::ptr::null();
     var = *argv;
     options = xrealloc(
       options as *mut libc::c_void,

@@ -214,7 +214,7 @@ unsafe extern "C" fn modinfo(
     1856101646708284338 => {
       j = 1i32;
       while 1i32 << j & (OPT_TAGS as libc::c_int | OPT_F as libc::c_int) != 0 {
-        let mut pattern: *const libc::c_char = 0 as *const libc::c_char;
+        let mut pattern: *const libc::c_char = std::ptr::null();
         if !(1i32 << j & tags == 0) {
           pattern = field;
           if 1i32 << j & OPT_TAGS as libc::c_int != 0 {
@@ -275,7 +275,7 @@ pub unsafe extern "C" fn modinfo_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut field: *const libc::c_char = 0 as *const libc::c_char;
+  let mut field: *const libc::c_char = std::ptr::null();
   let mut name: [libc::c_char; 256] = [0; 256];
   let mut uts: utsname = utsname {
     sysname: [0; 65],
@@ -290,7 +290,7 @@ pub unsafe extern "C" fn modinfo_main(
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut opts: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
-  field = 0 as *const libc::c_char;
+  field = std::ptr::null();
   opts = getopt32(
     argv,
     b"^0F:nadlp\x00-1\x00" as *const u8 as *const libc::c_char,

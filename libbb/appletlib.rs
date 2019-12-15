@@ -145,7 +145,7 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
  * This makes (shared busybox) + libbusybox smaller.
  * (--gc-sections would be even better....)
  */
-pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
+pub static mut applet_name: *const libc::c_char = std::ptr::null();
 
 static mut ruid: uid_t = 0; /* real uid */
 
@@ -186,7 +186,7 @@ unsafe fn parse_config_file() {
   let mut sct_head: *mut suid_config_t = std::ptr::null_mut();
   let mut applet_no: libc::c_int = 0;
   let mut f: *mut libc::FILE = std::ptr::null_mut();
-  let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut errmsg: *const libc::c_char = std::ptr::null();
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
   let mut st: libc::stat = std::mem::zeroed();

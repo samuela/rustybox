@@ -184,8 +184,8 @@ pub unsafe extern "C" fn nandwrite_main(
   let mut filebuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut opt_s: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   let mut opt_f: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
-  let mut opt_l: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opt_bb: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_l: *const libc::c_char = std::ptr::null();
+  let mut opt_bb: *const libc::c_char = std::ptr::null();
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
     opts = getopt32long(
       argv,

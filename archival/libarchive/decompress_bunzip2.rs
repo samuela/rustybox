@@ -647,7 +647,7 @@ unsafe extern "C" fn read_bunzip(
   mut len: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut dbuf: *const u32 = 0 as *const u32;
+  let mut dbuf: *const u32 = std::ptr::null();
   let mut pos: libc::c_int = 0;
   let mut current: libc::c_int = 0;
   let mut previous: libc::c_int = 0;

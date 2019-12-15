@@ -906,8 +906,8 @@ unsafe extern "C" fn fork_job(
 ) -> pid_t {
   let mut current_block: u64;
   let mut pas: *mut passwd = std::ptr::null_mut();
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
-  let mut prog: *const libc::c_char = 0 as *const libc::c_char;
+  let mut shell: *const libc::c_char = std::ptr::null();
+  let mut prog: *const libc::c_char = std::ptr::null();
   let mut sv_logmode: smallint = 0;
   let mut pid: pid_t = 0;
   /* prepare things before vfork */

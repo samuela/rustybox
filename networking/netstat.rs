@@ -475,7 +475,7 @@ unsafe extern "C" fn dir_act(
   mut _userData: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
-  let mut pid: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pid: *const libc::c_char = std::ptr::null();
   let mut pid_slash_progname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_pid_fname: [libc::c_char; 41] = [0; 41];
   let mut cmdline_buf: [libc::c_char; 512] = [0; 512];
@@ -816,7 +816,7 @@ unsafe extern "C" fn tcp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
 }
 unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut have_remaddr: libc::c_int = 0;
-  let mut state_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut state_str: *const libc::c_char = std::ptr::null();
   let mut param: inet_params = inet_params {
     local_port: 0,
     rem_port: 0,
@@ -919,9 +919,9 @@ unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut state: libc::c_int = 0;
   let mut num: libc::c_int = 0;
   let mut path_ofs: libc::c_int = 0;
-  let mut ss_proto: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ss_state: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ss_type: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ss_proto: *const libc::c_char = std::ptr::null();
+  let mut ss_state: *const libc::c_char = std::ptr::null();
+  let mut ss_type: *const libc::c_char = std::ptr::null();
   let mut ss_flags: [libc::c_char; 32] = [0; 32];
   /* 2.6.15 may report lines like "... @/tmp/fam-user-^@^@^@^@^@^@^@..."
    * Other users report long lines filled by NUL bytes.

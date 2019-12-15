@@ -186,7 +186,7 @@ pub unsafe extern "C" fn taskset_main(
   let mut mask_size_in_bytes: libc::c_uint = 0;
   let mut pid: pid_t = 0i32;
   let mut opt_p: libc::c_uint = 0;
-  let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
+  let mut current_new: *const libc::c_char = std::ptr::null();
   let mut aff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: we mimic util-linux's taskset: -p does not take
    * an argument, i.e., "-pN" is NOT valid, only "-p N"!

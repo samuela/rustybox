@@ -635,7 +635,7 @@ pub unsafe extern "C" fn xargs_main(
   );
   let mut opt_a: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str;
-  *fresh9 = 0 as *const libc::c_char;
+  *fresh9 = std::ptr::null();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx = 0i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs = 0i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 1i32;
@@ -673,7 +673,7 @@ pub unsafe extern "C" fn xargs_main(
       == '\u{0}' as i32
   {
     let ref mut fresh11 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str;
-    *fresh11 = 0 as *const libc::c_char
+    *fresh11 = std::ptr::null()
   }
   if opt & OPT_ZEROTERM as libc::c_int as libc::c_uint != 0 {
     read_args = Some(

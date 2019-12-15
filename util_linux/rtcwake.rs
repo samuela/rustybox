@@ -223,10 +223,10 @@ pub unsafe extern "C" fn rtcwake_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut rtcname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut rtcname: *const libc::c_char = std::ptr::null();
   let mut suspend: *const libc::c_char = b"standby\x00" as *const u8 as *const libc::c_char;
-  let mut opt_seconds: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opt_time: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_seconds: *const libc::c_char = std::ptr::null();
+  let mut opt_time: *const libc::c_char = std::ptr::null();
   let mut rtc_time: time_t = 0;
   let mut sys_time: time_t = 0;
   let mut alarm_time: time_t = 0;

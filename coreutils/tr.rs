@@ -227,7 +227,7 @@ unsafe extern "C" fn expand(
       *buffer_p = buffer
     }
     if *arg as libc::c_int == '\\' as i32 {
-      let mut z: *const libc::c_char = 0 as *const libc::c_char;
+      let mut z: *const libc::c_char = std::ptr::null();
       arg = arg.offset(1);
       z = arg;
       ac = bb_process_escape_sequence(&mut z) as libc::c_uchar;
@@ -254,7 +254,7 @@ unsafe extern "C" fn expand(
         i = *arg as libc::c_uchar as libc::c_uint; /* skip 0-9 or 0-\ */
         arg = arg.offset(3);
         if ac as libc::c_int == '\\' as i32 {
-          let mut z_0: *const libc::c_char = 0 as *const libc::c_char;
+          let mut z_0: *const libc::c_char = std::ptr::null();
           z_0 = arg;
           ac = bb_process_escape_sequence(&mut z_0) as libc::c_uchar;
           arg = z_0 as *mut libc::c_char

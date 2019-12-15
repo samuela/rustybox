@@ -457,8 +457,8 @@ pub unsafe extern "C" fn ifconfig_main(
     sa_family: 0,
     sa_data: [0; 14],
   };
-  let mut a1op: *const arg1opt = 0 as *const arg1opt;
-  let mut op: *const options = 0 as *const options;
+  let mut a1op: *const arg1opt = std::ptr::null();
+  let mut op: *const options = std::ptr::null();
   let mut sockfd: libc::c_int = 0;
   let mut selector: libc::c_int = 0;
   let mut mask: libc::c_uint = 0;
@@ -467,7 +467,7 @@ pub unsafe extern "C" fn ifconfig_main(
   let mut sai_netmask: libc::c_uint = 0;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /*char host[128];*/
-  let mut host: *const libc::c_char = 0 as *const libc::c_char; /* make gcc happy */
+  let mut host: *const libc::c_char = std::ptr::null(); /* make gcc happy */
   let mut show_all_param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   did_flags = 0i32 as libc::c_uint;
   sai_hostname = 0i32 as libc::c_uint;

@@ -133,8 +133,8 @@ pub unsafe extern "C" fn cryptpw_main(
   let mut salt: [libc::c_char; 38] = [0; 38];
   let mut salt_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut password: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut opt_m: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opt_S: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_m: *const libc::c_char = std::ptr::null();
+  let mut opt_S: *const libc::c_char = std::ptr::null();
   let mut fd: libc::c_int = 0;
   static mut mkpasswd_longopts: [libc::c_char; 39] = [
     115, 116, 100, 105, 110, 0, 0, 115, 112, 97, 115, 115, 119, 111, 114, 100, 45, 102, 100, 0, 1,
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn cryptpw_main(
   ];
   fd = 0i32;
   opt_m = b"des\x00" as *const u8 as *const libc::c_char;
-  opt_S = 0 as *const libc::c_char;
+  opt_S = std::ptr::null();
   /* at most two non-option arguments; -P NUM */
   getopt32long(
     argv,

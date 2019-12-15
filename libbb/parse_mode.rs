@@ -37,7 +37,7 @@ pub unsafe extern "C" fn bb_parse_mode(
   ];
   static mut who_chars: [libc::c_char; 5] = [97, 117, 103, 111, 0];
   static mut perm_chars: [libc::c_char; 7] = [114, 119, 120, 88, 115, 116, 0];
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut wholist: mode_t = 0;
   let mut permlist: mode_t = 0;
   let mut new_mode: mode_t = 0;

@@ -963,7 +963,7 @@ pub unsafe extern "C" fn svc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut command: [libc::c_char; 2] = [0; 2];
-  let mut optstring: *const libc::c_char = 0 as *const libc::c_char;
+  let mut optstring: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;
   optstring = b"udopchaitkx\x00" as *const u8 as *const libc::c_char;
   opts = getopt32(argv, optstring);

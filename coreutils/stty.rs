@@ -1835,7 +1835,7 @@ pub unsafe extern "C" fn stty_main(
     c_ospeed: 0,
   };
   let mut output_func: Option<unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ()> = None;
-  let mut file_name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut file_name: *const libc::c_char = std::ptr::null();
   let mut display_all: libc::c_int = 0i32;
   let mut stty_state: libc::c_int = 0;
   let mut k: libc::c_int = 0;
@@ -1852,8 +1852,8 @@ pub unsafe extern "C" fn stty_main(
     if (*argv.offset(k as isize)).is_null() {
       break;
     }
-    let mut mp: *const mode_info = 0 as *const mode_info;
-    let mut cp: *const control_info = 0 as *const control_info;
+    let mut mp: *const mode_info = std::ptr::null();
+    let mut cp: *const control_info = std::ptr::null();
     let mut arg: *const libc::c_char = *argv.offset(k as isize);
     let mut argnext: *const libc::c_char = *argv.offset((k + 1i32) as isize);
     let mut param: libc::c_int = 0;
@@ -2039,8 +2039,8 @@ pub unsafe extern "C" fn stty_main(
     if (*argv.offset(k as isize)).is_null() {
       break;
     }
-    let mut mp_0: *const mode_info = 0 as *const mode_info;
-    let mut cp_0: *const control_info = 0 as *const control_info;
+    let mut mp_0: *const mode_info = std::ptr::null();
+    let mut cp_0: *const control_info = std::ptr::null();
     let mut arg_0: *const libc::c_char = *argv.offset(k as isize);
     let mut argnext_0: *const libc::c_char = *argv.offset((k + 1i32) as isize);
     let mut param_0: libc::c_int = 0;

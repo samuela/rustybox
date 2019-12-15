@@ -77,7 +77,7 @@ pub unsafe extern "C" fn ubirename_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut rnvol: *mut ubi_rnvol_req = std::ptr::null_mut();
-  let mut ubi_devname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ubi_devname: *const libc::c_char = std::ptr::null();
   let mut ubi_devnum: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
   /* argc can be 4, 6, 8, ... */

@@ -92,8 +92,8 @@ pub unsafe extern "C" fn mknod_main(
 ) -> libc::c_int {
   let mut mode: mode_t = 0;
   let mut dev: libc::dev_t = 0;
-  let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
-  let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut type_0: *const libc::c_char = std::ptr::null();
+  let mut arg: *const libc::c_char = std::ptr::null();
   mode = getopt_mk_fifo_nod(argv);
   argv = argv.offset(optind as isize);
   //argc -= optind;

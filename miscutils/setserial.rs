@@ -224,7 +224,7 @@ unsafe extern "C" fn serial_ctl(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut ret: libc::c_int = 0i32;
-  let mut err: *const libc::c_char = 0 as *const libc::c_char;
+  let mut err: *const libc::c_char = std::ptr::null();
   if ops & 1i32 << 0i32 != 0 {
     ret = ioctl(fd, 0x541fi32 as libc::c_ulong, serinfo);
     if ret < 0i32 {
@@ -300,8 +300,8 @@ unsafe extern "C" fn print_serial_flags(
   mut postfix: *const libc::c_char,
 ) {
   let mut i: libc::c_int = 0;
-  let mut spd: *const libc::c_char = 0 as *const libc::c_char;
-  let mut pr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut spd: *const libc::c_char = std::ptr::null();
+  let mut pr: *const libc::c_char = std::ptr::null();
   pr = prefix;
   spd = get_spd(serial_flags, mode);
   if !spd.is_null() {
@@ -341,9 +341,9 @@ unsafe extern "C" fn print_closing_wait(mut closing_wait: libc::c_uint) {
 unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print_mode) {
   let mut fd: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
-  let mut uart: *const libc::c_char = 0 as *const libc::c_char;
-  let mut prefix: *const libc::c_char = 0 as *const libc::c_char;
-  let mut postfix: *const libc::c_char = 0 as *const libc::c_char;
+  let mut uart: *const libc::c_char = std::ptr::null();
+  let mut prefix: *const libc::c_char = std::ptr::null();
+  let mut postfix: *const libc::c_char = std::ptr::null();
   let mut serinfo: serial_struct = serial_struct {
     type_0: 0,
     line: 0,
@@ -483,7 +483,7 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
     if (*arg).is_null() {
       break;
     }
-    let mut word: *const libc::c_char = 0 as *const libc::c_char;
+    let mut word: *const libc::c_char = std::ptr::null();
     let mut invert: libc::c_int = 0;
     let mut cmd: libc::c_int = 0;
     word = *arg;

@@ -285,7 +285,7 @@ pub unsafe extern "C" fn vconfig_main(
     u: C2RustUnnamed { device2: [0; 24] },
     vlan_qos: 0,
   };
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut fd: libc::c_int = 0;
   memset(
     &mut ifr as *mut vlan_ioctl_args as *mut libc::c_void,

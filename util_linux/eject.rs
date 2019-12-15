@@ -174,7 +174,7 @@ pub unsafe extern "C" fn eject_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut flags: libc::c_uint = 0;
-  let mut device: *const libc::c_char = 0 as *const libc::c_char;
+  let mut device: *const libc::c_char = std::ptr::null();
   flags = getopt32(
     argv,
     b"^tTs\x00?1:t--T:T--t\x00" as *const u8 as *const libc::c_char,

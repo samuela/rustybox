@@ -131,7 +131,7 @@ unsafe extern "C" fn find_token(
   mut key: *const libc::c_char,
   mut defvalue: *const libc::c_char,
 ) -> *const libc::c_char {
-  let mut r: *const libc::c_char = 0 as *const libc::c_char;
+  let mut r: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
   i = 0i32;
   while !(*string_array.offset(i as isize)).is_null() {
@@ -172,7 +172,7 @@ unsafe extern "C" fn parse(
   loop {
     let mut header: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* 32 is enough */
     let mut tokens: [*const libc::c_char; 32] = [0 as *const libc::c_char; 32];
-    let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+    let mut type_0: *const libc::c_char = std::ptr::null();
     /* Read the header (everything up to two \n) */
     let mut header_idx: libc::c_uint = 0i32 as libc::c_uint;
     let mut last_ch: libc::c_int = 0i32;
@@ -243,7 +243,7 @@ unsafe extern "C" fn parse(
       }
       s = strtok(0 as *mut libc::c_char, delims)
     }
-    tokens[ntokens as usize] = 0 as *const libc::c_char;
+    tokens[ntokens as usize] = std::ptr::null();
     if ntokens == 0i32 as libc::c_uint {
       break;
     }

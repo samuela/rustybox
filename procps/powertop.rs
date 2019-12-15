@@ -416,7 +416,7 @@ unsafe extern "C" fn process_irq_counts() {
   {
     let mut irq_desc: [libc::c_char; 147] = [0; 147];
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut name: *const libc::c_char = 0 as *const libc::c_char;
+    let mut name: *const libc::c_char = std::ptr::null();
     let mut nr: libc::c_int = 0;
     let mut count: ullong = 0;
     let mut delta: ullong = 0;
@@ -536,9 +536,9 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
     )
     .is_null()
     {
-      let mut count: *const libc::c_char = 0 as *const libc::c_char; /* deferred */
-      let mut process: *const libc::c_char = 0 as *const libc::c_char; /* points to pid now */
-      let mut func: *const libc::c_char = 0 as *const libc::c_char;
+      let mut count: *const libc::c_char = std::ptr::null(); /* deferred */
+      let mut process: *const libc::c_char = std::ptr::null(); /* points to pid now */
+      let mut func: *const libc::c_char = std::ptr::null();
       let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut idx: libc::c_int = 0;
       let mut cnt: libc::c_uint = 0;
@@ -571,7 +571,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
           continue;
         }
         p = skip_whitespace(p);
-        process = 0 as *const libc::c_char;
+        process = std::ptr::null();
         loop {
           p = strchr(p, ' ' as i32);
           if p.is_null() {

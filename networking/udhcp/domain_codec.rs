@@ -44,7 +44,7 @@ pub unsafe extern "C" fn dname_dec(
   /* note: "return NULL" below are leak-safe since
    * dst isn't allocated yet */
   {
-    let mut c: *const u8 = 0 as *const u8;
+    let mut c: *const u8 = std::ptr::null();
     let mut crtpos: libc::c_uint = 0;
     let mut retpos: libc::c_uint = 0;
     let mut depth: libc::c_uint = 0;
@@ -190,8 +190,8 @@ unsafe extern "C" fn find_offset(
   mut clen: libc::c_int,
   mut dname: *const u8,
 ) -> libc::c_int {
-  let mut c: *const u8 = 0 as *const u8;
-  let mut d: *const u8 = 0 as *const u8;
+  let mut c: *const u8 = std::ptr::null();
+  let mut d: *const u8 = std::ptr::null();
   let mut off: libc::c_int = 0;
   /* find all labels in cstr */
   off = 0i32;

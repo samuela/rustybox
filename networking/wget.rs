@@ -478,7 +478,7 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
   );
   if flag == PROGRESS_END as libc::c_int {
     free((*ptr_to_globals).pmt.curfile as *mut libc::c_char as *mut libc::c_void);
-    (*ptr_to_globals).pmt.curfile = 0 as *const libc::c_char;
+    (*ptr_to_globals).pmt.curfile = std::ptr::null();
     if notty == 0i32 {
       bb_putchar_stderr('\n' as i32 as libc::c_char);
     }
@@ -1939,7 +1939,7 @@ pub unsafe extern "C" fn wget_main(
     (*ptr_to_globals).extra_headers = hdr;
     while !headers_llist.is_null() {
       let mut bit: libc::c_int = 0;
-      let mut words: *const libc::c_char = 0 as *const libc::c_char;
+      let mut words: *const libc::c_char = std::ptr::null();
       size = sprintf(
         hdr,
         b"%s\r\n\x00" as *const u8 as *const libc::c_char,

@@ -93,7 +93,7 @@ pub unsafe extern "C" fn mktemp_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut path: *const libc::c_char = 0 as *const libc::c_char;
+  let mut path: *const libc::c_char = std::ptr::null();
   let mut chp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
   path = getenv(b"TMPDIR\x00" as *const u8 as *const libc::c_char);

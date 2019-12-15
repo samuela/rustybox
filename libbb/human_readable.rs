@@ -53,8 +53,8 @@ pub unsafe extern "C" fn make_human_readable_str(
     'Y' as i32 as libc::c_char,
   ]; /* 0..9 - the fractional digit */
   let mut frac: libc::c_uint = 0; /* Deal with rounding */
-  let mut u: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut u: *const libc::c_char = std::ptr::null();
+  let mut fmt: *const libc::c_char = std::ptr::null();
   if val == 0i32 as libc::c_ulonglong {
     return b"0\x00" as *const u8 as *const libc::c_char;
   }
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn smart_ulltoa5(
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c: libc::c_char = 0;
   let mut v: libc::c_uint = 0;
   let mut u: libc::c_uint = 0;
@@ -477,7 +477,7 @@ pub unsafe extern "C" fn smart_ulltoa4(
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c: libc::c_char = 0;
   let mut v: libc::c_uint = 0;
   let mut u: libc::c_uint = 0;

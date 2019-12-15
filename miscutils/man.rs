@@ -507,7 +507,7 @@ pub unsafe extern "C" fn man_main(
   loop {
     let mut current_block_61: u64;
     /* for each argv[] */
-    let mut cur_path: *const libc::c_char = 0 as *const libc::c_char;
+    let mut cur_path: *const libc::c_char = std::ptr::null();
     let mut cur_mp: libc::c_int = 0;
     let mut found: libc::c_int = 0i32;
     if !strchr(*argv, '/' as i32).is_null() {

@@ -514,7 +514,7 @@ unsafe extern "C" fn chksum_and_xwrite(mut fd: libc::c_int, mut hp: *mut tar_hea
   /* POSIX says that checksum is done on unsigned bytes
    * (Sun and HP-UX gets it wrong... more details in
    * GNU tar source) */
-  let mut cp: *const libc::c_uchar = 0 as *const libc::c_uchar;
+  let mut cp: *const libc::c_uchar = std::ptr::null();
   let mut chksum: libc::c_int = 0;
   let mut size: libc::c_int = 0;
   strcpy(
@@ -887,7 +887,7 @@ unsafe extern "C" fn exclude_file(
         return 1i32;
       }
     } else {
-      let mut p: *const libc::c_char = 0 as *const libc::c_char;
+      let mut p: *const libc::c_char = std::ptr::null();
       p = file;
       while *p.offset(0) as libc::c_int != '\u{0}' as i32 {
         if (p == file || *p.offset(-1i32 as isize) as libc::c_int == '/' as i32)
@@ -910,7 +910,7 @@ unsafe extern "C" fn writeFileToTarball(
   mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut tbInfo: *mut TarBallInfo = userData as *mut TarBallInfo;
-  let mut header_name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut header_name: *const libc::c_char = std::ptr::null();
   let mut inputFileFd: libc::c_int = -1i32;
   /* Strip leading '/' and such (must be before memorizing hardlink's name) */
   header_name = strip_unsafe_prefix(fileName);
@@ -1427,7 +1427,7 @@ pub unsafe extern "C" fn tar_main(
   /* Create an archive */
   if opt & OPT_CREATE as libc::c_int as libc::c_uint != 0 {
     let mut tbInfo: *mut TarBallInfo = std::ptr::null_mut();
-    let mut zipMode: *const libc::c_char = 0 as *const libc::c_char;
+    let mut zipMode: *const libc::c_char = std::ptr::null();
     if opt & OPT_COMPRESS as libc::c_int as libc::c_uint != 0 {
       zipMode = b"compress\x00" as *const u8 as *const libc::c_char
     }

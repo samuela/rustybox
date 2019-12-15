@@ -88,7 +88,7 @@ pub const OPT_c: C2RustUnnamed = 2;
 pub const OPT_r: C2RustUnnamed = 16;
 
 unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_char) {
-  let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ptr: *const libc::c_char = std::ptr::null();
   let mut pid: pid_t = 0;
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn crontab_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut pas: *const passwd = 0 as *const passwd;
+  let mut pas: *const passwd = std::ptr::null();
   let mut crontab_dir: *const libc::c_char =
     b"/var/spool/cron/crontabs\x00" as *const u8 as *const libc::c_char;
   let mut tmp_fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

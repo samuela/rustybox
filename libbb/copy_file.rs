@@ -379,7 +379,7 @@ pub unsafe extern "C" fn copy_file(
     }
     if source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
       let mut dp: *mut DIR = std::ptr::null_mut();
-      let mut tp: *const libc::c_char = 0 as *const libc::c_char;
+      let mut tp: *const libc::c_char = std::ptr::null();
       let mut d: *mut dirent = std::ptr::null_mut();
       let mut saved_umask: mode_t = 0i32 as mode_t;
       if flags & FILEUTILS_RECUR as libc::c_int == 0 {
@@ -521,7 +521,7 @@ pub unsafe extern "C" fn copy_file(
                 & FILEUTILS_DEREFERENCE as libc::c_int + FILEUTILS_DEREFERENCE_L0 as libc::c_int
                 == 0
             {
-              let mut link_target: *const libc::c_char = 0 as *const libc::c_char;
+              let mut link_target: *const libc::c_char = std::ptr::null();
               link_target = is_in_ino_dev_hashtable(&mut source_stat);
               if !link_target.is_null() {
                 if link(link_target, dest) < 0i32 {

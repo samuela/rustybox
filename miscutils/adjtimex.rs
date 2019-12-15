@@ -163,7 +163,7 @@ pub unsafe extern "C" fn adjtimex_main(
               c2rust_unnamed_c2rust_unnamed_0_c2rust_unnamed_1_c2rust_unnamed_2_c2rust_unnamed_3_c2rust_unnamed_4_c2rust_unnamed_5_c2rust_unnamed_6_c2rust_unnamed_7_c2rust_unnamed_8_c2rust_unnamed_9:
                   [0; 44],};
   let mut ret: libc::c_int = 0;
-  let mut descript: *const libc::c_char = 0 as *const libc::c_char;
+  let mut descript: *const libc::c_char = std::ptr::null();
   memset(
     &mut txc as *mut timex as *mut libc::c_void,
     0i32,
@@ -207,8 +207,8 @@ pub unsafe extern "C" fn adjtimex_main(
     bb_perror_nomsg_and_die();
   }
   if opt & OPT_quiet as libc::c_int as libc::c_uint == 0 {
-    let mut sep: *const libc::c_char = 0 as *const libc::c_char;
-    let mut name: *const libc::c_char = 0 as *const libc::c_char;
+    let mut sep: *const libc::c_char = std::ptr::null();
+    let mut name: *const libc::c_char = std::ptr::null();
     let mut i: libc::c_int = 0;
     printf(b"    mode:         %d\n-o  offset:       %ld us\n-f  freq.adjust:  %ld (65536 = 1ppm)\n    maxerror:     %ld\n    esterror:     %ld\n    status:       %d (\x00"
                    as *const u8 as *const libc::c_char, txc.modes, txc.offset,

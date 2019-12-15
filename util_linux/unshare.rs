@@ -270,7 +270,7 @@ unsafe extern "C" fn parse_propagation(mut prop_str: *const libc::c_char) -> lib
   return (MS_REC as libc::c_int | MS_SLAVE as libc::c_int) as libc::c_ulong;
 }
 unsafe extern "C" fn mount_namespaces(mut pid: pid_t, mut ns_ctx_list: *mut namespace_ctx) {
-  let mut ns: *const namespace_descr = 0 as *const namespace_descr;
+  let mut ns: *const namespace_descr = std::ptr::null();
   let mut ns_ctx: *mut namespace_ctx = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   i = 0i32;
@@ -304,9 +304,9 @@ pub unsafe extern "C" fn unshare_main(
   let mut opts: libc::c_uint = 0;
   let mut unsflags: libc::c_int = 0;
   let mut need_mount: uintptr_t = 0;
-  let mut proc_mnt_target: *const libc::c_char = 0 as *const libc::c_char;
-  let mut prop_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut setgrp_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut proc_mnt_target: *const libc::c_char = std::ptr::null();
+  let mut prop_str: *const libc::c_char = std::ptr::null();
+  let mut setgrp_str: *const libc::c_char = std::ptr::null();
   let mut prop_flags: libc::c_ulong = 0;
   let mut reuid: uid_t = geteuid();
   let mut regid: gid_t = getegid();
@@ -323,7 +323,7 @@ pub unsafe extern "C" fn unshare_main(
   );
   proc_mnt_target = b"/proc\x00" as *const u8 as *const libc::c_char;
   prop_str = b"private\x00unchanged\x00shared\x00slave\x00\x00" as *const u8 as *const libc::c_char;
-  setgrp_str = 0 as *const libc::c_char;
+  setgrp_str = std::ptr::null();
   opts = getopt32long(
     argv,
     b"^+muinpUfr\xfd::\xfe:\xff:\x00\xf0m:\xf1u:\xf2i:\xf3n:\xf4p:\xf5U:rU:\xfdm\x00" as *const u8

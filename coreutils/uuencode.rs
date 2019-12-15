@@ -95,7 +95,7 @@ pub unsafe extern "C" fn uuencode_main(
 ) -> libc::c_int {
   let mut stat_buf: stat = std::mem::zeroed();
   let mut src_fd: libc::c_int = 0i32;
-  let mut tbl: *const libc::c_char = 0 as *const libc::c_char;
+  let mut tbl: *const libc::c_char = std::ptr::null();
   let mut mode: mode_t = 0;
   let mut src_buf: [libc::c_char; 45] = [0; 45];
   let mut dst_buf: [libc::c_char; 61] = [0; 61];

@@ -203,8 +203,8 @@ pub unsafe extern "C" fn print_e2flags(
   mut flags: libc::c_ulong,
   mut options: libc::c_uint,
 ) {
-  let mut fv: *const u32 = 0 as *const u32;
-  let mut fn_0: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fv: *const u32 = std::ptr::null();
+  let mut fn_0: *const libc::c_char = std::ptr::null();
   fv = e2attr_flags_value.as_ptr();
   if options & 1i32 as libc::c_uint != 0 {
     let mut first: libc::c_int = 1i32;

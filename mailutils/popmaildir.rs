@@ -250,8 +250,8 @@ pub unsafe extern "C" fn popmaildir_main(
   let mut nmsg: libc::c_uint = 0;
   let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;
-  let mut retr: *const libc::c_char = 0 as *const libc::c_char;
-  let mut delivery: *const libc::c_char = 0 as *const libc::c_char;
+  let mut retr: *const libc::c_char = std::ptr::null();
+  let mut delivery: *const libc::c_char = std::ptr::null();
   let mut opt_nlines: libc::c_uint = 0i32 as libc::c_uint;
   // init global variables
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

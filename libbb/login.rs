@@ -83,7 +83,7 @@ pub unsafe extern "C" fn print_login_issue(
   let mut fp: *mut FILE = std::ptr::null_mut(); /* start a new line */
   let mut c: libc::c_int = 0;
   let mut buf: [libc::c_char; 257] = [0; 257];
-  let mut outbuf: *const libc::c_char = 0 as *const libc::c_char;
+  let mut outbuf: *const libc::c_char = std::ptr::null();
   let mut t: time_t = 0;
   let mut uts: utsname = utsname {
     sysname: [0; 65],
@@ -705,7 +705,7 @@ static mut forbid: [libc::c_char; 150] = [
 /* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
 #[no_mangle]
 pub unsafe extern "C" fn sanitize_env_if_suid() -> libc::c_int {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   if getuid() == geteuid() {
     return 0i32;
   }

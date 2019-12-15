@@ -482,7 +482,7 @@ pub unsafe extern "C" fn echo_main(
 ) -> libc::c_int {
   let mut current_block: u64; /* not an option arg, echo it */
   let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
-  let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut arg: *const libc::c_char = std::ptr::null();
   let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buflen: libc::c_uint = 0;

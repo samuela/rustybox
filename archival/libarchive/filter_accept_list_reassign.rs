@@ -81,7 +81,7 @@ pub unsafe extern "C" fn filter_accept_list_reassign(
   )
   .is_null()
   {
-    let mut name_ptr: *const libc::c_char = 0 as *const libc::c_char;
+    let mut name_ptr: *const libc::c_char = std::ptr::null();
     /* Find extension */
     name_ptr = strrchr((*(*archive_handle).file_header).name, '.' as i32);
     if name_ptr.is_null() {

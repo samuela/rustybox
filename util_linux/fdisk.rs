@@ -597,7 +597,7 @@ unsafe extern "C" fn partname(
   mut pno: libc::c_int,
   mut lth: libc::c_int,
 ) -> *const libc::c_char {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut w: libc::c_int = 0;
   let mut wp: libc::c_int = 0;
   let mut bufsiz: libc::c_int = 0;
@@ -2065,8 +2065,8 @@ unsafe extern "C" fn list_disk_geometry() {
  * Two separate checks: primary and logical partitions.
  */
 unsafe extern "C" fn wrong_p_order(mut prev: *mut libc::c_int) -> libc::c_int {
-  let mut pe: *const pte = 0 as *const pte;
-  let mut p: *const partition = 0 as *const partition;
+  let mut pe: *const pte = std::ptr::null();
+  let mut p: *const partition = std::ptr::null();
   let mut last_p_start_pos: sector_t = 0i32 as sector_t;
   let mut p_start_pos: sector_t = 0;
   let mut i: libc::c_uint = 0;
@@ -2309,7 +2309,7 @@ unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
   );
   i = 0i32;
   while i < (*ptr_to_globals).g_partitions {
-    let mut p: *const partition = 0 as *const partition;
+    let mut p: *const partition = std::ptr::null();
     let mut pe: *const pte =
       &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(i as isize) as *mut pte;
     let mut boot4: [libc::c_char; 4] = [0; 4];
@@ -2386,8 +2386,8 @@ unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
   };
 }
 unsafe extern "C" fn x_list_table(mut extend: libc::c_int) {
-  let mut pe: *const pte = 0 as *const pte;
-  let mut p: *const partition = 0 as *const partition;
+  let mut pe: *const pte = std::ptr::null();
+  let mut p: *const partition = std::ptr::null();
   let mut i: libc::c_int = 0;
   printf(
     b"\nDisk %s: %u heads, %u sectors, %u cylinders\n\n\x00" as *const u8 as *const libc::c_char,
@@ -2433,7 +2433,7 @@ unsafe extern "C" fn x_list_table(mut extend: libc::c_int) {
 unsafe extern "C" fn fill_bounds(mut first: *mut sector_t, mut last: *mut sector_t) {
   let mut i: libc::c_uint = 0;
   let mut pe: *const pte = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(0) as *mut pte;
-  let mut p: *const partition = 0 as *const partition;
+  let mut p: *const partition = std::ptr::null();
   i = 0i32 as libc::c_uint;
   while i < (*ptr_to_globals).g_partitions as libc::c_uint {
     p = (*pe).part_table;

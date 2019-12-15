@@ -900,8 +900,8 @@ unsafe extern "C" fn des_init(
   let mut inbit: libc::c_int = 0;
   let mut obit: libc::c_int = 0;
   let mut p: u32 = 0;
-  let mut bits28: *const u32 = 0 as *const u32;
-  let mut bits24: *const u32 = 0 as *const u32;
+  let mut bits28: *const u32 = std::ptr::null();
+  let mut bits24: *const u32 = std::ptr::null();
   if ctx.is_null() {
     ctx = xmalloc(::std::mem::size_of::<des_ctx>() as libc::c_ulong) as *mut des_ctx
   }

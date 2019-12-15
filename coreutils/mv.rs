@@ -116,8 +116,8 @@ pub unsafe extern "C" fn mv_main(
   let mut source_exists: libc::c_int = 0;
   let mut current_block: u64;
   let mut dest_stat: stat = std::mem::zeroed();
-  let mut last: *const libc::c_char = 0 as *const libc::c_char;
-  let mut dest: *const libc::c_char = 0 as *const libc::c_char;
+  let mut last: *const libc::c_char = std::ptr::null();
+  let mut dest: *const libc::c_char = std::ptr::null();
   let mut flags: libc::c_uint = 0;
   let mut dest_exists: libc::c_int = 0;
   let mut status: libc::c_int = 0i32;

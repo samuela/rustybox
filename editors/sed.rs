@@ -380,7 +380,7 @@ unsafe extern "C" fn copy_parsing_escapes(
   mut string: *const libc::c_char,
   mut len: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   let mut dest: *mut libc::c_char = xmalloc((len + 1i32) as size_t) as *mut libc::c_char;
   /* sed recognizes \n */
   /* GNU sed also recognizes \t and \r */
@@ -531,8 +531,8 @@ unsafe extern "C" fn parse_file_cmd(
   mut filecmdstr: *const libc::c_char,
   mut retval: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut start: *const libc::c_char = 0 as *const libc::c_char;
-  let mut eol: *const libc::c_char = 0 as *const libc::c_char;
+  let mut start: *const libc::c_char = std::ptr::null();
+  let mut eol: *const libc::c_char = std::ptr::null();
   /* Skip whitespace, then grab filename to end of line */
   start = skip_whitespace(filecmdstr);
   eol = strchrnul(start, '\n' as i32);

@@ -291,7 +291,7 @@ unsafe extern "C" fn arith_apply(
   let mut current_block: u64;
   let mut top_of_stack: *mut var_or_num_t = std::ptr::null_mut();
   let mut rez: arith_t = 0;
-  let mut err: *const libc::c_char = 0 as *const libc::c_char;
+  let mut err: *const libc::c_char = std::ptr::null();
   /* There is no operator that can work without arguments */
   if !(*numstackptr == numstack) {
     top_of_stack = (*numstackptr).offset(-1);
@@ -727,7 +727,7 @@ unsafe extern "C" fn evaluate_string(
   let mut var_name_size: size_t = 0;
   let mut current_block: u64;
   let mut lasttok: operator = 0;
-  let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut errmsg: *const libc::c_char = std::ptr::null();
   expr = skip_whitespace(expr);
   let mut start_expr: *const libc::c_char = expr;
   let mut expr_len: libc::c_uint = strlen(expr).wrapping_add(2i32 as libc::c_ulong) as libc::c_uint;
@@ -755,9 +755,9 @@ unsafe extern "C" fn evaluate_string(
   let fresh2 = stackptr;
   stackptr = stackptr.offset(1);
   *fresh2 = lasttok;
-  errmsg = 0 as *const libc::c_char;
+  errmsg = std::ptr::null();
   's_37: loop {
-    let mut p: *const libc::c_char = 0 as *const libc::c_char;
+    let mut p: *const libc::c_char = std::ptr::null();
     let mut op: operator = 0;
     let mut prec: operator = 0;
     let mut arithval: libc::c_char = 0;
@@ -987,7 +987,7 @@ pub unsafe extern "C" fn arith(
   mut math_state: *mut arith_state_t,
   mut expr: *const libc::c_char,
 ) -> arith_t {
-  (*math_state).errmsg = 0 as *const libc::c_char;
+  (*math_state).errmsg = std::ptr::null();
   (*math_state).list_of_recursed_names = std::ptr::null_mut();
   return evaluate_string(math_state, expr);
 }

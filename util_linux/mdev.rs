@@ -903,7 +903,7 @@ unsafe extern "C" fn next_rule() -> *const rule {
       Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
     );
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename;
-    *fresh5 = 0 as *const libc::c_char
+    *fresh5 = std::ptr::null()
   }
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .rule_vec
@@ -1141,7 +1141,7 @@ unsafe extern "C" fn make_device(
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_idx = 0i32 as libc::c_uint;
   loop {
-    let mut str_to_match: *const libc::c_char = 0 as *const libc::c_char;
+    let mut str_to_match: *const libc::c_char = std::ptr::null();
     let mut off: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
     let mut command: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut alias: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1149,7 +1149,7 @@ unsafe extern "C" fn make_device(
     let mut aliaslink: libc::c_char = 0; /* for compiler */
     aliaslink = aliaslink;
     let mut node_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut rule: *const rule = 0 as *const rule;
+    let mut rule: *const rule = std::ptr::null();
     str_to_match = device_name;
     rule = next_rule();
     if env_matches((*rule).envmatch) == 0 {

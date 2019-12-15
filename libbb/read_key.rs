@@ -67,7 +67,7 @@ pub unsafe extern "C" fn read_key(
     events: 0,
     revents: 0,
   };
-  let mut seq: *const libc::c_char = 0 as *const libc::c_char;
+  let mut seq: *const libc::c_char = std::ptr::null();
   let mut n: libc::c_int = 0;
   /* Known escape sequences for cursor and function keys.
    * See "Xterm Control Sequences"

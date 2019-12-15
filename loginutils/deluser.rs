@@ -113,9 +113,9 @@ pub unsafe extern "C" fn deluser_main(
   /* Username (non-NULL only in "delgroup USER GROUP" case) */
   let mut member: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Name of passwd or group file */
-  let mut pfile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pfile: *const libc::c_char = std::ptr::null();
   /* Name of shadow or gshadow file */
-  let mut sfile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sfile: *const libc::c_char = std::ptr::null();
   /* Are we deluser or delgroup? */
   let mut do_deluser: libc::c_int = (1i32 != 0
     && (1i32 == 0 || *applet_name.offset(3) as libc::c_int == 'u' as i32))
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn deluser_main(
                 return 1i32;
               }
               pfile = sfile;
-              sfile = 0 as *const libc::c_char;
+              sfile = std::ptr::null();
               if !(1i32 != 0 && !pfile.is_null()) {
                 break;
               }

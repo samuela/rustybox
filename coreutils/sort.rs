@@ -677,7 +677,7 @@ pub unsafe extern "C" fn sort_main(
       }
       while *str_k != 0 {
         let mut flag: libc::c_int = 0;
-        let mut idx: *const libc::c_char = 0 as *const libc::c_char;
+        let mut idx: *const libc::c_char = std::ptr::null();
         if *str_k as libc::c_int == ',' as i32 && {
           let fresh2 = i;
           i = i + 1;

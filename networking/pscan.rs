@@ -209,7 +209,7 @@ pub unsafe extern "C" fn pscan_main(
    * Rule of thumb: with min_rtt of N msec, scanning 1000 ports
    * will take N seconds at absolute minimum */
   let mut opt_min_rtt: *const libc::c_char = b"5\x00" as *const u8 as *const libc::c_char; /* -T: default min rtt in msec */
-  let mut result_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut result_str: *const libc::c_char = std::ptr::null();
   let mut lsap: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
@@ -291,7 +291,7 @@ pub unsafe extern "C" fn pscan_main(
     /* We need unblocking socket so we don't need to wait for ETIMEOUT. */
     /* Nonblocking connect typically "fails" with errno == EINPROGRESS */
     ndelay_on(s);
-    result_str = 0 as *const libc::c_char;
+    result_str = std::ptr::null();
     start = monotonic_us() as libc::c_uint;
     if connect(
       s,

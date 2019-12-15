@@ -527,7 +527,7 @@ pub unsafe extern "C" fn setup_environment(
   }
   let mut current_block_16: u64;
   if flags & 1i32 << 1i32 != 0 {
-    let mut term: *const libc::c_char = 0 as *const libc::c_char;
+    let mut term: *const libc::c_char = std::ptr::null();
     // No, gcc (4.2.1) is not clever enougn to do it itself.
     //xsetenv("USER",    pw->pw_name);
     //xsetenv("LOGNAME", pw->pw_name);

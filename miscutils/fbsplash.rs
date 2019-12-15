@@ -748,9 +748,9 @@ pub unsafe extern "C" fn fbsplash_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut fb_device: *const libc::c_char = 0 as *const libc::c_char;
-  let mut cfg_filename: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fifo_filename: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fb_device: *const libc::c_char = std::ptr::null();
+  let mut cfg_filename: *const libc::c_char = std::ptr::null();
+  let mut fifo_filename: *const libc::c_char = std::ptr::null();
   let mut fp: *mut FILE = std::ptr::null_mut();
   fp = fp;
   let mut num_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -762,8 +762,8 @@ pub unsafe extern "C" fn fbsplash_main(
   asm!("" : : : "memory" : "volatile");
   // parse command line options
   fb_device = b"/dev/fb0\x00" as *const u8 as *const libc::c_char;
-  cfg_filename = 0 as *const libc::c_char;
-  fifo_filename = 0 as *const libc::c_char;
+  cfg_filename = std::ptr::null();
+  fifo_filename = std::ptr::null();
   bCursorOff = 1i32 as libc::c_uint
     & getopt32(
       argv,

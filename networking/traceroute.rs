@@ -760,11 +760,11 @@ unsafe extern "C" fn packet4_ok(
   mut from: *const sockaddr_in,
   mut seq: libc::c_int,
 ) -> libc::c_int {
-  let mut icp: *const icmp = 0 as *const icmp;
+  let mut icp: *const icmp = std::ptr::null();
   let mut type_0: libc::c_uchar = 0;
   let mut code: libc::c_uchar = 0;
   let mut hlen: libc::c_int = 0;
-  let mut ip: *const ip = 0 as *const ip;
+  let mut ip: *const ip = std::ptr::null();
   ip = (*ptr_to_globals).recv_pkt.as_mut_ptr() as *mut ip;
   hlen = ((*ip).ip_hl() as libc::c_int) << 2i32;
   if read_len < hlen + 8i32 {
@@ -809,8 +809,8 @@ unsafe extern "C" fn packet4_ok(
     || type_0 as libc::c_int == 3i32
     || type_0 as libc::c_int == 0i32
   {
-    let mut hip: *const ip = 0 as *const ip;
-    let mut up: *const udphdr = 0 as *const udphdr;
+    let mut hip: *const ip = std::ptr::null();
+    let mut up: *const udphdr = std::ptr::null();
     hip = &(*icp).icmp_dun.id_ip.idi_ip;
     hlen = ((*hip).ip_hl() as libc::c_int) << 2i32;
     if option_mask32 & OPT_USE_ICMP as libc::c_int as libc::c_uint != 0 {
@@ -968,7 +968,7 @@ unsafe extern "C" fn packet_ok(
   mut to: *mut sockaddr,
   mut seq: libc::c_int,
 ) -> libc::c_int {
-  let mut icp: *const icmp6_hdr = 0 as *const icmp6_hdr;
+  let mut icp: *const icmp6_hdr = std::ptr::null();
   let mut type_0: libc::c_uchar = 0;
   let mut code: libc::c_uchar = 0;
   if (*from_lsa).u.sa.sa_family as libc::c_int == 2i32 {

@@ -533,7 +533,7 @@ unsafe extern "C" fn print_ascii(
     if !(fresh11 != 0) {
       break;
     }
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
+    let mut s: *const libc::c_char = std::ptr::null();
     let fresh12 = block;
     block = block.offset(1);
     let mut c: libc::c_uint = *(fresh12 as *mut libc::c_uchar) as libc::c_uint;
@@ -651,7 +651,7 @@ unsafe extern "C" fn decode_one_format(
   let mut size_spec: size_spec = NO_SIZE;
   let mut size: libc::c_uint = 0;
   let mut fmt: output_format = SIGNED_DECIMAL;
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut print_function: Option<
@@ -1038,7 +1038,7 @@ unsafe extern "C" fn decode_format_string(mut s: *const libc::c_char) {
       hexl_mode_trailer: 0,
       field_width: 0,
     };
-    let mut next: *const libc::c_char = 0 as *const libc::c_char;
+    let mut next: *const libc::c_char = std::ptr::null();
     next = decode_one_format(s_orig, s, &mut tspec);
     s = next;
     let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).spec;
@@ -1573,9 +1573,9 @@ pub unsafe extern "C" fn od_main(
     105, 99, 97, 116, 101, 115, 0, 0, 118, 115, 116, 114, 105, 110, 103, 115, 0, 2, 83, 119, 105,
     100, 116, 104, 0, 2, 119, 116, 114, 97, 100, 105, 116, 105, 111, 110, 97, 108, 0, 0, -1, 0,
   ];
-  let mut str_A: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_N: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_j: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_A: *const libc::c_char = std::ptr::null();
+  let mut str_N: *const libc::c_char = std::ptr::null();
+  let mut str_j: *const libc::c_char = std::ptr::null();
   let mut str_S: *const libc::c_char = b"3\x00" as *const u8 as *const libc::c_char;
   let mut lst_t: *mut llist_t = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;

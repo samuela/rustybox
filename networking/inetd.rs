@@ -1665,7 +1665,7 @@ pub unsafe extern "C" fn inetd_main(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid != 0i32 as libc::c_uint {
     /* run by non-root user */
     let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename;
-    *fresh19 = 0 as *const libc::c_char
+    *fresh19 = std::ptr::null()
   }
   /* -q N, -R N */
   opt = getopt32(

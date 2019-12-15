@@ -425,7 +425,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut hccp: *mut hcc = std::ptr::null_mut();
-  let mut instructs: *const libc::c_char = 0 as *const libc::c_char;
+  let mut instructs: *const libc::c_char = std::ptr::null();
   let mut msg_per_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len_per_host: libc::c_uint = 0;
   len_per_host = len_per_host;

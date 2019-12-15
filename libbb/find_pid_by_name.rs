@@ -136,7 +136,7 @@ unsafe extern "C" fn comm_match(
   mut procName: *const libc::c_char,
 ) -> libc::c_int {
   let mut argv1idx: libc::c_int = 0; /* comm does not match */
-  let mut argv1: *const libc::c_char = 0 as *const libc::c_char;
+  let mut argv1: *const libc::c_char = std::ptr::null();
   if strncmp((*p).comm.as_mut_ptr(), procName, 15i32 as libc::c_ulong) != 0i32 {
     return 0i32;
   }

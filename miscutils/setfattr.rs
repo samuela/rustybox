@@ -62,7 +62,7 @@ pub unsafe extern "C" fn setfattr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut name: *const libc::c_char = std::ptr::null();
   let mut value: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut status: libc::c_int = 0;
   let mut opt: libc::c_int = 0;

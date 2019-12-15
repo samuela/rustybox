@@ -604,7 +604,7 @@ unsafe extern "C" fn process_packet(
 ) -> libc::c_int {
   let mut head: *mut dns_head = std::ptr::null_mut();
   let mut unaligned_type_class: *mut type_and_class = std::ptr::null_mut();
-  let mut err_msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut err_msg: *const libc::c_char = std::ptr::null();
   let mut query_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut answstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut answb: *mut u8 = std::ptr::null_mut();
@@ -662,7 +662,7 @@ unsafe extern "C" fn process_packet(
     }
     __v
   };
-  err_msg = 0 as *const libc::c_char;
+  err_msg = std::ptr::null();
   /* start of query string */
   query_string = head.offset(1) as *mut libc::c_void as *mut libc::c_char;
   /* caller guarantees strlen is <= MAX_PACK_LEN */

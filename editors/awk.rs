@@ -1249,9 +1249,9 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
   /* Initialized to TC_OPTERM: */
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut tl: *const libc::c_char = 0 as *const libc::c_char;
+  let mut tl: *const libc::c_char = std::ptr::null();
   let mut tc: u32 = 0;
-  let mut ti: *const u32 = 0 as *const u32;
+  let mut ti: *const u32 = std::ptr::null();
   if (*ptr_to_globals.offset(-1i32 as isize)).t_rollback != 0 {
     (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 0i32 as smallint
   } else if (*(ptr_to_globals as *mut globals2)).next_token__concat_inserted != 0 {
@@ -2196,7 +2196,7 @@ unsafe extern "C" fn mk_splitter(mut s: *const libc::c_char, mut spl: *mut tspli
 unsafe extern "C" fn as_regex(mut op: *mut node, mut preg: *mut regex_t) -> *mut regex_t {
   let mut cflags: libc::c_int = 0;
   let mut v: *mut var = std::ptr::null_mut();
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   if (*op).info & 0xff00i32 as libc::c_uint == OC_REGEXP as libc::c_int as libc::c_uint {
     return if (*ptr_to_globals.offset(-1i32 as isize)).icase as libc::c_int != 0 {
       (*op).r.ire
@@ -2470,8 +2470,8 @@ unsafe extern "C" fn split_f0() {
 unsafe extern "C" fn handle_special(mut v: *mut var) {
   let mut n: libc::c_int = 0;
   let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut sep: *const libc::c_char = 0 as *const libc::c_char;
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sep: *const libc::c_char = std::ptr::null();
+  let mut s: *const libc::c_char = std::ptr::null();
   let mut sl: libc::c_int = 0;
   let mut l: libc::c_int = 0;
   let mut len: libc::c_int = 0;
@@ -2827,7 +2827,7 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
   let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut s1: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s1: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut incr: libc::c_int = 0;
@@ -2919,7 +2919,7 @@ unsafe extern "C" fn awk_sub(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut resbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut sp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sp: *const libc::c_char = std::ptr::null();
   let mut match_no: libc::c_int = 0;
   let mut residx: libc::c_int = 0;
   let mut replen: libc::c_int = 0;
@@ -2973,7 +2973,7 @@ unsafe extern "C" fn awk_sub(
     residx += eo;
     match_no += 1;
     if match_no >= nm {
-      let mut s: *const libc::c_char = 0 as *const libc::c_char;
+      let mut s: *const libc::c_char = std::ptr::null();
       let mut nbs: libc::c_int = 0;
       /* replace */
       residx -= eo - so;
@@ -3418,7 +3418,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
       }
       if !(*op1).r.n.is_null() {
         /* array ref? */
-        let mut s: *const libc::c_char = 0 as *const libc::c_char;
+        let mut s: *const libc::c_char = std::ptr::null();
         s = getvar_s(evaluate((*op1).r.n, v1));
         hash_remove(iamarray(v), s);
       } else {
@@ -3646,7 +3646,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               /* The body might be empty, still has to eval the args */
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
@@ -4243,7 +4243,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -4815,7 +4815,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -5387,7 +5387,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -5959,7 +5959,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -6531,7 +6531,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -7103,7 +7103,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -7675,7 +7675,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -8247,7 +8247,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -8819,7 +8819,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -9391,7 +9391,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -9963,7 +9963,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -10535,7 +10535,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -11107,7 +11107,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -11679,7 +11679,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -12251,7 +12251,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -12823,7 +12823,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -13395,7 +13395,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -13967,7 +13967,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -14539,7 +14539,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -15111,7 +15111,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -15683,7 +15683,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -16255,7 +16255,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -16827,7 +16827,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -17399,7 +17399,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -17971,7 +17971,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -18543,7 +18543,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -19115,7 +19115,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -19687,7 +19687,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -20259,7 +20259,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -20831,7 +20831,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
             11227437541145425351 => {
               let mut vbeg: *mut var = std::ptr::null_mut();
               let mut v_1: *mut var = std::ptr::null_mut();
-              let mut sv_progname: *const libc::c_char = 0 as *const libc::c_char;
+              let mut sv_progname: *const libc::c_char = std::ptr::null();
               if (*(*op).r.n).info == 0 && (*(*op).r.f).body.first.is_null() {
                 syntax_error(EMSG_UNDEF_FUNC.as_ptr());
               }
@@ -21282,8 +21282,8 @@ unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int
 /* switch to next input file */
 unsafe extern "C" fn next_input_file() -> *mut rstream {
   let mut F: *mut FILE = std::ptr::null_mut(); /* cheat */
-  let mut fname: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ind: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fname: *const libc::c_char = std::ptr::null();
+  let mut ind: *const libc::c_char = std::ptr::null();
   if !(*(ptr_to_globals as *mut globals2))
     .next_input_file__rsm
     .F

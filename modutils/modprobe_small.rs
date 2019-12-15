@@ -313,7 +313,7 @@ unsafe extern "C" fn filename2modname(
   mut modname: *mut libc::c_char,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
-  let mut from: *const libc::c_char = 0 as *const libc::c_char;
+  let mut from: *const libc::c_char = std::ptr::null();
   // Disabled since otherwise "modprobe dir/name" would work
   // as if it is "modprobe name". It is unclear why
   // 'basenamization' was here in the first place.
@@ -543,7 +543,7 @@ unsafe extern "C" fn fileAction(
   mut _depth: libc::c_int,
 ) -> libc::c_int {
   let mut cur: libc::c_int = 0;
-  let mut fname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fname: *const libc::c_char = std::ptr::null();
   let mut is_remove: bool = 1i32 != 0 && 1i32 + 1i32 + 1i32 + 1i32 == 1i32
     || (1i32 != 0 || 1i32 != 0) && option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0;
   pathname = pathname.offset(2);

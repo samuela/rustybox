@@ -394,7 +394,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
   };
   let mut fd: libc::c_int = 0;
   let mut result: libc::c_int = -1i32;
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   fd = socket(
     17i32,
     SOCK_DGRAM as libc::c_int,
@@ -598,7 +598,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
   }; /* struct copy */
   let mut fd: libc::c_int = 0;
   let mut result: libc::c_int = -1i32;
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   fd = socket(10i32, SOCK_DGRAM as libc::c_int, IPPROTO_UDP as libc::c_int);
   if fd < 0i32 {
     msg = b"socket(%s)\x00" as *const u8 as *const libc::c_char;

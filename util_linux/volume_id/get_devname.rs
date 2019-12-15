@@ -286,7 +286,7 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
   uuid = uuid;
   let mut label: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   label = label;
-  let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+  let mut type_0: *const libc::c_char = std::ptr::null();
   type_0 = type_0;
   let mut fd: libc::c_int = 0;
   fd = open(device, 0i32);

@@ -660,7 +660,7 @@ pub unsafe extern "C" fn udhcp_option_idx(
   }
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   s = option_strings;
   while *s != 0 {
     s = s.offset(strlen(s).wrapping_add(1i32 as libc::c_ulong) as isize)
@@ -825,7 +825,7 @@ pub unsafe extern "C" fn udhcp_add_simple_option(
   mut code: u8,
   mut data: u32,
 ) {
-  let mut dh: *const dhcp_optflag = 0 as *const dhcp_optflag;
+  let mut dh: *const dhcp_optflag = std::ptr::null();
   dh = dhcp_optflags.as_ptr();
   while (*dh).code != 0 {
     if (*dh).code as libc::c_int == code as libc::c_int {
@@ -895,7 +895,7 @@ unsafe extern "C" fn attach_option(
   let mut allocated: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*optflag).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int == OPTION_BIN as libc::c_int
   {
-    let mut end: *const libc::c_char = 0 as *const libc::c_char;
+    let mut end: *const libc::c_char = std::ptr::null();
     allocated = xstrdup(buffer);
     end = hex2bin(allocated, buffer, 255i32);
     if *bb_errno != 0 {
@@ -997,7 +997,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
   let mut opt_list: *mut *mut option_set = arg as *mut *mut option_set;
   let mut opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut optflag: *const dhcp_optflag = 0 as *const dhcp_optflag;
+  let mut optflag: *const dhcp_optflag = std::ptr::null();
   let mut userdef_optflag: dhcp_optflag = dhcp_optflag { flags: 0, code: 0 };
   let mut optcode: libc::c_uint = 0;
   let mut retval: libc::c_int = 0;

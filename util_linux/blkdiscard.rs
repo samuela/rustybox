@@ -78,7 +78,7 @@ pub unsafe extern "C" fn blkdiscard_main(
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0; /* Leaving these two variables out does not  */
   let mut offset_str: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char; /* shrink code size and hampers readability. */
-  let mut length_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut length_str: *const libc::c_char = std::ptr::null();
   let mut offset: u64 = 0;
   let mut length: u64 = 0;
   let mut range: [u64; 2] = [0; 2];

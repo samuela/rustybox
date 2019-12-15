@@ -236,7 +236,7 @@ pub unsafe extern "C" fn decode_base64(
   mut src: *const libc::c_char,
 ) -> *const libc::c_char {
   let mut dst: *mut libc::c_char = *pp_dst; /* while (1) */
-  let mut src_tail: *const libc::c_char = 0 as *const libc::c_char;
+  let mut src_tail: *const libc::c_char = std::ptr::null();
   's_11: loop {
     let mut six_bit: [libc::c_uchar; 4] = [0; 4];
     let mut count: libc::c_int = 0i32;
@@ -879,7 +879,7 @@ pub unsafe extern "C" fn read_base64(
   let mut in_buf: [libc::c_char; 66] = [0; 66];
   let mut out_buf: [libc::c_char; 50] = [0; 50];
   let mut out_tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut in_tail: *const libc::c_char = 0 as *const libc::c_char;
+  let mut in_tail: *const libc::c_char = std::ptr::null();
   let mut term_seen: libc::c_int = 0i32;
   let mut in_count: libc::c_int = 0i32;
   loop {

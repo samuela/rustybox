@@ -729,8 +729,8 @@ unsafe extern "C" fn string_option_to_env(
   mut option_end: *const u8,
 ) -> *mut libc::c_char {
   let mut current_block: u64;
-  let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
-  let mut name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ptr: *const libc::c_char = std::ptr::null();
+  let mut name: *const libc::c_char = std::ptr::null();
   let mut val_len: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   ptr = d6_option_strings.as_ptr();
@@ -2509,7 +2509,7 @@ pub unsafe extern "C" fn udhcpc6_main(
   let mut address_timeout: libc::c_uint = 0;
   let mut prefix_timeout: libc::c_uint = 0;
   let mut current_block: u64;
-  let mut str_r: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_r: *const libc::c_char = std::ptr::null();
   let mut clientid_mac_ptr: *mut libc::c_void = std::ptr::null_mut();
   let mut list_O: *mut llist_t = std::ptr::null_mut();
   let mut list_x: *mut llist_t = std::ptr::null_mut();
