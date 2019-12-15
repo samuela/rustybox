@@ -1,8 +1,6 @@
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
-use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -12,48 +10,13 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
-  #[no_mangle]
-  fn crc32_block_endian0(
-    val: u32,
-    buf: *const libc::c_void,
-    len: libc::c_uint,
-    crc_table: *mut u32,
-  ) -> u32;
-  #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut u32;
+
   #[no_mangle]
   static mut global_crc32_table: *mut u32;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn gunzip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn append_ext(
-    filename: *mut libc::c_char,
-    expected_ext: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bbunpack(
-    argv: *mut *mut libc::c_char,
-    unpacker: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-    make_new_name: Option<
-      unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
-    >,
-    expected_ext: *const libc::c_char,
-  ) -> libc::c_int;
+
 }
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -66,8 +29,9 @@ extern "C" {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub l_buf: *mut uch,
   pub d_buf: *mut ush,
@@ -113,26 +77,30 @@ pub const max_lazy_match: C2RustUnnamed_1 = 16;
 pub const max_chain_length: C2RustUnnamed_1 = 128;
 pub const comp_level_minus4: C2RustUnnamed_1 = 2;
 pub const WINDOW_SIZE: C2RustUnnamed_1 = 65536;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ct_data {
   pub fc: C2RustUnnamed_3,
   pub dl: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub dad: ush,
   pub len: ush,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub freq: ush,
   pub code: ush,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tree_desc {
   pub dyn_tree: *mut ct_data,
   pub static_tree: *mut ct_data,
@@ -142,8 +110,9 @@ pub struct tree_desc {
   pub max_length: libc::c_int,
   pub max_code: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals2 {
   pub heap: [ush; 573],
   pub heap_len: libc::c_int,
@@ -185,7 +154,7 @@ unsafe extern "C" fn flush_outbuf() {
   if (*ptr_to_globals.offset(-1)).outcnt == 0i32 as libc::c_uint {
     return;
   }
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     (*ptr_to_globals.offset(-1)).outbuf as *mut libc::c_char as *const libc::c_void,
     (*ptr_to_globals.offset(-1)).outcnt as size_t,
@@ -263,7 +232,7 @@ unsafe extern "C" fn flush_outbuf_if_32bit_optimized() {
  * Return the current crc in either case.
  */
 unsafe extern "C" fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
-  (*ptr_to_globals.offset(-1)).crc = crc32_block_endian0(
+  (*ptr_to_globals.offset(-1)).crc = crate::libbb::crc32::crc32_block_endian0(
     (*ptr_to_globals.offset(-1)).crc,
     s as *const libc::c_void,
     n,
@@ -277,7 +246,7 @@ unsafe extern "C" fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
  */
 unsafe extern "C" fn file_read(mut buf: *mut libc::c_void, mut size: libc::c_uint) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
-  len = safe_read(0i32, buf, size as size_t) as libc::c_uint;
+  len = crate::libbb::read::safe_read(0i32, buf, size as size_t) as libc::c_uint;
   if len == -1i32 as libc::c_uint || len == 0i32 as libc::c_uint {
     return len;
   }
@@ -2133,7 +2102,7 @@ pub unsafe extern "C" fn gzip_main(
   let ref mut fresh80 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh80 = (xzalloc(
+  *fresh80 = (crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<globals>() as libc::c_ulong)
       .wrapping_add(::std::mem::size_of::<globals2>() as libc::c_ulong),
   ) as *mut libc::c_char)
@@ -2141,7 +2110,7 @@ pub unsafe extern "C" fn gzip_main(
     as *mut libc::c_void as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* Must match bbunzip's constants OPT_STDOUT, OPT_FORCE! */
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"cfkvqdtn123456789\x00" as *const u8 as *const libc::c_char,
     gzip_longopts.as_ptr(),
@@ -2151,48 +2120,48 @@ pub unsafe extern "C" fn gzip_main(
     != 0
   {
     /* -d and/or -t */
-    return gunzip_main(argc, argv);
+    return crate::archival::bbunzip::gunzip_main(argc, argv);
   } /* retain only -cfkvq */
   option_mask32 &= ((1i32 << 5i32) - 1i32) as libc::c_uint;
   /* Allocate all global buffers (for DYN_ALLOC option) */
   let ref mut fresh81 = (*ptr_to_globals.offset(-1)).l_buf;
-  *fresh81 = xzalloc(
+  *fresh81 = crate::libbb::xfuncs_printf::xzalloc(
     (((0x2000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh82 = (*ptr_to_globals.offset(-1)).outbuf;
-  *fresh82 = xzalloc(
+  *fresh82 = crate::libbb::xfuncs_printf::xzalloc(
     (((8192i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh83 = (*ptr_to_globals.offset(-1)).d_buf;
-  *fresh83 = xzalloc(
+  *fresh83 = crate::libbb::xfuncs_printf::xzalloc(
     (((0x2000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<ush>() as libc::c_ulong),
   ) as *mut ush;
   let ref mut fresh84 = (*ptr_to_globals.offset(-1)).window;
-  *fresh84 = xzalloc(
+  *fresh84 = crate::libbb::xfuncs_printf::xzalloc(
     (((2i64 * 0x8000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh85 = (*ptr_to_globals.offset(-1)).prev;
-  *fresh85 = xzalloc(
+  *fresh85 = crate::libbb::xfuncs_printf::xzalloc(
     ((((1i64 << 16i32) + 1i64) / 2i32 as libc::c_long) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<ush>() as libc::c_ulong),
   ) as *mut ush;
   /* Initialize the CRC32 table */
-  global_crc32_new_table_le();
+  crate::libbb::crc32::global_crc32_new_table_le();
   argv = argv.offset(optind as isize);
-  return bbunpack(
+  return crate::archival::bbunzip::bbunpack(
     argv,
     Some(pack_gzip as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
-      append_ext
+      crate::archival::bbunzip::append_ext
         as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"gz\x00" as *const u8 as *const libc::c_char,
