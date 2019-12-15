@@ -1,12 +1,10 @@
+use crate::libbb::appletlib::applet_name;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
-use libc::ssize_t;
 use libc::strcmp;
 use libc::strrchr;
 extern "C" {
@@ -20,104 +18,51 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static mut global_crc32_table: *mut u32;
-  #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut u32;
-  #[no_mangle]
-  fn crc32_block_endian0(
-    val: u32,
-    buf: *const libc::c_void,
-    len: libc::c_uint,
-    crc_table: *mut u32,
-  ) -> u32;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn bbunpack(
-    argv: *mut *mut libc::c_char,
-    unpacker: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-    make_new_name: Option<
-      unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
-    >,
-    expected_ext: *const libc::c_char,
-  ) -> libc::c_int;
-  /*
-    This file is part of the LZO real-time data compression library.
 
-    Copyright (C) 1996..2008 Markus Franz Xaver Johannes Oberhumer
-    All Rights Reserved.
+/*
+  This file is part of the LZO real-time data compression library.
 
-    Markus F.X.J. Oberhumer <markus@oberhumer.com>
-    http://www.oberhumer.com/opensource/lzo/
+  Copyright (C) 1996..2008 Markus Franz Xaver Johannes Oberhumer
+  All Rights Reserved.
 
-    The LZO library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License as
-    published by the Free Software Foundation; either version 2 of
-    the License, or (at your option) any later version.
+  Markus F.X.J. Oberhumer <markus@oberhumer.com>
+  http://www.oberhumer.com/opensource/lzo/
 
-    The LZO library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  The LZO library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2 of
+  the License, or (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with the LZO library; see the file COPYING.
-    If not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-  */
-  /*
-  static void die_at(int line)
-  {
-    bb_error_msg_and_die("internal error at %d", line);
-  }
-  #define assert(v) if (!(v)) die_at(__LINE__)
-  */
-  #[no_mangle]
-  fn lzo1x_1_compress(
-    src: *const u8,
-    src_len: libc::c_uint,
-    dst: *mut u8,
-    dst_len: *mut libc::c_uint,
-    wrkmem: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn lzo1x_1_15_compress(
-    src: *const u8,
-    src_len: libc::c_uint,
-    dst: *mut u8,
-    dst_len: *mut libc::c_uint,
-    wrkmem: *mut libc::c_void,
-  ) -> libc::c_int;
-  /* decompression */
-  //int lzo1x_decompress(const u8* src, unsigned src_len,
-  //		u8* dst, unsigned* dst_len /*, void* wrkmem */);
-  /* safe decompression with overrun testing */
-  #[no_mangle]
-  fn lzo1x_decompress_safe(
-    src: *const u8,
-    src_len: libc::c_uint,
-    dst: *mut u8,
-    dst_len: *mut libc::c_uint,
-  ) -> libc::c_int;
+  The LZO library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with the LZO library; see the file COPYING.
+  If not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+/*
+static void die_at(int line)
+{
+  bb_error_msg_and_die("internal error at %d", line);
+}
+#define assert(v) if (!(v)) die_at(__LINE__)
+*/
+
+/* decompression */
+//int lzo1x_decompress(const u8* src, unsigned src_len,
+//		u8* dst, unsigned* dst_len /*, void* wrkmem */);
+/* safe decompression with overrun testing */
+
 }
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -130,13 +75,15 @@ extern "C" {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub chksum: chksum_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct chksum_t {
   pub f_adler32: u32,
   pub f_crc32: u32,
@@ -146,8 +93,9 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const M_LZO1X_999: C2RustUnnamed_0 = 3;
 pub const M_LZO1X_1_15: C2RustUnnamed_0 = 2;
 pub const M_LZO1X_1: C2RustUnnamed_0 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct header_t {
   pub version_be16: u16,
   pub lib_version_be16: u16,
@@ -737,7 +685,12 @@ unsafe extern "C" fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: li
 unsafe extern "C" fn lzo_crc32(mut c: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
   //if (buf == NULL) - impossible
   //	return 0;
-  return !crc32_block_endian0(!c, buf as *const libc::c_void, len, global_crc32_table);
+  return !crate::libbb::crc32::crc32_block_endian0(
+    !c,
+    buf as *const libc::c_void,
+    len,
+    global_crc32_table,
+  );
 }
 /* *********************************************************************/
 unsafe extern "C" fn init_chksum() {
@@ -785,7 +738,7 @@ unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
 /* *********************************************************************/
 unsafe extern "C" fn read32() -> u32 {
   let mut v: u32 = 0;
-  xread(
+  crate::libbb::read_printf::xread(
     0i32,
     &mut v as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
@@ -803,15 +756,14 @@ unsafe extern "C" fn read32() -> u32 {
       let fresh62;
       let fresh63 = __x;
       asm!("bswap $0" : "=r" (fresh62) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh61, fresh63))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh61, fresh63)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh61, fresh63, fresh62);
     }
     __v
   };
 }
 unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
-  xread(0i32, buf, cnt as size_t);
+  crate::libbb::read_printf::xread(0i32, buf, cnt as size_t);
   add_bytes_to_chksum(buf, cnt);
 }
 //static int f_read8(void)
@@ -842,8 +794,7 @@ unsafe extern "C" fn f_read32() -> u32 {
       let fresh65;
       let fresh66 = __x;
       asm!("bswap $0" : "=r" (fresh65) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh64, fresh66))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh64, fresh66)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh64, fresh66, fresh65);
     }
     __v
@@ -863,20 +814,19 @@ unsafe extern "C" fn write32(mut v: u32) {
       let fresh68;
       let fresh69 = __x;
       asm!("bswap $0" : "=r" (fresh68) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh67, fresh69))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh67, fresh69)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh67, fresh69, fresh68);
     }
     __v
   };
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     &mut v as *mut u32 as *const libc::c_void,
     4i32 as size_t,
   );
 }
 unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
-  xwrite(1i32, buf, cnt as size_t);
+  crate::libbb::xfuncs_printf::xwrite(1i32, buf, cnt as size_t);
   add_bytes_to_chksum(buf, cnt);
 }
 /* DO NOT CHANGE */
@@ -888,8 +838,8 @@ unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int)
 unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint; /* LZO_E_OK */
   let mut r: libc::c_int = 0i32;
-  let b1: *mut u8 = xzalloc(block_size as size_t) as *mut u8;
-  let b2: *mut u8 = xzalloc(
+  let b1: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(block_size as size_t) as *mut u8;
+  let b2: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(
     block_size
       .wrapping_add(block_size.wrapping_div(16i32 as libc::c_uint))
       .wrapping_add(64i32 as libc::c_uint)
@@ -904,12 +854,12 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
    * -7..9: M_LZO1X_999 if ENABLE_LZOP_COMPR_HIGH
    */
   if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
-    wrk_mem = xzalloc(
+    wrk_mem = crate::libbb::xfuncs_printf::xzalloc(
       (16384i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
     ) as *mut u8
   } else {
     /* check only if it's not the only possibility */
-    wrk_mem = xzalloc(
+    wrk_mem = crate::libbb::xfuncs_printf::xzalloc(
       (32768i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut u8>() as libc::c_ulong),
     ) as *mut u8
   }
@@ -923,7 +873,8 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
     // if (src_len < block_size)
     // 	break;
     /* read a block */
-    l = full_read(0i32, b1 as *mut libc::c_void, block_size as size_t) as libc::c_int;
+    l = crate::libbb::read::full_read(0i32, b1 as *mut libc::c_void, block_size as size_t)
+      as libc::c_int;
     src_len = if l > 0i32 { l } else { 0i32 } as libc::c_uint;
     if src_len == 0i32 as libc::c_uint {
       write32(0i32 as u32);
@@ -944,8 +895,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           let fresh71;
           let fresh72 = __x;
           asm!("bswap $0" : "=r" (fresh71) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh70, fresh72))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh70, fresh72)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh70, fresh72, fresh71);
         }
         __v
@@ -961,13 +911,25 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       }
       /* compress */
       if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
-        r = lzo1x_1_compress(b1, src_len, b2, &mut dst_len, wrk_mem as *mut libc::c_void)
+        r = crate::archival::libarchive::lzo1x_1::lzo1x_1_compress(
+          b1,
+          src_len,
+          b2,
+          &mut dst_len,
+          wrk_mem as *mut libc::c_void,
+        )
       } else {
-        r = lzo1x_1_15_compress(b1, src_len, b2, &mut dst_len, wrk_mem as *mut libc::c_void)
+        r = crate::archival::libarchive::lzo1x_1o::lzo1x_1_15_compress(
+          b1,
+          src_len,
+          b2,
+          &mut dst_len,
+          wrk_mem as *mut libc::c_void,
+        )
       }
       if r != 0i32 {
         /* not LZO_E_OK */
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"%s: %s\x00" as *const u8 as *const libc::c_char,
           b"internal error\x00" as *const u8 as *const libc::c_char,
           b"compression\x00" as *const u8 as *const libc::c_char,
@@ -980,7 +942,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           let mut new_len: libc::c_uint = src_len;
           r = lzo1x_optimize(b2, dst_len, b1, &mut new_len);
           if r != 0i32 || new_len != src_len {
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               b"%s: %s\x00" as *const u8 as *const libc::c_char,
               b"internal error\x00" as *const u8 as *const libc::c_char,
               b"optimization\x00" as *const u8 as *const libc::c_char,
@@ -1002,8 +964,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh75;
             let fresh76 = __x;
             asm!("bswap $0" : "=r" (fresh75) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh74, fresh76))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh74, fresh76)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh74, fresh76, fresh75);
           }
           __v
@@ -1025,8 +986,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh79;
             let fresh80 = __x;
             asm!("bswap $0" : "=r" (fresh79) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh78, fresh80, fresh79);
           }
           __v
@@ -1049,8 +1009,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh83;
             let fresh84 = __x;
             asm!("bswap $0" : "=r" (fresh83) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh82, fresh84))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh82, fresh84)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh82, fresh84, fresh83);
           }
           __v
@@ -1072,8 +1031,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh87;
             let fresh88 = __x;
             asm!("bswap $0" : "=r" (fresh87) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh86, fresh88))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh86, fresh88)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh86, fresh88, fresh87);
           }
           __v
@@ -1097,8 +1055,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               let fresh91;
               let fresh92 = __x;
               asm!("bswap $0" : "=r" (fresh91) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh90, fresh92, fresh91);
             }
             __v
@@ -1120,15 +1077,14 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               let fresh95;
               let fresh96 = __x;
               asm!("bswap $0" : "=r" (fresh95) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh94, fresh96))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh94, fresh96)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh94, fresh96, fresh95);
             }
             __v
           }
         }
       }
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         1i32,
         wordbuf.as_mut_ptr() as *const libc::c_void,
         (wordptr as *mut libc::c_char)
@@ -1137,10 +1093,10 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       );
       if dst_len < src_len {
         /* write compressed block data */
-        xwrite(1i32, b2 as *const libc::c_void, dst_len as size_t);
+        crate::libbb::xfuncs_printf::xwrite(1i32, b2 as *const libc::c_void, dst_len as size_t);
       } else {
         /* write uncompressed block data */
-        xwrite(1i32, b1 as *const libc::c_void, src_len as size_t);
+        crate::libbb::xfuncs_printf::xwrite(1i32, b1 as *const libc::c_void, src_len as size_t);
       }
     }
   }
@@ -1162,7 +1118,9 @@ unsafe extern "C" fn lzo_check(
    */
   let mut c: u32 = fn_0.expect("non-null function pointer")(init, buf, len);
   if c != ref_0 {
-    bb_simple_error_msg_and_die(b"checksum error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"checksum error\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* *********************************************************************/
@@ -1197,17 +1155,21 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
     /* error if split file */
     if dst_len as libc::c_long == 0xffffffffi64 {
       /* should not happen - not yet implemented */
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"this file is a split lzop file\x00" as *const u8 as *const libc::c_char,
       );
     }
     if dst_len as libc::c_long > 64i32 as libc::c_long * 1024i64 * 1024i64 {
-      bb_simple_error_msg_and_die(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"corrupted data\x00" as *const u8 as *const libc::c_char,
+      );
     }
     /* read compressed block size */
     src_len = read32();
     if src_len <= 0i32 as libc::c_uint || src_len > dst_len {
-      bb_simple_error_msg_and_die(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"corrupted data\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if dst_len > block_size {
       if !b2.is_null() {
@@ -1237,13 +1199,13 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       }
     }
     if b2.is_null() {
-      b2 = xzalloc(mcs_block_size as size_t) as *mut u8
+      b2 = crate::libbb::xfuncs_printf::xzalloc(mcs_block_size as size_t) as *mut u8
     }
     /* read the block into the end of our buffer */
     b1 = b2
       .offset(mcs_block_size as isize)
       .offset(-(src_len as isize));
-    xread(0i32, b1 as *mut libc::c_void, src_len as size_t);
+    crate::libbb::read_printf::xread(0i32, b1 as *mut libc::c_void, src_len as size_t);
     if src_len < dst_len {
       let mut d: libc::c_uint = dst_len;
       if option_mask32 & OPT_F as libc::c_int as libc::c_uint == 0 {
@@ -1271,9 +1233,11 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       //			if (option_mask32 & OPT_F)
       //				r = lzo1x_decompress(b1, src_len, b2, &d /*, NULL*/);
       //			else
-      r = lzo1x_decompress_safe(b1, src_len, b2, &mut d);
+      r = crate::archival::libarchive::lzo1x_d::lzo1x_decompress_safe(b1, src_len, b2, &mut d);
       if r != 0i32 || dst_len != d {
-        bb_simple_error_msg_and_die(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"corrupted data\x00" as *const u8 as *const libc::c_char,
+        );
       }
       dst = b2
     } else {
@@ -1302,7 +1266,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       }
     }
     /* write uncompressed block data */
-    xwrite(1i32, dst as *const libc::c_void, dst_len as size_t);
+    crate::libbb::xfuncs_printf::xwrite(1i32, dst as *const libc::c_void, dst_len as size_t);
   }
   free(b2 as *mut libc::c_void);
   return 1i32;
@@ -1349,7 +1313,7 @@ static mut lzop_magic: [libc::c_uchar; 9] = [
 /* This coding is derived from Alexander Lehmann's pngcheck code. */
 unsafe extern "C" fn check_magic() {
   let mut magic: [libc::c_uchar; 9] = [0; 9];
-  xread(
+  crate::libbb::read_printf::xread(
     0i32,
     magic.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_uchar; 9]>() as libc::c_ulong,
@@ -1360,7 +1324,9 @@ unsafe extern "C" fn check_magic() {
     ::std::mem::size_of::<[libc::c_uchar; 9]>() as libc::c_ulong,
   ) != 0i32
   {
-    bb_simple_error_msg_and_die(b"bad magic number\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"bad magic number\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* *********************************************************************/
@@ -1368,7 +1334,7 @@ unsafe extern "C" fn check_magic() {
 /* *********************************************************************/
 unsafe extern "C" fn write_header(mut h: *mut header_t) {
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     lzop_magic.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_uchar; 9]>() as libc::c_ulong,
@@ -1396,8 +1362,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
       let fresh99;
       let fresh100 = __x;
       asm!("bswap $0" : "=r" (fresh99) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh98, fresh100))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh98, fresh100)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh98, fresh100, fresh99);
     }
     __v
@@ -1436,8 +1401,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh102;
       let fresh103 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh102) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh101, fresh103))
-                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh101, fresh103)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh101, fresh103, fresh102);
     }
     __v
@@ -1456,8 +1420,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh105;
       let fresh106 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh105) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh104, fresh106))
-                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh104, fresh106)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh104, fresh106, fresh105);
     }
     __v
@@ -1504,8 +1467,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh108;
       let fresh109 = __x;
       asm!("bswap $0" : "=r" (fresh108) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh107, fresh109))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh107, fresh109)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh107, fresh109, fresh108);
     }
     __v
@@ -1566,7 +1528,7 @@ unsafe extern "C" fn lzo_set_method(mut h: *mut header_t) {
     level = 1i32 as smallint
   }
   if option_mask32 & OPT_789 as libc::c_int as libc::c_uint != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"high compression not compiled in\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -1602,8 +1564,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       let fresh111;
       let fresh112 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh111) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh110, fresh112))
-                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh110, fresh112)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh110, fresh112, fresh111);
     }
     __v
@@ -1619,8 +1580,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       let fresh114;
       let fresh115 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh114) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh113, fresh115))
-                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh113, fresh115)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh113, fresh115, fresh114);
     }
     __v
@@ -1636,8 +1596,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       let fresh117;
       let fresh118 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh117) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh116, fresh118))
-                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh116, fresh118)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh116, fresh118, fresh117);
     }
     __v
@@ -1655,8 +1614,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
       let fresh120;
       let fresh121 = __x;
       asm!("bswap $0" : "=r" (fresh120) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh119, fresh121))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh119, fresh121)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh119, fresh121, fresh120);
     }
     __v
@@ -1677,8 +1635,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
         let fresh123;
         let fresh124 = __x;
         asm!("bswap $0" : "=r" (fresh123) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh122, fresh124))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh122, fresh124)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh122, fresh124, fresh123);
       }
       __v
@@ -1697,8 +1654,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
           let fresh126;
           let fresh127 = __x;
           asm!("bswap $0" : "=r" (fresh126) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh125, fresh127))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh125, fresh127)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh125, fresh127, fresh126);
         }
         __v
@@ -1729,7 +1685,7 @@ unsafe extern "C" fn do_lzo_decompress() -> libc::c_int {
   check_magic();
   r = read_header(&mut header);
   if r != 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"header_error %d\x00" as *const u8 as *const libc::c_char,
       r,
     );
@@ -1748,12 +1704,18 @@ unsafe extern "C" fn make_new_name_lzop(
         b"lzo\x00" as *const u8 as *const libc::c_char,
       ) != 0i32
     {
-      return xasprintf(b"%s.out\x00" as *const u8 as *const libc::c_char, filename);
+      return crate::libbb::xfuncs_printf::xasprintf(
+        b"%s.out\x00" as *const u8 as *const libc::c_char,
+        filename,
+      );
     }
     *extension = '\u{0}' as i32 as libc::c_char;
     return filename;
   }
-  return xasprintf(b"%s.lzo\x00" as *const u8 as *const libc::c_char, filename);
+  return crate::libbb::xfuncs_printf::xasprintf(
+    b"%s.lzo\x00" as *const u8 as *const libc::c_char,
+    filename,
+  );
 }
 unsafe extern "C" fn pack_lzop(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   if option_mask32 & OPT_DECOMPRESS as libc::c_int as libc::c_uint != 0 {
@@ -1766,7 +1728,7 @@ pub unsafe extern "C" fn lzop_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"cfUvqdt123456789CFk\x00" as *const u8 as *const libc::c_char,
   );
@@ -1786,8 +1748,8 @@ pub unsafe extern "C" fn lzop_main(
   if false && *applet_name.offset(4) as libc::c_int == 'o' as i32 {
     option_mask32 |= OPT_DECOMPRESS as libc::c_int as libc::c_uint
   }
-  global_crc32_new_table_le();
-  return bbunpack(
+  crate::libbb::crc32::global_crc32_new_table_le();
+  return crate::archival::bbunzip::bbunpack(
     argv,
     Some(pack_lzop as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
