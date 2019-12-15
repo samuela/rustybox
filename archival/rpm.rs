@@ -22,9 +22,9 @@ use libc::printf;
 use libc::stat;
 use libc::strcmp;
 use libc::time_t;
+use libc::tm;
 use libc::uid_t;
 extern "C" {
-
   #[no_mangle]
   static mut optind: libc::c_int;
 
@@ -66,60 +66,18 @@ extern "C" {
   /* Search for an entry with a matching username.  */
 
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn copy_file(
-    source: *const libc::c_char,
-    dest: *const libc::c_char,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
+
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
+
   /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
-  #[no_mangle]
-  fn setup_unzip_on_fd(fd: libc::c_int, fail_if_not_compressed: libc::c_int) -> libc::c_int;
+
   /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
-  #[no_mangle]
-  fn setup_lzma_on_fd(fd: libc::c_int);
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   static bb_msg_standard_output: [libc::c_char; 0];
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn init_handle() -> *mut archive_handle_t;
-  #[no_mangle]
-  fn data_extract_all(archive_handle: *mut archive_handle_t);
-  #[no_mangle]
-  fn get_header_cpio(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn seek_by_read(fd: libc::c_int, amount: off_t);
-  #[no_mangle]
-  fn check_errors_in_children(signo: libc::c_int);
 }
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -132,7 +90,6 @@ extern "C" {
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use libc::tm;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -175,8 +132,9 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub map: *mut libc::c_void,
   pub mytags: *mut rpm_index,
@@ -184,8 +142,9 @@ pub struct globals {
   pub mapsize: libc::c_uint,
   pub pagesize: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rpm_index {
   pub tag: u32,
   pub type_0: u32,
@@ -194,8 +153,9 @@ pub struct rpm_index {
 }
 
 /* Then follows the header: */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rpm_header {
   pub magic_and_ver: u32,
   pub reserved: u32,
@@ -222,9 +182,9 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
     filename = bb_msg_standard_output.as_ptr(); /* Seek past the unused lead */
     fd = 0i32
   } else {
-    fd = xopen(filename, 0i32)
+    fd = crate::libbb::xfuncs_printf::xopen(filename, 0i32)
   }
-  storepos = xlseek(fd, 96i32 as off_t, 1i32) as libc::c_uint;
+  storepos = crate::libbb::xfuncs_printf::xlseek(fd, 96i32 as off_t, 1i32) as libc::c_uint;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount = 0i32;
   tags = 0 as *mut rpm_index;
   idx = 0i32 as libc::c_uint;
@@ -238,7 +198,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
       size: 0,
     };
     let mut cnt: libc::c_uint = 0;
-    xread(
+    crate::libbb::read_printf::xread(
       fd,
       &mut header as *mut rpm_header as *mut libc::c_void,
       ::std::mem::size_of::<rpm_header>() as libc::c_ulong,
@@ -257,14 +217,13 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           let fresh1;
           let fresh2 = __x;
           asm!("bswap $0" : "=r" (fresh1) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
       })
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"invalid RPM header magic in \'%s\'\x00" as *const u8 as *const libc::c_char,
         filename,
       );
@@ -282,8 +241,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         let fresh4;
         let fresh5 = __x;
         asm!("bswap $0" : "=r" (fresh4) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
@@ -301,8 +259,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         let fresh7;
         let fresh8 = __x;
         asm!("bswap $0" : "=r" (fresh7) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -313,13 +270,13 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
     ) as libc::c_uint as libc::c_uint;
     let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount;
     *fresh9 = (*fresh9 as libc::c_uint).wrapping_add(cnt) as libc::c_int as libc::c_int;
-    tags = xrealloc(
+    tags = crate::libbb::xfuncs_printf::xrealloc(
       tags as *mut libc::c_void,
       (::std::mem::size_of::<rpm_index>() as libc::c_ulong).wrapping_mul(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount as libc::c_ulong,
       ),
     ) as *mut rpm_index;
-    xread(
+    crate::libbb::read_printf::xread(
       fd,
       &mut *tags.offset(idx as isize) as *mut rpm_index as *mut libc::c_void,
       (::std::mem::size_of::<rpm_index>() as libc::c_ulong).wrapping_mul(cnt as libc::c_ulong),
@@ -344,8 +301,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           let fresh12;
           let fresh13 = __x;
           asm!("bswap $0" : "=r" (fresh12) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
         }
         __v
@@ -363,8 +319,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           let fresh15;
           let fresh16 = __x;
           asm!("bswap $0" : "=r" (fresh15) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
         }
         __v
@@ -382,47 +337,29 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
           let fresh18;
           let fresh19 = __x;
           asm!("bswap $0" : "=r" (fresh18) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
         }
         __v
       };
-      (*tag).offset =
-                storepos.wrapping_add({
-                                           let mut __v: libc::c_uint = 0;
-                                           let mut __x: libc::c_uint =
-                                               (*tag).offset;
-                                           if false {
-                                               __v =
-                                                   (__x & 0xff000000u32) >>
-                                                       24i32 |
-                                                       (__x &
-                                                            0xff0000i32 as
-                                                                libc::c_uint)
-                                                           >> 8i32 |
-                                                       (__x &
-                                                            0xff00i32 as
-                                                                libc::c_uint)
-                                                           << 8i32 |
-                                                       (__x &
-                                                            0xffi32 as
-                                                                libc::c_uint)
-                                                           << 24i32
-                                           } else {
-                                               let fresh20 = &mut __v;
-                                               let fresh21;
-                                               let fresh22 = __x;
-                                               asm!("bswap $0" : "=r"
-                                                    (fresh21) : "0"
-                                                    (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22))
-                                                    :);
-                                               c2rust_asm_casts::AsmCast::cast_out(fresh20,
-                                                                                   fresh22,
-                                                                                   fresh21);
-                                           }
-                                           __v
-                                       });
+      (*tag).offset = storepos.wrapping_add({
+        let mut __v: libc::c_uint = 0;
+        let mut __x: libc::c_uint = (*tag).offset;
+        if false {
+          __v = (__x & 0xff000000u32) >> 24i32
+            | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
+            | (__x & 0xff00i32 as libc::c_uint) << 8i32
+            | (__x & 0xffi32 as libc::c_uint) << 24i32
+        } else {
+          let fresh20 = &mut __v;
+          let fresh21;
+          let fresh22 = __x;
+          asm!("bswap $0" : "=r" (fresh21) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22)) :);
+          c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
+        }
+        __v
+      });
       if pass == 0i32 as libc::c_uint {
         (*tag).tag = ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as u32 as u32
       }
@@ -435,7 +372,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
       }
     }
     /* Seek past store */
-    storepos = xlseek(fd, header.size as off_t, 1i32) as libc::c_uint;
+    storepos = crate::libbb::xfuncs_printf::xlseek(fd, header.size as off_t, 1i32) as libc::c_uint;
     pass = pass.wrapping_add(1)
   }
   let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags;
@@ -457,7 +394,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
     0i32 as off64_t,
   );
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).map == -1i32 as *mut libc::c_void {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"mmap \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -545,8 +482,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
         let fresh26;
         let fresh27 = __x;
         asm!("bswap $0" : "=r" (fresh26) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
       }
       __v
@@ -565,8 +501,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
         let fresh29;
         let fresh30 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh29) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh28, fresh30, fresh29);
       }
       __v
@@ -609,16 +544,16 @@ unsafe extern "C" fn fileaction_dobackup(
       && oldfile.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     {
       /* File already exists  - really should check MD5's etc to see if different */
-      newname = xasprintf(
+      newname = crate::libbb::xfuncs_printf::xasprintf(
         b"%s.rpmorig\x00" as *const u8 as *const libc::c_char,
         filename,
       );
-      copy_file(
+      crate::libbb::copy_file::copy_file(
         filename,
         newname,
         FILEUTILS_RECUR as libc::c_int | FILEUTILS_PRESERVE_STATUS as libc::c_int,
       );
-      remove_file(
+      crate::libbb::remove_file::remove_file(
         filename,
         FILEUTILS_RECUR as libc::c_int | FILEUTILS_FORCE as libc::c_int,
       );
@@ -637,7 +572,8 @@ unsafe extern "C" fn fileaction_setowngrp(
   } else {
     getuid()
   } as libc::c_int;
-  let mut gr: *mut group = bb_internal_getgrnam(rpm_getstr(1040i32, fileref));
+  let mut gr: *mut group =
+    crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(rpm_getstr(1040i32, fileref));
   let mut gid: libc::c_int = if !gr.is_null() {
     (*gr).gr_gid
   } else {
@@ -651,7 +587,7 @@ unsafe extern "C" fn loop_through_files(
 ) {
   let mut count: libc::c_int = 0i32;
   while !rpm_getstr(filetag, count).is_null() {
-    let mut filename: *mut libc::c_char = xasprintf(
+    let mut filename: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
       b"%s%s\x00" as *const u8 as *const libc::c_char,
       rpm_getstr(1118i32, rpm_getint(1116i32, count)),
       rpm_getstr(1117i32, count),
@@ -667,20 +603,26 @@ unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const li
   let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t; /* else: SRPM, install to current dir */
   if !source_rpm.is_null() {
     /* Binary rpm (it was built from some SRPM), install to root */
-    xchdir(b"/\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
   }
   /* Initialize */
-  archive_handle = init_handle();
-  (*archive_handle).seek =
-    Some(seek_by_read as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> ());
-  (*archive_handle).action_data =
-    Some(data_extract_all as unsafe extern "C" fn(_: *mut archive_handle_t) -> ());
+  archive_handle = crate::archival::libarchive::init_handle::init_handle();
+  (*archive_handle).seek = Some(
+    crate::archival::libarchive::seek_by_read::seek_by_read
+      as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> (),
+  );
+  (*archive_handle).action_data = Some(
+    crate::archival::libarchive::data_extract_all::data_extract_all
+      as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+  );
   /* For testing (rpm -i only lists the files in internal cpio): */
   (*archive_handle).ah_flags = (1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 9i32) as libc::c_uint;
   (*archive_handle).src_fd = fd;
   /*archive_handle->offset = 0; - init_handle() did it */
-  setup_unzip_on_fd((*archive_handle).src_fd, 1i32);
-  while get_header_cpio(archive_handle) as libc::c_int == 0i32 {}
+  crate::archival::libarchive::open_transformer::setup_unzip_on_fd((*archive_handle).src_fd, 1i32);
+  while crate::archival::libarchive::get_header_cpio::get_header_cpio(archive_handle) as libc::c_int
+    == 0i32
+  {}
 }
 //usage:#define rpm_trivial_usage
 //usage:       "-i PACKAGE.rpm; rpm -qp[ildc] PACKAGE.rpm"
@@ -741,7 +683,7 @@ pub unsafe extern "C" fn rpm_main(
       113 => {
         /* First arg: Query mode */
         if func != 0 {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         func = rpm_query as libc::c_int
       }
@@ -764,14 +706,14 @@ pub unsafe extern "C" fn rpm_main(
         func |= rpm_query_list_config as libc::c_int
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }
   argv = argv.offset(optind as isize);
   //argc -= optind;
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     let mut rpm_fd: libc::c_int = 0;
@@ -965,7 +907,7 @@ pub unsafe extern "C" fn rpm_main(
       }
     } else {
       /* Unsupported (help text shows what we support) */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     argv = argv.offset(1);
     if (*argv).is_null() {
@@ -1021,15 +963,17 @@ pub unsafe extern "C" fn rpm2cpio_main(
   {
     // lzma compression can't be detected
     // set up decompressor without detection
-    setup_lzma_on_fd(rpm_fd);
+    crate::archival::libarchive::open_transformer::setup_lzma_on_fd(rpm_fd);
   } else {
-    setup_unzip_on_fd(rpm_fd, 1i32);
+    crate::archival::libarchive::open_transformer::setup_unzip_on_fd(rpm_fd, 1i32);
   }
-  if bb_copyfd_eof(rpm_fd, 1i32) < 0 {
-    bb_simple_error_msg_and_die(b"error unpacking\x00" as *const u8 as *const libc::c_char);
+  if crate::libbb::copyfd::bb_copyfd_eof(rpm_fd, 1i32) < 0 {
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"error unpacking\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if false || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0i32 != 0 {
-    check_errors_in_children(0i32);
+    crate::archival::libarchive::open_transformer::check_errors_in_children(0i32);
     return bb_got_signal as libc::c_int;
   }
   return 0i32;
