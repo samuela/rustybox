@@ -5,11 +5,11 @@ use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-
 use libc;
 use libc::off_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct file_header_t {
   pub name: *mut libc::c_char,
   pub link_target: *mut libc::c_char,
@@ -28,8 +28,9 @@ pub struct file_header_t {
  * of "llist-compatible" structs, and using llist_FOO functions
  * on them.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct hardlinks_t {
   pub next: *mut hardlinks_t,
   pub inode: libc::c_int, /* TODO: must match maj/min too! */
@@ -40,8 +41,8 @@ pub struct hardlinks_t {
   pub name: [libc::c_char; 1],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct archive_handle_t {
   /* Flags. 1st since it is most used member */
   pub ah_flags: libc::c_uint,
@@ -103,8 +104,8 @@ pub struct archive_handle_t {
 #[no_mangle]
 pub static mut cpio_TRAILER: [libc::c_char; 11] = [84, 82, 65, 73, 76, 69, 82, 33, 33, 33, 0];
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct transformer_state_t {
   pub signature_skipped: smallint,
 
@@ -124,8 +125,8 @@ pub struct transformer_state_t {
   pub magic: TransformerMagic, /* if we read magic, it's saved here */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union TransformerMagic {
   pub b: [u8; 8],
   pub b16: [u16; 4],
