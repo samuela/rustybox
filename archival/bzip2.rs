@@ -13,47 +13,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bunzip2_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
-
-  #[no_mangle]
-  fn append_ext(
-    filename: *mut libc::c_char,
-    expected_ext: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bbunpack(
-    argv: *mut *mut libc::c_char,
-    unpacker: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
-    make_new_name: Option<
-      unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
-    >,
-    expected_ext: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 pub type bb__aliased_u32 = u32;
@@ -81,8 +41,9 @@ pub const BBUNPK_OPT_VERBOSE: C2RustUnnamed_0 = 8;
 pub const BBUNPK_OPT_KEEP: C2RustUnnamed_0 = 4;
 pub const BBUNPK_OPT_FORCE: C2RustUnnamed_0 = 2;
 pub const BBUNPK_OPT_STDOUT: C2RustUnnamed_0 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct bz_stream {
   pub state: *mut libc::c_void,
   pub next_in: *mut libc::c_char,
@@ -91,8 +52,9 @@ pub struct bz_stream {
   pub avail_out: libc::c_uint,
   pub total_out: libc::c_ulonglong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct EState {
   pub strm: *mut bz_stream,
   pub mode: u8,
@@ -1534,7 +1496,8 @@ unsafe extern "C" fn isempty_RL(mut s: *mut EState) -> libc::c_int {
 unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize100k: libc::c_int) {
   let mut n: libc::c_uint = 0;
   let mut s: *mut EState = 0 as *mut EState;
-  s = xzalloc(::std::mem::size_of::<EState>() as libc::c_ulong) as *mut EState;
+  s = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<EState>() as libc::c_ulong)
+    as *mut EState;
   (*s).strm = strm;
   n = (100000i32 * blockSize100k) as libc::c_uint;
   (*s).arr1 =
@@ -1550,7 +1513,7 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
   (*s).ftab = xmalloc(
     (65537i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
   ) as *mut u32;
-  (*s).crc32table = crc32_filltable(0 as *mut u32, 1i32);
+  (*s).crc32table = crate::libbb::crc32::crc32_filltable(0 as *mut u32, 1i32);
   (*s).state = 2i32 as u8;
   (*s).mode = 2i32 as u8;
   (*s).blockSize100k = blockSize100k as u8;
@@ -2761,19 +2724,19 @@ unsafe extern "C" fn bz_write(
     ret = BZ2_bzCompress(strm, if rlen != 0 { 0i32 } else { 2i32 });
     if ret != 1i32 && ret != 3i32 && ret != 4i32 {
       /* BZ_FINISHed */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"internal error %d\x00" as *const u8 as *const libc::c_char,
         ret,
       ); /* prevent bogus error message */
     } /* it's small */
     n = (IOBUF_SIZE as libc::c_int as libc::c_uint).wrapping_sub((*strm).avail_out) as libc::c_int;
     if n != 0 {
-      n2 = full_write(1i32, wbuf, n as size_t) as libc::c_int;
+      n2 = crate::libbb::full_write::full_write(1i32, wbuf, n as size_t) as libc::c_int;
       if n2 != n {
         if n2 >= 0i32 {
           *bb_errno = 0i32
         }
-        bb_simple_perror_msg(if n2 >= 0i32 {
+        crate::libbb::perror_msg::bb_simple_perror_msg(if n2 >= 0i32 {
           b"short write\x00" as *const u8 as *const libc::c_char
         } else {
           b"write error\x00" as *const u8 as *const libc::c_char
@@ -2818,13 +2781,15 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
   }
   BZ2_bzCompressInit(&mut bzs, level as libc::c_int);
   loop {
-    count = full_read(
+    count = crate::libbb::read::full_read(
       0i32,
       iobuf as *mut libc::c_void,
       IOBUF_SIZE as libc::c_int as size_t,
     );
     if count < 0 {
-      bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"read error\x00" as *const u8 as *const libc::c_char,
+      );
       total = -1i32 as libc::c_longlong;
       break;
     } else {
@@ -2867,7 +2832,7 @@ pub unsafe extern "C" fn bzip2_main(
    * --fast        alias for -1
    * --best        alias for -9
    */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^cfkvqdtzs123456789\x00s2\x00" as *const u8 as *const libc::c_char,
   );
@@ -2876,14 +2841,14 @@ pub unsafe extern "C" fn bzip2_main(
     != 0
   {
     /* -d and/or -t */
-    return bunzip2_main(argc, argv);
+    return crate::archival::bbunzip::bunzip2_main(argc, argv);
   }
   argv = argv.offset(optind as isize);
-  return bbunpack(
+  return crate::archival::bbunzip::bbunpack(
     argv,
     Some(compressStream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
-      append_ext
+      crate::archival::bbunzip::append_ext
         as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"bz2\x00" as *const u8 as *const libc::c_char,
