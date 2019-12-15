@@ -1,5 +1,5 @@
+use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
-use crate::libbb::llist::llist_t;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::bb_uidgid_t;
 use crate::librb::fd_pair;
@@ -46,63 +46,7 @@ extern "C" {
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_get_chunk_from_file(file: *mut FILE, end: *mut size_t) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn parse_chown_usergroup_or_die(u: *mut bb_uidgid_t, user_group: *mut libc::c_char);
-
-  #[no_mangle]
-  fn xfork() -> pid_t;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -110,38 +54,14 @@ extern "C" {
   #[no_mangle]
   static cpio_TRAILER: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn init_handle() -> *mut archive_handle_t;
-
-  #[no_mangle]
-  fn filter_accept_list(archive_handle: *mut archive_handle_t) -> libc::c_char;
-
-  #[no_mangle]
-  fn data_extract_all(archive_handle: *mut archive_handle_t);
-
-  #[no_mangle]
-  fn data_extract_to_stdout(archive_handle: *mut archive_handle_t);
-
-  #[no_mangle]
-  fn header_list(file_header: *const file_header_t);
-
-  #[no_mangle]
-  fn header_verbose_list(file_header: *const file_header_t);
-
-  #[no_mangle]
-  fn get_header_cpio(archive_handle: *mut archive_handle_t) -> libc::c_char;
-
-  #[no_mangle]
-  fn create_links_from_list(list: *mut llist_t);
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub owner_ugid: bb_uidgid_t,
 }
 
-use crate::archival::libarchive::bb_archive::archive_handle_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_2STDOUT: C2RustUnnamed = 16384;
 pub const OPT_QUIET: C2RustUnnamed = 8192;
@@ -165,16 +85,16 @@ pub const OPT_NUL_TERMINATED: C2RustUnnamed = 4;
 pub const OPT_TEST: C2RustUnnamed = 2;
 pub const OPT_EXTRACT: C2RustUnnamed = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct inodes_s {
   pub next: *mut inodes_s,
   pub names: *mut name_s,
   pub st: stat,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct name_s {
   pub next: *mut name_s,
   pub name: [libc::c_char; 1],
@@ -189,7 +109,7 @@ unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
     if !(i >= 0i32) {
       break;
     }
-    bb_putchar('\u{0}' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\u{0}' as i32);
   }
   return size;
 }
@@ -205,9 +125,12 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut st: stat = std::mem::zeroed();
     line = if option_mask32 & OPT_NUL_TERMINATED as libc::c_int as libc::c_uint != 0 {
-      bb_get_chunk_from_file(stdin, std::ptr::null_mut::<size_t>())
+      crate::libbb::get_line_from_file::bb_get_chunk_from_file(
+        stdin,
+        std::ptr::null_mut::<size_t>(),
+      )
     } else {
-      xmalloc_fgetline(stdin)
+      crate::libbb::get_line_from_file::xmalloc_fgetline(stdin)
     };
     if !line.is_null() {
       /* Strip leading "./[./]..." from the filename */
@@ -268,7 +191,9 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
           loop {
             if l.is_null() {
               /* Not found: add new item to "links" list */
-              l = xzalloc(::std::mem::size_of::<inodes_s>() as libc::c_ulong) as *mut inodes_s;
+              l = crate::libbb::xfuncs_printf::xzalloc(
+                ::std::mem::size_of::<inodes_s>() as libc::c_ulong
+              ) as *mut inodes_s;
               (*l).st = st;
               (*l).next = links;
               links = l;
@@ -298,7 +223,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
     loop {
       match current_block_47 {
         16800535488375699875 => {
-          bb_simple_perror_msg_and_die(name);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(name);
         }
         6299548793047770735 => {
           if !links.is_null() {
@@ -352,7 +277,8 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
             if st.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
               /* st.st_size == 0 is a must, but for uniformity
                * in the output, we zero out everything */
-              let mut lpath: *mut libc::c_char = xmalloc_readlink_or_warn(name); /* S_ISREG */
+              let mut lpath: *mut libc::c_char =
+                crate::libbb::xreadlink::xmalloc_readlink_or_warn(name); /* S_ISREG */
               if lpath.is_null() {
                 current_block_47 = 16800535488375699875;
                 continue;
@@ -360,10 +286,10 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
               bytes += printf(b"%s\x00" as *const u8 as *const libc::c_char, lpath) as libc::c_long;
               free(lpath as *mut libc::c_void);
             } else {
-              let mut fd: libc::c_int = xopen(name, 0i32);
-              fflush_all();
+              let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(name, 0i32);
+              crate::libbb::xfuncs_printf::fflush_all();
               /* We must abort if file got shorter too! */
-              bb_copyfd_exact_size(fd, 1i32, st.st_size);
+              crate::libbb::copyfd::bb_copyfd_exact_size(fd, 1i32, st.st_size);
               bytes += st.st_size;
               close(fd);
             }
@@ -406,14 +332,14 @@ pub unsafe extern "C" fn cpio_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .owner_ugid
     .gid = -1i64 as gid_t;
-  archive_handle = init_handle();
+  archive_handle = crate::archival::libarchive::init_handle::init_handle();
   /* archive_handle->src_fd = STDIN_FILENO; - done by init_handle */
   (*archive_handle).ah_flags = (1i32 << 3i32) as libc::c_uint;
   /* As of now we do not enforce this: */
   /* -i,-t,-o,-p are mutually exclusive */
   /* -u,-d,-m make sense only with -i or -p */
   /* -L makes sense only with -o or -p */
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"it0uvdmLF:R:oH:p\x00" as *const u8 as *const libc::c_char,
     long_opts,
@@ -424,7 +350,7 @@ pub unsafe extern "C" fn cpio_main(
   argv = argv.offset(optind as isize);
   if opt & OPT_OWNER as libc::c_int as libc::c_uint != 0 {
     /* -R */
-    parse_chown_usergroup_or_die(
+    crate::libpwdgrp::uidgid_get::parse_chown_usergroup_or_die(
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).owner_ugid,
       cpio_owner,
     );
@@ -434,13 +360,16 @@ pub unsafe extern "C" fn cpio_main(
     == OPT_FILE as libc::c_int as libc::c_uint
   {
     /* -F without -o */
-    xmove_fd(xopen(cpio_filename, 0i32), 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(cpio_filename, 0i32),
+      0i32,
+    );
   }
   if opt & OPT_PASSTHROUGH as libc::c_int as libc::c_uint != 0 {
     let mut pid: pid_t = 0;
     let mut pp: fd_pair = fd_pair { rd: 0, wr: 0 };
     if (*argv.offset(0)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if opt & OPT_CREATE_LEADING_DIR as libc::c_int as libc::c_uint != 0 {
       mkdir(*argv.offset(0), 0o777i32 as mode_t);
@@ -454,21 +383,21 @@ pub unsafe extern "C" fn cpio_main(
      * a diffrerent problem earlier.
      * This is good enough for now.
      */
-    xpipe(&mut pp.rd);
-    pid = xfork();
+    crate::libbb::xfuncs_printf::xpipe(&mut pp.rd);
+    pid = crate::libbb::xfuncs_printf::xfork();
     if pid == 0i32 {
       /* child */
       close(pp.rd);
-      xmove_fd(pp.wr, 1i32);
+      crate::libbb::xfuncs_printf::xmove_fd(pp.wr, 1i32);
       current_block = 15458570239431914930;
     } else {
       /* parent */
       /* undo fork_or_rexec() damage */
       let fresh0 = argv;
       argv = argv.offset(1);
-      xchdir(*fresh0);
+      crate::libbb::xfuncs_printf::xchdir(*fresh0);
       close(pp.wr);
-      xmove_fd(pp.rd, 0i32);
+      crate::libbb::xfuncs_printf::xmove_fd(pp.rd, 0i32);
       //opt &= ~OPT_PASSTHROUGH;
       opt |= OPT_EXTRACT as libc::c_int as libc::c_uint;
       current_block = 8255155894120985361;
@@ -477,10 +406,13 @@ pub unsafe extern "C" fn cpio_main(
     if *cpio_fmt.offset(0) as libc::c_int != 'n' as i32 {
       /* -o */
       /* we _require_ "-H newc" */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if opt & OPT_FILE as libc::c_int as libc::c_uint != 0 {
-      xmove_fd(xopen(cpio_filename, 0o1i32 | 0o100i32 | 0o1000i32), 1i32);
+      crate::libbb::xfuncs_printf::xmove_fd(
+        crate::libbb::xfuncs_printf::xopen(cpio_filename, 0o1i32 | 0o100i32 | 0o1000i32),
+        1i32,
+      );
     }
     current_block = 15458570239431914930;
   } else {
@@ -493,20 +425,26 @@ pub unsafe extern "C" fn cpio_main(
       if opt & (OPT_TEST as libc::c_int | OPT_EXTRACT as libc::c_int) as libc::c_uint
         == 0i32 as libc::c_uint
       {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       if opt & OPT_TEST as libc::c_int as libc::c_uint != 0 {
         /* if both extract and test options are given, ignore extract option */
         opt &= !(OPT_EXTRACT as libc::c_int) as libc::c_uint;
-        (*archive_handle).action_header =
-          Some(header_list as unsafe extern "C" fn(_: *const file_header_t) -> ())
+        (*archive_handle).action_header = Some(
+          crate::archival::libarchive::header_list::header_list
+            as unsafe extern "C" fn(_: *const file_header_t) -> (),
+        )
       }
       if opt & OPT_EXTRACT as libc::c_int as libc::c_uint != 0 {
-        (*archive_handle).action_data =
-          Some(data_extract_all as unsafe extern "C" fn(_: *mut archive_handle_t) -> ());
+        (*archive_handle).action_data = Some(
+          crate::archival::libarchive::data_extract_all::data_extract_all
+            as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        );
         if opt & OPT_2STDOUT as libc::c_int as libc::c_uint != 0 {
-          (*archive_handle).action_data =
-            Some(data_extract_to_stdout as unsafe extern "C" fn(_: *mut archive_handle_t) -> ())
+          (*archive_handle).action_data = Some(
+            crate::archival::libarchive::data_extract_to_stdout::data_extract_to_stdout
+              as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+          )
         }
       }
       if opt & OPT_UNCONDITIONAL as libc::c_int as libc::c_uint != 0 {
@@ -515,13 +453,20 @@ pub unsafe extern "C" fn cpio_main(
       }
       if opt & OPT_VERBOSE as libc::c_int as libc::c_uint != 0 {
         if (*archive_handle).action_header
-          == Some(header_list as unsafe extern "C" fn(_: *const file_header_t) -> ())
+          == Some(
+            crate::archival::libarchive::header_list::header_list
+              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+          )
         {
-          (*archive_handle).action_header =
-            Some(header_verbose_list as unsafe extern "C" fn(_: *const file_header_t) -> ())
+          (*archive_handle).action_header = Some(
+            crate::archival::libarchive::header_verbose_list::header_verbose_list
+              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+          )
         } else {
-          (*archive_handle).action_header =
-            Some(header_list as unsafe extern "C" fn(_: *const file_header_t) -> ())
+          (*archive_handle).action_header = Some(
+            crate::archival::libarchive::header_list::header_list
+              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+          )
         }
       }
       if opt & OPT_CREATE_LEADING_DIR as libc::c_int as libc::c_uint != 0 {
@@ -532,15 +477,24 @@ pub unsafe extern "C" fn cpio_main(
       }
       while !(*argv).is_null() {
         (*archive_handle).filter = Some(
-          filter_accept_list as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          crate::archival::libarchive::filter_accept_list::filter_accept_list
+            as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
         );
-        llist_add_to(&mut (*archive_handle).accept, *argv as *mut libc::c_void);
+        crate::libbb::llist::llist_add_to(
+          &mut (*archive_handle).accept,
+          *argv as *mut libc::c_void,
+        );
         argv = argv.offset(1)
       }
       /* see get_header_cpio */
       (*archive_handle).cpio__blocks = -1i32 as off_t as uoff_t;
-      while get_header_cpio(archive_handle) as libc::c_int == 0i32 {}
-      create_links_from_list((*archive_handle).link_placeholders);
+      while crate::archival::libarchive::get_header_cpio::get_header_cpio(archive_handle)
+        as libc::c_int
+        == 0i32
+      {}
+      crate::archival::libarchive::unsafe_symlink_target::create_links_from_list(
+        (*archive_handle).link_placeholders,
+      );
       if (*archive_handle).cpio__blocks != -1i32 as off_t as libc::c_ulong
         && opt & OPT_QUIET as libc::c_int as libc::c_uint == 0
       {
