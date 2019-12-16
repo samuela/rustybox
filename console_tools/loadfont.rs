@@ -226,7 +226,7 @@ unsafe extern "C" fn do_loadfont(
   }
   buf = xzalloc((charwidth * (if fontsize < 128i32 { 128i32 } else { fontsize })) as size_t)
     as *mut libc::c_uchar;
-  i = 0i32;
+  i = 0;
   while i < fontsize {
     memcpy(
       buf.offset((i * charwidth) as isize) as *mut libc::c_void,
@@ -244,8 +244,8 @@ unsafe extern "C" fn do_loadfont(
     charcount: 0,
     data: 0 as *mut libc::c_uchar,
   };
-  cfo.op = 0i32 as libc::c_uint;
-  cfo.flags = 0i32 as libc::c_uint;
+  cfo.op = 0 as libc::c_uint;
+  cfo.flags = 0 as libc::c_uint;
   cfo.width = width as libc::c_uint;
   cfo.height = height as libc::c_uint;
   cfo.charcount = fontsize as libc::c_uint;
@@ -299,7 +299,7 @@ unsafe extern "C" fn do_loadtable(
     entries: 0 as *mut unipair,
   }; /* PSF2 */
   let mut up: *mut unipair = std::ptr::null_mut();
-  let mut ct: libc::c_int = 0i32;
+  let mut ct: libc::c_int = 0;
   let mut maxct: libc::c_int = 0;
   let mut glyph: libc::c_int = 0;
   let mut unicode: u16 = 0;
@@ -307,9 +307,9 @@ unsafe extern "C" fn do_loadtable(
   up = xmalloc(
     (maxct as libc::c_ulong).wrapping_mul(::std::mem::size_of::<unipair>() as libc::c_ulong),
   ) as *mut unipair;
-  glyph = 0i32;
+  glyph = 0;
   while glyph < fontsize {
-    while tailsz > 0i32 {
+    while tailsz > 0 {
       if psf2 == 0 {
         /* PSF1 */
         unicode = (((*inbuf.offset(1) as u16 as libc::c_int) << 8i32)
@@ -350,7 +350,7 @@ unsafe extern "C" fn do_loadtable(
               maxct = 1i32
             }
             loop {
-              if tailsz <= 0i32
+              if tailsz <= 0
                 || (*inbuf as libc::c_int) < 0x80i32
                 || *inbuf as libc::c_int > 0xbfi32
               {
@@ -364,7 +364,7 @@ unsafe extern "C" fn do_loadtable(
               unicode =
                 (((unicode as libc::c_int) << 6i32) + (*fresh1 as libc::c_int & 0x3fi32)) as u16;
               maxct -= 1;
-              if !(maxct > 0i32) {
+              if !(maxct > 0) {
                 break;
               }
             }
@@ -383,9 +383,9 @@ unsafe extern "C" fn do_loadtable(
   }
   /* Note: after PIO_UNIMAPCLR and before PIO_UNIMAP
    * this printf did not work on many kernels */
-  advice.advised_hashsize = 0i32 as libc::c_ushort;
-  advice.advised_hashstep = 0i32 as libc::c_ushort;
-  advice.advised_hashlevel = 0i32 as libc::c_ushort;
+  advice.advised_hashsize = 0 as libc::c_ushort;
+  advice.advised_hashstep = 0 as libc::c_ushort;
+  advice.advised_hashlevel = 0 as libc::c_ushort;
   bb_xioctl(
     fd,
     0x4b68i32 as libc::c_uint,
@@ -406,7 +406,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
   let mut width: libc::c_int = 8i32;
   let mut charsize: libc::c_int = 0;
   let mut fontsize: libc::c_int = 256i32;
-  let mut has_table: libc::c_int = 0i32;
+  let mut has_table: libc::c_int = 0;
   let mut font: *mut libc::c_uchar = buffer;
   let mut table: *mut libc::c_uchar = std::ptr::null_mut();
   if len >= ::std::mem::size_of::<psf1_header>() as libc::c_ulong
@@ -453,7 +453,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
     height = 16i32;
     charsize = height;
     font = font.offset(40)
-  } else if len & 0o377i32 as libc::c_ulong == 0i32 as libc::c_ulong {
+  } else if len & 0o377i32 as libc::c_ulong == 0 as libc::c_ulong {
     /* bare font */
     height = len.wrapping_div(256i32 as libc::c_ulong) as libc::c_int;
     charsize = height
@@ -511,7 +511,7 @@ pub unsafe extern "C" fn loadfont_main(
     );
   }
   do_load(get_console_fd_or_die(), buffer, len);
-  return 0i32;
+  return 0;
 }
 /* kbd-1.12:
 setfont [-O font+umap.orig] [-o font.orig] [-om cmap.orig]
@@ -568,7 +568,7 @@ unsafe extern "C" fn ctoi(mut s: *mut libc::c_char) -> libc::c_int {
   if !((*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
     return -1i32;
   }
-  return xstrtoul(s, 0i32) as libc::c_int;
+  return xstrtoul(s, 0) as libc::c_int;
 }
 #[no_mangle]
 pub unsafe extern "C" fn setfont_main(
@@ -639,7 +639,7 @@ pub unsafe extern "C" fn setfont_main(
           .wrapping_mul(::std::mem::size_of::<libc::c_ushort>() as libc::c_ulong),
       );
       // fill vanilla map
-      i = 0i32;
+      i = 0;
       while i < 256i32 {
         *(map as *mut libc::c_ushort).offset(i as isize) = (0xf000i32 + i) as libc::c_ushort;
         i += 1
@@ -658,7 +658,7 @@ pub unsafe extern "C" fn setfont_main(
         // parse code/value pair
         let mut a: libc::c_int = ctoi(token[0]);
         let mut b: libc::c_int = ctoi(token[1]);
-        if a < 0i32 || a >= 256i32 || b < 0i32 || b > 65535i32 {
+        if a < 0 || a >= 256i32 || b < 0 || b > 65535i32 {
           bb_simple_error_msg_and_die(b"map format\x00" as *const u8 as *const libc::c_char);
         }
         // patch map
@@ -669,7 +669,7 @@ pub unsafe extern "C" fn setfont_main(
         }
       }
       if mode != 0x4b6ai32 as libc::c_uint {
-        i = 0i32;
+        i = 0;
         while i < 256i32 {
           *(map as *mut libc::c_uchar).offset(i as isize) =
             *(map as *mut libc::c_ushort).offset(i as isize) as libc::c_uchar;
@@ -686,5 +686,5 @@ pub unsafe extern "C" fn setfont_main(
       b"mode\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }

@@ -103,7 +103,7 @@ pub unsafe extern "C" fn is_directory(
   } else {
     status = lstat(fileName, &mut statBuf)
   }
-  status = (status == 0i32
+  status = (status == 0
     && statBuf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
     as libc::c_int;
   return status;

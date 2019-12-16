@@ -273,7 +273,7 @@ unsafe extern "C" fn do_ioctl_get_ifindex(mut dev: *mut libc::c_char) -> libc::c
   };
   let mut fd: libc::c_int = 0;
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   bb_xioctl(
     fd,
     0x8933i32 as libc::c_uint,
@@ -296,7 +296,7 @@ unsafe extern "C" fn do_ioctl_get_iftype(mut dev: *mut libc::c_char) -> libc::c_
   let mut fd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   err = bb_ioctl_or_warn(
     fd,
     0x8927i32 as libc::c_uint,
@@ -323,7 +323,7 @@ unsafe extern "C" fn do_ioctl_get_ifname(mut idx: libc::c_int) -> *mut libc::c_c
   let mut fd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
   ifr.ifr_ifru.ifru_ivalue = idx;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   err = bb_ioctl_or_warn(
     fd,
     0x8910i32 as libc::c_uint,
@@ -357,10 +357,10 @@ unsafe extern "C" fn do_get_ioctl(
   let mut err: libc::c_int = 0;
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   err = bb_ioctl_or_warn(
     fd,
-    (0x89f0i32 + 0i32) as libc::c_uint,
+    (0x89f0i32 + 0) as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
     b"SIOCGETTUNNEL\x00" as *const u8 as *const libc::c_char,
   );
@@ -389,7 +389,7 @@ unsafe extern "C" fn do_add_ioctl(
     strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   }
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   /* #define magic will turn ioctl# into string */
   if cmd == 0x89f0i32 + 3i32 {
     bb_xioctl(
@@ -407,7 +407,7 @@ unsafe extern "C" fn do_add_ioctl(
     );
   }
   close(fd);
-  return 0i32;
+  return 0;
 }
 /* Dies on error, otherwise returns 0 */
 unsafe extern "C" fn do_del_ioctl(
@@ -430,7 +430,7 @@ unsafe extern "C" fn do_del_ioctl(
     strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   }
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   bb_xioctl(
     fd,
     (0x89f0i32 + 2i32) as libc::c_uint,
@@ -438,7 +438,7 @@ unsafe extern "C" fn do_del_ioctl(
     b"SIOCDELTUNNEL\x00" as *const u8 as *const libc::c_char,
   );
   close(fd);
-  return 0i32;
+  return 0;
 }
 /* Dies on error */
 unsafe extern "C" fn parse_args(
@@ -456,12 +456,12 @@ unsafe extern "C" fn parse_args(
     116, 116, 108, 0, 105, 110, 104, 101, 114, 105, 116, 0, 116, 111, 115, 0, 100, 115, 102, 105,
     101, 108, 100, 0, 110, 97, 109, 101, 0, 0,
   ];
-  let mut count: libc::c_int = 0i32;
+  let mut count: libc::c_int = 0;
   let mut medium: [libc::c_char; 16] = [0; 16];
   let mut key: libc::c_int = 0;
   memset(
     p as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ip_tunnel_parm>() as libc::c_ulong,
   );
   medium[0] = '\u{0}' as i32 as libc::c_char;
@@ -831,7 +831,7 @@ unsafe extern "C" fn parse_args(
           __v
         }) as libc::c_int) as u16
     } else if key == ARG_nopmtudisc as libc::c_int {
-      (*p).iph.frag_off = 0i32 as u16
+      (*p).iph.frag_off = 0 as u16
     } else if key == ARG_pmtudisc as libc::c_int {
       (*p).iph.frag_off = {
         let mut __v: libc::c_ushort = 0;
@@ -896,7 +896,7 @@ unsafe extern "C" fn parse_args(
         duparg2(b"name\x00" as *const u8 as *const libc::c_char, *argv);
       }
       strncpy_IFNAMSIZ((*p).name.as_mut_ptr(), *argv);
-      if cmd == 0x89f0i32 + 3i32 && count == 0i32 {
+      if cmd == 0x89f0i32 + 3i32 && count == 0 {
         let mut old_p: ip_tunnel_parm = ip_tunnel_parm {
           name: [0; 16],
           link: 0,
@@ -919,7 +919,7 @@ unsafe extern "C" fn parse_args(
         };
         memset(
           &mut old_p as *mut ip_tunnel_parm as *mut libc::c_void,
-          0i32,
+          0,
           ::std::mem::size_of::<ip_tunnel_parm>() as libc::c_ulong,
         );
         if do_get_ioctl(*argv, &mut old_p) != 0 {
@@ -931,26 +931,26 @@ unsafe extern "C" fn parse_args(
     count += 1;
     argv = argv.offset(1)
   }
-  if (*p).iph.protocol as libc::c_int == 0i32 {
+  if (*p).iph.protocol as libc::c_int == 0 {
     if memcmp(
       (*p).name.as_mut_ptr() as *const libc::c_void,
       b"gre\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       3i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       (*p).iph.protocol = IPPROTO_GRE as libc::c_int as u8
     } else if memcmp(
       (*p).name.as_mut_ptr() as *const libc::c_void,
       b"ipip\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       4i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       (*p).iph.protocol = IPPROTO_IPIP as libc::c_int as u8
     } else if memcmp(
       (*p).name.as_mut_ptr() as *const libc::c_void,
       b"sit\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       3i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as u8
     }
@@ -1005,7 +1005,7 @@ unsafe extern "C" fn parse_args(
   if medium[0] != 0 {
     (*p).link = do_ioctl_get_ifindex(medium.as_mut_ptr())
   }
-  if (*p).i_key == 0i32 as libc::c_uint
+  if (*p).i_key == 0 as libc::c_uint
     && ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*p).iph.daddr;
@@ -1047,7 +1047,7 @@ unsafe extern "C" fn parse_args(
         __v
       }) as libc::c_int) as u16
   }
-  if (*p).o_key == 0i32 as libc::c_uint
+  if (*p).o_key == 0 as libc::c_uint
     && ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = (*p).iph.daddr;
@@ -1139,7 +1139,7 @@ unsafe extern "C" fn do_add(mut cmd: libc::c_int, mut argv: *mut *mut libc::c_ch
     },
   };
   parse_args(argv, cmd, &mut p);
-  if p.iph.ttl as libc::c_int != 0 && p.iph.frag_off as libc::c_int == 0i32 {
+  if p.iph.ttl as libc::c_int != 0 && p.iph.frag_off as libc::c_int == 0 {
     bb_simple_error_msg_and_die(
       b"ttl != 0 and noptmudisc are incompatible\x00" as *const u8 as *const libc::c_char,
     );
@@ -1549,7 +1549,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
     if ptr.is_null() || {
       let fresh99 = ptr;
       ptr = ptr.offset(1);
-      *fresh99 = 0i32 as libc::c_char;
+      *fresh99 = 0 as libc::c_char;
       (sscanf(
         buf.as_mut_ptr(),
         b"%s\x00" as *const u8 as *const libc::c_char,
@@ -1595,7 +1595,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
       }
       memset(
         &mut p1 as *mut ip_tunnel_parm as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<ip_tunnel_parm>() as libc::c_ulong,
       );
       if do_get_ioctl(name.as_mut_ptr(), &mut p1) != 0 {
@@ -1638,7 +1638,7 @@ unsafe extern "C" fn do_show(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       daddr: 0,
     },
   };
-  parse_args(argv, 0x89f0i32 + 0i32, &mut p);
+  parse_args(argv, 0x89f0i32 + 0, &mut p);
   match p.iph.protocol as libc::c_int {
     4 => {
       err = do_get_ioctl(
@@ -1672,7 +1672,7 @@ unsafe extern "C" fn do_show(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     }
     _ => {
       do_tunnels_list(&mut p);
-      return 0i32;
+      return 0;
     }
   }
   if err != 0 {
@@ -1680,7 +1680,7 @@ unsafe extern "C" fn do_show(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   }
   print_tunnel(&mut p);
   bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -1695,7 +1695,7 @@ pub unsafe extern "C" fn do_iptunnel(mut argv: *mut *mut libc::c_char) -> libc::
   ];
   if !(*argv).is_null() {
     let mut key: libc::c_int = index_in_substrings(keywords.as_ptr(), *argv);
-    if key < 0i32 {
+    if key < 0 {
       invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);

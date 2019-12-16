@@ -57,11 +57,11 @@ unsafe extern "C" fn adjust_column(mut column: libc::c_uint, mut c: libc::c_char
   }
   if c as libc::c_int == '\u{8}' as i32 {
     column = column.wrapping_sub(1);
-    if (column as libc::c_int) < 0i32 {
-      column = 0i32 as libc::c_uint
+    if (column as libc::c_int) < 0 {
+      column = 0 as libc::c_uint
     }
   } else if c as libc::c_int == '\r' as i32 {
-    column = 0i32 as libc::c_uint
+    column = 0 as libc::c_uint
   } else if UNICODE_ON as libc::c_int != UNICODE_ON as libc::c_int
     || c as libc::c_int & 0xc0i32 != 0x80i32
   {
@@ -83,7 +83,7 @@ pub unsafe extern "C" fn fold_main(
   let mut line_out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w_opt: *const libc::c_char = b"80\x00" as *const u8 as *const libc::c_char;
   let mut width: libc::c_uint = 0;
-  let mut exitcode: smallint = 0i32 as smallint;
+  let mut exitcode: smallint = 0 as smallint;
   /* Turn any numeric options into -w options.  */
   let mut i: libc::c_int = 0; /* Screen column where next char will go */
   i = 1i32; /* Index in 'line_out' for next char */
@@ -115,8 +115,8 @@ pub unsafe extern "C" fn fold_main(
   loop {
     let mut istream: *mut FILE = fopen_or_warn_stdin(*argv);
     let mut c: libc::c_int = 0;
-    let mut column: libc::c_uint = 0i32 as libc::c_uint;
-    let mut offset_out: libc::c_uint = 0i32 as libc::c_uint;
+    let mut column: libc::c_uint = 0 as libc::c_uint;
+    let mut offset_out: libc::c_uint = 0 as libc::c_uint;
     if istream.is_null() {
       exitcode = 1i32 as smallint
     } else {
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn fold_main(
           break;
         }
         /* We grow line_out in chunks of 0x1000 bytes */
-        if offset_out & 0xfffi32 as libc::c_uint == 0i32 as libc::c_uint {
+        if offset_out & 0xfffi32 as libc::c_uint == 0 as libc::c_uint {
           line_out = xrealloc(
             line_out as *mut libc::c_void,
             offset_out.wrapping_add(0x1000i32 as libc::c_uint) as size_t,
@@ -139,12 +139,12 @@ pub unsafe extern "C" fn fold_main(
               line_out as *const libc::c_void,
               offset_out.wrapping_add(1i32 as libc::c_uint),
             );
-            offset_out = 0i32 as libc::c_uint;
+            offset_out = 0 as libc::c_uint;
             column = offset_out;
             break;
           } else {
             column = adjust_column(column, c as libc::c_char) as libc::c_uint;
-            if column <= width || offset_out == 0i32 as libc::c_uint {
+            if column <= width || offset_out == 0 as libc::c_uint {
               /* offset_out == 0 case happens
                * with small width (say, 1) and tabs.
                * The very first tab already goes to column 8,
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn fold_main(
                 /* No blank found, wrap will split the overlong word */
                 /* Look for the last blank. */
                 logical_end = offset_out.wrapping_sub(1i32 as libc::c_uint);
-                while logical_end as libc::c_int >= 0i32 {
+                while logical_end as libc::c_int >= 0 {
                   if ({
                     let mut bb__isblank: libc::c_uchar =
                       *line_out.offset(logical_end as isize) as libc::c_uchar;
@@ -186,7 +186,7 @@ pub unsafe extern "C" fn fold_main(
                       offset_out.wrapping_sub(logical_end) as libc::c_ulong,
                     );
                     offset_out = offset_out.wrapping_sub(logical_end);
-                    i_0 = 0i32 as libc::c_uint;
+                    i_0 = 0 as libc::c_uint;
                     column = i_0;
                     while i_0 < offset_out {
                       column =
@@ -203,7 +203,7 @@ pub unsafe extern "C" fn fold_main(
                 line_out as *const libc::c_void,
                 offset_out.wrapping_add(1i32 as libc::c_uint),
               );
-              offset_out = 0i32 as libc::c_uint;
+              offset_out = 0 as libc::c_uint;
               column = offset_out
             }
           }

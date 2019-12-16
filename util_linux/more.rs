@@ -106,7 +106,7 @@ unsafe extern "C" fn get_wh() {
 unsafe extern "C" fn tcsetattr_tty_TCSANOW(mut settings: *mut termios) {
   tcsetattr(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
-    0i32,
+    0,
     settings,
   );
 }
@@ -126,8 +126,8 @@ pub unsafe extern "C" fn more_main(
   let mut current_block: u64;
   let mut c: libc::c_int = 0;
   c = c;
-  let mut input: libc::c_int = 0i32;
-  let mut spaces: libc::c_int = 0i32;
+  let mut input: libc::c_int = 0;
+  let mut spaces: libc::c_int = 0;
   let mut please_display_more_prompt: libc::c_int = 0;
   let mut tty: *mut FILE = std::ptr::null_mut();
   /* Parse options */
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn more_main(
   set_termios_to_raw(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings,
-    0i32,
+    0,
   );
   bb_signals(
     BB_FATAL_SIGS as libc::c_int,
@@ -177,12 +177,12 @@ pub unsafe extern "C" fn more_main(
     }
     match current_block {
       15089075282327824602 => {
-        st.st_size = 0i32 as off_t;
+        st.st_size = 0 as off_t;
         fstat(fileno_unlocked(file), &mut st);
         get_wh();
-        please_display_more_prompt = 0i32;
-        len = 0i32;
-        lines = 0i32;
+        please_display_more_prompt = 0;
+        len = 0;
+        lines = 0;
         loop {
           let mut wrap: libc::c_int = 0;
           if spaces != 0 {
@@ -205,7 +205,7 @@ pub unsafe extern "C" fn more_main(
               len = printf(b"--More-- \x00" as *const u8 as *const libc::c_char);
               if st.st_size != 0 {
                 let mut d: uoff_t = (st.st_size as uoff_t).wrapping_div(100i32 as libc::c_ulong);
-                if d == 0i32 as libc::c_ulong {
+                if d == 0 as libc::c_ulong {
                   d = 1i32 as uoff_t
                 }
                 len += printf(
@@ -245,9 +245,9 @@ pub unsafe extern "C" fn more_main(
                     as *const libc::c_char,
                 )
               }
-              len = 0i32;
-              lines = 0i32;
-              please_display_more_prompt = 0i32;
+              len = 0;
+              lines = 0;
+              please_display_more_prompt = 0;
               /* The user may have resized the terminal.
                * Re-read the dimensions. */
               get_wh();
@@ -282,7 +282,7 @@ pub unsafe extern "C" fn more_main(
               {
                 please_display_more_prompt = 1i32
               }
-              len = 0i32
+              len = 0
             }
             if !(c != '\n' as i32 && wrap != 0) {
               break;
@@ -305,5 +305,5 @@ pub unsafe extern "C" fn more_main(
     }
   }
   tcsetattr_tty_TCSANOW(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings);
-  return 0i32;
+  return 0;
 }

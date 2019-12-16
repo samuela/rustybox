@@ -274,7 +274,7 @@ pub unsafe extern "C" fn pgrep_main(
   };
   memset(
     &mut Z as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   /* Parse -SIGNAL for pkill. Must be first option, if present */
@@ -306,10 +306,10 @@ pub unsafe extern "C" fn pgrep_main(
   {
     /* -l: print the whole signal list */
     print_signames();
-    return 0i32;
+    return 0;
   }
   pid = getpid() as libc::c_uint;
-  if sid2match == 0i32 {
+  if sid2match == 0 {
     sid2match = getsid(pid as pid_t)
   }
   scan_mask = PSSCAN_COMM as libc::c_int | PSSCAN_ARGV0 as libc::c_int;
@@ -317,7 +317,7 @@ pub unsafe extern "C" fn pgrep_main(
     scan_mask |= PSSCAN_ARGVN as libc::c_int
   }
   /* One pattern is required, if no -s and no -P */
-  if sid2match & ppid2match < 0i32 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null())
+  if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null())
   {
     bb_show_usage();
   }
@@ -332,7 +332,7 @@ pub unsafe extern "C" fn pgrep_main(
       },
     );
   }
-  matched_pid = 0i32;
+  matched_pid = 0;
   cmd_last = std::ptr::null_mut::<libc::c_char>();
   proc_0 = std::ptr::null_mut();
   loop {
@@ -348,10 +348,10 @@ pub unsafe extern "C" fn pgrep_main(
     }
     if opt & (1i32 << OPTBIT_V as libc::c_int) as libc::c_uint == 0 {
       /* Quickly reject -sN -PN mismatches... unless -v */
-      if ppid2match >= 0i32 && ppid2match as libc::c_uint != (*proc_0).ppid {
+      if ppid2match >= 0 && ppid2match as libc::c_uint != (*proc_0).ppid {
         continue; /* not -a: find first NUL */
       }
-      if sid2match >= 0i32 && sid2match as libc::c_uint != (*proc_0).sid {
+      if sid2match >= 0 && sid2match as libc::c_uint != (*proc_0).sid {
         continue;
       }
     }
@@ -373,7 +373,7 @@ pub unsafe extern "C" fn pgrep_main(
       }
       loop {
         i -= 1;
-        if !(i >= 0i32) {
+        if !(i >= 0) {
           break;
         }
         if (*cmd.offset(i as isize) as libc::c_uchar as libc::c_int) < ' ' as i32 {
@@ -386,9 +386,9 @@ pub unsafe extern "C" fn pgrep_main(
        * or equivalently "ppid!=1 OR name!=firefox".
        * Check the first condition and if true, skip matching.
        */
-      if ppid2match >= 0i32 && ppid2match as libc::c_uint != (*proc_0).ppid {
+      if ppid2match >= 0 && ppid2match as libc::c_uint != (*proc_0).ppid {
         current_block = 7077386041754914429; /* if no PATTERN, then it's a match, else... */
-      } else if sid2match >= 0i32 && sid2match as libc::c_uint != (*proc_0).sid {
+      } else if sid2match >= 0 && sid2match as libc::c_uint != (*proc_0).sid {
         current_block = 7077386041754914429;
       } else {
         current_block = 2500484646272006982;
@@ -406,8 +406,8 @@ pub unsafe extern "C" fn pgrep_main(
               cmd,
               1i32 as size_t,
               Z.re_match.as_mut_ptr(),
-              0i32,
-            ) == 0i32) as libc::c_int;
+              0,
+            ) == 0) as libc::c_int;
             if !(match_0 == 0 && cmd != (*proc_0).comm.as_mut_ptr()) {
               break;
             }
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn pgrep_main(
           }
           if match_0 != 0 && opt & (1i32 << OPTBIT_X as libc::c_int) as libc::c_uint != 0 {
             /* -x requires full string match */
-            match_0 = ((*Z.re_match.as_mut_ptr().offset(0)).rm_so == 0i32
+            match_0 = ((*Z.re_match.as_mut_ptr().offset(0)).rm_so == 0
               && *cmd.offset((*Z.re_match.as_mut_ptr().offset(0)).rm_eo as isize) as libc::c_int
                 == '\u{0}' as i32) as libc::c_int
           }
@@ -435,7 +435,7 @@ pub unsafe extern "C" fn pgrep_main(
       free(cmd_last as *mut libc::c_void);
       cmd_last = xstrdup(cmd)
     } else {
-      if cmdlen >= 0i32 {
+      if cmdlen >= 0 {
         *cmd.offset(cmdlen as isize) = '\u{0}' as i32 as libc::c_char
       }
       act((*proc_0).pid, cmd, signo);
@@ -447,6 +447,6 @@ pub unsafe extern "C" fn pgrep_main(
   if !cmd_last.is_null() {
     act(matched_pid as libc::c_uint, cmd_last, signo);
   }
-  return (matched_pid == 0i32) as libc::c_int;
+  return (matched_pid == 0) as libc::c_int;
   /* return 1 if no processes listed/signaled */
 }

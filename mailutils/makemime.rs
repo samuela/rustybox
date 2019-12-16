@@ -300,5 +300,5 @@ pub unsafe extern "C" fn makemime_main(
     b"\n--%s--\n\n\x00" as *const u8 as *const libc::c_char,
     opt_output,
   );
-  return 0i32;
+  return 0;
 }

@@ -190,7 +190,7 @@ pub unsafe extern "C" fn nuke_str(mut str: *mut libc::c_char) {
     while *str != 0 {
       let fresh0 = str;
       str = str.offset(1);
-      *fresh0 = 0i32 as libc::c_char
+      *fresh0 = 0 as libc::c_char
     }
     /* or: memset(str, 0, strlen(str)); - not as small as above */
   };

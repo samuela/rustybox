@@ -177,5 +177,5 @@ pub unsafe extern "C" fn volume_id_probe_nilfs(mut id: *mut volume_id) -> libc::
   if (*sb).s_rev_level == 2i32 as libc::c_uint {
     (*id).type_0 = b"nilfs2\x00" as *const u8 as *const libc::c_char
   }
-  return 0i32;
+  return 0;
 }

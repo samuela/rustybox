@@ -64,9 +64,9 @@ pub unsafe extern "C" fn setsid_main(
    *  $ true | setsid PROG
    * or if setsid is executed in backquotes (`setsid PROG`)...
    */
-  if setsid() < 0i32 {
+  if setsid() < 0 {
     let mut pid: pid_t = xfork();
-    if pid != 0i32 {
+    if pid != 0 {
       /* parent */
       /* TODO:
        * we can waitpid(pid, &status, 0) and then even
@@ -75,7 +75,7 @@ pub unsafe extern "C" fn setsid_main(
        * However, the code is larger and upstream
        * does not do such trick.
        */
-      return 0i32;
+      return 0;
     }
     /* child */
     /* now there should be no error: */

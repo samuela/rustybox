@@ -172,7 +172,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     {
       let mut init = suffix_mult {
         suffix: [0, 0, 0, 0],
-        mult: 0i32 as libc::c_uint,
+        mult: 0 as libc::c_uint,
       };
       init
     },
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn ubi_tools_main(
   let mut mtd_num: libc::c_int = 0;
   let mut dev_num: libc::c_int = -1i32;
   let mut vol_id: libc::c_int = -1i32;
-  let mut vid_hdr_offset: libc::c_int = 0i32;
+  let mut vid_hdr_offset: libc::c_int = 0;
   let mut vol_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut size_bytes: libc::c_ulonglong = 0;
   size_bytes = size_bytes;
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn ubi_tools_main(
   );
   memset(
     &mut req_structs as *mut C2RustUnnamed_0 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_0>() as libc::c_ulong,
   );
   if 1i32 != 0
@@ -270,7 +270,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     && (0i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 == 1i32
       || *applet_name.offset(4) as libc::c_int == 't' as i32)
   {
-    if opts & (1i32 << 0i32) as libc::c_uint == 0 {
+    if opts & (1i32 << 0) as libc::c_uint == 0 {
       bb_error_msg_and_die(
         b"%s device not specified\x00" as *const u8 as *const libc::c_char,
         b"MTD\x00" as *const u8 as *const libc::c_char,
@@ -281,10 +281,10 @@ pub unsafe extern "C" fn ubi_tools_main(
     req_structs.attach_req.vid_hdr_offset = vid_hdr_offset;
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (64i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<ubi_attach_req>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('o' as i32) << 0 + 8i32) as libc::c_uint
+        | (64i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<ubi_attach_req>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut req_structs.attach_req as *mut ubi_attach_req as *mut libc::c_void,
       b"UBI_IOCATT\x00" as *const u8 as *const libc::c_char,
@@ -307,10 +307,10 @@ pub unsafe extern "C" fn ubi_tools_main(
     /* FIXME? kernel expects i32* here: */
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (65i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('o' as i32) << 0 + 8i32) as libc::c_uint
+        | (65i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut dev_num as *mut libc::c_int as *mut libc::c_void,
       b"UBI_IOCDET\x00" as *const u8 as *const libc::c_char,
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     && (0i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 == 1i32
       || *applet_name.offset(4) as libc::c_int == 'k' as i32)
   {
-    if opts & (1i32 << 0i32) as libc::c_uint != 0 {
+    if opts & (1i32 << 0) as libc::c_uint != 0 {
       let mut leb_avail: libc::c_uint = 0;
       let mut leb_size: libc::c_uint = 0;
       let mut num: libc::c_uint = 0;
@@ -396,10 +396,10 @@ pub unsafe extern "C" fn ubi_tools_main(
     strcpy(req_structs.mkvol_req.name.as_mut_ptr(), vol_name);
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (0i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<ubi_mkvol_req>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('o' as i32) << 0 + 8i32) as libc::c_uint
+        | (0i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<ubi_mkvol_req>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut req_structs.mkvol_req as *mut ubi_mkvol_req as *mut libc::c_void,
       b"UBI_IOCMKVOL\x00" as *const u8 as *const libc::c_char,
@@ -428,10 +428,10 @@ pub unsafe extern "C" fn ubi_tools_main(
       let mut t: i32 = vol_id;
       bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('o' as i32) << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut t as *mut i32 as *mut libc::c_void,
         b"UBI_IOCRMVOL\x00" as *const u8 as *const libc::c_char,
@@ -439,10 +439,10 @@ pub unsafe extern "C" fn ubi_tools_main(
     } else {
       bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('o' as i32) << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<__s32>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut vol_id as *mut libc::c_int as *mut libc::c_void,
         b"UBI_IOCRMVOL\x00" as *const u8 as *const libc::c_char,
@@ -470,10 +470,10 @@ pub unsafe extern "C" fn ubi_tools_main(
     req_structs.rsvol_req.vol_id = vol_id;
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (2i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<ubi_rsvol_req>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('o' as i32) << 0 + 8i32) as libc::c_uint
+        | (2i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<ubi_rsvol_req>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut req_structs.rsvol_req as *mut ubi_rsvol_req as *mut libc::c_void,
       b"UBI_IOCRSVOL\x00" as *const u8 as *const libc::c_char,
@@ -491,14 +491,14 @@ pub unsafe extern "C" fn ubi_tools_main(
       //usage:     "\n	-t	Truncate to zero size"
       //usage:     "\n	-s SIZE	Size in bytes to resize to"
       /* truncate the volume by starting an update for size 0 */
-      bytes64 = 0i32 as int64_t;
+      bytes64 = 0 as int64_t;
       /* this ioctl expects int64_t* parameter */
       bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('O' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (0i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<__s64>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('O' as i32) << 0 + 8i32) as libc::c_uint
+          | (0i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<__s64>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut bytes64 as *mut int64_t as *mut libc::c_void,
         b"UBI_IOCVOLUP\x00" as *const u8 as *const libc::c_char,
@@ -540,7 +540,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       }
       if *(*argv).offset(0) as libc::c_int != '-' as i32 || *(*argv).offset(1) as libc::c_int != 0 {
         /* mtd-utils supports "-" as stdin */
-        xmove_fd(xopen(*argv, 0i32), 0i32);
+        xmove_fd(xopen(*argv, 0), 0);
       }
       if opts & (1i32 << 4i32) as libc::c_uint == 0 {
         let mut st: stat = std::mem::zeroed();
@@ -551,21 +551,21 @@ pub unsafe extern "C" fn ubi_tools_main(
       /* this ioctl expects signed int64_t* parameter */
       bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('O' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (0i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<__s64>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('O' as i32) << 0 + 8i32) as libc::c_uint
+          | (0i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<__s64>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut bytes64 as *mut int64_t as *mut libc::c_void,
         b"UBI_IOCVOLUP\x00" as *const u8 as *const libc::c_char,
       );
       /* can't use bb_copyfd_exact_size(): copy in blocks of exactly leb_size */
       buf = xmalloc(leb_size_0 as size_t) as *mut libc::c_char;
-      while size_bytes != 0i32 as libc::c_ulonglong {
+      while size_bytes != 0 as libc::c_ulonglong {
         let mut len: libc::c_int =
           full_read(0i32, buf as *mut libc::c_void, leb_size_0 as size_t) as libc::c_int;
-        if len <= 0i32 {
-          if len < 0i32 {
+        if len <= 0 {
+          if len < 0 {
             bb_perror_msg_and_die(
               b"read error from \'%s\'\x00" as *const u8 as *const libc::c_char,
               *argv,
@@ -583,5 +583,5 @@ pub unsafe extern "C" fn ubi_tools_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

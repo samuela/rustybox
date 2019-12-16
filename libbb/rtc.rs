@@ -70,7 +70,7 @@ pub struct linux_rtc_time {
  */
 #[no_mangle]
 pub unsafe extern "C" fn rtc_adjtime_is_utc() -> libc::c_int {
-  let mut utc: libc::c_int = 0i32;
+  let mut utc: libc::c_int = 0;
   let mut f: *mut FILE = fopen_for_read(b"/etc/adjtime\x00" as *const u8 as *const libc::c_char);
   if !f.is_null() {
     let mut buffer: [libc::c_char; 128] = [0; 128];
@@ -112,12 +112,12 @@ unsafe extern "C" fn open_loop_on_busy(
    */
   let mut try_0: libc::c_int = 1000i32 / 20i32;
   loop {
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     rtc = open(name, flags);
     if *bb_errno == 16i32 {
       usleep((20i32 * 1000i32) as useconds_t);
       try_0 -= 1;
-      if try_0 != 0i32 {
+      if try_0 != 0 {
         continue;
       }
       /* EBUSY. Last try, exit on error instead of returning -1 */
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn rtc_xopen(
       }
       _ => {
         rtc = open_loop_on_busy(*default_rtc, flags);
-        if rtc >= 0i32 {
+        if rtc >= 0 {
           return rtc;
         }
         if *name.offset(0) == 0 {
@@ -167,15 +167,15 @@ pub unsafe extern "C" fn rtc_xopen(
 pub unsafe extern "C" fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
   memset(
     ptm as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<tm>() as libc::c_ulong,
   );
   bb_xioctl(
     fd,
-    ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (0x9i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    ((2u32 << 0 + 8i32 + 8i32 + 14i32
+      | (('p' as i32) << 0 + 8i32) as libc::c_uint
+      | (0x9i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     ptm as *mut libc::c_void,
     b"RTC_RD_TIME\x00" as *const u8 as *const libc::c_char,

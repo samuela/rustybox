@@ -63,9 +63,9 @@ pub unsafe extern "C" fn pstm_init_size(mut a: *mut pstm_int, mut size: uint32) 
     (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(size as libc::c_ulong),
   ) as *mut pstm_digit; //bbox
                         //bbox	a->pool = pool;
-  (*a).used = 0i32;
+  (*a).used = 0;
   (*a).alloc = size as libc::c_int;
-  (*a).sign = 0i32;
+  (*a).sign = 0;
   /*
    zero the digits
   */
@@ -73,7 +73,7 @@ pub unsafe extern "C" fn pstm_init_size(mut a: *mut pstm_int, mut size: uint32) 
   //	for (x = 0; x < size; x++) {
   //		a->dp[x] = 0;
   //	}
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -100,10 +100,10 @@ unsafe extern "C" fn pstm_init(mut a: *mut pstm_int) -> int32 {
    to positive
   */
   //bbox	a->pool = pool;
-  (*a).used = 0i32;
+  (*a).used = 0;
   (*a).alloc = 64i32;
-  (*a).sign = 0i32;
-  return 0i32;
+  (*a).sign = 0;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -137,11 +137,11 @@ pub unsafe extern "C" fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) 
     i = (*a).alloc;
     (*a).alloc = size;
     while i < (*a).alloc {
-      *(*a).dp.offset(i as isize) = 0i32 as pstm_digit;
+      *(*a).dp.offset(i as isize) = 0 as pstm_digit;
       i += 1
     }
   }
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -155,15 +155,15 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
    If dst == src do nothing
   */
   if a == b {
-    return 0i32;
+    return 0;
   }
   /*
    Grow dest
   */
   if (*b).alloc < (*a).used {
     pstm_grow(b, (*a).used);
-    res = 0i32;
-    if res != 0i32 {
+    res = 0;
+    if res != 0 {
       return res;
     }
   }
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
   /* destination */
   tmpb = (*b).dp;
   /* copy all the digits */
-  n = 0i32;
+  n = 0;
   while n < (*a).used {
     let fresh0 = tmpa;
     tmpa = tmpa.offset(1);
@@ -191,7 +191,7 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
   while n < (*b).used {
     let fresh2 = tmpb;
     tmpb = tmpb.offset(1);
-    *fresh2 = 0i32 as pstm_digit;
+    *fresh2 = 0 as pstm_digit;
     n += 1
   }
   /*
@@ -199,7 +199,7 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
   */
   (*b).used = (*a).used;
   (*b).sign = (*a).sign;
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -212,12 +212,12 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
 #[no_mangle]
 pub unsafe extern "C" fn pstm_clamp(mut a: *mut pstm_int) {
   /*	decrease used while the most significant digit is zero. */
-  while (*a).used > 0i32 && *(*a).dp.offset(((*a).used - 1i32) as isize) == 0i32 as libc::c_uint {
+  while (*a).used > 0 && *(*a).dp.offset(((*a).used - 1i32) as isize) == 0 as libc::c_uint {
     (*a).used -= 1
   }
   /*	reset the sign flag if used == 0 */
-  if (*a).used == 0i32 {
-    (*a).sign = 0i32
+  if (*a).used == 0 {
+    (*a).sign = 0
   };
 }
 /* *****************************************************************************/
@@ -234,9 +234,9 @@ pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
     /*
        first zero the digits
     */
-    i = 0i32;
+    i = 0;
     while i < (*a).used {
-      *(*a).dp.offset(i as isize) = 0i32 as pstm_digit;
+      *(*a).dp.offset(i as isize) = 0 as pstm_digit;
       i += 1
     }
     free((*a).dp as *mut libc::c_void);
@@ -244,9 +244,9 @@ pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
        reset members to make debugging easier
     */
     (*a).dp = std::ptr::null_mut();
-    (*a).used = 0i32;
+    (*a).used = 0;
     (*a).alloc = (*a).used;
-    (*a).sign = 0i32
+    (*a).sign = 0
   };
 }
 /* *****************************************************************************/
@@ -261,14 +261,14 @@ pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
 unsafe extern "C" fn pstm_zero(mut a: *mut pstm_int) {
   let mut n: int32 = 0;
   let mut tmp: *mut pstm_digit = std::ptr::null_mut();
-  (*a).sign = 0i32;
-  (*a).used = 0i32;
+  (*a).sign = 0;
+  (*a).used = 0;
   tmp = (*a).dp;
-  n = 0i32;
+  n = 0;
   while n < (*a).alloc {
     let fresh3 = tmp;
     tmp = tmp.offset(1);
-    *fresh3 = 0i32 as pstm_digit;
+    *fresh3 = 0 as pstm_digit;
     n += 1
   }
 }
@@ -297,7 +297,7 @@ pub unsafe extern "C" fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int
   /*
    compare based on digits
   */
-  n = 0i32;
+  n = 0;
   while n < (*a).used {
     if *tmpa > *tmpb {
       return 1i32;
@@ -309,7 +309,7 @@ pub unsafe extern "C" fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int
     tmpa = tmpa.offset(-1);
     tmpb = tmpb.offset(-1)
   }
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -362,7 +362,7 @@ pub unsafe extern "C" fn pstm_init_for_read_unsigned_bin(
     .wrapping_div(32i32 as libc::c_ulong)
     .wrapping_add(2i32 as libc::c_ulong) as int32;
   pstm_init_size(a, size as uint32);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -400,21 +400,21 @@ pub unsafe extern "C" fn pstm_read_unsigned_bin(
     as libc::c_int;
   if (*a).alloc < (*a).used {
     pstm_grow(a, (*a).used);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
   }
   pd = (*a).dp as *mut libc::c_uchar;
   /* read the bytes in */
   c -= 1i32;
-  while c >= 0i32 {
+  while c >= 0 {
     let fresh4 = b;
     b = b.offset(1);
     *pd.offset(c as isize) = *fresh4;
     c -= 1i32
   }
   pstm_clamp(a);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -422,14 +422,14 @@ pub unsafe extern "C" fn pstm_read_unsigned_bin(
 unsafe extern "C" fn pstm_count_bits(mut a: *mut pstm_int) -> libc::c_int {
   let mut r: libc::c_int = 0; //bbox: was int16
   let mut q: pstm_digit = 0;
-  if (*a).used == 0i32 {
-    return 0i32;
+  if (*a).used == 0 {
+    return 0;
   }
   /* get number of digits and add that */
   r = ((*a).used - 1i32) * 32i32;
   /* take the last digit and count the bits in it */
   q = *(*a).dp.offset(((*a).used - 1i32) as isize);
-  while q > 0i32 as pstm_digit {
+  while q > 0 as pstm_digit {
     r += 1;
     q >>= 1i32 as pstm_digit
   }
@@ -439,13 +439,13 @@ unsafe extern "C" fn pstm_count_bits(mut a: *mut pstm_int) -> libc::c_int {
 #[no_mangle]
 pub unsafe extern "C" fn pstm_unsigned_bin_size(mut a: *mut pstm_int) -> int32 {
   let mut size: int32 = pstm_count_bits(a);
-  return size / 8i32 + (if size & 7i32 != 0i32 { 1i32 } else { 0i32 });
+  return size / 8i32 + (if size & 7i32 != 0 { 1i32 } else { 0 });
 }
 /* *****************************************************************************/
 unsafe extern "C" fn pstm_set(mut a: *mut pstm_int, mut b: pstm_digit) {
   pstm_zero(a);
   *(*a).dp.offset(0) = b;
-  (*a).used = if *(*a).dp.offset(0) != 0 { 1i32 } else { 0i32 };
+  (*a).used = if *(*a).dp.offset(0) != 0 { 1i32 } else { 0 };
 }
 /* *****************************************************************************/
 /*
@@ -459,14 +459,14 @@ unsafe extern "C" fn pstm_rshd(mut a: *mut pstm_int, mut x: libc::c_int) {
     return;
   }
   /* shift */
-  y = 0i32;
+  y = 0;
   while y < (*a).used - x {
     *(*a).dp.offset(y as isize) = *(*a).dp.offset((y + x) as isize);
     y += 1
   }
   /* zero rest */
   while y < (*a).used {
-    *(*a).dp.offset(y as isize) = 0i32 as pstm_digit;
+    *(*a).dp.offset(y as isize) = 0 as pstm_digit;
     y += 1
   }
   /* decrement count */
@@ -483,16 +483,16 @@ unsafe extern "C" fn pstm_lshd(mut a: *mut pstm_int, mut b: libc::c_int) -> int3
   /*
    If its less than zero return.
   */
-  if b <= 0i32 {
-    return 0i32;
+  if b <= 0 {
+    return 0;
   }
   /*
    Grow to fit the new digits.
   */
   if (*a).alloc < (*a).used + b {
     pstm_grow(a, (*a).used + b);
-    res = 0i32;
-    if res != 0i32 {
+    res = 0;
+    if res != 0 {
       return res;
     }
   }
@@ -525,14 +525,14 @@ unsafe extern "C" fn pstm_lshd(mut a: *mut pstm_int, mut b: libc::c_int) -> int3
   }
   /* zero the lower digits */
   top = (*a).dp;
-  x = 0i32;
+  x = 0;
   while x < b {
     let fresh7 = top;
     top = top.offset(1);
-    *fresh7 = 0i32 as pstm_digit;
+    *fresh7 = 0 as pstm_digit;
     x += 1
   }
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -542,8 +542,8 @@ unsafe extern "C" fn pstm_2expt(mut a: *mut pstm_int, mut b: libc::c_int) -> int
   let mut z: libc::c_int = 0; //bbox: was int16
                               /* zero a as per default */
   pstm_zero(a);
-  if b < 0i32 {
-    return 0i32;
+  if b < 0 {
+    return 0;
   }
   z = b / 32i32;
   if z >= 4096i32 {
@@ -553,13 +553,13 @@ unsafe extern "C" fn pstm_2expt(mut a: *mut pstm_int, mut b: libc::c_int) -> int
   (*a).used = z + 1i32;
   if (*a).used > (*a).alloc {
     pstm_grow(a, (*a).used);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
   }
   /* put the single bit in its place */
   *(*a).dp.offset(z as isize) = (1i32 as pstm_digit) << b % 32i32;
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -575,8 +575,8 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
   */
   if (*b).alloc < (*a).used + 1i32 {
     pstm_grow(b, (*a).used + 1i32);
-    res = 0i32;
-    if res != 0i32 {
+    res = 0;
+    if res != 0 {
       return res;
     }
   }
@@ -591,8 +591,8 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
   /* alias for dest */
   tmpb = (*b).dp;
   /* carry */
-  r = 0i32 as pstm_digit;
-  x = 0i32;
+  r = 0 as pstm_digit;
+  x = 0;
   while x < (*a).used {
     /*
           get what will be the *next* carry bit from the
@@ -615,7 +615,7 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
     x += 1
   }
   /* new leading digit? */
-  if r != 0i32 as libc::c_uint && (*b).used != 4096i32 - 1i32 {
+  if r != 0 as libc::c_uint && (*b).used != 4096i32 - 1i32 {
     /* add a MSB which is always 1 at this point */
     *tmpb = 1i32 as pstm_digit;
     (*b).used += 1
@@ -628,11 +628,11 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
   while x < oldused {
     let fresh10 = tmpb;
     tmpb = tmpb.offset(1);
-    *fresh10 = 0i32 as pstm_digit;
+    *fresh10 = 0 as pstm_digit;
     x += 1
   }
   (*b).sign = (*a).sign;
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -653,16 +653,16 @@ pub unsafe extern "C" fn s_pstm_sub(
   }
   if (*c).alloc < (*a).used {
     pstm_grow(c, (*a).used);
-    x = 0i32;
-    if x != 0i32 {
+    x = 0;
+    if x != 0 {
       return x;
     }
   }
   oldused = (*c).used;
   oldbused = (*b).used;
   (*c).used = (*a).used;
-  t = 0i32 as pstm_word;
-  x = 0i32;
+  t = 0 as pstm_word;
+  x = 0;
   while x < oldbused {
     t = (*(*a).dp.offset(x as isize) as pstm_word)
       .wrapping_sub((*(*b).dp.offset(x as isize) as pstm_word).wrapping_add(t));
@@ -677,11 +677,11 @@ pub unsafe extern "C" fn s_pstm_sub(
     x += 1
   }
   while x < oldused {
-    *(*c).dp.offset(x as isize) = 0i32 as pstm_digit;
+    *(*c).dp.offset(x as isize) = 0 as pstm_digit;
     x += 1
   }
   pstm_clamp(c);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -706,20 +706,20 @@ unsafe extern "C" fn s_pstm_add(
   (*c).used = y;
   if (*c).used > (*c).alloc {
     pstm_grow(c, (*c).used);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
   }
-  t = 0i32 as pstm_word;
-  x = 0i32;
+  t = 0 as pstm_word;
+  x = 0;
   while x < y {
     if (*a).used < x {
-      adp = 0i32 as pstm_word
+      adp = 0 as pstm_word
     } else {
       adp = *(*a).dp.offset(x as isize) as pstm_word
     }
     if (*b).used < x {
-      bdp = 0i32 as pstm_word
+      bdp = 0 as pstm_word
     } else {
       bdp = *(*b).dp.offset(x as isize) as pstm_word
     }
@@ -728,10 +728,10 @@ unsafe extern "C" fn s_pstm_add(
     t >>= 32i32;
     x += 1
   }
-  if t != 0i32 as libc::c_ulong && x < 4096i32 {
+  if t != 0 as libc::c_ulong && x < 4096i32 {
     if (*c).used == (*c).alloc {
       pstm_grow(c, (*c).alloc + 1i32);
-      if 0i32 != 0i32 {
+      if 0 != 0 {
         return -8i32;
       }
     }
@@ -742,11 +742,11 @@ unsafe extern "C" fn s_pstm_add(
   }
   (*c).used = x;
   while x < oldused {
-    *(*c).dp.offset(x as isize) = 0i32 as pstm_digit;
+    *(*c).dp.offset(x as isize) = 0 as pstm_digit;
     x += 1
   }
   pstm_clamp(c);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -770,7 +770,7 @@ pub unsafe extern "C" fn pstm_sub(
     */
     (*c).sign = sa;
     res = s_pstm_add(a, b, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   } else if pstm_cmp_mag(a, b) != -1i32 {
@@ -782,19 +782,19 @@ pub unsafe extern "C" fn pstm_sub(
     (*c).sign = sa;
     /* The first has a larger or equal magnitude */
     res = s_pstm_sub(a, b, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   } else {
     /* The result has the _opposite_ sign from the first number. */
-    (*c).sign = if sa == 0i32 { 1i32 } else { 0i32 };
+    (*c).sign = if sa == 0 { 1i32 } else { 0 };
     /* The second has a larger magnitude */
     res = s_pstm_sub(b, a, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   }
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -819,7 +819,7 @@ unsafe extern "C" fn pstm_montgomery_setup(
              =>  2*(1) - (1)     = 1
   */
   b = *(*a).dp.offset(0); /* here x*a==1 mod 2**4 */
-  if b & 1i32 as libc::c_uint == 0i32 as libc::c_uint {
+  if b & 1i32 as libc::c_uint == 0 as libc::c_uint {
     bb_simple_error_msg_and_die(
       b"pstm_montogomery_setup failure\n\x00" as *const u8 as *const libc::c_char,
     ); /* here x*a==1 mod 2**8 */
@@ -833,7 +833,7 @@ unsafe extern "C" fn pstm_montgomery_setup(
     as pstm_digit as pstm_digit;
   /* rho = -1/m mod b */
   *rho = ((1i32 as pstm_word) << 32i32 as pstm_word).wrapping_sub(x as pstm_word) as pstm_digit;
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -854,7 +854,7 @@ unsafe extern "C" fn pstm_montgomery_calc_normalization(
   /* compute A = B^(n-1) * 2^(bits-1) */
   if (*b).used > 1i32 {
     x = pstm_2expt(a, ((*b).used - 1i32) * 32i32 + bits - 1i32);
-    if x != 0i32 {
+    if x != 0 {
       return x;
     }
   } else {
@@ -864,17 +864,17 @@ unsafe extern "C" fn pstm_montgomery_calc_normalization(
   /* now compute C = A * B mod b */
   x = bits - 1i32;
   while x < 32i32 {
-    if pstm_mul_2(a, a) != 0i32 {
+    if pstm_mul_2(a, a) != 0 {
       return -8i32;
     }
     if pstm_cmp_mag(a, b) != -1i32 {
-      if s_pstm_sub(a, b, a) != 0i32 {
+      if s_pstm_sub(a, b, a) != 0 {
         return -8i32;
       }
     }
     x += 1
   }
-  return 0i32;
+  return 0;
 }
 /*
  * Copyright (C) 2017 Denys Vlasenko
@@ -934,22 +934,22 @@ unsafe extern "C" fn pstm_mul_2d(
   let mut x: libc::c_int = 0;
   /* copy it */
   pstm_copy(a, c);
-  if 0i32 != 0i32 {
+  if 0 != 0 {
     return -8i32;
   }
   /* handle whole digits */
   if b >= 32i32 {
     pstm_lshd(c, b / 32i32);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
   }
   b %= 32i32;
   /* shift the digits */
-  if b != 0i32 {
-    carry = 0i32 as pstm_digit;
+  if b != 0 {
+    carry = 0 as pstm_digit;
     shift = (32i32 - b) as pstm_digit;
-    x = 0i32;
+    x = 0;
     while x < (*c).used {
       carrytmp = *(*c).dp.offset(x as isize) >> shift;
       *(*c).dp.offset(x as isize) = (*(*c).dp.offset(x as isize) << b).wrapping_add(carry);
@@ -960,7 +960,7 @@ unsafe extern "C" fn pstm_mul_2d(
     if carry != 0 && x < 4096i32 {
       if (*c).used == (*c).alloc {
         pstm_grow(c, (*c).alloc + 1i32);
-        if 0i32 != 0i32 {
+        if 0 != 0 {
           return -8i32;
         }
       }
@@ -970,7 +970,7 @@ unsafe extern "C" fn pstm_mul_2d(
     }
   }
   pstm_clamp(c);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -985,30 +985,30 @@ unsafe extern "C" fn pstm_mod_2d(
 {
   let mut x: libc::c_int = 0; //bbox: was int16
                               /* zero if count less than or equal to zero */
-  if b <= 0i32 {
+  if b <= 0 {
     pstm_zero(c);
-    return 0i32;
+    return 0;
   }
   /* get copy of input */
   pstm_copy(a, c);
-  if 0i32 != 0i32 {
+  if 0 != 0 {
     return -8i32;
   }
   /* if 2**d is larger than we just return */
   if b >= 32i32 * (*a).used {
-    return 0i32;
+    return 0;
   }
   /* zero digits above the last digit of the modulus */
-  x = b / 32i32 + (if b % 32i32 == 0i32 { 0i32 } else { 1i32 });
+  x = b / 32i32 + (if b % 32i32 == 0 { 0 } else { 1i32 });
   while x < (*c).used {
-    *(*c).dp.offset(x as isize) = 0i32 as pstm_digit;
+    *(*c).dp.offset(x as isize) = 0 as pstm_digit;
     x += 1
   }
   /* clear the digit that is not completely outside/inside the modulus */
   let ref mut fresh13 = *(*c).dp.offset((b / 32i32) as isize);
   *fresh13 &= !(0i32 as pstm_digit) >> 32i32 - b;
   pstm_clamp(c);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -1025,16 +1025,16 @@ unsafe extern "C" fn pstm_mul_d(
   let mut oldused: libc::c_int = 0;
   if (*c).alloc < (*a).used + 1i32 {
     pstm_grow(c, (*a).used + 1i32);
-    res = 0i32;
-    if res != 0i32 {
+    res = 0;
+    if res != 0 {
       return res;
     }
   }
   oldused = (*c).used;
   (*c).used = (*a).used;
   (*c).sign = (*a).sign;
-  w = 0i32 as pstm_word;
-  x = 0i32;
+  w = 0 as pstm_word;
+  x = 0;
   while x < (*a).used {
     w = (*(*a).dp.offset(x as isize) as pstm_word)
       .wrapping_mul(b as pstm_word)
@@ -1043,18 +1043,18 @@ unsafe extern "C" fn pstm_mul_d(
     w = w >> 32i32;
     x += 1
   }
-  if w != 0i32 as libc::c_ulong && (*a).used != 4096i32 {
+  if w != 0 as libc::c_ulong && (*a).used != 4096i32 {
     let fresh14 = (*c).used;
     (*c).used = (*c).used + 1;
     *(*c).dp.offset(fresh14 as isize) = w as pstm_digit;
     x += 1
   }
   while x < oldused {
-    *(*c).dp.offset(x as isize) = 0i32 as pstm_digit;
+    *(*c).dp.offset(x as isize) = 0 as pstm_digit;
     x += 1
   }
   pstm_clamp(c);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -1079,24 +1079,24 @@ unsafe extern "C" fn pstm_div_2d(
     dp: 0 as *mut pstm_digit,
   };
   /* if the shift count is <= 0 then we do no work */
-  if b <= 0i32 {
+  if b <= 0 {
     pstm_copy(a, c);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
     if !d.is_null() {
       pstm_zero(d);
     }
-    return 0i32;
+    return 0;
   }
   /* get the remainder */
   if !d.is_null() {
     pstm_init(&mut t);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       return -8i32;
     }
     pstm_mod_2d(a, b, &mut t);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       res = -8i32;
       current_block = 7090354130695220050;
     } else {
@@ -1110,7 +1110,7 @@ unsafe extern "C" fn pstm_div_2d(
     /* copy */
     {
       pstm_copy(a, c);
-      if 0i32 != 0i32 {
+      if 0 != 0 {
         res = -8i32
       } else {
         /* shift by as many digits in the bit count */
@@ -1119,7 +1119,7 @@ unsafe extern "C" fn pstm_div_2d(
         }
         /* shift any bit count < DIGIT_BIT */
         D = (b % 32i32) as pstm_digit;
-        if D != 0i32 as libc::c_uint {
+        if D != 0 as libc::c_uint {
           let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
           let mut mask: pstm_digit = 0;
           let mut shift: pstm_digit = 0;
@@ -1130,9 +1130,9 @@ unsafe extern "C" fn pstm_div_2d(
           /* alias */
           tmpc = (*c).dp.offset(((*c).used - 1i32) as isize);
           /* carry */
-          r = 0i32 as pstm_digit;
+          r = 0 as pstm_digit;
           x = (*c).used - 1i32;
-          while x >= 0i32 {
+          while x >= 0 {
             /* get the lower  bits of this word in a temp */
             rr = *tmpc & mask;
             /* shift the current word and mix in the carry bits from previous */
@@ -1144,14 +1144,14 @@ unsafe extern "C" fn pstm_div_2d(
           }
         }
         pstm_clamp(c);
-        res = 0i32
+        res = 0
       }
     }
     _ => {}
   }
   if !d.is_null() {
     pstm_copy(&mut t, d);
-    if 0i32 != 0i32 {
+    if 0 != 0 {
       res = -8i32
     }
     pstm_clear(&mut t);
@@ -1175,7 +1175,7 @@ unsafe extern "C" fn pstm_init_copy(
   let mut x: libc::c_int = 0; //bbox: was int16
   let mut res: int32 = 0;
   if a == b {
-    return 0i32;
+    return 0;
   }
   x = (*b).alloc;
   if toSqr != 0 {
@@ -1189,12 +1189,12 @@ unsafe extern "C" fn pstm_init_copy(
     }
   }
   pstm_init_size(a, x as uint32);
-  res = 0i32;
-  if res != 0i32 {
+  res = 0;
+  if res != 0 {
     return res;
   }
   pstm_copy(b, a);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /*
@@ -1261,68 +1261,68 @@ unsafe extern "C" fn pstm_div(
   let mut norm: libc::c_int = 0;
   let mut neg: libc::c_int = 0;
   /* is divisor zero ? */
-  if (if (*b).used == 0i32 { 1i32 } else { 0i32 }) == 1i32 {
+  if (if (*b).used == 0 { 1i32 } else { 0 }) == 1i32 {
     return -9i32;
   }
   /* if a < b then q=0, r = a */
   if pstm_cmp_mag(a, b) == -1i32 {
     if !d.is_null() {
       pstm_copy(a, d);
-      if 0i32 != 0i32 {
+      if 0 != 0 {
         return -8i32;
       }
     }
     if !c.is_null() {
       pstm_zero(c);
     }
-    return 0i32;
+    return 0;
   }
   /*
     Smart-size inits
   */
   pstm_init_size(&mut t1, (*a).alloc as uint32);
-  res = 0i32;
-  if res != 0i32 {
+  res = 0;
+  if res != 0 {
     return res;
   }
   pstm_init_size(&mut t2, 3i32 as uint32);
-  res = 0i32;
-  if !(res != 0i32) {
-    pstm_init_copy(&mut x, a, 0i32);
-    res = 0i32;
-    if !(res != 0i32) {
+  res = 0;
+  if !(res != 0) {
+    pstm_init_copy(&mut x, a, 0);
+    res = 0;
+    if !(res != 0) {
       /*
         Used to be an init_copy on b but pstm_grow was always hit with triple size
       */
       pstm_init_size(&mut y, ((*b).used * 3i32) as uint32);
-      res = 0i32;
-      if !(res != 0i32) {
+      res = 0;
+      if !(res != 0) {
         pstm_copy(b, &mut y);
-        res = 0i32;
-        if !(res != 0i32) {
+        res = 0;
+        if !(res != 0) {
           /* fix the sign */
-          neg = if (*a).sign == (*b).sign { 0i32 } else { 1i32 };
-          y.sign = 0i32;
+          neg = if (*a).sign == (*b).sign { 0 } else { 1i32 };
+          y.sign = 0;
           x.sign = y.sign;
           /* normalize both x and y, ensure that y >= b/2, [b == 2**DIGIT_BIT] */
           norm = pstm_count_bits(&mut y) % 32i32;
           if norm < 32i32 - 1i32 {
             norm = 32i32 - 1i32 - norm;
             pstm_mul_2d(&mut x, norm, &mut x);
-            res = 0i32;
-            if res != 0i32 {
+            res = 0;
+            if res != 0 {
               current_block = 17810489416690824808;
             } else {
               pstm_mul_2d(&mut y, norm, &mut y);
-              res = 0i32;
-              if res != 0i32 {
+              res = 0;
+              if res != 0 {
                 current_block = 17810489416690824808;
               } else {
                 current_block = 8704759739624374314;
               }
             }
           } else {
-            norm = 0i32;
+            norm = 0;
             current_block = 8704759739624374314;
           }
           match current_block {
@@ -1332,13 +1332,13 @@ unsafe extern "C" fn pstm_div(
               n = x.used - 1i32;
               t = y.used - 1i32;
               pstm_init_size(&mut q, (n - t + 1i32) as uint32);
-              res = 0i32;
-              if !(res != 0i32) {
+              res = 0;
+              if !(res != 0) {
                 q.used = n - t + 1i32;
                 /* while (x >= y*b**n-t) do { q[n-t] += 1; x -= y*b**{n-t} } */
                 pstm_lshd(&mut y, n - t);
-                res = 0i32;
-                if res != 0i32 {
+                res = 0;
+                if res != 0 {
                   current_block = 16660950639971353743;
                 } else {
                   current_block = 11743904203796629665;
@@ -1356,7 +1356,7 @@ unsafe extern "C" fn pstm_div(
                         let ref mut fresh15 = *q.dp.offset((n - t) as isize);
                         *fresh15 = (*fresh15).wrapping_add(1);
                         res = pstm_sub(&mut x, &mut y, &mut x);
-                        if res != 0i32 {
+                        if res != 0 {
                           current_block = 16660950639971353743;
                         } else {
                           current_block = 11743904203796629665;
@@ -1398,27 +1398,27 @@ unsafe extern "C" fn pstm_div(
                                   .wrapping_sub(1i32 as libc::c_uint);
                               /* find left hand */
                               pstm_zero(&mut t1);
-                              *t1.dp.offset(0) = if t - 1i32 < 0i32 {
-                                0i32 as libc::c_uint
+                              *t1.dp.offset(0) = if t - 1i32 < 0 {
+                                0 as libc::c_uint
                               } else {
                                 *y.dp.offset((t - 1i32) as isize)
                               };
                               *t1.dp.offset(1) = *y.dp.offset(t as isize);
                               t1.used = 2i32;
                               pstm_mul_d(&mut t1, *q.dp.offset((i - t - 1i32) as isize), &mut t1);
-                              res = 0i32;
-                              if res != 0i32 {
+                              res = 0;
+                              if res != 0 {
                                 current_block = 16660950639971353743;
                                 continue 'c_11045;
                               }
                               /* find right hand */
-                              *t2.dp.offset(0) = if i - 2i32 < 0i32 {
-                                0i32 as libc::c_uint
+                              *t2.dp.offset(0) = if i - 2i32 < 0 {
+                                0 as libc::c_uint
                               } else {
                                 *x.dp.offset((i - 2i32) as isize)
                               };
-                              *t2.dp.offset(1) = if i - 1i32 < 0i32 {
-                                0i32 as libc::c_uint
+                              *t2.dp.offset(1) = if i - 1i32 < 0 {
+                                0 as libc::c_uint
                               } else {
                                 *x.dp.offset((i - 1i32) as isize)
                               };
@@ -1430,38 +1430,38 @@ unsafe extern "C" fn pstm_div(
                             }
                             /* step 3.3 x = x - q{i-t-1} * y * b**{i-t-1} */
                             pstm_mul_d(&mut y, *q.dp.offset((i - t - 1i32) as isize), &mut t1);
-                            res = 0i32;
-                            if res != 0i32 {
+                            res = 0;
+                            if res != 0 {
                               current_block = 16660950639971353743;
                               continue 'c_11045;
                             }
                             pstm_lshd(&mut t1, i - t - 1i32);
-                            res = 0i32;
-                            if res != 0i32 {
+                            res = 0;
+                            if res != 0 {
                               current_block = 16660950639971353743;
                               continue 'c_11045;
                             }
                             res = pstm_sub(&mut x, &mut t1, &mut x);
-                            if res != 0i32 {
+                            if res != 0 {
                               current_block = 16660950639971353743;
                               continue 'c_11045;
                             }
                             /* if x < 0 then { x = x + y*b**{i-t-1}; q{i-t-1} -= 1; } */
                             if x.sign == 1i32 {
                               pstm_copy(&mut y, &mut t1);
-                              res = 0i32;
-                              if res != 0i32 {
+                              res = 0;
+                              if res != 0 {
                                 current_block = 16660950639971353743;
                                 continue 'c_11045;
                               }
                               pstm_lshd(&mut t1, i - t - 1i32);
-                              res = 0i32;
-                              if res != 0i32 {
+                              res = 0;
+                              if res != 0 {
                                 current_block = 16660950639971353743;
                                 continue 'c_11045;
                               }
                               res = pstm_add(&mut x, &mut t1, &mut x);
-                              if res != 0i32 {
+                              if res != 0 {
                                 current_block = 16660950639971353743;
                                 continue 'c_11045;
                               }
@@ -1476,11 +1476,11 @@ unsafe extern "C" fn pstm_div(
                           now q is the quotient and x is the remainder (which we have to normalize)
                         */
                         /* get sign before writing to c */
-                        x.sign = if x.used == 0i32 { 0i32 } else { (*a).sign };
+                        x.sign = if x.used == 0 { 0 } else { (*a).sign };
                         if !c.is_null() {
                           pstm_clamp(&mut q);
                           pstm_copy(&mut q, c);
-                          if 0i32 != 0i32 {
+                          if 0 != 0 {
                             res = -8i32;
                             current_block = 16660950639971353743;
                             continue;
@@ -1490,8 +1490,8 @@ unsafe extern "C" fn pstm_div(
                         }
                         if !d.is_null() {
                           pstm_div_2d(&mut x, norm, &mut x, 0 as *mut pstm_int);
-                          res = 0i32;
-                          if res != 0i32 {
+                          res = 0;
+                          if res != 0 {
                             current_block = 16660950639971353743;
                             continue;
                           }
@@ -1501,18 +1501,18 @@ unsafe extern "C" fn pstm_div(
                           */
                           i = (*b).used;
                           while i < x.used {
-                            *x.dp.offset(i as isize) = 0i32 as pstm_digit;
+                            *x.dp.offset(i as isize) = 0 as pstm_digit;
                             i += 1
                           }
                           pstm_clamp(&mut x);
                           pstm_copy(&mut x, d);
-                          if 0i32 != 0i32 {
+                          if 0 != 0 {
                             res = -8i32;
                             current_block = 16660950639971353743;
                             continue;
                           }
                         }
-                        res = 0i32;
+                        res = 0;
                         current_block = 16660950639971353743;
                       }
                     }
@@ -1567,12 +1567,12 @@ unsafe extern "C" fn pstm_mod(
     Smart-size
   */
   pstm_init_size(&mut t, (*b).alloc as uint32);
-  err = 0i32;
-  if err != 0i32 {
+  err = 0;
+  if err != 0 {
     return err;
   }
   err = pstm_div(a, b, 0 as *mut pstm_int, &mut t);
-  if err != 0i32 {
+  if err != 0 {
     pstm_clear(&mut t);
     return err;
   }
@@ -1613,12 +1613,12 @@ pub unsafe extern "C" fn pstm_mulmod(
     size = (*a).alloc
   }
   pstm_init_size(&mut tmp, size as uint32);
-  res = 0i32;
-  if res != 0i32 {
+  res = 0;
+  if res != 0 {
     return res;
   }
-  res = pstm_mul_comba(a, b, &mut tmp, 0 as *mut pstm_digit, 0i32 as uint32);
-  if res != 0i32 {
+  res = pstm_mul_comba(a, b, &mut tmp, 0 as *mut pstm_digit, 0 as uint32);
+  if res != 0 {
     pstm_clear(&mut tmp);
     return res;
   }
@@ -1673,13 +1673,13 @@ pub unsafe extern "C" fn pstm_exptmod(
   }
   /* now setup montgomery  */
   err = pstm_montgomery_setup(P, &mut mp);
-  if err != 0i32 {
+  if err != 0 {
     return err;
   }
   /* setup result */
   pstm_init_size(&mut res, ((*P).used * 2i32 + 1i32) as uint32);
-  err = 0i32;
-  if err != 0i32 {
+  err = 0;
+  if err != 0 {
     return err;
   }
   /*
@@ -1689,27 +1689,27 @@ pub unsafe extern "C" fn pstm_exptmod(
   */
   /* now we need R mod m */
   err = pstm_montgomery_calc_normalization(&mut res, P);
-  if !(err != 0i32) {
+  if !(err != 0) {
     /*
      init M array
      init first cell
     */
     pstm_init_size(&mut *M.as_mut_ptr().offset(1), res.used as uint32);
-    err = 0i32;
-    if !(err != 0i32) {
+    err = 0;
+    if !(err != 0) {
       /* now set M[1] to G * R mod m */
       if pstm_cmp_mag(P, G) != 1i32 {
         /* G > P so we reduce it first */
         err = pstm_mod(G, P, &mut *M.as_mut_ptr().offset(1));
-        if err != 0i32 {
+        if err != 0 {
           current_block = 1207487804900576449;
         } else {
           current_block = 5634871135123216486;
         }
       } else {
         pstm_copy(G, &mut *M.as_mut_ptr().offset(1));
-        err = 0i32;
-        if err != 0i32 {
+        err = 0;
+        if err != 0 {
           current_block = 1207487804900576449;
         } else {
           current_block = 5634871135123216486;
@@ -1723,7 +1723,7 @@ pub unsafe extern "C" fn pstm_exptmod(
             P,
             &mut *M.as_mut_ptr().offset(1),
           );
-          if !(err != 0i32) {
+          if !(err != 0) {
             /*
               Pre-allocated digit.  Used for mul, sqr, AND reduce
             */
@@ -1739,10 +1739,10 @@ pub unsafe extern "C" fn pstm_exptmod(
               &mut *M.as_mut_ptr().offset(1),
               1i32,
             );
-            if 0i32 != 0i32 {
+            if 0 != 0 {
               err = -8i32
             } else {
-              x = 0i32;
+              x = 0;
               loop {
                 if !(x < winsize - 1i32) {
                   current_block = 2604890879466389055;
@@ -1754,7 +1754,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                   paD,
                   paDlen,
                 );
-                if err != 0i32 {
+                if err != 0 {
                   current_block = 6164085797154605288;
                   break;
                 }
@@ -1765,7 +1765,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                   paD,
                   paDlen,
                 );
-                if err != 0i32 {
+                if err != 0 {
                   current_block = 6164085797154605288;
                   break;
                 }
@@ -1788,8 +1788,8 @@ pub unsafe extern "C" fn pstm_exptmod(
                       &mut *M.as_mut_ptr().offset(x as isize),
                       (M[(1i32 << winsize - 1i32) as usize].alloc + 1i32) as uint32,
                     );
-                    err = 0i32;
-                    if err != 0i32 {
+                    err = 0;
+                    if err != 0 {
                       y = 1i32 << winsize - 1i32;
                       while y < x {
                         pstm_clear(&mut *M.as_mut_ptr().offset(y as isize));
@@ -1819,7 +1819,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                           paD,
                           paDlen,
                         );
-                        if err != 0i32 {
+                        if err != 0 {
                           current_block = 14289100601382369252;
                           break;
                         }
@@ -1830,7 +1830,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                           paD,
                           paDlen,
                         );
-                        if err != 0i32 {
+                        if err != 0 {
                           current_block = 14289100601382369252;
                           break;
                         }
@@ -1839,17 +1839,17 @@ pub unsafe extern "C" fn pstm_exptmod(
                       match current_block {
                         5891011138178424807 => {
                           /* set initial mode and bit cnt */
-                          mode = 0i32;
+                          mode = 0;
                           bitcnt = 1i32;
-                          buf = 0i32 as pstm_digit;
+                          buf = 0 as pstm_digit;
                           digidx = (*X).used - 1i32;
-                          bitcpy = 0i32;
-                          bitbuf = 0i32;
+                          bitcpy = 0;
+                          bitbuf = 0;
                           's_285: loop
                           /* grab next digit as required */
                           {
                             bitcnt -= 1;
-                            if bitcnt == 0i32 {
+                            if bitcnt == 0 {
                               /* if digidx == -1 we are out of digits so break */
                               if digidx == -1i32 {
                                 current_block = 10393716428851982524;
@@ -1870,18 +1870,18 @@ pub unsafe extern "C" fn pstm_exptmod(
                                  in the exponent.  Technically this opt is not required but it
                                  does lower the # of trivial squaring/reductions used
                             */
-                            if mode == 0i32 && y == 0i32 {
+                            if mode == 0 && y == 0 {
                               continue;
                             }
                             /* if the bit is zero and mode == 1 then we square */
-                            if mode == 1i32 && y == 0i32 {
+                            if mode == 1i32 && y == 0 {
                               err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
-                              if err != 0i32 {
+                              if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
                               }
                               err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                              if err != 0i32 {
+                              if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
                               }
@@ -1894,15 +1894,15 @@ pub unsafe extern "C" fn pstm_exptmod(
                                 continue;
                               }
                               /* ok window is filled so square as required and mul square first */
-                              x = 0i32;
+                              x = 0;
                               while x < winsize {
                                 err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
-                                if err != 0i32 {
+                                if err != 0 {
                                   current_block = 14289100601382369252;
                                   break 's_285;
                                 }
                                 err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                                if err != 0i32 {
+                                if err != 0 {
                                   current_block = 14289100601382369252;
                                   break 's_285;
                                 }
@@ -1916,18 +1916,18 @@ pub unsafe extern "C" fn pstm_exptmod(
                                 paD,
                                 paDlen,
                               );
-                              if err != 0i32 {
+                              if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
                               }
                               err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                              if err != 0i32 {
+                              if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
                               }
                               /* empty window and reset */
-                              bitcpy = 0i32;
-                              bitbuf = 0i32;
+                              bitcpy = 0;
+                              bitbuf = 0;
                               mode = 1i32
                             }
                           }
@@ -1936,27 +1936,27 @@ pub unsafe extern "C" fn pstm_exptmod(
                             _ =>
                             /* if bits remain then square/multiply */
                             {
-                              if mode == 2i32 && bitcpy > 0i32 {
+                              if mode == 2i32 && bitcpy > 0 {
                                 /* square then multiply if the bit is set */
-                                x = 0i32;
+                                x = 0;
                                 loop {
                                   if !(x < bitcpy) {
                                     current_block = 10301740260014665685;
                                     break;
                                   }
                                   err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
-                                  if err != 0i32 {
+                                  if err != 0 {
                                     current_block = 14289100601382369252;
                                     break;
                                   }
                                   err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                                  if err != 0i32 {
+                                  if err != 0 {
                                     current_block = 14289100601382369252;
                                     break;
                                   }
                                   /* get next bit of the window */
                                   bitbuf <<= 1i32;
-                                  if bitbuf & 1i32 << winsize != 0i32 {
+                                  if bitbuf & 1i32 << winsize != 0 {
                                     /* then multiply */
                                     err = pstm_mul_comba(
                                       &mut res,
@@ -1965,12 +1965,12 @@ pub unsafe extern "C" fn pstm_exptmod(
                                       paD,
                                       paDlen,
                                     );
-                                    if err != 0i32 {
+                                    if err != 0 {
                                       current_block = 14289100601382369252;
                                       break;
                                     }
                                     err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                                    if err != 0i32 {
+                                    if err != 0 {
                                       current_block = 14289100601382369252;
                                       break;
                                     }
@@ -1990,12 +1990,12 @@ pub unsafe extern "C" fn pstm_exptmod(
                                 */
                                 {
                                   err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
-                                  if !(err != 0i32) {
+                                  if !(err != 0) {
                                     /* swap res with Y */
                                     pstm_copy(&mut res, Y);
-                                    err = 0i32;
-                                    if !(err != 0i32) {
-                                      err = 0i32
+                                    err = 0;
+                                    if !(err != 0) {
+                                      err = 0
                                     }
                                   }
                                 }
@@ -2047,23 +2047,23 @@ pub unsafe extern "C" fn pstm_add(
     /* both positive or both negative, add their mags, copy the sign */
     (*c).sign = sa;
     res = s_pstm_add(a, b, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   } else if pstm_cmp_mag(a, b) == -1i32 {
     (*c).sign = sb;
     res = s_pstm_sub(b, a, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   } else {
     (*c).sign = sa;
     res = s_pstm_sub(a, b, c);
-    if res != 0i32 {
+    if res != 0 {
       return res;
     }
   }
-  return 0i32;
+  return 0;
 }
 /*
    one positive, the other negative
@@ -2080,7 +2080,7 @@ unsafe extern "C" fn pstm_reverse(mut s: *mut libc::c_uchar, mut len: libc::c_in
   let mut ix: int32 = 0;
   let mut iy: int32 = 0;
   let mut t: libc::c_uchar = 0;
-  ix = 0i32;
+  ix = 0;
   iy = len - 1i32;
   while ix < iy {
     t = *s.offset(ix as isize);
@@ -2215,33 +2215,33 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
   let mut x: libc::c_int = 0;
   let mut t: pstm_int = {
     let mut init = pstm_int {
-      used: 0i32,
+      used: 0,
       alloc: 0,
       sign: 0,
       dp: 0 as *mut pstm_digit,
     };
     init
   };
-  pstm_init_copy(&mut t, a, 0i32);
-  res = 0i32;
-  if res != 0i32 {
+  pstm_init_copy(&mut t, a, 0);
+  res = 0;
+  if res != 0 {
     return res;
   }
-  x = 0i32;
-  while (if t.used == 0i32 { 1i32 } else { 0i32 }) == 0i32 {
+  x = 0;
+  while (if t.used == 0 { 1i32 } else { 0 }) == 0 {
     let fresh17 = x;
     x = x + 1;
     *b.offset(fresh17 as isize) = (*t.dp.offset(0) & 255i32 as libc::c_uint) as libc::c_uchar;
     pstm_div_2d(&mut t, 8i32, &mut t, 0 as *mut pstm_int);
-    res = 0i32;
-    if res != 0i32 {
+    res = 0;
+    if res != 0 {
       pstm_clear(&mut t);
       return res;
     }
   }
   pstm_reverse(b, x);
   pstm_clear(&mut t);
-  return 0i32;
+  return 0;
 }
 /* *****************************************************************************/
 /* !DISABLE_PSTM */

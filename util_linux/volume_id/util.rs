@@ -77,8 +77,8 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut c: libc::c_uint = 0;
-  j = 0i32 as libc::c_uint;
-  i = 0i32 as libc::c_uint;
+  j = 0 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i.wrapping_add(2i32 as libc::c_uint) as libc::c_ulong <= count {
     if endianess as libc::c_uint == LE as libc::c_int as libc::c_uint {
       c = ((*buf.offset(i.wrapping_add(1i32 as libc::c_uint) as isize) as libc::c_int) << 8i32
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
         | *buf.offset(i.wrapping_add(1i32 as libc::c_uint) as isize) as libc::c_int)
         as libc::c_uint
     }
-    if c == 0i32 as libc::c_uint {
+    if c == 0 as libc::c_uint {
       break;
     }
     if j.wrapping_add(1i32 as libc::c_uint) as libc::c_ulong >= len {
@@ -188,13 +188,13 @@ pub unsafe extern "C" fn volume_id_set_uuid(
   //	memcpy(id->uuid_raw, buf, count);
   //	id->uuid_raw_len = count;
   /* if set, create string in the same format, the native platform uses */
-  i = 0i32 as libc::c_uint; /* all bytes are zero, leave it empty ("") */
+  i = 0 as libc::c_uint; /* all bytes are zero, leave it empty ("") */
   loop {
     if !(i < count) {
       current_block = 17179679302217393232;
       break;
     }
-    if *buf.offset(i as isize) as libc::c_int != 0i32 {
+    if *buf.offset(i as isize) as libc::c_int != 0 {
       current_block = 11319177375723085162;
       break;
     }
@@ -292,7 +292,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
       current_block = 3815402658071396482;
     } else {
       (*id).sbbuf_len = len;
-      off = 0i32 as u64;
+      off = 0 as u64;
       current_block = 16164644963279819311;
     }
   } else {
@@ -311,14 +311,14 @@ pub unsafe extern "C" fn volume_id_get_buffer(
       (*id).seekbuf_off = off;
       (*id).seekbuf_len = len;
       (*id).seekbuf = xrealloc((*id).seekbuf as *mut libc::c_void, len) as *mut u8;
-      small_off = 0i32 as libc::c_uint;
+      small_off = 0 as libc::c_uint;
       dst = (*id).seekbuf;
       current_block = 16164644963279819311;
     }
   }
   match current_block {
     16164644963279819311 => {
-      if lseek((*id).fd, off as off64_t, 0i32) as libc::c_ulong != off {
+      if lseek((*id).fd, off as off64_t, 0) as libc::c_ulong != off {
         current_block = 1886147455329398701;
       } else {
         read_len = full_read((*id).fd, dst as *mut libc::c_void, len);
@@ -399,10 +399,10 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 pub unsafe extern "C" fn volume_id_free_buffer(mut id: *mut volume_id) {
   free((*id).sbbuf as *mut libc::c_void);
   (*id).sbbuf = std::ptr::null_mut();
-  (*id).sbbuf_len = 0i32 as size_t;
+  (*id).sbbuf_len = 0 as size_t;
   free((*id).seekbuf as *mut libc::c_void);
   (*id).seekbuf = std::ptr::null_mut();
-  (*id).seekbuf_len = 0i32 as size_t;
-  (*id).seekbuf_off = 0i32 as u64;
+  (*id).seekbuf_len = 0 as size_t;
+  (*id).seekbuf_off = 0 as u64;
   /* paranoia */
 }

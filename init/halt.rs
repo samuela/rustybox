@@ -175,7 +175,7 @@ unsafe extern "C" fn write_wtmp() {
   }*/
   memset(
     &mut utmp as *mut utmpx as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<utmpx>() as libc::c_ulong,
   ); /* it is wide enough */
   utmp.ut_tv.tv_sec = time(0 as *mut time_t) as i32; /* = strcpy(utmp.ut_id, "~~"); */
@@ -221,11 +221,11 @@ unsafe extern "C" fn init_was_not_there() -> libc::c_int {
    */
   while access(
     b"/proc/meminfo\x00" as *const u8 as *const libc::c_char,
-    0i32,
-  ) != 0i32
+    0,
+  ) != 0
     && {
       cnt -= 1;
-      (cnt) >= 0i32
+      (cnt) >= 0
     }
   {
     sleep(1i32 as libc::c_uint);
@@ -240,19 +240,19 @@ pub unsafe extern "C" fn halt_main(
 ) -> libc::c_int {
   static mut magic: [libc::c_int; 3] = [0xcdef0123u32 as libc::c_int, 0x4321fedci32, 0x1234567i32];
   static mut signals: [smallint; 3] = [10i32 as smallint, 12i32 as smallint, 15i32 as smallint];
-  let mut delay: libc::c_int = 0i32;
+  let mut delay: libc::c_int = 0;
   let mut which: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut rc: libc::c_int = 0;
   /* Figure out which applet we're running */
   if 1i32 != 0 && 1i32 == 0 && 1i32 == 0 {
-    which = 0i32
+    which = 0
   } else if 1i32 == 0 && 1i32 != 0 && 1i32 == 0 {
     which = 1i32
   } else if 1i32 == 0 && 1i32 == 0 && 1i32 != 0 {
     which = 2i32
   } else {
-    which = 0i32;
+    which = 0;
     while (*::std::mem::transmute::<&[u8; 4], &[libc::c_char; 4]>(b"hpr\x00"))[which as usize]
       as libc::c_int
       != *applet_name.offset(0) as libc::c_int
@@ -274,7 +274,7 @@ pub unsafe extern "C" fn halt_main(
   write_wtmp();
   if flags & 8i32 != 0 {
     /* -w */
-    return 0i32;
+    return 0;
   }
   if flags & 2i32 == 0 {
     /* no -n */
@@ -290,12 +290,12 @@ pub unsafe extern "C" fn halt_main(
     /* bbox init/linuxrc assumed */
     let mut pidlist: *mut pid_t =
       find_pid_by_name(b"linuxrc\x00" as *const u8 as *const libc::c_char);
-    if *pidlist.offset(0) > 0i32 {
+    if *pidlist.offset(0) > 0 {
       rc = kill(*pidlist.offset(0), signals[which as usize] as libc::c_int)
     }
     if rc != 0 {
       /* talk to init */
-      if 0i32 == 0 {
+      if 0 == 0 {
         /* bbox init assumed */
         rc = kill(1i32, signals[which as usize] as libc::c_int);
         if init_was_not_there() != 0 {

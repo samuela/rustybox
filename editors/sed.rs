@@ -339,7 +339,7 @@ unsafe extern "C" fn parse_escapes(
   mut to: libc::c_char,
 ) -> libc::c_uint {
   let mut d: *mut libc::c_char = dest; /* skip backslash in string[] */
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   if len == -1i32 {
     len = strlen(string) as libc::c_int
   }
@@ -403,10 +403,10 @@ unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
   mut str: *const libc::c_char,
 ) -> libc::c_int {
   let mut bracket: libc::c_int = -1i32;
-  let mut escaped: libc::c_int = 0i32;
-  let mut idx: libc::c_int = 0i32;
+  let mut escaped: libc::c_int = 0;
+  let mut idx: libc::c_int = 0;
   let mut ch: libc::c_char = 0;
-  if delimiter < 0i32 {
+  if delimiter < 0 {
     bracket -= 1;
     delimiter = -delimiter
   }
@@ -415,7 +415,7 @@ unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
     if !(ch as libc::c_int != '\u{0}' as i32) {
       break;
     }
-    if bracket >= 0i32 {
+    if bracket >= 0 {
       if ch as libc::c_int == ']' as i32
         && !(bracket == idx - 1i32
           || bracket == idx - 2i32
@@ -424,7 +424,7 @@ unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
         bracket = -1i32
       }
     } else if escaped != 0 {
-      escaped = 0i32
+      escaped = 0
     } else if ch as libc::c_int == '\\' as i32 {
       escaped = 1i32
     } else if bracket == -1i32 && ch as libc::c_int == '[' as i32 {
@@ -450,7 +450,7 @@ unsafe extern "C" fn parse_regex_delim(
 ) -> libc::c_int {
   let mut cmdstr_ptr: *const libc::c_char = cmdstr;
   let mut delimiter: libc::c_uchar = 0;
-  let mut idx: libc::c_int = 0i32;
+  let mut idx: libc::c_int = 0;
   /* verify that the 's' or 'y' is followed by something.  That something
    * (typically a 'slash') is now our regexp delimiter... */
   if *cmdstr as libc::c_int == '\u{0}' as i32 {
@@ -501,7 +501,7 @@ unsafe extern "C" fn get_address(
     }
     pos = pos.offset(1);
     next = index_of_next_unescaped_regexp_delim(delimiter as libc::c_int, pos);
-    if next != 0i32 {
+    if next != 0 {
       temp = copy_parsing_escapes(pos, next);
       *regex = xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong) as *mut regex_t;
       let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
@@ -608,7 +608,7 @@ unsafe extern "C" fn parse_subst_cmd(
         103 => {
           /* Replace all occurrences */
           if *match_0.offset(0) as libc::c_int != '^' as i32 {
-            (*sed_cmd).which_match = 0i32 as libc::c_uint
+            (*sed_cmd).which_match = 0 as libc::c_uint
           }
         }
         112 => {
@@ -767,7 +767,7 @@ unsafe extern "C" fn parse_cmd_args(
         .wrapping_add(1i32 as libc::c_ulong)
         .wrapping_mul(2i32 as libc::c_ulong),
     ) as *mut libc::c_char;
-    i = 0i32;
+    i = 0;
     while *match_0.offset(i as isize) as libc::c_int != 0
       && *replace.offset(i as isize) as libc::c_int != 0
     {
@@ -891,7 +891,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
           idx -= 1
           /* if 0, trigger error check below */
         }
-        if idx < 0i32 {
+        if idx < 0 {
           bb_simple_error_msg_and_die(
             b"no address after comma\x00" as *const u8 as *const libc::c_char,
           );
@@ -973,7 +973,7 @@ unsafe extern "C" fn do_subst_w_backrefs(
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   /* go through the replacement string */
-  i = 0i32;
+  i = 0;
   while *replace.offset(i as isize) != 0 {
     /* if we find a backreference (\1, \2, etc.) print the backref'ed text */
     if *replace.offset(i as isize) as libc::c_int == '\\' as i32 {
@@ -1021,10 +1021,10 @@ unsafe extern "C" fn do_subst_command(
   mut line_p: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut line: *mut libc::c_char = *line_p;
-  let mut match_count: libc::c_uint = 0i32 as libc::c_uint;
-  let mut altered: bool = 0i32 != 0;
+  let mut match_count: libc::c_uint = 0 as libc::c_uint;
+  let mut altered: bool = 0 != 0;
   let mut prev_match_empty: bool = 1i32 != 0;
-  let mut tried_at_eol: bool = 0i32 != 0;
+  let mut tried_at_eol: bool = 0 != 0;
   let mut current_regex: *mut regex_t = std::ptr::null_mut();
   current_regex = (*sed_cmd).sub_match;
   /* Handle empty regex. */
@@ -1045,10 +1045,10 @@ unsafe extern "C" fn do_subst_command(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .regmatch
         .as_mut_ptr(),
-      0i32,
+      0,
     )
   {
-    return 0i32;
+    return 0;
   }
   /* Initialize temporary output buffer. */
   let ref mut fresh17 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1060,7 +1060,7 @@ unsafe extern "C" fn do_subst_command(
     .len = 64i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .pipeline
-    .idx = 0i32;
+    .idx = 0;
   loop
   /* Now loop through, substituting for matches */
   {
@@ -1073,7 +1073,7 @@ unsafe extern "C" fn do_subst_command(
     /* If we aren't interested in this match, output old line to
      * end of match and continue */
     if (*sed_cmd).which_match != 0 && (*sed_cmd).which_match != match_count {
-      i = 0i32;
+      i = 0;
       while i < end {
         let fresh18 = line;
         line = line.offset(1);
@@ -1088,7 +1088,7 @@ unsafe extern "C" fn do_subst_command(
       }
     } else {
       /* Print everything before the match */
-      i = 0i32;
+      i = 0;
       while i < start {
         pipe_putc(*line.offset(i as isize));
         i += 1
@@ -1100,7 +1100,7 @@ unsafe extern "C" fn do_subst_command(
        * second is "" before "d", third is "" after "d".
        * Second match is NOT replaced!
        */
-      if prev_match_empty as libc::c_int != 0 || start != 0i32 || start != end {
+      if prev_match_empty as libc::c_int != 0 || start != 0 || start != end {
         //dbg("%d %d %d", prev_match_empty, start, end);
         do_subst_w_backrefs(line, (*sed_cmd).string);
         /* Flag that something has changed */
@@ -1121,7 +1121,7 @@ unsafe extern "C" fn do_subst_command(
       /* Advance past the match */
       line = line.offset(end as isize);
       /* if we're not doing this globally, get out now */
-      if (*sed_cmd).which_match != 0i32 as libc::c_uint {
+      if (*sed_cmd).which_match != 0 as libc::c_uint {
         break;
       }
     }
@@ -1170,7 +1170,7 @@ unsafe extern "C" fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
   while !sed_cmd.is_null() {
     if (*sed_cmd).cmd as libc::c_int == ':' as i32
       && !(*sed_cmd).string.is_null()
-      && strcmp((*sed_cmd).string, label) == 0i32
+      && strcmp((*sed_cmd).string, label) == 0
     {
       return sed_cmd;
     }
@@ -1348,9 +1348,9 @@ unsafe extern "C" fn beg_match(
     && regexec(
       (*sed_cmd).beg_match,
       pattern_space,
-      0i32 as size_t,
+      0 as size_t,
       0 as *mut regmatch_t,
-      0i32,
+      0,
     ) == 0) as libc::c_int;
   if retval != 0 {
     let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
@@ -1363,7 +1363,7 @@ unsafe extern "C" fn process_files() {
   let mut current_block: u64;
   let mut pattern_space: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut next_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut linenum: libc::c_int = 0i32;
+  let mut linenum: libc::c_int = 0;
   let mut last_puts_char: libc::c_char = '\n' as i32 as libc::c_char;
   let mut last_gets_char: libc::c_char = 0;
   let mut next_gets_char: libc::c_char = 0;
@@ -1374,7 +1374,7 @@ unsafe extern "C" fn process_files() {
   loop
   /* Go through every line in each file */
   {
-    substituted = 0i32;
+    substituted = 0;
     /* Advance to next line.  Stop if out of lines. */
     pattern_space = next_line;
     if pattern_space.is_null() {
@@ -1409,7 +1409,7 @@ unsafe extern "C" fn process_files() {
               && (*sed_cmd).end_line == 0
               && (*sed_cmd).beg_match.is_null()
               && (*sed_cmd).end_match.is_null()
-            || (*sed_cmd).beg_line > 0i32
+            || (*sed_cmd).beg_line > 0
               && (if (*sed_cmd).end_line != 0 || !(*sed_cmd).end_match.is_null() {
                 ((*sed_cmd).beg_line <= linenum) as libc::c_int
               } else {
@@ -1428,7 +1428,7 @@ unsafe extern "C" fn process_files() {
             (*sed_cmd).end_line = linenum + (-(*sed_cmd).end_line - 2i32)
           }
           /* once matched, "n,xxx" range is dead, disabling it */
-          if (*sed_cmd).beg_line > 0i32 {
+          if (*sed_cmd).beg_line > 0 {
             (*sed_cmd).beg_line = -2i32
           }
           (*sed_cmd).set_in_match(
@@ -1446,10 +1446,10 @@ unsafe extern "C" fn process_files() {
                 && regexec(
                   (*sed_cmd).end_match,
                   pattern_space,
-                  0i32 as size_t,
+                  0 as size_t,
                   0 as *mut regmatch_t,
-                  0i32,
-                ) == 0i32) as libc::c_int as libc::c_uint,
+                  0,
+                ) == 0) as libc::c_int as libc::c_uint,
           )
         }
         /* Skip blocks of commands we didn't match */
@@ -1460,14 +1460,14 @@ unsafe extern "C" fn process_files() {
             (matched == 0) as libc::c_int
           } != 0
           {
-            let mut nest_cnt: libc::c_uint = 0i32 as libc::c_uint;
+            let mut nest_cnt: libc::c_uint = 0 as libc::c_uint;
             loop {
               if (*sed_cmd).cmd as libc::c_int == '{' as i32 {
                 nest_cnt = nest_cnt.wrapping_add(1)
               }
               if (*sed_cmd).cmd as libc::c_int == '}' as i32 {
                 nest_cnt = nest_cnt.wrapping_sub(1);
-                if nest_cnt == 0i32 as libc::c_uint {
+                if nest_cnt == 0 as libc::c_uint {
                   break;
                 }
               }
@@ -1502,7 +1502,7 @@ unsafe extern "C" fn process_files() {
                 /* Append newline and pattern space to hold space */
                 {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -1523,7 +1523,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -1552,7 +1552,7 @@ unsafe extern "C" fn process_files() {
                 /* Append newline and hold space to pattern space */
                 {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -1571,7 +1571,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1606,9 +1606,9 @@ unsafe extern "C" fn process_files() {
                 {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -1630,7 +1630,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -1688,7 +1688,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -1905,7 +1905,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -1926,7 +1926,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -1952,7 +1952,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -1971,7 +1971,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -2003,9 +2003,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -2025,7 +2025,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -2067,7 +2067,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -2245,7 +2245,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -2266,7 +2266,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -2292,7 +2292,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -2311,7 +2311,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -2343,9 +2343,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -2365,7 +2365,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -2407,7 +2407,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -2585,7 +2585,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -2606,7 +2606,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -2632,7 +2632,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -2651,7 +2651,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -2683,9 +2683,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -2705,7 +2705,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -2747,7 +2747,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -2929,7 +2929,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -2950,7 +2950,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -2976,7 +2976,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -2995,7 +2995,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -3027,9 +3027,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -3049,7 +3049,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -3091,7 +3091,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -3269,7 +3269,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -3290,7 +3290,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -3316,7 +3316,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -3335,7 +3335,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -3367,9 +3367,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -3389,7 +3389,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -3431,7 +3431,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -3609,7 +3609,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -3630,7 +3630,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -3656,7 +3656,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -3675,7 +3675,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -3707,9 +3707,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -3729,7 +3729,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -3771,7 +3771,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -3949,7 +3949,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -3970,7 +3970,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -3996,7 +3996,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -4015,7 +4015,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -4047,9 +4047,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -4069,7 +4069,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -4111,7 +4111,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -4289,7 +4289,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -4310,7 +4310,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -4336,7 +4336,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -4355,7 +4355,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -4387,9 +4387,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -4409,7 +4409,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -4451,7 +4451,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -4629,7 +4629,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -4650,7 +4650,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -4676,7 +4676,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -4695,7 +4695,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -4727,9 +4727,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -4749,7 +4749,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -4791,7 +4791,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -4969,7 +4969,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -4990,7 +4990,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -5016,7 +5016,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -5035,7 +5035,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -5067,9 +5067,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -5089,7 +5089,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -5131,7 +5131,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -5309,7 +5309,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -5330,7 +5330,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -5356,7 +5356,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -5375,7 +5375,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -5407,9 +5407,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -5429,7 +5429,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -5471,7 +5471,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -5649,7 +5649,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -5670,7 +5670,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -5696,7 +5696,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -5715,7 +5715,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -5747,9 +5747,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -5769,7 +5769,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -5811,7 +5811,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -5989,7 +5989,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -6010,7 +6010,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -6036,7 +6036,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -6055,7 +6055,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -6087,9 +6087,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -6109,7 +6109,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -6151,7 +6151,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -6329,7 +6329,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -6350,7 +6350,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -6376,7 +6376,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -6395,7 +6395,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -6427,9 +6427,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -6449,7 +6449,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -6491,7 +6491,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -6669,7 +6669,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -6690,7 +6690,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -6716,7 +6716,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -6735,7 +6735,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -6767,9 +6767,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -6789,7 +6789,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -6831,7 +6831,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -7009,7 +7009,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -7030,7 +7030,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -7056,7 +7056,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -7075,7 +7075,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -7107,9 +7107,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -7129,7 +7129,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -7171,7 +7171,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -7349,7 +7349,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -7370,7 +7370,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -7396,7 +7396,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -7415,7 +7415,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -7447,9 +7447,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -7469,7 +7469,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -7511,7 +7511,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -7689,7 +7689,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -7710,7 +7710,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -7736,7 +7736,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -7755,7 +7755,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -7787,9 +7787,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -7809,7 +7809,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -7851,7 +7851,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -8029,7 +8029,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -8050,7 +8050,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -8076,7 +8076,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -8095,7 +8095,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -8127,9 +8127,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -8149,7 +8149,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -8191,7 +8191,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -8369,7 +8369,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -8390,7 +8390,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -8416,7 +8416,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -8435,7 +8435,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -8467,9 +8467,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -8489,7 +8489,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -8531,7 +8531,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -8709,7 +8709,7 @@ unsafe extern "C" fn process_files() {
               match current_block {
                 11227437541145425351 => {
                   let mut hold_space_size_0: libc::c_int = 2i32;
-                  let mut pattern_space_size_0: libc::c_int = 0i32;
+                  let mut pattern_space_size_0: libc::c_int = 0;
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                     .hold_space
                     .is_null()
@@ -8730,7 +8730,7 @@ unsafe extern "C" fn process_files() {
                   ) as *mut libc::c_char;
                   if hold_space_size_0 == 2i32 {
                     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space =
-                      0i32 as libc::c_char
+                      0 as libc::c_char
                   }
                   strcat(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space,
@@ -8756,7 +8756,7 @@ unsafe extern "C" fn process_files() {
                 }
                 10468276026569382870 => {
                   let mut pattern_space_size: libc::c_int = 2i32;
-                  let mut hold_space_size: libc::c_int = 0i32;
+                  let mut hold_space_size: libc::c_int = 0;
                   if !pattern_space.is_null() {
                     pattern_space_size = (pattern_space_size as libc::c_ulong)
                       .wrapping_add(strlen(pattern_space))
@@ -8775,7 +8775,7 @@ unsafe extern "C" fn process_files() {
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
                   if pattern_space_size == 2i32 {
-                    *pattern_space.offset(0) = 0i32 as libc::c_char
+                    *pattern_space.offset(0) = 0 as libc::c_char
                   }
                   strcat(pattern_space, b"\n\x00" as *const u8 as *const libc::c_char);
                   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -8807,9 +8807,9 @@ unsafe extern "C" fn process_files() {
                 1739363794695357236 => {
                   let mut i: libc::c_int = 0;
                   let mut j: libc::c_int = 0;
-                  i = 0i32;
+                  i = 0;
                   while *pattern_space.offset(i as isize) != 0 {
-                    j = 0i32;
+                    j = 0;
                     while *(*sed_cmd).string.offset(j as isize) != 0 {
                       if *pattern_space.offset(i as isize) as libc::c_int
                         == *(*sed_cmd).string.offset(j as isize) as libc::c_int
@@ -8829,7 +8829,7 @@ unsafe extern "C" fn process_files() {
                   if substituted == 0 {
                     current_block = 17965632435239708295;
                   } else {
-                    substituted = 0i32;
+                    substituted = 0;
                     current_block = 13861430101487131366;
                   }
                 }
@@ -8871,7 +8871,7 @@ unsafe extern "C" fn process_files() {
                     pattern_space = next_line;
                     last_gets_char = next_gets_char;
                     next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
-                    substituted = 0i32;
+                    substituted = 0;
                     linenum += 1
                   }
                   current_block = 17965632435239708295;
@@ -9120,10 +9120,10 @@ pub unsafe extern "C" fn sed_main(
     && strcmp(
       *argv.offset(1),
       b"--version\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
   {
     puts(b"This is not GNU sed version 4.0\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
   }
   /* do normal option parsing */
   opt_f = std::ptr::null_mut();
@@ -9212,7 +9212,7 @@ pub unsafe extern "C" fn sed_main(
           *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char;
           process_files();
         }
-      } else if stat(*argv, &mut statbuf) != 0i32 {
+      } else if stat(*argv, &mut statbuf) != 0 {
         bb_simple_perror_msg(*argv);
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 as smallint;
         let ref mut fresh35 =

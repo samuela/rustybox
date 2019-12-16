@@ -148,7 +148,7 @@ unsafe extern "C" fn search_dev_inode(mut st: *const stat) -> smallint {
     }
     ilist = (*ilist).next
   }
-  return 0i32 as smallint;
+  return 0 as smallint;
 }
 unsafe extern "C" fn scan_proc_net_or_maps(
   mut path: *const libc::c_char,
@@ -169,15 +169,15 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   let mut sag: *mut libc::c_void = std::ptr::null_mut();
   f = fopen_for_read(path);
   if f.is_null() {
-    return 0i32 as smallint;
+    return 0 as smallint;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recursion_depth == PROC_NET as libc::c_int
   {
     let mut fd: libc::c_int = 0;
     /* find socket dev */
-    statbuf.st_dev = 0i32 as libc::dev_t; /* . or .. */
-    fd = socket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
-    if fd >= 0i32 {
+    statbuf.st_dev = 0 as libc::dev_t; /* . or .. */
+    fd = socket(2i32, SOCK_DGRAM as libc::c_int, 0);
+    if fd >= 0 {
       fstat(fd, &mut statbuf);
       close(fd);
     }
@@ -190,7 +190,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
     fag = &mut major as *mut libc::c_int as *mut libc::c_void;
     sag = &mut minor as *mut libc::c_int as *mut libc::c_void
   }
-  retval = 0i32 as smallint;
+  retval = 0 as smallint;
   while !fgets_unlocked(line.as_mut_ptr(), 255i32, f).is_null() {
     r = sscanf(
       line.as_mut_ptr(),
@@ -217,7 +217,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
         add_inode(&mut statbuf);
       }
     } else {
-      if !(major != 0i32 && minor != 0i32 && statbuf.st_ino != 0i32 as libc::c_ulong) {
+      if !(major != 0 && minor != 0 && statbuf.st_ino != 0 as libc::c_ulong) {
         continue;
       }
       statbuf.st_dev = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
@@ -237,12 +237,12 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
   let mut retval: smallint = 0;
   d = opendir(path);
   if d.is_null() {
-    return 0i32 as smallint;
+    return 0 as smallint;
   }
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recursion_depth;
   *fresh0 += 1;
-  retval = 0i32 as smallint;
-  stop_scan = 0i32 as smallint;
+  retval = 0 as smallint;
+  stop_scan = 0 as smallint;
   while stop_scan == 0 && {
     d_ent = readdir(d);
     !d_ent.is_null()
@@ -262,9 +262,9 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
           0 as *mut *mut libc::c_char,
           10i32,
         ) as pid_t;
-        if *bb_errno != 0i32
+        if *bb_errno != 0
           || pid == (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mypid
-          || scan_recursive(subpath) as libc::c_int == 0i32
+          || scan_recursive(subpath) as libc::c_int == 0
         {
           current_block_25 = 17784502470059252271;
         } else {
@@ -272,7 +272,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
             if kill(
               pid,
               (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).killsig,
-            ) != 0i32
+            ) != 0
             {
               bb_perror_msg(
                 b"kill pid %s\x00" as *const u8 as *const libc::c_char,
@@ -310,7 +310,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
                 }
               }
               _ => {
-                stop_scan = scan_proc_net_or_maps(subpath, 0i32 as libc::c_uint);
+                stop_scan = scan_proc_net_or_maps(subpath, 0 as libc::c_uint);
                 if stop_scan != 0 {
                   retval = stop_scan
                 }
@@ -328,7 +328,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
                 }
               }
               _ => {
-                stop_scan = scan_proc_net_or_maps(subpath, 0i32 as libc::c_uint);
+                stop_scan = scan_proc_net_or_maps(subpath, 0 as libc::c_uint);
                 if stop_scan != 0 {
                   retval = stop_scan
                 }
@@ -350,7 +350,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
     }
     match current_block_25 {
       16160708752528353120 => {
-        if !(stat(subpath, &mut statbuf) < 0i32) {
+        if !(stat(subpath, &mut statbuf) < 0) {
           stop_scan = search_dev_inode(&mut statbuf);
           if stop_scan != 0 {
             retval = stop_scan
@@ -397,7 +397,7 @@ pub unsafe extern "C" fn fuser_main(
       continue;
     }
     sig = get_signum(&mut *arg.offset(1));
-    if sig < 0i32 {
+    if sig < 0 {
       continue;
     }
     /* "-SIGNAL" option found. Remove it and bail out */
@@ -436,7 +436,7 @@ pub unsafe extern "C" fn fuser_main(
         .offset(::std::mem::size_of::<[libc::c_char; 11]>() as libc::c_ulong as isize)
         .offset(-1),
     ) == 2i32
-      && access(path.as_mut_ptr(), 4i32) == 0i32
+      && access(path.as_mut_ptr(), 4i32) == 0
     {
       /* PORT/PROTO */
       scan_proc_net_or_maps(path.as_mut_ptr(), port);

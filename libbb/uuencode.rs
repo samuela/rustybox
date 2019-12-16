@@ -183,16 +183,16 @@ pub unsafe extern "C" fn bb_uuencode(
 ) {
   let mut s: *const libc::c_uchar = src as *const libc::c_uchar;
   /* Transform the 3x8 bits to 4x6 bits */
-  while length > 0i32 {
+  while length > 0 {
     let mut s1: libc::c_uint = 0;
     let mut s2: libc::c_uint = 0;
     /* Are s[1], s[2] valid or should be assumed 0? */
-    s2 = 0i32 as libc::c_uint; /* can be >=0, -1, -2 */
+    s2 = 0 as libc::c_uint; /* can be >=0, -1, -2 */
     s1 = s2;
     length -= 3i32;
     if length >= -1i32 {
       s1 = *s.offset(1) as libc::c_uint;
-      if length >= 0i32 {
+      if length >= 0 {
         s2 = *s.offset(2) as libc::c_uint
       }
     }
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn decode_base64(
   let mut src_tail: *const libc::c_char = std::ptr::null();
   's_11: loop {
     let mut six_bit: [libc::c_uchar; 4] = [0; 4];
-    let mut count: libc::c_int = 0i32;
+    let mut count: libc::c_int = 0;
     /* Note that if we decode "AA==" and ate first '=',
      * we just decoded one char (count == 2) and now we'll
      * do the loop once more to decode second '='.
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn decode_base64(
       loop {
         ch = *src as libc::c_int;
         if ch == '\u{0}' as i32 {
-          if count == 0i32 {
+          if count == 0 {
             //TODO: add BASE64_FLAG_foo to die on bad char?
             /* Example:
              * If we decode "QUJD <NUL>", we want
@@ -880,13 +880,13 @@ pub unsafe extern "C" fn read_base64(
   let mut out_buf: [libc::c_char; 50] = [0; 50];
   let mut out_tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut in_tail: *const libc::c_char = std::ptr::null();
-  let mut term_seen: libc::c_int = 0i32;
-  let mut in_count: libc::c_int = 0i32;
+  let mut term_seen: libc::c_int = 0;
+  let mut in_count: libc::c_int = 0;
   loop {
     while in_count < BUFFER_SIZE as libc::c_int {
       let mut ch: libc::c_int = getc_unlocked(src_stream);
       if ch == flags as libc::c_schar as libc::c_int {
-        if in_count == 0i32 {
+        if in_count == 0 {
           return;
         }
         term_seen = 1i32;
@@ -913,7 +913,7 @@ pub unsafe extern "C" fn read_base64(
       && strcmp(
         in_buf.as_mut_ptr(),
         b"====\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
     {
       return;
     }

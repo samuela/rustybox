@@ -32,14 +32,14 @@ unsafe extern "C" fn xmalloc_fgets_internal(
   let mut linebuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* NULL */
   let term_length: libc::c_int = strlen(terminating_string) as libc::c_int;
   let mut end_string_offset: libc::c_int = 0;
-  let mut linebufsz: libc::c_int = 0i32;
-  let mut idx: libc::c_int = 0i32;
+  let mut linebufsz: libc::c_int = 0;
+  let mut idx: libc::c_int = 0;
   let mut ch: libc::c_int = 0;
   let mut maxsz: size_t = *maxsz_p;
   loop {
     ch = getc_unlocked(file);
     if ch == -1i32 {
-      if idx == 0i32 {
+      if idx == 0 {
         return linebuf;
       }
       break;
@@ -57,13 +57,13 @@ unsafe extern "C" fn xmalloc_fgets_internal(
       idx += 1;
       /* Check for terminating string */
       end_string_offset = idx - term_length;
-      if !(end_string_offset >= 0i32
+      if !(end_string_offset >= 0
         && memcmp(
           &mut *linebuf.offset(end_string_offset as isize) as *mut libc::c_char
             as *const libc::c_void,
           terminating_string as *const libc::c_void,
           term_length as libc::c_ulong,
-        ) == 0i32)
+        ) == 0)
       {
         continue;
       }
@@ -89,7 +89,7 @@ pub unsafe extern "C" fn xmalloc_fgets_str(
   mut terminating_string: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut maxsz: size_t = (2147483647i32 - 4095i32) as size_t;
-  return xmalloc_fgets_internal(file, terminating_string, 0i32, &mut maxsz);
+  return xmalloc_fgets_internal(file, terminating_string, 0, &mut maxsz);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_fgets_str_len(
@@ -102,7 +102,7 @@ pub unsafe extern "C" fn xmalloc_fgets_str_len(
     maxsz = (2147483647i32 - 4095i32) as size_t;
     maxsz_p = &mut maxsz
   }
-  return xmalloc_fgets_internal(file, terminating_string, 0i32, maxsz_p);
+  return xmalloc_fgets_internal(file, terminating_string, 0, maxsz_p);
 }
 
 /*

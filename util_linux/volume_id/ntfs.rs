@@ -216,7 +216,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   let mut ns: *mut ntfs_super_block = std::ptr::null_mut();
   let mut buf: *const u8 = std::ptr::null();
   let mut val: *const u8 = std::ptr::null();
-  ns = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut ntfs_super_block;
+  ns = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut ntfs_super_block;
   if ns.is_null() {
     return -1i32;
   }
@@ -224,7 +224,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
     (*ns).oem_id.as_mut_ptr() as *const libc::c_void,
     b"NTFS\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     4i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   cluster_size = ((*ns).sectors_per_cluster as libc::c_uint).wrapping_mul(sector_size);
   mft_cluster = (*ns).mft_cluster_location;
   mft_off = mft_cluster.wrapping_mul(cluster_size as libc::c_ulong);
-  if ((*ns).cluster_per_mft_record as libc::c_int) < 0i32 {
+  if ((*ns).cluster_per_mft_record as libc::c_int) < 0 {
     /* size = -log2(mft_record_size); normally 1024 Bytes */
     mft_record_size = (1i32 << -((*ns).cluster_per_mft_record as libc::c_int)) as libc::c_uint
   } else {
@@ -252,7 +252,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
       (*mftr).magic.as_mut_ptr() as *const libc::c_void,
       b"FILE\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       4i32 as libc::c_ulong,
-    ) != 0i32)
+    ) != 0)
     {
       attr_off = (*mftr).attrs_offset as libc::c_uint;
       loop {
@@ -263,7 +263,7 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
         val_off = (*attr).value_offset as libc::c_uint;
         val_len = (*attr).value_len;
         attr_off = attr_off.wrapping_add(attr_len);
-        if attr_len == 0i32 as libc::c_uint {
+        if attr_len == 0 as libc::c_uint {
           break;
         }
         if attr_off >= mft_record_size {
@@ -292,5 +292,5 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   }
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"ntfs\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

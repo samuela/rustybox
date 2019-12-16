@@ -243,11 +243,11 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
     sa_family: 0,
     sa_data: [0; 14],
   };
-  let mut flags: libc::c_int = 0i32;
+  let mut flags: libc::c_int = 0;
   let mut err: libc::c_int = 0;
   memset(
     &mut req as *mut arpreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<arpreq>() as libc::c_ulong,
   );
   /* Resolve the host name. */
@@ -255,7 +255,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
     .input
     .expect("non-null function pointer")(host, &mut sa)
-    < 0i32
+    < 0
   {
     bb_simple_herror_msg_and_die(host);
   }
@@ -326,13 +326,13 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
         if strcmp(
           *args,
           b"255.255.255.255\x00" as *const u8 as *const libc::c_char,
-        ) != 0i32
+        ) != 0
         {
           host = *args;
           if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
             .input
             .expect("non-null function pointer")(host, &mut sa)
-            < 0i32
+            < 0
           {
             bb_simple_herror_msg_and_die(host);
           }
@@ -350,7 +350,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
       }
     }
   }
-  if flags == 0i32 {
+  if flags == 0 {
     flags = 3i32
   }
   strncpy_IFNAMSIZ(
@@ -368,7 +368,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
       0x8953i32 as libc::c_ulong,
       &mut req as *mut arpreq,
     );
-    if err < 0i32 {
+    if err < 0 {
       if *bb_errno == 6i32 {
         if !(flags & 1i32 != 0) {
           printf(
@@ -407,7 +407,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
         sockfd as libc::c_int,
         0x8953i32 as libc::c_ulong,
         &mut req as *mut arpreq,
-      ) < 0i32
+      ) < 0
       {
         if *bb_errno == 6i32 {
           printf(
@@ -421,7 +421,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
     }
     _ => {}
   }
-  return 0i32;
+  return 0;
 }
 /* Get the hardware address to a specified interface name */
 unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut sockaddr) {
@@ -496,7 +496,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
   let mut flags: libc::c_int = 0;
   memset(
     &mut req as *mut arpreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<arpreq>() as libc::c_ulong,
   );
   let fresh1 = args;
@@ -505,7 +505,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
     .input
     .expect("non-null function pointer")(host, &mut sa)
-    < 0i32
+    < 0
   {
     bb_simple_herror_msg_and_die(host);
   }
@@ -529,7 +529,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
     if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw)
       .input
       .expect("non-null function pointer")(*fresh3, &mut req.arp_ha)
-      < 0i32
+      < 0
     {
       bb_simple_error_msg_and_die(
         b"invalid hardware address\x00" as *const u8 as *const libc::c_char,
@@ -593,13 +593,13 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
         if strcmp(
           *args,
           b"255.255.255.255\x00" as *const u8 as *const libc::c_char,
-        ) != 0i32
+        ) != 0
         {
           host = *args;
           if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
             .input
             .expect("non-null function pointer")(host, &mut sa)
-            < 0i32
+            < 0
           {
             bb_simple_herror_msg_and_die(host);
           }
@@ -633,7 +633,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
     &mut req as *mut arpreq as *mut libc::c_void,
     b"SIOCSARP\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }
 /* Print the contents of an ARP request block. */
 unsafe extern "C" fn arp_disp(
@@ -695,8 +695,8 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
   let mut type_0: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut num: libc::c_int = 0;
-  let mut entries: libc::c_uint = 0i32 as libc::c_uint;
-  let mut shown: libc::c_uint = 0i32 as libc::c_uint;
+  let mut entries: libc::c_uint = 0 as libc::c_uint;
+  let mut shown: libc::c_uint = 0 as libc::c_uint;
   let mut ip: [libc::c_char; 128] = [0; 128];
   let mut hwa: [libc::c_char; 128] = [0; 128];
   let mut mask: [libc::c_char; 128] = [0; 128];
@@ -708,7 +708,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
     if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
       .input
       .expect("non-null function pointer")(name, &mut sa)
-      < 0i32
+      < 0
     {
       bb_simple_herror_msg_and_die(name);
     }
@@ -758,7 +758,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
       continue;
     }
     /* if the user specified address differs, skip it */
-    if !host.is_null() && strcmp(ip.as_mut_ptr(), host) != 0i32 {
+    if !host.is_null() && strcmp(ip.as_mut_ptr(), host) != 0 {
       continue;
     }
     /* if the user specified device differs, skip it */
@@ -769,7 +769,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
       && strcmp(
         dev.as_mut_ptr(),
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device,
-      ) != 0i32
+      ) != 0
     {
       continue;
     }
@@ -780,7 +780,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
       if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
         .input
         .expect("non-null function pointer")(ip.as_mut_ptr(), &mut sa)
-        < 0i32
+        < 0
       {
         hostname = ip.as_mut_ptr()
       } else {
@@ -792,7 +792,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
             as libc::c_int,
         )
       }
-      if strcmp(hostname, ip.as_mut_ptr()) == 0i32 {
+      if strcmp(hostname, ip.as_mut_ptr()) == 0 {
         hostname = b"?\x00" as *const u8 as *const libc::c_char
       }
     }
@@ -828,7 +828,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
       );
     }
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn arp_main(
@@ -841,7 +841,7 @@ pub unsafe extern "C" fn arp_main(
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device;
   *fresh5 = b"\x00" as *const u8 as *const libc::c_char;
   xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
     sockfd as libc::c_int,
   );
   let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap;
@@ -899,7 +899,7 @@ pub unsafe extern "C" fn arp_main(
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap).name,
     );
   }
-  if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).alen <= 0i32 {
+  if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).alen <= 0 {
     bb_error_msg_and_die(
       b"%s: %s without ARP support\x00" as *const u8 as *const libc::c_char,
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).name,

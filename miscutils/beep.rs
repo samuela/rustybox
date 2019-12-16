@@ -44,7 +44,7 @@ pub unsafe extern "C" fn beep_main(
     if c == 'n' as i32 {
       tickrate_div_freq = (1193180i32 / 4000i32) as libc::c_uint;
       length = 30i32 as libc::c_uint;
-      delay = 0i32 as libc::c_uint;
+      delay = 0 as libc::c_uint;
       rep = 1i32 as libc::c_uint
     }
     c = getopt(
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn beep_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }
 /*
  * so, e.g. Beethoven's 9th symphony "Ode an die Freude" would be

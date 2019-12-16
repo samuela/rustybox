@@ -176,7 +176,7 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
       b"# \t\x00" as *const u8 as *const libc::c_char,
     ) != 0
     {
-      do_sethostname(s, 0i32);
+      do_sethostname(s, 0);
     }
   } else if sethostname(s, strlen(s)) != 0 {
     //		if (errno == EPERM)
@@ -295,10 +295,10 @@ pub unsafe extern "C" fn hostname_main(
     do_sethostname(hostname_str, 1i32);
   } else if !(*argv.offset(0)).is_null() {
     /* Set the hostname */
-    do_sethostname(*argv.offset(0), 0i32);
+    do_sethostname(*argv.offset(0), 0);
   } else {
     /* Just print the current hostname */
     puts(buf);
   }
-  return 0i32;
+  return 0;
 }

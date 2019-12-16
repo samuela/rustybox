@@ -298,7 +298,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
   let mut fd: libc::c_int = 0;
   wdir = xopen(
     b".\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
+    0 | 0o4000i32,
   );
   xchdir(directory_name);
   dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
@@ -306,7 +306,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
     let mut buf: [libc::c_char; 256] = [0; 256];
     let mut tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut size: libc::c_int = 0;
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     d = readdir(dir);
     if d.is_null() {
       if *bb_errno != 0 {
@@ -320,8 +320,8 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
       if (*d).d_name[0] as libc::c_int == '.' as i32 {
         continue;
       }
-      fd = open((*d).d_name.as_mut_ptr(), 0i32 | 0o4000i32);
-      if fd < 0i32 {
+      fd = open((*d).d_name.as_mut_ptr(), 0 | 0o4000i32);
+      if fd < 0 {
         if *bb_errno == 21i32 && !directory_name.is_null() {
           if option_mask32 & OPT_v as libc::c_int as libc::c_uint != 0 {
             bb_perror_msg(
@@ -345,14 +345,14 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
             .wrapping_sub(1i32 as libc::c_ulong),
         ) as libc::c_int;
         close(fd);
-        if size < 0i32 {
+        if size < 0 {
           bb_perror_msg_and_die(
             b"read %s/%s\x00" as *const u8 as *const libc::c_char,
             directory_name,
             (*d).d_name.as_mut_ptr(),
           );
         }
-        if size == 0i32 {
+        if size == 0 {
           unsetenv((*d).d_name.as_mut_ptr());
         } else {
           buf[size as usize] = '\n' as i32 as libc::c_char;
@@ -460,7 +460,7 @@ pub unsafe extern "C" fn chpst_main(
           as libc::c_uint
     }
   } else {
-    opt = 0i32 as libc::c_uint;
+    opt = 0 as libc::c_uint;
     option_mask32 = opt;
     argv = argv.offset(1);
     if (*argv).is_null() {
@@ -553,7 +553,7 @@ pub unsafe extern "C" fn chpst_main(
   }
   /* nice should be done before xsetuid */
   if opt & OPT_n as libc::c_int as libc::c_uint != 0 {
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     if nice(xatoi(nicestr)) == -1i32 {
       bb_simple_perror_msg_and_die(b"nice\x00" as *const u8 as *const libc::c_char);
     }

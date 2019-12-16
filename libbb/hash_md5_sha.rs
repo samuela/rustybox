@@ -77,7 +77,7 @@ unsafe extern "C" fn common64_hash(
     bufpos = bufpos.wrapping_add(remaining);
     /* Clever way to do "if (bufpos != N) break; ... ; bufpos = 0;" */
     bufpos = bufpos.wrapping_sub(64i32 as libc::c_uint);
-    if bufpos != 0i32 as libc::c_uint {
+    if bufpos != 0 as libc::c_uint {
       break;
     }
     (*ctx).process_block.expect("non-null function pointer")(ctx);
@@ -97,7 +97,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
     let mut remaining: libc::c_uint = (64i32 as libc::c_uint).wrapping_sub(bufpos);
     memset(
       (*ctx).wbuffer.as_mut_ptr().offset(bufpos as isize) as *mut libc::c_void,
-      0i32,
+      0,
       remaining as libc::c_ulong,
     );
     /* Do we have enough space for the length count? */
@@ -137,7 +137,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
     if remaining >= 8i32 as libc::c_uint {
       break;
     }
-    bufpos = 0i32 as libc::c_uint
+    bufpos = 0 as libc::c_uint
   }
 }
 /*
@@ -235,7 +235,7 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     1i32 as libc::c_char,
     6i32 as libc::c_char,
     11i32 as libc::c_char,
-    0i32 as libc::c_char,
+    0 as libc::c_char,
     5i32 as libc::c_char,
     10i32 as libc::c_char,
     15i32 as libc::c_char,
@@ -257,14 +257,14 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     7i32 as libc::c_char,
     10i32 as libc::c_char,
     13i32 as libc::c_char,
-    0i32 as libc::c_char,
+    0 as libc::c_char,
     3i32 as libc::c_char,
     6i32 as libc::c_char,
     9i32 as libc::c_char,
     12i32 as libc::c_char,
     15i32 as libc::c_char,
     2i32 as libc::c_char,
-    0i32 as libc::c_char,
+    0 as libc::c_char,
     7i32 as libc::c_char,
     14i32 as libc::c_char,
     5i32 as libc::c_char,
@@ -299,7 +299,7 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
   we save swapped words in WORDS array.  */
   /* Round 1 */
   pc = C_array.as_ptr();
-  i = 0i32;
+  i = 0;
   while i < 4i32 {
     let fresh4 = pc;
     pc = pc.offset(1);
@@ -341,7 +341,7 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
   argument specifying the function to use.  */
   /* Round 2 */
   pp = P_array.as_ptr();
-  i = 0i32;
+  i = 0;
   while i < 4i32 {
     let fresh8 = pp;
     pp = pp.offset(1);
@@ -390,7 +390,7 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     i += 1
   }
   /* Round 3 */
-  i = 0i32;
+  i = 0;
   while i < 4i32 {
     let fresh16 = pp;
     pp = pp.offset(1);
@@ -439,7 +439,7 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
     i += 1
   }
   /* Round 4 */
-  i = 0i32;
+  i = 0;
   while i < 4i32 {
     let fresh24 = pp;
     pp = pp.offset(1);
@@ -502,7 +502,7 @@ pub unsafe extern "C" fn md5_begin(mut ctx: *mut md5_ctx_t) {
   (*ctx).hash[1] = 0xefcdab89u32;
   (*ctx).hash[2] = 0x98badcfeu32;
   (*ctx).hash[3] = 0x10325476i32 as u32;
-  (*ctx).total64 = 0i32 as u64;
+  (*ctx).total64 = 0 as u64;
   (*ctx).process_block = Some(md5_process_block64 as unsafe extern "C" fn(_: *mut md5_ctx_t) -> ());
 }
 /* Used also for sha1 and sha256 */
@@ -525,7 +525,7 @@ pub unsafe extern "C" fn md5_end(
   mut resbuf: *mut libc::c_void,
 ) -> libc::c_uint {
   /* MD5 stores total in LE, need to swap on BE arches: */
-  common64_end(ctx, 0i32);
+  common64_end(ctx, 0);
   /* The MD5 result is in little endian byte order */
   memcpy(
     resbuf,
@@ -574,7 +574,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
   let mut e: u32 = 0;
   /* On-stack work buffer frees up one register in the main loop
    * which otherwise will be needed to hold ctx pointer */
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     W[(i + 16i32) as usize] = {
       let mut __v: libc::c_uint = 0;
@@ -604,15 +604,15 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
   d = (*ctx).hash[3];
   e = (*ctx).hash[4];
   /* 4 rounds of 20 operations each */
-  cnt = 0i32;
-  i = 0i32;
+  cnt = 0;
+  i = 0;
   while i < 4i32 {
     j = 19i32;
     loop {
       let mut work: u32 = 0;
       work = c ^ d;
       let mut current_block_18: u64;
-      if i == 0i32 {
+      if i == 0 {
         work = work & b ^ d;
         if j <= 3i32 {
           current_block_18 = 12098554138476111035;
@@ -657,7 +657,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
       a = work;
       cnt = cnt + 1i32 & 15i32;
       j -= 1;
-      if !(j >= 0i32) {
+      if !(j >= 0) {
         break;
       }
     }
@@ -765,7 +765,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   let mut words: *const u32 = (*ctx).wbuffer.as_mut_ptr() as *mut u32;
   /* Operators defined in FIPS 180-2:4.1.2.  */
   /* Compute the message schedule according to FIPS 180-2:6.2.2 step 2.  */
-  t = 0i32 as libc::c_uint;
+  t = 0 as libc::c_uint;
   while t < 16i32 as libc::c_uint {
     W[t as usize] = {
       let mut __v: libc::c_uint = 0;
@@ -818,7 +818,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   g = (*ctx).hash[6];
   h = (*ctx).hash[7];
   /* The actual computation according to FIPS 180-2:6.2.2 step 3.  */
-  t = 0i32 as libc::c_uint;
+  t = 0 as libc::c_uint;
   while t < 64i32 as libc::c_uint {
     /* Need to fetch upper half of sha_K[t]
      * (I hope compiler is clever enough to just fetch
@@ -880,7 +880,7 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   let mut words: *const u64 = (*ctx).wbuffer.as_mut_ptr() as *mut u64;
   /* Operators defined in FIPS 180-2:4.1.2.  */
   /* Compute the message schedule according to FIPS 180-2:6.3.2 step 2.  */
-  t = 0i32 as libc::c_uint;
+  t = 0 as libc::c_uint;
   while t < 16i32 as libc::c_uint {
     W[t as usize] = {
       let mut __v: u64 = 0;
@@ -929,7 +929,7 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
     t = t.wrapping_add(1)
   }
   /* The actual computation according to FIPS 180-2:6.3.2 step 3.  */
-  t = 0i32 as libc::c_uint;
+  t = 0 as libc::c_uint;
   while t < 80i32 as libc::c_uint {
     let mut T1: u64 = h
       .wrapping_add(
@@ -973,13 +973,13 @@ pub unsafe extern "C" fn sha1_begin(mut ctx: *mut sha1_ctx_t) {
   (*ctx).hash[2] = 0x98badcfeu32;
   (*ctx).hash[3] = 0x10325476i32 as u32;
   (*ctx).hash[4] = 0xc3d2e1f0u32;
-  (*ctx).total64 = 0i32 as u64;
+  (*ctx).total64 = 0 as u64;
   (*ctx).process_block =
     Some(sha1_process_block64 as unsafe extern "C" fn(_: *mut sha1_ctx_t) -> ());
 }
 static mut init256: [u32; 10] = [
-  0i32 as u32,
-  0i32 as u32,
+  0 as u32,
+  0 as u32,
   0x6a09e667i32 as u32,
   0xbb67ae85u32,
   0x3c6ef372i32 as u32,
@@ -990,8 +990,8 @@ static mut init256: [u32; 10] = [
   0x5be0cd19i32 as u32,
 ];
 static mut init512_lo: [u32; 10] = [
-  0i32 as u32,
-  0i32 as u32,
+  0 as u32,
+  0 as u32,
   0xf3bcc908u32,
   0x84caa73bu32,
   0xfe94f82bu32,
@@ -1026,7 +1026,7 @@ pub unsafe extern "C" fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
   let mut i: libc::c_int = 0;
   /* Two extra iterations zero out ctx->total64[2] */
   let mut tp: *mut u64 = (*ctx).total64.as_mut_ptr();
-  i = 0i32;
+  i = 0;
   while i < 2i32 + 8i32 {
     *tp.offset(i as isize) =
       ((init256[i as usize] as u64) << 32i32).wrapping_add(init512_lo[i as usize] as libc::c_ulong);
@@ -1066,7 +1066,7 @@ pub unsafe extern "C" fn sha512_hash(
     bufpos = bufpos.wrapping_add(remaining);
     /* Clever way to do "if (bufpos != N) break; ... ; bufpos = 0;" */
     bufpos = bufpos.wrapping_sub(128i32 as libc::c_uint);
-    if bufpos != 0i32 as libc::c_uint {
+    if bufpos != 0 as libc::c_uint {
       break;
     }
     sha512_process_block128(ctx);
@@ -1092,7 +1092,7 @@ pub unsafe extern "C" fn sha1_end(
   } as libc::c_uint;
   /* This way we do not impose alignment constraints on resbuf: */
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < hash_size {
     (*ctx).hash[i as usize] = {
       let mut __v: libc::c_uint = 0;
@@ -1139,7 +1139,7 @@ pub unsafe extern "C" fn sha512_end(
     let mut remaining: libc::c_uint = (128i32 as libc::c_uint).wrapping_sub(bufpos);
     memset(
       (*ctx).wbuffer.as_mut_ptr().offset(bufpos as isize) as *mut libc::c_void,
-      0i32,
+      0,
       remaining as libc::c_ulong,
     );
     if remaining >= 16i32 as libc::c_uint {
@@ -1204,10 +1204,10 @@ pub unsafe extern "C" fn sha512_end(
     if remaining >= 16i32 as libc::c_uint {
       break;
     }
-    bufpos = 0i32 as libc::c_uint
+    bufpos = 0 as libc::c_uint
   }
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[u64; 8]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<u64>() as libc::c_ulong) as libc::c_uint
@@ -1348,11 +1348,11 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
   /*static const u8 MOD5[10] = { 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, };*/
   let mut x: libc::c_uint = 0;
   let mut round: libc::c_uint = 0;
-  round = 0i32 as libc::c_uint;
+  round = 0 as libc::c_uint;
   while round < NROUNDS as libc::c_int as libc::c_uint {
     /* Theta */
     let mut BC: [u64; 10] = [0; 10];
-    x = 0i32 as libc::c_uint;
+    x = 0 as libc::c_uint;
     while x < 5i32 as libc::c_uint {
       BC[x as usize] = *state.offset(x as isize)
         ^ *state.offset(x.wrapping_add(5i32 as libc::c_uint) as isize)
@@ -1366,7 +1366,7 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
      * BC[MOD5[x+N]] trick below to fetch BC[(x+N) % 5],
      * and the code is a bit _smaller_.
      */
-    x = 0i32 as libc::c_uint;
+    x = 0 as libc::c_uint;
     while x < 5i32 as libc::c_uint {
       let mut temp: u64 = BC[x.wrapping_add(4i32 as libc::c_uint) as usize]
         ^ rotl64(
@@ -1387,7 +1387,7 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
     }
     /* Rho Pi */
     let mut t1: u64 = *state.offset(1);
-    x = 0i32 as libc::c_uint;
+    x = 0 as libc::c_uint;
     while x < 24i32 as libc::c_uint {
       let mut t0: u64 = *state.offset(PI_LANE[x as usize] as isize);
       *state.offset(PI_LANE[x as usize] as isize) =
@@ -1396,7 +1396,7 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
       x = x.wrapping_add(1)
     }
     /* Chi */
-    x = 0i32 as libc::c_uint;
+    x = 0 as libc::c_uint;
     while x <= 20i32 as libc::c_uint {
       let mut BC0: u64 = 0;
       let mut BC1: u64 = 0;
@@ -1428,7 +1428,7 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
 pub unsafe extern "C" fn sha3_begin(mut ctx: *mut sha3_ctx_t) {
   memset(
     ctx as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sha3_ctx_t>() as libc::c_ulong,
   );
   /* SHA3-512, user can override */
@@ -1451,7 +1451,7 @@ pub unsafe extern "C" fn sha3_hash(
     len = (len as libc::c_ulong).wrapping_sub(remaining as libc::c_ulong) as size_t as size_t;
     /*bufpos = 0; - already is */
     /* XOR data into buffer */
-    while remaining != 0i32 as libc::c_uint {
+    while remaining != 0 as libc::c_uint {
       let mut buf: *mut u8 = (*ctx).state.as_mut_ptr() as *mut u8;
       let fresh60 = data;
       data = data.offset(1);
@@ -1462,7 +1462,7 @@ pub unsafe extern "C" fn sha3_hash(
     }
     /* Clever way to do "if (bufpos != N) break; ... ; bufpos = 0;" */
     bufpos = bufpos.wrapping_sub((*ctx).input_block_bytes);
-    if bufpos != 0i32 as libc::c_uint {
+    if bufpos != 0 as libc::c_uint {
       break;
     }
     sha3_process_block72((*ctx).state.as_mut_ptr());

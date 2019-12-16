@@ -81,14 +81,14 @@ pub unsafe extern "C" fn sleep_main(
     *argv.offset(0),
     b"inf\x00" as *const u8 as *const libc::c_char,
     3i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     loop {
       sleep(2147483647i32 as libc::c_uint);
     }
   }
   /* undo busybox.c setlocale */
-  duration = 0i32 as duration_t;
+  duration = 0 as duration_t;
   loop {
     duration += parse_duration_str(*argv);
     argv = argv.offset(1);
@@ -98,5 +98,5 @@ pub unsafe extern "C" fn sleep_main(
   }
   sleep_for_duration(duration);
   /* simple */
-  return 0i32;
+  return 0;
 }

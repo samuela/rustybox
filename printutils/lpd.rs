@@ -228,7 +228,7 @@ pub unsafe extern "C" fn lpd_main(
   // nullify ctrl/data filenames
   memset(
     filenames.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[*mut libc::c_char; 2]>() as libc::c_ulong,
   );
 
@@ -283,7 +283,7 @@ pub unsafe extern "C" fn lpd_main(
         let mut var: [libc::c_char; 2] = [0; 2];
         // non-spooling mode or no spool helper specified
         if spooling == 0 || (*argv).is_null() {
-          return 0i32;
+          return 0;
         } // the only non-error exit
           // spooling mode but we didn't see both ctrlfile & datafile
         if spooling != 7i32 {
@@ -365,7 +365,7 @@ pub unsafe extern "C" fn lpd_main(
             // get length
             expected_len =
               bb_strtou(s.offset(1), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
-            if *bb_errno != 0 || expected_len < 0i32 {
+            if *bb_errno != 0 || expected_len < 0 {
               puts(b"Bad length\x00" as *const u8 as *const libc::c_char);
               current_block = 12481496603591474651;
               break;
@@ -382,7 +382,7 @@ pub unsafe extern "C" fn lpd_main(
                 // job in flight has mode 0200 "only writable"
                 sane(fname);
                 fd = open3_or_warn(fname, 0o100i32 | 0o1i32 | 0o1000i32 | 0o200i32, 0o200i32);
-                if fd < 0i32 {
+                if fd < 0 {
                   current_block = 12481496603591474651;
                   break;
                 }
@@ -415,11 +415,11 @@ pub unsafe extern "C" fn lpd_main(
                 // get EOF indicator, see whether it is NUL (ok)
                 // (and don't trash s[0]!)
                 if safe_read(
-                  0i32,
+                  0,
                   &mut *s.offset(1) as *mut libc::c_char as *mut libc::c_void,
                   1i32 as size_t,
                 ) != 1
-                  || *s.offset(1) as libc::c_int != 0i32
+                  || *s.offset(1) as libc::c_int != 0
                 {
                   current_block = 12481496603591474651;
                   break;
@@ -460,7 +460,7 @@ pub unsafe extern "C" fn lpd_main(
     i = 2i32;
     loop {
       i -= 1;
-      if !(i >= 0i32) {
+      if !(i >= 0) {
         break;
       }
       if !filenames[i as usize].is_null() {

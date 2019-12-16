@@ -132,7 +132,7 @@ pub unsafe extern "C" fn check_password(
     return 2i32;
   }
   encrypted = pw_encrypt(plaintext, pw_pass, 1i32);
-  r = (strcmp(encrypted, pw_pass) == 0i32) as libc::c_int;
+  r = (strcmp(encrypted, pw_pass) == 0) as libc::c_int;
   free(encrypted as *mut libc::c_void);
   return r;
 }
@@ -626,7 +626,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
 pub unsafe extern "C" fn ask_and_check_password(mut pw: *const passwd) -> libc::c_int {
   return ask_and_check_password_extended(
     pw,
-    0i32,
+    0,
     b"Password: \x00" as *const u8 as *const libc::c_char,
   );
 }

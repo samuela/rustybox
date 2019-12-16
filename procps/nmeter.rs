@@ -251,7 +251,7 @@ unsafe extern "C" fn print_outbuf() {
     .cur_outbuf
     .wrapping_offset_from(bb_common_bufsiz1.as_mut_ptr())
     as libc::c_long as libc::c_int;
-  if sz > 0i32 {
+  if sz > 0 {
     xwrite(
       1i32,
       bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
@@ -268,7 +268,7 @@ unsafe extern "C" fn put(mut s: *const libc::c_char) {
     .wrapping_offset_from(p) as libc::c_long as libc::c_int;
   while *s as libc::c_int != 0 && {
     sz -= 1;
-    (sz) >= 0i32
+    (sz) >= 0
   } {
     let fresh0 = s;
     s = s.offset(1);
@@ -313,11 +313,11 @@ unsafe extern "C" fn readfile_z(mut pf: *mut proc_file, mut fname: *const libc::
     sz = PROC_MIN_FILE_SIZE as libc::c_int
   }
   loop {
-    fd = xopen(fname, 0i32);
+    fd = xopen(fname, 0);
     *buf.offset(0) = '\u{0}' as i32 as libc::c_char;
     rdsz = read(fd, buf as *mut libc::c_void, (sz - 1i32) as size_t) as libc::c_int;
     close(fd);
-    if !(rdsz > 0i32) {
+    if !(rdsz > 0) {
       break;
     }
     if rdsz == sz - 1i32 && sz < PROC_MAX_FILE_SIZE as libc::c_int {
@@ -344,7 +344,7 @@ unsafe extern "C" fn get_file(mut pf: *mut proc_file) -> *const libc::c_char {
 unsafe extern "C" fn read_after_slash(mut p: *const libc::c_char) -> ullong {
   p = strchr(p, '/' as i32);
   if p.is_null() {
-    return 0i32 as ullong;
+    return 0 as ullong;
   }
   return strtoull(p.offset(1), 0 as *mut *mut libc::c_char, 10i32);
 }
@@ -385,7 +385,7 @@ unsafe extern "C" fn rdval(
       };
       posbits -= curpos as libc::c_long;
       if posbits <= 1 {
-        return 0i32;
+        return 0;
       }
     }
     while *p as libc::c_int > ' ' as i32 {
@@ -394,7 +394,7 @@ unsafe extern "C" fn rdval(
     }
     curpos <<= 1i32
   }
-  return 0i32;
+  return 0;
 }
 // Parses files with lines like "... ... ... 3/148 ...."
 unsafe extern "C" fn rdval_loadavg(
@@ -422,10 +422,10 @@ unsafe extern "C" fn rdval_diskstats(
   mut vec: *mut ullong,
 ) -> libc::c_int {
   let mut devname: [libc::c_char; 32] = [0; 32];
-  let mut devname_len: libc::c_uint = 0i32 as libc::c_uint;
-  let mut value_idx: libc::c_int = 0i32;
-  *vec.offset(0) = 0i32 as ullong;
-  *vec.offset(1) = 0i32 as ullong;
+  let mut devname_len: libc::c_uint = 0 as libc::c_uint;
+  let mut value_idx: libc::c_int = 0;
+  *vec.offset(0) = 0 as ullong;
+  *vec.offset(1) = 0 as ullong;
   let mut current_block_19: u64;
   loop {
     value_idx += 1;
@@ -436,14 +436,14 @@ unsafe extern "C" fn rdval_diskstats(
       break;
     }
     if *p as libc::c_int == '\n' as i32 {
-      value_idx = 0i32;
+      value_idx = 0;
       p = p.offset(1)
     } else {
       if value_idx == 3i32 {
         let mut end: *mut libc::c_char = strchrnul(p, ' ' as i32);
         /* If this a hda1-like device (same prefix as last one + digit)? */
         if devname_len != 0
-          && strncmp(devname.as_mut_ptr(), p, devname_len as libc::c_ulong) == 0i32
+          && strncmp(devname.as_mut_ptr(), p, devname_len as libc::c_ulong) == 0
           && (*p.offset(devname_len as isize) as libc::c_int - '0' as i32) as libc::c_uchar
             as libc::c_int
             <= 9i32
@@ -502,7 +502,7 @@ unsafe extern "C" fn rdval_diskstats(
       }
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn scale(mut ul: ullong) {
   let mut buf: [libc::c_char; 5] = [0; 5];
@@ -527,25 +527,25 @@ unsafe extern "C" fn init_cr(mut _param: *const libc::c_char) -> *mut s_stat {
 }
 unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
   let mut data: [ullong; 7] = [
-    0i32 as ullong,
-    0i32 as ullong,
-    0i32 as ullong,
-    0i32 as ullong,
-    0i32 as ullong,
-    0i32 as ullong,
-    0i32 as ullong,
+    0 as ullong,
+    0 as ullong,
+    0 as ullong,
+    0 as ullong,
+    0 as ullong,
+    0 as ullong,
+    0 as ullong,
   ];
   let mut frac: [libc::c_uint; 7] = [
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
+    0 as libc::c_uint,
   ];
-  let mut all: ullong = 0i32 as ullong;
-  let mut norm_all: libc::c_uint = 0i32 as libc::c_uint;
+  let mut all: ullong = 0 as ullong;
+  let mut norm_all: libc::c_uint = 0 as libc::c_uint;
   let mut bar_sz: libc::c_uint = (*s).bar_sz;
   let mut bar: *mut libc::c_char = (*s).bar.as_mut_ptr();
   let mut i: libc::c_int = 0;
@@ -566,7 +566,7 @@ unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
     put_question_marks(bar_sz as libc::c_int);
     return;
   }
-  i = 0i32;
+  i = 0;
   while i < CPU_FIELDCNT as libc::c_int {
     let mut old: ullong = (*s).old[i as usize];
     if data[i as usize] < old {
@@ -579,7 +579,7 @@ unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
     i += 1
   }
   if all != 0 {
-    i = 0i32;
+    i = 0;
     while i < CPU_FIELDCNT as libc::c_int {
       let mut t: ullong = (bar_sz as libc::c_ulonglong).wrapping_mul(data[i as usize]);
       data[i as usize] = t.wrapping_div(all);
@@ -590,7 +590,7 @@ unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
     }
     while norm_all < bar_sz {
       let mut max: libc::c_uint = frac[0];
-      let mut pos: libc::c_int = 0i32;
+      let mut pos: libc::c_int = 0;
       i = 1i32;
       while i < CPU_FIELDCNT as libc::c_int {
         if frac[i as usize] > max {
@@ -600,7 +600,7 @@ unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
         i += 1
       }
       //softirq
-      frac[pos as usize] = 0i32 as libc::c_uint; //avoid bumping up same value twice
+      frac[pos as usize] = 0 as libc::c_uint; //avoid bumping up same value twice
       data[pos as usize] = data[pos as usize].wrapping_add(1); //sys
       norm_all = norm_all.wrapping_add(1)
     } //usr
@@ -658,11 +658,11 @@ unsafe extern "C" fn init_cpu(mut param: *const libc::c_char) -> *mut s_stat {
   let mut sz: libc::c_int = 0;
   let mut s: *mut cpu_stat = std::ptr::null_mut();
   sz = if *param.offset(0) as libc::c_int != 0 {
-    strtoul(param, 0 as *mut *mut libc::c_char, 0i32)
+    strtoul(param, 0 as *mut *mut libc::c_char, 0)
   } else {
     10i32 as libc::c_ulong
   } as libc::c_int;
-  if sz <= 0i32 {
+  if sz <= 0 {
     sz = 1i32
   }
   if sz > 1000i32 {
@@ -759,7 +759,7 @@ unsafe extern "C" fn collect_blk(mut s: *mut blk_stat) {
     put_question_marks(9i32); //sanitize
     return;
   } //sanitize
-  i = 0i32;
+  i = 0;
   while i < 2i32 {
     let mut old: ullong = (*s).old[i as usize];
     if data[i as usize] < old {
@@ -837,7 +837,7 @@ unsafe extern "C" fn collect_if(mut s: *mut if_stat) {
     put_question_marks(10i32);
     return;
   }
-  i = 0i32;
+  i = 0;
   while i < 4i32 {
     let mut old: ullong = (*s).old[i as usize];
     if data[i as usize] < old {
@@ -900,11 +900,11 @@ unsafe extern "C" fn init_if(mut device: *const libc::c_char) -> *mut s_stat {
 //HugePages_Free:      0
 //Hugepagesize:     4096 kB
 unsafe extern "C" fn collect_mem(mut s: *mut mem_stat) {
-  let mut m_total: ullong = 0i32 as ullong;
-  let mut m_free: ullong = 0i32 as ullong;
-  let mut m_bufs: ullong = 0i32 as ullong;
-  let mut m_cached: ullong = 0i32 as ullong;
-  let mut m_slab: ullong = 0i32 as ullong;
+  let mut m_total: ullong = 0 as ullong;
+  let mut m_free: ullong = 0 as ullong;
+  let mut m_bufs: ullong = 0 as ullong;
+  let mut m_cached: ullong = 0 as ullong;
+  let mut m_slab: ullong = 0 as ullong;
   if rdval(
     get_file(&mut (*ptr_to_globals).proc_meminfo),
     b"MemTotal:\x00" as *const u8 as *const libc::c_char,
@@ -1048,8 +1048,8 @@ unsafe extern "C" fn init_time(mut param: *const libc::c_char) -> *mut s_stat {
     xzalloc(::std::mem::size_of::<time_stat>() as libc::c_ulong) as *mut time_stat;
   (*s).collect = Some(collect_time as unsafe extern "C" fn(_: *mut time_stat) -> ());
   prec = *param.offset(0) as libc::c_int - '0' as i32;
-  if prec < 0i32 {
-    prec = 0i32
+  if prec < 0 {
+    prec = 0
   } else if prec > 6i32 {
     prec = 6i32
   }
@@ -1133,14 +1133,14 @@ pub unsafe extern "C" fn nmeter_main(
   ) != 0
   {
     (*ptr_to_globals).delta = xatoi(opt_d) * 1000i32;
-    (*ptr_to_globals).deltanz = if (*ptr_to_globals).delta > 0i32 {
+    (*ptr_to_globals).deltanz = if (*ptr_to_globals).delta > 0 {
       (*ptr_to_globals).delta
     } else {
       1i32
     } as libc::c_uint;
     (*ptr_to_globals).need_seconds = ((1000000i32 as libc::c_uint)
       .wrapping_rem((*ptr_to_globals).deltanz)
-      != 0i32 as libc::c_uint) as libc::c_int as smallint
+      != 0 as libc::c_uint) as libc::c_int as smallint
   }
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
@@ -1234,7 +1234,7 @@ pub unsafe extern "C" fn nmeter_main(
   // Generate first samples but do not print them, they're bogus
   collect_info(first);
   reset_outbuf();
-  if (*ptr_to_globals).delta >= 0i32 {
+  if (*ptr_to_globals).delta >= 0 {
     gettimeofday(&mut (*ptr_to_globals).tv, 0 as *mut timezone);
     usleep(if (*ptr_to_globals).delta > 1000000i32 {
       1000000i32 as libc::c_long
@@ -1253,7 +1253,7 @@ pub unsafe extern "C" fn nmeter_main(
     // time resolution ;)
     // TODO: detect and avoid useless updates
     // (like: nothing happens except time)
-    if (*ptr_to_globals).delta >= 0i32 {
+    if (*ptr_to_globals).delta >= 0 {
       let mut rem: libc::c_int = 0;
       // can be commented out, will sacrifice sleep time precision a bit
       gettimeofday(&mut (*ptr_to_globals).tv, 0 as *mut timezone);

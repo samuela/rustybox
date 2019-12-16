@@ -188,5 +188,5 @@ pub unsafe extern "C" fn lsof_main(
       closedir(d_fd);
     }
   }
-  return 0i32;
+  return 0;
 }

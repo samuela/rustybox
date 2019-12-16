@@ -76,7 +76,7 @@ pub unsafe extern "C" fn runlevel_main(
     }
     if (*ut).ut_type as libc::c_int == 1i32 {
       prev = ((*ut).ut_pid / 256i32) as libc::c_char;
-      if prev as libc::c_int == 0i32 {
+      if prev as libc::c_int == 0 {
         prev = 'N' as i32 as libc::c_char
       }
       printf(
@@ -84,7 +84,7 @@ pub unsafe extern "C" fn runlevel_main(
         prev as libc::c_int,
         (*ut).ut_pid % 256i32,
       );
-      return 0i32;
+      return 0;
     }
   }
   puts(b"unknown\x00" as *const u8 as *const libc::c_char);

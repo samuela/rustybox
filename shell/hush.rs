@@ -1027,8 +1027,8 @@ static mut hush_version_str: [libc::c_char; 24] = [
 static mut redir_table: [C2RustUnnamed_10; 5] = [
   {
     let mut init = C2RustUnnamed_10 {
-      mode: 0i32,
-      default_fd: 0i32 as libc::c_schar,
+      mode: 0,
+      default_fd: 0 as libc::c_schar,
       descrip: [60, 0, 0],
     };
     init
@@ -1059,8 +1059,8 @@ static mut redir_table: [C2RustUnnamed_10; 5] = [
   },
   {
     let mut init = C2RustUnnamed_10 {
-      mode: 0i32,
-      default_fd: 0i32 as libc::c_schar,
+      mode: 0,
+      default_fd: 0 as libc::c_schar,
       descrip: [60, 60, 0],
     };
     init
@@ -1565,14 +1565,14 @@ unsafe extern "C" fn add_strings_to_strings(
   let mut count2: libc::c_uint = 0;
   let mut v: *mut *mut libc::c_char = std::ptr::null_mut();
   v = strings;
-  count1 = 0i32 as libc::c_uint;
+  count1 = 0 as libc::c_uint;
   if !v.is_null() {
     while !(*v).is_null() {
       count1 = count1.wrapping_add(1);
       v = v.offset(1)
     }
   }
-  count2 = 0i32 as libc::c_uint;
+  count2 = 0 as libc::c_uint;
   v = add;
   while !(*v).is_null() {
     count2 = count2.wrapping_add(1);
@@ -1590,7 +1590,7 @@ unsafe extern "C" fn add_strings_to_strings(
   i = count2 as libc::c_int;
   loop {
     i -= 1;
-    if !(i >= 0i32) {
+    if !(i >= 0) {
       break;
     }
     let ref mut fresh6 = *v.offset(count1.wrapping_add(i as libc::c_uint) as isize);
@@ -1610,7 +1610,7 @@ unsafe extern "C" fn add_string_to_strings(
   let mut v: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2]; /* newfd < 0 */
   v[0] = add;
   v[1] = std::ptr::null_mut::<libc::c_char>();
-  return add_strings_to_strings(strings, v.as_mut_ptr(), 0i32);
+  return add_strings_to_strings(strings, v.as_mut_ptr(), 0);
 }
 unsafe extern "C" fn free_strings(mut strings: *mut *mut libc::c_char) {
   let mut v: *mut *mut libc::c_char = std::ptr::null_mut();
@@ -1628,8 +1628,8 @@ unsafe extern "C" fn dup_CLOEXEC(mut fd: libc::c_int, mut avoid_fd: libc::c_int)
   let mut newfd: libc::c_int = 0;
   loop {
     newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
-    if newfd >= 0i32 {
-      if 1030i32 == 0i32 {
+    if newfd >= 0 {
+      if 1030i32 == 0 {
         /* if old libc (w/o F_DUPFD_CLOEXEC) */
         fcntl(newfd, 2i32, 1i32);
       }
@@ -1652,7 +1652,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
   let mut newfd: libc::c_int = 0;
   loop {
     newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
-    if newfd < 0i32 {
+    if newfd < 0 {
       if *bb_errno == 16i32 {
         continue;
       }
@@ -1665,7 +1665,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
       }
       xfunc_die();
     } else {
-      if 1030i32 == 0i32 {
+      if 1030i32 == 0 {
         /* if old libc (w/o F_DUPFD_CLOEXEC) */
         fcntl(newfd, 2i32, 1i32);
       }
@@ -1678,13 +1678,13 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
 unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
   let mut fp: *mut HFILE = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
-  fd = 0i32;
+  fd = 0;
   if !name.is_null() {
-    fd = open(name, 0i32 | 0o2000000i32);
-    if fd < 0i32 {
+    fd = open(name, 0 | 0o2000000i32);
+    if fd < 0 {
       return 0 as *mut HFILE;
     }
-    if 0o2000000i32 == 0i32 {
+    if 0o2000000i32 == 0 {
       /* ancient libc */
       close_on_exec_on(fd);
     }
@@ -1709,14 +1709,14 @@ unsafe extern "C" fn hfclose(mut fp: *mut HFILE) {
       pp = &mut (*cur).next_hfile
     }
   }
-  if (*fp).fd >= 0i32 {
+  if (*fp).fd >= 0 {
     close((*fp).fd);
   }
   free(fp as *mut libc::c_void);
 }
 unsafe extern "C" fn refill_HFILE_and_getc(mut fp: *mut HFILE) -> libc::c_int {
   let mut n: libc::c_int = 0;
-  if (*fp).fd < 0i32 {
+  if (*fp).fd < 0 {
     /* Already saw EOF */
     return -1i32;
   }
@@ -1727,12 +1727,12 @@ unsafe extern "C" fn refill_HFILE_and_getc(mut fp: *mut HFILE) -> libc::c_int {
     (*fp).buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
   ) as libc::c_int;
-  if n < 0i32 {
+  if n < 0 {
     bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
-    n = 0i32
+    n = 0
   }
   (*fp).end = (*fp).buf.as_mut_ptr().offset(n as isize);
-  if n == 0i32 {
+  if n == 0 {
     /* EOF/error */
     close((*fp).fd);
     (*fp).fd = -1i32;
@@ -1768,12 +1768,12 @@ unsafe extern "C" fn move_HFILEs_on_redirect(
     }
     fl = (*fl).next_hfile
   }
-  if (*ptr_to_globals).x_mode_fd > 0i32 && fd == (*ptr_to_globals).x_mode_fd {
+  if (*ptr_to_globals).x_mode_fd > 0 && fd == (*ptr_to_globals).x_mode_fd {
     (*ptr_to_globals).x_mode_fd = xdup_CLOEXEC_and_close(fd, avoid_fd);
     return 1i32;
     /* "found and moved" */
   }
-  return 0i32;
+  return 0;
   /* "not in the list" */
 }
 unsafe extern "C" fn fd_in_HFILEs(mut fd: libc::c_int) -> libc::c_int {
@@ -1784,7 +1784,7 @@ unsafe extern "C" fn fd_in_HFILEs(mut fd: libc::c_int) -> libc::c_int {
     }
     fl = (*fl).next_hfile
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn save_and_replace_G_args(
   mut sv: *mut save_arg_t,
@@ -1797,7 +1797,7 @@ unsafe extern "C" fn save_and_replace_G_args(
   let ref mut fresh9 = *argv.offset(0);
   *fresh9 = *(*ptr_to_globals).global_argv.offset(0);
   (*ptr_to_globals).global_argv = argv;
-  (*ptr_to_globals).global_args_malloced = 0i32 as smalluint;
+  (*ptr_to_globals).global_args_malloced = 0 as smalluint;
   (*ptr_to_globals).global_argc =
     (1i32 as libc::c_uint).wrapping_add(string_array_len(argv.offset(1))) as libc::c_int;
 }
@@ -1887,7 +1887,7 @@ unsafe extern "C" fn sigexit(mut sig: libc::c_int) -> ! {
     );
   }
   /* Not a signal, just exit */
-  if sig <= 0i32 {
+  if sig <= 0 {
     _exit(-sig);
   }
   kill_myself_with_sig(sig);
@@ -1923,7 +1923,7 @@ unsafe extern "C" fn pick_sighandler(mut sig: libc::c_uint) -> sighandler_t {
 /* Restores tty foreground process group, and exits. */
 unsafe extern "C" fn hush_exit(mut exitcode: libc::c_int) -> ! {
   fflush_all();
-  if (*ptr_to_globals).exiting as libc::c_int <= 0i32
+  if (*ptr_to_globals).exiting as libc::c_int <= 0
     && !(*ptr_to_globals).traps.is_null()
     && !(*(*ptr_to_globals).traps.offset(0)).is_null()
     && *(*(*ptr_to_globals).traps.offset(0)).offset(0) as libc::c_int != 0
@@ -1943,13 +1943,13 @@ unsafe extern "C" fn hush_exit(mut exitcode: libc::c_int) -> ! {
 }
 //TODO: return a mask of ALL handled sigs?
 unsafe extern "C" fn check_and_run_traps() -> libc::c_int {
-  let mut last_sig: libc::c_int = 0i32; /* else: "" trap, ignoring signal */
+  let mut last_sig: libc::c_int = 0; /* else: "" trap, ignoring signal */
   's_8: loop {
     let mut sig: libc::c_int = 0;
     if sigisemptyset(&mut (*ptr_to_globals).pending_set) != 0 {
       break;
     }
-    sig = 0i32;
+    sig = 0;
     loop {
       sig += 1;
       if sigismember(&mut (*ptr_to_globals).pending_set, sig) != 0 {
@@ -1993,8 +1993,8 @@ unsafe extern "C" fn check_and_run_traps() -> libc::c_int {
            * not individual processes */
           job = (*ptr_to_globals).job_list;
           while !job.is_null() {
-            if !((*job).pgrp <= 0i32) {
-              if kill(-(*job).pgrp, 1i32) == 0i32 {
+            if !((*job).pgrp <= 0) {
+              if kill(-(*job).pgrp, 1i32) == 0 {
                 kill(-(*job).pgrp, 18i32);
               }
             }
@@ -2037,7 +2037,7 @@ unsafe extern "C" fn get_ptr_to_local_var(
     if cur.is_null() {
       break;
     }
-    if strncmp((*cur).varstr, name, len as libc::c_ulong) == 0i32
+    if strncmp((*cur).varstr, name, len as libc::c_ulong) == 0
       && *(*cur).varstr.offset(len as isize) as libc::c_int == '=' as i32
     {
       return pp;
@@ -2053,7 +2053,7 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
     let mut cpp: *mut *mut libc::c_char = (*ptr_to_globals).expanded_assignments;
     while !(*cpp).is_null() {
       let mut cp: *mut libc::c_char = *cpp;
-      if strncmp(cp, name, len as libc::c_ulong) == 0i32
+      if strncmp(cp, name, len as libc::c_ulong) == 0
         && *cp.offset(len as isize) as libc::c_int == '=' as i32
       {
         return cp.offset(len as isize).offset(1);
@@ -2065,27 +2065,27 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
   if !vpp.is_null() {
     return (**vpp).varstr.offset(len as isize).offset(1);
   }
-  if strcmp(name, b"PPID\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(name, b"PPID\x00" as *const u8 as *const libc::c_char) == 0 {
     return utoa((*ptr_to_globals).root_ppid as libc::c_uint);
   }
   // bash compat: UID? EUID?
-  if strcmp(name, b"RANDOM\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(name, b"RANDOM\x00" as *const u8 as *const libc::c_char) == 0 {
     return utoa(next_random(&mut (*ptr_to_globals).random_gen));
   } /* including '=' */
-  if strcmp(name, b"LINENO\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(name, b"LINENO\x00" as *const u8 as *const libc::c_char) == 0 {
     return utoa((*ptr_to_globals).execute_lineno);
   }
   let mut fmt: *const libc::c_char = std::ptr::null();
   if strcmp(
     name,
     b"EPOCHSECONDS\x00" as *const u8 as *const libc::c_char,
-  ) == 0i32
+  ) == 0
   {
     fmt = b"%lu\x00" as *const u8 as *const libc::c_char
   } else if strcmp(
     name,
     b"EPOCHREALTIME\x00" as *const u8 as *const libc::c_char,
-  ) == 0i32
+  ) == 0
   {
     fmt = b"%lu.%06u\x00" as *const u8 as *const libc::c_char
   }
@@ -2114,9 +2114,9 @@ unsafe extern "C" fn handle_changed_special_names(
       name,
       b"OPTIND\x00" as *const u8 as *const libc::c_char,
       6i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
-      (*ptr_to_globals).getopt_count = 0i32 as libc::c_uint;
+      (*ptr_to_globals).getopt_count = 0 as libc::c_uint;
       return;
     }
   };
@@ -2145,7 +2145,7 @@ unsafe extern "C" fn set_local_var(
       current_block = 10930818133215224067;
       break;
     }
-    if strncmp((*cur).varstr, str, name_len as libc::c_ulong) != 0i32 {
+    if strncmp((*cur).varstr, str, name_len as libc::c_ulong) != 0 {
       cur_pp = &mut (*cur).next
     } else {
       /* We found an existing var with this name */
@@ -2175,7 +2175,7 @@ unsafe extern "C" fn set_local_var(
          * z=z
          */
         if (*cur).flg_export != 0 {
-          flags |= (1i32 << 0i32) as libc::c_uint
+          flags |= (1i32 << 0) as libc::c_uint
         }
         /* New variable is local ("local VAR=VAL" or
          * "VAR=VAL cmd")
@@ -2190,7 +2190,7 @@ unsafe extern "C" fn set_local_var(
           *(*ptr_to_globals).shadowed_vars_pp = cur
         } else {
           /* Came from pseudo_exec_argv(), no need to save: delete it */
-          if (*cur).max_len == 0i32 {
+          if (*cur).max_len == 0 {
             /* then free it later */
             /* allocated "VAR=VAL"? */
             free_me = (*cur).varstr
@@ -2200,15 +2200,15 @@ unsafe extern "C" fn set_local_var(
         current_block = 10930818133215224067;
         break;
       } else {
-        if !(strcmp((*cur).varstr.offset(name_len as isize), eq_sign.offset(1)) == 0i32) {
+        if !(strcmp((*cur).varstr.offset(name_len as isize), eq_sign.offset(1)) == 0) {
           /* Replace the value in the found "struct variable" */
-          if (*cur).max_len != 0i32 {
+          if (*cur).max_len != 0 {
             if (*cur).max_len as libc::c_ulong >= strnlen(str, ((*cur).max_len + 1i32) as size_t) {
               /* This one is from startup env, reuse space */
               strcpy((*cur).varstr, str);
             } else {
               /* Can't reuse */
-              (*cur).max_len = 0i32;
+              (*cur).max_len = 0;
               current_block = 11779985319611290286;
               break;
             }
@@ -2249,13 +2249,13 @@ unsafe extern "C" fn set_local_var(
   if flags & (1i32 << 2i32) as libc::c_uint != 0 {
     (*cur).flg_read_only = 1i32 as smallint
   }
-  if flags & (1i32 << 0i32) as libc::c_uint != 0 {
+  if flags & (1i32 << 0) as libc::c_uint != 0 {
     (*cur).flg_export = 1i32 as smallint
   }
-  retval = 0i32;
+  retval = 0;
   if (*cur).flg_export != 0 {
     if flags & (1i32 << 1i32) as libc::c_uint != 0 {
-      (*cur).flg_export = 0i32 as smallint
+      (*cur).flg_export = 0 as smallint
     /* unsetenv was already done */
     } else {
       retval = putenv((*cur).varstr)
@@ -2274,7 +2274,7 @@ unsafe extern "C" fn set_local_var_from_halves(
 ) {
   let mut var: *mut libc::c_char =
     xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, name, val);
-  set_local_var(var, 0i32 as libc::c_uint);
+  set_local_var(var, 0 as libc::c_uint);
 }
 /* Used at startup and after each cd */
 unsafe extern "C" fn set_pwd_var(mut flag: libc::c_uint) {
@@ -2298,7 +2298,7 @@ unsafe extern "C" fn unset_local_var_len(
     if cur.is_null() {
       break;
     }
-    if strncmp((*cur).varstr, name, name_len as libc::c_ulong) == 0i32
+    if strncmp((*cur).varstr, name, name_len as libc::c_ulong) == 0
       && *(*cur).varstr.offset(name_len as isize) as libc::c_int == '=' as i32
     {
       if (*cur).flg_read_only != 0 {
@@ -2321,7 +2321,7 @@ unsafe extern "C" fn unset_local_var_len(
   }
   /* Handle "unset LINENO" et al even if did not find the variable to unset */
   handle_changed_special_names(name, name_len as libc::c_uint);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn unset_local_var(mut name: *const libc::c_char) -> libc::c_int {
   return unset_local_var_len(name, strlen(name) as libc::c_int);
@@ -2403,7 +2403,7 @@ unsafe extern "C" fn set_vars_and_save_old(mut strings: *mut *mut libc::c_char) 
       10043043949733653460 => {
         set_local_var(
           *s,
-          (*ptr_to_globals).var_nest_level << 3i32 | (1i32 << 0i32) as libc::c_uint,
+          (*ptr_to_globals).var_nest_level << 3i32 | (1i32 << 0) as libc::c_uint,
         );
         s = s.offset(1)
       }
@@ -2444,7 +2444,7 @@ unsafe extern "C" fn reinit_unicode_for_hush() {
  */
 unsafe extern "C" fn setup_prompt_string() -> *const libc::c_char {
   let mut prompt_str: *const libc::c_char = std::ptr::null();
-  prompt_str = get_local_var_value(if (*ptr_to_globals).promptmode as libc::c_int == 0i32 {
+  prompt_str = get_local_var_value(if (*ptr_to_globals).promptmode as libc::c_int == 0 {
     b"PS1\x00" as *const u8 as *const libc::c_char
   } else {
     b"PS2\x00" as *const u8 as *const libc::c_char
@@ -2463,7 +2463,7 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
     if (*ptr_to_globals).flag_SIGINT != 0 {
       /* There was ^C'ed, make it look prettier: */
       bb_putchar('\n' as i32);
-      (*ptr_to_globals).flag_SIGINT = 0i32 as smallint
+      (*ptr_to_globals).flag_SIGINT = 0 as smallint
     }
     /* buglet: SIGINT will not make new prompt to appear _at once_,
      * only after <Enter>. (^C works immediately) */
@@ -2474,11 +2474,11 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
       1024i32 - 1i32,
     );
     /* read_line_input intercepts ^C, "convert" it to SIGINT */
-    if r == 0i32 {
+    if r == 0 {
       raise(2i32);
     }
     check_and_run_traps();
-    if r != 0i32 && (*ptr_to_globals).flag_SIGINT == 0 {
+    if r != 0 && (*ptr_to_globals).flag_SIGINT == 0 {
       break;
     }
     /* ^C or SIGINT: repeat */
@@ -2490,7 +2490,7 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
     );
     (*ptr_to_globals).last_exitcode = (128i32 + 2i32) as smalluint
   }
-  if r < 0i32 {
+  if r < 0 {
     /* EOF/error detected */
     (*i).p = std::ptr::null();
     r = -1i32;
@@ -2545,11 +2545,11 @@ unsafe extern "C" fn i_getch(mut i: *mut in_str) -> libc::c_int {
   } else {
     /* peek_buf[] is an int array, not char. Can contain EOF. */
     ch = (*i).peek_buf[0];
-    if ch != 0i32 {
+    if ch != 0 {
       let mut ch2: libc::c_int = (*i).peek_buf[1];
       (*i).peek_buf[0] = ch2;
-      if !(ch2 == 0i32) {
-        (*i).peek_buf[1] = 0i32
+      if !(ch2 == 0) {
+        (*i).peek_buf[1] = 0
       }
     } else {
       ch = fgetc_interactive(i)
@@ -2576,7 +2576,7 @@ unsafe extern "C" fn i_peek(mut i: *mut in_str) -> libc::c_int {
   }
   /* peek_buf[] is an int array, not char. Can contain EOF. */
   ch = (*i).peek_buf[0];
-  if ch != 0i32 {
+  if ch != 0 {
     return ch;
   }
   /* Need to get a new char */
@@ -2609,7 +2609,7 @@ unsafe extern "C" fn i_peek2(mut i: *mut in_str) -> libc::c_int {
   /* peek_buf[] is an int array, not char. Can contain EOF. */
   /* Is there 2nd char? */
   ch = (*i).peek_buf[1];
-  if ch == 0i32 {
+  if ch == 0 {
     loop
     /* We did not read it yet, get it now */
     {
@@ -2661,7 +2661,7 @@ unsafe extern "C" fn i_peek_and_eat_bkslash_nl(mut input: *mut in_str) -> libc::
 unsafe extern "C" fn setup_file_in_str(mut i: *mut in_str, mut fp: *mut HFILE) {
   memset(
     i as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<in_str>() as libc::c_ulong,
   );
   (*i).file = fp;
@@ -2670,15 +2670,15 @@ unsafe extern "C" fn setup_file_in_str(mut i: *mut in_str, mut fp: *mut HFILE) {
 unsafe extern "C" fn setup_string_in_str(mut i: *mut in_str, mut s: *const libc::c_char) {
   memset(
     i as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<in_str>() as libc::c_ulong,
   );
   /*i->file = NULL */
   (*i).p = s;
 }
 unsafe extern "C" fn o_reset_to_empty_unquoted(mut o: *mut o_string) {
-  (*o).length = 0i32;
-  (*o).has_quoted_part = 0i32 as smallint;
+  (*o).length = 0;
+  (*o).has_quoted_part = 0 as smallint;
   if !(*o).data.is_null() {
     *(*o).data.offset(0) = '\u{0}' as i32 as libc::c_char
   };
@@ -2687,7 +2687,7 @@ unsafe extern "C" fn o_free_and_set_NULL(mut o: *mut o_string) {
   free((*o).data as *mut libc::c_void);
   memset(
     o as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<o_string>() as libc::c_ulong,
   );
 }
@@ -2756,17 +2756,17 @@ unsafe extern "C" fn x_mode_prefix() {
   loop {
     x_mode_addchr('+' as i32);
     n -= 1;
-    if !(n >= 0i32) {
+    if !(n >= 0) {
       break;
     }
   }
 }
 unsafe extern "C" fn x_mode_flush() {
   let mut len: libc::c_int = (*ptr_to_globals).x_mode_buf.length;
-  if len <= 0i32 {
+  if len <= 0 {
     return;
   }
-  if (*ptr_to_globals).x_mode_fd > 0i32 {
+  if (*ptr_to_globals).x_mode_fd > 0 {
     *(*ptr_to_globals).x_mode_buf.data.offset(len as isize) = '\n' as i32 as libc::c_char;
     full_write(
       (*ptr_to_globals).x_mode_fd,
@@ -2774,7 +2774,7 @@ unsafe extern "C" fn x_mode_flush() {
       (len + 1i32) as size_t,
     );
   }
-  (*ptr_to_globals).x_mode_buf.length = 0i32;
+  (*ptr_to_globals).x_mode_buf.length = 0;
 }
 /*
  * HUSH_BRACE_EXPANSION code needs corresponding quoting on variable expansion side.
@@ -2926,9 +2926,9 @@ unsafe extern "C" fn o_save_ptr_helper(mut o: *mut o_string, mut n: libc::c_int)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
       as libc::c_int; /* NB: n+1! */
     string_len = (*o).length - string_start;
-    (*o).has_empty_slot = 0i32 as smallint
+    (*o).has_empty_slot = 0 as smallint
   }
-  (*o).has_quoted_part = 0i32 as smallint;
+  (*o).has_quoted_part = 0 as smallint;
   let ref mut fresh15 = *list.offset(n as isize);
   *fresh15 = string_len as uintptr_t as *mut libc::c_char;
   return n + 1i32;
@@ -2985,7 +2985,7 @@ unsafe extern "C" fn glob_needed(mut s: *const libc::c_char) -> libc::c_int {
   while *s != 0 {
     if *s as libc::c_int == '\\' as i32 {
       if *s.offset(1) == 0 {
-        return 0i32;
+        return 0;
       }
       s = s.offset(2)
     } else {
@@ -2999,11 +2999,11 @@ unsafe extern "C" fn glob_needed(mut s: *const libc::c_char) -> libc::c_int {
       s = s.offset(1)
     }
   }
-  return 0i32;
+  return 0;
 }
 /* Return pointer to next closing brace or to comma */
 unsafe extern "C" fn next_brace_sub(mut cp: *const libc::c_char) -> *const libc::c_char {
-  let mut depth: libc::c_uint = 0i32 as libc::c_uint;
+  let mut depth: libc::c_uint = 0 as libc::c_uint;
   cp = cp.offset(1);
   while *cp as libc::c_int != '\u{0}' as i32 {
     if *cp as libc::c_int == '\\' as i32 {
@@ -3016,8 +3016,8 @@ unsafe extern "C" fn next_brace_sub(mut cp: *const libc::c_char) -> *const libc:
       if *cp as libc::c_int == '}' as i32 && {
         let fresh16 = depth;
         depth = depth.wrapping_sub(1);
-        (fresh16) == 0i32 as libc::c_uint
-      } || *cp as libc::c_int == ',' as i32 && depth == 0i32 as libc::c_uint
+        (fresh16) == 0 as libc::c_uint
+      } || *cp as libc::c_int == ',' as i32 && depth == 0 as libc::c_uint
       {
         break;
       }
@@ -3153,11 +3153,11 @@ unsafe extern "C" fn glob_brace(
   };
   memset(
     &mut globdata as *mut glob_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<glob_t>() as libc::c_ulong,
   );
-  gr = glob(pattern, 0i32, None, &mut globdata);
-  if gr != 0i32 {
+  gr = glob(pattern, 0, None, &mut globdata);
+  if gr != 0 {
     if gr == 3i32 {
       globfree(&mut globdata);
       /* NB: garbles parameter */
@@ -3257,7 +3257,7 @@ unsafe extern "C" fn o_finalize_list(
 unsafe extern "C" fn free_pipe(mut pi: *mut pipe) -> *mut pipe {
   let mut next: *mut pipe = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < (*pi).num_cmds {
     let mut command: *mut command = std::ptr::null_mut();
     let mut r: *mut redir_struct = std::ptr::null_mut();
@@ -3349,7 +3349,7 @@ unsafe extern "C" fn done_command(mut ctx: *mut parse_context) -> libc::c_int {
   }
   memset(
     command as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<command>() as libc::c_ulong,
   );
   (*command).lineno = (*ptr_to_globals).parse_lineno;
@@ -3361,7 +3361,7 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
   /* Close previous command */
   not_null = done_command(ctx);
   (*(*ctx).pipe).pi_inverted = (*ctx).ctx_inverted;
-  (*ctx).ctx_inverted = 0i32 as smallint;
+  (*ctx).ctx_inverted = 0 as smallint;
   (*(*ctx).pipe).res_word = (*ctx).ctx_res_w;
   let mut current_block_20: u64;
   if type_0 as libc::c_uint == PIPE_BG as libc::c_int as libc::c_uint
@@ -3397,9 +3397,9 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
         (*pi).num_cmds = 1i32;
         (*pi).cmds = xzalloc(::std::mem::size_of::<command>() as libc::c_ulong) as *mut command;
         command = &mut *(*pi).cmds.offset(0) as *mut command;
-        if 0i32 != 0i32 {
+        if 0 != 0 {
           /* "if xzalloc didn't do that already" */
-          (*command).cmd_type = 0i32 as smallint
+          (*command).cmd_type = 0 as smallint
         }
         (*command).group = (*ctx).list_head;
         /* Replace all pipes in ctx with one newly created */
@@ -3448,10 +3448,10 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
 unsafe extern "C" fn initialize_context(mut ctx: *mut parse_context) {
   memset(
     ctx as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<parse_context>() as libc::c_ulong,
   );
-  if MAYBE_ASSIGNMENT as libc::c_int != 0i32 {
+  if MAYBE_ASSIGNMENT as libc::c_int != 0 {
     (*ctx).is_assignment = MAYBE_ASSIGNMENT as libc::c_int as smallint
   }
   (*ctx).list_head = new_pipe();
@@ -3485,7 +3485,7 @@ unsafe extern "C" fn match_reserved_word(mut word: *mut o_string) -> *const rese
         literal: [33, 0, 0, 0, 0, 0],
         res: RES_NONE as libc::c_int as libc::c_uchar,
         assignment_flag: NOT_ASSIGNMENT as libc::c_int as libc::c_uchar,
-        flag: 0i32,
+        flag: 0,
       };
       init
     },
@@ -3616,7 +3616,7 @@ unsafe extern "C" fn match_reserved_word(mut word: *mut o_string) -> *const rese
         as libc::c_uint as isize,
     )
   {
-    if strcmp((*word).data, (*r).literal.as_ptr()) == 0i32 {
+    if strcmp((*word).data, (*r).literal.as_ptr()) == 0 {
       return r;
     }
     r = r.offset(1)
@@ -3648,7 +3648,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
   {
     /* "case word IN ..." - IN part starts first MATCH part */
     r = &reserved_match
-  } else if (*r).flag == 0i32 {
+  } else if (*r).flag == 0 {
     /* '!' */
     if (*ctx).ctx_inverted != 0 {
       /* bash doesn't accept '! ! true' */
@@ -3686,7 +3686,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
     done_pipe(ctx, PIPE_SEQ);
     old_0 = (*ctx).stack;
     (*(*old_0).command).group = (*ctx).list_head;
-    (*(*old_0).command).cmd_type = 0i32 as smallint;
+    (*(*old_0).command).cmd_type = 0 as smallint;
     *ctx = *old_0;
     free(old_0 as *mut libc::c_void);
   }
@@ -3699,8 +3699,8 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
  */
 unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
   let mut command: *mut command = (*ctx).command;
-  if (*ctx).word.length == 0i32 && (*ctx).word.has_quoted_part == 0 {
-    return 0i32;
+  if (*ctx).word.length == 0 && (*ctx).word.has_quoted_part == 0 {
+    return 0;
   }
   if !(*ctx).pending_redirect.is_null() {
     /* We do not glob in e.g. >*.tmp case. bash seems to glob here
@@ -3745,12 +3745,12 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
       && strcmp(
         (*ctx).word.data,
         b"esac\x00" as *const u8 as *const libc::c_char,
-      ) != 0i32
+      ) != 0
     {
       /* not "... pattern) cmd;; esac" */
       /* already done when ctx_dsemicolon was set to 1: */
       /* ctx->ctx_res_w = RES_MATCH; */
-      (*ctx).ctx_dsemicolon = 0i32 as smallint
+      (*ctx).ctx_dsemicolon = 0 as smallint
     } else if (*command).argv.is_null()
       && (*ctx).ctx_res_w as libc::c_int != RES_FOR as libc::c_int
       && (*ctx).ctx_res_w as libc::c_int != RES_IN as libc::c_int
@@ -3766,7 +3766,7 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
          * If we don't close the pipe _now_, immediately after "do", lineno logic
          * sees "cmd" as starting at "do" - i.e., at the previous line.
          */
-        if 0i32 != 0
+        if 0 != 0
           || (*reserved).res as libc::c_int == RES_THEN as libc::c_int
           || (*reserved).res as libc::c_int == RES_ELIF as libc::c_int
           || (*reserved).res as libc::c_int == RES_ELSE as libc::c_int
@@ -3777,23 +3777,23 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
         o_reset_to_empty_unquoted(&mut (*ctx).word);
         return ((*ctx).ctx_res_w as libc::c_int == RES_SNTX as libc::c_int) as libc::c_int;
       }
-      if 0i32 != 0
+      if 0 != 0
         || strcmp(
           (*ctx).word.data,
           b"[[\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
         || strcmp(
           (*ctx).word.data,
           b"local\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
         || strcmp(
           (*ctx).word.data,
           b"export\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
         || strcmp(
           (*ctx).word.data,
           b"readonly\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
       {
         (*command).cmd_type = 2i32 as smallint
       }
@@ -3837,7 +3837,7 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
     done_pipe(ctx, PIPE_SEQ);
   }
   o_reset_to_empty_unquoted(&mut (*ctx).word);
-  return 0i32;
+  return 0;
 }
 /* Peek ahead in the input to find out if we have a "&n" construct,
  * as in "2>&1", that represents duplicating a file descriptor.
@@ -3861,8 +3861,8 @@ unsafe extern "C" fn parse_redir_right_fd(mut input: *mut in_str) -> libc::c_int
     ch = i_getch(input);
     return REDIRFD_CLOSE as libc::c_int;
   }
-  d = 0i32;
-  ok = 0i32;
+  d = 0;
+  ok = 0;
   while ch != -1i32 && (ch - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
     d = d * 10i32 + (ch - '0' as i32);
     ok = 1i32;
@@ -3944,7 +3944,7 @@ unsafe extern "C" fn parse_redirect(
      * end of the next parsed word. */
     (*ctx).pending_redirect = redir
   }
-  return 0i32;
+  return 0;
 }
 /* If a redirect is immediately preceded by a number, that number is
  * supposed to tell which file descriptor to redirect.  This routine
@@ -3972,7 +3972,7 @@ unsafe extern "C" fn redirect_opt_num(mut o: *mut o_string) -> libc::c_int {
     return -1i32;
   }
   num = bb_strtou((*o).data, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
-  if *bb_errno != 0 || num < 0i32 {
+  if *bb_errno != 0 || num < 0 {
     return -1i32;
   }
   o_reset_to_empty_unquoted(o);
@@ -3997,7 +3997,7 @@ unsafe extern "C" fn fetch_till_str(
     init
   };
   let mut past_EOL: libc::c_uint = 0;
-  let mut prev: libc::c_int = 0i32;
+  let mut prev: libc::c_int = 0;
   let mut ch: libc::c_int = 0;
   /* Starting with "" is necessary for this case:
    * cat <<EOF
@@ -4037,7 +4037,7 @@ unsafe extern "C" fn fetch_till_str(
           o_addchr(&mut heredoc, ch);
           if prev == '\\' as i32 && ch == '\\' as i32 {
             /* Correctly handle foo\\<eol> (not a line cont.) */
-            prev = 0i32
+            prev = 0
           } else {
             prev = ch
           }
@@ -4046,7 +4046,7 @@ unsafe extern "C" fn fetch_till_str(
           if heredoc_flags & HEREDOC_QUOTED as libc::c_int != 0 || prev != '\\' as i32 {
             /* not '\' */
             /* End-of-line, and not a line continuation */
-            if strcmp(heredoc.data.offset(past_EOL as isize), word) == 0i32 {
+            if strcmp(heredoc.data.offset(past_EOL as isize), word) == 0 {
               *heredoc.data.offset(past_EOL as isize) = '\u{0}' as i32 as libc::c_char;
               return heredoc.data;
             }
@@ -4070,7 +4070,7 @@ unsafe extern "C" fn fetch_till_str(
              */
             heredoc.length -= 1; /* not '\' */
             *heredoc.data.offset(heredoc.length as isize) = '\u{0}' as i32 as libc::c_char;
-            prev = 0i32
+            prev = 0
           }
         }
       }
@@ -4102,7 +4102,7 @@ unsafe extern "C" fn fetch_heredocs(
   while !pi.is_null() && heredoc_cnt != 0 {
     let mut i: libc::c_int = 0;
     let mut cmd: *mut command = (*pi).cmds;
-    i = 0i32;
+    i = 0;
     while i < (*pi).num_cmds {
       let mut redir: *mut redir_struct = (*cmd).redirects;
       while !redir.is_null() {
@@ -4127,7 +4127,7 @@ unsafe extern "C" fn fetch_heredocs(
         //bb_error_msg("%s:%u heredoc_cnt:%d", __func__, __LINE__, heredoc_cnt);
         heredoc_cnt = fetch_heredocs((*cmd).group, heredoc_cnt, input);
         /* error */
-        if heredoc_cnt < 0i32 {
+        if heredoc_cnt < 0 {
           return heredoc_cnt;
         }
       }
@@ -4151,7 +4151,7 @@ unsafe extern "C" fn parse_group(
    * Typically it's empty, but for function defs,
    * it contains function name (without '()'). */
   let mut pipe_list: *mut pipe = std::ptr::null_mut(); /* (... */
-  let mut heredoc_cnt: libc::c_int = 0i32;
+  let mut heredoc_cnt: libc::c_int = 0;
   let mut endch: libc::c_int = 0;
   let mut command: *mut command = (*ctx).command;
   if ch == '(' as i32 && (*ctx).word.has_quoted_part == 0 {
@@ -4243,7 +4243,7 @@ unsafe extern "C" fn add_till_single_quote(
     let mut ch: libc::c_int = i_getch(input);
     if ch == -1i32 {
       syntax_error_unterm_ch('\'' as i32 as libc::c_char);
-      return 0i32;
+      return 0;
     }
     if ch == '\'' as i32 {
       return 1i32;
@@ -4259,7 +4259,7 @@ unsafe extern "C" fn add_till_single_quote_dquoted(
     let mut ch: libc::c_int = i_getch(input);
     if ch == -1i32 {
       syntax_error_unterm_ch('\'' as i32 as libc::c_char);
-      return 0i32;
+      return 0;
     }
     if ch == '\'' as i32 {
       return 1i32;
@@ -4275,7 +4275,7 @@ unsafe extern "C" fn add_till_double_quote(
     let mut ch: libc::c_int = i_getch(input);
     if ch == -1i32 {
       syntax_error_unterm_ch('\"' as i32 as libc::c_char);
-      return 0i32;
+      return 0;
     }
     if ch == '\"' as i32 {
       return 1i32;
@@ -4291,7 +4291,7 @@ unsafe extern "C" fn add_till_double_quote(
       continue;
     }
     if add_till_backquote(dest, input, 1i32) == 0 {
-      return 0i32;
+      return 0;
     }
     o_addchr(dest, ch);
   }
@@ -4329,7 +4329,7 @@ unsafe extern "C" fn add_till_backquote(
         }
         if ch == -1i32 {
             syntax_error_unterm_ch('`' as i32 as libc::c_char);
-            return 0i32
+            return 0
         }
         o_addchr(dest, ch);
     }
@@ -4350,7 +4350,7 @@ unsafe extern "C" fn add_till_closing_bracket(
     ch = i_getch(input);
     if ch == -1i32 {
       syntax_error_unterm_ch(end_ch as libc::c_char);
-      return 0i32;
+      return 0;
     }
     if ch as libc::c_uint == end_ch || ch == end_char2 as libc::c_int {
       if dbl == 0 {
@@ -4371,22 +4371,22 @@ unsafe extern "C" fn add_till_closing_bracket(
         '}' as i32
       };
       if add_till_closing_bracket(dest, input, ch as libc::c_uint) == 0 {
-        return 0i32;
+        return 0;
       }
       o_addchr(dest, ch);
     } else if ch == '\'' as i32 {
       if add_till_single_quote(dest, input) == 0 {
-        return 0i32;
+        return 0;
       }
       o_addchr(dest, ch);
     } else if ch == '\"' as i32 {
       if add_till_double_quote(dest, input) == 0 {
-        return 0i32;
+        return 0;
       }
       o_addchr(dest, ch);
     } else if ch == '`' as i32 {
-      if add_till_backquote(dest, input, 0i32) == 0 {
-        return 0i32;
+      if add_till_backquote(dest, input, 0) == 0 {
+        return 0;
       }
       o_addchr(dest, ch);
     } else {
@@ -4397,7 +4397,7 @@ unsafe extern "C" fn add_till_closing_bracket(
       ch = i_getch(input); /* first character after the $ */
       if ch == -1i32 {
         syntax_error_unterm_ch(end_ch as libc::c_char); /* error */
-        return 0i32;
+        return 0;
       } /* error */
       o_addchr(dest, ch); /* eat '{' */
     }
@@ -4434,7 +4434,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4449,7 +4449,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4548,9 +4548,9 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
+                      if last_ch as libc::c_int == 0 {
                         /* error? */
-                        return 0i32;
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -4579,7 +4579,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
                 match current_block_96 {
@@ -4596,7 +4596,7 @@ unsafe extern "C" fn parse_dollar(
                 /* not one of those */
                 {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -4665,7 +4665,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4680,7 +4680,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4752,8 +4752,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -4775,7 +4775,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -4791,7 +4791,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -4849,7 +4849,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4864,7 +4864,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -4936,8 +4936,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -4959,7 +4959,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -4975,7 +4975,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5033,7 +5033,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5048,7 +5048,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5120,8 +5120,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -5143,7 +5143,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
                 match current_block_96 {
@@ -5158,7 +5158,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5216,7 +5216,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5231,7 +5231,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5303,8 +5303,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -5326,7 +5326,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -5342,7 +5342,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5400,7 +5400,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5415,7 +5415,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5487,8 +5487,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -5510,7 +5510,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -5526,7 +5526,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5587,7 +5587,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5602,7 +5602,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5674,8 +5674,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -5697,7 +5697,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -5713,7 +5713,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5771,7 +5771,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5786,7 +5786,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5858,8 +5858,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -5881,7 +5881,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -5897,7 +5897,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -5958,7 +5958,7 @@ unsafe extern "C" fn parse_dollar(
                 if add_till_closing_bracket(dest, input, (')' as i32 | 0x80i32) as libc::c_uint)
                   == 0
                 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -5973,7 +5973,7 @@ unsafe extern "C" fn parse_dollar(
                   pos_0 = (*dest).length as libc::c_uint
                 }
                 if add_till_closing_bracket(dest, input, ')' as i32 as libc::c_uint) == 0 {
-                  return 0i32;
+                  return 0;
                 }
                 if !(0 as *mut libc::c_void).is_null() {
                   o_addstr(0 as *mut o_string, (*dest).data.offset(pos_0 as isize));
@@ -6045,8 +6045,8 @@ unsafe extern "C" fn parse_dollar(
                         pos = (*dest).length as libc::c_uint
                       }
                       last_ch = add_till_closing_bracket(dest, input, end_ch) as libc::c_uchar;
-                      if last_ch as libc::c_int == 0i32 {
-                        return 0i32;
+                      if last_ch as libc::c_int == 0 {
+                        return 0;
                       }
                       if !(0 as *mut libc::c_void).is_null() {
                         o_addstr(0 as *mut o_string, (*dest).data.offset(pos as isize));
@@ -6068,7 +6068,7 @@ unsafe extern "C" fn parse_dollar(
                     current_block_96 = 15587532755333643506;
                     break;
                   } else {
-                    len_single_ch = 0i32 as libc::c_char
+                    len_single_ch = 0 as libc::c_char
                   }
                 }
 
@@ -6084,7 +6084,7 @@ unsafe extern "C" fn parse_dollar(
                 10041771570435381152 => {}
                 _ => {
                   syntax_error_unterm_str(b"${name}\x00" as *const u8 as *const libc::c_char);
-                  return 0i32;
+                  return 0;
                 }
               }
             }
@@ -6149,7 +6149,7 @@ unsafe extern "C" fn parse_dollar(
       o_addchr(dest, 3i32);
       loop {
         o_addchr(dest, ch | quote_mask as libc::c_int);
-        quote_mask = 0i32 as libc::c_uchar;
+        quote_mask = 0 as libc::c_uchar;
         ch = i_peek_and_eat_bkslash_nl(input);
         if bb_ascii_isalnum(ch as libc::c_uchar) == 0 && ch != '_' as i32 {
           break;
@@ -6182,7 +6182,7 @@ unsafe extern "C" fn encode_string(
         /* note: can't move it above ch == dquote_end check! */
         if ch == -1i32 {
             syntax_error_unterm_ch('\"' as i32 as libc::c_char);
-            return 0i32
+            return 0
             /* error */
         }
         next = '\u{0}' as i32;
@@ -6194,7 +6194,7 @@ unsafe extern "C" fn encode_string(
 			 * is sourced.
 			 */
                 syntax_error_unterm_ch('\"' as i32 as libc::c_char);
-                return 0i32
+                return 0
                 /* error */
             }
             /* bash:
@@ -6218,7 +6218,7 @@ unsafe extern "C" fn encode_string(
             o_addqchr(dest, ch);
         } else if ch == '$' as i32 {
             if parse_dollar(dest, input, 0x80i32 as libc::c_uchar) == 0 {
-                return 0i32
+                return 0
             }
         } else if ch == '`' as i32 {
             //unsigned pos = dest->length;
@@ -6227,7 +6227,7 @@ unsafe extern "C" fn encode_string(
             if add_till_backquote(dest, input,
                                   (dquote_end == '\"' as i32) as libc::c_int)
                    == 0 {
-                return 0i32
+                return 0
             }
             o_addchr(dest, 3i32);
         } else { o_addQchr(dest, ch); }
@@ -6281,7 +6281,7 @@ unsafe extern "C" fn parse_stream(
    * $IFS is used only for word splitting when $var is expanded,
    * here we should use blank chars as separators, not $IFS
    */
-  heredoc_cnt = 0i32; /* while (1) */
+  heredoc_cnt = 0; /* while (1) */
   's_38: loop
   /* not ""(... */
   {
@@ -6318,7 +6318,7 @@ unsafe extern "C" fn parse_stream(
         /* If we got nothing... */
         /* (this makes bare "&" cmd a no-op.
          * bash says: "syntax error near unexpected token '&'") */
-        if (*pi).num_cmds == 0i32 && (*pi).res_word as libc::c_int == RES_NONE as libc::c_int {
+        if (*pi).num_cmds == 0 && (*pi).res_word as libc::c_int == RES_NONE as libc::c_int {
           free_pipe_list(pi);
           pi = std::ptr::null_mut()
         }
@@ -6430,9 +6430,9 @@ unsafe extern "C" fn parse_stream(
               if (*ctx.command).group.is_null()
                 && (*ctx.command).argv.is_null()
                 && (*ctx.command).redirects.is_null()
-                && ctx.word.length == 0i32
+                && ctx.word.length == 0
                 && ctx.word.has_quoted_part == 0
-                && heredoc_cnt == 0i32
+                && heredoc_cnt == 0
               {
                 /* This newline can be ignored. But...
                  * Without check #1, interactive shell
@@ -6452,7 +6452,7 @@ unsafe extern "C" fn parse_stream(
                  * cmd1 may need to run in BG).
                  */
                 let mut pi_0: *mut pipe = ctx.list_head;
-                if (*pi_0).num_cmds != 0i32
+                if (*pi_0).num_cmds != 0
                   && (*pi_0).followup as libc::c_int != PIPE_BG as libc::c_int
                 {
                   /* check #2 */
@@ -6463,7 +6463,7 @@ unsafe extern "C" fn parse_stream(
               done_pipe(&mut ctx, PIPE_SEQ);
               if heredoc_cnt != 0 {
                 heredoc_cnt = fetch_heredocs(ctx.list_head, heredoc_cnt, input);
-                if heredoc_cnt != 0i32 {
+                if heredoc_cnt != 0 {
                   current_block = 1907364584679199995;
                   break;
                 }
@@ -6479,7 +6479,7 @@ unsafe extern "C" fn parse_stream(
            * Pathological example: { ""}; } should exec "}" cmd
            */
           if ch == '}' as i32 {
-            if ctx.word.length != 0i32 || ctx.word.has_quoted_part as libc::c_int != 0 {
+            if ctx.word.length != 0 || ctx.word.has_quoted_part as libc::c_int != 0 {
               current_block = 18309173857163198886;
             } else if !((*ctx.command).group.is_null()
               && (*ctx.command).argv.is_null()
@@ -6500,7 +6500,7 @@ unsafe extern "C" fn parse_stream(
               } else {
                 current_block = 18309173857163198886;
               }
-            } else if !((*ctx.pipe).num_cmds == 0i32
+            } else if !((*ctx.pipe).num_cmds == 0
               && (*ctx.pipe).res_word as libc::c_int == RES_NONE as libc::c_int)
             {
               current_block = 13059973731526369978;
@@ -6518,14 +6518,14 @@ unsafe extern "C" fn parse_stream(
                 7518107371177619303 => {
                   if end_trigger != 0
                     && end_trigger == ch
-                    && (ch != ';' as i32 || heredoc_cnt == 0i32)
+                    && (ch != ';' as i32 || heredoc_cnt == 0)
                     && (ch != ')' as i32
                       || ctx.ctx_res_w as libc::c_int != RES_MATCH as libc::c_int
                       || ctx.word.has_quoted_part == 0
                         && strcmp(
                           ctx.word.data,
                           b"esac\x00" as *const u8 as *const libc::c_char,
-                        ) == 0i32)
+                        ) == 0)
                   {
                     if done_word(&mut ctx) != 0 {
                       current_block = 1907364584679199995;
@@ -6536,11 +6536,11 @@ unsafe extern "C" fn parse_stream(
                     /* Do we sit outside of any if's, loops or case's? */
                     if 1i32 == 0
                       || ctx.ctx_res_w as libc::c_int == RES_NONE as libc::c_int
-                        && ctx.old_flag == 0i32
+                        && ctx.old_flag == 0
                     {
                       o_free_and_set_NULL(&mut ctx.word);
                       if ch != ';' as i32
-                        && ((*ctx.list_head).num_cmds == 0i32
+                        && ((*ctx.list_head).num_cmds == 0
                           && (*ctx.list_head).res_word as libc::c_int == RES_NONE as libc::c_int)
                       {
                         /* Example: bare "{ }", "()" */
@@ -6566,7 +6566,7 @@ unsafe extern "C" fn parse_stream(
                       current_block = 11456536786442373077;
                       match current_block {
                         8338824944507035481 => {
-                          if ctx.word.length == 0i32 && ctx.word.has_quoted_part == 0 {
+                          if ctx.word.length == 0 && ctx.word.has_quoted_part == 0 {
                             loop
                             /* skip "#comment" */
                             /* note: we do not add it to &ctx.as_string */
@@ -6634,7 +6634,7 @@ unsafe extern "C" fn parse_stream(
                       current_block = 14429734548985272971;
                       match current_block {
                         8338824944507035481 => {
-                          if ctx.word.length == 0i32 && ctx.word.has_quoted_part == 0 {
+                          if ctx.word.length == 0 && ctx.word.has_quoted_part == 0 {
                             loop {
                               ch = i_peek(input);
                               if ch == '\n' as i32 {
@@ -6692,7 +6692,7 @@ unsafe extern "C" fn parse_stream(
                       current_block = 8338824944507035481;
                       match current_block {
                         8338824944507035481 => {
-                          if ctx.word.length == 0i32 && ctx.word.has_quoted_part == 0 {
+                          if ctx.word.length == 0 && ctx.word.has_quoted_part == 0 {
                             loop {
                               ch = i_peek(input);
                               if ch == '\n' as i32 {
@@ -6775,7 +6775,7 @@ unsafe extern "C" fn parse_stream(
                                     }
                                     36 => {
                                         if parse_dollar(&mut ctx.word, input,
-                                                        0i32 as libc::c_uchar)
+                                                        0 as libc::c_uchar)
                                                == 0 {
                                             current_block =
                                                 1907364584679199995;
@@ -6819,7 +6819,7 @@ unsafe extern "C" fn parse_stream(
                                         o_addchr(&mut ctx.word, 3i32);
                                         o_addchr(&mut ctx.word, '`' as i32);
                                         if add_till_backquote(&mut ctx.word,
-                                                              input, 0i32) ==
+                                                              input, 0) ==
                                                0 {
                                             current_block =
                                                 1907364584679199995;
@@ -6875,9 +6875,9 @@ unsafe extern "C" fn parse_stream(
                                         if ctx.ctx_res_w as libc::c_int ==
                                                RES_MATCH as libc::c_int &&
                                                (*ctx.command).argv.is_null()
-                                               && ctx.word.length == 0i32 &&
+                                               && ctx.word.length == 0 &&
                                                ctx.word.has_quoted_part as
-                                                   libc::c_int == 0i32 {
+                                                   libc::c_int == 0 {
                                             continue ;
                                         }
                                         current_block = 613454377845503748;
@@ -6944,7 +6944,7 @@ unsafe extern "C" fn parse_stream(
                     /* fall through */
                     {
                       let mut n: libc::c_int = parse_group(&mut ctx, input, ch);
-                      if n < 0i32 {
+                      if n < 0 {
                         current_block = 1907364584679199995;
                         break;
                       }
@@ -7039,7 +7039,7 @@ unsafe extern "C" fn o_addblock_duplicate_backslash(
 ) {
   loop {
     len -= 1;
-    if !(len >= 0i32) {
+    if !(len >= 0) {
       break;
     }
     let fresh20 = str;
@@ -7079,7 +7079,7 @@ unsafe extern "C" fn expand_on_ifs(
   mut n: libc::c_int,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
-  let mut last_is_ifs: libc::c_int = 0i32;
+  let mut last_is_ifs: libc::c_int = 0;
   loop {
     let mut word_len: libc::c_int = 0;
     if *str == 0 {
@@ -7101,7 +7101,7 @@ unsafe extern "C" fn expand_on_ifs(
           /*o_addblock(output, str, word_len); - WRONG: "v='\*'; echo Z$v" prints "Z*" instead of "Z\*" */
           /*o_addqblock(output, str, word_len); - WRONG: "v='*'; echo Z$v" prints "Z*" instead of Z* files */
         }
-        last_is_ifs = 0i32;
+        last_is_ifs = 0;
         str = str.offset(word_len as isize);
         if *str == 0 {
           /* EOL - do not finalize word */
@@ -7328,7 +7328,7 @@ unsafe extern "C" fn encode_then_expand_vararg(
         if do_unbackslash != 0 {
           EXP_FLAG_ESC_GLOB_CHARS as libc::c_int
         } else {
-          0i32
+          0
         },
         do_unbackslash,
       )
@@ -7455,7 +7455,7 @@ unsafe extern "C" fn encode_then_append_var_plusminus(
         if dest.o_expflags != 0 || dquoted != 0 {
           0x80i32
         } else {
-          0i32
+          0
         } as libc::c_uchar,
       ) == 0
       {
@@ -7572,7 +7572,7 @@ unsafe extern "C" fn replace_pattern(
   mut exp_op: libc::c_char,
 ) -> *mut libc::c_char {
   let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut res_len: libc::c_uint = 0i32 as libc::c_uint;
+  let mut res_len: libc::c_uint = 0 as libc::c_uint;
   let mut repl_len: libc::c_uint = strlen(repl) as libc::c_uint;
   /* Null pattern never matches, including if "var" is empty */
   if *pattern.offset(0) == 0 {
@@ -7674,7 +7674,7 @@ unsafe extern "C" fn expand_one_var(
   };
   arg0 = *arg.offset(0);
   *arg.offset(0) = (arg0 as libc::c_int & 0x7fi32) as libc::c_char;
-  exp_op = 0i32 as libc::c_char;
+  exp_op = 0 as libc::c_char;
   if *arg.offset(0) as libc::c_int == '#' as i32
     && *arg.offset(1) as libc::c_int != 0
     && (exp_saveptr.is_null()
@@ -7764,7 +7764,7 @@ unsafe extern "C" fn expand_one_var(
         val = utoa(if (*ptr_to_globals).global_argc != 0 {
           ((*ptr_to_globals).global_argc) - 1i32
         } else {
-          0i32
+          0
         } as libc::c_uint)
       }
       45 => {
@@ -7813,7 +7813,7 @@ unsafe extern "C" fn expand_one_var(
     val = utoa(if !val.is_null() {
       unicode_strlen(val)
     } else {
-      0i32 as libc::c_ulong
+      0 as libc::c_ulong
     } as libc::c_uint)
   } else if exp_op != 0 {
     if exp_op as libc::c_int == '%' as i32 || exp_op as libc::c_int == '#' as i32 {
@@ -7839,7 +7839,7 @@ unsafe extern "C" fn expand_one_var(
           /* ## or %% */
           exp_word = exp_word.offset(1)
         }
-        exp_exp_word = encode_then_expand_vararg(exp_word, 1i32, 0i32);
+        exp_exp_word = encode_then_expand_vararg(exp_word, 1i32, 0);
         if !exp_exp_word.is_null() {
           exp_word = exp_exp_word
         }
@@ -7890,7 +7890,7 @@ unsafe extern "C" fn expand_one_var(
         let mut pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut repl: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut t_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        pattern = encode_then_expand_vararg(exp_word, 1i32, 0i32);
+        pattern = encode_then_expand_vararg(exp_word, 1i32, 0);
         if pattern.is_null() {
           pattern = xstrdup(exp_word)
         }
@@ -7951,19 +7951,19 @@ unsafe extern "C" fn expand_one_var(
         if !errmsg.is_null() {
           current_block = 17565683642146649389;
         } else {
-          if beg < 0i32 as libc::c_longlong {
+          if beg < 0 as libc::c_longlong {
             /* negative beg counts from the end */
             beg = strlen(val) as arith_t + beg;
-            if beg < 0i32 as libc::c_longlong {
+            if beg < 0 as libc::c_longlong {
               /* ${v: -999999} is "" */
-              len = 0i32 as arith_t;
+              len = 0 as arith_t;
               beg = len
             }
           }
-          if len < 0i32 as libc::c_longlong {
+          if len < 0 as libc::c_longlong {
             /* in bash, len=-n means strlen()-n */
             len = strlen(val) as arith_t - beg + len;
-            if len < 0i32 as libc::c_longlong {
+            if len < 0 as libc::c_longlong {
               /* bash compat */
               msg_and_die_if_script(
                 b"%s: substring expression < 0\x00" as *const u8 as *const libc::c_char,
@@ -7971,7 +7971,7 @@ unsafe extern "C" fn expand_one_var(
               );
             }
           }
-          if len <= 0i32 as libc::c_longlong
+          if len <= 0 as libc::c_longlong
             || val.is_null()
             || beg as libc::c_ulonglong >= strlen(val) as libc::c_ulonglong
           {
@@ -8062,7 +8062,7 @@ unsafe extern "C" fn expand_one_var(
           to_be_freed = encode_then_expand_vararg(
             exp_word,
             (arg0 as libc::c_int & 0x80i32 == 0) as libc::c_int,
-            0i32,
+            0,
           );
           if !to_be_freed.is_null() {
             exp_word = to_be_freed
@@ -8101,7 +8101,7 @@ unsafe extern "C" fn expand_one_var(
             } else {
               let mut new_var: *mut libc::c_char =
                 xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, var, val);
-              set_local_var(new_var, 0i32 as libc::c_uint);
+              set_local_var(new_var, 0 as libc::c_uint);
             }
           }
         }
@@ -8129,7 +8129,7 @@ unsafe extern "C" fn expand_vars_to_list(
   /* output->o_expflags & EXP_FLAG_SINGLEWORD (0x80) if we are in
    * expansion of right-hand side of assignment == 1-element expand.
    */
-  let mut cant_be_null: libc::c_char = 0i32 as libc::c_char; /* only bit 0x80 matters */
+  let mut cant_be_null: libc::c_char = 0 as libc::c_char; /* only bit 0x80 matters */
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* end of "while (SPECIAL_VAR_SYMBOL is found) ..." */
   loop {
     p = strchr(arg, 3i32);
@@ -8141,7 +8141,7 @@ unsafe extern "C" fn expand_vars_to_list(
     if (*output).ended_in_ifs != 0 {
       o_addchr(output, '\u{0}' as i32);
       n = o_save_ptr(output, n);
-      (*output).ended_in_ifs = 0i32 as smallint
+      (*output).ended_in_ifs = 0 as smallint
     }
     o_addblock(
       output,
@@ -8318,10 +8318,10 @@ unsafe extern "C" fn expand_variables(
     init
   };
   output.o_expflags = expflags as libc::c_int;
-  n = 0i32;
+  n = 0;
   loop {
     /* go to next list[n] */
-    output.ended_in_ifs = 0i32 as smallint;
+    output.ended_in_ifs = 0 as smallint;
     n = o_save_ptr(&mut output, n);
     if (*argv).is_null() {
       break;
@@ -8405,7 +8405,7 @@ unsafe extern "C" fn expand_assignments(
   p = std::ptr::null_mut();
   (*ptr_to_globals).expanded_assignments = p;
   /* Expand assignments into one string each */
-  i = 0i32;
+  i = 0;
   while i < count {
     p = add_string_to_strings(
       p,
@@ -8422,12 +8422,12 @@ unsafe extern "C" fn expand_assignments(
   return p;
 }
 unsafe extern "C" fn switch_off_special_sigs(mut mask: libc::c_uint) {
-  let mut sig: libc::c_uint = 0i32 as libc::c_uint;
+  let mut sig: libc::c_uint = 0 as libc::c_uint;
   loop
   /* trap is '', has to remain SIG_IGN */
   {
     mask >>= 1i32;
-    if !(mask != 0i32 as libc::c_uint) {
+    if !(mask != 0 as libc::c_uint) {
       break;
     }
     sig = sig.wrapping_add(1);
@@ -8467,7 +8467,7 @@ unsafe extern "C" fn reset_traps_to_defaults() {
   }
   /* Switch off special sigs */
   switch_off_special_sigs(mask);
-  (*ptr_to_globals).fatal_sig_mask = 0i32 as libc::c_uint;
+  (*ptr_to_globals).fatal_sig_mask = 0 as libc::c_uint;
   (*ptr_to_globals).special_sig_mask &= !(SPECIAL_INTERACTIVE_SIGS as libc::c_int) as libc::c_uint;
   /* SIGQUIT,SIGCHLD and maybe SPECIAL_JOBSTOP_SIGS
    * remain set in G.special_sig_mask */
@@ -8475,7 +8475,7 @@ unsafe extern "C" fn reset_traps_to_defaults() {
     return;
   }
   /* Reset all sigs to default except ones with empty traps */
-  sig = 0i32 as libc::c_uint; /* no trap: nothing to do */
+  sig = 0 as libc::c_uint; /* no trap: nothing to do */
   while sig < (64i32 + 1i32) as libc::c_uint {
     if !(*(*ptr_to_globals).traps.offset(sig as isize)).is_null() {
       if !(*(*(*ptr_to_globals).traps.offset(sig as isize)).offset(0) == 0) {
@@ -8485,7 +8485,7 @@ unsafe extern "C" fn reset_traps_to_defaults() {
         let ref mut fresh34 = *(*ptr_to_globals).traps.offset(sig as isize);
         *fresh34 = std::ptr::null_mut::<libc::c_char>();
         /* There is no signal for trap 0 (EXIT) */
-        if !(sig == 0i32 as libc::c_uint) {
+        if !(sig == 0 as libc::c_uint) {
           install_sighandler(sig as libc::c_int, pick_sighandler(sig));
         }
       }
@@ -8510,7 +8510,7 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
   loop {
     let mut pipe_list: *mut pipe = std::ptr::null_mut();
     if end_trigger == ';' as i32 {
-      (*ptr_to_globals).promptmode = 0i32 as smallint
+      (*ptr_to_globals).promptmode = 0 as smallint
     }
     pipe_list = parse_stream(0 as *mut libc::c_int, inp, end_trigger);
     if pipe_list.is_null() || pipe_list == 1 as *mut libc::c_void as *mut pipe {
@@ -8528,16 +8528,16 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
         /* Force prompt */
         (*inp).p = std::ptr::null();
         /* This stream isn't empty */
-        empty = 0i32 != 0
+        empty = 0 != 0
       } else {
         if pipe_list.is_null() && empty as libc::c_int != 0 {
-          (*ptr_to_globals).last_exitcode = 0i32 as smalluint
+          (*ptr_to_globals).last_exitcode = 0 as smalluint
         }
         break;
       }
     } else {
       run_and_free_list(pipe_list);
-      empty = 0i32 != 0;
+      empty = 0 != 0;
       if (*ptr_to_globals).flag_return_in_progress as libc::c_int == 1i32 {
         break;
       }
@@ -8581,13 +8581,13 @@ unsafe extern "C" fn generate_stream_from_string(
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
     })
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* child */
     die_func = ::std::mem::transmute::<
       Option<unsafe extern "C" fn() -> !>,
@@ -8598,7 +8598,7 @@ unsafe extern "C" fn generate_stream_from_string(
      * SUSv3 says ctrl-Z should be ignored, ctrl-C should not.
      */
     bb_signals(
-      0i32 + (1i32 << 20i32) + (1i32 << 21i32) + (1i32 << 22i32),
+      0 + (1i32 << 20i32) + (1i32 << 21i32) + (1i32 << 22i32),
       ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
     ); /* NB: close _first_, then move fd! */
     close(channel[0]);
@@ -8649,7 +8649,7 @@ unsafe extern "C" fn generate_stream_from_string(
     }
     /* Prevent it from trying to handle ctrl-z etc */
     (*ptr_to_globals).run_list_level = 1i32; /* or else $RANDOM repeats in child */
-    (*ptr_to_globals).random_gen.galois_LFSR = 0i32;
+    (*ptr_to_globals).random_gen.galois_LFSR = 0;
     reset_traps_to_defaults();
     (*ptr_to_globals).x_mode_depth = (*ptr_to_globals).x_mode_depth.wrapping_add(1);
     //bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
@@ -8679,7 +8679,7 @@ unsafe extern "C" fn process_command_subs(
   let mut eol_cnt: libc::c_int = 0;
   fp = xfdopen_for_read(generate_stream_from_string(s, &mut pid));
   /* Now send results of command back into original context */
-  eol_cnt = 0i32;
+  eol_cnt = 0;
   loop {
     ch = getc_unlocked(fp);
     if !(ch != -1i32) {
@@ -8702,7 +8702,7 @@ unsafe extern "C" fn process_command_subs(
   /* We need to extract exitcode. Test case
    * "true; echo `sleep 1; false` $?"
    * should print 1 */
-  safe_waitpid(pid, &mut status, 0i32);
+  safe_waitpid(pid, &mut status, 0);
   return (status & 0xff00i32) >> 8i32;
 }
 /* ENABLE_HUSH_TICK */
@@ -8730,11 +8730,11 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
   ndelay_on(pair.wr);
   loop {
     written = write(pair.wr, heredoc as *const libc::c_void, len as size_t) as libc::c_int;
-    if written <= 0i32 {
+    if written <= 0 {
       break;
     }
     len -= written;
-    if len == 0i32 {
+    if len == 0 {
       close(pair.wr);
       free(expanded as *mut libc::c_void);
       return;
@@ -8749,12 +8749,12 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
    * (that exec happens after we return from this function) */
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* child */
     die_func = ::std::mem::transmute::<
       Option<unsafe extern "C" fn() -> !>,
@@ -8765,13 +8765,13 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
     } else {
       ({
         let mut bb__xvfork_pid: pid_t = vfork();
-        if bb__xvfork_pid < 0i32 {
+        if bb__xvfork_pid < 0 {
           bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
         }
         bb__xvfork_pid
       })
     };
-    if pid != 0i32 {
+    if pid != 0 {
       _exit(0i32);
     }
     /* grandchild */
@@ -8813,14 +8813,14 @@ unsafe extern "C" fn add_squirrel(
 ) -> *mut squirrel {
   let mut moved_to: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   if !sq.is_null() {
-    while (*sq.offset(i as isize)).orig_fd >= 0i32 {
+    while (*sq.offset(i as isize)).orig_fd >= 0 {
       /* If we collide with an already moved fd... */
       if fd == (*sq.offset(i as isize)).moved_to {
         (*sq.offset(i as isize)).moved_to =
           dup_CLOEXEC((*sq.offset(i as isize)).moved_to, avoid_fd);
-        if (*sq.offset(i as isize)).moved_to < 0i32 {
+        if (*sq.offset(i as isize)).moved_to < 0 {
           /* what? */
           xfunc_die();
         }
@@ -8835,7 +8835,7 @@ unsafe extern "C" fn add_squirrel(
   }
   /* If this fd is open, we move and remember it; if it's closed, moved_to = -1 */
   moved_to = dup_CLOEXEC(fd, avoid_fd);
-  if moved_to < 0i32 && *bb_errno != 9i32 {
+  if moved_to < 0 && *bb_errno != 9i32 {
     xfunc_die();
   }
   return append_squirrel(sq, i, fd, moved_to);
@@ -8845,9 +8845,9 @@ unsafe extern "C" fn add_squirrel_closed(
   mut fd: libc::c_int,
 ) -> *mut squirrel {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   if !sq.is_null() {
-    while (*sq.offset(i as isize)).orig_fd >= 0i32 {
+    while (*sq.offset(i as isize)).orig_fd >= 0 {
       /* If we collide with an already moved fd... */
       if fd == (*sq.offset(i as isize)).orig_fd {
         /* Examples:
@@ -8898,7 +8898,7 @@ unsafe extern "C" fn save_fd_on_redirect(
      * and change ->fd to 10 if fd#3 is a script fd. WRONG.
      */
     //bb_error_msg("sqp == NULL: [v]forked child");
-    return 0i32;
+    return 0;
   }
   /* If this one of script's fds? */
   if move_HFILEs_on_redirect(fd, avoid_fd) != 0 {
@@ -8928,19 +8928,19 @@ unsafe extern "C" fn save_fd_on_redirect(
   if sqp == 1 as *mut libc::c_void as *mut *mut squirrel {
     /* Don't preserve redirected fds: exec is _meant_ to change these */
     //bb_error_msg("sqp == ERR_PTR: exec >FILE");
-    return 0i32;
+    return 0;
   }
   /* Check whether it collides with any open fds (e.g. stdio), save fds as needed */
   *sqp = add_squirrel(*sqp, fd, avoid_fd);
-  return 0i32;
+  return 0;
   /* "we did not close fd" */
 }
 unsafe extern "C" fn restore_redirects(mut sq: *mut squirrel) {
   if !sq.is_null() {
     let mut i: libc::c_int = 0;
-    i = 0i32;
-    while (*sq.offset(i as isize)).orig_fd >= 0i32 {
-      if (*sq.offset(i as isize)).moved_to >= 0i32 {
+    i = 0;
+    while (*sq.offset(i as isize)).orig_fd >= 0 {
+      if (*sq.offset(i as isize)).moved_to >= 0 {
         /* We simply die on error */
         xmove_fd(
           (*sq.offset(i as isize)).moved_to,
@@ -8969,15 +8969,15 @@ unsafe extern "C" fn internally_opened_fd(
     return 1i32;
   }
   if !sq.is_null() {
-    i = 0i32;
-    while (*sq.offset(i as isize)).orig_fd >= 0i32 {
+    i = 0;
+    while (*sq.offset(i as isize)).orig_fd >= 0 {
       if fd == (*sq.offset(i as isize)).moved_to {
         return 1i32;
       }
       i += 1
     }
   }
-  return 0i32;
+  return 0;
 }
 /* squirrel != NULL means we squirrel away copies of stdin, stdout,
  * and stderr if they are redirected. */
@@ -8993,7 +8993,7 @@ unsafe extern "C" fn setup_redirects(
     let mut closed: libc::c_int = 0;
     if (*redir).rd_type as libc::c_int == REDIRECT_HEREDOC2 as libc::c_int {
       /* "rd_fd<<HERE" case */
-      save_fd_on_redirect((*redir).rd_fd, 0i32, sqp);
+      save_fd_on_redirect((*redir).rd_fd, 0, sqp);
       /* for REDIRECT_HEREDOC2, rd_filename holds _contents_
        * of the heredoc */
       setup_heredoc(redir);
@@ -9018,7 +9018,7 @@ unsafe extern "C" fn setup_redirects(
           );
           newfd = open_or_warn(p, mode);
           free(p as *mut libc::c_void);
-          if newfd < 0i32 {
+          if newfd < 0 {
             /* Error message from open_or_warn can be lost
              * if stderr has been redirected, but bash
              * and ash both lose it as well
@@ -9090,7 +9090,7 @@ unsafe extern "C" fn setup_redirects(
     }
     redir = (*redir).next
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn find_in_path(mut arg: *const libc::c_char) -> *mut libc::c_char {
   let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -9103,7 +9103,7 @@ unsafe extern "C" fn find_in_path(mut arg: *const libc::c_char) -> *mut libc::c_
     let mut end: *const libc::c_char = strchrnul(PATH, ':' as i32);
     let mut sz: libc::c_int = end.wrapping_offset_from(PATH) as libc::c_long as libc::c_int;
     free(ret as *mut libc::c_void);
-    if sz != 0i32 {
+    if sz != 0 {
       ret = xasprintf(
         b"%.*s/%s\x00" as *const u8 as *const libc::c_char,
         sz,
@@ -9115,7 +9115,7 @@ unsafe extern "C" fn find_in_path(mut arg: *const libc::c_char) -> *mut libc::c_
        * it means "use current dir" */
       ret = xstrdup(arg)
     }
-    if access(ret, 0i32) == 0i32 {
+    if access(ret, 0) == 0 {
       break;
     }
     if *end as libc::c_int == '\u{0}' as i32 {
@@ -9132,7 +9132,7 @@ unsafe extern "C" fn find_builtin_helper(
   mut end: *const built_in_command,
 ) -> *const built_in_command {
   while x != end {
-    if strcmp(name, (*x).b_cmd) != 0i32 {
+    if strcmp(name, (*x).b_cmd) != 0 {
       x = x.offset(1)
     } else {
       return x;
@@ -9209,7 +9209,7 @@ unsafe extern "C" fn enter_var_nest_level() {
 }
 unsafe extern "C" fn leave_var_nest_level() {
   (*ptr_to_globals).var_nest_level = (*ptr_to_globals).var_nest_level.wrapping_sub(1);
-  if 1i32 != 0 && ((*ptr_to_globals).var_nest_level as libc::c_int) < 0i32 {
+  if 1i32 != 0 && ((*ptr_to_globals).var_nest_level as libc::c_int) < 0 {
     bb_simple_error_msg_and_die(b"BUG: nesting underflow\x00" as *const u8 as *const libc::c_char);
   }
   remove_nested_vars();
@@ -9222,7 +9222,7 @@ unsafe extern "C" fn find_function_slot(mut name: *const libc::c_char) -> *mut *
     if funcp.is_null() {
       break;
     }
-    if strcmp(name, (*funcp).name) == 0i32 {
+    if strcmp(name, (*funcp).name) == 0 {
       break;
     }
     funcpp = &mut (*funcp).next
@@ -9351,7 +9351,7 @@ unsafe extern "C" fn exec_builtin(
 unsafe extern "C" fn execvp_or_die(mut argv: *mut *mut libc::c_char) -> ! {
   let mut e: libc::c_int = 0;
   /* Don't propagate SIG_IGN to the child */
-  if SPECIAL_JOBSTOP_SIGS as libc::c_int != 0i32 {
+  if SPECIAL_JOBSTOP_SIGS as libc::c_int != 0 {
     switch_off_special_sigs(
       (*ptr_to_globals).special_sig_mask & SPECIAL_JOBSTOP_SIGS as libc::c_int as libc::c_uint,
     );
@@ -9389,7 +9389,7 @@ unsafe extern "C" fn x_mode_print_optionally_squoted(mut str: *const libc::c_cha
     /* print '....' up to EOL or first squote */
     len = strchrnul(cp, '\'' as i32).wrapping_offset_from(cp) as libc::c_long as libc::c_int
       as libc::c_uint;
-    if len != 0i32 as libc::c_uint {
+    if len != 0 as libc::c_uint {
       x_mode_addchr('\'' as i32);
       x_mode_addblock(cp, len as libc::c_int);
       x_mode_addchr('\'' as i32);
@@ -9411,7 +9411,7 @@ unsafe extern "C" fn dump_cmd_in_x_mode(mut argv: *mut *mut libc::c_char) {
     let mut n: libc::c_uint = 0;
     /* "+[+++...][ cmd...]\n\0" */
     x_mode_prefix();
-    n = 0i32 as libc::c_uint;
+    n = 0 as libc::c_uint;
     while !(*argv.offset(n as isize)).is_null() {
       x_mode_addchr(' ' as i32);
       if *(*argv.offset(n as isize)).offset(0) as libc::c_int == '\u{0}' as i32 {
@@ -9475,7 +9475,7 @@ unsafe extern "C" fn pseudo_exec_argv(
   let mut x: *const built_in_command = std::ptr::null();
   let mut sv_shadowed: *mut *mut variable = std::ptr::null_mut();
   let mut new_env: *mut *mut libc::c_char = std::ptr::null_mut();
-  let mut opt_vV: libc::c_char = 0i32 as libc::c_char;
+  let mut opt_vV: libc::c_char = 0 as libc::c_char;
   let mut funcp: *const function = std::ptr::null();
   new_env = expand_assignments(argv, assignment_cnt);
   dump_cmd_in_x_mode(new_env);
@@ -9510,7 +9510,7 @@ unsafe extern "C" fn pseudo_exec_argv(
     's_102: while strcmp(
       *argv.offset(0),
       b"command\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
       && !(*argv.offset(1)).is_null()
     {
       let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* bash allows "command command command [-OPT] BAR" */
@@ -9625,7 +9625,7 @@ unsafe extern "C" fn get_cmdtext(mut pi: *mut pipe) -> *const libc::c_char {
     (*pi).cmdtext = xzalloc(1i32 as size_t) as *mut libc::c_char;
     return (*pi).cmdtext;
   }
-  len = 0i32;
+  len = 0;
   loop {
     len = (len as libc::c_ulong).wrapping_add(strlen(*argv).wrapping_add(1i32 as libc::c_ulong))
       as libc::c_int as libc::c_int;
@@ -9661,7 +9661,7 @@ unsafe extern "C" fn remove_job_from_table(mut pi: *mut pipe) {
     }
     (*prev_pipe).next = (*pi).next
   }
-  (*ptr_to_globals).last_jobid = 0i32 as libc::c_uint;
+  (*ptr_to_globals).last_jobid = 0 as libc::c_uint;
   if !(*ptr_to_globals).job_list.is_null() {
     (*ptr_to_globals).last_jobid = (*(*ptr_to_globals).job_list).jobid
   };
@@ -9681,7 +9681,7 @@ unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
   let mut i: libc::c_int = 0;
   clean_up_last_dead_job();
   /* Find the end of the list, and find next job ID to use */
-  i = 0i32;
+  i = 0;
   jobp = &mut (*ptr_to_globals).job_list;
   loop {
     job = *jobp;
@@ -9706,7 +9706,7 @@ unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
       .wrapping_mul((*pi).num_cmds as libc::c_ulong),
   ) as *mut command;
   /* Cannot copy entire pi->cmds[] vector! This causes double frees */
-  i = 0i32;
+  i = 0;
   while i < (*pi).num_cmds {
     (*(*job).cmds.offset(i as isize)).pid = (*(*pi).cmds.offset(i as isize)).pid;
     i += 1
@@ -9731,18 +9731,18 @@ unsafe extern "C" fn job_exited_or_stopped(mut pi: *mut pipe) -> libc::c_int {
     return -1i32;
   }
   /* All processes in fg pipe have exited or stopped */
-  rcode = 0i32;
+  rcode = 0;
   i = (*pi).num_cmds;
   loop {
     i -= 1;
-    if !(i >= 0i32) {
+    if !(i >= 0) {
       break;
     }
     rcode = (*(*pi).cmds.offset(i as isize)).cmd_exitcode as libc::c_int;
     /* usually last process gives overall exitstatus,
      * but with "set -o pipefail", last *failed* process does */
-    if (*ptr_to_globals).o_opt[OPT_O_PIPEFAIL as libc::c_int as usize] as libc::c_int == 0i32
-      || rcode != 0i32
+    if (*ptr_to_globals).o_opt[OPT_O_PIPEFAIL as libc::c_int as usize] as libc::c_int == 0
+      || rcode != 0
     {
       break;
     }
@@ -9761,15 +9761,15 @@ unsafe extern "C" fn process_wait_result(
   let mut pi: *mut pipe = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut dead: libc::c_int = 0;
-  dead = (status & 0x7fi32 == 0i32
-    || ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32)
+  dead = (status & 0x7fi32 == 0
+    || ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0)
     as libc::c_int;
   /* Were we asked to wait for a fg pipe? */
   if !fg_pipe.is_null() {
     i = (*fg_pipe).num_cmds;
     loop {
       i -= 1;
-      if !(i >= 0i32) {
+      if !(i >= 0) {
         break;
       }
       let mut rcode: libc::c_int = 0;
@@ -9778,7 +9778,7 @@ unsafe extern "C" fn process_wait_result(
       }
       if dead != 0 {
         let mut ex: libc::c_int = 0;
-        (*(*fg_pipe).cmds.offset(i as isize)).pid = 0i32;
+        (*(*fg_pipe).cmds.offset(i as isize)).pid = 0;
         (*fg_pipe).alive_cmds -= 1;
         ex = (status & 0xff00i32) >> 8i32;
         /* It wasn't in fg_pipe, look for process in bg pipes */
@@ -9786,7 +9786,7 @@ unsafe extern "C" fn process_wait_result(
          * process in pipe (prints just newline for SIGINT/SIGPIPE).
          * Mimic this. Example: "sleep 5" + (^\ or kill -QUIT)
          */
-        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           let mut sig: libc::c_int = status & 0x7fi32;
           if i == (*fg_pipe).num_cmds - 1i32 {
             /* TODO: use strsignal() instead for bash compat? but that's bloat... */
@@ -9806,17 +9806,17 @@ unsafe extern "C" fn process_wait_result(
         (*fg_pipe).stopped_cmds += 1
       }
       rcode = job_exited_or_stopped(fg_pipe);
-      if rcode >= 0i32 {
+      if rcode >= 0 {
         /* Note: *non-interactive* bash does not continue if all processes in fg pipe
          * are stopped. Testcase: "cat | cat" in a script (not on command line!)
          * and "killall -STOP cat" */
         if (*ptr_to_globals).interactive_fd != 0 {
-          if (*fg_pipe).alive_cmds != 0i32 {
+          if (*fg_pipe).alive_cmds != 0 {
             insert_job_into_table(fg_pipe);
           }
           return rcode;
         }
-        if (*fg_pipe).alive_cmds == 0i32 {
+        if (*fg_pipe).alive_cmds == 0 {
           return rcode;
         }
       }
@@ -9832,7 +9832,7 @@ unsafe extern "C" fn process_wait_result(
       current_block = 790185930182612747;
       break;
     }
-    i = 0i32;
+    i = 0;
     while i < (*pi).num_cmds {
       if (*(*pi).cmds.offset(i as isize)).pid == childpid {
         current_block = 4076451519832173219;
@@ -9853,14 +9853,14 @@ unsafe extern "C" fn process_wait_result(
         /* this wasn't a process from fg_pipe */
         /* child exited */
         let mut rcode_0: libc::c_int = (status & 0xff00i32) >> 8i32;
-        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           rcode_0 = 128i32 + (status & 0x7fi32)
         }
         (*(*pi).cmds.offset(i as isize)).cmd_exitcode = rcode_0 as smalluint;
         if (*ptr_to_globals).last_bg_pid == (*(*pi).cmds.offset(i as isize)).pid {
           (*ptr_to_globals).last_bg_pid_exitcode = rcode_0 as smalluint
         }
-        (*(*pi).cmds.offset(i as isize)).pid = 0i32;
+        (*(*pi).cmds.offset(i as isize)).pid = 0;
         (*pi).alive_cmds -= 1;
         if (*pi).alive_cmds == 0 {
           (*ptr_to_globals).dead_job_exitcode = job_exited_or_stopped(pi);
@@ -9911,12 +9911,12 @@ unsafe extern "C" fn process_wait_result(
 unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -> libc::c_int {
   let mut attributes: libc::c_int = 0;
   let mut status: libc::c_int = 0;
-  let mut rcode: libc::c_int = 0i32;
+  let mut rcode: libc::c_int = 0;
   attributes = 2i32;
   if fg_pipe.is_null() {
     attributes |= 1i32
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   loop
   /* Do we do this right?
    * bash-3.00# sleep 20 | false
@@ -9929,7 +9929,7 @@ unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -
   {
     let mut childpid: pid_t = 0; /* while (waitpid succeeds)... */
     childpid = waitpid(-1i32, &mut status, attributes);
-    if childpid <= 0i32 {
+    if childpid <= 0 {
       if childpid != 0 && *bb_errno != 10i32 {
         bb_simple_perror_msg(b"waitpid\x00" as *const u8 as *const libc::c_char);
       }
@@ -9938,13 +9938,13 @@ unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -
       break;
     } else {
       rcode = process_wait_result(fg_pipe, childpid, status);
-      if rcode >= 0i32 {
+      if rcode >= 0 {
         break;
       }
       if childpid == waitfor_pid {
         /* "wait PID" */
         rcode = (status & 0xff00i32) >> 8i32;
-        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           rcode = 128i32 + (status & 0x7fi32)
         }
         if status & 0xffi32 == 0x7fi32 {
@@ -9955,7 +9955,7 @@ unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -
         break;
       /* "wait PID" called us, give it exitcode+1 */
       } else {
-        if !(-1i32 == waitfor_pid && (*ptr_to_globals).dead_job_exitcode >= 0i32) {
+        if !(-1i32 == waitfor_pid && (*ptr_to_globals).dead_job_exitcode >= 0) {
           continue;
         }
         /* some job did finish */
@@ -9968,7 +9968,7 @@ unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -
 }
 unsafe extern "C" fn checkjobs_and_fg_shell(mut fg_pipe: *mut pipe) -> libc::c_int {
   let mut p: pid_t = 0;
-  let mut rcode: libc::c_int = checkjobs(fg_pipe, 0i32);
+  let mut rcode: libc::c_int = checkjobs(fg_pipe, 0);
   if (*ptr_to_globals).saved_tty_pgrp != 0 {
     /* Job finished, move the shell to the foreground */
     p = getpgrp(); /* our process group id */
@@ -10077,7 +10077,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     (*ptr_to_globals).ifs_whitespace = (*ptr_to_globals).ifs as *mut libc::c_char
   }
   (*pi).pgrp = -1i32;
-  (*pi).stopped_cmds = 0i32;
+  (*pi).stopped_cmds = 0;
   command = &mut *(*pi).cmds.offset(0) as *mut command;
   argv_expanded = std::ptr::null_mut();
   if !((*pi).num_cmds != 1i32
@@ -10097,11 +10097,11 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         *fresh39 = std::ptr::null_mut::<libc::c_char>();
         (*funcp).parent_cmd = command;
         (*command).child_func = funcp;
-        return 0i32;
+        return 0;
       }
       /* { list } */
       rcode = 1i32; /* exitcode if redir failed */
-      if setup_redirects(command, &mut squirrel) == 0i32 {
+      if setup_redirects(command, &mut squirrel) == 0 {
         //FIXME: we need to pass squirrel down into run_list()
         //for SH_STANDALONE case, or else this construct:
         // { find /proc/self/fd; true; } >FILE; cmd2
@@ -10132,7 +10132,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
        * Try "a=t >file"
        */
       i = 0;
-      (*ptr_to_globals).expand_exitcode = 0i32 as smalluint;
+      (*ptr_to_globals).expand_exitcode = 0 as smalluint;
       current_block = 17116254691753230924;
     } else {
       /* Expand the rest into (possibly) many strings each */
@@ -10190,7 +10190,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
              */
             (*ptr_to_globals).shadowed_vars_pp = &mut old_vars;
             rcode = redirect_and_varexp_helper(command, &mut squirrel, argv_expanded);
-            if rcode == 0i32 {
+            if rcode == 0 {
               if funcp_0.is_null() {
                 /* Do not collect *to old_vars list* vars shadowed
                  * by e.g. "local VAR" builtin (collect them
@@ -10221,7 +10221,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         //    if (ENABLE_FEATURE_SH_NOFORK && NUM_APPLETS > 1) {
 
         // let mut n: libc::c_int = find_applet_by_name(*argv_expanded.offset(0));
-        // if n < 0i32 || 0i32 == 0 {
+        // if n < 0 || 0 == 0 {
         //   current_block = 7411349665265910262;
         // } else {
         //   enter_var_nest_level();
@@ -10229,7 +10229,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         //   (*ptr_to_globals).shadowed_vars_pp = &mut old_vars;
         //   rcode = redirect_and_varexp_helper(command, &mut squirrel, argv_expanded);
         //   (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;
-        //   if rcode == 0i32 {
+        //   if rcode == 0 {
         //     /*
         //      * Note: signals (^C) can't interrupt here.
         //      * We remember them and they will be acted upon
@@ -10292,7 +10292,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         rcode = setup_redirects(command, &mut squirrel);
         restore_redirects(squirrel);
         /* Set shell variables */
-        i = 0i32 as libc::c_uint;
+        i = 0 as libc::c_uint;
         while i < (*command).assignment_cnt {
           let mut p_0: *mut libc::c_char = expand_string_to_string(
             *argv.offset(i as isize),
@@ -10301,7 +10301,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
           );
           if (*ptr_to_globals).o_opt[OPT_O_XTRACE as libc::c_int as usize] != 0 {
             let mut eq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-            if i == 0i32 as libc::c_uint {
+            if i == 0 as libc::c_uint {
               x_mode_prefix();
             }
             x_mode_addchr(' ' as i32);
@@ -10316,7 +10316,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
             x_mode_print_optionally_squoted(eq);
             x_mode_flush();
           }
-          if set_local_var(p_0, 0i32 as libc::c_uint) != 0 {
+          if set_local_var(p_0, 0 as libc::c_uint) != 0 {
             /* assignment to readonly var / putenv error? */
             rcode = 1i32
           }
@@ -10329,7 +10329,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
          *  false; x=1; echo $? - should print 0
          * Because of the 2nd case, we can't just use G.last_exitcode.
          */
-        if rcode == 0i32 {
+        if rcode == 0 {
           rcode = (*ptr_to_globals).expand_exitcode as libc::c_int
         }
         if (*pi).pi_inverted != 0 {
@@ -10343,9 +10343,9 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
    * might include `cmd` runs! Do not rerun it! We *must*
    * use argv_expanded if it's non-NULL */
   /* Going to fork a child per each pipe member */
-  (*pi).alive_cmds = 0i32;
-  next_infd = 0i32;
-  cmd_no = 0i32;
+  (*pi).alive_cmds = 0;
+  next_infd = 0;
+  cmd_no = 0;
   while cmd_no < (*pi).num_cmds {
     let mut pipefds: fd_pair = fd_pair { rd: 0, wr: 0 };
     command = &mut *(*pi).cmds.offset(cmd_no as isize) as *mut command;
@@ -10362,7 +10362,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     // !(*command).argv.is_null();
 
     /* pipes are inserted between pairs of commands */
-    pipefds.rd = 0i32;
+    pipefds.rd = 0;
     pipefds.wr = 1i32;
     if cmd_no < (*pi).num_cmds {
       xpipe(&mut pipefds.rd);
@@ -10376,17 +10376,17 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         Option<unsafe extern "C" fn() -> ()>,
       >(Some(fflush_and__exit as unsafe extern "C" fn() -> !));
       /* pseudo_exec() does not return */
-      (*ptr_to_globals).random_gen.galois_LFSR = 0i32; /* or else $RANDOM repeats in child */
+      (*ptr_to_globals).random_gen.galois_LFSR = 0; /* or else $RANDOM repeats in child */
       if (*ptr_to_globals).run_list_level == 1i32 && (*ptr_to_globals).interactive_fd != 0 {
         let mut pgrp: pid_t = 0;
         pgrp = (*pi).pgrp;
-        if pgrp < 0i32 {
+        if pgrp < 0 {
           /* Every child adds itself to new process group
            * with pgid == pid_of_first_child_in_pipe */
           /* true for 1st process only */
           pgrp = getpid()
         }
-        if setpgid(0i32, pgrp) == 0i32
+        if setpgid(0i32, pgrp) == 0
           && (*pi).followup as libc::c_int != PIPE_BG as libc::c_int
           && (*ptr_to_globals).saved_tty_pgrp != 0
         {
@@ -10396,15 +10396,15 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
           tcsetpgrp((*ptr_to_globals).interactive_fd, pgrp);
         }
       }
-      if (*pi).alive_cmds == 0i32 && (*pi).followup as libc::c_int == PIPE_BG as libc::c_int {
+      if (*pi).alive_cmds == 0 && (*pi).followup as libc::c_int == PIPE_BG as libc::c_int {
         /* 1st cmd in backgrounded pipe
          * should have its stdin /dev/null'ed */
         close(0i32);
-        if open(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32) != 0 {
-          xopen(b"/\x00" as *const u8 as *const libc::c_char, 0i32);
+        if open(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0) != 0 {
+          xopen(b"/\x00" as *const u8 as *const libc::c_char, 0);
         }
       } else {
-        xmove_fd(next_infd, 0i32);
+        xmove_fd(next_infd, 0);
       }
       xmove_fd(pipefds.wr, 1i32);
       if pipefds.rd > 1i32 {
@@ -10439,7 +10439,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     ));
     free(argv_expanded as *mut libc::c_void);
     argv_expanded = std::ptr::null_mut();
-    if (*command).pid < 0i32 {
+    if (*command).pid < 0 {
       /* [v]fork failed */
       /* Clearly indicate, was it fork or vfork */
       bb_simple_perror_msg(if 1i32 != 0 {
@@ -10450,7 +10450,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     } else {
       (*pi).alive_cmds += 1;
       /* Second and next children need to know pid of first one */
-      if (*pi).pgrp < 0i32 {
+      if (*pi).pgrp < 0 {
         (*pi).pgrp = (*command).pid
       }
     }
@@ -10478,7 +10478,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
   let mut for_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut last_followup: smallint = 0;
   let mut rcode: smalluint = 0;
-  let mut cond_code: smalluint = 0i32 as smalluint;
+  let mut cond_code: smalluint = 0 as smalluint;
   let mut rword: smallint = 0;
   let mut last_rword: smallint = 0;
   /* Check syntax for "for" */
@@ -10547,8 +10547,8 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
     }
     /* Still in the same "if...", "then..." or "do..." branch? */
     if rword as libc::c_int == last_rword as libc::c_int && 1i32 != 0 {
-      if rcode as libc::c_int == 0i32 && last_followup as libc::c_int == PIPE_OR as libc::c_int
-        || rcode as libc::c_int != 0i32 && last_followup as libc::c_int == PIPE_AND as libc::c_int
+      if rcode as libc::c_int == 0 && last_followup as libc::c_int == PIPE_OR as libc::c_int
+        || rcode as libc::c_int != 0 && last_followup as libc::c_int == PIPE_AND as libc::c_int
       {
         /* It is "<true> || CMD" or "<false> && CMD"
          * and we should not execute CMD */
@@ -10567,7 +10567,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
         if cond_code != 0 {
           if rword as libc::c_int == RES_THEN as libc::c_int {
             /* if false; then ... fi has exitcode 0! */
-            rcode = 0i32 as smalluint;
+            rcode = 0 as smalluint;
             (*ptr_to_globals).last_exitcode = rcode;
             /* "if <false> THEN cmd": skip cmd */
             current_block = 18377268871191777778;
@@ -10599,7 +10599,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                 static mut encoded_dollar_at_argv: [*const libc::c_char; 2] =
                   unsafe { [encoded_dollar_at.as_ptr(), 0 as *const libc::c_char] }; /* argv list with one element: "$@" */
                 let mut vals: *mut *mut libc::c_char = std::ptr::null_mut(); /* else: "for var; do..." -> assume "$@" list */
-                rcode = 0i32 as smalluint;
+                rcode = 0 as smalluint;
                 (*ptr_to_globals).last_exitcode = rcode;
                 vals = encoded_dollar_at_argv.as_ptr() as *mut *mut libc::c_char;
                 if (*(*pi).next).res_word as libc::c_int == RES_IN as libc::c_int {
@@ -10630,7 +10630,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                     *(*(*pi).cmds.offset(0)).argv.offset(0),
                     *fresh40,
                   ),
-                  0i32 as libc::c_uint,
+                  0 as libc::c_uint,
                 );
               }
               current_block = 18377268871191777778;
@@ -10657,11 +10657,11 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
               while !(*argv).is_null() {
                 let mut pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                 pattern =
-                  expand_string_to_string(*argv, EXP_FLAG_ESC_GLOB_CHARS as libc::c_int, 0i32);
+                  expand_string_to_string(*argv, EXP_FLAG_ESC_GLOB_CHARS as libc::c_int, 0);
                 /* TODO: which FNM_xxx flags to use? */
-                cond_code = (fnmatch(pattern, case_word, 0i32) != 0i32) as libc::c_int as smalluint;
+                cond_code = (fnmatch(pattern, case_word, 0) != 0) as libc::c_int as smalluint;
                 free(pattern as *mut libc::c_void);
-                if cond_code as libc::c_int == 0i32 {
+                if cond_code as libc::c_int == 0 {
                   /* match! we will execute this branch */
                   free(case_word as *mut libc::c_void); /* make future "word)" stop */
                   case_word = std::ptr::null_mut::<libc::c_char>();
@@ -10674,7 +10674,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
             } else {
               if rword as libc::c_int == RES_CASE_BODY as libc::c_int {
                 /* inside of a case branch */
-                if cond_code as libc::c_int != 0i32 {
+                if cond_code as libc::c_int != 0 {
                   current_block = 18377268871191777778;
                 } else {
                   current_block = 8533724845731836612;
@@ -10689,14 +10689,14 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                   if rword as libc::c_int == RES_ESAC as libc::c_int {
                     if !case_word.is_null() {
                       /* "case" did not match anything: still set $? (to 0) */
-                      rcode = 0i32 as smalluint;
+                      rcode = 0 as smalluint;
                       (*ptr_to_globals).last_exitcode = rcode
                     }
                   }
                   /* Just pressing <enter> in shell should check for jobs.
                    * OTOH, in non-interactive shell this is useless
                    * and only leads to extra job checks */
-                  if (*pi).num_cmds == 0i32 {
+                  if (*pi).num_cmds == 0 {
                     if (*ptr_to_globals).interactive_fd != 0 {
                       current_block = 14155031687646128401;
                     } else {
@@ -10707,7 +10707,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                      * to execute this pipe. NB: have to do checkjobs(NULL)
                      * after run_pipe to collect any background children,
                      * even if list execution is to be stopped. */
-                    (*ptr_to_globals).flag_break_continue = 0i32 as smallint; /* NB: rcode is a smalluint, r is int */
+                    (*ptr_to_globals).flag_break_continue = 0 as smallint; /* NB: rcode is a smalluint, r is int */
                     r = run_pipe(pi);
                     rcode = r as smalluint;
                     if r != -1i32 {
@@ -10724,15 +10724,15 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                         if !loop_top.is_null() {
                           (*ptr_to_globals).depth_break_continue =
                             (*ptr_to_globals).depth_break_continue.wrapping_sub(1);
-                          if (*ptr_to_globals).depth_break_continue == 0i32 as libc::c_uint {
-                            (*ptr_to_globals).flag_break_continue = 0i32 as smallint
+                          if (*ptr_to_globals).depth_break_continue == 0 as libc::c_uint {
+                            (*ptr_to_globals).flag_break_continue = 0 as smallint
                           } /* else: "while... do... { we are here (innermost list is not a loop!) };...done" */
                           /* else: e.g. "continue 2" should *break* once, *then* continue */
                         }
-                        if (*ptr_to_globals).depth_break_continue != 0i32 as libc::c_uint
+                        if (*ptr_to_globals).depth_break_continue != 0 as libc::c_uint
                           || fbc as libc::c_int == BC_BREAK as libc::c_int
                         {
-                          checkjobs(0 as *mut pipe, 0i32);
+                          checkjobs(0 as *mut pipe, 0);
                           break;
                         } else {
                           /* "continue": simulate end of loop */
@@ -10740,7 +10740,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                         }
                         current_block = 18377268871191777778;
                       } else if (*ptr_to_globals).flag_return_in_progress as libc::c_int == 1i32 {
-                        checkjobs(0 as *mut pipe, 0i32);
+                        checkjobs(0 as *mut pipe, 0);
                         break;
                       } else {
                         current_block = 13479157322803929894;
@@ -10757,9 +10757,9 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                         /* Last command's pid goes to $! */
                         (*ptr_to_globals).last_bg_pid =
                           (*(*pi).cmds.offset(((*pi).num_cmds - 1i32) as isize)).pid;
-                        (*ptr_to_globals).last_bg_pid_exitcode = 0i32 as smalluint;
+                        (*ptr_to_globals).last_bg_pid_exitcode = 0 as smalluint;
                         /* Check pi->pi_inverted? "! sleep 1 & echo $?": bash says 1. dash and ash say 0 */
-                        rcode = 0i32 as smalluint
+                        rcode = 0 as smalluint
                       } else if (*ptr_to_globals).run_list_level == 1i32
                         && (*ptr_to_globals).interactive_fd != 0
                       {
@@ -10767,7 +10767,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                         rcode = checkjobs_and_fg_shell(pi) as smalluint
                       } else {
                         /* This one just waits for completion */
-                        rcode = checkjobs(pi, 0i32) as smalluint
+                        rcode = checkjobs(pi, 0) as smalluint
                       }
                       (*ptr_to_globals).last_exitcode = rcode;
                       check_and_run_traps();
@@ -10777,12 +10777,12 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                       18377268871191777778 => {}
                       _ => {
                         /* Handle "set -e" */
-                        if rcode as libc::c_int != 0i32
+                        if rcode as libc::c_int != 0
                           && (*ptr_to_globals).o_opt[OPT_O_ERREXIT as libc::c_int as usize]
                             as libc::c_int
                             != 0
                         {
-                          if (*ptr_to_globals).errexit_depth == 0i32 {
+                          if (*ptr_to_globals).errexit_depth == 0 {
                             hush_exit(rcode as libc::c_int);
                           }
                         }
@@ -10800,7 +10800,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                   match current_block {
                     18377268871191777778 => {}
                     _ => {
-                      checkjobs(0 as *mut pipe, 0i32);
+                      checkjobs(0 as *mut pipe, 0);
                       current_block = 10720305954121010852;
                     }
                   }
@@ -10824,7 +10824,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
           if rword as libc::c_int == RES_WHILE as libc::c_int {
             if rcode != 0 {
               /* "while false; do...done" - exitcode 0 */
-              rcode = 0i32 as smalluint;
+              rcode = 0 as smalluint;
               (*ptr_to_globals).last_exitcode = rcode;
               break;
             }
@@ -10859,7 +10859,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
 /* !BB_MMU */
 /* Select which version we will use */
 unsafe extern "C" fn run_and_free_list(mut pi: *mut pipe) -> libc::c_int {
-  let mut rcode: libc::c_int = 0i32;
+  let mut rcode: libc::c_int = 0;
   if (*ptr_to_globals).o_opt[OPT_O_NOEXEC as libc::c_int as usize] == 0 {
     rcode = run_list(pi)
   }
@@ -10871,10 +10871,10 @@ unsafe extern "C" fn run_and_free_list(mut pi: *mut pipe) -> libc::c_int {
 }
 unsafe extern "C" fn install_sighandlers(mut mask: libc::c_uint) {
   let mut old_handler: sighandler_t = None;
-  let mut sig: libc::c_uint = 0i32 as libc::c_uint;
+  let mut sig: libc::c_uint = 0 as libc::c_uint;
   loop {
     mask >>= 1i32;
-    if !(mask != 0i32 as libc::c_uint) {
+    if !(mask != 0 as libc::c_uint) {
       break;
     }
     sig = sig.wrapping_add(1);
@@ -10965,7 +10965,7 @@ unsafe extern "C" fn set_mode(
     }
     120 => {
       (*ptr_to_globals).o_opt[OPT_O_XTRACE as libc::c_int as usize] = state as libc::c_char;
-      if (*ptr_to_globals).x_mode_fd <= 0i32 {
+      if (*ptr_to_globals).x_mode_fd <= 0 {
         (*ptr_to_globals).x_mode_fd = dup_CLOEXEC(2i32, 10i32)
       }
       current_block_13 = 11584701595673473500;
@@ -10984,7 +10984,7 @@ unsafe extern "C" fn set_mode(
          * We always use the second form.
          */
         let mut p: *const libc::c_char = o_opt_strings.as_ptr();
-        idx = 0i32;
+        idx = 0;
         while *p != 0 {
           printf(
             b"set %co %s\n\x00" as *const u8 as *const libc::c_char,
@@ -11001,7 +11001,7 @@ unsafe extern "C" fn set_mode(
         current_block_13 = 11584701595673473500;
       } else {
         idx = index_in_strings(o_opt_strings.as_ptr(), o_opt);
-        if idx >= 0i32 {
+        if idx >= 0 {
           (*ptr_to_globals).o_opt[idx as usize] = state as libc::c_char;
           current_block_13 = 11584701595673473500;
         } else {
@@ -11021,7 +11021,7 @@ unsafe extern "C" fn set_mode(
       return 1i32
     }
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn hush_main(
@@ -11041,9 +11041,9 @@ pub unsafe extern "C" fn hush_main(
   asm!("" : : : "memory" : "volatile");
   sigfillset(&mut (*ptr_to_globals).sa.sa_mask);
   (*ptr_to_globals).sa.sa_flags = 0x10000000i32;
-  if 0i32 != 0i32 {
+  if 0 != 0 {
     /* if EXIT_SUCCESS == 0, it is already done */
-    (*ptr_to_globals).last_exitcode = 0i32 as smalluint
+    (*ptr_to_globals).last_exitcode = 0 as smalluint
   }
   /* Deal with HUSH_VERSION */
   unsetenv(b"HUSH_VERSION\x00" as *const u8 as *const libc::c_char); /* in case it exists in initial env */
@@ -11076,7 +11076,7 @@ pub unsafe extern "C" fn hush_main(
   /* (Re)insert HUSH_VERSION into env (AFTER we scanned the env!) */
   putenv((*shell_ver).varstr);
   /* Export PWD */
-  set_pwd_var((1i32 << 0i32) as libc::c_uint);
+  set_pwd_var((1i32 << 0) as libc::c_uint);
   /* Set (but not export) HOSTNAME unless already set */
   if get_local_var_value(b"HOSTNAME\x00" as *const u8 as *const libc::c_char).is_null() {
     let mut uts: utsname = utsname {
@@ -11158,9 +11158,9 @@ pub unsafe extern "C" fn hush_main(
     if !(*argv.offset(0)).is_null() && *(*argv.offset(0)).offset(0) as libc::c_int == '-' as i32 {
       OPT_login as libc::c_int
     } else {
-      0i32
+      0
     } as libc::c_uint; /* option parsing loop */
-  builtin_argc = 0i32 as libc::c_uint;
+  builtin_argc = 0 as libc::c_uint;
   loop
   /* Well, we cannot just declare interactiveness,
    * we have to have some stuff (ctty, etc) */
@@ -11171,7 +11171,7 @@ pub unsafe extern "C" fn hush_main(
       argv,
       b"+c:exinsl\x00" as *const u8 as *const libc::c_char,
     );
-    if opt <= 0i32 {
+    if opt <= 0 {
       current_block = 10007731352114176167;
       break;
     }
@@ -11241,7 +11241,7 @@ pub unsafe extern "C" fn hush_main(
         continue;
       }
       110 | 120 | 101 => {
-        if set_mode(1i32, opt as libc::c_char, 0 as *const libc::c_char) == 0i32 {
+        if set_mode(1i32, opt as libc::c_char, 0 as *const libc::c_char) == 0 {
           /* no error */
           continue;
         }
@@ -11313,20 +11313,20 @@ pub unsafe extern "C" fn hush_main(
          */
         if isatty(0i32) != 0 && isatty(1i32) != 0 {
           (*ptr_to_globals).saved_tty_pgrp = tcgetpgrp(0i32);
-          if (*ptr_to_globals).saved_tty_pgrp < 0i32 {
-            (*ptr_to_globals).saved_tty_pgrp = 0i32
+          if (*ptr_to_globals).saved_tty_pgrp < 0 {
+            (*ptr_to_globals).saved_tty_pgrp = 0
           }
           // TODO: track & disallow any attempts of user
           // to (inadvertently) close/redirect G_interactive_fd
           (*ptr_to_globals).interactive_fd = dup_CLOEXEC(0i32, 254i32);
-          if (*ptr_to_globals).interactive_fd < 0i32 {
+          if (*ptr_to_globals).interactive_fd < 0 {
             /* try to dup stdin to high fd#, >= 255 */
             /* try to dup to any fd */
             (*ptr_to_globals).interactive_fd = dup(0i32);
-            if (*ptr_to_globals).interactive_fd < 0i32 {
+            if (*ptr_to_globals).interactive_fd < 0 {
               /* give up */
-              (*ptr_to_globals).interactive_fd = 0i32;
-              (*ptr_to_globals).saved_tty_pgrp = 0i32
+              (*ptr_to_globals).interactive_fd = 0;
+              (*ptr_to_globals).saved_tty_pgrp = 0
             }
           }
         }
@@ -11426,7 +11426,7 @@ pub unsafe extern "C" fn hush_main(
  * Built-ins
  */
 unsafe extern "C" fn builtin_true(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_applet_main(
   mut argv: *mut *mut libc::c_char,
@@ -11481,13 +11481,13 @@ unsafe extern "C" fn builtin_help(mut _argv: *mut *mut libc::c_char) -> libc::c_
     }
     x = x.offset(1)
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_history(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   if !(*ptr_to_globals).line_input_state.is_null() {
     show_history((*ptr_to_globals).line_input_state);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn skip_dash_dash(mut argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char {
   argv = argv.offset(1);
@@ -11532,16 +11532,16 @@ unsafe extern "C" fn builtin_cd(mut argv: *mut *mut libc::c_char) -> libc::c_int
    * set it again, but do not export. bash does the same.
    */
   set_pwd_var(0i32 as libc::c_uint);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_pwd(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   puts(get_cwd(0i32));
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_eval(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   argv = skip_dash_dash(argv);
   if (*argv.offset(0)).is_null() {
-    return 0i32;
+    return 0;
   }
   (*ptr_to_globals).x_mode_depth = (*ptr_to_globals).x_mode_depth.wrapping_add(1);
   //bb_error_msg("%s: ++x_mode_depth=%d", __func__, G.x_mode_depth);
@@ -11558,7 +11558,7 @@ unsafe extern "C" fn builtin_eval(mut argv: *mut *mut libc::c_char) -> libc::c_i
      */
     let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut len: libc::c_uint = 0i32 as libc::c_uint;
+    let mut len: libc::c_uint = 0 as libc::c_uint;
     let mut pp: *mut *mut libc::c_char = argv;
     loop {
       len = (len as libc::c_ulong).wrapping_add(strlen(*pp).wrapping_add(1i32 as libc::c_ulong))
@@ -11591,7 +11591,7 @@ unsafe extern "C" fn builtin_eval(mut argv: *mut *mut libc::c_char) -> libc::c_i
 unsafe extern "C" fn builtin_exec(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   argv = skip_dash_dash(argv);
   if (*argv.offset(0)).is_null() {
-    return 0i32;
+    return 0;
   }
   /* Careful: we can end up here after [v]fork. Do not restore
    * tty pgrp then, only top-level shell process does that */
@@ -11639,7 +11639,7 @@ unsafe extern "C" fn builtin_exit(mut argv: *mut *mut libc::c_char) -> libc::c_i
 }
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/type.html */
 unsafe extern "C" fn builtin_type(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   loop {
     argv = argv.offset(1);
     if (*argv).is_null() {
@@ -11715,7 +11715,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
   };
   memset(
     &mut params as *mut builtin_read_params as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<builtin_read_params>() as libc::c_ulong,
   );
   /* "!": do not abort on errors.
@@ -11788,7 +11788,7 @@ unsafe extern "C" fn builtin_umask(mut argv: *mut *mut libc::c_char) -> libc::c_
         b"umask\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
-      rc = 0i32
+      rc = 0
     }
   } else {
     /* Mimic bash */
@@ -11866,12 +11866,12 @@ unsafe extern "C" fn helper_export_local(
       if flags & (1i32 << 1i32) as libc::c_uint != 0 {
         /* export -n NAME (without =VALUE) */
         if !var.is_null() {
-          (*var).flg_export = 0i32 as smallint; /* else: export -n NOT_EXISTING_VAR: no-op */
+          (*var).flg_export = 0 as smallint; /* else: export -n NOT_EXISTING_VAR: no-op */
           unsetenv(name);
         }
         current_block_24 = 9188997750422900590;
       } else {
-        if flags & (1i32 << 0i32) as libc::c_uint != 0 {
+        if flags & (1i32 << 0) as libc::c_uint != 0 {
           /* export NAME (without =VALUE) */
           if !var.is_null() {
             (*var).flg_export = 1i32 as smallint;
@@ -11902,7 +11902,7 @@ unsafe extern "C" fn helper_export_local(
               _ =>
               /* Is this "local" bltin? */
               {
-                if flags & (1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 2i32) as libc::c_uint == 0 {
+                if flags & (1i32 << 0 | 1i32 << 1i32 | 1i32 << 2i32) as libc::c_uint == 0 {
                   let mut lvl: libc::c_uint = flags >> 3i32;
                   if !var.is_null() && (*var).var_nest_level as libc::c_uint == lvl {
                     current_block_24 = 9188997750422900590;
@@ -11966,7 +11966,7 @@ unsafe extern "C" fn helper_export_local(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_export(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt_unexport: libc::c_uint = 0;
@@ -12002,19 +12002,19 @@ unsafe extern "C" fn builtin_export(mut argv: *mut *mut libc::c_char) -> libc::c
       }
       /*fflush_all(); - done after each builtin anyway */
     }
-    return 0i32;
+    return 0;
   }
   return helper_export_local(
     argv,
     if opt_unexport != 0 {
       (1i32) << 1i32
     } else {
-      (1i32) << 0i32
+      (1i32) << 0
     } as libc::c_uint,
   );
 }
 unsafe extern "C" fn builtin_local(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  if (*ptr_to_globals).func_nest_level == 0i32 as libc::c_uint {
+  if (*ptr_to_globals).func_nest_level == 0 as libc::c_uint {
     bb_error_msg(
       b"%s: not in a function\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
@@ -12053,7 +12053,7 @@ unsafe extern "C" fn builtin_readonly(mut argv: *mut *mut libc::c_char) -> libc:
       }
       e = (*e).next
     }
-    return 0i32;
+    return 0;
   }
   return helper_export_local(argv, (1i32 << 2i32) as libc::c_uint);
 }
@@ -12072,7 +12072,7 @@ unsafe extern "C" fn builtin_unset(mut argv: *mut *mut libc::c_char) -> libc::c_
     return 1i32;
   }
   argv = argv.offset(optind as isize);
-  ret = 0i32;
+  ret = 0;
   while !(*argv).is_null() {
     if opts & 2i32 as libc::c_uint == 0 {
       /* not -f */
@@ -12124,10 +12124,10 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
       puts((*e).varstr);
       e = (*e).next
     }
-    return 0i32;
+    return 0;
   }
   loop {
-    if strcmp(arg, b"--\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(arg, b"--\x00" as *const u8 as *const libc::c_char) == 0 {
       argv = argv.offset(1);
       current_block = 11206778511404137033;
       break;
@@ -12169,7 +12169,7 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
     4495394744059808450 => {
       /* Now argv[0] is 1st argument */
       if arg.is_null() {
-        return 0i32;
+        return 0;
       }
     }
     _ => {}
@@ -12202,14 +12202,14 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
   (*ptr_to_globals).global_argv = pp;
   (*ptr_to_globals).global_argc =
     (1i32 as libc::c_uint).wrapping_add(string_array_len(pp.offset(1))) as libc::c_int;
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = 1i32;
   argv = skip_dash_dash(argv);
   if !(*argv.offset(0)).is_null() {
     n = bb_strtou(*argv.offset(0), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
-    if *bb_errno != 0 || n < 0i32 {
+    if *bb_errno != 0 || n < 0 {
       /* shared string with ash.c */
       bb_error_msg(
         b"Illegal number: %s\x00" as *const u8 as *const libc::c_char,
@@ -12224,7 +12224,7 @@ unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_
        */
     }
   }
-  if n >= 0i32 && n < (*ptr_to_globals).global_argc {
+  if n >= 0 && n < (*ptr_to_globals).global_argc {
     if (*ptr_to_globals).global_args_malloced != 0 {
       let mut m: libc::c_int = 1i32;
       while m <= n {
@@ -12241,7 +12241,7 @@ unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_
       ((*ptr_to_globals).global_argc as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
     );
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -12287,7 +12287,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
     argv = (*ptr_to_globals).global_argv
   }
   cbuf[1] = '\u{0}' as i32 as libc::c_char;
-  my_opterr = 0i32;
+  my_opterr = 0;
   if *optstring.offset(0) as libc::c_int != ':' as i32 {
     cp = get_local_var_value(b"OPTERR\x00" as *const u8 as *const libc::c_char);
     /* 0 if "OPTERR=0", 1 otherwise */
@@ -12330,18 +12330,18 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
    * until we get Nth result (or failure).
    * (N == G.getopt_count is reset to 0 whenever OPTIND is [un]set).
    */
-  optind = 0i32;
-  count = 0i32 as libc::c_uint;
+  optind = 0;
+  count = 0 as libc::c_uint;
   n = string_array_len(argv) as libc::c_int;
   loop {
     optarg = std::ptr::null_mut::<libc::c_char>();
     opterr = if count < (*ptr_to_globals).getopt_count {
-      0i32
+      0
     } else {
       my_opterr
     };
     c = getopt(n, argv, optstring);
-    if c < 0i32 {
+    if c < 0 {
       break;
     }
     count = count.wrapping_add(1);
@@ -12355,7 +12355,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
     utoa(optind as libc::c_uint),
   ); /* "next time, give me N+1'th result" */
   (*ptr_to_globals).getopt_count = count; /* just in case */
-  optind = 0i32;
+  optind = 0;
   /* Set OPTARG */
   /* Always set or unset, never left as-is, even on exit/error:
    * "If no option was found, or if the option that was found
@@ -12377,8 +12377,8 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
     unset_local_var(b"OPTARG\x00" as *const u8 as *const libc::c_char);
   }
   /* Convert -1 to "?" */
-  exitcode = 0i32;
-  if c < 0i32 {
+  exitcode = 0;
+  if c < 0 {
     /* -1: end of options */
     exitcode = 1i32;
     c = '?' as i32
@@ -12412,7 +12412,7 @@ unsafe extern "C" fn builtin_source(mut argv: *mut *mut libc::c_char) -> libc::c
     arg_path = find_in_path(filename);
     if !arg_path.is_null() {
       filename = arg_path
-    } else if 0i32 == 0 {
+    } else if 0 == 0 {
       *bb_errno = 2i32;
       bb_simple_perror_msg(filename);
       return 1i32;
@@ -12435,7 +12435,7 @@ unsafe extern "C" fn builtin_source(mut argv: *mut *mut libc::c_char) -> libc::c
     save_and_replace_G_args(&mut sv, argv);
   }
   /* "false; . ./empty_line; echo Zero:$?" should print 0 */
-  (*ptr_to_globals).last_exitcode = 0i32 as smalluint;
+  (*ptr_to_globals).last_exitcode = 0 as smalluint;
   parse_and_run_file(input);
   hfclose(input);
   if !args_need_save.is_null() {
@@ -12460,7 +12460,7 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
   if (*argv).is_null() {
     let mut i: libc::c_int = 0;
     /* No args: print all trapped */
-    i = 0i32;
+    i = 0;
     while i < 64i32 + 1i32 {
       if !(*(*ptr_to_globals).traps.offset(i as isize)).is_null() {
         printf(b"trap -- \x00" as *const u8 as *const libc::c_char);
@@ -12477,12 +12477,12 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
       i += 1
     }
     /*fflush_all(); - done after each builtin anyway */
-    return 0i32;
+    return 0;
   }
   new_cmd = std::ptr::null_mut::<libc::c_char>();
   /* If first arg is a number: reset all specified signals */
   sig = bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
-  if *bb_errno == 0i32 {
+  if *bb_errno == 0 {
     ret = 0;
   } else {
     if (*argv.offset(1)).is_null() {
@@ -12518,13 +12518,13 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
     /* new_cmd remains NULL: "reset these sigs" */
     argv = argv.offset(1)
   }
-  ret = 0i32;
+  ret = 0;
   while !(*argv).is_null() {
     let mut handler: sighandler_t = None;
     let fresh53 = argv;
     argv = argv.offset(1);
     sig = get_signum(*fresh53);
-    if sig < 0i32 {
+    if sig < 0 {
       ret = 1i32;
       /* Mimic bash message exactly */
       bb_error_msg(
@@ -12536,7 +12536,7 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
       let ref mut fresh54 = *(*ptr_to_globals).traps.offset(sig as isize);
       *fresh54 = xstrdup(new_cmd);
       /* There is no signal for 0 (EXIT) */
-      if sig == 0i32 {
+      if sig == 0 {
         continue;
       }
       if !new_cmd.is_null() {
@@ -12576,7 +12576,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
     }
     /* It is "%%", "%+" or "%" - current job */
     jobnum = (*ptr_to_globals).last_jobid;
-    if jobnum == 0i32 as libc::c_uint {
+    if jobnum == 0 as libc::c_uint {
       bb_simple_error_msg(b"no current job\x00" as *const u8 as *const libc::c_char);
       return 0 as *mut pipe;
     }
@@ -12597,7 +12597,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
 unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut job: *mut pipe = std::ptr::null_mut();
   let mut status_string: *const libc::c_char = std::ptr::null();
-  checkjobs(0 as *mut pipe, 0i32);
+  checkjobs(0 as *mut pipe, 0);
   job = (*ptr_to_globals).job_list;
   while !job.is_null() {
     if (*job).alive_cmds == (*job).stopped_cmds {
@@ -12614,7 +12614,7 @@ unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_
     job = (*job).next
   }
   clean_up_last_dead_job();
-  return 0i32;
+  return 0;
 }
 /* built-in 'fg' and 'bg' handler */
 unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_int {
@@ -12663,16 +12663,16 @@ unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_
     tcsetpgrp((*ptr_to_globals).interactive_fd, (*pi).pgrp);
   }
   /* Restart the processes in the job */
-  i = 0i32; /* FG job shouldn't be in job table */
+  i = 0; /* FG job shouldn't be in job table */
   while i < (*pi).num_cmds {
     i += 1
   }
-  (*pi).stopped_cmds = 0i32;
+  (*pi).stopped_cmds = 0;
   i = kill(-(*pi).pgrp, 18i32);
-  if i < 0i32 {
+  if i < 0 {
     if *bb_errno == 3i32 {
       delete_finished_job(pi);
-      return 0i32;
+      return 0;
     }
     bb_simple_perror_msg(b"kill (SIGCONT)\x00" as *const u8 as *const libc::c_char);
   }
@@ -12680,15 +12680,15 @@ unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_
     remove_job_from_table(pi);
     return checkjobs_and_fg_shell(pi);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   if !(*argv.offset(1)).is_null()
     && strcmp(
       *argv.offset(1),
       b"-l\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
   {
     let mut i: libc::c_int = 1i32;
     loop {
@@ -12749,11 +12749,11 @@ unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_i
               (*pi).pgrp,
             ) as isize)
           } else {
-            j = 0i32;
+            j = 0;
             while j < n {
               let mut cmd: *mut command = &mut *(*pi).cmds.offset(j as isize) as *mut command;
               /* Skip exited members of the job */
-              if !((*cmd).pid == 0i32) {
+              if !((*cmd).pid == 0) {
                 /*
                  * kill_main has matching code to expect
                  * leading space. Needed to not confuse
@@ -12777,7 +12777,7 @@ unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_i
       }
     }
   }
-  if !(*argv.offset(1)).is_null() || ret == 0i32 {
+  if !(*argv.offset(1)).is_null() || ret == 0 {
     ret = run_applet_main(
       argv,
       Some(
@@ -12793,7 +12793,7 @@ unsafe extern "C" fn wait_for_child_or_signal(
   mut waitfor_pipe: *mut pipe,
   mut waitfor_pid: pid_t,
 ) -> libc::c_int {
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   loop {
     let mut sig: libc::c_int = 0;
     let mut oldset: sigset_t = std::mem::zeroed();
@@ -12815,7 +12815,7 @@ unsafe extern "C" fn wait_for_child_or_signal(
         ret = checkjobs(0 as *mut pipe, waitfor_pid); /* waitpid(WNOHANG) inside */
         if !waitfor_pipe.is_null() {
           let mut rcode: libc::c_int = job_exited_or_stopped(waitfor_pipe);
-          if rcode >= 0i32 {
+          if rcode >= 0 {
             ret = rcode;
             sigprocmask(2i32, &mut oldset, 0 as *mut sigset_t);
             break;
@@ -12826,9 +12826,9 @@ unsafe extern "C" fn wait_for_child_or_signal(
         /* if ret != 0, it's exitcode+1 of exited waitfor_pid child */
         if *bb_errno == 10i32 || ret != 0 {
           ret -= 1;
-          if ret < 0i32 {
+          if ret < 0 {
             /* if ECHILD, may need to fix "ret" */
-            ret = 0i32
+            ret = 0
           }
           if waitfor_pid == -1i32 && *bb_errno == 10i32 {
             /* exitcode of "wait -n" with no children is 127, not 0 */
@@ -12866,7 +12866,7 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
     && strcmp(
       *argv.offset(0),
       b"-n\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
   {
     /* wait -n */
     /* (bash accepts "wait -n PID" too and ignores PID) */
@@ -12890,19 +12890,19 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
      * ^C <-- after ~4 sec from keyboard
      * $
      */
-    return wait_for_child_or_signal(0 as *mut pipe, 0i32);
+    return wait_for_child_or_signal(0 as *mut pipe, 0);
   } /* bash compat for bad jobspecs */
   loop {
     let mut pid: pid_t = bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as pid_t;
-    if *bb_errno != 0 || pid <= 0i32 {
+    if *bb_errno != 0 || pid <= 0 {
       if *(*argv.offset(0)).offset(0) as libc::c_int == '%' as i32 {
         let mut wait_pipe: *mut pipe = std::ptr::null_mut();
         ret = 127i32;
         wait_pipe = parse_jobspec(*argv);
         if !wait_pipe.is_null() {
           ret = job_exited_or_stopped(wait_pipe);
-          if ret < 0i32 {
-            ret = wait_for_child_or_signal(wait_pipe, 0i32)
+          if ret < 0 {
+            ret = wait_for_child_or_signal(wait_pipe, 0)
           } else {
             /* waiting on "last dead job" removes it */
             clean_up_last_dead_job();
@@ -12920,7 +12920,7 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
     } else {
       /* Do we have such child? */
       ret = waitpid(pid, &mut status, 1i32);
-      if ret < 0i32 {
+      if ret < 0 {
         /* No */
         ret = 127i32;
         if *bb_errno == 10i32 {
@@ -12943,14 +12943,14 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
           /* ??? */
           bb_perror_msg(b"wait %s\x00" as *const u8 as *const libc::c_char, *argv);
         }
-      } else if ret == 0i32 {
+      } else if ret == 0 {
         /* Yes, and it still runs */
         ret = wait_for_child_or_signal(0 as *mut pipe, pid)
       } else {
         /* Yes, and it just exited */
         process_wait_result(0 as *mut pipe, pid, status);
         ret = (status & 0xff00i32) >> 8i32;
-        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           ret = 128i32 + (status & 0x7fi32)
         }
       }
@@ -12984,14 +12984,14 @@ unsafe extern "C" fn parse_numeric_argv1(
 }
 unsafe extern "C" fn builtin_break(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut depth: libc::c_uint = 0;
-  if (*ptr_to_globals).depth_of_loop == 0i32 as libc::c_uint {
+  if (*ptr_to_globals).depth_of_loop == 0 as libc::c_uint {
     bb_error_msg(
       b"%s: only meaningful in a loop\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
     /* bash compat */
-    (*ptr_to_globals).flag_break_continue = 0i32 as smallint;
-    return 0i32;
+    (*ptr_to_globals).flag_break_continue = 0 as smallint;
+    return 0;
   }
   /* if we came from builtin_continue(), need to undo "= 1" */
   (*ptr_to_globals).flag_break_continue += 1; /* BC_BREAK = 1, or BC_CONTINUE = 2 */
@@ -13007,7 +13007,7 @@ unsafe extern "C" fn builtin_break(mut argv: *mut *mut libc::c_char) -> libc::c_
   if (*ptr_to_globals).depth_of_loop < depth {
     (*ptr_to_globals).depth_break_continue = (*ptr_to_globals).depth_of_loop
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn builtin_continue(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   (*ptr_to_globals).flag_break_continue = 1i32 as smallint;
@@ -13034,7 +13034,7 @@ unsafe extern "C" fn builtin_return(mut argv: *mut *mut libc::c_char) -> libc::c
   rc = parse_numeric_argv1(
     argv,
     (*ptr_to_globals).last_exitcode as libc::c_uint,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   ) as libc::c_int;
   return rc;
 }
@@ -13048,7 +13048,7 @@ unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c
     16u64 as u8,
     '\n' as i32 as u8,
     24u64 as u8,
-    0i32 as u8,
+    0 as u8,
   ];
   let mut p: *const u8 = std::ptr::null();
   let mut clk_tck: libc::c_uint = 0;
@@ -13083,5 +13083,5 @@ unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

@@ -330,7 +330,7 @@ unsafe extern "C" fn pmatch(
         }
         loop {
           if len == 0 {
-            return 0i32 as libc::c_uint;
+            return 0 as libc::c_uint;
           }
           if *s as libc::c_int == c as libc::c_int {
             break;
@@ -344,7 +344,7 @@ unsafe extern "C" fn pmatch(
         p = p.offset(1);
         c = *fresh1;
         if c as libc::c_int != *s as libc::c_int {
-          return 0i32 as libc::c_uint;
+          return 0 as libc::c_uint;
         }
         loop {
           if len == 0 {
@@ -368,10 +368,10 @@ unsafe extern "C" fn pmatch(
           continue;
           */
         if len == 0 {
-          return 0i32 as libc::c_uint;
+          return 0 as libc::c_uint;
         }
         if *s as libc::c_int != c as libc::c_int {
-          return 0i32 as libc::c_uint;
+          return 0 as libc::c_uint;
         }
         s = s.offset(1);
         len = len.wrapping_sub(1)
@@ -529,8 +529,8 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
         (*ld).fnsave.as_mut_ptr(),
       );
     }
-    fd = xopen((*ld).fnsave.as_mut_ptr(), 0i32 | 0o4000i32);
-    xmove_fd(fd, 0i32);
+    fd = xopen((*ld).fnsave.as_mut_ptr(), 0 | 0o4000i32);
+    xmove_fd(fd, 0);
     (*ld).fnsave[26] = 't' as i32 as libc::c_char;
     fd = xopen(
       (*ld).fnsave.as_mut_ptr(),
@@ -539,7 +539,7 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
     xmove_fd(fd, 1i32);
     fd = open(
       b"state\x00" as *const u8 as *const libc::c_char,
-      0i32 | 0o4000i32,
+      0 | 0o4000i32,
     );
     if fd == -1i32 {
       if *bb_errno != 2i32 {
@@ -555,7 +555,7 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
       ));
       fd = xopen(
         b"state\x00" as *const u8 as *const libc::c_char,
-        0i32 | 0o4000i32,
+        0 | 0o4000i32,
       )
     }
     xmove_fd(fd, 4i32);
@@ -584,14 +584,14 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
   let mut f: [libc::c_char; 28] = [0; 28];
   if (*ld).ppid != 0 {
     sig_unblock(1i32);
-    while safe_waitpid((*ld).ppid, &mut (*ptr_to_globals).wstat, 0i32) == -1i32 {
+    while safe_waitpid((*ld).ppid, &mut (*ptr_to_globals).wstat, 0) == -1i32 {
       pause2cannot(
         b"wait for processor\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
       );
     }
     sig_block(1i32);
-    (*ld).ppid = 0i32
+    (*ld).ppid = 0
   }
   if (*ld).fddir == -1i32 {
     return 1i32 as libc::c_uint;
@@ -602,7 +602,7 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
       (*ld).name,
     );
   }
-  if ((*ptr_to_globals).wstat & 0xff00i32) >> 8i32 != 0i32 {
+  if ((*ptr_to_globals).wstat & 0xff00i32) >> 8i32 != 0 {
     warnx(
       b"processor failed, restart\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
@@ -615,7 +615,7 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
       pause1cannot(b"change to initial working directory\x00" as *const u8 as *const libc::c_char);
     }
     return if !(*ld).processor.is_null() {
-      0i32
+      0
     } else {
       1i32
     } as libc::c_uint;
@@ -674,9 +674,9 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
   let mut d: *mut DIR = std::ptr::null_mut();
   let mut f: *mut dirent = std::ptr::null_mut();
   let mut oldest: [libc::c_char; 30] = [0; 30];
-  let mut n: libc::c_int = 0i32;
+  let mut n: libc::c_int = 0;
   oldest[0] = 'A' as i32 as libc::c_char;
-  oldest[27] = 0i32 as libc::c_char;
+  oldest[27] = 0 as libc::c_char;
   oldest[1] = oldest[27];
   loop {
     d = opendir(b".\x00" as *const u8 as *const libc::c_char);
@@ -688,7 +688,7 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
       (*ld).name,
     );
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   loop {
     f = readdir(d);
     if f.is_null() {
@@ -706,7 +706,7 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
         }
       } else {
         n += 1;
-        if strcmp((*f).d_name.as_mut_ptr(), oldest.as_mut_ptr()) < 0i32 {
+        if strcmp((*f).d_name.as_mut_ptr(), oldest.as_mut_ptr()) < 0 {
           memcpy(
             oldest.as_mut_ptr() as *mut libc::c_void,
             (*f).d_name.as_mut_ptr() as *const libc::c_void,
@@ -714,7 +714,7 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
           );
         }
       }
-      *bb_errno = 0i32
+      *bb_errno = 0
     }
   }
   if *bb_errno != 0 {
@@ -744,8 +744,8 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
   let mut st: stat = std::mem::zeroed();
   let mut now: libc::c_uint = 0;
   if (*ld).fddir == -1i32 {
-    (*ld).rotate_period = 0i32 as libc::c_uint;
-    return 0i32 as libc::c_uint;
+    (*ld).rotate_period = 0 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   if (*ld).ppid != 0 {
     while processorstop(ld) == 0 {}
@@ -765,24 +765,24 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
   (*ld).fnsave[27] = '\u{0}' as i32 as libc::c_char;
   loop {
     fmt_time_bernstein_25((*ld).fnsave.as_mut_ptr());
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     stat((*ld).fnsave.as_mut_ptr(), &mut st);
     if !(*bb_errno != 2i32) {
       break;
     }
   }
   now = monotonic_sec();
-  if (*ld).rotate_period != 0 && now.wrapping_sub((*ld).next_rotate) as libc::c_int > 0i32 {
+  if (*ld).rotate_period != 0 && now.wrapping_sub((*ld).next_rotate) as libc::c_int > 0 {
     (*ld).next_rotate = now.wrapping_add((*ld).rotate_period);
     if (*ptr_to_globals)
       .nearest_rotate
       .wrapping_sub((*ld).next_rotate) as libc::c_int
-      > 0i32
+      > 0
     {
       (*ptr_to_globals).nearest_rotate = (*ld).next_rotate
     }
   }
-  if (*ld).size > 0i32 as libc::c_uint {
+  if (*ld).size > 0 as libc::c_uint {
     while fflush((*ld).filecur) != 0 || fsync((*ld).fdcur) == -1i32 {
       pause2cannot(
         b"fsync current logfile\x00" as *const u8 as *const libc::c_char,
@@ -843,11 +843,11 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
     setvbuf(
       (*ld).filecur,
       std::ptr::null_mut::<libc::c_char>(),
-      0i32,
+      0,
       (*ptr_to_globals).linelen as size_t,
     );
     close_on_exec_on((*ld).fdcur);
-    (*ld).size = 0i32 as libc::c_uint;
+    (*ld).size = 0 as libc::c_uint;
     while fchmod((*ld).fdcur, 0o644i32 as mode_t) == -1i32 {
       pause2cannot(
         b"set mode of current\x00" as *const u8 as *const libc::c_char,
@@ -893,7 +893,7 @@ unsafe extern "C" fn buffer_pwrite(
       let mut d: *mut DIR = std::ptr::null_mut();
       let mut f: *mut dirent = std::ptr::null_mut();
       let mut oldest: [libc::c_char; 30] = [0; 30];
-      let mut j: libc::c_int = 0i32;
+      let mut j: libc::c_int = 0;
       while fchdir((*ld).fddir) == -1i32 {
         pause2cannot(
           b"change directory, want remove old logfile\x00" as *const u8 as *const libc::c_char,
@@ -913,7 +913,7 @@ unsafe extern "C" fn buffer_pwrite(
           (*ld).name,
         );
       }
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       loop {
         f = readdir(d);
         if f.is_null() {
@@ -923,7 +923,7 @@ unsafe extern "C" fn buffer_pwrite(
           && strlen((*f).d_name.as_mut_ptr()) == 27i32 as libc::c_ulong
         {
           j += 1;
-          if strcmp((*f).d_name.as_mut_ptr(), oldest.as_mut_ptr()) < 0i32 {
+          if strcmp((*f).d_name.as_mut_ptr(), oldest.as_mut_ptr()) < 0 {
             memcpy(
               oldest.as_mut_ptr() as *mut libc::c_void,
               (*f).d_name.as_mut_ptr() as *const libc::c_void,
@@ -947,7 +947,7 @@ unsafe extern "C" fn buffer_pwrite(
             (*ld).name,
             oldest.as_mut_ptr(),
           );
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           if unlink(oldest.as_mut_ptr()) == -1i32 {
             warn2(
               b"can\'t unlink oldest logfile\x00" as *const u8 as *const libc::c_char,
@@ -1035,13 +1035,13 @@ unsafe extern "C" fn logdir_open(
   let mut i: libc::c_int = 0;
   let mut st: stat = std::mem::zeroed();
   now = monotonic_sec();
-  (*ld).fddir = open(fn_0, 0i32 | 0o4000i32);
+  (*ld).fddir = open(fn_0, 0 | 0o4000i32);
   if (*ld).fddir == -1i32 {
     warn2(
       b"can\'t open log directory\x00" as *const u8 as *const libc::c_char,
       fn_0 as *mut libc::c_char,
     );
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   close_on_exec_on((*ld).fddir);
   if fchdir((*ld).fddir) == -1i32 {
@@ -1050,7 +1050,7 @@ unsafe extern "C" fn logdir_open(
       b"can\'t change directory\x00" as *const u8 as *const libc::c_char,
       fn_0 as *mut libc::c_char,
     );
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   (*ld).fdlock = open(
     b"lock\x00" as *const u8 as *const libc::c_char,
@@ -1066,16 +1066,16 @@ unsafe extern "C" fn logdir_open(
     while fchdir((*ptr_to_globals).fdwdir) == -1i32 {
       pause1cannot(b"change to initial working directory\x00" as *const u8 as *const libc::c_char);
     }
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   close_on_exec_on((*ld).fdlock);
-  (*ld).size = 0i32 as libc::c_uint;
+  (*ld).size = 0 as libc::c_uint;
   (*ld).sizemax = 1000000i32 as libc::c_uint;
   (*ld).nmin = 10i32 as libc::c_uint;
   (*ld).nmax = (*ld).nmin;
-  (*ld).rotate_period = 0i32 as libc::c_uint;
+  (*ld).rotate_period = 0 as libc::c_uint;
   (*ld).name = fn_0 as *mut libc::c_char;
-  (*ld).ppid = 0i32;
+  (*ld).ppid = 0;
   (*ld).match_0 = '+' as i32 as libc::c_char;
   free((*ld).inst as *mut libc::c_void);
   (*ld).inst = std::ptr::null_mut::<libc::c_char>();
@@ -1088,13 +1088,13 @@ unsafe extern "C" fn logdir_open(
     (::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
-  if i < 0i32 && *bb_errno != 2i32 {
+  if i < 0 && *bb_errno != 2i32 {
     bb_perror_msg(
       b"warning: %s/config\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
     );
   }
-  if i > 0i32 {
+  if i > 0 {
     buf[i as usize] = '\u{0}' as i32 as libc::c_char;
     if (*ptr_to_globals).verbose != 0 {
       bb_error_msg(
@@ -1136,7 +1136,7 @@ unsafe extern "C" fn logdir_open(
               },
               s,
             );
-            if l >= 0i32 && !new.is_null() {
+            if l >= 0 && !new.is_null() {
               break;
             }
             pause_nomem();
@@ -1166,7 +1166,7 @@ unsafe extern "C" fn logdir_open(
             {
               let mut init = suffix_mult {
                 suffix: [0, 0, 0, 0],
-                mult: 0i32 as libc::c_uint,
+                mult: 0 as libc::c_uint,
               };
               init
             },
@@ -1178,7 +1178,7 @@ unsafe extern "C" fn logdir_open(
               || (*ptr_to_globals)
                 .nearest_rotate
                 .wrapping_sub((*ld).next_rotate) as libc::c_int
-                > 0i32
+                > 0
             {
               (*ptr_to_globals).nearest_rotate = (*ld).next_rotate
             }
@@ -1216,7 +1216,7 @@ unsafe extern "C" fn logdir_open(
       (*ld).fnsave[27] = '\u{0}' as i32 as libc::c_char;
       loop {
         fmt_time_bernstein_25((*ld).fnsave.as_mut_ptr());
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         stat((*ld).fnsave.as_mut_ptr(), &mut st);
         if !(*bb_errno != 2i32) {
           break;
@@ -1253,7 +1253,7 @@ unsafe extern "C" fn logdir_open(
     while fchdir((*ptr_to_globals).fdwdir) == -1i32 {
       pause1cannot(b"change to initial working directory\x00" as *const u8 as *const libc::c_char);
     }
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   loop {
     (*ld).fdcur = open(
@@ -1282,7 +1282,7 @@ unsafe extern "C" fn logdir_open(
   setvbuf(
     (*ld).filecur,
     std::ptr::null_mut::<libc::c_char>(),
-    0i32,
+    0,
     (*ptr_to_globals).linelen as size_t,
   );
   close_on_exec_on((*ld).fdcur);
@@ -1293,7 +1293,7 @@ unsafe extern "C" fn logdir_open(
     );
   }
   if (*ptr_to_globals).verbose != 0 {
-    if i == 0i32 {
+    if i == 0 {
       bb_error_msg(
         b"info: append: %s/current\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
@@ -1312,9 +1312,9 @@ unsafe extern "C" fn logdir_open(
 }
 unsafe extern "C" fn logdirs_reopen() {
   let mut l: libc::c_int = 0;
-  let mut ok: libc::c_int = 0i32;
-  (*ptr_to_globals).tmaxflag = 0i32 as smallint;
-  l = 0i32;
+  let mut ok: libc::c_int = 0;
+  (*ptr_to_globals).tmaxflag = 0 as smallint;
+  l = 0;
   while (l as libc::c_uint) < (*ptr_to_globals).dirn {
     logdir_close(&mut *(*ptr_to_globals).dir.offset(l as isize));
     if logdir_open(
@@ -1354,34 +1354,34 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
     revents: 0,
   };
   let mut i: libc::c_int = 0;
-  input.fd = 0i32;
+  input.fd = 0;
   input.events = 0x1i32 as libc::c_short;
   loop {
     if (*ptr_to_globals).rotateasap != 0 {
-      i = 0i32;
+      i = 0;
       while (i as libc::c_uint) < (*ptr_to_globals).dirn {
         rotate((*ptr_to_globals).dir.offset(i as isize));
         i += 1
       }
-      (*ptr_to_globals).rotateasap = 0i32 as smallint
+      (*ptr_to_globals).rotateasap = 0 as smallint
     }
     if (*ptr_to_globals).exitasap != 0 {
       if (*ptr_to_globals).linecomplete != 0 {
-        return 0i32;
+        return 0;
       }
       len = 1i32 as libc::c_uint
     }
     if (*ptr_to_globals).reopenasap != 0 {
       logdirs_reopen();
-      (*ptr_to_globals).reopenasap = 0i32 as smallint
+      (*ptr_to_globals).reopenasap = 0 as smallint
     }
     now = monotonic_sec();
     (*ptr_to_globals).nearest_rotate = now.wrapping_add((45i32 * 60i32 + 45i32) as libc::c_uint);
-    i = 0i32;
+    i = 0;
     while (i as libc::c_uint) < (*ptr_to_globals).dirn {
       if (*(*ptr_to_globals).dir.offset(i as isize)).rotate_period != 0 {
         if now.wrapping_sub((*(*ptr_to_globals).dir.offset(i as isize)).next_rotate) as libc::c_int
-          > 0i32
+          > 0
         {
           rotate((*ptr_to_globals).dir.offset(i as isize));
         }
@@ -1389,7 +1389,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
           .nearest_rotate
           .wrapping_sub((*(*ptr_to_globals).dir.offset(i as isize)).next_rotate)
           as libc::c_int
-          > 0i32
+          > 0
         {
           (*ptr_to_globals).nearest_rotate = (*(*ptr_to_globals).dir.offset(i as isize)).next_rotate
         }
@@ -1405,17 +1405,17 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
     if i > 1000000i32 {
       i = 1000000i32
     }
-    if i <= 0i32 {
+    if i <= 0 {
       i = 1i32
     }
     poll(&mut input, 1i32 as nfds_t, i * 1000i32);
     sigprocmask(
-      0i32,
+      0,
       &mut (*ptr_to_globals).blocked_sigset,
       0 as *mut sigset_t,
     );
     i = ndelay_read(0i32, s as *mut libc::c_void, len as size_t) as libc::c_int;
-    if i >= 0i32 {
+    if i >= 0 {
       break;
     }
     if !(*bb_errno == 4i32) {
@@ -1429,7 +1429,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
     }
     /* else: EAGAIN - normal, repeat silently */
   }
-  if i > 0i32 {
+  if i > 0 {
     let mut cnt: libc::c_int = 0;
     (*ptr_to_globals).linecomplete =
       (*s.offset((i - 1i32) as isize) as libc::c_int == '\n' as i32) as libc::c_int as smallint;
@@ -1439,7 +1439,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
     cnt = i;
     loop {
       cnt -= 1;
-      if !(cnt >= 0i32) {
+      if !(cnt >= 0) {
         break;
       }
       let mut ch: libc::c_char = *s;
@@ -1448,7 +1448,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
           *s = (*ptr_to_globals).repl
         } else {
           let mut j: libc::c_int = 0;
-          j = 0i32;
+          j = 0;
           while *(*ptr_to_globals).replace.offset(j as isize) != 0 {
             if ch as libc::c_int == *(*ptr_to_globals).replace.offset(j as isize) as libc::c_int {
               *s = (*ptr_to_globals).repl;
@@ -1484,13 +1484,13 @@ unsafe extern "C" fn sig_child_handler(mut _sig_no: libc::c_int) {
   }
   loop {
     pid = wait_any_nohang(&mut (*ptr_to_globals).wstat);
-    if !(pid > 0i32) {
+    if !(pid > 0) {
       break;
     }
-    l = 0i32;
+    l = 0;
     while (l as libc::c_uint) < (*ptr_to_globals).dirn {
       if (*(*ptr_to_globals).dir.offset(l as isize)).ppid == pid {
-        (*(*ptr_to_globals).dir.offset(l as isize)).ppid = 0i32;
+        (*(*ptr_to_globals).dir.offset(l as isize)).ppid = 0;
         processorstop(&mut *(*ptr_to_globals).dir.offset(l as isize));
         break;
       } else {
@@ -1551,10 +1551,10 @@ pub unsafe extern "C" fn svlogd_main(
   let mut r: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut stdin_cnt: ssize_t = 0i32 as ssize_t;
+  let mut stdin_cnt: ssize_t = 0 as ssize_t;
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
-  let mut timestamp: libc::c_uint = 0i32 as libc::c_uint;
+  let mut timestamp: libc::c_uint = 0 as libc::c_uint;
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -1589,10 +1589,10 @@ pub unsafe extern "C" fn svlogd_main(
     // -l
     (*ptr_to_globals).linemax = xatou_range(
       l,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       (COMMON_BUFSIZE as libc::c_int - 26i32) as libc::c_uint,
     ) as libc::c_int;
-    if (*ptr_to_globals).linemax == 0i32 {
+    if (*ptr_to_globals).linemax == 0 {
       (*ptr_to_globals).linemax = COMMON_BUFSIZE as libc::c_int - 26i32
     }
     if (*ptr_to_globals).linemax < 256i32 {
@@ -1609,20 +1609,20 @@ pub unsafe extern "C" fn svlogd_main(
   argv = argv.offset(optind as isize);
   argc -= optind;
   (*ptr_to_globals).dirn = argc as libc::c_uint;
-  if (*ptr_to_globals).dirn <= 0i32 as libc::c_uint {
+  if (*ptr_to_globals).dirn <= 0 as libc::c_uint {
     bb_show_usage();
   }
   // //if (buflen <= linemax) bb_show_usage();
   (*ptr_to_globals).fdwdir = xopen(
     b".\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
+    0 | 0o4000i32,
   );
   close_on_exec_on((*ptr_to_globals).fdwdir);
   (*ptr_to_globals).dir = xzalloc(
     ((*ptr_to_globals).dirn as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<logdir>() as libc::c_ulong),
   ) as *mut logdir;
-  i = 0i32;
+  i = 0;
   while (i as libc::c_uint) < (*ptr_to_globals).dirn {
     (*(*ptr_to_globals).dir.offset(i as isize)).fddir = -1i32;
     (*(*ptr_to_globals).dir.offset(i as isize)).fdcur = -1i32;
@@ -1642,7 +1642,7 @@ pub unsafe extern "C" fn svlogd_main(
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 14i32);
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 1i32);
   sigprocmask(
-    0i32,
+    0,
     &mut (*ptr_to_globals).blocked_sigset,
     0 as *mut sigset_t,
   );
@@ -1690,7 +1690,7 @@ pub unsafe extern "C" fn svlogd_main(
   setvbuf(
     stderr,
     std::ptr::null_mut::<libc::c_char>(),
-    0i32,
+    0,
     (*ptr_to_globals).linelen as size_t,
   );
   let mut current_block_116: u64;
@@ -1721,7 +1721,7 @@ pub unsafe extern "C" fn svlogd_main(
       i = (*ptr_to_globals).linemax - stdin_cnt as i32;
       if i >= 128i32 {
         i = buffer_pread(lineptr.offset(stdin_cnt as isize), i as libc::c_uint);
-        if i <= 0i32 {
+        if i <= 0 {
           /* EOF or error on stdin */
           (*ptr_to_globals).exitasap = 1i32 as smallint
         } else {
@@ -1789,7 +1789,7 @@ pub unsafe extern "C" fn svlogd_main(
             );
             *printptr.offset(25) = ' ' as i32 as libc::c_char
           }
-          i = 0i32;
+          i = 0;
           while (i as libc::c_uint) < (*ptr_to_globals).dirn {
             let mut ld: *mut logdir = &mut *(*ptr_to_globals).dir.offset(i as isize) as *mut logdir;
             if !((*ld).fddir == -1i32) {
@@ -1844,7 +1844,7 @@ pub unsafe extern "C" fn svlogd_main(
               ch = *lineptr.offset(((*ptr_to_globals).linelen - 1i32) as isize)
             }
             /* linelen == no of chars incl. '\n' (or == stdin_cnt) */
-            i = 0i32;
+            i = 0;
             while (i as libc::c_uint) < (*ptr_to_globals).dirn {
               if !((*(*ptr_to_globals).dir.offset(i as isize)).fddir == -1i32) {
                 if (*(*ptr_to_globals).dir.offset(i as isize)).matcherr as libc::c_int == 'e' as i32
@@ -1900,7 +1900,7 @@ pub unsafe extern "C" fn svlogd_main(
     }
     fflush_all();
   }
-  i = 0i32;
+  i = 0;
   while (i as libc::c_uint) < (*ptr_to_globals).dirn {
     if (*(*ptr_to_globals).dir.offset(i as isize)).ppid != 0 {
       while processorstop(&mut *(*ptr_to_globals).dir.offset(i as isize)) == 0 {}
@@ -1908,5 +1908,5 @@ pub unsafe extern "C" fn svlogd_main(
     logdir_close(&mut *(*ptr_to_globals).dir.offset(i as isize));
     i += 1
   }
-  return 0i32;
+  return 0;
 }

@@ -101,10 +101,10 @@ pub unsafe extern "C" fn bb_mode_string(mut mode: mode_t) -> *const libc::c_char
   let mut k: libc::c_int = 0;
   let mut m: libc::c_int = 0;
   *p = type_chars[(mode >> 12i32 & 0xfi32 as libc::c_uint) as usize];
-  i = 0i32;
+  i = 0;
   m = 0o400i32;
   loop {
-    k = 0i32;
+    k = 0;
     j = k;
     loop {
       p = p.offset(1);

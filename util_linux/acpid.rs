@@ -334,7 +334,7 @@ static mut f_evt_tab: [acpi_event; 3] = [
       s_type: b"EV_SW\x00" as *const u8 as *const libc::c_char,
       n_type: 0x5i32 as u16,
       s_code: b"SW_LID\x00" as *const u8 as *const libc::c_char,
-      n_code: 0i32 as u16,
+      n_code: 0 as u16,
       value: 1i32 as u32,
       desc: b"button/lid LID0 00000080\x00" as *const u8 as *const libc::c_char,
     };
@@ -383,7 +383,7 @@ unsafe extern "C" fn process_event(mut event: *const libc::c_char) {
   // N.B. run-parts would require scripts to have #!/bin/sh
   // handler is directory? -> use run-parts
   // handler is file? -> run it directly
-  if 0i32 == stat(event, &mut st) {
+  if 0 == stat(event, &mut st) {
     spawn((args.as_mut_ptr() as *mut *mut libc::c_char).offset(
       (0i32 as libc::c_uint == st.st_mode & 0o40000i32 as libc::c_uint) as libc::c_int as isize,
     ));
@@ -399,7 +399,7 @@ unsafe extern "C" fn find_action(
   let mut action: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
   // map event
-  i = 0i32;
+  i = 0;
   while i < (*ptr_to_globals).n_evt {
     if !ev.is_null() {
       if (*ev).type_0 as libc::c_int
@@ -422,7 +422,7 @@ unsafe extern "C" fn find_action(
   }
   // get action
   if !action.is_null() {
-    i = 0i32;
+    i = 0;
     while i < (*ptr_to_globals).n_act {
       if !strstr(action, (*(*ptr_to_globals).act_tab.offset(i as isize)).key).is_null() {
         action = (*(*ptr_to_globals).act_tab.offset(i as isize)).action;
@@ -600,7 +600,7 @@ pub unsafe extern "C" fn acpid_main(
   // by SIGTERM et al:
   //bb_signals(BB_FATAL_SIGS, record_signo);
   pfd = std::ptr::null_mut(); /* this fd has nothing */
-  nfd = 0i32;
+  nfd = 0;
   loop {
     let mut fd: libc::c_int = 0;
     let mut dev_event: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -613,9 +613,9 @@ pub unsafe extern "C" fn acpid_main(
       opt_input,
       nfd,
     );
-    fd = open(dev_event, 0i32 | 0o4000i32);
-    if fd < 0i32 {
-      if nfd == 0i32 {
+    fd = open(dev_event, 0 | 0o4000i32);
+    if fd < 0 {
+      if nfd == 0 {
         bb_simple_perror_msg_and_die(dev_event);
       }
       break;
@@ -633,14 +633,14 @@ pub unsafe extern "C" fn acpid_main(
     }
   }
   write_pidfile(opt_pidfile);
-  while safe_poll(pfd, nfd as nfds_t, -1i32) > 0i32 {
+  while safe_poll(pfd, nfd as nfds_t, -1i32) > 0 {
     let mut i: libc::c_int = 0;
     let mut current_block_47: u64;
-    i = 0i32;
+    i = 0;
     while i < nfd {
       let mut event: *const libc::c_char = std::ptr::null();
       if (*pfd.offset(i as isize)).revents as libc::c_int & 0x1i32 == 0 {
-        if !((*pfd.offset(i as isize)).revents as libc::c_int == 0i32) {
+        if !((*pfd.offset(i as isize)).revents as libc::c_int == 0) {
           /* Likely POLLERR, POLLHUP, POLLNVAL.
            * Do not listen on this fd anymore.
            */
@@ -661,7 +661,7 @@ pub unsafe extern "C" fn acpid_main(
           buf = xmalloc_reads((*pfd.offset(i as isize)).fd, std::ptr::null_mut::<size_t>());
           /* buf = "button/power PWRB 00000080 00000000" */
           len = strlen(buf).wrapping_sub(9i32 as libc::c_ulong) as libc::c_int;
-          if len >= 0i32 {
+          if len >= 0 {
             *buf.offset(len as isize) = '\u{0}' as i32 as libc::c_char
           }
           event = find_action(0 as *mut input_event, buf);
@@ -685,7 +685,7 @@ pub unsafe extern "C" fn acpid_main(
             ) as libc::c_ulong
           {
             current_block_47 = 7226443171521532240;
-          } else if ev.value != 1i32 && ev.value != 0i32 {
+          } else if ev.value != 1i32 && ev.value != 0 {
             current_block_47 = 7226443171521532240;
           } else {
             event = find_action(&mut ev, 0 as *const libc::c_char);
@@ -708,5 +708,5 @@ pub unsafe extern "C" fn acpid_main(
   if wrote_pidfile != 0 {
     unlink(opt_pidfile);
   }
-  return 0i32;
+  return 0;
 }

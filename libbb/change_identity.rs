@@ -515,7 +515,7 @@ pub unsafe extern "C" fn change_identity(mut pw: *const passwd) {
   let mut res: libc::c_int = 0; /* helps to close a fd used internally by libc */
   res = bb_internal_initgroups((*pw).pw_name, (*pw).pw_gid);
   bb_internal_endgrent();
-  if res != 0i32 {
+  if res != 0 {
     /*
      * If initgroups() fails because a system call is unimplemented
      * then we are running on a Linux kernel compiled without multiuser

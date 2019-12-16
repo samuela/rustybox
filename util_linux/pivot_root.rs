@@ -45,9 +45,9 @@ pub unsafe extern "C" fn pivot_root_main(
     bb_show_usage();
   }
   /* NOFORK applet. Hardly matters wrt performance, but code is trivial */
-  if pivot_root(*argv.offset(1), *argv.offset(2)) < 0i32 {
+  if pivot_root(*argv.offset(1), *argv.offset(2)) < 0 {
     /* prints "pivot_root: <strerror text>" */
     bb_perror_nomsg_and_die();
   }
-  return 0i32;
+  return 0;
 }

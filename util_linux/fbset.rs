@@ -215,7 +215,7 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
 
 unsafe extern "C" fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: libc::c_uint) {
   loop {
-    if *src as i32 > 0i32 {
+    if *src as i32 > 0 {
       *dst = *src
     }
     src = src.offset(1);
@@ -237,7 +237,7 @@ unsafe extern "C" fn copy_changed_values(
   //if ((i32) set->xres_virtual > 0)   base->xres_virtual = set->xres_virtual;
   //if ((i32) set->yres_virtual > 0)   base->yres_virtual = set->yres_virtual;
   copy_if_gt0(&mut (*set).xres, &mut (*base).xres, 4i32 as libc::c_uint);
-  if (*set).bits_per_pixel as i32 > 0i32 {
+  if (*set).bits_per_pixel as i32 > 0 {
     (*base).bits_per_pixel = (*set).bits_per_pixel
   }
   //copy_if_gt0(&set->bits_per_pixel, &base->bits_per_pixel, 1);
@@ -276,7 +276,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [97, 0, 0, 0, 0, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_ALL as libc::c_int as libc::c_uchar,
     };
     init
@@ -284,7 +284,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [105, 0, 0, 0, 0, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_INFO as libc::c_int as libc::c_uchar,
     };
     init
@@ -348,7 +348,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [115, 104, 111, 119, 0, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_SHOW as libc::c_int as libc::c_uchar,
     };
     init
@@ -356,7 +356,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [115, 0, 0, 0, 0, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_SHOW as libc::c_int as libc::c_uchar,
     };
     init
@@ -364,7 +364,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [97, 108, 108, 0, 0, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_ALL as libc::c_int as libc::c_uchar,
     };
     init
@@ -412,7 +412,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   {
     let mut init = cmdoptions_t {
       name: [109, 97, 116, 99, 104, 0, 0, 0, 0],
-      param_count: 0i32 as libc::c_uchar,
+      param_count: 0 as libc::c_uchar,
       code: CMD_MATCH as libc::c_int as libc::c_uchar,
     };
     init
@@ -553,7 +553,7 @@ unsafe extern "C" fn ss(
   mut buf: *mut libc::c_char,
   mut what: *const libc::c_char,
 ) {
-  if strcmp(buf, what) == 0i32 {
+  if strcmp(buf, what) == 0 {
     *x &= !flag
   } else {
     *x |= flag
@@ -586,7 +586,7 @@ unsafe extern "C" fn read_mode_db(
     b"# \t\r\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    if strcmp(token[0], b"mode\x00" as *const u8 as *const libc::c_char) != 0i32
+    if strcmp(token[0], b"mode\x00" as *const u8 as *const libc::c_char) != 0
       || token[1].is_null()
     {
       continue;
@@ -614,7 +614,7 @@ unsafe extern "C" fn read_mode_db(
     break;
   }
   if token[0].is_null() {
-    return 0i32;
+    return 0;
   }
   while config_read(
     parser,
@@ -625,7 +625,7 @@ unsafe extern "C" fn read_mode_db(
   {
     let mut i: libc::c_int = 0;
     //bb_error_msg("???[%s][%s]", token[0], token[1]);
-    if strcmp(token[0], b"endmode\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(token[0], b"endmode\x00" as *const u8 as *const libc::c_char) == 0 {
       //bb_error_msg("OK[%s]", mode);
       return 1i32;
     } /* for compiler */
@@ -769,28 +769,28 @@ unsafe extern "C" fn read_mode_db(
         );
         (*base).red.offset = red_offset as u32;
         (*base).red.length = red_length as u32;
-        (*base).red.msb_right = 0i32 as u32;
+        (*base).red.msb_right = 0 as u32;
         (*base).green.offset = green_offset as u32;
         (*base).green.length = green_length as u32;
-        (*base).green.msb_right = 0i32 as u32;
+        (*base).green.msb_right = 0 as u32;
         (*base).blue.offset = blue_offset as u32;
         (*base).blue.length = blue_length as u32;
-        (*base).blue.msb_right = 0i32 as u32;
+        (*base).blue.msb_right = 0 as u32;
         (*base).transp.offset = transp_offset as u32;
         (*base).transp.length = transp_length as u32;
-        (*base).transp.msb_right = 0i32 as u32
+        (*base).transp.msb_right = 0 as u32
       }
       _ => {}
     }
   }
-  return 0i32;
+  return 0;
 }
 
 #[inline(never)]
 unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
-  let mut drate: libc::c_double = 0i32 as libc::c_double;
-  let mut hrate: libc::c_double = 0i32 as libc::c_double;
-  let mut vrate: libc::c_double = 0i32 as libc::c_double;
+  let mut drate: libc::c_double = 0 as libc::c_double;
+  let mut hrate: libc::c_double = 0 as libc::c_double;
+  let mut vrate: libc::c_double = 0 as libc::c_double;
   if (*v).pixclock != 0 {
     drate = 1e12f64 / (*v).pixclock as libc::c_double;
     hrate = drate
@@ -813,7 +813,7 @@ unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
            (*v).bits_per_pixel, (*v).pixclock, (*v).left_margin,
            (*v).right_margin, (*v).upper_margin, (*v).lower_margin,
            (*v).hsync_len, (*v).vsync_len,
-           if (*v).accel_flags > 0i32 as libc::c_uint {
+           if (*v).accel_flags > 0 as libc::c_uint {
                b"true\x00" as *const u8 as *const libc::c_char
            } else { b"false\x00" as *const u8 as *const libc::c_char },
            (*v).red.length, (*v).red.offset, (*v).green.length,
@@ -919,7 +919,7 @@ pub unsafe extern "C" fn fbset_main(
   };
   let mut fh: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  let mut options: libc::c_uint = 0i32 as libc::c_uint;
+  let mut options: libc::c_uint = 0 as libc::c_uint;
   let mut fbdev: *const libc::c_char = b"/dev/fb0\x00" as *const u8 as *const libc::c_char;
   let mut modefile: *const libc::c_char = b"/etc/fb.modes\x00" as *const u8 as *const libc::c_char;
   let mut thisarg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -933,7 +933,7 @@ pub unsafe extern "C" fn fbset_main(
   /* parse cmd args.... why do they have to make things so difficult? */
   argv = argv.offset(1);
   argc -= 1;
-  while argc > 0i32 && {
+  while argc > 0 && {
     thisarg = *argv;
     !thisarg.is_null()
   } {
@@ -944,7 +944,7 @@ pub unsafe extern "C" fn fbset_main(
       mode = thisarg;
       options |= OPT_READMODE as libc::c_int as libc::c_uint
     } else {
-      i = 0i32;
+      i = 0;
       loop {
         if !((i as libc::c_uint)
           < (::std::mem::size_of::<[cmdoptions_t; 36]>() as libc::c_ulong)
@@ -954,7 +954,7 @@ pub unsafe extern "C" fn fbset_main(
           current_block = 13321564401369230990;
           break;
         }
-        if strcmp(thisarg.offset(1), g_cmdoptions[i as usize].name.as_ptr()) != 0i32 {
+        if strcmp(thisarg.offset(1), g_cmdoptions[i as usize].name.as_ptr()) != 0 {
           i += 1
         } else {
           if argc <= g_cmdoptions[i as usize].param_count as libc::c_int {
@@ -1011,7 +1011,7 @@ pub unsafe extern "C" fn fbset_main(
     argc -= 1;
     argv = argv.offset(1)
   }
-  fh = xopen(fbdev, 0i32);
+  fh = xopen(fbdev, 0);
   bb_xioctl(
     fh,
     FBIOGET_VSCREENINFO as libc::c_int as libc::c_uint,
@@ -1039,8 +1039,8 @@ pub unsafe extern "C" fn fbset_main(
       b"FBIOPUT_VSCREENINFO\x00" as *const u8 as *const libc::c_char,
     );
   }
-  if options == 0i32 as libc::c_uint || options & OPT_SHOW as libc::c_int as libc::c_uint != 0 {
+  if options == 0 as libc::c_uint || options & OPT_SHOW as libc::c_int as libc::c_uint != 0 {
     showmode(&mut var_old);
   }
-  return 0i32;
+  return 0;
 }

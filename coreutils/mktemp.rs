@@ -129,7 +129,7 @@ pub unsafe extern "C" fn mktemp_main(
     } else {
       current_block = 4808432441040389987;
     }
-  } else if mkstemp(chp) < 0i32 {
+  } else if mkstemp(chp) < 0 {
     current_block = 11708925467940708064;
   } else {
     current_block = 4808432441040389987;
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn mktemp_main(
     }
     _ => {
       puts(chp);
-      return 0i32;
+      return 0;
     }
   };
 }

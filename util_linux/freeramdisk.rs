@@ -27,19 +27,19 @@ pub unsafe extern "C" fn freeramdisk_main(
   ioctl_or_perror_and_die(
     fd,
     if 1i32 != 0 && *applet_name.offset(1) as libc::c_int == 'r' as i32 || 1i32 == 0 {
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (97i32 << 0i32) as libc::c_uint)
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (97i32 << 0) as libc::c_uint)
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint
     } else {
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (2i32 << 0i32 + 8i32) as libc::c_uint
-        | (0x4bi32 << 0i32) as libc::c_uint)
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (2i32 << 0 + 8i32) as libc::c_uint
+        | (0x4bi32 << 0) as libc::c_uint)
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint
     },
     0 as *mut libc::c_void,
     b"%s\x00" as *const u8 as *const libc::c_char,
     *argv.offset(1),
   );
-  return 0i32;
+  return 0;
 }

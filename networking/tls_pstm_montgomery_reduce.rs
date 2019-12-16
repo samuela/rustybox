@@ -236,26 +236,26 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
         .wrapping_add(1i32 as libc::c_uint)
   {
     c = paD;
-    memset(c as *mut libc::c_void, 0i32, paDlen as libc::c_ulong);
+    memset(c as *mut libc::c_void, 0, paDlen as libc::c_ulong);
   } else {
     c = xzalloc((2i32 * pa + 1i32) as size_t) as *mut pstm_digit
     //bbox
   }
   /* copy the input */
   oldused = (*a).used;
-  x = 0i32;
+  x = 0;
   while x < oldused {
     *c.offset(x as isize) = *(*a).dp.offset(x as isize);
     x += 1
   }
-  x = 0i32;
+  x = 0;
   while x < pa {
-    let mut cy: pstm_digit = 0i32 as pstm_digit;
+    let mut cy: pstm_digit = 0 as pstm_digit;
     /* get Mu for this round */
     mu = (*c.offset(x as isize)).wrapping_mul(mp);
     _c = c.offset(x as isize);
     tmpm = (*m).dp;
-    y = 0i32;
+    y = 0;
     /* PSTM_X86_64 */
     while y < pa {
       let mut t: pstm_word = 0;
@@ -281,7 +281,7 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
   /* now copy out */
   _c = c.offset(pa as isize);
   tmpm = (*a).dp;
-  x = 0i32;
+  x = 0;
   while x < pa + 1i32 {
     let fresh2 = _c;
     _c = _c.offset(1);
@@ -293,16 +293,16 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
   while x < oldused {
     let fresh4 = tmpm;
     tmpm = tmpm.offset(1);
-    *fresh4 = 0i32 as pstm_digit;
+    *fresh4 = 0 as pstm_digit;
     x += 1
   }
   (*a).used = pa + 1i32;
   pstm_clamp(a);
   /* reuse x as return code */
-  x = 0i32;
+  x = 0;
   /* if A >= m then A = A - m */
   if pstm_cmp_mag(a, m) != -1i32 {
-    if s_pstm_sub(a, m, a) != 0i32 {
+    if s_pstm_sub(a, m, a) != 0 {
       x = -8i32
     }
   }

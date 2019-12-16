@@ -183,13 +183,13 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
     (*rs).magic.as_mut_ptr() as *const libc::c_void,
     b"ReIsErFs\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     8i32 as libc::c_ulong,
-  ) == 0i32)
+  ) == 0)
   {
     if memcmp(
       (*rs).magic.as_mut_ptr() as *const libc::c_void,
       b"ReIsEr2Fs\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       9i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       //		strcpy(id->type_version, "3.6");
       current_block = 14461063366507817781;
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
       (*rs).magic.as_mut_ptr() as *const libc::c_void,
       b"ReIsEr3Fs\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       9i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       current_block = 14461063366507817781;
     } else {
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
         (*rs4).magic.as_mut_ptr() as *const libc::c_void,
         b"ReIsEr4\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         7i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       {
         //		strcpy(id->type_version, "4");
         //		volume_id_set_label_raw(id, rs4->label, 16);
@@ -225,7 +225,7 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
           (*rs).magic.as_mut_ptr() as *const libc::c_void,
           b"ReIsErFs\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           8i32 as libc::c_ulong,
-        ) == 0i32)
+        ) == 0)
         {
           return -1i32;
         }
@@ -246,5 +246,5 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
   //		strcpy(id->type_version, "3.5");
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"reiserfs\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

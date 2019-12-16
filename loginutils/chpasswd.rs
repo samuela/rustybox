@@ -106,7 +106,7 @@ pub unsafe extern "C" fn chpasswd_main(
   let mut algo: *const libc::c_char = b"des\x00" as *const u8 as *const libc::c_char;
   let mut root: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_int = 0;
-  if getuid() != 0i32 as libc::c_uint {
+  if getuid() != 0 as libc::c_uint {
     bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   opt = getopt32long(
@@ -143,7 +143,7 @@ pub unsafe extern "C" fn chpasswd_main(
         algo = b"md5\x00" as *const u8 as *const libc::c_char
       }
       crypt_make_pw_salt(salt.as_mut_ptr(), algo);
-      pass = pw_encrypt(pass, salt.as_mut_ptr(), 0i32);
+      pass = pw_encrypt(pass, salt.as_mut_ptr(), 0);
       free_me = pass
     }
     /* This is rather complex: if user is not found in /etc/shadow,
@@ -154,11 +154,11 @@ pub unsafe extern "C" fn chpasswd_main(
       pass,
       0 as *const libc::c_char,
     );
-    if rc > 0i32 {
+    if rc > 0 {
       /* password in /etc/shadow was updated */
       pass = b"x\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     }
-    if rc >= 0i32 {
+    if rc >= 0 {
       /* 0 = /etc/shadow missing (not an error), >0 = passwd changed in /etc/shadow */
       rc = update_passwd(
         b"/etc/passwd\x00" as *const u8 as *const libc::c_char,
@@ -169,7 +169,7 @@ pub unsafe extern "C" fn chpasswd_main(
     }
     /* LOGMODE_BOTH logs to syslog also */
     logmode = LOGMODE_BOTH as libc::c_int as smallint;
-    if rc < 0i32 {
+    if rc < 0 {
       bb_error_msg_and_die(
         b"an error occurred updating password for %s\x00" as *const u8 as *const libc::c_char,
         name,
@@ -185,5 +185,5 @@ pub unsafe extern "C" fn chpasswd_main(
     free(name as *mut libc::c_void);
     free(free_me as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }

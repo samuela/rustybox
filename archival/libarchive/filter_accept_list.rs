@@ -26,7 +26,7 @@ pub unsafe extern "C" fn filter_accept_list(
   )
   .is_null()
   {
-    return 0i32 as libc::c_char;
+    return 0 as libc::c_char;
   }
   return 1i32 as libc::c_char;
 }

@@ -87,7 +87,7 @@ static mut opcode_value: [libc::c_short; 34] = [
   14i32 as libc::c_short,
   15i32 as libc::c_short,
   16i32 as libc::c_short,
-  0i32 as libc::c_short,
+  0 as libc::c_short,
   9i32 as libc::c_short,
   6i32 as libc::c_short,
   22i32 as libc::c_short,
@@ -135,7 +135,7 @@ pub unsafe extern "C" fn mt_main(
   if strcmp(
     *argv.offset(1),
     b"-f\x00" as *const u8 as *const libc::c_char,
-  ) == 0i32
+  ) == 0
   {
     if (*argv.offset(2)).is_null() || (*argv.offset(3)).is_null() {
       bb_show_usage();
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn mt_main(
     argv = argv.offset(2)
   }
   idx = index_in_strings(opcode_name.as_ptr(), *argv.offset(1));
-  if idx < 0i32 {
+  if idx < 0 {
     bb_error_msg_and_die(
       b"unrecognized opcode %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
@@ -158,17 +158,17 @@ pub unsafe extern "C" fn mt_main(
   }
   match opcode_value[idx as usize] as libc::c_int {
     5 | 13 | 27 | 24 => mode = 0o1i32,
-    _ => mode = 0i32,
+    _ => mode = 0,
   }
   fd = xopen(file, mode);
   match opcode_value[idx as usize] as libc::c_int {
     23 => {
       ioctl_or_perror_and_die(
         fd,
-        ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('m' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (3i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<mtpos>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((2u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('m' as i32) << 0 + 8i32) as libc::c_uint
+          | (3i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<mtpos>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut position as *mut mtpos as *mut libc::c_void,
         b"%s\x00" as *const u8 as *const libc::c_char,
@@ -182,10 +182,10 @@ pub unsafe extern "C" fn mt_main(
     _ => {
       ioctl_or_perror_and_die(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('m' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<mtop>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('m' as i32) << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<mtop>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut op as *mut mtop as *mut libc::c_void,
         b"%s\x00" as *const u8 as *const libc::c_char,
@@ -193,5 +193,5 @@ pub unsafe extern "C" fn mt_main(
       );
     }
   }
-  return 0i32;
+  return 0;
 }

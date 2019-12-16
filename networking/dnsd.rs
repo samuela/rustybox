@@ -273,16 +273,16 @@ pub struct dns_entry {
  * Insert length of substrings instead of dots
  */
 unsafe extern "C" fn undot(mut rip: *mut libc::c_char) {
-  let mut i: libc::c_int = 0i32;
-  let mut s: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
+  let mut s: libc::c_int = 0;
   while *rip.offset(i as isize) != 0 {
     i += 1
   }
   i -= 1;
-  while i >= 0i32 {
+  while i >= 0 {
     if *rip.offset(i as isize) as libc::c_int == '.' as i32 {
       *rip.offset(i as isize) = s as libc::c_char;
-      s = 0i32
+      s = 0
     } else {
       s += 1
     }
@@ -310,7 +310,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
   {
     let mut ip: in_addr = in_addr { s_addr: 0 };
     let mut v32: u32 = 0;
-    if inet_aton(token[1], &mut ip) == 0i32 {
+    if inet_aton(token[1], &mut ip) == 0 {
       bb_error_msg(
         b"error at line %u, skipping\x00" as *const u8 as *const libc::c_char,
         (*parser).lineno,
@@ -414,7 +414,7 @@ unsafe extern "C" fn table_lookup(
          * [65+32]<65 same chars>1   <31 same chars>NUL
          * This example seems to be the minimal case when false match occurs.
          */
-        if strcasecmp((*d).name.as_mut_ptr(), query_string) != 0i32 {
+        if strcasecmp((*d).name.as_mut_ptr(), query_string) != 0 {
           current_block_5 = 137226434401907431;
         } else {
           current_block_5 = 820271813250567934;
@@ -614,9 +614,9 @@ unsafe extern "C" fn process_packet(
   let mut class: u16 = 0;
   let mut query_len: libc::c_int = 0;
   head = buf as *mut dns_head;
-  if (*head).nquer as libc::c_int == 0i32 {
+  if (*head).nquer as libc::c_int == 0 {
     bb_simple_error_msg(b"packet has 0 queries, ignored\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
     /* don't reply */
   }
   if (*head).flags as libc::c_int
@@ -641,7 +641,7 @@ unsafe extern "C" fn process_packet(
   {
     /* QR bit */
     bb_simple_error_msg(b"response packet, ignored\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
     /* don't reply */
   }
   /* QR = 1 "response", RCODE = 4 "Not Implemented" */
@@ -694,7 +694,7 @@ unsafe extern "C" fn process_packet(
       }
       __v
     }) as libc::c_int
-    != 0i32
+    != 0
   {
     err_msg = b"opcode != 0\x00" as *const u8 as *const libc::c_char
   } else {
@@ -885,7 +885,7 @@ unsafe extern "C" fn process_packet(
           }
           outr_flags = {
             let mut __v: libc::c_ushort = 0;
-            let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0i32) as libc::c_ushort;
+            let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0) as libc::c_ushort;
             if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
@@ -942,7 +942,7 @@ unsafe extern "C" fn process_packet(
       }
       __v
     }) as libc::c_int
-    != 0i32
+    != 0
   {
     /* not a positive response */
     if option_mask32 & 1i32 as libc::c_uint != 0 {
@@ -957,11 +957,11 @@ unsafe extern "C" fn process_packet(
       ); // why???
     }
     if option_mask32 & 2i32 as libc::c_uint != 0 {
-      return 0i32;
+      return 0;
     }
   }
   (*head).flags = ((*head).flags as libc::c_int | outr_flags as libc::c_int) as u16;
-  (*head).nadd = 0i32 as u16;
+  (*head).nadd = 0 as u16;
   (*head).nauth = (*head).nadd;
   (*head).nquer = {
     let mut __v: libc::c_ushort = 0;
@@ -1034,7 +1034,7 @@ pub unsafe extern "C" fn dnsd_main(
   udps = xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
-    0i32,
+    0,
   );
   xbind(udps, &mut (*lsa).u.sa, (*lsa).len);
   socket_want_pktinfo(udps);
@@ -1063,7 +1063,7 @@ pub unsafe extern "C" fn dnsd_main(
       udps,
       buf.as_mut_ptr() as *mut libc::c_void,
       (MAX_PACK_LEN as libc::c_int + 1i32) as size_t,
-      0i32,
+      0,
       &mut (*from).u.sa,
       &mut (*to).u.sa,
       (*lsa).len,
@@ -1079,14 +1079,14 @@ pub unsafe extern "C" fn dnsd_main(
       }
       buf[r as usize] = '\u{0}' as i32 as u8;
       r = process_packet(conf_data, conf_ttl, buf.as_mut_ptr());
-      if r <= 0i32 {
+      if r <= 0 {
         continue;
       }
       send_to_from(
         udps,
         buf.as_mut_ptr() as *mut libc::c_void,
         r as size_t,
-        0i32,
+        0,
         &mut (*from).u.sa,
         &mut (*to).u.sa,
         (*lsa).len,

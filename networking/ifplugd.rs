@@ -606,7 +606,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 unsafe extern "C" fn set_ifreq_to_ifname(mut ifreq: *mut ifreq) {
   memset(
     ifreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   strncpy_IFNAMSIZ(
@@ -620,7 +620,7 @@ unsafe extern "C" fn network_ioctl(
   mut errmsg: *const libc::c_char,
 ) -> libc::c_int {
   let mut r: libc::c_int = ioctl(ioctl_fd as libc::c_int, request as libc::c_ulong, data);
-  if r < 0i32 && !errmsg.is_null() {
+  if r < 0 && !errmsg.is_null() {
     bb_perror_msg(b"%s failed\x00" as *const u8 as *const libc::c_char, errmsg);
   }
   return r;
@@ -637,7 +637,7 @@ unsafe extern "C" fn detect_link_mii() -> smallint {
     0x8947i32,
     ifreq as *mut libc::c_void,
     b"SIOCGMIIPHY\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -646,7 +646,7 @@ unsafe extern "C" fn detect_link_mii() -> smallint {
     0x8948i32,
     ifreq as *mut libc::c_void,
     b"SIOCGMIIREG\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -667,7 +667,7 @@ unsafe extern "C" fn detect_link_priv() -> smallint {
     0x89f0i32,
     ifreq as *mut libc::c_void,
     b"SIOCDEVPRIVATE\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -676,7 +676,7 @@ unsafe extern "C" fn detect_link_priv() -> smallint {
     0x89f0i32 + 1i32,
     ifreq as *mut libc::c_void,
     b"SIOCDEVPRIVATE+1\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -704,7 +704,7 @@ unsafe extern "C" fn detect_link_ethtool() -> smallint {
     0x8946i32,
     &mut ifreq as *mut ifreq as *mut libc::c_void,
     b"ETHTOOL_GLINK\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -729,7 +729,7 @@ unsafe extern "C" fn detect_link_iff() -> smallint {
     0x8913i32,
     &mut ifreq as *mut ifreq as *mut libc::c_void,
     b"SIOCGIFFLAGS\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -759,7 +759,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
   let mut mac: [u8; 6] = [0; 6];
   memset(
     &mut iwrequest as *mut iwreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<iwreq>() as libc::c_ulong,
   );
   strncpy_IFNAMSIZ(
@@ -770,7 +770,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
     0x8b15i32,
     &mut iwrequest as *mut iwreq as *mut libc::c_void,
     b"SIOCGIWAP\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return IFSTATUS_ERR as libc::c_int as smallint;
   }
@@ -781,7 +781,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
   );
   if mac[0] as libc::c_int == 0xffi32
     || mac[0] as libc::c_int == 0x44i32
-    || mac[0] as libc::c_int == 0i32
+    || mac[0] as libc::c_int == 0
   {
     i = 1i32;
     while i < 6i32 {
@@ -875,7 +875,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char) -> libc::c_int 
     r & 0xffi32,
   );
   return if option_mask32 & FLAG_IGNORE_RETVAL as libc::c_int as libc::c_uint != 0 {
-    0i32
+    0
   } else {
     r
   };
@@ -898,9 +898,9 @@ unsafe extern "C" fn up_iface() {
     0x8913i32,
     &mut ifrequest as *mut ifreq as *mut libc::c_void,
     b"getting interface flags\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
-    (*ptr_to_globals).iface_exists = 0i32 as smallint;
+    (*ptr_to_globals).iface_exists = 0 as smallint;
     return;
   }
   if ifrequest.ifr_ifru.ifru_flags as libc::c_int & IFF_UP as libc::c_int == 0 {
@@ -912,12 +912,12 @@ unsafe extern "C" fn up_iface() {
       0x8914i32,
       &mut ifrequest as *mut ifreq as *mut libc::c_void,
       b"setting interface flags\x00" as *const u8 as *const libc::c_char,
-    ) < 0i32
+    ) < 0
     {
       if *bb_errno != 19i32 && *bb_errno != 99i32 {
         xfunc_die();
       }
-      (*ptr_to_globals).iface_exists = 0i32 as smallint;
+      (*ptr_to_globals).iface_exists = 0 as smallint;
       return;
     }
   };
@@ -952,7 +952,7 @@ unsafe extern "C" fn detect_link() -> smallint {
     let mut i: libc::c_int = 0;
     let mut sv_logmode: smallint = 0;
     sv_logmode = logmode;
-    i = 0i32;
+    i = 0;
     while (i as libc::c_uint)
       < (::std::mem::size_of::<[C2RustUnnamed_12; 5]>() as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<C2RustUnnamed_12>() as libc::c_ulong)
@@ -1108,7 +1108,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
                       .wrapping_add(0i32 as libc::c_ulong) as isize,
                   ) as *mut libc::c_void as *const libc::c_char,
                   len as libc::c_ulong,
-                ) == 0i32
+                ) == 0
               {
                 (*ptr_to_globals).iface_exists = ((*mhdr).nlmsg_type as libc::c_int
                   == RTM_NEWLINK as libc::c_int)
@@ -1156,12 +1156,12 @@ unsafe extern "C" fn read_pid(mut filename: *const libc::c_char) -> pid_t {
     buf.as_mut_ptr() as *mut libc::c_void,
     127i32 as size_t,
   ) as libc::c_int;
-  if len > 0i32 {
+  if len > 0 {
     buf[len as usize] = '\u{0}' as i32 as libc::c_char;
     /* returns ULONG_MAX on error => -1 */
     return bb_strtoul(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 10i32) as pid_t;
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn ifplugd_main(
@@ -1217,13 +1217,13 @@ pub unsafe extern "C" fn ifplugd_main(
   );
   pid_from_pidfile = read_pid(pidfile_name);
   if opts & FLAG_KILL as libc::c_int as libc::c_uint != 0 {
-    if pid_from_pidfile > 0i32 {
+    if pid_from_pidfile > 0 {
       /* Upstream tool use SIGINT for -k */
       kill(pid_from_pidfile, 2i32);
     }
-    return 0i32;
+    return 0;
   }
-  if pid_from_pidfile > 0i32 && kill(pid_from_pidfile, 0i32) == 0i32 {
+  if pid_from_pidfile > 0 && kill(pid_from_pidfile, 0) == 0 {
     bb_simple_error_msg_and_die(b"daemon already running\x00" as *const u8 as *const libc::c_char);
   }
   api_mode_found = strchr(
@@ -1242,21 +1242,21 @@ pub unsafe extern "C" fn ifplugd_main(
     bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
   xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
     ioctl_fd as libc::c_int,
   );
   if opts & FLAG_MONITOR as libc::c_int as libc::c_uint != 0 {
-    let mut fd: libc::c_int = create_and_bind_to_netlink(0i32, 1i32, 0i32 as libc::c_uint);
+    let mut fd: libc::c_int = create_and_bind_to_netlink(0i32, 1i32, 0 as libc::c_uint);
     xmove_fd(fd, netlink_fd as libc::c_int);
   }
   write_pidfile(pidfile_name);
   /* this can't be moved before socket creation */
   if opts & FLAG_NO_SYSLOG as libc::c_int as libc::c_uint == 0 {
-    openlog(applet_name, 0i32, 3i32 << 3i32);
+    openlog(applet_name, 0, 3i32 << 3i32);
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
   }
   bb_signals(
-    0i32 | 1i32 << 2i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 1i32,
+    0 | 1i32 << 2i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 1i32,
     Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   bb_info_msg(
@@ -1278,7 +1278,7 @@ pub unsafe extern "C" fn ifplugd_main(
       0x8933i32,
       &mut ifrequest as *mut ifreq as *mut libc::c_void,
       0 as *const libc::c_char,
-    ) == 0i32) as libc::c_int as smallint
+    ) == 0) as libc::c_int as smallint
   }
   if (*ptr_to_globals).iface_exists != 0 {
     maybe_up_new_iface();
@@ -1308,7 +1308,7 @@ pub unsafe extern "C" fn ifplugd_main(
       && iface_status == IFSTATUS_UP as libc::c_int
       || opts & FLAG_INITIAL_DOWN as libc::c_int as libc::c_uint != 0
     {
-      if run_script(iface_status_str) != 0i32 {
+      if run_script(iface_status_str) != 0 {
         current_block = 8614729751013307988;
       } else {
         current_block = 6560072651652764009;
@@ -1322,22 +1322,22 @@ pub unsafe extern "C" fn ifplugd_main(
         /* Main loop */
         netlink_pollfd[0].fd = netlink_fd as libc::c_int; /* while (1) */
         netlink_pollfd[0].events = 0x1i32 as libc::c_short;
-        delay_time = 0i32;
+        delay_time = 0;
         loop {
           let mut iface_status_old: libc::c_int = 0;
           match bb_got_signal as libc::c_int {
             2 | 15 => {
-              bb_got_signal = 0i32 as smallint;
+              bb_got_signal = 0 as smallint;
               current_block = 538028991732400653;
               break;
             }
             3 => {
-              bb_got_signal = 0i32 as smallint;
+              bb_got_signal = 0 as smallint;
               current_block = 8614729751013307988;
               break;
             }
             0 => {}
-            _ => bb_got_signal = 0i32 as smallint,
+            _ => bb_got_signal = 0 as smallint,
           }
           /* do not clear bb_got_signal if already 0, this can lose signals */
           if poll(
@@ -1345,10 +1345,10 @@ pub unsafe extern "C" fn ifplugd_main(
             (if opts & FLAG_MONITOR as libc::c_int as libc::c_uint != 0 {
               1i32
             } else {
-              0i32
+              0
             }) as nfds_t,
             (*ptr_to_globals).poll_time as libc::c_int,
-          ) < 0i32
+          ) < 0
           {
             if *bb_errno == 4i32 {
               continue;
@@ -1363,7 +1363,7 @@ pub unsafe extern "C" fn ifplugd_main(
               let mut iface_exists_old: libc::c_int = 0;
               iface_exists_old = (*ptr_to_globals).iface_exists as libc::c_int;
               (*ptr_to_globals).iface_exists = check_existence_through_netlink() as smallint;
-              if ((*ptr_to_globals).iface_exists as libc::c_int) < 0i32 {
+              if ((*ptr_to_globals).iface_exists as libc::c_int) < 0 {
                 current_block = 8614729751013307988;
                 break;
               }
@@ -1400,7 +1400,7 @@ pub unsafe extern "C" fn ifplugd_main(
               if delay_time != 0 {
                 /* link restored its old status before
                  * we ran script. don't run the script: */
-                delay_time = 0i32
+                delay_time = 0
               } else {
                 delay_time = monotonic_sec() as libc::c_int;
                 if iface_status == IFSTATUS_UP as libc::c_int {
@@ -1416,15 +1416,15 @@ pub unsafe extern "C" fn ifplugd_main(
               }
             }
             if !(delay_time != 0
-              && monotonic_sec().wrapping_sub(delay_time as libc::c_uint) as libc::c_int >= 0i32)
+              && monotonic_sec().wrapping_sub(delay_time as libc::c_uint) as libc::c_int >= 0)
             {
               continue;
             }
-            if run_script(iface_status_str) != 0i32 {
+            if run_script(iface_status_str) != 0 {
               current_block = 8614729751013307988;
               break;
             }
-            delay_time = 0i32
+            delay_time = 0
           }
         }
         match current_block {

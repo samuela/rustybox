@@ -37,5 +37,5 @@ pub unsafe extern "C" fn filter_accept_reject_list(
     }
   }
   /* Accepted */
-  return 0i32 as libc::c_char;
+  return 0 as libc::c_char;
 }

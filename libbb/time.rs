@@ -335,7 +335,7 @@ pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut pt
       }
       match current_block_52 {
         1724319918354933278 => {
-          (*ptm).tm_sec = 0i32;
+          (*ptm).tm_sec = 0;
           if end as libc::c_int == '.' as i32 {
             /* xxx.SS */
             if sscanf(

@@ -29,9 +29,9 @@ pub unsafe extern "C" fn count_strstr(
   mut sub: *const libc::c_char,
 ) -> libc::c_uint {
   let mut sub_len: size_t = strlen(sub);
-  let mut count: libc::c_uint = 0i32 as libc::c_uint;
+  let mut count: libc::c_uint = 0 as libc::c_uint;
   /* If sub is empty, avoid an infinite loop */
-  if sub_len == 0i32 as libc::c_ulong {
+  if sub_len == 0 as libc::c_ulong {
     return strlen(str).wrapping_add(1i32 as libc::c_ulong) as libc::c_uint;
   }
   loop {

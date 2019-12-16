@@ -120,7 +120,7 @@ pub unsafe extern "C" fn deluser_main(
   let mut do_deluser: libc::c_int = (1i32 != 0
     && (1i32 == 0 || *applet_name.offset(3) as libc::c_int == 'u' as i32))
     as libc::c_int;
-  let mut opt_delhome: libc::c_int = 0i32;
+  let mut opt_delhome: libc::c_int = 0;
   if do_deluser != 0 {
     opt_delhome = getopt32long(
       argv,
@@ -130,7 +130,7 @@ pub unsafe extern "C" fn deluser_main(
     argv = argv.offset(opt_delhome as isize);
     argc -= opt_delhome
   }
-  if geteuid() != 0i32 as libc::c_uint {
+  if geteuid() != 0 as libc::c_uint {
     bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   name = *argv.offset(1);
@@ -178,11 +178,11 @@ pub unsafe extern "C" fn deluser_main(
         match current_block_45 {
           16500901810917105941 => {
             /* "delgroup GROUP" or "delgroup USER GROUP" */
-            if do_deluser < 0i32 {
+            if do_deluser < 0 {
               /* delgroup after deluser? */
               gr = bb_internal_getgrnam(name);
               if gr.is_null() {
-                return 0i32;
+                return 0;
               }
             } else {
               gr = xgetgrnam(name)
@@ -225,7 +225,7 @@ pub unsafe extern "C" fn deluser_main(
                 break;
               }
             }
-            if !(do_deluser > 0i32) {
+            if !(do_deluser > 0) {
               break;
             }
             /* Delete user from all groups */
@@ -250,7 +250,7 @@ pub unsafe extern "C" fn deluser_main(
           }
         }
       }
-      return 0i32;
+      return 0;
     }
   }
   /* Reached only if number of command line args is wrong */

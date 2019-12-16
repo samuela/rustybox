@@ -69,11 +69,11 @@ unsafe extern "C" fn open_to_or_warn(
   mut mode: libc::c_int,
 ) -> libc::c_int {
   let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open3_or_warn(filename, flags, mode);
-  if fd < 0i32 {
+  if fd < 0 {
     return 1i32;
   }
   crate::libbb::xfuncs_printf::xmove_fd(fd, to_fd);
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn append_ext(
@@ -98,10 +98,10 @@ pub unsafe extern "C" fn bbunpack(
   let mut del: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut stat_buf: stat = std::mem::zeroed();
-  let mut status: libc::c_longlong = 0i32 as libc::c_longlong;
+  let mut status: libc::c_longlong = 0 as libc::c_longlong;
   let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut new_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut exitcode: smallint = 0i32 as smallint;
+  let mut exitcode: smallint = 0 as smallint;
   let mut xstate: transformer_state_t = std::mem::zeroed();
   loop {
     /* NB: new_name is *maybe* malloc'ed! */
@@ -115,9 +115,9 @@ pub unsafe extern "C" fn bbunpack(
     /* Open src */
     if !filename.is_null() {
       if option_mask32 & BBUNPK_SEAMLESS_MAGIC as libc::c_int as libc::c_uint == 0 {
-        if stat(filename, &mut stat_buf) != 0i32 {
+        if stat(filename, &mut stat_buf) != 0 {
           current_block = 18200770512078651936;
-        } else if open_to_or_warn(0i32, filename, 0i32, 0i32) != 0 {
+        } else if open_to_or_warn(0i32, filename, 0, 0) != 0 {
           current_block = 7403963845855106808;
         } else {
           current_block = 2668756484064249700;
@@ -127,10 +127,10 @@ pub unsafe extern "C" fn bbunpack(
         /* fail_if_not_compressed because zcat refuses uncompressed input */
         let mut fd: libc::c_int =
           crate::archival::libarchive::open_transformer::open_zipped(filename, 1i32);
-        if fd < 0i32 {
+        if fd < 0 {
           current_block = 18200770512078651936;
         } else {
-          crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+          crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
           current_block = 2668756484064249700;
         }
       }
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn bbunpack(
               1i32,
               b"/dev/null\x00" as *const u8 as *const libc::c_char,
               0o1i32,
-              0i32,
+              0,
             ) != 0
             {
               crate::libbb::xfunc_die::xfunc_die();
@@ -221,7 +221,7 @@ pub unsafe extern "C" fn bbunpack(
               /*xstate.src_fd = STDIN_FILENO; - already is */
               xstate.dst_fd = 1i32;
               status = unpacker.expect("non-null function pointer")(&mut xstate);
-              if status < 0i32 as libc::c_longlong {
+              if status < 0 as libc::c_longlong {
                 exitcode = 1i32 as smallint
               }
             } else if crate::libbb::copyfd::bb_copyfd_eof(0i32, 1i32) < 0 {
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn bbunpack(
             }
             if !filename.is_null() {
               del = new_name;
-              if status >= 0i32 as libc::c_longlong {
+              if status >= 0 as libc::c_longlong {
                 let mut new_name_len: libc::c_uint = 0;
                 /* TODO: restore other things? */
                 if xstate.mtime != 0 {
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn bbunpack(
                   }; 2];
                   times[0].tv_sec = xstate.mtime;
                   times[1].tv_sec = times[0].tv_sec;
-                  times[0].tv_usec = 0i32 as suseconds_t;
+                  times[0].tv_usec = 0 as suseconds_t;
                   times[1].tv_usec = times[0].tv_usec;
                   /* ignoring errors */
                   utimes(new_name, times.as_mut_ptr() as *const timeval);
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn bbunpack(
                       as libc::c_ulonglong)
                       .wrapping_div(status as libc::c_ulonglong)
                   } else {
-                    0i32 as libc::c_ulonglong
+                    0 as libc::c_ulonglong
                   } as libc::c_uint;
                   fprintf(
                     stderr,
@@ -330,7 +330,7 @@ unsafe extern "C" fn make_new_name_generic(
   mut expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut extension: *mut libc::c_char = strrchr(filename, '.' as i32);
-  if extension.is_null() || strcmp(extension.offset(1), expected_ext) != 0i32 {
+  if extension.is_null() || strcmp(extension.offset(1), expected_ext) != 0 {
     /* Mimic GNU gunzip - "real" bunzip2 tries to */
     /* unpack file anyway, to file.out */
     return std::ptr::null_mut::<libc::c_char>();
@@ -436,10 +436,10 @@ unsafe extern "C" fn make_new_name_gunzip(
   if strcmp(
     extension,
     (b"tgz\x00" as *const u8 as *const libc::c_char).offset(1),
-  ) == 0i32
+  ) == 0
   {
     *extension.offset(-1i32 as isize) = '\u{0}' as i32 as libc::c_char
-  } else if strcmp(extension, b"tgz\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  } else if strcmp(extension, b"tgz\x00" as *const u8 as *const libc::c_char) == 0 {
     filename = crate::libbb::xfuncs_printf::xstrdup(filename);
     extension = strrchr(filename, '.' as i32);
     *extension.offset(2) = 'a' as i32 as libc::c_char;

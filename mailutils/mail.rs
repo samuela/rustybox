@@ -122,15 +122,15 @@ unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
     bb_simple_error_msg_and_die(b"timed out\x00" as *const u8 as *const libc::c_char);
   }
   // SIGCHLD. reap zombies
-  if safe_waitpid((*ptr_to_globals).helper_pid, &mut signo, 1i32) > 0i32 {
-    if ((signo & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+  if safe_waitpid((*ptr_to_globals).helper_pid, &mut signo, 1i32) > 0 {
+    if ((signo & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
       bb_error_msg_and_die(
         b"helper killed by signal %u\x00" as *const u8 as *const libc::c_char,
         signo & 0x7fi32,
       );
     }
-    if signo & 0x7fi32 == 0i32 {
-      (*ptr_to_globals).helper_pid = 0i32;
+    if signo & 0x7fi32 == 0 {
+      (*ptr_to_globals).helper_pid = 0;
       if (signo & 0xff00i32) >> 8i32 != 0 {
         bb_error_msg_and_die(
           b"helper exited (%u)\x00" as *const u8 as *const libc::c_char,
@@ -150,12 +150,12 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   xpipe(pipes.as_mut_ptr().offset(2));
   // NB: handler must be installed before vfork
   bb_signals(
-    0i32 + (1i32 << 17i32) + (1i32 << 14i32),
+    0 + (1i32 << 17i32) + (1i32 << 14i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   ); // for parent:0, for child:2
   (*ptr_to_globals).helper_pid = {
     let mut bb__xvfork_pid: pid_t = vfork(); // 1 or 3 - closing one write end
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       // 2 or 0 - closing one read end
     } // 0 or 2 - using other read end
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   i = ((*ptr_to_globals).helper_pid == 0) as libc::c_int * 2i32;
   close(pipes[(i + 1i32) as usize]);
   close(pipes[(2i32 - i) as usize]);
-  xmove_fd(pipes[i as usize], 0i32);
+  xmove_fd(pipes[i as usize], 0);
   xmove_fd(pipes[(3i32 - i) as usize], 1i32);
   // End result:
   // parent stdout [3] -> child stdin [2]
@@ -172,7 +172,7 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   if (*ptr_to_globals).helper_pid == 0 {
     // child
     // if parent dies, get SIGTERM
-    prctl(1i32, 15i32, 0i32, 0i32, 0i32);
+    prctl(1i32, 15i32, 0, 0, 0);
     // try to execute connection helper
     // NB: SIGCHLD & SIGALRM revert to SIG_DFL on exec
     BB_EXECVP_or_die(argv as *mut *mut libc::c_char);
@@ -298,7 +298,7 @@ pub unsafe extern "C" fn printbuf_base64(mut text: *const libc::c_char, mut len:
 }
 #[no_mangle]
 pub unsafe extern "C" fn printfile_base64(mut fname: *const libc::c_char) {
-  encode_n_base64(fname, 0 as *const libc::c_char, 0i32 as size_t);
+  encode_n_base64(fname, 0 as *const libc::c_char, 0 as size_t);
 }
 /*
  * get username and password from a file descriptor
@@ -307,10 +307,10 @@ pub unsafe extern "C" fn printfile_base64(mut fname: *const libc::c_char) {
 pub unsafe extern "C" fn get_cred_or_die(mut fd: libc::c_int) {
   if isatty(fd) != 0 {
     (*ptr_to_globals).user =
-      bb_ask_noecho(fd, 0i32, b"User: \x00" as *const u8 as *const libc::c_char);
+      bb_ask_noecho(fd, 0, b"User: \x00" as *const u8 as *const libc::c_char);
     (*ptr_to_globals).pass = bb_ask_noecho(
       fd,
-      0i32,
+      0,
       b"Password: \x00" as *const u8 as *const libc::c_char,
     )
   } else {

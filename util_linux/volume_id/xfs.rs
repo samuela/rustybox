@@ -164,7 +164,7 @@ pub struct xfs_super_block {
 pub unsafe extern "C" fn volume_id_probe_xfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut xs: *mut xfs_super_block = std::ptr::null_mut();
-  xs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut xfs_super_block;
+  xs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut xfs_super_block;
   if xs.is_null() {
     return -1i32;
   }
@@ -172,7 +172,7 @@ pub unsafe extern "C" fn volume_id_probe_xfs(mut id: *mut volume_id) -> libc::c_
     (*xs).magic.as_mut_ptr() as *const libc::c_void,
     b"XFSB\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     4i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -181,5 +181,5 @@ pub unsafe extern "C" fn volume_id_probe_xfs(mut id: *mut volume_id) -> libc::c_
   volume_id_set_uuid(id, (*xs).uuid.as_mut_ptr(), UUID_DCE);
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"xfs\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

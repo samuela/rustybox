@@ -69,7 +69,7 @@ unsafe extern "C" fn string_checker_helper(
     /* || strcasecmp(p1, p2) == 0 - 1st strcasestr should catch this too */
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn string_checker(
   mut p1: *const libc::c_char,
@@ -86,7 +86,7 @@ unsafe extern "C" fn string_checker(
   i = size;
   loop {
     i -= 1;
-    if !(i >= 0i32) {
+    if !(i >= 0) {
       break;
     }
     let fresh0 = p;
@@ -136,8 +136,8 @@ unsafe extern "C" fn obscure_msg(
     return b"similar to hostname\x00" as *const u8 as *const libc::c_char;
   }
   /* Should / Must contain a mix of: */
-  mixed = 0i32 as libc::c_uint;
-  i = 0i32 as libc::c_uint;
+  mixed = 0 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < length {
     if (*new_p.offset(i as isize) as libc::c_int - 'a' as i32) as libc::c_uchar as libc::c_int
       <= 'z' as i32 - 'a' as i32
@@ -160,7 +160,7 @@ unsafe extern "C" fn obscure_msg(
     } /* special characters */
     /* 0-9 */
     /* Count i'th char */
-    c = 0i32 as libc::c_uint;
+    c = 0 as libc::c_uint;
     p = new_p;
     loop {
       p = strchr(p, *new_p.offset(i as isize) as libc::c_int);
@@ -668,6 +668,6 @@ pub unsafe extern "C" fn obscure(
     );
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 /* ENABLE_UNIT_TEST */

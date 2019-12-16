@@ -331,7 +331,7 @@ unsafe extern "C" fn ioctl_alt_func(
   mut string: *const libc::c_char,
 ) -> libc::c_int {
   if ioctl(fd as libc::c_int, cmd as libc::c_ulong, args) == 0 {
-    return 0i32;
+    return 0;
   }
   *args.offset(0) = alt as libc::c_uchar;
   return bb_ioctl_or_warn(
@@ -368,7 +368,7 @@ unsafe extern "C" fn print_value_on_off(mut str: *const libc::c_char, mut argp: 
     str,
     argp,
   );
-  on_off((argp != 0i32 as libc::c_ulong) as libc::c_int);
+  on_off((argp != 0 as libc::c_ulong) as libc::c_int);
 }
 unsafe extern "C" fn print_ascii(mut p: *const libc::c_char, mut length: libc::c_int) {
   /* every 16bit word is big-endian (i.e. inverted) */
@@ -410,8 +410,8 @@ unsafe extern "C" fn mode_loop(
   mut have_mode: *mut u8,
 ) -> u8 {
   let mut ii: u16 = 0;
-  let mut err_dma: u8 = 0i32 as u8;
-  ii = 0i32 as u16;
+  let mut err_dma: u8 = 0 as u8;
+  ii = 0 as u16;
   while ii as libc::c_int <= 7i32 {
     if mode_sel as libc::c_int & 0x1i32 != 0 {
       printf(
@@ -519,7 +519,7 @@ static mut minor_str: [libc::c_char; 1016] = [
 ];
 /* 0x0023-0xfffe */
 static mut actual_ver: [libc::c_char; 36] = [
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   1i32 as libc::c_char,
   1i32 as libc::c_char,
   1i32 as libc::c_char,
@@ -550,11 +550,11 @@ static mut actual_ver: [libc::c_char; 36] = [
   6i32 as libc::c_char,
   7i32 as libc::c_char,
   7i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
   7i32 as libc::c_char,
   6i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
 ];
 static mut cmd_feat_str: [libc::c_char; 844] = [
   0, 78, 79, 80, 32, 99, 109, 100, 0, 82, 69, 65, 68, 32, 66, 85, 70, 70, 69, 82, 32, 99, 109, 100,
@@ -611,13 +611,13 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   let mut jj: u16 = 0;
   let mut kk: u16 = 0;
   let mut like_std: u16 = 1i32 as u16;
-  let mut std: u16 = 0i32 as u16;
+  let mut std: u16 = 0 as u16;
   let mut min_std: u16 = 0xffffi32 as u16;
   let mut dev: u16 = 0xffffi32 as u16;
   let mut eqpt: u16 = 0xffffi32 as u16;
-  let mut have_mode: u8 = 0i32 as u8;
-  let mut err_dma: u8 = 0i32 as u8;
-  let mut chksum: u8 = 0i32 as u8;
+  let mut have_mode: u8 = 0 as u8;
+  let mut err_dma: u8 = 0 as u8;
+  let mut chksum: u8 = 0 as u8;
   let mut ll: u32 = 0;
   let mut mm: u32 = 0;
   let mut nn: u32 = 0;
@@ -627,10 +627,10 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   /* check if we recognize the device type */
   bb_putchar('\n' as i32);
   if *val.offset(0) as libc::c_int & 0x8000i32 == 0 {
-    dev = 0i32 as u16;
+    dev = 0 as u16;
     printf(b"ATA device, with \x00" as *const u8 as *const libc::c_char);
   } else if *val.offset(0) as libc::c_int == 0x848ai32 {
-    dev = 0i32 as u16;
+    dev = 0 as u16;
     like_std = 4i32 as u16;
     printf(b"CompactFlash ATA device, with \x00" as *const u8 as *const libc::c_char);
   } else if *val.offset(0) as libc::c_int & 0x4000i32 == 0 {
@@ -741,10 +741,10 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       kk = if like_std as libc::c_int > 4i32 {
         (like_std as libc::c_int) - 4i32
       } else {
-        0i32
+        0
       } as u16;
       ii = 14i32 as u16;
-      while ii as libc::c_int > 0i32 && ii as libc::c_int > kk as libc::c_int {
+      while ii as libc::c_int > 0 && ii as libc::c_int > kk as libc::c_int {
         if jj as libc::c_int & 0x8000i32 != 0 {
           printf(
             b"%u \x00" as *const u8 as *const libc::c_char,
@@ -755,7 +755,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
             kk = if like_std as libc::c_int > 4i32 {
               (like_std as libc::c_int) - 4i32
             } else {
-              0i32
+              0
             } as u16
           }
           if min_std as libc::c_int > ii as libc::c_int {
@@ -792,7 +792,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       like_std = 5i32 as u16
     } else if (std as libc::c_int == 3i32 || std == 0 && (like_std as libc::c_int) < 4i32)
       && (*val.offset(83) as libc::c_int & 0xc000i32 == 0x4000i32
-        && (*val.offset(83) as libc::c_int & 0x3fffi32 > 0i32
+        && (*val.offset(83) as libc::c_int & 0x3fffi32 > 0
           || *val.offset(82) as libc::c_int & 0x77ffi32 > 0xfi32)
         || *val.offset(50) as libc::c_int & 0xc000i32 == 0x4000i32
         || *val.offset(53) as libc::c_int & 0x4i32 != 0 && *val.offset(88) as libc::c_int != 0
@@ -824,7 +824,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     }
   } else {
     /* TBD: do CDROM stuff more thoroughly.  For now... */
-    kk = 0i32 as u16;
+    kk = 0 as u16;
     if *val.offset(74) as libc::c_int == 9i32 {
       kk = 1i32 as u16;
       printf(
@@ -879,7 +879,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     }
   }
   if dev as libc::c_int == 0x1i32 {
-    if *val.offset(0) as libc::c_int & 0x60i32 == 0i32 {
+    if *val.offset(0) as libc::c_int & 0x60i32 == 0 {
       strng = b"3ms\x00" as *const u8 as *const libc::c_char
     } else if *val.offset(0) as libc::c_int & 0x60i32 == 0x20i32 {
       strng = b"<=10ms with INTRQ\x00" as *const u8 as *const libc::c_char
@@ -892,7 +892,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       b"\tDRQ response: %s\n\tPacket size: \x00" as *const u8 as *const libc::c_char,
       strng,
     );
-    if *val.offset(0) as libc::c_int & 0x3i32 == 0i32 {
+    if *val.offset(0) as libc::c_int & 0x3i32 == 0 {
       strng = b"12 bytes\x00" as *const u8 as *const libc::c_char
     } else if *val.offset(0) as libc::c_int & 0x3i32 == 0x1i32 {
       strng = b"16 bytes\x00" as *const u8 as *const libc::c_char
@@ -903,8 +903,8 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   } else {
     /* addressing...CHS? See section 6.2 of ATA specs 4 or 5 */
     ll = (*val.offset(61) as u32) << 16i32 | *val.offset(60) as libc::c_uint;
-    mm = 0i32 as u32;
-    bbbig = 0i32 as u64;
+    mm = 0 as u32;
+    bbbig = 0 as u64;
     if ll > 0xfbfc10i32 as libc::c_uint && *val.offset(1) == 0 {
       puts(b"\tCHS addressing not supported\x00" as *const u8 as *const libc::c_char);
     } else {
@@ -914,13 +914,13 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
                    *val.offset(1) as libc::c_int,
                    if jj as libc::c_int != 0 {
                        *val.offset(54) as libc::c_int
-                   } else { 0i32 }, *val.offset(3) as libc::c_int,
+                   } else { 0 }, *val.offset(3) as libc::c_int,
                    if jj as libc::c_int != 0 {
                        *val.offset(55) as libc::c_int
-                   } else { 0i32 }, *val.offset(6) as libc::c_int,
+                   } else { 0 }, *val.offset(6) as libc::c_int,
                    if jj as libc::c_int != 0 {
                        *val.offset(56) as libc::c_int
-                   } else { 0i32 });
+                   } else { 0 });
       if min_std as libc::c_int == 1i32
         && (*val.offset(4) as libc::c_int != 0 || *val.offset(5) as libc::c_int != 0)
       {
@@ -1052,7 +1052,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       (*val.offset(75) as libc::c_int & 0x1fi32) + 1i32,
     );
   }
-  if dev as libc::c_int == 0i32 {
+  if dev as libc::c_int == 0 {
     if like_std as libc::c_int == 1i32 {
       printf(
         b"\tCan%s perform double-word IO\n\x00" as *const u8 as *const libc::c_char,
@@ -1214,7 +1214,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
    * than n (e.g. 3, 2, 1 and 0).  Print all the modes. */
   if *val.offset(53) as libc::c_int & 0x2i32 != 0 && *val.offset(64) as libc::c_int & 0xffi32 != 0 {
     jj = ((*val.offset(64) as libc::c_int & 0xffi32) << 3i32 | 0x7i32) as u16;
-    ii = 0i32 as u16;
+    ii = 0 as u16;
     while ii as libc::c_int <= 8i32 {
       if jj as libc::c_int & 0x1i32 != 0 {
         printf(
@@ -1229,7 +1229,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   } else if ((min_std as libc::c_int) < 5i32 || eqpt as libc::c_int == 0x5i32)
     && *val.offset(51) as libc::c_int & 0xff00i32 != 0
   {
-    ii = 0i32 as u16;
+    ii = 0 as u16;
     while ii as libc::c_int <= *val.offset(51) as libc::c_int >> 8i32 {
       printf(
         b"pio%d \x00" as *const u8 as *const libc::c_char,
@@ -1263,7 +1263,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     puts(b"Commands/features:\n\tEnabled\tSupported:\x00" as *const u8 as *const libc::c_char);
     jj = *val.offset(82);
     kk = *val.offset(85);
-    ii = 0i32 as u16;
+    ii = 0 as u16;
     while (ii as libc::c_int) < 48i32 {
       let mut feat_str: *const libc::c_char = nth_string(cmd_feat_str.as_ptr(), ii as libc::c_int);
       if jj as libc::c_int & 0x8000i32 != 0 && *feat_str as libc::c_int != '\u{0}' as i32 {
@@ -1314,7 +1314,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
     }
     jj = *val.offset(128);
     if jj != 0 {
-      ii = 0i32 as u16;
+      ii = 0 as u16;
       while (ii as libc::c_int) < 6i32 {
         printf(
           b"\t%s\t%s\n\x00" as *const u8 as *const libc::c_char,
@@ -1464,7 +1464,7 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
     (*id).fw_rev.as_ptr(),
     (*id).serial_no.as_ptr(),
   );
-  i = 0i32;
+  i = 0;
   while i <= 15i32 {
     if (*id).config as libc::c_int & 1i32 << i != 0 {
       printf(
@@ -1482,7 +1482,7 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
            (*id).buf_type as libc::c_int,
            nth_string(BuffType.as_ptr(),
                       if (*id).buf_type as libc::c_int > 3i32 {
-                          0i32
+                          0
                       } else { (*id).buf_type as libc::c_int }),
            (*id).buf_size as libc::c_int / 2i32,
            (*id).max_multsect as libc::c_int);
@@ -1518,7 +1518,7 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
       ((((*id).cur_capacity1 as libc::c_int) << 16i32) as libc::c_ulong)
         | (*id).cur_capacity0 as libc::c_ulong
     },
-    if (*id).capability as libc::c_int & 2i32 == 0i32 {
+    if (*id).capability as libc::c_int & 2i32 == 0 {
       b"no\x00" as *const u8 as *const libc::c_char
     } else {
       b"yes\x00" as *const u8 as *const libc::c_char
@@ -1705,10 +1705,10 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
         b"unknown\x00" as *const u8 as *const libc::c_char
       },
     );
-    if (*id).major_rev_num as libc::c_int != 0i32 && (*id).major_rev_num as libc::c_int != 0xffffi32
+    if (*id).major_rev_num as libc::c_int != 0 && (*id).major_rev_num as libc::c_int != 0xffffi32
     {
       /* NOVAL_1 */
-      i = 0i32;
+      i = 0;
       while i <= 15i32 {
         if (*id).major_rev_num as libc::c_int & 1i32 << i != 0 {
           printf(b" ATA/ATAPI-%u\x00" as *const u8 as *const libc::c_char, i);
@@ -1726,10 +1726,10 @@ unsafe extern "C" fn flush_buffer_cache()
   fsync(fd as libc::c_int); /* flush buffers */
   bb_ioctl_or_warn(
     fd as libc::c_int,
-    0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-      | (97i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+    0u32 << 0 + 8i32 + 8i32 + 14i32
+      | (0x12i32 << 0 + 8i32) as libc::c_uint
+      | (97i32 << 0) as libc::c_uint
+      | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
     0 as *mut libc::c_void,
     b"BLKFLSBUF\x00" as *const u8 as *const libc::c_char,
   ); /* do it again, big time */
@@ -1749,7 +1749,7 @@ unsafe extern "C" fn flush_buffer_cache()
 unsafe extern "C" fn seek_to_zero()
 /*int fd*/
 {
-  xlseek(fd as libc::c_int, 0i32 as off_t, 0i32);
+  xlseek(fd as libc::c_int, 0 as off_t, 0);
 }
 unsafe extern "C" fn read_big_block(mut buf: *mut libc::c_char) {
   let mut i: libc::c_int = 0;
@@ -1759,7 +1759,7 @@ unsafe extern "C" fn read_big_block(mut buf: *mut libc::c_char) {
     (1i32 * 1024i32 * 1024i32) as size_t,
   );
   /* access all sectors of buf to ensure the read fully completed */
-  i = 0i32;
+  i = 0;
   while i < 1i32 * 1024i32 * 1024i32 {
     let ref mut fresh0 = *buf.offset(i as isize);
     *fresh0 = (*fresh0 as libc::c_int & 1i32) as libc::c_char;
@@ -1769,13 +1769,13 @@ unsafe extern "C" fn read_big_block(mut buf: *mut libc::c_char) {
 unsafe extern "C" fn dev_size_mb() -> libc::c_uint
 /*int fd*/ {
   let mut u: C2RustUnnamed_1 = C2RustUnnamed_1 { blksize64: 0 };
-  if 0i32
+  if 0
     == ioctl(
       fd as libc::c_int,
-      (2u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+      (2u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (114i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32,
       &mut u.blksize64 as *mut libc::c_ulonglong,
     )
   {
@@ -1786,10 +1786,10 @@ unsafe extern "C" fn dev_size_mb() -> libc::c_uint
   } else {
     bb_xioctl(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (96i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (96i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut u.blksize32 as *mut libc::c_uint as *mut libc::c_void,
       b"BLKGETSIZE\x00" as *const u8 as *const libc::c_char,
     ); // sectors
@@ -1857,7 +1857,7 @@ unsafe extern "C" fn do_time(mut cache: libc::c_int)
   }
   fflush_all();
   /* Now do the timing */
-  iterations = 0i32 as libc::c_uint;
+  iterations = 0 as libc::c_uint;
   /* Max time to run (small for cache, avoids getting
    * huge total_MB which can overlow unsigned type) */
   elapsed2 = 510000i32 as libc::c_uint; /* cache */
@@ -1923,7 +1923,7 @@ unsafe extern "C" fn bus_state_value(mut value: libc::c_uint) {
 }
 unsafe extern "C" fn interpret_standby(mut standby: u8) {
   printf(b" (\x00" as *const u8 as *const libc::c_char);
-  if standby as libc::c_int == 0i32 {
+  if standby as libc::c_int == 0 {
     printf(b"off\x00" as *const u8 as *const libc::c_char);
   } else if standby as libc::c_int <= 240i32
     || standby as libc::c_int == 252i32
@@ -2029,7 +2029,7 @@ static mut xfermode_name: [[libc::c_char; 5]; 32] = [
 unsafe extern "C" fn translate_xfermode(mut name: *const libc::c_char) -> libc::c_int {
   let mut val: libc::c_int = 0;
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[u8; 32]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<u8>() as libc::c_ulong) as libc::c_uint
@@ -2055,7 +2055,7 @@ unsafe extern "C" fn translate_xfermode(mut name: *const libc::c_char) -> libc::
 }
 unsafe extern "C" fn interpret_xfermode(mut xfermode: libc::c_uint) {
   printf(b" (\x00" as *const u8 as *const libc::c_char);
-  if xfermode == 0i32 as libc::c_uint {
+  if xfermode == 0 as libc::c_uint {
     printf(b"default PIO mode\x00" as *const u8 as *const libc::c_char);
   } else if xfermode == 1i32 as libc::c_uint {
     printf(b"default PIO mode, disable IORDY\x00" as *const u8 as *const libc::c_char);
@@ -2106,9 +2106,9 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   except for args[2] */
   let mut args: [libc::c_uchar; 4] = [
     0xefi32 as libc::c_uchar,
-    0i32 as libc::c_uchar,
-    0i32 as libc::c_uchar,
-    0i32 as libc::c_uchar,
+    0 as libc::c_uchar,
+    0 as libc::c_uchar,
+    0 as libc::c_uchar,
   ];
   let mut fmt: *const libc::c_char = b" %s\t= %2ld\x00" as *const u8 as *const libc::c_char;
   /*fd = xopen_nonblocking(devname);*/
@@ -2122,10 +2122,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
     );
     bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (98i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (98i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).Xreadahead as *mut libc::c_int
         as *mut libc::c_void,
       b"BLKRASET\x00" as *const u8 as *const libc::c_char,
@@ -2161,7 +2161,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       b"HDIO_SCAN_HWIF\x00" as *const u8 as *const libc::c_char,
     );
     args[0] = 0xefi32 as libc::c_uchar;
-    args[1] = 0i32 as libc::c_uchar
+    args[1] = 0 as libc::c_uchar
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).set_piomode != 0 {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).noisy_piomode != 0 {
@@ -2228,10 +2228,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
     );
     bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (93i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (93i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).readonly as *mut libc::c_ulong
         as *mut libc::c_void,
       b"BLKROSET\x00" as *const u8 as *const libc::c_char,
@@ -2314,7 +2314,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
     } else {
       0xdfi32
     } as libc::c_uchar;
-    args[2] = 0i32 as libc::c_uchar;
+    args[2] = 0 as libc::c_uchar;
     print_flag_on_off(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_doorlock as libc::c_int,
       b"drive doorlock\x00" as *const u8 as *const libc::c_char,
@@ -2379,7 +2379,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       &mut args as *mut [libc::c_uchar; 4] as *mut libc::c_void,
       b"HDIO_DRIVE_CMD\x00" as *const u8 as *const libc::c_char,
     );
-    args[1] = 0i32 as libc::c_uchar
+    args[1] = 0 as libc::c_uchar
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).set_xfermode != 0 {
     args[1] =
@@ -2399,7 +2399,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       &mut args as *mut [libc::c_uchar; 4] as *mut libc::c_void,
       b"HDIO_DRIVE_CMD\x00" as *const u8 as *const libc::c_char,
     );
-    args[1] = 0i32 as libc::c_uchar
+    args[1] = 0 as libc::c_uchar
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_lookahead as libc::c_int == 2i32 {
     args[2] = if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lookahead != 0 {
@@ -2444,7 +2444,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       &mut args as *mut [libc::c_uchar; 4] as *mut libc::c_void,
       b"HDIO_DRIVE_CMD\x00" as *const u8 as *const libc::c_char,
     );
-    args[1] = 0i32 as libc::c_uchar
+    args[1] = 0 as libc::c_uchar
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_wcache as libc::c_int == 2i32 {
     /* DO_FLUSHCACHE */
@@ -2469,7 +2469,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   /* DO_FLUSHCACHE */
   /* In code below, we do not preserve args[0], but the rest
   is preserved, including args[2] */
-  args[2] = 0i32 as libc::c_uchar;
+  args[2] = 0 as libc::c_uchar;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).set_standbynow != 0 {
     puts(b" issuing standby command\x00" as *const u8 as *const libc::c_char);
     args[0] = 0xe0i32 as libc::c_uchar;
@@ -2516,7 +2516,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       &mut args as *mut [libc::c_uchar; 4] as *mut libc::c_void,
       b"HDIO_DRIVE_CMD\x00" as *const u8 as *const libc::c_char,
     );
-    args[1] = 0i32 as libc::c_uchar
+    args[1] = 0 as libc::c_uchar
   }
   /* HDIO_DRIVE_CMD */
   /* HDIO_DRIVE_CMD */
@@ -2656,10 +2656,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_readonly != 0 {
     if bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (94i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (94i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut parm as *mut libc::c_long as *mut libc::c_void,
       b"BLKROGET\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -2673,10 +2673,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).getset_readahead != 0 {
     if bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (99i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (99i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut parm as *mut libc::c_long as *mut libc::c_void,
       b"BLKRAGET\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -2690,10 +2690,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).get_geom != 0 {
     if bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (96i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (96i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut parm as *mut libc::c_long as *mut libc::c_void,
       b"BLKGETSIZE\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -2733,7 +2733,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
       b"HDIO_DRIVE_CMD\x00" as *const u8 as *const libc::c_char,
     ) != 0
     {
-      if *bb_errno != 5i32 || args[0] as libc::c_int != 0i32 || args[1] as libc::c_int != 0i32 {
+      if *bb_errno != 5i32 || args[0] as libc::c_int != 0 || args[1] as libc::c_int != 0 {
         state = b"unknown\x00" as *const u8 as *const libc::c_char
       } else {
         state = b"sleeping\x00" as *const u8 as *const libc::c_char
@@ -2745,7 +2745,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
         b"standby\x00" as *const u8 as *const libc::c_char
       }
     }
-    args[2] = 0i32 as libc::c_uchar;
+    args[2] = 0 as libc::c_uchar;
     args[1] = args[2];
     printf(
       b" drive state is:  %s\n\x00" as *const u8 as *const libc::c_char,
@@ -2762,7 +2762,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   }
   /* FEATURE_HDPARM_HDIO_DRIVE_RESET */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).perform_tristate != 0 {
-    args[0] = 0i32 as libc::c_uchar;
+    args[0] = 0 as libc::c_uchar;
     args[1] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tristate as libc::c_uchar;
     bb_ioctl_or_warn(
       fd as libc::c_int,
@@ -2879,7 +2879,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
     let mut args1: [libc::c_uchar; 516] = [0; 516]; /* time device */
     memset(
       args1.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[libc::c_uchar; 516]>() as libc::c_ulong,
     );
     args1[0] = 0xeci32 as libc::c_uchar;
@@ -2928,10 +2928,10 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).reread_partn != 0 {
     bb_ioctl_or_warn(
       fd as libc::c_int,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (95i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (95i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       0 as *mut libc::c_void,
       b"BLKRRPART\x00" as *const u8 as *const libc::c_char,
     );
@@ -2966,15 +2966,15 @@ unsafe extern "C" fn identify_from_stdin() -> ! {
   let mut b: *mut libc::c_uchar = buf.as_mut_ptr();
   let mut i: libc::c_int = 0;
   xread(
-    0i32,
+    0,
     buf.as_mut_ptr() as *mut libc::c_void,
     1280i32 as size_t,
   );
   // Convert the newline-separated hex data into an identify block.
-  i = 0i32;
+  i = 0;
   while i < 256i32 {
     let mut j: libc::c_int = 0;
-    j = 0i32;
+    j = 0;
     while j < 4i32 {
       let fresh1 = b;
       b = b.offset(1);
@@ -3002,13 +3002,13 @@ unsafe extern "C" fn parse_opts_0_max(
   mut value: *mut libc::c_ulong,
   mut max: libc::c_int,
 ) -> libc::c_int {
-  return parse_opts(value, 0i32, max);
+  return parse_opts(value, 0, max);
 }
 unsafe extern "C" fn parse_opts_0_1(mut value: *mut libc::c_ulong) -> libc::c_int {
-  return parse_opts(value, 0i32, 1i32);
+  return parse_opts(value, 0, 1i32);
 }
 unsafe extern "C" fn parse_opts_0_INTMAX(mut value: *mut libc::c_ulong) -> libc::c_int {
-  return parse_opts(value, 0i32, 2147483647i32);
+  return parse_opts(value, 0, 2147483647i32);
 }
 unsafe extern "C" fn parse_xfermode(
   mut flag: libc::c_int,
@@ -3038,10 +3038,10 @@ pub unsafe extern "C" fn hdparm_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut c: libc::c_int = 0;
-  let mut flagcount: libc::c_int = 0i32;
+  let mut flagcount: libc::c_int = 0;
   loop {
     c = getopt(argc, argv, hdparm_options.as_ptr());
-    if !(c >= 0i32) {
+    if !(c >= 0) {
       break;
     }
     flagcount += 1;
@@ -3239,5 +3239,5 @@ pub unsafe extern "C" fn hdparm_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

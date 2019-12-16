@@ -36,7 +36,7 @@ pub unsafe extern "C" fn crc32_filltable(
       xmalloc((256i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong))
         as *mut u32
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 256i32 as libc::c_uint {
     c = if endian != 0 { (i) << 24i32 } else { i };
     j = 8i32 as libc::c_uint;
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn crc32_filltable(
 /* Common uses: */
 #[no_mangle]
 pub unsafe extern "C" fn crc32_new_table_le() -> *mut u32 {
-  return crc32_filltable(0 as *mut u32, 0i32);
+  return crc32_filltable(0 as *mut u32, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn global_crc32_new_table_le() -> *mut u32 {

@@ -101,7 +101,7 @@ pub unsafe extern "C" fn watchdog_main(
     {
       let mut init = suffix_mult {
         suffix: [0, 0, 0, 0],
-        mult: 0i32 as libc::c_uint,
+        mult: 0 as libc::c_uint,
       };
       init
     },
@@ -123,7 +123,7 @@ pub unsafe extern "C" fn watchdog_main(
    * can't rely on parent exiting before us (let alone *cleanly* releasing
    * the watchdog fd -- something else that may not even be allowed).
    */
-  if opts & (1i32 << 0i32) as libc::c_uint == 0 {
+  if opts & (1i32 << 0) as libc::c_uint == 0 {
     bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
   /* maybe bb_logenv_override(); here for LOGGING=syslog to work? */
@@ -143,20 +143,20 @@ pub unsafe extern "C" fn watchdog_main(
   htimer_duration = htimer_duration.wrapping_div(1000i32 as libc::c_uint);
   bb_ioctl_or_warn(
     3i32,
-    ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (('W' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (4i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    ((2u32 << 0 + 8i32 + 8i32 + 14i32
+      | (('W' as i32) << 0 + 8i32) as libc::c_uint
+      | (4i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     &enable as *const libc::c_int as *mut libc::c_void,
     b"WDIOC_SETOPTIONS\x00" as *const u8 as *const libc::c_char,
   );
   bb_ioctl_or_warn(
     3i32,
-    (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
-      | (('W' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (6i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    (((2u32 | 1u32) << 0 + 8i32 + 8i32 + 14i32
+      | (('W' as i32) << 0 + 8i32) as libc::c_uint
+      | (6i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     &mut htimer_duration as *mut libc::c_uint as *mut libc::c_void,
     b"WDIOC_SETTIMEOUT\x00" as *const u8 as *const libc::c_char,

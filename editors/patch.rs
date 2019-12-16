@@ -186,7 +186,7 @@ unsafe extern "C" fn do_line(mut data: *mut libc::c_void) {
         (if (*ptr_to_globals).state > 3i32 {
           1i32
         } else {
-          0i32
+          0
         }) as isize,
       ),
     );
@@ -247,7 +247,7 @@ unsafe extern "C" fn fail_hunk() {
     free((*ptr_to_globals).tempname as *mut libc::c_void);
   }
   (*ptr_to_globals).tempname = std::ptr::null_mut::<libc::c_char>();
-  (*ptr_to_globals).state = 0i32;
+  (*ptr_to_globals).state = 0;
 }
 // Given a hunk of a unified diff, make the appropriate change to the file.
 // This does not use the location information, but instead treats a hunk
@@ -260,13 +260,13 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
   let mut plist: *mut double_list = std::ptr::null_mut();
   let mut buf: *mut double_list = std::ptr::null_mut();
   let mut check: *mut double_list = std::ptr::null_mut();
-  let mut matcheof: libc::c_int = 0i32;
-  let mut reverse: libc::c_int = (option_mask32 & (1i32 << 0i32) as libc::c_uint) as libc::c_int;
-  let mut backwarn: libc::c_int = 0i32;
+  let mut matcheof: libc::c_int = 0;
+  let mut reverse: libc::c_int = (option_mask32 & (1i32 << 0) as libc::c_uint) as libc::c_int;
+  let mut backwarn: libc::c_int = 0;
   /* Do we try "dummy" revert to check whether
    * to silently skip this hunk? Used to implement -N.
    */
-  let mut dummy_revert: libc::c_int = 0i32;
+  let mut dummy_revert: libc::c_int = 0;
   // Break doubly linked list so we can use singly linked traversal function.
   (*(*(*ptr_to_globals).current_hunk).prev).next = std::ptr::null_mut();
   // Match EOF if there aren't as many ending context lines as beginning
@@ -275,7 +275,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
     if *(*plist).data.offset(0) as libc::c_int == ' ' as i32 {
       matcheof += 1
     } else {
-      matcheof = 0i32
+      matcheof = 0
     }
     plist = (*plist).next
   }
@@ -323,7 +323,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
             == (*::std::mem::transmute::<&[u8; 3], &[libc::c_char; 3]>(b"+-\x00"))[reverse as usize]
               as libc::c_int
         {
-          if !data.is_null() && strcmp(data, (*plist).data.offset(1)) == 0i32 {
+          if !data.is_null() && strcmp(data, (*plist).data.offset(1)) == 0 {
             if backwarn == 0 {
               backwarn = (*ptr_to_globals).linenum as libc::c_int;
               if option_mask32 & (1i32 << 4i32) as libc::c_uint != 0 {
@@ -369,7 +369,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
                 == (*::std::mem::transmute::<&[u8; 3], &[libc::c_char; 3]>(b"+-\x00"))
                   [reverse as usize] as libc::c_int
             {
-              if strcmp((*check).data, (*plist).data.offset(1)) == 0i32 && backwarn == 0 {
+              if strcmp((*check).data, (*plist).data.offset(1)) == 0 && backwarn == 0 {
                 backwarn = (*ptr_to_globals).linenum as libc::c_int;
                 if option_mask32 & (1i32 << 4i32) as libc::c_uint != 0 {
                   dummy_revert = 1i32;
@@ -439,7 +439,7 @@ pub unsafe extern "C" fn patch_main(
 ) -> libc::c_int {
   let mut opts: libc::c_int = 0; /* for compiler */
   let mut reverse: libc::c_int = 0; /* for compiler */
-  let mut state: libc::c_int = 0i32;
+  let mut state: libc::c_int = 0;
   let mut oldname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -471,18 +471,18 @@ pub unsafe extern "C" fn patch_main(
   /*ignored*/
   //bb_error_msg_and_die("opts:%x", opts);
   argv = argv.offset(optind as isize); // can be negative!
-  reverse = opts & 1i32 << 0i32;
+  reverse = opts & 1i32 << 0;
   (*ptr_to_globals).prefix = if opts & 1i32 << 2i32 != 0 {
     xatoi(opt_p)
   } else {
-    0i32
+    0
   } as libc::c_long;
   (*ptr_to_globals).fileout = -1i32;
   (*ptr_to_globals).filein = (*ptr_to_globals).fileout;
   if opts & 1i32 << 3i32 != 0 {
-    xmove_fd(xopen_stdin(opt_i), 0i32);
+    xmove_fd(xopen_stdin(opt_i), 0);
   } else if !(*argv.offset(0)).is_null() && !(*argv.offset(1)).is_null() {
-    xmove_fd(xopen_stdin(*argv.offset(1)), 0i32);
+    xmove_fd(xopen_stdin(*argv.offset(1)), 0);
   }
   loop
   // Loop through the lines in the patch
@@ -523,7 +523,7 @@ pub unsafe extern "C" fn patch_main(
         }
       } else {
         fail_hunk();
-        state = 0i32
+        state = 0
       }
     } else {
       // Open a new file?
@@ -566,7 +566,7 @@ pub unsafe extern "C" fn patch_main(
           if i > 1900i32 && i <= 1970i32 {
             *name = xstrdup(b"/dev/null\x00" as *const u8 as *const libc::c_char)
           } else {
-            *s = 0i32 as libc::c_char;
+            *s = 0 as libc::c_char;
             *name = xstrdup(patchline.offset(4))
           }
         }
@@ -596,7 +596,7 @@ pub unsafe extern "C" fn patch_main(
             patchline,
           );
         }
-        (*ptr_to_globals).context = 0i32;
+        (*ptr_to_globals).context = 0;
         state = 2i32;
         // If the --- line is missing or malformed, either oldname
         // or (for -R) newname could be NULL -- but not both.  Like
@@ -611,21 +611,21 @@ pub unsafe extern "C" fn patch_main(
         if (*ptr_to_globals).filein == -1i32 {
           let mut oldsum: libc::c_int = 0;
           let mut newsum: libc::c_int = 0;
-          let mut empty: libc::c_int = 0i32;
+          let mut empty: libc::c_int = 0;
           let mut name_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           oldsum = ((*ptr_to_globals).oldline + oldlen) as libc::c_int;
           newsum = ((*ptr_to_globals).newline + newlen) as libc::c_int;
           name_0 = if reverse != 0 { oldname } else { newname };
           // We're deleting oldname if new file is /dev/null (before -p)
           // or if new hunk is empty (zero context) after patching
-          if strcmp(name_0, b"/dev/null\x00" as *const u8 as *const libc::c_char) == 0i32
+          if strcmp(name_0, b"/dev/null\x00" as *const u8 as *const libc::c_char) == 0
             || (if reverse != 0 { oldsum } else { newsum }) == 0
           {
             name_0 = if reverse != 0 { newname } else { oldname };
             empty = 1i32
           }
           // Handle -p path truncation.
-          i_0 = 0i32;
+          i_0 = 0;
           s_0 = name_0;
           while *s_0 != 0 {
             if option_mask32 & (1i32 << 2i32) as libc::c_uint != 0
@@ -650,7 +650,7 @@ pub unsafe extern "C" fn patch_main(
           }
           if empty != 0 {
             // File is empty after the patches have been applied
-            state = 0i32;
+            state = 0;
             if option_mask32 & (1i32 << 5i32) as libc::c_uint != 0 {
               // If we've got a file to open, do so.
               // If flag -E or --remove-empty-files is set
@@ -678,7 +678,7 @@ pub unsafe extern "C" fn patch_main(
             if strcmp(
               oldname,
               b"/dev/null\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
               || oldsum == 0
             {
               printf(
@@ -699,14 +699,14 @@ pub unsafe extern "C" fn patch_main(
                 (*ptr_to_globals).filein = xopen(name_0, 0o100i32 | 0o200i32 | 0o2i32)
               } else {
                 (*ptr_to_globals).filein =
-                  xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32)
+                  xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0)
               }
             } else {
               printf(
                 b"patching file %s\n\x00" as *const u8 as *const libc::c_char,
                 name_0,
               );
-              (*ptr_to_globals).filein = xopen(name_0, 0i32)
+              (*ptr_to_globals).filein = xopen(name_0, 0)
             }
             if opts & (1i32 << 8i32) * 1i32 == 0 {
               (*ptr_to_globals).tempname =
@@ -722,7 +722,7 @@ pub unsafe extern "C" fn patch_main(
                 xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o1i32)
             }
             (*ptr_to_globals).linenum = 0;
-            (*ptr_to_globals).hunknum = 0i32
+            (*ptr_to_globals).hunknum = 0
           }
         }
         (*ptr_to_globals).hunknum += 1;

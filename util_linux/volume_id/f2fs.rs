@@ -175,9 +175,9 @@ pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c
   (*id).type_0 = b"f2fs\x00" as *const u8 as *const libc::c_char;
   // For version 1.0 we don't know sb structure and can't set label/uuid
   if (*sb).major_ver as libc::c_int == 1i32 as u16 as libc::c_int
-    && (*sb).minor_ver as libc::c_int == 0i32 as u16 as libc::c_int
+    && (*sb).minor_ver as libc::c_int == 0 as u16 as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   volume_id_set_label_unicode16(
     id,
@@ -186,5 +186,5 @@ pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c
     if 1024i32 < 64i32 { 1024i32 } else { 64i32 } as size_t,
   );
   volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
-  return 0i32;
+  return 0;
 }

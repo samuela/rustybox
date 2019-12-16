@@ -270,7 +270,7 @@ unsafe fn parse_config_file() {
           /* Missing name? */
           errmsg = b"section header\x00" as *const u8 as *const libc::c_char;
           break;
-        } else if strcasecmp(s, b"SUID\x00" as *const u8 as *const libc::c_char) == 0i32 {
+        } else if strcasecmp(s, b"SUID\x00" as *const u8 as *const libc::c_char) == 0 {
           section = 1i32 as smallint
         } else {
           /* Right now we only have one section so just check it.
@@ -321,7 +321,7 @@ unsafe fn parse_config_file() {
           sct_head = sct;
           /* Get the specified mode. */
           e_0 = skip_whitespace(e_0.offset(1));
-          i = 0i32 as libc::c_uint;
+          i = 0 as libc::c_uint;
           while i < 3i32 as libc::c_uint {
             /* There are 4 chars for each of user/group/other.
              * "x-xx" instead of "x-" are to make
@@ -333,13 +333,13 @@ unsafe fn parse_config_file() {
               0o4000i32 as libc::c_ushort,
               (0o4000i32 | 0o100i32) as libc::c_ushort,
               0o100i32 as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
               0o2000i32 as libc::c_ushort,
               (0o2000i32 | 0o100i32 >> 3i32) as libc::c_ushort,
               (0o100i32 >> 3i32) as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
               (0o100i32 >> 3i32 >> 3i32) as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
             ];
             let mut q: *const libc::c_char = strchrnul(
               mode_chars
@@ -378,7 +378,7 @@ unsafe fn parse_config_file() {
             break;
           } else {
             *e_0 = ':' as i32 as libc::c_char;
-            if !(get_uidgid(&mut (*sct).m_ugid, s) == 0i32) {
+            if !(get_uidgid(&mut (*sct).m_ugid, s) == 0) {
               continue;
             }
             errmsg = b"unknown user/group\x00" as *const u8 as *const libc::c_char;

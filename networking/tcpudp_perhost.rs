@@ -55,17 +55,17 @@ pub unsafe extern "C" fn ipsvd_perhost_add(
   let mut i: libc::c_uint = 0;
   let mut conn: libc::c_uint = 1i32 as libc::c_uint;
   let mut freepos: libc::c_int = -1i32;
-  i = 0i32 as libc::c_uint;
-  while (*cc.offset(i as isize)).pid >= 0i32 {
+  i = 0 as libc::c_uint;
+  while (*cc.offset(i as isize)).pid >= 0 {
     if (*cc.offset(i as isize)).ip.is_null() {
       freepos = i as libc::c_int
-    } else if strcmp((*cc.offset(i as isize)).ip, ip) == 0i32 {
+    } else if strcmp((*cc.offset(i as isize)).ip, ip) == 0 {
       conn = conn.wrapping_add(1)
     }
     i = i.wrapping_add(1)
   }
   if freepos == -1i32 {
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   if conn <= maxconn {
     let ref mut fresh0 = (*cc.offset(freepos as isize)).ip;
@@ -78,13 +78,13 @@ pub unsafe extern "C" fn ipsvd_perhost_add(
 #[no_mangle]
 pub unsafe extern "C" fn ipsvd_perhost_remove(mut cc: *mut hcc, mut pid: libc::c_int) {
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
-  while (*cc.offset(i as isize)).pid >= 0i32 {
+  i = 0 as libc::c_uint;
+  while (*cc.offset(i as isize)).pid >= 0 {
     if (*cc.offset(i as isize)).pid == pid {
       free((*cc.offset(i as isize)).ip as *mut libc::c_void);
       let ref mut fresh1 = (*cc.offset(i as isize)).ip;
       *fresh1 = std::ptr::null_mut::<libc::c_char>();
-      (*cc.offset(i as isize)).pid = 0i32;
+      (*cc.offset(i as isize)).pid = 0;
       return;
     }
     i = i.wrapping_add(1)

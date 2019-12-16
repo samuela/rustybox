@@ -194,7 +194,7 @@ unsafe extern "C" fn toarith(mut v: *mut VALUE) -> bool {
     /* Currently does not worry about overflow or int/long differences. */
     i = strtoll((*v).u.s, &mut e, 10i32) as arith_t;
     if (*v).u.s == e || *e as libc::c_int != 0 {
-      return 0i32 != 0;
+      return 0 != 0;
     }
     free((*v).u.s as *mut libc::c_void);
     (*v).u.i = i;
@@ -209,9 +209,9 @@ unsafe extern "C" fn nextarg(mut str: *const libc::c_char) -> libc::c_int {
     || strcmp(
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
       str,
-    ) != 0i32
+    ) != 0
   {
-    return 0i32;
+    return 0;
   }
   return *str.offset(0) as libc::c_uchar as libc::c_int
     + *str.offset(1) as libc::c_uchar as libc::c_int;
@@ -232,7 +232,7 @@ unsafe extern "C" fn cmp_common(
     tostring(l);
     tostring(r);
     ll = strcmp((*l).u.s, (*r).u.s) as arith_t;
-    rr = 0i32 as arith_t
+    rr = 0 as arith_t
   }
   /* calculating ll - rr and checking the result is prone to overflows.
    * We'll do it differently: */
@@ -309,15 +309,15 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
   }
   memset(
     &mut re_buffer as *mut regex_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<regex_t>() as libc::c_ulong,
   );
   memset(
     re_regs.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[regmatch_t; 2]>() as libc::c_ulong,
   );
-  xregcomp(&mut re_buffer, (*pv).u.s, 0i32);
+  xregcomp(&mut re_buffer, (*pv).u.s, 0);
   /* expr uses an anchored pattern match, so check that there was a
    * match and that the match starts at offset 0. */
   if regexec(
@@ -325,18 +325,18 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
     (*sv).u.s,
     NMATCH as libc::c_int as size_t,
     re_regs.as_mut_ptr(),
-    0i32,
+    0,
   ) != REG_NOMATCH as libc::c_int
-    && re_regs[0].rm_so == 0i32
+    && re_regs[0].rm_so == 0
   {
     /* Were \(...\) used? */
-    if re_buffer.re_nsub > 0i32 as libc::c_ulong && re_regs[1].rm_so >= 0i32 {
+    if re_buffer.re_nsub > 0 as libc::c_ulong && re_regs[1].rm_so >= 0 {
       *(*sv).u.s.offset(re_regs[1].rm_eo as isize) = '\u{0}' as i32 as libc::c_char;
       v = str_value((*sv).u.s.offset(re_regs[1].rm_so as isize))
     } else {
       v = int_value(re_regs[0].rm_eo as arith_t)
     }
-  } else if re_buffer.re_nsub > 0i32 as libc::c_ulong {
+  } else if re_buffer.re_nsub > 0 as libc::c_ulong {
     v = str_value(b"\x00" as *const u8 as *const libc::c_char)
   } else {
     v = int_value(0i32 as arith_t)
@@ -390,9 +390,9 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
       )) + 1i32
     } else {
-      0i32
+      0
     };
-  if key == 0i32 {
+  if key == 0 {
     /* not a keyword */
     return eval7();
   } /* We have a valid token, so get the next argument.  */
@@ -431,7 +431,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
     tostring(r);
     v = int_value(strcspn((*l).u.s, (*r).u.s).wrapping_add(1i32 as libc::c_ulong) as arith_t);
     if (*v).u.i == strlen((*l).u.s) as arith_t + 1 {
-      (*v).u.i = 0i32 as arith_t
+      (*v).u.i = 0 as arith_t
     }
     freev(l);
     freev(r);

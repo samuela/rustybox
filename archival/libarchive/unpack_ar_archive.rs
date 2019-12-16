@@ -37,5 +37,5 @@ pub unsafe extern "C" fn unpack_ar_archive(mut ar_archive: *mut archive_handle_t
     bb_simple_error_msg_and_die(b"invalid ar magic\x00" as *const u8 as *const libc::c_char);
   }
   (*ar_archive).offset += 7i32 as libc::c_long;
-  while get_header_ar(ar_archive) as libc::c_int == 0i32 {}
+  while get_header_ar(ar_archive) as libc::c_int == 0 {}
 }

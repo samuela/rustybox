@@ -151,15 +151,15 @@ unsafe extern "C" fn new_peer(mut state: *mut isrv_state_t, mut fd: libc::c_int)
   let mut buf: *mut identd_buf_t =
     xzalloc(::std::mem::size_of::<identd_buf_t>() as libc::c_ulong) as *mut identd_buf_t; /* failure, unregister peer */
   peer = isrv_register_peer(state, buf as *mut libc::c_void);
-  if peer < 0i32 {
-    return 0i32;
+  if peer < 0 {
+    return 0;
   }
-  if isrv_register_fd(state, peer, fd) < 0i32 {
+  if isrv_register_fd(state, peer, fd) < 0 {
     return peer;
   }
   ndelay_on(fd);
   isrv_want_rd(state, fd);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn do_rd(mut fd: libc::c_int, mut paramp: *mut *mut libc::c_void) -> libc::c_int {
   let mut buf: *mut identd_buf_t = *paramp as *mut identd_buf_t;
@@ -174,9 +174,9 @@ unsafe extern "C" fn do_rd(mut fd: libc::c_int, mut paramp: *mut *mut libc::c_vo
       .wrapping_sub(1i32 as libc::c_ulong)
       .wrapping_sub((*buf).pos as libc::c_ulong),
   ) as libc::c_int;
-  if sz < 0i32 {
+  if sz < 0 {
     if !(*bb_errno != 11i32) {
-      return 0i32;
+      return 0;
     }
   /* "session is ok" */
   } else {
@@ -187,11 +187,11 @@ unsafe extern "C" fn do_rd(mut fd: libc::c_int, mut paramp: *mut *mut libc::c_vo
       *p = '\u{0}' as i32 as libc::c_char
     }
     if p.is_null() && sz != 0 {
-      return 0i32;
+      return 0;
     }
     /* Terminate session. If we are in server mode, then
      * fd is still in nonblocking mode - we never block here */
-    if fd == 0i32 {
+    if fd == 0 {
       fd += 1
     } /* inetd mode? then write to fd 1 */
     dprintf(
@@ -222,9 +222,9 @@ unsafe extern "C" fn inetd_mode() {
   {
     alarm(TIMEOUT as libc::c_int as libc::c_uint);
     if !(do_rd(
-      0i32,
+      0,
       &mut buf as *mut *mut identd_buf_t as *mut libc::c_void as *mut *mut libc::c_void,
-    ) == 0i32)
+    ) == 0)
     {
       break;
     }
@@ -270,14 +270,14 @@ pub unsafe extern "C" fn fakeidentd_main(
   }
   if opt & OPT_inetd as libc::c_int as libc::c_uint != 0 {
     inetd_mode();
-    return 0i32;
+    return 0;
   }
   /* Ignore closed connections when writing */
   signal(
     13i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
-  fd = 0i32;
+  fd = 0;
   if opt & OPT_inetdwait as libc::c_int as libc::c_uint == 0 {
     fd = create_and_bind_stream_or_die(bind_address, 113i32);
     xlisten(fd, 5i32);
@@ -292,8 +292,8 @@ pub unsafe extern "C" fn fakeidentd_main(
     if opt & OPT_inetdwait as libc::c_int as libc::c_uint != 0 {
       TIMEOUT as libc::c_int
     } else {
-      0i32
+      0
     },
   );
-  return 0i32;
+  return 0;
 }

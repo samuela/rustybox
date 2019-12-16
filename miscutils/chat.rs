@@ -172,19 +172,19 @@ pub unsafe extern "C" fn chat_main(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut record_fd: libc::c_int = -1i32;
-  let mut echo: bool = 0i32 != 0;
+  let mut echo: bool = 0 != 0;
   // collection of device replies which cause unconditional termination
   let mut aborts: *mut llist_t = std::ptr::null_mut();
   // inactivity period
   let mut timeout: libc::c_int = 45i32 * 1000i32;
   // maximum length of abort string
-  let mut max_abort_len: size_t = 0i32 as size_t;
+  let mut max_abort_len: size_t = 0 as size_t;
   // directive names
   // make x* functions fail with correct exitcode
   xfunc_error_retval = ERR_IO as libc::c_int as u8;
   // trap vanilla signals to prevent process from being killed suddenly
   bb_signals(
-    0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
+    0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   getopt32(argv, b"vVsSE\x00" as *const u8 as *const libc::c_char);
@@ -198,7 +198,7 @@ pub unsafe extern "C" fn chat_main(
         as *const libc::c_char,
       *argv,
     );
-    if key >= 0i32 {
+    if key >= 0 {
       let mut onoff: bool = false;
       // ordinary expect-send pair!
       argv = argv.offset(1);
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn chat_main(
       if arg.is_null() {
         bb_show_usage();
       }
-      onoff = 0i32 != strcmp(b"OFF\x00" as *const u8 as *const libc::c_char, arg);
+      onoff = 0 != strcmp(b"OFF\x00" as *const u8 as *const libc::c_char, arg);
       if DIR_HANGUP as libc::c_int == key {
         // cache directive value
         // OFF -> 0, anything else -> 1
@@ -231,11 +231,11 @@ pub unsafe extern "C" fn chat_main(
         let mut l: *mut llist_t = std::ptr::null_mut();
         // remove the string from abort conditions
         // N.B. gotta refresh maximum length too...
-        max_abort_len = 0i32 as size_t;
+        max_abort_len = 0 as size_t;
         l = aborts;
         while !l.is_null() {
           let mut len_0: size_t = strlen((*l).data);
-          if strcmp(arg, (*l).data) == 0i32 {
+          if strcmp(arg, (*l).data) == 0 {
             llist_unlink(&mut aborts, l);
           } else if len_0 > max_abort_len {
             max_abort_len = len_0
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn chat_main(
         // turn record on/off
         // N.B. record means dumping device input to a file
         // close previous record_fd
-        if record_fd > 0i32 {
+        if record_fd > 0 {
           close(record_fd);
         }
         // N.B. do we have to die here on open error?
@@ -280,14 +280,14 @@ pub unsafe extern "C" fn chat_main(
       // do expect
       //-----------------------
       let mut expect_len: libc::c_int = 0;
-      let mut buf_len: size_t = 0i32 as size_t;
+      let mut buf_len: size_t = 0 as size_t;
       let mut max_len: size_t = max_abort_len;
       let mut pfd: pollfd = pollfd {
         fd: 0,
         events: 0,
         revents: 0,
       };
-      let mut nofail: libc::c_int = 0i32;
+      let mut nofail: libc::c_int = 0;
       let fresh1 = argv;
       argv = argv.offset(1);
       let mut expect: *mut libc::c_char = *fresh1;
@@ -314,11 +314,11 @@ pub unsafe extern "C" fn chat_main(
             bb_got_signal = ERR_MEM as libc::c_int as smallint
           } else {
             // get reply
-            pfd.fd = 0i32; /* while (have data) */
+            pfd.fd = 0; /* while (have data) */
             pfd.events = 0x1i32 as libc::c_short;
             's_332: loop {
               if !(bb_got_signal == 0
-                && poll(&mut pfd, 1i32 as nfds_t, timeout) > 0i32
+                && poll(&mut pfd, 1i32 as nfds_t, timeout) > 0
                 && pfd.revents as libc::c_int & 0x1i32 != 0)
               {
                 current_block = 11869735117417356968;
@@ -328,13 +328,13 @@ pub unsafe extern "C" fn chat_main(
               let mut delta: ssize_t = 0;
               // read next char from device
               if safe_read(
-                0i32,
+                0,
                 bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *mut libc::c_void,
                 1i32 as size_t,
               ) > 0
               {
                 // dump device input if RECORD fname
-                if record_fd > 0i32 {
+                if record_fd > 0 {
                   full_write(
                     record_fd,
                     bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *const libc::c_void,
@@ -452,7 +452,7 @@ pub unsafe extern "C" fn chat_main(
       if (*argv).is_null() {
         continue; // inhibit terminating command with \r
       } // loaded command
-      let mut nocr: libc::c_int = 0i32;
+      let mut nocr: libc::c_int = 0;
       let mut loaded: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut len_2: size_t = 0;
       let fresh4 = argv;
@@ -476,7 +476,7 @@ pub unsafe extern "C" fn chat_main(
       pfd.events = 0x4i32 as libc::c_short;
       while len_2 != 0
         && bb_got_signal == 0
-        && poll(&mut pfd, 1i32 as nfds_t, -1i32) > 0i32
+        && poll(&mut pfd, 1i32 as nfds_t, -1i32) > 0
         && pfd.revents as libc::c_int & 0x4i32 != 0
       {
         // "\\d" means 1 sec delay, "\\p" means 0.01 sec delay
@@ -494,7 +494,7 @@ pub unsafe extern "C" fn chat_main(
             len_2 = len_2.wrapping_sub(1);
             continue;
           } else if 'K' as i32 == c as libc::c_int {
-            tcsendbreak(1i32, 0i32);
+            tcsendbreak(1i32, 0);
             len_2 = len_2.wrapping_sub(1);
             continue;
           } else {

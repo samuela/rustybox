@@ -101,10 +101,10 @@ pub unsafe extern "C" fn blkdiscard_main(
   } else {
     bb_xioctl(
       fd,
-      ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((2u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (114i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut length as *mut u64 as *mut libc::c_void,
       b"BLKGETSIZE64\x00" as *const u8 as *const libc::c_char,
@@ -116,15 +116,15 @@ pub unsafe extern "C" fn blkdiscard_main(
   ioctl_or_perror_and_die(
     fd,
     if opts & OPT_SECURE as libc::c_int as libc::c_uint != 0 {
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (125i32 << 0i32) as libc::c_uint)
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (125i32 << 0) as libc::c_uint)
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint
     } else {
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (119i32 << 0i32) as libc::c_uint)
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (119i32 << 0) as libc::c_uint)
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint
     },
     &mut range as *mut [u64; 2] as *mut libc::c_void,
     b"%s: %s failed\x00" as *const u8 as *const libc::c_char,
@@ -135,5 +135,5 @@ pub unsafe extern "C" fn blkdiscard_main(
       b"BLKDISCARD\x00" as *const u8 as *const libc::c_char
     },
   );
-  return 0i32;
+  return 0;
 }

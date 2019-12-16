@@ -52,7 +52,7 @@ unsafe extern "C" fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlin
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(monotonic_us() as libc::c_uint);
   i = numlines.wrapping_sub(1i32 as libc::c_uint);
-  while i > 0i32 as libc::c_uint {
+  while i > 0 as libc::c_uint {
     r = rand() as libc::c_uint;
     /* RAND_MAX can be as small as 32767 */
     if i > 2147483647i32 as libc::c_uint {
@@ -90,7 +90,7 @@ pub unsafe extern "C" fn shuf_main(
   argc -= optind;
   argv = argv.offset(optind as isize);
   /* Prepare lines for shuffling - either: */
-  if opts & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opts & (1i32 << 0) as libc::c_uint != 0 {
     /* make lines from command-line arguments */
     numlines = argc as libc::c_uint;
     lines = argv
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn shuf_main(
       (numlines as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
     ) as *mut *mut libc::c_char;
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i < numlines {
       let ref mut fresh2 = *lines.offset(i as isize);
       *fresh2 = lo as uintptr_t as *mut libc::c_char;
@@ -140,7 +140,7 @@ pub unsafe extern "C" fn shuf_main(
       b"-\x00" as *const u8 as *const libc::c_char
     });
     lines = std::ptr::null_mut();
-    numlines = 0i32 as libc::c_uint;
+    numlines = 0 as libc::c_uint;
     loop {
       let mut line: *mut libc::c_char = xmalloc_fgetline(fp);
       if line.is_null() {
@@ -159,7 +159,7 @@ pub unsafe extern "C" fn shuf_main(
     }
     fclose_if_not_stdin(fp);
   }
-  if numlines != 0i32 as libc::c_uint {
+  if numlines != 0 as libc::c_uint {
     shuffle_lines(lines, numlines);
   }
   if opts & (1i32 << 3i32) as libc::c_uint != 0 {
@@ -176,7 +176,7 @@ pub unsafe extern "C" fn shuf_main(
   if opts & (1i32 << 4i32) as libc::c_uint != 0 {
     eol = '\u{0}' as i32 as libc::c_char
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < numlines {
     if opts & (1i32 << 1i32) as libc::c_uint != 0 {
       printf(

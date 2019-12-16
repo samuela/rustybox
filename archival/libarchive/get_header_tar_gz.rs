@@ -30,11 +30,11 @@ pub unsafe extern "C" fn get_header_tar_gz(
     Some(seek_by_read as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> ());
   fork_transformer(
     (*archive_handle).src_fd,
-    0i32,
+    0,
     Some(unpack_gz_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
   );
-  (*archive_handle).offset = 0i32 as off_t;
-  while get_header_tar(archive_handle) as libc::c_int == 0i32 {}
+  (*archive_handle).offset = 0 as off_t;
+  while get_header_tar(archive_handle) as libc::c_int == 0 {}
   /* Can only do one file at a time */
   return 1i32 as libc::c_char;
 }

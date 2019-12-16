@@ -704,7 +704,7 @@ unsafe extern "C" fn add_static_lease(
   optlen = if !opts.is_null() {
     ((1i32 + 1i32) as libc::c_ulong).wrapping_add(strnlen(opts, 120i32 as size_t))
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   } as libc::c_uint;
   loop
   /* Find the tail of the list */
@@ -761,13 +761,13 @@ unsafe extern "C" fn get_static_nip_by_mac(mut mac: *mut libc::c_void) -> u32 {
       (*st_lease).mac.as_mut_ptr() as *const libc::c_void,
       mac,
       6i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       return (*st_lease).nip;
     }
     st_lease = (*st_lease).next
   }
-  return 0i32 as u32;
+  return 0 as u32;
 }
 unsafe extern "C" fn is_nip_reserved_as_static(mut nip: u32) -> libc::c_int {
   let mut st_lease: *mut static_lease =
@@ -778,7 +778,7 @@ unsafe extern "C" fn is_nip_reserved_as_static(mut nip: u32) -> libc::c_int {
     }
     st_lease = (*st_lease).next
   }
-  return 0i32;
+  return 0;
 }
 /* Find the oldest expired lease, NULL if there are no expired leases */
 unsafe extern "C" fn oldest_expired_lease() -> *mut dyn_lease {
@@ -787,9 +787,9 @@ unsafe extern "C" fn oldest_expired_lease() -> *mut dyn_lease {
   let mut i: libc::c_uint = 0;
   /* Unexpired leases have g_leases[i].expires >= current time
    * and therefore can't ever match */
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
-    if (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires == 0i32 as libc::c_uint
+    if (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires == 0 as libc::c_uint
       || (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires < oldest_time
     {
       oldest_time = (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
@@ -804,7 +804,7 @@ unsafe extern "C" fn oldest_expired_lease() -> *mut dyn_lease {
  */
 unsafe extern "C" fn clear_leases(mut chaddr: *const u8, mut yiaddr: u32) {
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
     if !chaddr.is_null()
       && memcmp(
@@ -813,13 +813,13 @@ unsafe extern "C" fn clear_leases(mut chaddr: *const u8, mut yiaddr: u32) {
           .as_mut_ptr() as *const libc::c_void,
         chaddr as *const libc::c_void,
         6i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       || yiaddr != 0 && (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == yiaddr
     {
       memset(
         &mut *(ptr_to_globals as *mut dyn_lease).offset(i as isize) as *mut dyn_lease
           as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<dyn_lease>() as libc::c_ulong,
       );
     }
@@ -843,7 +843,7 @@ unsafe extern "C" fn add_lease(
   if !oldest.is_null() {
     memset(
       oldest as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<dyn_lease>() as libc::c_ulong,
     );
     if !hostname.is_null() {
@@ -894,7 +894,7 @@ unsafe extern "C" fn is_expired_lease(mut lease: *mut dyn_lease) -> libc::c_int 
 /* Find the first lease that matches MAC, NULL if no match */
 unsafe extern "C" fn find_lease_by_mac(mut mac: *const u8) -> *mut dyn_lease {
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
     if memcmp(
       (*(ptr_to_globals as *mut dyn_lease).offset(i as isize))
@@ -902,7 +902,7 @@ unsafe extern "C" fn find_lease_by_mac(mut mac: *const u8) -> *mut dyn_lease {
         .as_mut_ptr() as *const libc::c_void,
       mac as *const libc::c_void,
       6i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       return &mut *(ptr_to_globals as *mut dyn_lease).offset(i as isize) as *mut dyn_lease;
     }
@@ -913,7 +913,7 @@ unsafe extern "C" fn find_lease_by_mac(mut mac: *const u8) -> *mut dyn_lease {
 /* Find the first lease that matches IP, NULL is no match */
 unsafe extern "C" fn find_lease_by_nip(mut nip: u32) -> *mut dyn_lease {
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
     if (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == nip {
       return &mut *(ptr_to_globals as *mut dyn_lease).offset(i as isize) as *mut dyn_lease;
@@ -954,9 +954,9 @@ unsafe extern "C" fn nobody_responds_to_arp(
     nip,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).conflict_time,
     0 as *const libc::c_char,
-    0i32,
+    0,
   );
-  return 0i32;
+  return 0;
 }
 /* Find a new usable (we think) address */
 unsafe extern "C" fn find_free_or_expired_nip(
@@ -970,7 +970,7 @@ unsafe extern "C" fn find_free_or_expired_nip(
     let mut nip: u32 = 0;
     let mut lease: *mut dyn_lease = std::ptr::null_mut();
     /* ie, 192.168.55.0 */
-    if !(addr & 0xffi32 as libc::c_uint == 0i32 as libc::c_uint) {
+    if !(addr & 0xffi32 as libc::c_uint == 0 as libc::c_uint) {
       /* ie, 192.168.55.255 */
       if !(addr & 0xffi32 as libc::c_uint == 0xffi32 as libc::c_uint) {
         nip = {
@@ -1024,7 +1024,7 @@ unsafe extern "C" fn find_free_or_expired_nip(
   {
     return (*oldest_lease).lease_nip;
   }
-  return 0i32 as u32;
+  return 0 as u32;
 }
 /* On these functions, make sure your datatype matches */
 unsafe extern "C" fn read_str(
@@ -1041,7 +1041,7 @@ unsafe extern "C" fn read_u32(
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
   *(arg as *mut u32) = bb_strtou32(line, 0 as *mut *mut libc::c_char, 10i32);
-  return (*bb_errno == 0i32) as libc::c_int;
+  return (*bb_errno == 0) as libc::c_int;
 }
 unsafe extern "C" fn read_staticlease(
   mut const_line: *const libc::c_char,
@@ -1063,7 +1063,7 @@ unsafe extern "C" fn read_staticlease(
     &mut line,
   );
   if mac_string.is_null() || ether_aton_r(mac_string, &mut mac_bytes).is_null() {
-    return 0i32;
+    return 0;
   }
   /* Read ip */
   ip_string = strtok_r(
@@ -1073,7 +1073,7 @@ unsafe extern "C" fn read_staticlease(
   );
   if ip_string.is_null() || udhcp_str2nip(ip_string, &mut nip as *mut u32 as *mut libc::c_void) == 0
   {
-    return 0i32;
+    return 0;
   }
   opts = strtok_r(
     std::ptr::null_mut::<libc::c_char>(),
@@ -1098,7 +1098,7 @@ unsafe extern "C" fn read_optset(
     arg,
     dhcp_optflags.as_ptr(),
     dhcp_option_strings.as_ptr(),
-    0i32 != 0,
+    0 != 0,
   );
 }
 
@@ -1327,7 +1327,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   let mut k: *const config_keyword = std::ptr::null();
   let mut i: libc::c_uint = 0;
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < KWS_WITH_DEFAULTS as libc::c_int as libc::c_uint {
     keywords[i as usize]
       .handler
@@ -1347,13 +1347,13 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   ) != 0
   {
     k = keywords.as_ptr();
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i
       < (::std::mem::size_of::<[config_keyword; 18]>() as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<config_keyword>() as libc::c_ulong)
         as libc::c_uint
     {
-      if strcasecmp(token[0], (*k).keyword) == 0i32 {
+      if strcasecmp(token[0], (*k).keyword) == 0 {
         if (*k).handler.expect("non-null function pointer")(
           token[1],
           (bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t as *mut libc::c_char)
@@ -1426,7 +1426,7 @@ unsafe extern "C" fn write_leases() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file,
     0o1i32 | 0o100i32 | 0o1000i32,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     return;
   }
   written_at = time(0 as *mut time_t);
@@ -1459,19 +1459,19 @@ unsafe extern "C" fn write_leases() {
     &mut written_at as *mut int64_t as *const libc::c_void,
     ::std::mem::size_of::<int64_t>() as libc::c_ulong,
   );
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
     let mut tmp_time: leasetime_t = 0;
-    if !((*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == 0i32 as libc::c_uint)
+    if !((*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == 0 as libc::c_uint)
     {
       /* Screw with the time in the struct, for easier writing */
       tmp_time = (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
       let ref mut fresh12 = (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
       *fresh12 = (*fresh12 as libc::c_uint).wrapping_sub(curr) as leasetime_t as leasetime_t;
       if ((*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires as signed_leasetime_t)
-        < 0i32
+        < 0
       {
-        (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires = 0i32 as leasetime_t
+        (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires = 0 as leasetime_t
       }
       (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires = {
         let mut __v: libc::c_uint = 0;
@@ -1530,9 +1530,9 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
   let mut written_at: int64_t = 0;
   let mut time_passed: int64_t = 0;
   let mut fd: libc::c_int = 0;
-  let mut i: libc::c_uint = 0i32 as libc::c_uint;
-  fd = open_or_warn(file, 0i32);
-  if fd < 0i32 {
+  let mut i: libc::c_uint = 0 as libc::c_uint;
+  fd = open_or_warn(file, 0);
+  if fd < 0 {
     return;
   }
   if !(full_read(
@@ -1624,12 +1624,12 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         .wrapping_sub(time_passed as signed_leasetime_t as libc::c_uint)
           as signed_leasetime_t;
         let mut static_nip: u32 = 0;
-        if expires <= 0i32 {
+        if expires <= 0 {
           /* We keep expired leases: add_lease() will add
            * a lease with 0 seconds remaining.
            * Fewer IP address changes this way for mass reboot scenario.
            */
-          expires = 0i32
+          expires = 0
         }
         /* Check if there is a different static lease for this IP or MAC */
         static_nip = get_static_nip_by_mac(lease.lease_mac.as_mut_ptr() as *mut libc::c_void);
@@ -1704,7 +1704,7 @@ unsafe extern "C" fn send_packet_to_client(
         __v
       }) as libc::c_int
       != 0
-    || (*dhcp_pkt).ciaddr == 0i32 as libc::c_uint
+    || (*dhcp_pkt).ciaddr == 0 as libc::c_uint
   {
     if dhcp_verbose >= 1i32 as libc::c_uint {
       bb_simple_info_msg(b"broadcasting packet to client\x00" as *const u8 as *const libc::c_char);
@@ -1758,7 +1758,7 @@ unsafe extern "C" fn send_packet_verbose(
   addr.s_addr = (*dhcp_pkt).yiaddr;
   bb_info_msg(fmt, inet_ntoa(addr));
   /* send_packet emits error message itself if it detects failure */
-  send_packet(dhcp_pkt, 0i32);
+  send_packet(dhcp_pkt, 0);
 }
 unsafe extern "C" fn init_packet(
   mut packet: *mut dhcp_packet,
@@ -1796,7 +1796,7 @@ unsafe extern "C" fn add_server_options(mut packet: *mut dhcp_packet) {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).static_leases;
     while !st_lease.is_null() {
       if (*st_lease).nip == (*packet).yiaddr {
-        if *(*st_lease).opt.as_mut_ptr().offset(0) as libc::c_int != 0i32 {
+        if *(*st_lease).opt.as_mut_ptr().offset(0) as libc::c_int != 0 {
           client_hostname_opt = (*st_lease).opt.as_mut_ptr()
         }
         break;
@@ -1927,7 +1927,7 @@ unsafe extern "C" fn send_offer(
        * Note that we ignore requested IP in this case.
        */
       packet.yiaddr = (*lease).lease_nip
-    } else if requested_nip != 0i32 as libc::c_uint
+    } else if requested_nip != 0 as libc::c_uint
       && ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = requested_nip;
@@ -1993,7 +1993,7 @@ unsafe extern "C" fn send_offer(
       if !p_host_name.is_null() {
         *p_host_name.offset((1i32 - 2i32) as isize) as libc::c_uchar as libc::c_int
       } else {
-        0i32
+        0
       },
     );
     if lease.is_null() {
@@ -2119,7 +2119,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
     if !p_host_name.is_null() {
       *p_host_name.offset((1i32 - 2i32) as isize) as libc::c_uchar as libc::c_int
     } else {
-      0i32
+      0
     },
   );
   /* rewrite the file with leases at every new acceptance */
@@ -2165,7 +2165,7 @@ unsafe extern "C" fn send_inform(mut oldpacket: *mut dhcp_packet) {
   //Better yet: is ciaddr == IP source addr?
   init_packet(&mut packet, oldpacket, 5i32 as libc::c_char);
   add_server_options(&mut packet);
-  send_packet(&mut packet, 0i32);
+  send_packet(&mut packet, 0);
   // or maybe? send_packet_verbose(&packet, "sending ACK to %s");
 }
 #[no_mangle]
@@ -2209,7 +2209,7 @@ pub unsafe extern "C" fn udhcpd_main(
   }
   if opt & 4i32 as libc::c_uint != 0 {
     /* -I */
-    let mut lsa: *mut len_and_sockaddr = xhost_and_af2sockaddr(str_I, 0i32, 2i32 as sa_family_t);
+    let mut lsa: *mut len_and_sockaddr = xhost_and_af2sockaddr(str_I, 0, 2i32 as sa_family_t);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip =
       (*lsa).u.sin.sin_addr.s_addr;
     free(lsa as *mut libc::c_void);
@@ -2289,7 +2289,7 @@ pub unsafe extern "C" fn udhcpd_main(
   if udhcp_read_interface(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).ifindex,
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip == 0i32 as libc::c_uint
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip == 0 as libc::c_uint
     {
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip
     } else {
@@ -2347,7 +2347,7 @@ pub unsafe extern "C" fn udhcpd_main(
           hostname: [0; 20],
           pad: [0; 2],
         };
-        if server_socket < 0i32 {
+        if server_socket < 0 {
           server_socket = udhcp_listen_socket(
             67i32,
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,
@@ -2358,7 +2358,7 @@ pub unsafe extern "C" fn udhcpd_main(
           tv = -1i32;
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).auto_time != 0 {
             tv = timeout_end.wrapping_sub(monotonic_sec()) as libc::c_int;
-            if tv <= 0i32 {
+            if tv <= 0 {
               current_block = 16181713839514877146;
               break;
             }
@@ -2366,8 +2366,8 @@ pub unsafe extern "C" fn udhcpd_main(
           }
           /* Block here waiting for either signal or packet */
           retval = poll(pfds.as_mut_ptr(), 2i32 as nfds_t, tv);
-          if retval <= 0i32 {
-            if retval == 0i32 {
+          if retval <= 0 {
+            if retval == 0 {
               current_block = 16181713839514877146;
               break;
             }
@@ -2445,7 +2445,7 @@ pub unsafe extern "C" fn udhcpd_main(
          * socket read inside this call is restarted on caught signals.
          */
         bytes = udhcp_recv_kernel_packet(&mut packet, server_socket);
-        if bytes < 0i32 {
+        if bytes < 0 {
           /* bytes can also be -2 ("bad packet data") */
           if bytes == -1i32 && *bb_errno != 4i32 {
             if dhcp_verbose >= 1i32 as libc::c_uint {
@@ -2509,13 +2509,13 @@ pub unsafe extern "C" fn udhcpd_main(
                 6i32 as libc::c_ulong,
               );
               fake_lease.lease_nip = static_lease_nip;
-              fake_lease.expires = 0i32 as leasetime_t;
+              fake_lease.expires = 0 as leasetime_t;
               lease = &mut fake_lease
             } else {
               lease = find_lease_by_mac(packet.chaddr.as_mut_ptr())
             }
             /* Get REQUESTED_IP if present */
-            requested_nip = 0i32 as u32;
+            requested_nip = 0 as u32;
             requested_ip_opt = udhcp_get_option32(&mut packet, 0x32i32);
             if !requested_ip_opt.is_null() {
               requested_nip = *(requested_ip_opt as *mut bb__aliased_u32)
@@ -2632,7 +2632,7 @@ pub unsafe extern "C" fn udhcpd_main(
                 */
                 if requested_ip_opt.is_null() {
                   requested_nip = packet.ciaddr;
-                  if requested_nip == 0i32 as libc::c_uint {
+                  if requested_nip == 0 as libc::c_uint {
                     if dhcp_verbose >= 1i32 as libc::c_uint {
                       bb_info_msg(
                         b"no requested IP and no ciaddr%s\x00" as *const u8 as *const libc::c_char,
@@ -2690,7 +2690,7 @@ pub unsafe extern "C" fn udhcpd_main(
                 {
                   memset(
                     (*lease).lease_mac.as_mut_ptr() as *mut libc::c_void,
-                    0i32,
+                    0,
                     ::std::mem::size_of::<[u8; 6]>() as libc::c_ulong,
                   );
                   (*lease).expires = (time(0 as *mut time_t)
@@ -2734,7 +2734,7 @@ pub unsafe extern "C" fn udhcpd_main(
           }
         }
       }
-      retval = 0i32;
+      retval = 0;
       break;
     }
   }

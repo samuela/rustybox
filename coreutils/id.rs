@@ -139,7 +139,7 @@ unsafe extern "C" fn print_common(
       return 1i32;
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_group(mut id: gid_t, mut prefix: *const libc::c_char) -> libc::c_int {
   return print_common(id, gid2group(id), prefix);
@@ -167,13 +167,13 @@ unsafe extern "C" fn get_groups(
     m = bb_internal_getgrouplist(username, rgid, groups, n);
     /* I guess *n < 0 might indicate error. Anyway,
      * malloc'ing -1 bytes won't be good, so: */
-    if *n < 0i32 {
-      return 0i32;
+    if *n < 0 {
+      return 0;
     }
     return m;
   }
   *n = getgroups(*n, groups);
-  if *n >= 0i32 {
+  if *n >= 0 {
     return *n;
   }
   /* Error */
@@ -183,7 +183,7 @@ unsafe extern "C" fn get_groups(
     *n = getgroups(0i32, groups)
   }
   /* if *n >= 0, return -1 (got new *n), else return 0 (error): */
-  return -((*n >= 0i32) as libc::c_int);
+  return -((*n >= 0) as libc::c_int);
 }
 #[no_mangle]
 pub unsafe extern "C" fn id_main(
@@ -196,7 +196,7 @@ pub unsafe extern "C" fn id_main(
   let mut egid: gid_t = 0;
   let mut opt: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut prefix: *const libc::c_char = std::ptr::null();
   let mut username: *const libc::c_char = std::ptr::null();
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'g' as i32) {
@@ -262,7 +262,7 @@ pub unsafe extern "C" fn id_main(
       (64i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<gid_t>() as libc::c_ulong),
     ) as *mut gid_t;
     n = 64i32;
-    if get_groups(username, rgid, groups, &mut n) < 0i32 {
+    if get_groups(username, rgid, groups, &mut n) < 0 {
       /* Need bigger buffer after all */
       groups = xrealloc(
         groups as *mut libc::c_void,
@@ -270,10 +270,10 @@ pub unsafe extern "C" fn id_main(
       ) as *mut gid_t;
       get_groups(username, rgid, groups, &mut n);
     }
-    if n > 0i32 {
+    if n > 0 {
       /* Print the list */
       prefix = b" groups=\x00" as *const u8 as *const libc::c_char;
-      i = 0i32;
+      i = 0;
       while i < n {
         if !(opt != 0 && (*groups.offset(i as isize) == rgid || *groups.offset(i as isize) == egid))
         {
@@ -289,7 +289,7 @@ pub unsafe extern "C" fn id_main(
         }
         i += 1
       }
-    } else if n < 0i32 {
+    } else if n < 0 {
       /* error in get_groups() */
       bb_simple_error_msg_and_die(b"can\'t get groups\x00" as *const u8 as *const libc::c_char);
     }

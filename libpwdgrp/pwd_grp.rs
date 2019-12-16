@@ -233,7 +233,7 @@ unsafe extern "C" fn get_S() -> *mut statics {
 unsafe extern "C" fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int) -> libc::c_int {
   let mut p: *mut libc::c_char = buffer;
   let mut s: *mut libc::c_char = p;
-  let mut num_fields: libc::c_int = 0i32;
+  let mut num_fields: libc::c_int = 0;
   loop {
     if ({
       let mut bb__isblank: libc::c_uchar = *s as libc::c_uchar;
@@ -296,7 +296,7 @@ unsafe extern "C" fn parse_common(
       } else if field_pos == -1i32 {
         /* no key specified: sequential read, return a record */
         break;
-      } else if strcmp(key, nth_string(buf, field_pos)) == 0i32 {
+      } else if strcmp(key, nth_string(buf, field_pos)) == 0 {
         break;
       }
     }
@@ -360,7 +360,7 @@ unsafe extern "C" fn convert_to_struct(
   let mut def: *const libc::c_char = (*db).def.as_mut_ptr();
   let mut off: *const u8 = (*db).off.as_mut_ptr();
   /* For consistency, zero out all fields */
-  memset(result, 0i32, (*db).size_of as libc::c_ulong);
+  memset(result, 0, (*db).size_of as libc::c_ulong);
   loop {
     let fresh1 = off;
     off = off.offset(1);
@@ -401,7 +401,7 @@ unsafe extern "C" fn convert_to_struct(
       *fresh3 = members;
       loop {
         i -= 1;
-        if !(i >= 0i32) {
+        if !(i >= 0) {
           break;
         }
         if *buffer.offset(0) != 0 {
@@ -496,7 +496,7 @@ unsafe extern "C" fn getXXnam_r(
     .db
     .as_mut_ptr()
     .offset((db_and_field_pos >> 2i32) as isize) as *mut passdb;
-  buf = parse_file(db, name, 0i32);
+  buf = parse_file(db, name, 0);
   /* "db_and_field_pos & 3" is commented out since so far we don't implement
    * getXXXid_r() functions which would use that to pass 2 here */
   return massage_data_for_r_func(db, buffer, buflen, result as *mut *mut libc::c_void, buf);
@@ -517,7 +517,7 @@ pub unsafe extern "C" fn bb_internal_getpwnam_r(
   *result = struct_buf;
   return getXXnam_r(
     name,
-    ((0i32 << 2i32) + 0i32) as uintptr_t,
+    ((0i32 << 2i32) + 0) as uintptr_t,
     buffer,
     buflen,
     result as *mut libc::c_void,
@@ -565,7 +565,7 @@ pub unsafe extern "C" fn bb_internal_getspnam_r(
   *result = struct_buf;
   return getXXnam_r(
     name,
-    ((2i32 << 2i32) + 0i32) as uintptr_t,
+    ((2i32 << 2i32) + 0) as uintptr_t,
     buffer,
     buflen,
     result as *mut libc::c_void,
@@ -612,11 +612,11 @@ unsafe extern "C" fn getXXnam(
 /* Search for an entry with a matching username.  */
 #[no_mangle]
 pub unsafe extern "C" fn bb_internal_getpwnam(mut name: *const libc::c_char) -> *mut passwd {
-  return getXXnam(name, ((0i32 << 2i32) + 0i32) as libc::c_uint) as *mut passwd;
+  return getXXnam(name, ((0i32 << 2i32) + 0) as libc::c_uint) as *mut passwd;
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_internal_getgrnam(mut name: *const libc::c_char) -> *mut group {
-  return getXXnam(name, ((1i32 << 2i32) + 0i32) as libc::c_uint) as *mut group;
+  return getXXnam(name, ((1i32 << 2i32) + 0) as libc::c_uint) as *mut group;
 }
 /* Read an entry from the password-file stream, opening it if necessary.  */
 /* Search for an entry with a matching user ID.  */
@@ -716,7 +716,7 @@ unsafe extern "C" fn getgrouplist_internal(
         if !(group.gr_gid == gid) {
           m = group.gr_mem;
           while !(*m).is_null() {
-            if strcmp(*m, user) != 0i32 {
+            if strcmp(*m, user) != 0 {
               m = m.offset(1)
             } else {
               group_list = xrealloc_vector_helper(

@@ -255,7 +255,7 @@ unsafe extern "C" fn arith_lookup_val(
        */
       cur = (*math_state).list_of_recursed_names as *mut remembered_name;
       while !cur.is_null() {
-        if strcmp((*cur).var, (*t).var) == 0i32 {
+        if strcmp((*cur).var, (*t).var) == 0 {
           /* Yes */
           return b"expression recursion loop detected\x00" as *const u8 as *const libc::c_char;
         }
@@ -274,7 +274,7 @@ unsafe extern "C" fn arith_lookup_val(
       return (*math_state).errmsg;
     }
     /* treat undefined var as 0 */
-    (*t).val = 0i32 as arith_t
+    (*t).val = 0 as arith_t
   }
   return 0 as *const libc::c_char;
 }
@@ -301,17 +301,17 @@ unsafe extern "C" fn arith_apply(
       return err;
     }
     rez = (*top_of_stack).val;
-    if op as libc::c_int == 0i32 << 5i32 | 16i32 + 1i32 {
+    if op as libc::c_int == 0 << 5i32 | 16i32 + 1i32 {
       rez = -rez;
       current_block = 12705158477165241210;
     } else if op as libc::c_int == 1i32 << 5i32 | 16i32 {
       rez = (rez == 0) as libc::c_int as arith_t;
       current_block = 12705158477165241210;
-    } else if op as libc::c_int == 0i32 << 5i32 | 16i32 {
+    } else if op as libc::c_int == 0 << 5i32 | 16i32 {
       rez = !rez;
       current_block = 12705158477165241210;
-    } else if op as libc::c_int == 0i32 << 5i32 | 16i32 + 3i32
-      || op as libc::c_int == 0i32 << 5i32 | 16i32 + 2i32
+    } else if op as libc::c_int == 0 << 5i32 | 16i32 + 3i32
+      || op as libc::c_int == 0 << 5i32 | 16i32 + 2i32
     {
       rez += 1;
       current_block = 12705158477165241210;
@@ -331,7 +331,7 @@ unsafe extern "C" fn arith_apply(
         /* ...and they pop one */
         *numstackptr = top_of_stack; /* this decrements NUMPTR */
         bad_second_val = (*top_of_stack).second_val_present;
-        if op as libc::c_int == 0i32 << 5i32 | 4i32 {
+        if op as libc::c_int == 0 << 5i32 | 4i32 {
           /* ? operation */
           /* Make next if (...) protect against
            * $((expr1 ? expr2)) - that is, missing ": expr" */
@@ -342,7 +342,7 @@ unsafe extern "C" fn arith_apply(
           return b"malformed ?: operator\x00" as *const u8 as *const libc::c_char;
         } /* now points to left side */
         top_of_stack = top_of_stack.offset(-1);
-        if op as libc::c_int != 0i32 << 5i32 | 2i32 {
+        if op as libc::c_int != 0 << 5i32 | 2i32 {
           /* Resolve left side value (unless the op is '=') */
           err = arith_lookup_val(math_state, top_of_stack);
           if !err.is_null() {
@@ -351,7 +351,7 @@ unsafe extern "C" fn arith_apply(
         }
         right_side_val = rez;
         rez = (*top_of_stack).val;
-        if op as libc::c_int == 0i32 << 5i32 | 4i32 {
+        if op as libc::c_int == 0 << 5i32 | 4i32 {
           /* ? operation */
           rez = if rez != 0 {
             right_side_val
@@ -366,23 +366,23 @@ unsafe extern "C" fn arith_apply(
           }
           (*top_of_stack).second_val_present = op as libc::c_char;
           (*top_of_stack).second_val = right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 7i32
+        } else if op as libc::c_int == 0 << 5i32 | 7i32
           || op as libc::c_int == 2i32 << 5i32 | 2i32
         {
           rez |= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 5i32 {
+        } else if op as libc::c_int == 0 << 5i32 | 5i32 {
           rez = (right_side_val != 0 || rez != 0) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0i32 << 5i32 | 9i32
+        } else if op as libc::c_int == 0 << 5i32 | 9i32
           || op as libc::c_int == 1i32 << 5i32 | 2i32
         {
           rez &= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 8i32
+        } else if op as libc::c_int == 0 << 5i32 | 8i32
           || op as libc::c_int == 3i32 << 5i32 | 2i32
         {
           rez ^= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 6i32 {
+        } else if op as libc::c_int == 0 << 5i32 | 6i32 {
           rez = (rez != 0 && right_side_val != 0) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0i32 << 5i32 | 10i32 {
+        } else if op as libc::c_int == 0 << 5i32 | 10i32 {
           rez = (rez == right_side_val) as libc::c_int as arith_t
         } else if op as libc::c_int == 1i32 << 5i32 | 10i32 {
           rez = (rez != right_side_val) as libc::c_int as arith_t
@@ -392,21 +392,21 @@ unsafe extern "C" fn arith_apply(
           || op as libc::c_int == 7i32 << 5i32 | 2i32
         {
           rez >>= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 12i32
+        } else if op as libc::c_int == 0 << 5i32 | 12i32
           || op as libc::c_int == 6i32 << 5i32 | 2i32
         {
           rez <<= right_side_val
         } else if op as libc::c_int == 1i32 << 5i32 | 11i32 {
           rez = (rez > right_side_val) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0i32 << 5i32 | 11i32 {
+        } else if op as libc::c_int == 0 << 5i32 | 11i32 {
           rez = (rez < right_side_val) as libc::c_int as arith_t
         } else if op as libc::c_int == 3i32 << 5i32 | 11i32 {
           rez = (rez <= right_side_val) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0i32 << 5i32 | 14i32
-          || op as libc::c_int == 0i32 << 5i32 | 3i32
+        } else if op as libc::c_int == 0 << 5i32 | 14i32
+          || op as libc::c_int == 0 << 5i32 | 3i32
         {
           rez *= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 13i32
+        } else if op as libc::c_int == 0 << 5i32 | 13i32
           || op as libc::c_int == 4i32 << 5i32 | 2i32
         {
           rez += right_side_val
@@ -414,25 +414,25 @@ unsafe extern "C" fn arith_apply(
           || op as libc::c_int == 5i32 << 5i32 | 2i32
         {
           rez -= right_side_val
-        } else if op as libc::c_int == 0i32 << 5i32 | 2i32
-          || op as libc::c_int == 0i32 << 5i32 | 1i32
+        } else if op as libc::c_int == 0 << 5i32 | 2i32
+          || op as libc::c_int == 0 << 5i32 | 1i32
         {
           rez = right_side_val
         } else if op as libc::c_int == 1i32 << 5i32 | 15i32 {
           let mut c: arith_t = 0;
-          if right_side_val < 0i32 as libc::c_longlong {
+          if right_side_val < 0 as libc::c_longlong {
             return b"exponent less than 0\x00" as *const u8 as *const libc::c_char;
           }
           c = 1i32 as arith_t;
           loop {
             right_side_val -= 1;
-            if !(right_side_val >= 0i32 as libc::c_longlong) {
+            if !(right_side_val >= 0 as libc::c_longlong) {
               break;
             }
             c *= rez
           }
           rez = c
-        } else if right_side_val == 0i32 as libc::c_longlong {
+        } else if right_side_val == 0 as libc::c_longlong {
           return b"divide by zero\x00" as *const u8 as *const libc::c_char;
         } else {
           if op as libc::c_int == 1i32 << 5i32 | 14i32
@@ -451,7 +451,7 @@ unsafe extern "C" fn arith_apply(
              * Make sure to at least not SEGV here:
              */
             if right_side_val == -1i32 as libc::c_longlong
-              && rez << 1i32 == 0i32 as libc::c_longlong
+              && rez << 1i32 == 0 as libc::c_longlong
             {
               /* MAX_NEGATIVE_INT or 0 */
               right_side_val = 1i32 as arith_t
@@ -488,7 +488,7 @@ unsafe extern "C" fn arith_apply(
               buf.as_mut_ptr(),
             );
             /* After saving, make previous value for v++ or v-- */
-            if op as libc::c_int == 0i32 << 5i32 | 16i32 + 3i32 {
+            if op as libc::c_int == 0 << 5i32 | 16i32 + 3i32 {
               rez -= 1
             } else if op as libc::c_int == 1i32 << 5i32 | 16i32 + 3i32 {
               rez += 1
@@ -519,144 +519,144 @@ static mut op_tokens: [libc::c_char; 141] = [
   '<' as i32 as libc::c_char,
   '<' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (6i32 << 5i32 | 2i32) as libc::c_char,
   '>' as i32 as libc::c_char,
   '>' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (7i32 << 5i32 | 2i32) as libc::c_char,
   '<' as i32 as libc::c_char,
   '<' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 12i32) as libc::c_char,
   '>' as i32 as libc::c_char,
   '>' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 12i32) as libc::c_char,
   '|' as i32 as libc::c_char,
   '|' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 5i32) as libc::c_char,
   '&' as i32 as libc::c_char,
   '&' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 6i32) as libc::c_char,
   '!' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 10i32) as libc::c_char,
   '<' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (3i32 << 5i32 | 11i32) as libc::c_char,
   '>' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (2i32 << 5i32 | 11i32) as libc::c_char,
   '=' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 10i32) as libc::c_char,
   '|' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (2i32 << 5i32 | 2i32) as libc::c_char,
   '&' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 2i32) as libc::c_char,
   '*' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 3i32) as libc::c_char,
   '/' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 3i32) as libc::c_char,
   '%' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (2i32 << 5i32 | 3i32) as libc::c_char,
   '+' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (4i32 << 5i32 | 2i32) as libc::c_char,
   '-' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (5i32 << 5i32 | 2i32) as libc::c_char,
   '-' as i32 as libc::c_char,
   '-' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 16i32 + 3i32) as libc::c_char,
   '^' as i32 as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (3i32 << 5i32 | 2i32) as libc::c_char,
   '+' as i32 as libc::c_char,
   '+' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 16i32 + 3i32) as libc::c_char,
   '*' as i32 as libc::c_char,
   '*' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 15i32) as libc::c_char,
   '!' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 16i32) as libc::c_char,
   '<' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 11i32) as libc::c_char,
   '>' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 11i32) as libc::c_char,
   '=' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 2i32) as libc::c_char,
   '|' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 7i32) as libc::c_char,
   '&' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 9i32) as libc::c_char,
   '*' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 14i32) as libc::c_char,
   '/' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 14i32) as libc::c_char,
   '%' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (2i32 << 5i32 | 14i32) as libc::c_char,
   '+' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 13i32) as libc::c_char,
   '-' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 13i32) as libc::c_char,
   '^' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 8i32) as libc::c_char,
   '~' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 16i32) as libc::c_char,
   ',' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 1i32) as libc::c_char,
   '?' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (0i32 << 5i32 | 4i32) as libc::c_char,
   ':' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 4i32) as libc::c_char,
   ')' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   (1i32 << 5i32 | 16i32 + 4i32) as libc::c_char,
   '(' as i32 as libc::c_char,
-  0i32 as libc::c_char,
-  (0i32 << 5i32 | 0i32) as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
+  (0i32 << 5i32 | 0) as libc::c_char,
+  0 as libc::c_char,
 ];
 unsafe extern "C" fn strto_arith_t(
   mut nptr: *const libc::c_char,
@@ -664,7 +664,7 @@ unsafe extern "C" fn strto_arith_t(
 ) -> arith_t {
   let mut base: libc::c_uint = 0;
   let mut n: arith_t = 0;
-  n = strtoull(nptr, endptr, 0i32) as arith_t;
+  n = strtoull(nptr, endptr, 0) as arith_t;
   if **endptr as libc::c_int != '#' as i32
     || ((*nptr as libc::c_int) < '1' as i32 || *nptr as libc::c_int > '9' as i32)
     || (n < 2i32 as libc::c_longlong || n > 64i32 as libc::c_longlong)
@@ -675,7 +675,7 @@ unsafe extern "C" fn strto_arith_t(
    * NN is in 2..64 range.
    */
   base = n as libc::c_uint;
-  n = 0i32 as arith_t;
+  n = 0 as arith_t;
   nptr = (*endptr).offset(1);
   loop {
     let mut digit: libc::c_uint = (*nptr as libc::c_uint).wrapping_sub('0' as i32 as libc::c_uint);
@@ -751,7 +751,7 @@ unsafe extern "C" fn evaluate_string(
   let stack: *mut operator = fresh1.as_mut_ptr() as *mut operator;
   let mut stackptr: *mut operator = stack;
   /* Start with a left paren */
-  lasttok = (0i32 << 5i32 | 0i32) as operator; /* while (1) */
+  lasttok = (0i32 << 5i32 | 0) as operator; /* while (1) */
   let fresh2 = stackptr;
   stackptr = stackptr.offset(1);
   *fresh2 = lasttok;
@@ -766,7 +766,7 @@ unsafe extern "C" fn evaluate_string(
     if arithval as libc::c_int == '\u{0}' as i32 {
       if expr == start_expr {
         /* Null expression */
-        (*numstack).val = 0i32 as arith_t;
+        (*numstack).val = 0 as arith_t;
         current_block = 11386481267603146021;
         break;
       } else if expr
@@ -812,13 +812,13 @@ unsafe extern "C" fn evaluate_string(
       } else if (arithval as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
         /* Number */
         (*numstackptr).var = std::ptr::null_mut::<libc::c_char>(); /* bash compat */
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         (*numstackptr).val = strto_arith_t(
           expr,
           &mut expr as *mut *const libc::c_char as *mut *mut libc::c_char,
         );
         if *bb_errno != 0 {
-          (*numstackptr).val = 0i32 as arith_t
+          (*numstackptr).val = 0 as arith_t
         }
       } else {
         /* Should be an operator */
@@ -827,7 +827,7 @@ unsafe extern "C" fn evaluate_string(
          * "a+++v" is a++ + v.
          * "7+++v" is 7 + ++v, not 7++ + v.
          */
-        if lasttok as libc::c_int == 0i32 << 5i32 | 16i32 + 4i32
+        if lasttok as libc::c_int == 0 << 5i32 | 16i32 + 4i32
           && (*numstackptr.offset(-1i32 as isize)).var.is_null()
           && (*expr.offset(0) as libc::c_int == '+' as i32
             || *expr.offset(0) as libc::c_int == '-' as i32)
@@ -876,7 +876,7 @@ unsafe extern "C" fn evaluate_string(
         }
         /* NB: expr now points past the operator */
         /* post grammar: a++ reduce to num */
-        if lasttok as libc::c_int == 0i32 << 5i32 | 16i32 + 3i32
+        if lasttok as libc::c_int == 0 << 5i32 | 16i32 + 3i32
           || lasttok as libc::c_int == 1i32 << 5i32 | 16i32 + 3i32
         {
           lasttok = (0i32 << 5i32 | 16i32 + 4i32) as operator
@@ -885,7 +885,7 @@ unsafe extern "C" fn evaluate_string(
          * token was a number, or a right paren (which pretends to be
          * a number, since it evaluates to one). Think about it.
          * It makes sense. */
-        if lasttok as libc::c_int != 0i32 << 5i32 | 16i32 + 4i32 {
+        if lasttok as libc::c_int != 0 << 5i32 | 16i32 + 4i32 {
           match op as libc::c_int {
             13 => op = (1i32 << 5i32 | 16i32 + 1i32) as operator,
             45 => op = (0i32 << 5i32 | 16i32 + 1i32) as operator,
@@ -906,11 +906,11 @@ unsafe extern "C" fn evaluate_string(
          * "applied" in this way.
          */
         prec = (op as libc::c_int & 0x1fi32) as operator;
-        if prec as libc::c_int > 0i32 && (prec as libc::c_int) < 16i32
+        if prec as libc::c_int > 0 && (prec as libc::c_int) < 16i32
           || prec as libc::c_int == 16i32 + 4i32
         {
           /* not left paren or unary */
-          if lasttok as libc::c_int != 0i32 << 5i32 | 16i32 + 4i32 {
+          if lasttok as libc::c_int != 0 << 5i32 | 16i32 + 4i32 {
             current_block = 4372395669998863707;
             break;
           }
@@ -921,7 +921,7 @@ unsafe extern "C" fn evaluate_string(
               /* The algorithm employed here is simple: while we don't
                * hit an open paren nor the bottom of the stack, pop
                * tokens and apply them */
-              if prev_op as libc::c_int == 0i32 << 5i32 | 0i32 {
+              if prev_op as libc::c_int == 0 << 5i32 | 0 {
                 /* Any operator directly after a
                  * close paren should consider itself binary */
                 lasttok = (0i32 << 5i32 | 16i32 + 4i32) as operator;
@@ -961,7 +961,7 @@ unsafe extern "C" fn evaluate_string(
         *fresh4 = lasttok;
         continue;
       }
-      (*numstackptr).second_val_present = 0i32 as libc::c_char;
+      (*numstackptr).second_val_present = 0 as libc::c_char;
       numstackptr = numstackptr.offset(1);
       lasttok = (0i32 << 5i32 | 16i32 + 4i32) as operator
     }

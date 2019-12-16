@@ -82,7 +82,7 @@ unsafe extern "C" fn read_num(
   /* ar fields are fixed length text strings (padded with spaces).
    * Ensure bb_strtou doesn't read past the field in case the full
    * width is used. */
-  *str.offset(len as isize) = 0i32 as libc::c_char;
+  *str.offset(len as isize) = 0 as libc::c_char;
   /* This code works because
    * on misformatted numbers bb_strtou returns all-ones */
   err = bb_strtou(str, 0 as *mut *mut libc::c_char, base) as libc::c_int;
@@ -180,7 +180,7 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
     .offset(strcspn((*typed).name, b" /\x00" as *const u8 as *const libc::c_char) as isize) =
     '\u{0}' as i32 as libc::c_char;
   if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
-    == 0i32
+    == 0
   {
     (*archive_handle)
       .action_header
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
       while (*archive_handle)
         .dpkg__action_data_subarchive
         .expect("non-null function pointer")(sa) as libc::c_int
-        == 0i32
+        == 0
       {}
       create_links_from_list((*sa).link_placeholders);
     } else {
@@ -203,6 +203,6 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
   }
   (*archive_handle).offset += (*typed).size;
   /* Set the file pointer to the correct spot, we may have been reading a compressed file */
-  lseek((*archive_handle).src_fd, (*archive_handle).offset, 0i32);
-  return 0i32 as libc::c_char;
+  lseek((*archive_handle).src_fd, (*archive_handle).offset, 0);
+  return 0 as libc::c_char;
 }

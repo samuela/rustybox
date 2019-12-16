@@ -237,7 +237,7 @@ pub unsafe extern "C" fn d6_read_interface(
   ifa = ifap;
   while !ifa.is_null() {
     let mut sip6: *mut sockaddr_in6 = std::ptr::null_mut();
-    if !((*ifa).ifa_addr.is_null() || strcmp((*ifa).ifa_name, interface) != 0i32) {
+    if !((*ifa).ifa_addr.is_null() || strcmp((*ifa).ifa_name, interface) != 0) {
       if (*(*ifa).ifa_addr).sa_family as libc::c_int == 17i32 {
         let mut sll: *mut sockaddr_ll = (*ifa).ifa_addr as *mut libc::c_void as *mut sockaddr_ll;
         memcpy(
@@ -263,7 +263,7 @@ pub unsafe extern "C" fn d6_read_interface(
             *ifindex,
           );
         }
-        retval &= 3i32 - (1i32 << 0i32)
+        retval &= 3i32 - (1i32 << 0)
       }
       /* RFC 3315
        * 16. Client Source Address and Interface Selection
@@ -348,7 +348,7 @@ pub unsafe extern "C" fn d6_read_interface(
     ifa = (*ifa).ifa_next
   }
   freeifaddrs(ifap);
-  if retval & 1i32 << 0i32 != 0 {
+  if retval & 1i32 << 0 != 0 {
     /* This iface has no MAC (e.g. ppp), generate a random one */
     let mut ifr: ifreq = ifreq {
       ifr_ifrn: C2RustUnnamed_2 { ifrn_name: [0; 16] },
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn d6_read_interface(
     /*memset(&ifr, 0, sizeof(ifr)); - SIOCGIFINDEX does not need to clear all */
     strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), interface);
     fd = xsocket(10i32, SOCK_RAW as libc::c_int, IPPROTO_RAW as libc::c_int);
-    if ioctl(fd, 0x8933i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
+    if ioctl(fd, 0x8933i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0 {
       *ifindex = ifr.ifr_ifru.ifru_ivalue;
       if dhcp_verbose >= 2i32 as libc::c_uint {
         bb_info_msg(
@@ -371,7 +371,7 @@ pub unsafe extern "C" fn d6_read_interface(
           *ifindex,
         );
       }
-      if *(mac as *mut u32).offset(0) == 0i32 as libc::c_uint {
+      if *(mac as *mut u32).offset(0) == 0 as libc::c_uint {
         /* invent a fictitious MAC (once) */
         *(mac as *mut u32).offset(0) = rand() as u32;
         *(mac as *mut u16).offset(2) = rand() as u16;
@@ -379,14 +379,14 @@ pub unsafe extern "C" fn d6_read_interface(
         *fresh6 = (*fresh6 as libc::c_int & 0xfci32) as u8
         /* make sure it's not bcast */
       }
-      retval &= 3i32 - (1i32 << 0i32)
+      retval &= 3i32 - (1i32 << 0)
     }
     close(fd);
   }
-  if retval == 0i32 {
+  if retval == 0 {
     return retval;
   }
-  if retval & 1i32 << 0i32 != 0 {
+  if retval & 1i32 << 0 != 0 {
     bb_error_msg(
       b"can\'t get %s\x00" as *const u8 as *const libc::c_char,
       b"MAC\x00" as *const u8 as *const libc::c_char,
@@ -435,7 +435,7 @@ pub unsafe extern "C" fn d6_listen_socket(
   }
   memset(
     &mut addr as *mut sockaddr_in6 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
   );
   addr.sin6_family = 10i32 as sa_family_t;

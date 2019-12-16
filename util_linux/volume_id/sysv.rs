@@ -289,5 +289,5 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
     _ => {}
   }
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
-  return 0i32;
+  return 0;
 }

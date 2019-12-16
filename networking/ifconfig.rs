@@ -469,9 +469,9 @@ pub unsafe extern "C" fn ifconfig_main(
   /*char host[128];*/
   let mut host: *const libc::c_char = std::ptr::null(); /* make gcc happy */
   let mut show_all_param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  did_flags = 0i32 as libc::c_uint;
-  sai_hostname = 0i32 as libc::c_uint;
-  sai_netmask = 0i32 as libc::c_uint;
+  did_flags = 0 as libc::c_uint;
+  sai_hostname = 0 as libc::c_uint;
+  sai_netmask = 0 as libc::c_uint;
   /* skip argv[0] */
   argv = argv.offset(1);
   show_all_param = std::ptr::null_mut::<libc::c_char>();
@@ -492,7 +492,7 @@ pub unsafe extern "C" fn ifconfig_main(
     });
   }
   /* Create a channel to the NET kernel. */
-  sockfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  sockfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   /* get interface name */
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv);
   let mut current_block_97: u64;
@@ -518,7 +518,7 @@ pub unsafe extern "C" fn ifconfig_main(
         break;
       }
       /* Find table entry. */
-      if strcmp(p, (*op).name) == 0i32 {
+      if strcmp(p, (*op).name) == 0 {
         /* If name matches... */
         mask &= (*op).flags();
         if mask != 0 {
@@ -583,14 +583,14 @@ pub unsafe extern "C" fn ifconfig_main(
         if mask & 0x2i32 as libc::c_uint != 0 {
           if mask & 0x1i32 as libc::c_uint != 0 {
             host = *argv;
-            if strcmp(host, b"inet\x00" as *const u8 as *const libc::c_char) == 0i32 {
+            if strcmp(host, b"inet\x00" as *const u8 as *const libc::c_char) == 0 {
               continue;
             }
             sai.sin_family = 2i32 as sa_family_t;
-            sai.sin_port = 0i32 as in_port_t;
-            if strcmp(host, b"default\x00" as *const u8 as *const libc::c_char) == 0i32 {
+            sai.sin_port = 0 as in_port_t;
+            if strcmp(host, b"default\x00" as *const u8 as *const libc::c_char) == 0 {
               /* Default is special, meaning 0.0.0.0. */
-              sai.sin_addr.s_addr = 0i32 as in_addr_t
+              sai.sin_addr.s_addr = 0 as in_addr_t
             } else if *host.offset(0) as libc::c_int == '+' as i32
               && *host.offset(1) == 0
               && mask & 0x200i32 as libc::c_uint != 0
@@ -602,18 +602,18 @@ pub unsafe extern "C" fn ifconfig_main(
             } else {
               let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
               let mut prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-              let mut prefix_len: libc::c_int = 0i32;
+              let mut prefix_len: libc::c_int = 0;
               prefix = strchr(host, '/' as i32);
               if !prefix.is_null() {
                 prefix_len = xatou_range(
                   prefix.offset(1),
-                  0i32 as libc::c_uint,
+                  0 as libc::c_uint,
                   128i32 as libc::c_uint,
                 ) as libc::c_int;
                 *prefix = '\u{0}' as i32 as libc::c_char
               }
               loop {
-                lsa = xhost2sockaddr(host, 0i32);
+                lsa = xhost2sockaddr(host, 0);
                 if !((*lsa).u.sa.sa_family as libc::c_int != 10i32 && !prefix.is_null()) {
                   break;
                 }
@@ -633,7 +633,7 @@ pub unsafe extern "C" fn ifconfig_main(
                   ifr6_prefixlen: 0,
                   ifr6_ifindex: 0,
                 };
-                sockfd6 = xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
+                sockfd6 = xsocket(10i32, SOCK_DGRAM as libc::c_int, 0);
                 bb_xioctl(
                   sockfd6,
                   0x8933i32 as libc::c_uint,
@@ -700,7 +700,7 @@ pub unsafe extern "C" fn ifconfig_main(
           );
         } else {
           /* FIXME: error check?? */
-          let mut i: libc::c_ulong = strtoul(*argv, 0 as *mut *mut libc::c_char, 0i32);
+          let mut i: libc::c_ulong = strtoul(*argv, 0 as *mut *mut libc::c_char, 0);
           p = (&mut ifr as *mut ifreq as *mut libc::c_char)
             .offset((*a1op).ifr_offset as libc::c_int as isize);
           if mask & 0xci32 as libc::c_uint != 0 {
@@ -741,7 +741,7 @@ pub unsafe extern "C" fn ifconfig_main(
            * it'll go with the cross-platform support etc.
            */
           let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          let mut found_colon: libc::c_short = 0i32 as libc::c_short;
+          let mut found_colon: libc::c_short = 0 as libc::c_short;
           ptr = ifr.ifr_ifrn.ifrn_name.as_mut_ptr();
           while *ptr != 0 {
             if *ptr as libc::c_int == ':' as i32 {
@@ -790,7 +790,7 @@ pub unsafe extern "C" fn ifconfig_main(
       b"SIOCSIFFLAGS\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_static_initializers() {
   OptArray = [
@@ -798,7 +798,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"metric\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -808,7 +808,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"mtu\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -818,7 +818,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"txqueuelen\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -828,7 +828,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"dstaddr\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | (0x2i32 | 0x1i32)) as libc::c_uint);
@@ -838,7 +838,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"netmask\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | (0x2i32 | 0x1i32) | 0x20i32) as libc::c_uint);
@@ -858,7 +858,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"hw\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x2i32) as libc::c_uint);
@@ -878,7 +878,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"keepalive\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x1i32) as libc::c_uint);
@@ -888,7 +888,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"outfill\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x1i32) as libc::c_uint);
@@ -898,7 +898,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"mem_start\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x4i32) as libc::c_uint);
@@ -908,7 +908,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"io_addr\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x4i32) as libc::c_uint);
@@ -918,7 +918,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"irq\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0xci32) as libc::c_uint);
@@ -928,7 +928,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"add\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x2i32 | 0x1i32 | 0x40i32) as libc::c_uint);
@@ -938,7 +938,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"del\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x2i32 | 0x1i32 | 0x40i32) as libc::c_uint);

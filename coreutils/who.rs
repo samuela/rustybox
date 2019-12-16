@@ -203,7 +203,7 @@ pub unsafe extern "C" fn who_main(
           (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
             .wrapping_add(1i32 as libc::c_ulong),
         );
-        if stat(name.as_mut_ptr(), &mut st) == 0i32 {
+        if stat(name.as_mut_ptr(), &mut st) == 0 {
           idle_string(str6.as_mut_ptr(), st.st_atime);
         }
         /* manpages say ut_tv.tv_sec *is* time_t,
@@ -233,5 +233,5 @@ pub unsafe extern "C" fn who_main(
   if do_users != 0 {
     bb_putchar('\n' as i32);
   }
-  return 0i32;
+  return 0;
 }

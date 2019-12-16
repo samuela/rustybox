@@ -80,14 +80,14 @@ pub unsafe extern "C" fn isqrt(mut N: libc::c_ulonglong) -> libc::c_ulong {
   shift = ((::std::mem::size_of::<libc::c_ulonglong>() as libc::c_ulong)
     .wrapping_mul(8i32 as libc::c_ulong) as libc::c_uint)
     .wrapping_sub(2i32 as libc::c_uint);
-  x = 0i32 as libc::c_ulong;
+  x = 0 as libc::c_ulong;
   loop {
     x = (x << 1i32).wrapping_add(1i32 as libc::c_ulong);
     if (x as libc::c_ulonglong).wrapping_mul(x as libc::c_ulonglong) > N >> shift {
       x = x.wrapping_sub(1)
     }
     shift = shift.wrapping_sub(2i32 as libc::c_uint);
-    if !(shift as libc::c_int >= 0i32) {
+    if !(shift as libc::c_int >= 0) {
       break;
     }
   }

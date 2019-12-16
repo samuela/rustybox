@@ -87,7 +87,7 @@ pub unsafe extern "C" fn setkeycodes_main(
     sc = xstrtoul_range(
       *argv.offset(1),
       16i32,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       0xe07fi32 as libc::c_ulong,
     ) as libc::c_int;
     if sc >= 0xe000i32 {
@@ -97,7 +97,7 @@ pub unsafe extern "C" fn setkeycodes_main(
     a.scancode = sc as libc::c_uint;
     a.keycode = xatou_range(
       *argv.offset(2),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       255i32 as libc::c_uint,
     );
     ioctl_or_perror_and_die(
@@ -110,6 +110,6 @@ pub unsafe extern "C" fn setkeycodes_main(
     );
     argv = argv.offset(2)
   }
-  return 0i32;
+  return 0;
 }
 /* write kernel keycode table entry */

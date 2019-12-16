@@ -132,7 +132,7 @@ pub struct cramfs_info {
 pub unsafe extern "C" fn volume_id_probe_cramfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut cs: *mut cramfs_super = std::ptr::null_mut();
-  cs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut cramfs_super;
+  cs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut cramfs_super;
   if cs.is_null() {
     return -1i32;
   }
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn volume_id_probe_cramfs(mut id: *mut volume_id) -> libc:
     volume_id_set_label_string(id, (*cs).name.as_mut_ptr(), 16i32 as size_t);
     //		volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
     (*id).type_0 = b"cramfs\x00" as *const u8 as *const libc::c_char;
-    return 0i32;
+    return 0;
   }
   return -1i32;
 }

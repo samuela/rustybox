@@ -566,8 +566,8 @@ static mut tokenlist: [libc::c_char; 448] = [
   0,
 ];
 static mut tokeninfo: [u32; 100] = [
-  0i32 as u32,
-  0i32 as u32,
+  0 as u32,
+  0 as u32,
   OC_REGEXP as libc::c_int as u32,
   (0x20000i32 | 0x80000i32 | 'a' as i32) as u32,
   (0x20000i32 | 0x80000i32 | 'w' as i32) as u32,
@@ -623,7 +623,7 @@ static mut tokeninfo: [u32; 100] = [
     as u32,
   (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 4i32) as u32,
   (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 3i32) as u32,
-  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 0i32) as u32,
+  (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 0) as u32,
   (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 1i32) as u32,
   (OC_COMPARE as libc::c_int | (0x10000i32 | 0x20000i32) | 39i32 << 24i32 | 2i32) as u32,
   (OC_MATCH as libc::c_int | (0x10000i32 | 0x40000i32) | 45i32 << 24i32 | '!' as i32) as u32,
@@ -631,7 +631,7 @@ static mut tokeninfo: [u32; 100] = [
   (OC_LAND as libc::c_int | 0x10000i32 | 55i32 << 24i32) as u32,
   (OC_LOR as libc::c_int | 0x10000i32 | 59i32 << 24i32) as u32,
   (OC_TERNARY as libc::c_int | 0x10000i32 | 64i32 << 24i32 | '?' as i32) as u32,
-  (OC_COLON as libc::c_int | 0i32 | 67i32 << 24i32 | ':' as i32) as u32,
+  (OC_COLON as libc::c_int | 0 | 67i32 << 24i32 | ':' as i32) as u32,
   (OC_IN as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 49i32 << 24i32) as u32,
   (OC_COMMA as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32 | 0x80000i32) | 80i32 << 24i32)
     as u32,
@@ -639,11 +639,11 @@ static mut tokeninfo: [u32; 100] = [
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '+' as i32) as u32,
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '-' as i32) as u32,
   (OC_UNARY as libc::c_int | 0x20000i32 | 19i32 << 24i32 | '!' as i32) as u32,
-  0i32 as u32,
-  0i32 as u32,
-  0i32 as u32,
-  0i32 as u32,
-  0i32 as u32,
+  0 as u32,
+  0 as u32,
+  0 as u32,
+  0 as u32,
+  0 as u32,
   ST_IF as libc::c_int as u32,
   ST_DO as libc::c_int as u32,
   ST_FOR as libc::c_int as u32,
@@ -657,7 +657,7 @@ static mut tokeninfo: [u32; 100] = [
   (OC_RETURN as libc::c_int | 0x10000i32) as u32,
   (OC_EXIT as libc::c_int | (0x10000i32 | 0x100000i32)) as u32,
   ST_WHILE as libc::c_int as u32,
-  0i32 as u32,
+  0 as u32,
   (OC_BUILTIN as libc::c_int | B_an as libc::c_int | 0x83i32 << 24i32) as u32,
   (OC_BUILTIN as libc::c_int | B_co as libc::c_int | 0x41i32 << 24i32) as u32,
   (OC_BUILTIN as libc::c_int | B_ls as libc::c_int | 0x83i32 << 24i32) as u32,
@@ -690,11 +690,11 @@ static mut tokeninfo: [u32; 100] = [
   (OC_BUILTIN as libc::c_int | B_lo as libc::c_int | 0x49i32 << 24i32) as u32,
   (OC_BUILTIN as libc::c_int | B_up as libc::c_int | 0x49i32 << 24i32) as u32,
   (OC_FBLTIN as libc::c_int | (0x10000i32 | 0x40000i32) | F_le as libc::c_int) as u32,
-  (OC_GETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 0i32 << 24i32) as u32,
-  0i32 as u32,
-  0i32 as u32,
-  0i32 as u32,
-  0i32 as u32,
+  (OC_GETLINE as libc::c_int | (0x10000i32 | 0x40000i32 | 0x20000i32) | 0 << 24i32) as u32,
+  0 as u32,
+  0 as u32,
+  0 as u32,
+  0 as u32,
 ];
 static mut vNames: [libc::c_char; 107] = [
   67, 79, 78, 86, 70, 77, 84, 0, 79, 70, 77, 84, 0, 70, 83, 0, 42, 79, 70, 83, 0, 79, 82, 83, 0,
@@ -751,7 +751,7 @@ static mut EMSG_NEGATIVE_FIELD: [libc::c_char; 25] = [
 unsafe extern "C" fn zero_out_var(mut vp: *mut var) {
   memset(
     vp as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<var>() as libc::c_ulong,
   );
 }
@@ -765,7 +765,7 @@ unsafe extern "C" fn syntax_error(mut message: *const libc::c_char) -> ! {
 }
 /* ---- hash stuff ---- */
 unsafe extern "C" fn hashidx(mut name: *const libc::c_char) -> libc::c_uint {
-  let mut idx: libc::c_uint = 0i32 as libc::c_uint;
+  let mut idx: libc::c_uint = 0 as libc::c_uint;
   while *name != 0 {
     let fresh0 = name;
     name = name.offset(1);
@@ -796,7 +796,7 @@ unsafe extern "C" fn hash_search(
     .items
     .offset(hashidx(name).wrapping_rem((*hash).csize) as isize);
   while !hi.is_null() {
-    if strcmp((*hi).name.as_mut_ptr(), name) == 0i32 {
+    if strcmp((*hi).name.as_mut_ptr(), name) == 0 {
       return &mut (*hi).data as *mut C2RustUnnamed_0 as *mut libc::c_void;
     }
     hi = (*hi).next
@@ -824,7 +824,7 @@ unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
     (newsize as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut hash_item>() as libc::c_ulong),
   ) as *mut *mut hash_item;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*hash).csize {
     hi = *(*hash).items.offset(i as isize);
     while !hi.is_null() {
@@ -877,7 +877,7 @@ unsafe extern "C" fn hash_remove(mut hash: *mut xhash, mut name: *const libc::c_
   ) as *mut *mut hash_item_s;
   while !(*phi).is_null() {
     hi = *phi;
-    if strcmp((*hi).name.as_mut_ptr(), name) == 0i32 {
+    if strcmp((*hi).name.as_mut_ptr(), name) == 0 {
       (*hash).glen = ((*hash).glen as libc::c_ulong)
         .wrapping_sub(strlen(name).wrapping_add(1i32 as libc::c_ulong))
         as libc::c_uint as libc::c_uint;
@@ -965,7 +965,7 @@ unsafe extern "C" fn my_strtod(mut pp: *mut *mut libc::c_char) -> libc::c_double
     if c as libc::c_int == 'x' as i32
       || (*cp.offset(1) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32
     {
-      let mut ull: libc::c_ulonglong = strtoull(cp, pp, 0i32);
+      let mut ull: libc::c_ulonglong = strtoull(cp, pp, 0);
       if c as libc::c_int == 'x' as i32 {
         return ull as libc::c_double;
       }
@@ -1000,7 +1000,7 @@ unsafe extern "C" fn clear_array(mut array: *mut xhash) {
   let mut i: libc::c_uint = 0;
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut thi: *mut hash_item = std::ptr::null_mut();
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*array).csize {
     hi = *(*array).items.offset(i as isize);
     while !hi.is_null() {
@@ -1013,7 +1013,7 @@ unsafe extern "C" fn clear_array(mut array: *mut xhash) {
     *fresh7 = std::ptr::null_mut();
     i = i.wrapping_add(1)
   }
-  (*array).nel = 0i32 as libc::c_uint;
+  (*array).nel = 0 as libc::c_uint;
   (*array).glen = (*array).nel;
 }
 /* clear a variable */
@@ -1085,8 +1085,8 @@ unsafe extern "C" fn getvar_s(mut v: *mut var) -> *const libc::c_char {
 }
 unsafe extern "C" fn getvar_i(mut v: *mut var) -> libc::c_double {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  if (*v).type_0 & (0x1i32 | 0x100i32) as libc::c_uint == 0i32 as libc::c_uint {
-    (*v).number = 0i32 as libc::c_double;
+  if (*v).type_0 & (0x1i32 | 0x100i32) as libc::c_uint == 0 as libc::c_uint {
+    (*v).number = 0 as libc::c_double;
     s = (*v).string;
     if !s.is_null() && *s as libc::c_int != 0 {
       (*v).number = my_strtod(&mut s);
@@ -1108,7 +1108,7 @@ unsafe extern "C" fn getvar_i_int(mut v: *mut var) -> libc::c_ulong {
   let mut d: libc::c_double = getvar_i(v);
   /* Casting doubles to longs is undefined for values outside
    * of target type range. Try to widen it as much as possible */
-  if d >= 0i32 as libc::c_double {
+  if d >= 0 as libc::c_double {
     return d as libc::c_ulong;
   }
   /* Why? Think about d == -4294967295.0 (assuming 32bit longs) */
@@ -1139,7 +1139,7 @@ unsafe extern "C" fn is_numeric(mut v: *mut var) -> libc::c_int {
 /* return 1 when value of v corresponds to true, 0 otherwise */
 unsafe extern "C" fn istrue(mut v: *mut var) -> libc::c_int {
   if is_numeric(v) != 0 {
-    return ((*v).number != 0i32 as libc::c_double) as libc::c_int;
+    return ((*v).number != 0 as libc::c_double) as libc::c_int;
   }
   return (!(*v).string.is_null() && *(*v).string.offset(0) as libc::c_int != 0) as libc::c_int;
 }
@@ -1191,7 +1191,7 @@ unsafe extern "C" fn nvalloc(mut n: libc::c_int) -> *mut var {
   let ref mut fresh12 = (*(*ptr_to_globals.offset(-1i32 as isize)).g_cb).pos;
   *fresh12 = (*fresh12).offset(n as isize);
   while v < (*(*ptr_to_globals.offset(-1i32 as isize)).g_cb).pos {
-    (*v).type_0 = 0i32 as libc::c_uint;
+    (*v).type_0 = 0 as libc::c_uint;
     (*v).string = std::ptr::null_mut::<libc::c_char>();
     v = v.offset(1)
   }
@@ -1253,9 +1253,9 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
   let mut tc: u32 = 0;
   let mut ti: *const u32 = std::ptr::null();
   if (*ptr_to_globals.offset(-1i32 as isize)).t_rollback != 0 {
-    (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 0i32 as smallint
+    (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 0 as smallint
   } else if (*(ptr_to_globals as *mut globals2)).next_token__concat_inserted != 0 {
-    (*(ptr_to_globals as *mut globals2)).next_token__concat_inserted = 0i32 as smallint;
+    (*(ptr_to_globals as *mut globals2)).next_token__concat_inserted = 0 as smallint;
     (*(ptr_to_globals as *mut globals2)).t_tclass =
       (*(ptr_to_globals as *mut globals2)).next_token__save_tclass;
     (*(ptr_to_globals as *mut globals2)).t_info =
@@ -1376,7 +1376,7 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
                 | 1i32 << 24i32) as libc::c_uint
               | (1i32 << 15i32) as libc::c_uint)
             != 0
-            && strncmp(p, tl, l as libc::c_ulong) == 0i32
+            && strncmp(p, tl, l as libc::c_ulong) == 0
             && !(tc
               & (1i32 << 7i32
                 | (1i32 << 16i32 | 1i32 << 17i32)
@@ -1471,7 +1471,7 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
           | 1i32 << 19i32
           | 1i32 << 20i32
           | 1i32 << 21i32
-          | 1i32 << 0i32
+          | 1i32 << 0
           | 1i32 << 29i32
           | 1i32 << 30i32
           | (1i32 << 5i32 | 1i32 << 10i32)) as libc::c_uint
@@ -1528,7 +1528,7 @@ unsafe extern "C" fn mk_re_node(
   xregcomp(re.offset(1), s, 1i32 | 1i32 << 1i32);
 }
 unsafe extern "C" fn condition() -> *mut node {
-  next_token((1i32 << 0i32) as u32);
+  next_token((1i32 << 0) as u32);
   return parse_expr((1i32 << 1i32) as u32);
 }
 /* parse expression terminated by given argument, return ptr
@@ -1563,7 +1563,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
     | 1i32 << 19i32
     | 1i32 << 20i32
     | 1i32 << 21i32
-    | 1i32 << 0i32
+    | 1i32 << 0
     | 1i32 << 29i32
     | 1i32 << 30i32
     | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1593,7 +1593,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
         | 1i32 << 19i32
         | 1i32 << 20i32
         | 1i32 << 21i32
-        | 1i32 << 0i32
+        | 1i32 << 0
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)) as u32;
@@ -1634,7 +1634,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           | 1i32 << 19i32
           | 1i32 << 20i32
           | 1i32 << 21i32
-          | 1i32 << 0i32
+          | 1i32 << 0
           | 1i32 << 29i32
           | 1i32 << 30i32
           | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1652,7 +1652,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
             | 1i32 << 19i32
             | 1i32 << 20i32
             | 1i32 << 21i32
-            | 1i32 << 0i32
+            | 1i32 << 0
             | 1i32 << 29i32
             | 1i32 << 30i32
             | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1668,7 +1668,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           | 1i32 << 19i32
           | 1i32 << 20i32
           | 1i32 << 21i32
-          | 1i32 << 0i32
+          | 1i32 << 0
           | 1i32 << 29i32
           | 1i32 << 30i32
           | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1690,7 +1690,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
         | 1i32 << 19i32
         | 1i32 << 20i32
         | 1i32 << 21i32
-        | 1i32 << 0i32
+        | 1i32 << 0
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1702,7 +1702,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           | 1i32 << 19i32
           | 1i32 << 20i32
           | 1i32 << 21i32
-          | 1i32 << 0i32
+          | 1i32 << 0
           | 1i32 << 29i32
           | 1i32 << 30i32
           | 1i32 << 2i32) as libc::c_uint
@@ -1718,7 +1718,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
             | 1i32 << 19i32
             | 1i32 << 20i32
             | 1i32 << 21i32
-            | 1i32 << 0i32
+            | 1i32 << 0
             | 1i32 << 29i32
             | 1i32 << 30i32)) as libc::c_uint
           | iexp;
@@ -1789,7 +1789,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
               | 1i32 << 19i32
               | 1i32 << 20i32
               | 1i32 << 21i32
-              | 1i32 << 0i32
+              | 1i32 << 0
               | 1i32 << 29i32
               | 1i32 << 30i32
               | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1799,9 +1799,9 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           }
           524288 => (*cn).l.n = condition(),
           1048576 => {
-            next_token((1i32 << 0i32 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as u32);
+            next_token((1i32 << 0 | (1i32 << 14i32 | 1i32 << 15i32) | 1i32 << 13i32) as u32);
             rollback_token();
-            if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 0i32) as libc::c_uint != 0 {
+            if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 0) as libc::c_uint != 0 {
               /* It was a "(" token. Handle just like TC_BUILTIN */
               (*cn).l.n = condition()
             }
@@ -1892,7 +1892,7 @@ unsafe extern "C" fn chain_group() {
         | 1i32 << 19i32
         | 1i32 << 20i32
         | 1i32 << 21i32
-        | 1i32 << 0i32
+        | 1i32 << 0
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1913,7 +1913,7 @@ unsafe extern "C" fn chain_group() {
         | 1i32 << 19i32
         | 1i32 << 20i32
         | 1i32 << 21i32
-        | 1i32 << 0i32
+        | 1i32 << 0
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1937,7 +1937,7 @@ unsafe extern "C" fn chain_group() {
       | 1i32 << 19i32
       | 1i32 << 20i32
       | 1i32 << 21i32
-      | 1i32 << 0i32
+      | 1i32 << 0
       | 1i32 << 29i32
       | 1i32 << 30i32
       | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1963,7 +1963,7 @@ unsafe extern "C" fn chain_group() {
             | 1i32 << 19i32
             | 1i32 << 20i32
             | 1i32 << 21i32
-            | 1i32 << 0i32
+            | 1i32 << 0
             | 1i32 << 29i32
             | 1i32 << 30i32
             | (1i32 << 5i32 | 1i32 << 10i32)
@@ -1994,7 +1994,7 @@ unsafe extern "C" fn chain_group() {
         (*n).l.n = condition()
       }
       12800 => {
-        next_token((1i32 << 0i32) as u32);
+        next_token((1i32 << 0) as u32);
         n2 = parse_expr((1i32 << 14i32 | 1i32 << 1i32) as u32);
         if (*(ptr_to_globals as *mut globals2)).t_tclass & (1i32 << 1i32) as libc::c_uint != 0 {
           /* for-in */
@@ -2067,7 +2067,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
           | 1i32 << 19i32
           | 1i32 << 20i32
           | 1i32 << 21i32
-          | 1i32 << 0i32
+          | 1i32 << 0
           | 1i32 << 29i32
           | 1i32 << 30i32
           | (1i32 << 5i32 | 1i32 << 10i32)
@@ -2103,12 +2103,12 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
         (*(ptr_to_globals as *mut globals2)).t_string,
       ) as *mut func;
       (*f).body.first = std::ptr::null_mut();
-      (*f).nargs = 0i32 as libc::c_uint;
+      (*f).nargs = 0 as libc::c_uint;
       /* Match func arg list: a comma sep list of >= 0 args, and a close paren */
       while next_token((1i32 << 26i32 | 1i32 << 1i32 | 1i32 << 8i32) as u32) != 0 {
         /* Either an empty arg list, or trailing comma from prev iter
          * must be followed by an arg */
-        if (*f).nargs == 0i32 as libc::c_uint
+        if (*f).nargs == 0 as libc::c_uint
           && (*(ptr_to_globals as *mut globals2)).t_tclass == (1i32 << 1i32) as libc::c_uint
         {
           break;
@@ -2143,7 +2143,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
         | 1i32 << 19i32
         | 1i32 << 20i32
         | 1i32 << 21i32
-        | 1i32 << 0i32
+        | 1i32 << 0
         | 1i32 << 29i32
         | 1i32 << 30i32
         | (1i32 << 5i32 | 1i32 << 10i32)
@@ -2303,7 +2303,7 @@ unsafe extern "C" fn awk_split(
   {
     c[2] = '\n' as i32 as libc::c_char
   }
-  n = 0i32;
+  n = 0;
   if (*spl).info & 0xff00i32 as libc::c_uint == OC_REGEXP as libc::c_int as libc::c_uint {
     /* regex split */
     if *s == 0 {
@@ -2321,12 +2321,12 @@ unsafe extern "C" fn awk_split(
         s,
         1i32 as size_t,
         pmatch.as_mut_ptr(),
-        0i32,
-      ) == 0i32
+        0,
+      ) == 0
         && pmatch[0].rm_so <= l
       {
         l = pmatch[0].rm_so;
-        if pmatch[0].rm_eo == 0i32 {
+        if pmatch[0].rm_eo == 0 {
           l += 1;
           pmatch[0].rm_eo += 1
         }
@@ -2440,7 +2440,7 @@ unsafe extern "C" fn split_f0() {
   );
   fsrealloc(n);
   s = (*(ptr_to_globals as *mut globals2)).split_f0__fstrings;
-  i = 0i32;
+  i = 0;
   while i < n {
     let ref mut fresh54 = (*(*ptr_to_globals.offset(-1i32 as isize))
       .Fields
@@ -2482,7 +2482,7 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
   }
   if v == (*(ptr_to_globals as *mut globals2)).intvar[NF as libc::c_int as usize] {
     n = getvar_i(v) as libc::c_int;
-    if n < 0i32 {
+    if n < 0 {
       syntax_error(b"NF set to negative value\x00" as *const u8 as *const libc::c_char);
     }
     fsrealloc(n);
@@ -2490,8 +2490,8 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
     sep = getvar_s((*(ptr_to_globals as *mut globals2)).intvar[OFS as libc::c_int as usize]);
     sl = strlen(sep) as libc::c_int;
     b = std::ptr::null_mut::<libc::c_char>();
-    len = 0i32;
-    i = 0i32;
+    len = 0;
+    i = 0;
     while i < n {
       s = getvar_s(
         &mut *(*ptr_to_globals.offset(-1i32 as isize))
@@ -2525,7 +2525,7 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
     );
     (*ptr_to_globals.offset(-1i32 as isize)).is_f0_split = 1i32 as smallint
   } else if v == (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize] {
-    (*ptr_to_globals.offset(-1i32 as isize)).is_f0_split = 0i32 as smallint
+    (*ptr_to_globals.offset(-1i32 as isize)).is_f0_split = 0 as smallint
   } else if v == (*(ptr_to_globals as *mut globals2)).intvar[FS as libc::c_int as usize] {
     /*
      * The POSIX-2008 standard says that changing FS should have no effect on the
@@ -2600,7 +2600,7 @@ unsafe extern "C" fn hashwalk_init(mut v: *mut var, mut array: *mut xhash) {
   (*w).end = (*w).wbuf.as_mut_ptr();
   (*w).cur = (*w).end;
   (*w).prev = prev_walker;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*array).csize {
     hi = *(*array).items.offset(i as isize);
     while !hi.is_null() {
@@ -2617,7 +2617,7 @@ unsafe extern "C" fn hashwalk_next(mut v: *mut var) -> libc::c_int {
     let mut prev_walker: *mut walker_list = (*w).prev;
     free(w as *mut libc::c_void);
     (*v).x.walker = prev_walker;
-    return 0i32;
+    return 0;
   }
   setvar_s(v, nextword(&mut (*w).cur));
   return 1i32;
@@ -2637,7 +2637,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
   let mut size: libc::c_int = 0;
   let mut a: libc::c_int = 0;
   let mut p: libc::c_int = 0;
-  let mut pp: libc::c_int = 0i32;
+  let mut pp: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   let mut so: libc::c_int = 0;
   let mut eo: libc::c_int = 0;
@@ -2655,7 +2655,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
   p = (*rsm).pos;
   size = (*rsm).size;
   c = (*(ptr_to_globals as *mut globals2)).rsplitter.n.info as libc::c_char;
-  rp = 0i32;
+  rp = 0;
   if m.is_null() {
     m = qrealloc(m, 256i32, &mut size)
   }
@@ -2664,7 +2664,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
     eo = p;
     so = eo;
     r = 1i32;
-    if p > 0i32 {
+    if p > 0 {
       if (*(ptr_to_globals as *mut globals2)).rsplitter.n.info & 0xff00i32 as libc::c_uint
         == OC_REGEXP as libc::c_int as libc::c_uint
       {
@@ -2677,8 +2677,8 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
           b,
           1i32 as size_t,
           pmatch.as_mut_ptr(),
-          0i32,
-        ) == 0i32
+          0,
+        ) == 0
         {
           so = pmatch[0].rm_so;
           eo = pmatch[0].rm_eo;
@@ -2721,14 +2721,14 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
         }
       }
     }
-    if a > 0i32 {
+    if a > 0 {
       memmove(
         m as *mut libc::c_void,
         m.offset(a as isize) as *const libc::c_void,
         (p + 1i32) as libc::c_ulong,
       );
       b = m;
-      a = 0i32
+      a = 0
     }
     m = qrealloc(m, a + p + 128i32, &mut size);
     b = m.offset(a as isize);
@@ -2740,8 +2740,8 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
         (size - p - 1) as size_t,
       ) as i32;
     if p < pp {
-      p = 0i32;
-      r = 0i32;
+      p = 0;
+      r = 0;
       setvar_i(
         (*(ptr_to_globals as *mut globals2)).intvar[ERRNO as libc::c_int as usize],
         *bb_errno as libc::c_double,
@@ -2752,7 +2752,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
       break;
     }
   }
-  if p == 0i32 {
+  if p == 0 {
     r -= 1
   } else {
     c = *b.offset(so as isize);
@@ -2781,7 +2781,7 @@ unsafe extern "C" fn fmt_num(
   mut n: libc::c_double,
   mut int_as_int: libc::c_int,
 ) -> libc::c_int {
-  let mut r: libc::c_int = 0i32;
+  let mut r: libc::c_int = 0;
   let mut c: libc::c_char = 0;
   let mut s: *const libc::c_char = format;
   if int_as_int != 0 && n == n as libc::c_longlong as libc::c_double {
@@ -2839,7 +2839,7 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
   v = nvalloc(1i32);
   f = xstrdup(getvar_s(evaluate(nextarg(&mut n), v)));
   fmt = f;
-  i = 0i32;
+  i = 0;
   while *f != 0 {
     s = f;
     while *f as libc::c_int != 0
@@ -2888,7 +2888,7 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
       );
       i += sprintf(b.offset(i as isize), s, s1)
     } else {
-      i += fmt_num(b.offset(i as isize), incr, s, getvar_i(arg), 0i32)
+      i += fmt_num(b.offset(i as isize), incr, s, getvar_i(arg), 0)
     }
     *f = c1;
     /* if there was an error while sprintf, return value is negative */
@@ -2939,9 +2939,9 @@ unsafe extern "C" fn awk_sub(
   };
   let mut regex: *mut regex_t = std::ptr::null_mut();
   resbuf = std::ptr::null_mut::<libc::c_char>();
-  residx = 0i32;
-  match_no = 0i32;
-  regexec_flags = 0i32;
+  residx = 0;
+  match_no = 0;
+  regexec_flags = 0;
   regex = as_regex(rn, &mut sreg);
   sp = getvar_s(if !src.is_null() {
     src
@@ -2956,7 +2956,7 @@ unsafe extern "C" fn awk_sub(
       10i32 as size_t,
       pmatch.as_mut_ptr(),
       regexec_flags,
-    ) == 0i32)
+    ) == 0)
     {
       current_block = 6476622998065200121;
       break;
@@ -2977,7 +2977,7 @@ unsafe extern "C" fn awk_sub(
       let mut nbs: libc::c_int = 0;
       /* replace */
       residx -= eo - so;
-      nbs = 0i32;
+      nbs = 0;
       s = repl;
       while *s != 0 {
         let fresh55 = residx;
@@ -2993,7 +2993,7 @@ unsafe extern "C" fn awk_sub(
           {
             let mut j: libc::c_int = 0;
             residx -= nbs + 3i32 >> 1i32;
-            j = 0i32;
+            j = 0;
             if c as libc::c_int != '&' as i32 {
               j = c as libc::c_int - '0' as i32;
               nbs += 1
@@ -3013,7 +3013,7 @@ unsafe extern "C" fn awk_sub(
               residx += n
             }
           }
-          nbs = 0i32
+          nbs = 0
         }
         s = s.offset(1)
       }
@@ -3133,7 +3133,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
   op = (*op).l.n;
   av[3] = std::ptr::null_mut();
   av[2] = av[3];
-  i = 0i32;
+  i = 0;
   while i < 4i32 && !op.is_null() {
     an[i as usize] = nextarg(&mut op);
     if isr & 0x9000000i32 as libc::c_uint != 0 {
@@ -3188,16 +3188,16 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       if i > l {
         i = l
       }
-      if i < 0i32 {
-        i = 0i32
+      if i < 0 {
+        i = 0
       }
       n = if nargs > 2i32 {
         getvar_i(av[2])
       } else {
         (l - i) as libc::c_double
       } as libc::c_int;
-      if n < 0i32 {
-        n = 0i32
+      if n < 0 {
+        n = 0
       }
       s_0 = xstrndup(as_0[0].offset(i as isize), n);
       setvar_p(res, s_0);
@@ -3258,10 +3258,10 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       setvar_p(res, s_1);
     }
     1 => {
-      n = 0i32;
+      n = 0;
       ll = strlen(as_0[1]) as libc::c_int;
       l = strlen(as_0[0]).wrapping_sub(ll as libc::c_ulong) as libc::c_int;
-      if ll > 0i32 && l >= 0i32 {
+      if ll > 0 && l >= 0 {
         if (*ptr_to_globals.offset(-1i32 as isize)).icase == 0 {
           let mut s_2: *mut libc::c_char = strstr(as_0[0], as_0[1]);
           if !s_2.is_null() {
@@ -3271,9 +3271,9 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
           /* this piece of code is terribly slow and
            * really should be rewritten
            */
-          i = 0i32;
+          i = 0;
           while i <= l {
-            if strncasecmp(as_0[0].offset(i as isize), as_0[1], ll as libc::c_ulong) == 0i32 {
+            if strncasecmp(as_0[0].offset(i as isize), as_0[1], ll as libc::c_ulong) == 0 {
               n = i + 1i32;
               break;
             } else {
@@ -3294,7 +3294,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       i = strftime(
         (*ptr_to_globals.offset(-1i32 as isize)).g_buf,
         240i32 as size_t,
-        if nargs > 0i32 {
+        if nargs > 0 {
           as_0[0]
         } else {
           b"%a %b %d %H:%M:%S %Z %Y\x00" as *const u8 as *const libc::c_char
@@ -3311,12 +3311,12 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
     }
     2 => {
       re = as_regex(an[1], &mut sreg);
-      n = regexec(re, as_0[0], 1i32 as size_t, pmatch.as_mut_ptr(), 0i32);
-      if n == 0i32 {
+      n = regexec(re, as_0[0], 1i32 as size_t, pmatch.as_mut_ptr(), 0);
+      if n == 0 {
         pmatch[0].rm_so += 1;
         pmatch[0].rm_eo += 1
       } else {
-        pmatch[0].rm_so = 0i32;
+        pmatch[0].rm_so = 0;
         pmatch[0].rm_eo = -1i32
       }
       setvar_i(
@@ -3351,13 +3351,13 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
     10 => {
       setvar_i(
         res,
-        awk_sub(an[0], as_0[1], 0i32, av[2], av[2], 0i32) as libc::c_double,
+        awk_sub(an[0], as_0[1], 0, av[2], av[2], 0) as libc::c_double,
       );
     }
     11 => {
       setvar_i(
         res,
-        awk_sub(an[0], as_0[1], 1i32, av[2], av[2], 0i32) as libc::c_double,
+        awk_sub(an[0], as_0[1], 1i32, av[2], av[2], 0) as libc::c_double,
       );
     }
     _ => {}
@@ -3447,10 +3447,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -3552,7 +3552,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -3569,7 +3569,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -3635,7 +3635,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -3811,14 +3811,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -3851,14 +3851,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -3943,7 +3943,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -3977,7 +3977,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -4012,14 +4012,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -4049,10 +4049,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -4154,7 +4154,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -4171,7 +4171,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -4232,7 +4232,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -4403,14 +4403,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -4443,14 +4443,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -4523,7 +4523,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -4550,7 +4550,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -4585,14 +4585,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -4621,10 +4621,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -4726,7 +4726,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -4743,7 +4743,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -4804,7 +4804,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -4975,14 +4975,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -5015,14 +5015,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -5095,7 +5095,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -5122,7 +5122,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -5157,14 +5157,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -5193,10 +5193,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -5298,7 +5298,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -5315,7 +5315,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -5376,7 +5376,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -5547,14 +5547,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -5587,14 +5587,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -5667,7 +5667,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -5694,7 +5694,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -5729,14 +5729,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -5765,10 +5765,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -5870,7 +5870,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -5887,7 +5887,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -5948,7 +5948,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -6119,14 +6119,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -6159,14 +6159,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -6239,7 +6239,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -6266,7 +6266,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -6301,14 +6301,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -6337,10 +6337,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -6442,7 +6442,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -6459,7 +6459,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -6520,7 +6520,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -6691,14 +6691,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -6731,14 +6731,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -6811,7 +6811,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -6838,7 +6838,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -6873,14 +6873,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -6909,10 +6909,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -7014,7 +7014,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -7031,7 +7031,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -7092,7 +7092,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -7263,14 +7263,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -7303,14 +7303,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -7383,7 +7383,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -7410,7 +7410,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -7445,14 +7445,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -7481,10 +7481,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -7586,7 +7586,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -7603,7 +7603,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -7664,7 +7664,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -7835,14 +7835,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -7875,14 +7875,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -7955,7 +7955,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -7982,7 +7982,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -8017,14 +8017,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -8053,10 +8053,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -8158,7 +8158,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -8175,7 +8175,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -8236,7 +8236,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -8407,14 +8407,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -8447,14 +8447,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -8527,7 +8527,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -8554,7 +8554,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -8589,14 +8589,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -8625,10 +8625,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -8730,7 +8730,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -8747,7 +8747,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -8808,7 +8808,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -8979,14 +8979,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -9019,14 +9019,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -9099,7 +9099,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -9126,7 +9126,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -9161,14 +9161,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -9197,10 +9197,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -9302,7 +9302,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -9319,7 +9319,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -9380,7 +9380,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -9551,14 +9551,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -9591,14 +9591,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -9671,7 +9671,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -9698,7 +9698,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -9733,14 +9733,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -9769,10 +9769,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -9874,7 +9874,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -9891,7 +9891,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -9952,7 +9952,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -10123,14 +10123,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -10163,14 +10163,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -10243,7 +10243,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -10270,7 +10270,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -10305,14 +10305,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -10341,10 +10341,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -10446,7 +10446,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -10463,7 +10463,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -10524,7 +10524,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -10695,14 +10695,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -10735,14 +10735,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -10815,7 +10815,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -10842,7 +10842,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -10877,14 +10877,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -10913,10 +10913,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -11018,7 +11018,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -11035,7 +11035,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -11096,7 +11096,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -11267,14 +11267,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -11307,14 +11307,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -11387,7 +11387,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -11414,7 +11414,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -11449,14 +11449,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -11485,10 +11485,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -11590,7 +11590,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -11607,7 +11607,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -11668,7 +11668,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -11839,14 +11839,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -11879,14 +11879,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -11959,7 +11959,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -11986,7 +11986,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -12021,14 +12021,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -12057,10 +12057,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -12162,7 +12162,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -12179,7 +12179,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -12240,7 +12240,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -12411,14 +12411,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -12451,14 +12451,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -12531,7 +12531,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -12558,7 +12558,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -12593,14 +12593,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -12629,10 +12629,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -12734,7 +12734,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -12751,7 +12751,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -12812,7 +12812,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -12983,14 +12983,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -13023,14 +13023,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -13103,7 +13103,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -13130,7 +13130,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -13165,14 +13165,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -13201,10 +13201,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -13306,7 +13306,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -13323,7 +13323,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -13384,7 +13384,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -13555,14 +13555,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -13595,14 +13595,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -13675,7 +13675,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -13702,7 +13702,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -13737,14 +13737,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -13773,10 +13773,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -13878,7 +13878,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -13895,7 +13895,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -13956,7 +13956,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -14127,14 +14127,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -14167,14 +14167,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -14247,7 +14247,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -14274,7 +14274,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -14309,14 +14309,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -14345,10 +14345,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -14450,7 +14450,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -14467,7 +14467,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -14528,7 +14528,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -14699,14 +14699,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -14739,14 +14739,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -14819,7 +14819,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -14846,7 +14846,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -14881,14 +14881,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -14917,10 +14917,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -15022,7 +15022,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -15039,7 +15039,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -15100,7 +15100,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -15271,14 +15271,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -15311,14 +15311,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -15391,7 +15391,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -15418,7 +15418,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -15453,14 +15453,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -15489,10 +15489,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -15594,7 +15594,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -15611,7 +15611,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -15672,7 +15672,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -15843,14 +15843,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -15883,14 +15883,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -15963,7 +15963,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -15990,7 +15990,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -16025,14 +16025,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -16061,10 +16061,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -16166,7 +16166,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -16183,7 +16183,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -16244,7 +16244,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -16415,14 +16415,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -16455,14 +16455,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -16535,7 +16535,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -16562,7 +16562,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -16597,14 +16597,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -16633,10 +16633,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -16738,7 +16738,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -16755,7 +16755,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -16816,7 +16816,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -16987,14 +16987,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -17027,14 +17027,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -17107,7 +17107,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -17134,7 +17134,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -17169,14 +17169,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -17205,10 +17205,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -17310,7 +17310,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -17327,7 +17327,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -17388,7 +17388,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -17559,14 +17559,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -17599,14 +17599,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -17679,7 +17679,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -17706,7 +17706,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -17741,14 +17741,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -17777,10 +17777,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -17882,7 +17882,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -17899,7 +17899,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -17960,7 +17960,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -18131,14 +18131,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -18171,14 +18171,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -18251,7 +18251,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -18278,7 +18278,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -18313,14 +18313,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -18349,10 +18349,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -18454,7 +18454,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -18471,7 +18471,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -18532,7 +18532,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -18703,14 +18703,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -18743,14 +18743,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -18823,7 +18823,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -18850,7 +18850,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -18885,14 +18885,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -18921,10 +18921,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -19026,7 +19026,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -19043,7 +19043,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -19104,7 +19104,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -19275,14 +19275,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -19315,14 +19315,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -19395,7 +19395,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -19422,7 +19422,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -19457,14 +19457,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -19493,10 +19493,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -19598,7 +19598,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -19615,7 +19615,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -19676,7 +19676,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -19847,14 +19847,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -19887,14 +19887,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -19967,7 +19967,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -19994,7 +19994,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -20029,14 +20029,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -20065,10 +20065,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -20170,7 +20170,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -20187,7 +20187,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -20248,7 +20248,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -20419,14 +20419,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -20459,14 +20459,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -20539,7 +20539,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -20566,7 +20566,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -20601,14 +20601,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -20637,10 +20637,10 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
           match current_block {
             17870747410601324163 => {
               let mut i_1: libc::c_int = getvar_i(R.v) as libc::c_int;
-              if i_1 < 0i32 {
+              if i_1 < 0 {
                 syntax_error(EMSG_NEGATIVE_FIELD.as_ptr());
               }
-              if i_1 == 0i32 {
+              if i_1 == 0 {
                 res = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
               } else {
                 split_f0();
@@ -20742,7 +20742,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
-                    0i32
+                    0
                   } as libc::c_double
                 }
                 11 => {
@@ -20759,7 +20759,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 }
                 12 => {
                   let mut rsm_2: *mut rstream = std::ptr::null_mut();
-                  let mut err: libc::c_int = 0i32;
+                  let mut err: libc::c_int = 0;
                   rsm_2 = hash_search((*ptr_to_globals.offset(-1i32 as isize)).fdhash, L.s)
                     as *mut rstream;
                   if !rsm_2.is_null() {
@@ -20820,7 +20820,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   R.v = (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize]
                 }
                 i_0 = awk_getline(rsm_0, R.v);
-                if i_0 > 0i32 && op1.is_null() {
+                if i_0 > 0 && op1.is_null() {
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
                   incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
                 }
@@ -20991,14 +20991,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 45 => L_d -= R_d_1,
                 42 => L_d *= R_d_1,
                 47 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d /= R_d_1
                 }
                 38 => L_d = pow(L_d, R_d_1),
                 37 => {
-                  if R_d_1 == 0i32 as libc::c_double {
+                  if R_d_1 == 0 as libc::c_double {
                     syntax_error(EMSG_DIV_BY_ZERO.as_ptr());
                   }
                   L_d -= (L_d / R_d_1) as libc::c_longlong as libc::c_double * R_d_1
@@ -21031,14 +21031,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 } as libc::c_double
               }
               match opn & 0xfei32 {
-                0 => i_2 = (Ld_0 > 0i32 as libc::c_double) as libc::c_int,
-                2 => i_2 = (Ld_0 >= 0i32 as libc::c_double) as libc::c_int,
-                4 => i_2 = (Ld_0 == 0i32 as libc::c_double) as libc::c_int,
+                0 => i_2 = (Ld_0 > 0 as libc::c_double) as libc::c_int,
+                2 => i_2 = (Ld_0 >= 0 as libc::c_double) as libc::c_int,
+                4 => i_2 = (Ld_0 == 0 as libc::c_double) as libc::c_int,
                 _ => {}
               }
               setvar_i(
                 res,
-                ((i_2 == 0i32) as libc::c_int ^ opn & 1i32) as libc::c_double,
+                ((i_2 == 0) as libc::c_int ^ opn & 1i32) as libc::c_double,
               );
               current_block = 261410684697878013;
             }
@@ -21111,7 +21111,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if !hash_search(iamarray(R.v), L.s).is_null() {
                   1i32
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -21138,7 +21138,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                 if istrue(L.v) != 0 {
                   ptest((*op).r.n)
                 } else {
-                  0i32
+                  0
                 } as libc::c_double,
               );
               current_block = 261410684697878013;
@@ -21173,14 +21173,14 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
                   let mut i: libc::c_int =
-                    regexec(re, L.s, 0i32 as size_t, 0 as *mut regmatch_t, 0i32);
+                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
                   }
                   setvar_i(
                     res,
-                    ((i == 0i32) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
+                    ((i == 0) as libc::c_int ^ (opn == '!' as i32) as libc::c_int)
                       as libc::c_double,
                   );
                   current_block = 261410684697878013;
@@ -21233,14 +21233,14 @@ unsafe extern "C" fn awk_exit(mut r: libc::c_int) -> ! {
   zero_out_var(&mut tv);
   if (*ptr_to_globals.offset(-1i32 as isize)).exiting == 0 {
     (*ptr_to_globals.offset(-1i32 as isize)).exiting = 1i32 as smallint;
-    (*ptr_to_globals.offset(-1i32 as isize)).nextrec = 0i32 as smallint;
+    (*ptr_to_globals.offset(-1i32 as isize)).nextrec = 0 as smallint;
     evaluate(
       (*ptr_to_globals.offset(-1i32 as isize)).endseq.first,
       &mut tv,
     );
   }
   /* waiting for children */
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*(*ptr_to_globals.offset(-1i32 as isize)).fdhash).csize {
     hi = *(*(*ptr_to_globals.offset(-1i32 as isize)).fdhash)
       .items
@@ -21264,7 +21264,7 @@ unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int
     val = strchr(expr, '=' as i32);
     val.is_null()
   } {
-    return 0i32;
+    return 0;
   }
   exprc = xstrdup(expr);
   val = exprc.offset(val.wrapping_offset_from(expr) as libc::c_long as isize);
@@ -21296,7 +21296,7 @@ unsafe extern "C" fn next_input_file() -> *mut rstream {
   let ref mut fresh65 = (*(ptr_to_globals as *mut globals2))
     .next_input_file__rsm
     .adv;
-  *fresh65 = 0i32;
+  *fresh65 = 0;
   (*(ptr_to_globals as *mut globals2))
     .next_input_file__rsm
     .pos = *fresh65;
@@ -21384,7 +21384,7 @@ pub unsafe extern "C" fn awk_main(
   let ref mut fresh72 = (*ptr_to_globals.offset(-1i32 as isize)).fnhash;
   *fresh72 = hash_init();
   /* initialize variables */
-  i = 0i32;
+  i = 0;
   while *vnames != 0 {
     v = hash_find(
       (*ptr_to_globals.offset(-1i32 as isize)).vhash,
@@ -21395,7 +21395,7 @@ pub unsafe extern "C" fn awk_main(
     if *vvalues as libc::c_int != '\u{ff}' as i32 {
       setvar_s(v, nextword(&mut vvalues));
     } else {
-      setvar_i(v, 0i32 as libc::c_double);
+      setvar_i(v, 0 as libc::c_double);
     }
     if *vnames as libc::c_int == '*' as i32 {
       (*v).type_0 |= 0x400i32 as libc::c_uint;
@@ -21481,7 +21481,7 @@ pub unsafe extern "C" fn awk_main(
     /* one byte is reserved for some trick in next_token */
     j = 1i32;
     i = j;
-    while j > 0i32 {
+    while j > 0 {
       s_0 = xrealloc(s_0 as *mut libc::c_void, (i + 4096i32) as size_t) as *mut libc::c_char;
       j = fread(
         s_0.offset(i as isize) as *mut libc::c_void,
@@ -21512,10 +21512,10 @@ pub unsafe extern "C" fn awk_main(
   /* fill in ARGV array */
   setari_u(
     (*(ptr_to_globals as *mut globals2)).intvar[ARGV as libc::c_int as usize],
-    0i32,
+    0,
     b"awk\x00" as *const u8 as *const libc::c_char,
   );
-  i = 0i32;
+  i = 0;
   while !(*argv).is_null() {
     i += 1;
     let fresh80 = argv;
@@ -21552,20 +21552,20 @@ pub unsafe extern "C" fn awk_main(
   }
   /* passing through input files */
   while !(*ptr_to_globals.offset(-1i32 as isize)).iF.is_null() {
-    (*ptr_to_globals.offset(-1i32 as isize)).nextfile = 0i32 as smallint;
+    (*ptr_to_globals.offset(-1i32 as isize)).nextfile = 0 as smallint;
     setvar_i(
       (*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize],
-      0i32 as libc::c_double,
+      0 as libc::c_double,
     );
     loop {
       i = awk_getline(
         (*ptr_to_globals.offset(-1i32 as isize)).iF,
         (*(ptr_to_globals as *mut globals2)).intvar[F0 as libc::c_int as usize],
       );
-      if !(i > 0i32) {
+      if !(i > 0) {
         break;
       }
-      (*ptr_to_globals.offset(-1i32 as isize)).nextrec = 0i32 as smallint;
+      (*ptr_to_globals.offset(-1i32 as isize)).nextrec = 0 as smallint;
       incvar((*(ptr_to_globals as *mut globals2)).intvar[NR as libc::c_int as usize]);
       incvar((*(ptr_to_globals as *mut globals2)).intvar[FNR as libc::c_int as usize]);
       evaluate(
@@ -21576,7 +21576,7 @@ pub unsafe extern "C" fn awk_main(
         break;
       }
     }
-    if i < 0i32 {
+    if i < 0 {
       syntax_error(strerror(*bb_errno));
     }
     let ref mut fresh82 = (*ptr_to_globals.offset(-1i32 as isize)).iF;

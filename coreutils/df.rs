@@ -194,7 +194,7 @@ pub unsafe extern "C" fn df_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut df_disp_hr: libc::c_ulong = 1024i32 as libc::c_ulong;
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut mount_table: *mut FILE = std::ptr::null_mut();
   let mut mount_entry: *mut mntent = std::ptr::null_mut();
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn df_main(
     let mut current_block_7: u64;
     /* GNU coreutils 8.25 accepts "-BMiB" form too */
     let mut i: libc::c_int = 0;
-    i = 0i32;
+    i = 0;
     loop {
       if !((*kmg_i_suffixes.as_ptr().offset(i as isize)).suffix[0] != 0) {
         current_block_7 = 9606288038608642794;
@@ -237,7 +237,7 @@ pub unsafe extern "C" fn df_main(
           .suffix
           .as_ptr(),
         chp,
-      ) == 0i32
+      ) == 0
       {
         df_disp_hr = (*kmg_i_suffixes.as_ptr().offset(i as isize)).mult as libc::c_ulong;
         current_block_7 = 17833034027772472439;
@@ -270,7 +270,7 @@ pub unsafe extern "C" fn df_main(
     df_disp_hr = 512i32 as libc::c_ulong
   }
   if opt & OPT_HUMAN as libc::c_int as libc::c_uint != 0 {
-    df_disp_hr = 0i32 as libc::c_ulong;
+    df_disp_hr = 0 as libc::c_ulong;
     disp_units_hdr = b"     Size\x00" as *const u8 as *const libc::c_char
   }
   if opt & OPT_INODE as libc::c_int as libc::c_uint != 0 {
@@ -281,7 +281,7 @@ pub unsafe extern "C" fn df_main(
       b"%s-blocks\x00" as *const u8 as *const libc::c_char,
       make_human_readable_str(
         df_disp_hr as libc::c_ulonglong,
-        0i32 as libc::c_ulong,
+        0 as libc::c_ulong,
         (opt & OPT_POSIX as libc::c_int as libc::c_uint != 0) as libc::c_int as libc::c_ulong,
       ),
     )
@@ -347,21 +347,21 @@ pub unsafe extern "C" fn df_main(
       5891011138178424807 => {
         device = (*mount_entry).mnt_fsname;
         /* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-        if 1i32 != 0 && strcmp(device, b"rootfs\x00" as *const u8 as *const libc::c_char) == 0i32 {
+        if 1i32 != 0 && strcmp(device, b"rootfs\x00" as *const u8 as *const libc::c_char) == 0 {
           continue;
         }
         mount_point = (*mount_entry).mnt_dir;
         fs_type = (*mount_entry).mnt_type;
-        if statvfs(mount_point, &mut s) != 0i32 {
+        if statvfs(mount_point, &mut s) != 0 {
           bb_simple_perror_msg(mount_point);
         } else {
           /* Some uclibc versions were seen to lose f_frsize
            * (kernel does return it, but then uclibc does not copy it)
            */
-          if s.f_frsize == 0i32 as libc::c_ulong {
+          if s.f_frsize == 0 as libc::c_ulong {
             s.f_frsize = s.f_bsize
           } /* 0% if blocks_total == 0, else... */
-          if s.f_blocks > 0i32 as libc::c_ulong
+          if s.f_blocks > 0 as libc::c_ulong
             || mount_table.is_null()
             || opt & OPT_ALL as libc::c_int as libc::c_uint != 0
           {
@@ -380,7 +380,7 @@ pub unsafe extern "C" fn df_main(
             blocks_used = s.f_blocks.wrapping_sub(s.f_bfree) as libc::c_ulonglong;
             blocks_total = blocks_used.wrapping_add(s.f_bavail as libc::c_ulonglong);
             blocks_percent_used = blocks_total as libc::c_uint;
-            if blocks_total != 0i32 as libc::c_ulonglong {
+            if blocks_total != 0 as libc::c_ulonglong {
               /* Downscale sizes for narrower division */
               let mut u: libc::c_uint = 0;
               while blocks_total >= (2147483647i32 / 101i32) as libc::c_ulonglong {

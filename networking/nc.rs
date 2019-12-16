@@ -452,14 +452,14 @@ unsafe extern "C" fn findline(mut buf: *mut libc::c_char, mut siz: libc::c_uint)
   let mut x: libc::c_int = 0;
   if buf.is_null() {
     /* various sanity checks... */
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   } /* for */
   if siz > BIGSIZ as libc::c_int as libc::c_uint {
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   } /* 'sokay if it points just past the end! */
   x = siz as libc::c_int;
   p = buf;
-  while x > 0i32 {
+  while x > 0 {
     if *p as libc::c_int == '\n' as i32 {
       x = p.wrapping_offset_from(buf) as libc::c_long as libc::c_int;
       x += 1;
@@ -482,7 +482,7 @@ unsafe extern "C" fn doexec(mut proggie: *mut *mut libc::c_char) -> ! {
     let ref mut fresh0 = *proggie.offset(0);
     *fresh0 = (*ptr_to_globals).proggie0saved
   }
-  xmove_fd(netfd as libc::c_int, 0i32);
+  xmove_fd(netfd as libc::c_int, 0);
   dup2(0i32, 1i32);
   /* dup2(0, 2); - do we *really* want this? NO!
    * exec'ed prog can do it yourself, if needed */
@@ -498,7 +498,7 @@ unsafe extern "C" fn connect_w_timeout(mut fd: libc::c_int) -> libc::c_int {
   let mut rr: libc::c_int = 0;
   /* wrap connect inside a timer, and hit it */
   arm((*ptr_to_globals).o_wait); /* setjmp: connect failed... */
-  if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0i32 {
+  if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0 {
     rr = connect(
       fd,
       __CONST_SOCKADDR_ARG {
@@ -580,20 +580,20 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     }
     /* peek first packet and remember peer addr */
     arm((*ptr_to_globals).o_wait); /* might as well timeout this, too */
-    if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0i32 {
+    if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0 {
       /* do timeout for initial connect */
       /* (*ouraddr) is prefilled with "default" address */
       /* and here we block... */
       rr = recv_from_to(
         netfd as libc::c_int,
         0 as *mut libc::c_void,
-        0i32 as size_t,
+        0 as size_t,
         MSG_PEEK as libc::c_int,
         &mut (*ptr_to_globals).remend.u.sa,
         &mut (*(*ptr_to_globals).ouraddr).u.sa,
         (*(*ptr_to_globals).ouraddr).len,
       ) as libc::c_int;
-      if rr < 0i32 {
+      if rr < 0 {
         bb_simple_perror_msg_and_die(b"recvfrom\x00" as *const u8 as *const libc::c_char);
       }
       unarm();
@@ -616,7 +616,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
   } else {
     loop {
       arm((*ptr_to_globals).o_wait);
-      if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0i32 {
+      if _setjmp((*ptr_to_globals).jbuf.as_mut_ptr()) == 0 {
         loop {
           (*ptr_to_globals).remend.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
           rr = accept(
@@ -626,7 +626,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
             },
             &mut (*ptr_to_globals).remend.len,
           );
-          if rr < 0i32 {
+          if rr < 0 {
             bb_simple_perror_msg_and_die(b"accept\x00" as *const u8 as *const libc::c_char);
           }
           if (*ptr_to_globals).themaddr.is_null() {
@@ -639,10 +639,10 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
           //	bb_perror_msg_and_die("getsockname after accept");
           sv_port = get_nport(&mut (*ptr_to_globals).remend.u.sa); /* save */
           port = get_nport(&mut (*(*ptr_to_globals).themaddr).u.sa);
-          if port == 0i32 {
+          if port == 0 {
             /* "nc -nl -p LPORT RHOST" (w/o RPORT!):
              * we should accept any remote port */
-            set_nport(&mut (*ptr_to_globals).remend.u.sa, 0i32 as libc::c_uint);
+            set_nport(&mut (*ptr_to_globals).remend.u.sa, 0 as libc::c_uint);
             /* blot out remote port# */
           } /* restore */
           r = memcmp(
@@ -651,7 +651,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
             (*ptr_to_globals).remend.len as libc::c_ulong,
           );
           set_nport(&mut (*ptr_to_globals).remend.u.sa, sv_port as libc::c_uint);
-          if !(r != 0i32) {
+          if !(r != 0) {
             break;
           }
           /* nc 1.10 bails out instead, and its error message
@@ -681,11 +681,11 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
       ); /* no zombies please */
       if ({
         let mut bb__xvfork_pid: pid_t = vfork();
-        if bb__xvfork_pid < 0i32 {
+        if bb__xvfork_pid < 0 {
           bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
         }
         bb__xvfork_pid
-      }) != 0i32
+      }) != 0
       {
         /* parent: go back and accept more connections */
         close(rr);
@@ -727,7 +727,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
       optbuf.as_mut_ptr() as *mut libc::c_void,
       &mut x,
     );
-    if rr >= 0i32 && x != 0 {
+    if rr >= 0 && x != 0 {
       /* we've got options, lessee em... */
       *bin2hex(
         (*ptr_to_globals).bigbuf_net.as_mut_ptr(),
@@ -806,7 +806,7 @@ unsafe extern "C" fn udptest() -> libc::c_int {
     rr = xsocket(
       (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int,
       SOCK_STREAM as libc::c_int,
-      0i32,
+      0,
     );
     set_nport(
       &mut (*(*ptr_to_globals).themaddr).u.sa,
@@ -831,7 +831,7 @@ unsafe extern "C" fn udptest() -> libc::c_int {
     connect_w_timeout(rr);
     /* restore */
     close(rr);
-    (*ptr_to_globals).o_wait = 0i32 as libc::c_uint
+    (*ptr_to_globals).o_wait = 0 as libc::c_uint
   }
   rr = write(
     netfd as libc::c_int,
@@ -862,7 +862,7 @@ unsafe extern "C" fn oprint(
   let mut op: *mut libc::c_uchar = std::ptr::null_mut(); /* out asc-dump ptr */
   let mut ap: *mut libc::c_uchar = std::ptr::null_mut(); /* use the globals! */
   let mut stage: [libc::c_uchar; 100] = [0; 100]; /* preload separator */
-  if bc == 0i32 as libc::c_uint {
+  if bc == 0 as libc::c_uint {
     return;
   }
   obc = (*ptr_to_globals).wrote_net as libc::c_uint;
@@ -955,13 +955,13 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
     events: 0,
     revents: 0,
   }; 2];
-  pfds[0].fd = 0i32;
+  pfds[0].fd = 0;
   pfds[0].events = 0x1i32 as libc::c_short;
   pfds[1].fd = netfd as libc::c_int;
   pfds[1].events = 0x1i32 as libc::c_short;
   fds_open = 2i32 as libc::c_uint;
   netretry = 2i32 as libc::c_uint;
-  rnleft = 0i32 as libc::c_uint;
+  rnleft = 0 as libc::c_uint;
   rzleft = rnleft;
   if (*ptr_to_globals).o_interval != 0 {
     sleep((*ptr_to_globals).o_interval);
@@ -982,7 +982,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
       }
     }
     rr = poll(pfds.as_mut_ptr(), 2i32 as nfds_t, poll_tmout_ms);
-    if rr < 0i32 && *bb_errno != 4i32 {
+    if rr < 0 && *bb_errno != 4i32 {
       /* might have gotten ^Zed, etc */
       if (*ptr_to_globals).o_verbose != 0 {
         bb_simple_perror_msg(b"poll\x00" as *const u8 as *const libc::c_char);
@@ -992,7 +992,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
     }
     /* if we have a timeout AND stdin is closed AND we haven't heard anything
     from the net during that time, assume it's dead and close it too. */
-    if rr == 0i32 {
+    if rr == 0 {
       if pfds[0].revents == 0 {
         /* timeout */
         netretry = netretry.wrapping_sub(1); /* we actually try a coupla times. */
@@ -1005,7 +1005,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
             );
           }
           /* not an error! */
-          return 0i32;
+          return 0;
         }
       }
     }
@@ -1019,15 +1019,15 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
         (*ptr_to_globals).bigbuf_net.as_mut_ptr() as *mut libc::c_void,
         BIGSIZ as libc::c_int as size_t,
       ) as libc::c_int;
-      if rr <= 0i32 {
-        if rr < 0i32 && (*ptr_to_globals).o_verbose > 1i32 as libc::c_uint {
+      if rr <= 0 {
+        if rr < 0 && (*ptr_to_globals).o_verbose > 1i32 as libc::c_uint {
           /* nc 1.10 doesn't do this */
           bb_simple_perror_msg(b"net read\x00" as *const u8 as *const libc::c_char);
         }
         /* can't write anymore: broken pipe */
         pfds[1].fd = -1i32; /* don't poll for netfd anymore */
         fds_open = fds_open.wrapping_sub(1);
-        rzleft = 0i32 as libc::c_uint
+        rzleft = 0 as libc::c_uint
       } else {
         rnleft = rr as libc::c_uint;
         np = (*ptr_to_globals).bigbuf_net.as_mut_ptr()
@@ -1041,13 +1041,13 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
         /* stdin:ding */
         /* stdin: ding! */
         rr = read(
-          0i32,
+          0,
           (*ptr_to_globals).bigbuf_in.as_mut_ptr() as *mut libc::c_void,
           BIGSIZ as libc::c_int as size_t,
         ) as libc::c_int;
         /* Considered making reads here smaller for UDP mode, but 8192-byte
         mobygrams are kinda fun and exercise the reassembler. */
-        if rr <= 0i32 {
+        if rr <= 0 {
           /* at end, or fukt, or ... */
           pfds[0].fd = -1i32; /* disable stdin */
           /*close(STDIN_FILENO); - not really necessary */
@@ -1068,7 +1068,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
     {
       if rnleft != 0 {
         rr = write(1i32, np as *const libc::c_void, rnleft as size_t) as libc::c_int;
-        if rr > 0i32 {
+        if rr > 0 {
           if option_mask32 & OPT_o as libc::c_int as libc::c_uint != 0 {
             /* log the stdout */
             oprint('<' as i32, np as *mut libc::c_uchar, rr as libc::c_uint);
@@ -1093,7 +1093,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
           zp as *const libc::c_void,
           rr as size_t,
         ) as libc::c_int;
-        if rr > 0i32 {
+        if rr > 0 {
           if option_mask32 & OPT_o as libc::c_int as libc::c_uint != 0 {
             /* log what got sent */
             oprint('>' as i32, zp as *mut libc::c_uchar, rr as libc::c_uint);
@@ -1133,7 +1133,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
   the net again after a timeout.  I haven't seen any screwups yet, but it's
   not like my test network is particularly busy... */
   close(netfd as libc::c_int);
-  return 0i32;
+  return 0;
 }
 /* readwrite */
 /* main: now we pull it all together... */
@@ -1151,20 +1151,20 @@ pub unsafe extern "C" fn nc_main(
   themdotted = themdotted;
   let mut proggie: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut x: libc::c_int = 0;
-  let mut cnt_l: libc::c_uint = 0i32 as libc::c_uint;
-  let mut o_lport: libc::c_uint = 0i32 as libc::c_uint;
+  let mut cnt_l: libc::c_uint = 0 as libc::c_uint;
+  let mut o_lport: libc::c_uint = 0 as libc::c_uint;
   let ref mut fresh8 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh8 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* catch a signal or two for cleanup */
   bb_signals(
-    0i32 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
+    0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
     Some(catch as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   /* and suppress others... */
   bb_signals(
-    0i32 + (1i32 << 23i32) + (1i32 << 13i32),
+    0 + (1i32 << 23i32) + (1i32 << 13i32),
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   proggie = argv;
@@ -1174,7 +1174,7 @@ pub unsafe extern "C" fn nc_main(
       current_block = 7172762164747879670;
       break;
     }
-    if strcmp(*proggie, b"-e\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(*proggie, b"-e\x00" as *const u8 as *const libc::c_char) == 0 {
       *proggie = std::ptr::null_mut::<libc::c_char>();
       proggie = proggie.offset(1);
       current_block = 10887457417680102994;
@@ -1238,7 +1238,7 @@ pub unsafe extern "C" fn nc_main(
       } else {
         b"tcp\x00" as *const u8 as *const libc::c_char
       },
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     );
     if o_lport == 0 {
       bb_error_msg_and_die(
@@ -1265,10 +1265,10 @@ pub unsafe extern "C" fn nc_main(
           } else {
             b"tcp\x00" as *const u8 as *const libc::c_char
           },
-          0i32 as libc::c_uint,
+          0 as libc::c_uint,
         )
       } else {
-        0i32 as libc::c_uint
+        0 as libc::c_uint
       } as libc::c_int,
     )
   }
@@ -1285,7 +1285,7 @@ pub unsafe extern "C" fn nc_main(
     x = xsocket(
       (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int,
       x,
-      0i32,
+      0,
     )
   } else {
     /* We try IPv6, then IPv4, unless addr family is
@@ -1295,7 +1295,7 @@ pub unsafe extern "C" fn nc_main(
       if !(*ptr_to_globals).themaddr.is_null() {
         (*(*ptr_to_globals).themaddr).u.sa.sa_family as libc::c_int
       } else {
-        0i32
+        0
       },
       x,
     ); /* won't need stdin */
@@ -1327,8 +1327,8 @@ pub unsafe extern "C" fn nc_main(
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
     socket_want_pktinfo(netfd as libc::c_int);
   }
-  if 0i32 == 0
-    || cnt_l != 0i32 as libc::c_uint
+  if 0 == 0
+    || cnt_l != 0 as libc::c_uint
     || (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int != 1i32
   {
     xbind(
@@ -1348,7 +1348,7 @@ pub unsafe extern "C" fn nc_main(
       ofd as libc::c_int,
     );
   }
-  if cnt_l != 0i32 as libc::c_uint {
+  if cnt_l != 0 as libc::c_uint {
     dolisten(
       cnt_l.wrapping_sub(1i32 as libc::c_uint) as libc::c_int,
       proggie,
@@ -1367,13 +1367,13 @@ pub unsafe extern "C" fn nc_main(
     }
     x = connect_w_timeout(netfd as libc::c_int);
     if option_mask32 & OPT_z as libc::c_int as libc::c_uint != 0
-      && x == 0i32
+      && x == 0
       && option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0
     {
       /* if UDP scanning... */
       x = udptest()
     } /* connect or udptest wasn't successful */
-    if x == 0i32 {
+    if x == 0 {
       /* Yow, are we OPEN YET?! */
       if (*ptr_to_globals).o_verbose != 0 {
         fprintf(

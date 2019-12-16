@@ -89,30 +89,30 @@ pub unsafe extern "C" fn filter_accept_list_reassign(
     }
     name_ptr = name_ptr.offset(1);
     /* Modify the subarchive handler based on the extension */
-    if strcmp(name_ptr, b"tar\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(name_ptr, b"tar\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive =
         Some(get_header_tar as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
-    if 1i32 != 0 && strcmp(name_ptr, b"gz\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if 1i32 != 0 && strcmp(name_ptr, b"gz\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive =
         Some(get_header_tar_gz as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
-    if 1i32 != 0 && strcmp(name_ptr, b"bz2\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if 1i32 != 0 && strcmp(name_ptr, b"bz2\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive =
         Some(get_header_tar_bz2 as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
-    if 1i32 != 0 && strcmp(name_ptr, b"lzma\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if 1i32 != 0 && strcmp(name_ptr, b"lzma\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive =
         Some(get_header_tar_lzma as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
-    if 1i32 != 0 && strcmp(name_ptr, b"xz\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if 1i32 != 0 && strcmp(name_ptr, b"xz\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive =
         Some(get_header_tar_xz as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
   }
   return 1i32 as libc::c_char;

@@ -43,7 +43,7 @@ pub unsafe extern "C" fn ln_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut src_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -110,7 +110,7 @@ pub unsafe extern "C" fn ln_main(
       free(src_name as *mut libc::c_void);
       src_name = src
     }
-    if opts & 1i32 << 0i32 == 0 && stat(*argv, &mut statbuf) != 0 {
+    if opts & 1i32 << 0 == 0 && stat(*argv, &mut statbuf) != 0 {
       // coreutils: "ln dangling_symlink new_hardlink" works
       if lstat(*argv, &mut statbuf) != 0
         || !(statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint)
@@ -130,7 +130,7 @@ pub unsafe extern "C" fn ln_main(
         if opts & 1i32 << 3i32 != 0 {
           let mut backup: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           backup = xasprintf(b"%s%s\x00" as *const u8 as *const libc::c_char, src, suffix);
-          if rename(src, backup) < 0i32 && *bb_errno != 2i32 {
+          if rename(src, backup) < 0 && *bb_errno != 2i32 {
             bb_simple_perror_msg(src);
             status = 1i32;
             free(backup as *mut libc::c_void);
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn ln_main(
                   _: *const libc::c_char,
                 ) -> libc::c_int,
             );
-            if opts & 1i32 << 0i32 != 0 {
+            if opts & 1i32 << 0 != 0 {
               link_func = Some(
                 symlink
                   as unsafe extern "C" fn(
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn ln_main(
                 *argv,
               );
             }
-            if link_func.expect("non-null function pointer")(*argv, src) != 0i32 {
+            if link_func.expect("non-null function pointer")(*argv, src) != 0 {
               bb_simple_perror_msg(src);
               status = 1i32
             }

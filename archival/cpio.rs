@@ -106,7 +106,7 @@ unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
   size += i as libc::c_long;
   loop {
     i -= 1;
-    if !(i >= 0i32) {
+    if !(i >= 0) {
       break;
     }
     crate::libbb::xfuncs_printf::bb_putchar('\u{0}' as i32);
@@ -118,7 +118,7 @@ unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
 #[inline(never)]
 unsafe extern "C" fn cpio_o() -> libc::c_int {
   let mut links: *mut inodes_s = std::ptr::null_mut(); /* output bytes count */
-  let mut bytes: off_t = 0i32 as off_t; /* line == NULL: EOF */
+  let mut bytes: off_t = 0 as off_t; /* line == NULL: EOF */
   let mut current_block_47: u64;
   loop {
     let mut name: *const libc::c_char = std::ptr::null();
@@ -178,7 +178,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
         if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
         {
-          st.st_size = 0i32 as off_t
+          st.st_size = 0 as off_t
         }
         /* Store hardlinks for later processing, dont output them */
         if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
@@ -236,7 +236,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
             if (*links).names.is_null() {
               links = (*links).next
             } else {
-              st.st_size = 0i32 as off_t
+              st.st_size = 0 as off_t
             }
           } else {
             /* GNU cpio is reported to emit file data
@@ -247,7 +247,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
             /* st.st_nlink = 1; - GNU cpio does this */
             memset(
               &mut st as *mut stat as *mut libc::c_void,
-              0i32,
+              0,
               ::std::mem::size_of::<stat>() as libc::c_ulong,
             );
           }
@@ -286,7 +286,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
               bytes += printf(b"%s\x00" as *const u8 as *const libc::c_char, lpath) as libc::c_long;
               free(lpath as *mut libc::c_void);
             } else {
-              let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(name, 0i32);
+              let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(name, 0);
               crate::libbb::xfuncs_printf::fflush_all();
               /* We must abort if file got shorter too! */
               crate::libbb::copyfd::bb_copyfd_exact_size(fd, 1i32, st.st_size);
@@ -301,7 +301,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
               continue;
             }
             /* TODO: GNU cpio pads trailer to 512 bytes, do we want that? */
-            return 0i32;
+            return 0;
           } else {
             free(line as *mut libc::c_void);
             break;
@@ -361,8 +361,8 @@ pub unsafe extern "C" fn cpio_main(
   {
     /* -F without -o */
     crate::libbb::xfuncs_printf::xmove_fd(
-      crate::libbb::xfuncs_printf::xopen(cpio_filename, 0i32),
-      0i32,
+      crate::libbb::xfuncs_printf::xopen(cpio_filename, 0),
+      0,
     );
   }
   if opt & OPT_PASSTHROUGH as libc::c_int as libc::c_uint != 0 {
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn cpio_main(
      */
     crate::libbb::xfuncs_printf::xpipe(&mut pp.rd);
     pid = crate::libbb::xfuncs_printf::xfork();
-    if pid == 0i32 {
+    if pid == 0 {
       /* child */
       close(pp.rd);
       crate::libbb::xfuncs_printf::xmove_fd(pp.wr, 1i32);
@@ -397,7 +397,7 @@ pub unsafe extern "C" fn cpio_main(
       argv = argv.offset(1);
       crate::libbb::xfuncs_printf::xchdir(*fresh0);
       close(pp.wr);
-      crate::libbb::xfuncs_printf::xmove_fd(pp.rd, 0i32);
+      crate::libbb::xfuncs_printf::xmove_fd(pp.rd, 0);
       //opt &= ~OPT_PASSTHROUGH;
       opt |= OPT_EXTRACT as libc::c_int as libc::c_uint;
       current_block = 8255155894120985361;
@@ -423,7 +423,7 @@ pub unsafe extern "C" fn cpio_main(
     _ => {
       /* One of either extract or test options must be given */
       if opt & (OPT_TEST as libc::c_int | OPT_EXTRACT as libc::c_int) as libc::c_uint
-        == 0i32 as libc::c_uint
+        == 0 as libc::c_uint
       {
         crate::libbb::appletlib::bb_show_usage();
       }
@@ -473,7 +473,7 @@ pub unsafe extern "C" fn cpio_main(
         (*archive_handle).ah_flags |= (1i32 << 1i32) as libc::c_uint
       }
       if opt & OPT_PRESERVE_MTIME as libc::c_int as libc::c_uint != 0 {
-        (*archive_handle).ah_flags |= (1i32 << 0i32) as libc::c_uint
+        (*archive_handle).ah_flags |= (1i32 << 0) as libc::c_uint
       }
       while !(*argv).is_null() {
         (*archive_handle).filter = Some(
@@ -490,7 +490,7 @@ pub unsafe extern "C" fn cpio_main(
       (*archive_handle).cpio__blocks = -1i32 as off_t as uoff_t;
       while crate::archival::libarchive::get_header_cpio::get_header_cpio(archive_handle)
         as libc::c_int
-        == 0i32
+        == 0
       {}
       crate::archival::libarchive::unsafe_symlink_target::create_links_from_list(
         (*archive_handle).link_placeholders,
@@ -504,7 +504,7 @@ pub unsafe extern "C" fn cpio_main(
           (*archive_handle).cpio__blocks,
         );
       }
-      return 0i32;
+      return 0;
     }
   };
 }

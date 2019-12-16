@@ -84,14 +84,14 @@ pub unsafe extern "C" fn scan_and_match(
     c = *loc;
     if flags & SCAN_MATCH_LEFT_HALF as libc::c_int as libc::c_uint != 0 {
       *loc = '\u{0}' as i32 as libc::c_char;
-      r = fnmatch(pattern, string, 0i32);
+      r = fnmatch(pattern, string, 0);
       //bb_error_msg("fnmatch('%s','%s',0):%d", pattern, string, r);
       *loc = c
     } else {
-      r = fnmatch(pattern, loc, 0i32)
+      r = fnmatch(pattern, loc, 0)
       //bb_error_msg("fnmatch('%s','%s',0):%d", pattern, loc, r);
     }
-    if r == 0i32 {
+    if r == 0 {
       /* match found */
       return loc;
     }

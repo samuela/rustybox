@@ -127,7 +127,7 @@ unsafe extern "C" fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
     ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
   );
   if ret < 0 {
-    return 0i32 != 0;
+    return 0 != 0;
   }
   /* wakeup events could be disabled or not supported */
   return !is_prefixed_with(
@@ -185,20 +185,20 @@ unsafe extern "C" fn setup_alarm(
   if rtc_time + (24i32 * 60i32 * 60i32) as libc::c_long > *wakeup {
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (0x7i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('p' as i32) << 0 + 8i32) as libc::c_uint
+        | (0x7i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut wake.time as *mut linux_rtc_time as *mut libc::c_void,
       b"RTC_ALM_SET\x00" as *const u8 as *const libc::c_char,
     );
     bb_xioctl(
       fd,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (0x1i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('p' as i32) << 0 + 8i32) as libc::c_uint
+        | (0x1i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       0 as *mut libc::c_void,
       b"RTC_AIE_ON\x00" as *const u8 as *const libc::c_char,
     );
@@ -207,10 +207,10 @@ unsafe extern "C" fn setup_alarm(
     wake.enabled = 1i32 as libc::c_uchar; /* for compiler */
     bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (0xfi32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<linux_rtc_wkalrm>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('p' as i32) << 0 + 8i32) as libc::c_uint
+        | (0xfi32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<linux_rtc_wkalrm>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut wake as *mut linux_rtc_wkalrm as *mut libc::c_void,
       b"RTC_WKALM_SET\x00" as *const u8 as *const libc::c_char,
@@ -274,8 +274,8 @@ pub unsafe extern "C" fn rtcwake_main(
   /* the rtcname is relative to /dev */
   xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
   /* this RTC must exist and (if we'll sleep) be wakeup-enabled */
-  fd = rtc_xopen(&mut rtcname, 0i32);
-  if strcmp(suspend, b"on\x00" as *const u8 as *const libc::c_char) != 0i32 {
+  fd = rtc_xopen(&mut rtcname, 0);
+  if strcmp(suspend, b"on\x00" as *const u8 as *const libc::c_char) != 0 {
     if !may_wakeup(rtcname) {
       bb_error_msg_and_die(
         b"%s not enabled for wakeup events\x00" as *const u8 as *const libc::c_char,
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn rtcwake_main(
   );
   fflush_all();
   usleep((10i32 * 1000i32) as useconds_t);
-  if strcmp(suspend, b"on\x00" as *const u8 as *const libc::c_char) != 0i32 {
+  if strcmp(suspend, b"on\x00" as *const u8 as *const libc::c_char) != 0 {
     xopen_xwrite_close(
       b"/sys/power/state\x00" as *const u8 as *const libc::c_char,
       suspend,
@@ -338,12 +338,12 @@ pub unsafe extern "C" fn rtcwake_main(
   }
   bb_xioctl(
     fd,
-    0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (0x2i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+    0u32 << 0 + 8i32 + 8i32 + 14i32
+      | (('p' as i32) << 0 + 8i32) as libc::c_uint
+      | (0x2i32 << 0) as libc::c_uint
+      | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
     0 as *mut libc::c_void,
     b"RTC_AIE_OFF\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

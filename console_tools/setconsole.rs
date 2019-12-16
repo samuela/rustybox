@@ -71,5 +71,5 @@ pub unsafe extern "C" fn setconsole_main(
     0 as *mut libc::c_void,
     b"TIOCCONS\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

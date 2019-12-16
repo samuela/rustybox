@@ -62,7 +62,7 @@ pub unsafe extern "C" fn uevent_main(
   // Reproducer:
   //	uevent mdev &
   // 	find /sys -name uevent -exec sh -c 'echo add >"{}"' ';'
-  fd = create_and_bind_to_netlink(15i32, 1i32 << 0i32, RCVBUF as libc::c_int as libc::c_uint);
+  fd = create_and_bind_to_netlink(15i32, 1i32 << 0, RCVBUF as libc::c_int as libc::c_uint);
   loop {
     let mut netbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -79,7 +79,7 @@ pub unsafe extern "C" fn uevent_main(
       0x1i32 | 0x2i32,
       0x2i32 | 0x20i32,
       -1i32,
-      0i32 as off64_t,
+      0 as off64_t,
     ) as *mut libc::c_char;
     if netbuf == -1i32 as *mut libc::c_void as *mut libc::c_char {
       bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
@@ -101,7 +101,7 @@ pub unsafe extern "C" fn uevent_main(
     if (*argv.offset(0)).is_null() {
       putchar_unlocked('\n' as i32);
     }
-    idx = 0i32;
+    idx = 0;
     s = netbuf;
     while s < end {
       if (*argv.offset(0)).is_null() {
@@ -120,7 +120,7 @@ pub unsafe extern "C" fn uevent_main(
       *(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize);
     *fresh2 = std::ptr::null_mut::<libc::c_char>();
     if !(*argv.offset(0)).is_null() {
-      idx = 0i32;
+      idx = 0;
       while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize))
         .is_null()
       {
@@ -129,7 +129,7 @@ pub unsafe extern "C" fn uevent_main(
         putenv(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh3 as isize));
       }
       spawn_and_wait(argv);
-      idx = 0i32;
+      idx = 0;
       while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize))
         .is_null()
       {

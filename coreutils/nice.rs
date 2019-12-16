@@ -51,7 +51,7 @@ pub unsafe extern "C" fn nice_main(
 ) -> libc::c_int {
   let mut old_priority: libc::c_int = 0;
   let mut adjustment: libc::c_int = 0;
-  old_priority = getpriority(PRIO_PROCESS, 0i32 as id_t);
+  old_priority = getpriority(PRIO_PROCESS, 0 as id_t);
   argv = argv.offset(1);
   if (*argv).is_null() {
     /* No args, so (GNU) output current nice value. */
@@ -84,7 +84,7 @@ pub unsafe extern "C" fn nice_main(
   }
   /* Set our priority. */
   let mut prio: libc::c_int = old_priority + adjustment;
-  if setpriority(PRIO_PROCESS, 0i32 as id_t, prio) < 0i32 {
+  if setpriority(PRIO_PROCESS, 0 as id_t, prio) < 0 {
     bb_perror_msg_and_die(
       b"setpriority(%d)\x00" as *const u8 as *const libc::c_char,
       prio,

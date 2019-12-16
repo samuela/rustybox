@@ -206,7 +206,7 @@ pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::
   let mut sb: *mut ubifs_sb_node = std::ptr::null_mut();
   sb = volume_id_get_buffer(
     id,
-    0i32 as u64,
+    0 as u64,
     ::std::mem::size_of::<ubifs_sb_node>() as libc::c_ulong,
   ) as *mut ubifs_sb_node;
   if sb.is_null() {
@@ -217,5 +217,5 @@ pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::
   }
   (*id).type_0 = b"ubifs\x00" as *const u8 as *const libc::c_char;
   volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
-  return 0i32;
+  return 0;
 }

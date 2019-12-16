@@ -137,8 +137,8 @@ unsafe extern "C" fn comm_match(
 ) -> libc::c_int {
   let mut argv1idx: libc::c_int = 0; /* comm does not match */
   let mut argv1: *const libc::c_char = std::ptr::null();
-  if strncmp((*p).comm.as_mut_ptr(), procName, 15i32 as libc::c_ulong) != 0i32 {
-    return 0i32;
+  if strncmp((*p).comm.as_mut_ptr(), procName, 15i32 as libc::c_ulong) != 0 {
+    return 0;
   }
   /* In Linux, if comm is 15 chars, it is truncated.
    * (or maybe the name was exactly 15 chars, but there is
@@ -150,15 +150,15 @@ unsafe extern "C" fn comm_match(
    * This can be crazily_long_script_name.sh!
    * The telltale sign is basename(argv[1]) == procName */
   if (*p).argv0.is_null() {
-    return 0i32;
+    return 0;
   }
   argv1idx = strlen((*p).argv0).wrapping_add(1i32 as libc::c_ulong) as libc::c_int;
   if argv1idx >= (*p).argv_len as libc::c_int {
-    return 0i32;
+    return 0;
   }
   argv1 = (*p).argv0.offset(argv1idx as isize);
-  if strcmp(bb_basename(argv1), procName) != 0i32 {
-    return 0i32;
+  if strcmp(bb_basename(argv1), procName) != 0 {
+    return 0;
   }
   return 1i32;
 }
@@ -174,7 +174,7 @@ unsafe extern "C" fn comm_match(
 #[no_mangle]
 pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> *mut pid_t {
   let mut pidList: *mut pid_t = std::ptr::null_mut();
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   let mut p: *mut procps_status_t = std::ptr::null_mut();
   pidList = xzalloc(::std::mem::size_of::<pid_t>() as libc::c_ulong) as *mut pid_t;
   loop {
@@ -189,7 +189,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
       break;
     }
     if comm_match(p, procName) != 0
-      || !(*p).argv0.is_null() && strcmp(bb_basename((*p).argv0), procName) == 0i32
+      || !(*p).argv0.is_null() && strcmp(bb_basename((*p).argv0), procName) == 0
       || !(*p).exe.is_null()
         && strcmp(
           if *procName.offset(0) as libc::c_int == '/' as i32 {
@@ -198,7 +198,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
             bb_basename((*p).exe)
           },
           procName,
-        ) == 0i32
+        ) == 0
     {
       pidList = xrealloc_vector_helper(
         pidList as *mut libc::c_void,
@@ -211,7 +211,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
       *pidList.offset(fresh0 as isize) = (*p).pid as pid_t
     }
   }
-  *pidList.offset(i as isize) = 0i32;
+  *pidList.offset(i as isize) = 0;
   return pidList;
 }
 
@@ -753,15 +753,15 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
 /* Puts [comm] if cmdline is empty (-> process is a kernel thread) */
 #[no_mangle]
 pub unsafe extern "C" fn pidlist_reverse(mut pidList: *mut pid_t) -> *mut pid_t {
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   while *pidList.offset(i as isize) != 0 {
     i += 1
   }
   i -= 1;
-  if i >= 0i32 {
+  if i >= 0 {
     let mut k: pid_t = 0;
     let mut j: libc::c_int = 0;
-    j = 0i32;
+    j = 0;
     while i > j {
       k = *pidList.offset(i as isize);
       *pidList.offset(i as isize) = *pidList.offset(j as isize);

@@ -246,7 +246,7 @@ pub unsafe extern "C" fn recursive_action(
     )
   }
   follow = ACTION_FOLLOWLINKS as libc::c_int as libc::c_uint;
-  if depth == 0i32 as libc::c_uint {
+  if depth == 0 as libc::c_uint {
     follow =
       (ACTION_FOLLOWLINKS as libc::c_int | ACTION_FOLLOWLINKS_L0 as libc::c_int) as libc::c_uint
   }
@@ -257,10 +257,10 @@ pub unsafe extern "C" fn recursive_action(
     Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
   }
   .expect("non-null function pointer")(fileName, &mut statbuf);
-  if status < 0i32 {
+  if status < 0 {
     if flags & ACTION_DANGLING_OK as libc::c_int as libc::c_uint != 0
       && *bb_errno == 2i32
-      && lstat(fileName, &mut statbuf) == 0i32
+      && lstat(fileName, &mut statbuf) == 0
     {
       /* Dangling link */
       return fileAction.expect("non-null function pointer")(
@@ -298,7 +298,7 @@ pub unsafe extern "C" fn recursive_action(
         userData,
         depth as libc::c_int,
       );
-      if status == 0i32 {
+      if status == 0 {
         current_block = 8207725251379991669;
       } else {
         if status == 2i32 {
@@ -340,8 +340,8 @@ pub unsafe extern "C" fn recursive_action(
               userData,
               depth.wrapping_add(1i32 as libc::c_uint),
             );
-            if s == 0i32 {
-              status = 0i32
+            if s == 0 {
+              status = 0
             }
             free(nextFile as *mut libc::c_void);
           }
@@ -375,5 +375,5 @@ pub unsafe extern "C" fn recursive_action(
   if flags & ACTION_QUIET as libc::c_int as libc::c_uint == 0 {
     bb_simple_perror_msg(fileName);
   }
-  return 0i32;
+  return 0;
 }

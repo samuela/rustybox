@@ -45,7 +45,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
   let op_end: *mut u8 = out.offset(*out_len as isize);
   //	LZO_UNUSED(wrkmem);
   /* COPY_DICT */
-  *out_len = 0i32 as libc::c_uint;
+  *out_len = 0 as libc::c_uint;
   op = out;
   ip = in_0;
   if *ip as libc::c_int > 17i32 {
@@ -68,7 +68,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
         op = op.offset(1);
         *fresh2 = *fresh1;
         t = t.wrapping_sub(1);
-        if !(t > 0i32 as libc::c_uint) {
+        if !(t > 0 as libc::c_uint) {
           break;
         }
       }
@@ -179,14 +179,14 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
           t = *fresh3 as libc::c_uint;
           if !(t >= 16i32 as libc::c_uint) {
             /* a literal run */
-            if t == 0i32 as libc::c_uint {
+            if t == 0 as libc::c_uint {
               if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
                 < 1i32 as libc::c_uint
               {
                 current_block = 2691384274927532760;
                 continue;
               }
-              while *ip as libc::c_int == 0i32 {
+              while *ip as libc::c_int == 0 {
                 t = t.wrapping_add(255i32 as libc::c_uint);
                 ip = ip.offset(1);
                 if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
               op = op.offset(1);
               *fresh12 = *fresh11;
               t = t.wrapping_sub(1);
-              if !(t > 0i32 as libc::c_uint) {
+              if !(t > 0 as libc::c_uint) {
                 break;
               }
             }
@@ -285,14 +285,14 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
           if t >= 32i32 as libc::c_uint {
             /* a M3 match */
             t &= 31i32 as libc::c_uint;
-            if t == 0i32 as libc::c_uint {
+            if t == 0 as libc::c_uint {
               if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
                 < 1i32 as libc::c_uint
               {
                 current_block = 2691384274927532760;
                 continue;
               }
-              while *ip as libc::c_int == 0i32 {
+              while *ip as libc::c_int == 0 {
                 t = t.wrapping_add(255i32 as libc::c_uint);
                 ip = ip.offset(1);
                 if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
@@ -327,14 +327,14 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
             /* COPY_DICT */
             /* COPY_DICT */
             t &= 7i32 as libc::c_uint;
-            if t == 0i32 as libc::c_uint {
+            if t == 0 as libc::c_uint {
               if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
                 < 1i32 as libc::c_uint
               {
                 current_block = 2691384274927532760;
                 continue;
               }
-              while *ip as libc::c_int == 0i32 {
+              while *ip as libc::c_int == 0 {
                 t = t.wrapping_add(255i32 as libc::c_uint);
                 ip = ip.offset(1);
                 if (ip_end.wrapping_offset_from(ip) as libc::c_long as libc::c_uint)
@@ -362,7 +362,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
               //#endif
               *out_len = op.wrapping_offset_from(out) as libc::c_long as libc::c_uint;
               return if ip == ip_end {
-                0i32
+                0
               } else if ip < ip_end {
                 -8i32
               } else {
@@ -441,7 +441,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
               op = op.offset(1);
               *fresh32 = *fresh31;
               t = t.wrapping_sub(1);
-              if !(t > 0i32 as libc::c_uint) {
+              if !(t > 0 as libc::c_uint) {
                 break;
               }
             }
@@ -452,7 +452,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
     }
     /* COPY_DICT */
     t = (*ip.offset(-2i32 as isize) as libc::c_int & 3i32) as libc::c_uint;
-    if t == 0i32 as libc::c_uint {
+    if t == 0 as libc::c_uint {
       current_block = 7976072742316086414;
     } else {
       current_block = 2652804691515851435;

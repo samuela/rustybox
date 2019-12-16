@@ -277,7 +277,7 @@ pub unsafe extern "C" fn lpqr_main(
       }
       _ => {}
     }
-    return 0i32;
+    return 0;
   }
   //
   // LPR ------------------------
@@ -315,12 +315,12 @@ pub unsafe extern "C" fn lpqr_main(
       ); /* paranoia: fstat may theoretically fail */
       dfd = xmkstemp(tempfile.as_mut_ptr());
       bb_copyfd_eof(0i32, dfd);
-      xlseek(dfd, 0i32 as off_t, 0i32);
+      xlseek(dfd, 0 as off_t, 0);
       *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char
     } else {
-      dfd = xopen(*argv, 0i32)
+      dfd = xopen(*argv, 0)
     }
-    st.st_size = 0i32 as off_t;
+    st.st_size = 0 as off_t;
     fstat(dfd, &mut st);
     /* Apparently, some servers are buggy and won't accept 0-sized jobs.
      * Standard lpr works around it by refusing to send such jobs:
@@ -457,5 +457,5 @@ pub unsafe extern "C" fn lpqr_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

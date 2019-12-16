@@ -425,10 +425,10 @@ pub fn BUG_wrong_field_size() -> libc::c_uint {
 }
 
 unsafe extern "C" fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {
-  let mut r: libc::c_uint = 0i32 as libc::c_uint;
+  let mut r: libc::c_uint = 0 as libc::c_uint;
   loop {
     arg >>= 1i32;
-    if !(arg != 0i32 as libc::c_uint) {
+    if !(arg != 0 as libc::c_uint) {
       break;
     }
     r = r.wrapping_add(1)
@@ -455,7 +455,7 @@ unsafe extern "C" fn allocate(
   //bb_error_msg("ALLOC: [%u][%u][%u]: [%u-%u]:=[%x],[%x]", blocksize, start, end, start/8, blocksize - end/8 - 1, (1 << (start & 7)) - 1, (u8)(0xFF00 >> (end & 7)));
   memset(
     bitmap as *mut libc::c_void,
-    0i32,
+    0,
     blocksize as libc::c_ulong,
   ); //0..7 => 00000000..01111111
   i = start.wrapping_div(8i32 as libc::c_uint); //0..7 => 00000000..11111110
@@ -475,7 +475,7 @@ unsafe extern "C" fn allocate(
 unsafe extern "C" fn has_super(mut x: u32) -> u32 {
   // 0, 1 and powers of 3, 5, 7 up to 2^32 limit
   static mut supers: [u32; 46] = [
-    0i32 as u32,
+    0 as u32,
     1i32 as u32,
     3i32 as u32,
     5i32 as u32,
@@ -532,14 +532,14 @@ unsafe extern "C" fn has_super(mut x: u32) -> u32 {
       return 1i32 as u32;
     }
     if x > *sp {
-      return 0i32 as u32;
+      return 0 as u32;
     }
   }
 }
 /* predefined output descriptor */
 unsafe extern "C" fn PUT(mut off: u64, mut buf: *mut libc::c_void, mut size: u32) {
   //bb_error_msg("PUT[%llu]:[%u]", off, size);
-  xlseek(3i32, off as off_t, 0i32); // superblock
+  xlseek(3i32, off as off_t, 0); // superblock
   xwrite(3i32, buf, size as size_t); // group descriptors
 }
 #[no_mangle]
@@ -616,7 +616,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // check if it is mounted
   // N.B. what if we format a file? find_mount_point will return false negative since
   // it is loop block device which is mounted!
-  if !find_mount_point(*argv.offset(0), 0i32).is_null() {
+  if !find_mount_point(*argv.offset(0), 0).is_null() {
     bb_simple_error_msg_and_die(
       b"can\'t format mounted filesystem\x00" as *const u8 as *const libc::c_char,
     );
@@ -776,7 +776,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     overhead = (if has_super(ngroups.wrapping_sub(1i32 as libc::c_uint)) != 0 {
       (1i32 as libc::c_uint).wrapping_add(group_desc_blocks)
     } else {
-      0i32 as libc::c_uint
+      0 as libc::c_uint
     })
     .wrapping_add(1i32 as libc::c_uint)
     .wrapping_add(1i32 as libc::c_uint)
@@ -837,7 +837,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   bb_putchar('\n' as i32);
   if option_mask32 & OPT_n as libc::c_int as libc::c_uint != 0 {
-    return 0i32;
+    return 0;
   }
   // TODO: 3/5 refuse if mounted
   // TODO: 4/5 compat options
@@ -1047,11 +1047,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     BUG_wrong_field_size(); // TODO: what's 1?
   } // 180 days
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as u32
+    (*sb).s_creator_os = 0 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as u16 as u32
+    (*sb).s_creator_os = 0 as u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0i32 as u8 as u32
+    (*sb).s_creator_os = 0 as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -1078,11 +1078,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // we use values which match "mke2fs -O ^resize_inode":
   // in this case 1.41.9 never sets EXT3_FEATURE_RO_COMPAT_LARGE_FILE.
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u32
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0 | 0x20i32 * 1i32) as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u16 as u32
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0 | 0x20i32 * 1i32) as u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0i32 | 0x20i32 * 1i32) as u8 as u32
+    (*sb).s_feature_compat = (0i32 | 0x10i32 * 0 | 0x20i32 * 1i32) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -1162,15 +1162,15 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // calculate filesystem skeleton structures
   gd = xzalloc(group_desc_blocks.wrapping_mul(blocksize) as size_t) as *mut ext2_group_desc;
   buf = xmalloc(blocksize as size_t) as *mut u8;
-  (*sb).s_free_blocks_count = 0i32 as u32;
-  i = 0i32 as libc::c_uint;
+  (*sb).s_free_blocks_count = 0 as u32;
+  i = 0 as libc::c_uint;
   pos = first_block;
   n = nblocks.wrapping_sub(first_block);
   while i < ngroups {
     let mut overhead_0: u32 = pos.wrapping_add(if has_super(i) != 0 {
       (1i32 as libc::c_uint).wrapping_add(group_desc_blocks)
     } else {
-      0i32 as libc::c_uint
+      0 as libc::c_uint
     });
     let mut free_blocks: u32 = 0;
     // fill group descriptors
@@ -1216,7 +1216,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     //STORE_LE(gd[i].bg_used_dirs_count, 0);
     // N.B. both "/" and "/lost+found" are within the first block group
     // "/" occupies 1 block, "/lost+found" occupies lost_and_found_blocks...
-    if 0i32 as libc::c_uint == i {
+    if 0 as libc::c_uint == i {
       // ... thus increased overhead for the first block group ...
       overhead_0 = (overhead_0 as libc::c_uint)
         .wrapping_add((1i32 as libc::c_uint).wrapping_add(lost_and_found_blocks))
@@ -1314,7 +1314,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   // dump filesystem skeleton structures
   //	printf("Writing superblocks and filesystem accounting information: ");
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   pos = first_block;
   while i < ngroups {
     // dump superblock and group descriptors and their backups
@@ -1324,10 +1324,10 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         (pos as u64)
           .wrapping_mul(blocksize as libc::c_ulong)
           .wrapping_add(
-            (if 0i32 as libc::c_uint == i && 1024i32 as libc::c_uint != blocksize {
+            (if 0 as libc::c_uint == i && 1024i32 as libc::c_uint != blocksize {
               1024i32
             } else {
-              0i32
+              0
             }) as libc::c_ulong,
           ),
         sb as *mut libc::c_void,
@@ -1345,15 +1345,15 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     pos = pos.wrapping_add((8i32 as libc::c_uint).wrapping_mul(blocksize))
   }
   // zero boot sectors
-  memset(buf as *mut libc::c_void, 0i32, blocksize as libc::c_ulong);
+  memset(buf as *mut libc::c_void, 0, blocksize as libc::c_ulong);
   // Disabled: standard mke2fs doesn't do this, and
   // on SPARC this destroys Sun disklabel.
   // Users who need/want zeroing can easily do it with dd.
   //PUT(0, buf, 1024); // N.B. 1024 <= blocksize, so buf[0..1023] contains zeros
   // zero inode tables
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < ngroups {
-    n = 0i32 as libc::c_uint;
+    n = 0 as libc::c_uint;
     while n < inode_table_blocks {
       PUT(
         ((if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
@@ -1531,7 +1531,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     BUG_wrong_field_size() as libc::c_uint
   })
   .wrapping_add(1i32 as libc::c_uint);
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < lost_and_found_blocks {
     if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*inode).i_block[i as usize] = i.wrapping_add(n)
@@ -1557,7 +1557,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     inodesize,
   );
   // dump directories
-  memset(buf as *mut libc::c_void, 0i32, blocksize as libc::c_ulong);
+  memset(buf as *mut libc::c_void, 0, blocksize as libc::c_ulong);
   dir = buf as *mut ext2_dir;
   // dump 2nd+ blocks of "/lost+found"
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
@@ -1753,5 +1753,5 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   );
   // cleanup
   xclose(3i32);
-  return 0i32;
+  return 0;
 }

@@ -30,7 +30,7 @@ pub unsafe extern "C" fn full_write(
 ) -> ssize_t {
   let mut cc: ssize_t = 0;
   let mut total: ssize_t = 0;
-  total = 0i32 as ssize_t;
+  total = 0 as ssize_t;
   while len != 0 {
     cc = safe_write(fd, buf, len);
     if cc < 0 {

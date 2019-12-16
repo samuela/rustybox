@@ -59,7 +59,7 @@ pub unsafe extern "C" fn scriptreplay_main(
     }
   }
   tfp = xfopen_for_read(*argv.offset(1));
-  fd = xopen(script, 0i32);
+  fd = xopen(script, 0);
   while fscanf(
     tfp,
     b"%lf %lu\n\x00" as *const u8 as *const libc::c_char,
@@ -70,5 +70,5 @@ pub unsafe extern "C" fn scriptreplay_main(
     usleep((delay * factor) as useconds_t);
     bb_copyfd_exact_size(fd, 1i32, count as off_t);
   }
-  return 0i32;
+  return 0;
 }

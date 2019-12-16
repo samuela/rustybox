@@ -74,7 +74,7 @@ pub unsafe extern "C" fn setfattr_main(
     &mut value as *mut *const libc::c_char,
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
-  status = 0i32;
+  status = 0;
   loop {
     let mut r: libc::c_int = 0;
     if opt & OPT_x as libc::c_int != 0 {
@@ -119,7 +119,7 @@ pub unsafe extern "C" fn setfattr_main(
         name,
         value as *const libc::c_void,
         strlen(value),
-        0i32,
+        0,
       )
     }
     if r != 0 {

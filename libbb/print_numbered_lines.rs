@@ -459,5 +459,5 @@ pub unsafe extern "C" fn print_numbered_lines(
   }
   (*ns).start = N;
   fclose(fp);
-  return 0i32;
+  return 0;
 }

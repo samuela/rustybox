@@ -97,17 +97,17 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
     name,
     b"SIG\x00" as *const u8 as *const libc::c_char,
     3i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     name = name.offset(3)
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[[libc::c_char; 7]; 32]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong)
       as libc::c_uint
   {
-    if strcasecmp(name, signals[i as usize].as_ptr()) == 0i32 {
+    if strcasecmp(name, signals[i as usize].as_ptr()) == 0 {
       return i as libc::c_int;
     }
     i = i.wrapping_add(1)
@@ -132,7 +132,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
     name,
     b"RTMIN\x00" as *const u8 as *const libc::c_char,
     5i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     if *name.offset(5) == 0 {
       return sigrtmin as libc::c_int;
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
     name,
     b"RTMAX\x00" as *const u8 as *const libc::c_char,
     5i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     if *name.offset(5) == 0 {
       return sigrtmax as libc::c_int;

@@ -89,8 +89,8 @@ pub unsafe extern "C" fn mkdir_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: libc::c_long = -1i32 as libc::c_long;
-  let mut status: libc::c_int = 0i32;
-  let mut flags: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
+  let mut flags: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = getopt32long(

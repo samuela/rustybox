@@ -238,7 +238,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 unsafe extern "C" fn seek_ft(mut ft: *mut FILE_and_pos_t, mut pos: off_t) {
   if (*ft).ft_pos != pos {
     (*ft).ft_pos = pos;
-    fseeko((*ft).ft_fp, pos, 0i32);
+    fseeko((*ft).ft_fp, pos, 0);
   };
 }
 /* Reads tokens from given fp, handling -b and -w flags
@@ -315,7 +315,7 @@ unsafe extern "C" fn search(
     /* quick look for typical case */
     return k + 1i32;
   }
-  i = 0i32;
+  i = 0;
   j = k + 1i32;
   loop {
     let l: libc::c_int = i + j >> 1i32;
@@ -353,7 +353,7 @@ unsafe extern "C" fn stone(
   };
   let mut clen: libc::c_int = 1i32;
   let mut clistlen: libc::c_int = 100i32;
-  let mut k: libc::c_int = 0i32;
+  let mut k: libc::c_int = 0;
   let mut clist: *mut cand = xzalloc(
     (clistlen as libc::c_ulong).wrapping_mul(::std::mem::size_of::<cand>() as libc::c_ulong),
   ) as *mut cand;
@@ -372,9 +372,9 @@ unsafe extern "C" fn stone(
   cand.x = 1i32;
   while cand.x <= n {
     let mut j: libc::c_int = *a.offset(cand.x as isize);
-    let mut oldl: libc::c_int = 0i32;
-    let mut numtries: libc::c_uint = 0i32 as libc::c_uint;
-    if !(j == 0i32) {
+    let mut oldl: libc::c_int = 0;
+    let mut numtries: libc::c_uint = 0 as libc::c_uint;
+    if !(j == 0) {
       cand.y = -*b.offset(j as isize);
       cand.pred = *klist.offset(0);
       loop {
@@ -411,7 +411,7 @@ unsafe extern "C" fn stone(
         }
         j += 1;
         cand.y = *b.offset(j as isize);
-        if !(cand.y > 0i32 && numtries < bound) {
+        if !(cand.y > 0 && numtries < bound) {
           break;
         }
       }
@@ -440,7 +440,7 @@ unsafe extern "C" fn equiv(
     if (*a.offset(i as isize)).value < (*b.offset(j as isize)).value {
       let fresh1 = i;
       i = i + 1;
-      (*a.offset(fresh1 as isize)).value = 0i32 as libc::c_uint
+      (*a.offset(fresh1 as isize)).value = 0 as libc::c_uint
     } else if (*a.offset(i as isize)).value == (*b.offset(j as isize)).value {
       let fresh2 = i;
       i = i + 1;
@@ -452,10 +452,10 @@ unsafe extern "C" fn equiv(
   while i <= n {
     let fresh3 = i;
     i = i + 1;
-    (*a.offset(fresh3 as isize)).value = 0i32 as libc::c_uint
+    (*a.offset(fresh3 as isize)).value = 0 as libc::c_uint
   }
-  (*b.offset((m + 1i32) as isize)).value = 0i32 as libc::c_uint;
-  j = 0i32;
+  (*b.offset((m + 1i32) as isize)).value = 0 as libc::c_uint;
+  j = 0;
   loop {
     j += 1;
     if !(j <= m) {
@@ -521,8 +521,8 @@ unsafe extern "C" fn fetch(
     if option_mask32 & (1i32 << FLAG_T as libc::c_int) as libc::c_uint != 0 {
       putchar_unlocked('\t' as i32);
     }
-    j = 0i32;
-    col = 0i32;
+    j = 0;
+    col = 0;
     while (j as libc::c_long) < *ix.offset(i as isize) - *ix.offset((i - 1i32) as isize) {
       let mut c: libc::c_int = getc_unlocked((*ft).ft_fp);
       if c == -1i32 {
@@ -573,8 +573,8 @@ unsafe extern "C" fn create_J(
   let mut member: *mut libc::c_int = std::ptr::null_mut();
   let mut nfile: [*mut line; 2] = [0 as *mut line; 2];
   let mut sfile: [*mut line; 2] = [0 as *mut line; 2];
-  let mut pref: libc::c_int = 0i32;
-  let mut suff: libc::c_int = 0i32;
+  let mut pref: libc::c_int = 0;
+  let mut suff: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut delta: libc::c_int = 0;
@@ -583,7 +583,7 @@ unsafe extern "C" fn create_J(
    * where fileno == 0 points to the old file, and
    * fileno == 1 points to the new one.
    */
-  i = 0i32;
+  i = 0;
   while i < 2i32 {
     let mut hash: libc::c_uint = 0;
     let mut tok: token_t = 0;
@@ -593,13 +593,13 @@ unsafe extern "C" fn create_J(
         .wrapping_mul(::std::mem::size_of::<line>() as libc::c_ulong),
     ) as *mut line;
     /* ft gets here without the correct position, cant use seek_ft */
-    (*ft.offset(i as isize)).ft_pos = 0i32 as off_t;
-    fseeko((*ft.offset(i as isize)).ft_fp, 0i32 as off64_t, 0i32);
-    *nlen.offset(i as isize) = 0i32;
+    (*ft.offset(i as isize)).ft_pos = 0 as off_t;
+    fseeko((*ft.offset(i as isize)).ft_fp, 0 as off64_t, 0);
+    *nlen.offset(i as isize) = 0;
     /* We could zalloc nfile, but then zalloc starts showing in gprof at ~1% */
-    (*nfile[i as usize].offset(0)).c2rust_unnamed.offset = 0i32 as off_t; /* saves code */
+    (*nfile[i as usize].offset(0)).c2rust_unnamed.offset = 0 as off_t; /* saves code */
     loop {
-      tok = 0i32;
+      tok = 0;
       hash = tok as libc::c_uint;
       loop {
         tok = read_token(&mut *ft.offset(i as isize), tok);
@@ -661,7 +661,7 @@ unsafe extern "C" fn create_J(
       ((*nlen.offset(i as isize) + 2i32) as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<off_t>() as libc::c_ulong),
     ) as *mut off_t;
-    j = 0i32;
+    j = 0;
     while j < *nlen.offset(i as isize) + 1i32 {
       *(*ix.offset(i as isize)).offset(j as isize) = (*nfile[i as usize].offset(j as isize))
         .c2rust_unnamed
@@ -689,11 +689,11 @@ unsafe extern "C" fn create_J(
    * the result being sorted and stored in sfile[fileno],
    * and their sizes are stored in slen[fileno]
    */
-  j = 0i32;
+  j = 0;
   while j < 2i32 {
     sfile[j as usize] = nfile[j as usize].offset(pref as isize);
     slen[j as usize] = *nlen.offset(j as isize) - pref - suff;
-    i = 0i32;
+    i = 0;
     while i <= slen[j as usize] {
       (*sfile[j as usize].offset(i as isize))
         .c2rust_unnamed
@@ -740,7 +740,7 @@ unsafe extern "C" fn create_J(
    * are initialized with 0 (no matches), so that function stone can
    * then assign them their right values
    */
-  i = 0i32;
+  i = 0;
   delta = *nlen.offset(1) - *nlen.offset(0);
   while i <= *nlen.offset(0) {
     *J.offset(i as isize) = if i <= pref {
@@ -748,7 +748,7 @@ unsafe extern "C" fn create_J(
     } else if i > *nlen.offset(0) - suff {
       (i) + delta
     } else {
-      0i32
+      0
     };
     i += 1
   }
@@ -774,16 +774,16 @@ unsafe extern "C" fn create_J(
       );
       j = *J.offset(i as isize);
       while i <= *nlen.offset(0) && *J.offset(i as isize) == j {
-        let mut tok0: token_t = 0i32;
-        let mut tok1: token_t = 0i32;
+        let mut tok0: token_t = 0;
+        let mut tok1: token_t = 0;
         loop {
           tok0 = read_token(&mut *ft.offset(0), tok0);
           tok1 = read_token(&mut *ft.offset(1), tok1);
-          if (tok0 ^ tok1) & TOK_EMPTY as libc::c_int != 0i32
+          if (tok0 ^ tok1) & TOK_EMPTY as libc::c_int != 0
             || tok0 & TOK_EMPTY as libc::c_int == 0
               && tok0 & CHAR_MASK as libc::c_int != tok1 & CHAR_MASK as libc::c_int
           {
-            *J.offset(i as isize) = 0i32
+            *J.offset(i as isize) = 0
             /* Break the correspondence */
           }
           if !(tok0 & tok1 & TOK_EMPTY as libc::c_int == 0) {
@@ -846,13 +846,13 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
          * previous change, dump the record and reset it.
          */
         let mut ct: libc::c_int = 2i32 * (*ptr_to_globals).opt_U_context + 1i32;
-        if idx >= 0i32
+        if idx >= 0
           && v[0].a > (*vec.offset(idx as isize))[0].b + ct
           && v[1].a > (*vec.offset(idx as isize))[1].b + ct
         {
           break;
         }
-        j = 0i32;
+        j = 0;
         while j < 2i32 {
           k = v[j as usize].a;
           while k <= v[j as usize].b {
@@ -882,7 +882,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
       }
       *J.offset(v[0].b as isize) = v[1].b
     }
-    if !(idx < 0i32
+    if !(idx < 0
       || option_mask32 & (1i32 << FLAG_B as libc::c_int) as libc::c_uint != 0 && !nonempty)
     {
       if option_mask32 & (1i32 << FLAG_q as libc::c_int) as libc::c_uint == 0 {
@@ -909,7 +909,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
           );
         }
         printf(b"@@\x00" as *const u8 as *const libc::c_char);
-        j = 0i32;
+        j = 0;
         while j < 2i32 {
           span[j as usize].a = if 1i32 > (*cvp)[j as usize].a - (*ptr_to_globals).opt_U_context {
             1i32
@@ -933,7 +933,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
           if !(a == b) {
             printf(
               b",%d\x00" as *const u8 as *const libc::c_char,
-              if a < b { (b - a) + 1i32 } else { 0i32 },
+              if a < b { (b - a) + 1i32 } else { 0 },
             );
           }
           j += 1
@@ -960,7 +960,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
           if end {
             break;
           }
-          j = 0i32;
+          j = 0;
           while j < 2i32 {
             fetch(
               &mut *ft.as_mut_ptr().offset(j as isize),
@@ -992,40 +992,40 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
 unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut fp: [*mut FILE; 2] = [0 as *mut FILE; 2];
-  let mut binary: bool = 0i32 != 0;
-  let mut differ: bool = 0i32 != 0;
+  let mut binary: bool = 0 != 0;
+  let mut differ: bool = 0 != 0;
   let mut status: libc::c_int = STATUS_SAME as libc::c_int;
   let mut i: libc::c_int = 0;
   fp[0] = stdin;
   fp[1] = stdin;
-  i = 0i32;
+  i = 0;
   loop {
     if !(i < 2i32) {
       current_block = 6669252993407410313;
       break;
     }
-    let mut fd: libc::c_int = 0i32;
+    let mut fd: libc::c_int = 0;
     if !(*(*file.offset(i as isize)).offset(0) as libc::c_int == '-' as i32
       && *(*file.offset(i as isize)).offset(1) == 0)
     {
       if option_mask32 & (1i32 << FLAG_N as libc::c_int) as libc::c_uint == 0 {
-        fd = open_or_warn(*file.offset(i as isize), 0i32);
+        fd = open_or_warn(*file.offset(i as isize), 0);
         if fd == -1i32 {
           current_block = 15027506056153281688;
           break;
         }
       } else {
         /* -N: if some file does not exist compare it like empty */
-        fd = open(*file.offset(i as isize), 0i32);
+        fd = open(*file.offset(i as isize), 0);
         if fd == -1i32 {
-          fd = xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32)
+          fd = xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0)
         }
       }
     }
     /* Our diff implementation is using seek.
      * When we meet non-seekable file, we must make a temp copy.
      */
-    if lseek(fd, 0i32 as off64_t, 0i32) == -1i32 as libc::c_long && *bb_errno == 29i32 {
+    if lseek(fd, 0 as off64_t, 0) == -1i32 as libc::c_long && *bb_errno == 29i32 {
       let mut name: [libc::c_char; 15] =
         *::std::mem::transmute::<&[u8; 15], &mut [libc::c_char; 15]>(b"/tmp/difXXXXXX\x00");
       let mut fd_tmp: libc::c_int = xmkstemp(name.as_mut_ptr());
@@ -1033,11 +1033,11 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
       if bb_copyfd_eof(fd, fd_tmp) < 0 {
         xfunc_die();
       }
-      if fd != 0i32 {
+      if fd != 0 {
         close(fd);
       }
       fd = fd_tmp;
-      xlseek(fd, 0i32 as off_t, 0i32);
+      xlseek(fd, 0 as off_t, 0);
     }
     fp[i as usize] = fdopen(fd, b"r\x00" as *const u8 as *const libc::c_char);
     i += 1
@@ -1056,10 +1056,10 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
           differ = 1i32 != 0;
           i = if i < j { i } else { j }
         }
-        if i == 0i32 {
+        if i == 0 {
           break;
         }
-        k = 0i32;
+        k = 0;
         while k < i {
           if *buf0.offset(k as isize) == 0 || *buf1.offset(k as isize) == 0 {
             binary = 1i32 != 0
@@ -1164,7 +1164,7 @@ unsafe extern "C" fn skip_dir(
         concat_path_file((*ptr_to_globals).other_dir, filename);
       let mut r: libc::c_int = stat(othername, &mut osb);
       free(othername as *mut libc::c_void);
-      if r != 0i32 || !(osb.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
+      if r != 0 || !(osb.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
         /* other dir doesn't have similarly named
          * directory, don't recurse; return 1 upon
          * exit, just like diffutils' diff */
@@ -1186,10 +1186,10 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
   let mut i: libc::c_int = 0;
   memset(
     &mut list as *mut [dlist; 2] as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[dlist; 2]>() as libc::c_ulong,
   );
-  i = 0i32;
+  i = 0;
   while i < 2i32 {
     /*list[i].s = list[i].e = 0; - memset did it */
     /*list[i].dl = NULL; */
@@ -1220,7 +1220,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
           ) -> libc::c_int,
       ),
       &mut *list.as_mut_ptr().offset(i as isize) as *mut dlist as *mut libc::c_void,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     );
     /* Sort dl alphabetically.
      * GNU diff does this ignoring any number of trailing dots.
@@ -1234,7 +1234,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
         && strcmp(
           *list[i as usize].dl.offset(list[i as usize].s as isize),
           s_start,
-        ) < 0i32
+        ) < 0
       {
         list[i as usize].s += 1
       }
@@ -1270,7 +1270,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     } else {
       strcmp(dp[0], dp[1])
     };
-    k = (pos > 0i32) as libc::c_int;
+    k = (pos > 0) as libc::c_int;
     if pos != 0 && option_mask32 & (1i32 << FLAG_N as libc::c_int) as libc::c_uint == 0 {
       printf(
         b"Only in %s: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -1282,9 +1282,9 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     } else {
       let mut fullpath: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
       let mut path: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-      i = 0i32;
+      i = 0;
       while i < 2i32 {
-        if pos == 0i32 || i == k {
+        if pos == 0 || i == k {
           fullpath[i as usize] = concat_path_file(*p.offset(i as isize), dp[i as usize]);
           path[i as usize] = fullpath[i as usize];
           stat(
@@ -1369,7 +1369,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     }
     free(dp[k as usize] as *mut libc::c_void);
     list[k as usize].s += 1;
-    if pos == 0i32 {
+    if pos == 0 {
       free(dp[(1i32 - k) as usize] as *mut libc::c_void);
       list[(1i32 - k) as usize].s += 1
     }
@@ -1394,7 +1394,7 @@ pub unsafe extern "C" fn diff_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut gotstdin: libc::c_int = 0i32;
+  let mut gotstdin: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut file: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut s_start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1421,13 +1421,13 @@ pub unsafe extern "C" fn diff_main(
   }
   /* Compat: "diff file name_which_doesnt_exist" exits with 2 */
   xfunc_error_retval = 2i32 as u8;
-  i = 0i32;
+  i = 0;
   while i < 2i32 {
     file[i as usize] = *argv.offset(i as isize);
     if *file[i as usize].offset(0) as libc::c_int == '-' as i32 && *file[i as usize].offset(1) == 0
     {
       fstat(
-        0i32,
+        0,
         &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(i as isize),
       );
       gotstdin += 1

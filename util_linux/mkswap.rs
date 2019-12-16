@@ -183,7 +183,7 @@ pub unsafe extern "C" fn mkswap_main(
   xlseek(
     fd,
     pagesize.wrapping_sub(10i32 as libc::c_uint) as off_t,
-    0i32,
+    0,
   );
   xwrite(
     fd,
@@ -191,5 +191,5 @@ pub unsafe extern "C" fn mkswap_main(
     10i32 as size_t,
   );
   fsync(fd);
-  return 0i32;
+  return 0;
 }

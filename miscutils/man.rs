@@ -149,10 +149,10 @@ unsafe extern "C" fn run_pipe(
   let mut cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Prevent man page link loops */
   if level > 10i32 {
-    return 0i32;
+    return 0;
   }
-  if access(man_filename, 4i32) != 0i32 {
-    return 0i32;
+  if access(man_filename, 4i32) != 0 {
+    return 0;
   }
   if option_mask32 & OPT_w as libc::c_int as libc::c_uint != 0 {
     puts(man_filename);
@@ -226,7 +226,7 @@ unsafe extern "C" fn run_pipe(
   }
   /* err on the safe side */
   close(0i32); /* guaranteed to use fd 0 (STDIN_FILENO) */
-  open_zipped(man_filename, 0i32);
+  open_zipped(man_filename, 0);
   if man != 0 {
     let mut w: libc::c_int = get_terminal_width(-1i32);
     if w > 10i32 {
@@ -317,7 +317,7 @@ unsafe extern "C" fn add_MANPATH(
                   current_block_8 = 2979737022853876585;
                   continue;
                 }
-                if strcmp(*path_element, path) == 0i32 {
+                if strcmp(*path_element, path) == 0 {
                   break;
                 }
                 path_element = path_element.offset(1);
@@ -399,7 +399,7 @@ pub unsafe extern "C" fn man_main(
   opt = getopt32(argv, b"^+aw\x00-1\x00" as *const u8 as *const libc::c_char) as libc::c_int;
   argv = argv.offset(optind as isize);
   sec_list = xstrdup(b"0p:1:1p:2:3:3p:4:5:6:7:8:9\x00" as *const u8 as *const libc::c_char);
-  count_mp = 0i32;
+  count_mp = 0;
   man_path_list = add_MANPATH(
     0 as *mut *mut libc::c_char,
     &mut count_mp,
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn man_main(
     if token[1].is_null() {
       continue;
     }
-    if strcmp(b"DEFINE\x00" as *const u8 as *const libc::c_char, token[0]) == 0i32 {
+    if strcmp(b"DEFINE\x00" as *const u8 as *const libc::c_char, token[0]) == 0 {
       let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).col;
       *fresh5 = if_redefined(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).col,
@@ -462,15 +462,15 @@ pub unsafe extern "C" fn man_main(
     } else if strcmp(
       (b"MANDATORY_MANPATH\x00" as *const u8 as *const libc::c_char).offset(10),
       token[0],
-    ) == 0i32
+    ) == 0
       || strcmp(
         b"MANDATORY_MANPATH\x00" as *const u8 as *const libc::c_char,
         token[0],
-      ) == 0i32
+      ) == 0
     {
       man_path_list = add_MANPATH(man_path_list, &mut count_mp, token[1])
     }
-    if strcmp(b"MANSECT\x00" as *const u8 as *const libc::c_char, token[0]) == 0i32 {
+    if strcmp(b"MANSECT\x00" as *const u8 as *const libc::c_char, token[0]) == 0 {
       free(sec_list as *mut libc::c_void);
       sec_list = xstrdup(token[1])
     }
@@ -503,18 +503,18 @@ pub unsafe extern "C" fn man_main(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).col,
     )
   }
-  not_found = 0i32;
+  not_found = 0;
   loop {
     let mut current_block_61: u64;
     /* for each argv[] */
     let mut cur_path: *const libc::c_char = std::ptr::null();
     let mut cur_mp: libc::c_int = 0;
-    let mut found: libc::c_int = 0i32;
+    let mut found: libc::c_int = 0;
     if !strchr(*argv, '/' as i32).is_null() {
-      found = show_manpage(*argv, 1i32, 0i32);
+      found = show_manpage(*argv, 1i32, 0);
       current_block_61 = 13839692391726842101;
     } else {
-      cur_mp = 0i32;
+      cur_mp = 0;
       's_267: loop {
         let fresh11 = cur_mp;
         cur_mp = cur_mp + 1;
@@ -532,7 +532,7 @@ pub unsafe extern "C" fn man_main(
           let mut sect_len: libc::c_int =
             next_sect.wrapping_offset_from(cur_sect) as libc::c_long as libc::c_int;
           let mut man_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          let mut cat0man1: libc::c_int = 0i32;
+          let mut cat0man1: libc::c_int = 0;
           /* Search for cat, then man page */
           while cat0man1 < 2i32 {
             let mut found_here: libc::c_int = 0;
@@ -547,7 +547,7 @@ pub unsafe extern "C" fn man_main(
               sect_len,
               cur_sect,
             );
-            found_here = show_manpage(man_filename, cat0man1, 0i32);
+            found_here = show_manpage(man_filename, cat0man1, 0);
             found |= found_here;
             cat0man1 += found_here + 1i32;
             free(man_filename as *mut libc::c_void);

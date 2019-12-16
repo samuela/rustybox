@@ -177,21 +177,21 @@ pub unsafe extern "C" fn read_key(
     '3' as i32 as libc::c_char,
     ('D' as i32 | 0x80i32) as libc::c_char,
     KEYCODE_ALT_LEFT as libc::c_int as libc::c_char,
-    0i32 as libc::c_char,
+    0 as libc::c_char,
   ]; /* saved chars counter is in buffer[-1] now */
   pfd.fd = fd;
   pfd.events = 0x1i32 as libc::c_short;
   buffer = buffer.offset(1);
   loop {
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     n = *buffer.offset(-1i32 as isize) as libc::c_uchar as libc::c_int;
-    if n == 0i32 {
+    if n == 0 {
       /* If no data, wait for input.
        * If requested, wait TIMEOUT ms. TIMEOUT = -1 is useful
        * if fd can be in non-blocking mode.
        */
       if timeout >= -1i32 {
-        if safe_poll(&mut pfd, 1i32 as nfds_t, timeout) == 0i32 {
+        if safe_poll(&mut pfd, 1i32 as nfds_t, timeout) == 0 {
           /* Timed out */
           *bb_errno = 11i32;
           return -1i32 as int64_t;
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn read_key(
        * "li" too, and cat was getting wrong input.
        */
       n = safe_read(fd, buffer as *mut libc::c_void, 1i32 as size_t) as libc::c_int;
-      if n <= 0i32 {
+      if n <= 0 {
         return -1i32 as int64_t;
       }
     }
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn read_key(
         break;
       }
       /* n - position in sequence we did not read yet */
-      let mut i: libc::c_int = 0i32; /* position in sequence to compare */
+      let mut i: libc::c_int = 0; /* position in sequence to compare */
       /* Loop through chars in this sequence */
       loop
       /* So far escape sequence matched up to [i-1] */
@@ -241,11 +241,11 @@ pub unsafe extern "C" fn read_key(
            * so if we block for long it's not really an escape sequence.
            * Timeout is needed to reconnect escape sequences
            * split up by transmission over a serial console. */
-          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
+          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0 {
             current_block = 16551332604341906318;
             break 's_125;
           }
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           if safe_read(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
@@ -256,7 +256,7 @@ pub unsafe extern "C" fn read_key(
              * in fact, there is no data. */
             if *bb_errno != 11i32 {
               /* otherwise: it's EOF/error */
-              *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char;
+              *buffer.offset(-1i32 as isize) = 0 as libc::c_char;
               return -1i32 as int64_t;
             }
             current_block = 16551332604341906318;
@@ -280,12 +280,12 @@ pub unsafe extern "C" fn read_key(
         } else {
           if *seq.offset(i as isize) as libc::c_int & 0x80i32 != 0 {
             /* Entire seq matched */
-            n = 0i32;
+            n = 0;
             /* n -= i; memmove(...);
              * would be more correct,
              * but we never read ahead that much,
              * and n == i here. */
-            *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char;
+            *buffer.offset(-1i32 as isize) = 0 as libc::c_char;
             return *seq.offset((i + 1i32) as isize) as libc::c_schar as int64_t;
           }
           i += 1
@@ -300,10 +300,10 @@ pub unsafe extern "C" fn read_key(
          */
         while n < KEYCODE_BUFFER_SIZE as libc::c_int - 1i32 {
           /* 1 for count byte at buffer[-1] */
-          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
+          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0 {
             break;
           }
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           if safe_read(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn read_key(
              * in fact, there is no data. */
             if *bb_errno != 11i32 {
               /* otherwise: it's EOF/error */
-              *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char;
+              *buffer.offset(-1i32 as isize) = 0 as libc::c_char;
               return -1i32 as int64_t;
             }
             break;
@@ -350,7 +350,7 @@ pub unsafe extern "C" fn read_key(
             {
               continue;
             }
-            *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char;
+            *buffer.offset(-1i32 as isize) = 0 as libc::c_char;
             /* Pack into "1 <row15bits> <col16bits>" 32-bit sequence */
             row |= ((-1i32 as libc::c_uint) << 15i32) as libc::c_ulong;
             col |= row << 16i32;
@@ -379,7 +379,7 @@ pub unsafe extern "C" fn read_key(
      * This was not useful. Pretend there was no key pressed,
      * go and wait for a new keypress:
      */
-    *buffer.offset(-1i32 as isize) = 0i32 as libc::c_char
+    *buffer.offset(-1i32 as isize) = 0 as libc::c_char
   }
 }
 

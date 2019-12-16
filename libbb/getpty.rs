@@ -136,11 +136,11 @@ pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
 pub unsafe extern "C" fn xgetpty(mut line: *mut libc::c_char) -> libc::c_int {
   let mut p: libc::c_int = 0; /* chmod+chown corresponding slave pty */
   p = open(b"/dev/ptmx\x00" as *const u8 as *const libc::c_char, 0o2i32); /* (what does this do?) */
-  if p >= 0i32 {
+  if p >= 0 {
     grantpt(p);
     unlockpt(p);
     /* find out the name of slave pty */
-    if ptsname_r(p, line, (GETPTY_BUFSIZE as libc::c_int - 1i32) as size_t) != 0i32 {
+    if ptsname_r(p, line, (GETPTY_BUFSIZE as libc::c_int - 1i32) as size_t) != 0 {
       bb_simple_perror_msg_and_die(
         b"ptsname error (is /dev/pts mounted?)\x00" as *const u8 as *const libc::c_char,
       );

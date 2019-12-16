@@ -214,7 +214,7 @@ unsafe extern "C" fn open_by_path_or_target(
 ) -> libc::c_int {
   let mut proc_path_buf: [libc::c_char; 32] = [0; 32];
   if path.is_null() {
-    if target_pid == 0i32 {
+    if target_pid == 0 {
       /* Example:
        * "nsenter -p PROG" - neither -pFILE nor -tPID given.
        */
@@ -229,7 +229,7 @@ unsafe extern "C" fn open_by_path_or_target(
     );
     path = proc_path_buf.as_mut_ptr()
   }
-  return xopen(path, 0i32);
+  return xopen(path, 0);
 }
 
 #[no_mangle]
@@ -248,12 +248,12 @@ pub unsafe extern "C" fn nsenter_main(
   let mut setgroups_failed: libc::c_int = 0;
   let mut root_fd: libc::c_int = 0;
   let mut wd_fd: libc::c_int = 0;
-  let mut target_pid: libc::c_int = 0i32;
-  let mut uid: libc::c_int = 0i32;
-  let mut gid: libc::c_int = 0i32;
+  let mut target_pid: libc::c_int = 0;
+  let mut uid: libc::c_int = 0;
+  let mut gid: libc::c_int = 0;
   memset(
     ns_ctx_list.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[namespace_ctx; 6]>() as libc::c_ulong,
   );
   opts = getopt32long(
@@ -307,7 +307,7 @@ pub unsafe extern "C" fn nsenter_main(
       b"cwd\x00" as *const u8 as *const libc::c_char,
     )
   }
-  i = 0i32;
+  i = 0;
   while i < NS_COUNT as libc::c_int {
     let mut ns: *const namespace_descr =
       &*ns_list.as_ptr().offset(i as isize) as *const namespace_descr;
@@ -323,7 +323,7 @@ pub unsafe extern "C" fn nsenter_main(
    * Entering the user namespace without --preserve-credentials implies
    * --setuid & --setgid and clearing root's groups.
    */
-  setgroups_failed = 0i32;
+  setgroups_failed = 0;
   if opts & OPT_user as libc::c_int as libc::c_uint != 0
     && opts & OPT_prescred as libc::c_int as libc::c_uint == 0
   {
@@ -332,15 +332,15 @@ pub unsafe extern "C" fn nsenter_main(
      * We call setgroups() before and after setns() and only
      * bail-out if it fails twice.
      */
-    setgroups_failed = (setgroups(0i32 as size_t, 0 as *const gid_t) < 0i32) as libc::c_int
+    setgroups_failed = (setgroups(0i32 as size_t, 0 as *const gid_t) < 0) as libc::c_int
   }
-  i = 0i32;
+  i = 0;
   while i < NS_COUNT as libc::c_int {
     let mut ns_0: *const namespace_descr =
       &*ns_list.as_ptr().offset(i as isize) as *const namespace_descr;
     let mut ns_ctx_0: *mut namespace_ctx =
       &mut *ns_ctx_list.as_mut_ptr().offset(i as isize) as *mut namespace_ctx;
-    if !((*ns_ctx_0).fd < 0i32) {
+    if !((*ns_ctx_0).fd < 0) {
       if setns((*ns_ctx_0).fd, (*ns_0).flag) != 0 {
         bb_perror_msg_and_die(
           b"setns(): can\'t reassociate to namespace \'%s\'\x00" as *const u8
@@ -354,20 +354,20 @@ pub unsafe extern "C" fn nsenter_main(
     /* should close fds, to not confuse exec'ed PROG */
     /*ns_ctx->fd = -1;*/
   }
-  if root_fd >= 0i32 {
-    if wd_fd < 0i32 {
+  if root_fd >= 0 {
+    if wd_fd < 0 {
       /*
        * Save the current working directory if we're not
        * changing it.
        */
-      wd_fd = xopen(b".\x00" as *const u8 as *const libc::c_char, 0i32)
+      wd_fd = xopen(b".\x00" as *const u8 as *const libc::c_char, 0)
     }
     xfchdir(root_fd);
     xchroot(b".\x00" as *const u8 as *const libc::c_char);
     close(root_fd);
     /*root_fd = -1;*/
   }
-  if wd_fd >= 0i32 {
+  if wd_fd >= 0 {
     xfchdir(wd_fd);
     close(wd_fd);
     /*wd_fd = -1;*/
@@ -383,7 +383,7 @@ pub unsafe extern "C" fn nsenter_main(
     /* Child continues */
   }
   if opts & OPT_setgid as libc::c_int as libc::c_uint != 0 {
-    if setgroups(0i32 as size_t, 0 as *const gid_t) < 0i32 && setgroups_failed != 0 {
+    if setgroups(0i32 as size_t, 0 as *const gid_t) < 0 && setgroups_failed != 0 {
       bb_simple_perror_msg_and_die(b"setgroups\x00" as *const u8 as *const libc::c_char);
     }
     xsetgid(gid as gid_t);

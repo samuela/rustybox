@@ -827,7 +827,7 @@ unsafe extern "C" fn hmac_begin(
     //		// - CURVE25519_KEYSIZE is 32
     //		// - master_secret[] is 48
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < key_size {
     key_xor_ipad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x36i32) as u8;
     key_xor_opad[i as usize] = (*key.offset(i as isize) as libc::c_int ^ 0x5ci32) as u8;
@@ -1070,7 +1070,7 @@ unsafe extern "C" fn bad_record_die(
     len,
     expected,
   );
-  if len > 0i32 {
+  if len > 0 {
     let mut p: *mut u8 = (*tls).inbuf;
     if len > 99i32 {
       len = 99i32
@@ -1084,7 +1084,7 @@ unsafe extern "C" fn bad_record_die(
         *fresh4 as libc::c_int,
       );
       len -= 1;
-      if !(len != 0i32) {
+      if !(len != 0) {
         break;
       }
     }
@@ -1102,7 +1102,7 @@ unsafe extern "C" fn tls_error_die(mut tls: *mut tls_state_t, mut line: libc::c_
 //UNUSED
 unsafe extern "C" fn tls_free_outbuf(mut tls: *mut tls_state_t) {
   free((*tls).outbuf as *mut libc::c_void);
-  (*tls).outbuf_size = 0i32;
+  (*tls).outbuf_size = 0;
   (*tls).outbuf = std::ptr::null_mut();
 }
 unsafe extern "C" fn tls_get_outbuf(
@@ -1124,7 +1124,7 @@ unsafe extern "C" fn tls_get_zeroed_outbuf(
   mut len: libc::c_int,
 ) -> *mut libc::c_void {
   let mut record: *mut libc::c_void = tls_get_outbuf(tls, len);
-  memset(record, 0i32, len as libc::c_ulong);
+  memset(record, 0, len as libc::c_ulong);
   return record;
 }
 unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
@@ -1136,7 +1136,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   let mut xhdr: *mut record_hdr = std::ptr::null_mut();
   let mut padding_length: u8 = 0;
   xhdr = buf.offset(-(RECHDR_LEN as libc::c_int as isize)) as *mut libc::c_void as *mut record_hdr;
-  if 0i32 == 0 || (*tls).cipher_id as libc::c_int != 0x3bi32 {
+  if 0 == 0 || (*tls).cipher_id as libc::c_int != 0x3bi32 {
     /* or if it wasn't selected */
     xhdr = buf
       .offset(-(RECHDR_LEN as libc::c_int as isize))
@@ -1365,7 +1365,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
     let fresh11 = size;
     size = size.wrapping_add(1);
     *buf.offset(fresh11 as isize) = padding_length;
-    if !(size & (16i32 - 1i32) as libc::c_uint != 0i32 as libc::c_uint) {
+    if !(size & (16i32 - 1i32) as libc::c_uint != 0 as libc::c_uint) {
       break;
     }
     /* padding */
@@ -1537,7 +1537,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   };
   cnt = 1i32 as libc::c_uint;
   remaining = size;
-  while remaining != 0i32 as libc::c_uint {
+  while remaining != 0 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
     *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
@@ -1679,14 +1679,14 @@ unsafe extern "C" fn tls_has_buffered_record(mut tls: *mut tls_state_t) -> libc:
   let mut xhdr: *mut record_hdr = std::ptr::null_mut();
   let mut rec_size: libc::c_int = 0;
   if buffered < RECHDR_LEN as libc::c_int {
-    return 0i32;
+    return 0;
   }
   xhdr =
     (*tls).inbuf.offset((*tls).ofs_to_buffered as isize) as *mut libc::c_void as *mut record_hdr;
   rec_size = RECHDR_LEN as libc::c_int
     + (0x100i32 * (*xhdr).len16_hi as libc::c_int + (*xhdr).len16_lo as libc::c_int);
   if buffered < rec_size {
-    return 0i32;
+    return 0;
   }
   return rec_size;
 }
@@ -1731,7 +1731,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
   );
   cnt = 1i32 as libc::c_uint;
   remaining = size as libc::c_uint;
-  while remaining != 0i32 as libc::c_uint {
+  while remaining != 0 as libc::c_uint {
     let mut n: libc::c_uint = 0;
     cnt = cnt.wrapping_add(1);
     *(nonce.as_mut_ptr().offset(12) as *mut u32) = {
@@ -1798,7 +1798,7 @@ unsafe extern "C" fn tls_xread_record(
   /* discard it, get next record */
   {
     total = (*tls).buffered_size;
-    if total != 0i32 {
+    if total != 0 {
       memmove(
         (*tls).inbuf as *mut libc::c_void,
         (*tls).inbuf.offset((*tls).ofs_to_buffered as isize) as *const libc::c_void,
@@ -1807,7 +1807,7 @@ unsafe extern "C" fn tls_xread_record(
       //dbg("<< remaining at %d [%d] ", tls->ofs_to_buffered, total);
       //dump_raw_in("<< %s\n", tls->inbuf, total);
     }
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     target = MAX_INBUF as libc::c_int;
     loop {
       rem = 0;
@@ -1824,14 +1824,14 @@ unsafe extern "C" fn tls_xread_record(
         }
       }
       /* if total >= target, we have a full packet (and possibly more)... */
-      if total - target >= 0i32 {
+      if total - target >= 0 {
         (*tls).buffered_size = total - target;
         (*tls).ofs_to_buffered = target;
         //dbg("<< stashing at %d [%d] ", tls->ofs_to_buffered, tls->buffered_size);
         //dump_hex("<< %s\n", tls->inbuf + tls->ofs_to_buffered, tls->buffered_size);
         sz = target - RECHDR_LEN as libc::c_int;
         /* Needs to be decrypted? */
-        if (*tls).min_encrypted_len_on_read != 0i32 as libc::c_uint {
+        if (*tls).min_encrypted_len_on_read != 0 as libc::c_uint {
           if sz < (*tls).min_encrypted_len_on_read as libc::c_int {
             bb_error_msg_and_die(
               b"bad encrypted len:%u\x00" as *const u8 as *const libc::c_char,
@@ -1873,7 +1873,7 @@ unsafe extern "C" fn tls_xread_record(
               as libc::c_int
           }
         }
-        if sz < 0i32 {
+        if sz < 0 {
           bb_simple_error_msg_and_die(
             b"encrypted data too short\x00" as *const u8 as *const libc::c_char,
           );
@@ -1890,7 +1890,7 @@ unsafe extern "C" fn tls_xread_record(
       } else {
         /* input buffer is grown only as needed */
         rem = (*tls).inbuf_size - total;
-        if rem == 0i32 {
+        if rem == 0 {
           (*tls).inbuf_size += MAX_INBUF as libc::c_int / 8i32;
           if (*tls).inbuf_size > MAX_INBUF as libc::c_int {
             (*tls).inbuf_size = MAX_INBUF as libc::c_int
@@ -1906,8 +1906,8 @@ unsafe extern "C" fn tls_xread_record(
           (*tls).inbuf.offset(total as isize) as *mut libc::c_void,
           rem as size_t,
         ) as libc::c_int;
-        if sz <= 0i32 {
-          if sz == 0i32 && total == 0i32 {
+        if sz <= 0 {
+          if sz == 0 && total == 0 {
             current_block = 11459959175219260272;
             break 's_18;
           } else {
@@ -1949,16 +1949,16 @@ unsafe extern "C" fn tls_xread_record(
         }
         if *p_1.offset(0) as libc::c_int == 1i32 {
           /* warning */
-          if !(*p_1.offset(1) as libc::c_int == 0i32) {
+          if !(*p_1.offset(1) as libc::c_int == 0) {
             continue;
           }
           /* "close_notify" warning: it's EOF */
-          sz = 0i32;
+          sz = 0;
           current_block = 10435735846551762309;
           break;
         } else {
           /* p[0] not 1 or 2: not defined in protocol */
-          sz = 0i32;
+          sz = 0;
           current_block = 10435735846551762309;
           break;
         }
@@ -1969,7 +1969,7 @@ unsafe extern "C" fn tls_xread_record(
     11459959175219260272 =>
     /* "Abrupt" EOF, no TLS shutdown (seen from kernel.org) */
     {
-      (*tls).buffered_size = 0i32
+      (*tls).buffered_size = 0
     }
     18377268871191777778 => {
       bb_perror_msg_and_die(
@@ -2221,14 +2221,14 @@ unsafe extern "C" fn find_key_in_der_cert(
     der as *const libc::c_void,
     OID_RSA_KEY_ALG.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[u8; 13]>() as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     (*tls).flags |= GOT_CERT_RSA_KEY_ALG as libc::c_int as libc::c_uint
   } else if memcmp(
     der as *const libc::c_void,
     OID_ECDSA_KEY_ALG.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[u8; 11]>() as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
   } else {
     bb_simple_error_msg_and_die(b"not RSA or ECDSA cert\x00" as *const u8 as *const libc::c_char);
@@ -2250,7 +2250,7 @@ unsafe extern "C" fn find_key_in_der_cert(
      *   INTEGER 0x0181/385 bytes (modulus): 02820181 XX...XXX
      *   INTEGER 3 bytes (exponent): 0203 010001
      */
-    if *der as libc::c_int != 0i32 {
+    if *der as libc::c_int != 0 {
       /* "ignore bits", should be 0 */
       xfunc_die(); /* enter SEQ */
     }
@@ -2309,9 +2309,9 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
   mut sni: *const libc::c_char,
 ) {
   static mut ciphers: [u8; 20] = [
-    0i32 as u8,
-    (2i32 + (7i32 + 6i32 * 0i32 + 0i32) * 2i32) as u8,
-    0i32 as u8,
+    0 as u8,
+    (2i32 + (7i32 + 6i32 * 0 + 0) * 2i32) as u8,
+    0 as u8,
     0xffi32 as u8,
     0xc0i32 as u8,
     0x23i32 as u8,
@@ -2321,23 +2321,23 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
     0x2bi32 as u8,
     0xc0i32 as u8,
     0x2fi32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x3ci32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x3di32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x9ci32 as u8,
     0x1i32 as u8,
-    0i32 as u8,
+    0 as u8,
   ];
   static mut supported_groups: [u8; 8] = [
-    0i32 as u8,
+    0 as u8,
     0xai32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x4i32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x2i32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x1di32 as u8,
   ];
   //static const u8 signature_algorithms[] = {
@@ -2353,9 +2353,9 @@ unsafe extern "C" fn send_client_hello_and_alloc_hsd(
   let mut sni_len: libc::c_int = if !sni.is_null() {
     strnlen(sni, (127i32 - 5i32) as size_t)
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   } as libc::c_int;
-  ext_len = 0i32;
+  ext_len = 0;
   /* is.gd responds with "handshake failure" to our hello if there's no supported_groups element */
   ext_len = (ext_len as libc::c_ulong)
     .wrapping_add(::std::mem::size_of::<[u8; 8]>() as libc::c_ulong) as libc::c_int
@@ -2447,8 +2447,8 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
   // 02  000046 03|03   58|78|cf|c1 50|a5|49|ee|7e|29|48|71|fe|97|fa|e8|2d|19|87|72|90|84|9d|37|a3|f0|cb|6f|5f|e3|3c|2f |20  |d8|1a|78|96|52|d6|91|01|24|b3|d6|5b|b7|d0|6c|b3|e1|78|4e|3c|95|de|74|a0|ba|eb|a7|3a|ff|bd|a2|bf |00|9c |00|
   //SvHl len=70 maj.min unixtime^^^ 28randbytes^^^^^^^^^^^^^^^^^^^^^^^^^^^^_^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^_^^^ slen sid32bytes^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cipSel comprSel
   if (*hp).type_0 as libc::c_int != 2i32
-    || (*hp).len24_hi as libc::c_int != 0i32
-    || (*hp).len24_mid as libc::c_int != 0i32
+    || (*hp).len24_hi as libc::c_int != 0
+    || (*hp).len24_mid as libc::c_int != 0
     || (*hp).proto_maj as libc::c_int != 3i32
     || (*hp).proto_min as libc::c_int != 3i32
   {
@@ -2461,7 +2461,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
   cipherid = &mut (*hp).cipherid_hi;
   len24 = (*hp).len24_lo as libc::c_int;
   if (*hp).session_id_len as libc::c_int != 32i32 {
-    if (*hp).session_id_len as libc::c_int != 0i32 {
+    if (*hp).session_id_len as libc::c_int != 0 {
       bad_record_die(
         tls,
         b"\'server hello\'\x00" as *const u8 as *const libc::c_char,
@@ -2510,7 +2510,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
     } else if cipherid1 as libc::c_int >= 0x2bi32 && cipherid1 as libc::c_int <= 0x30i32 {
       /* C02B,2C,2F,30 are AES-GCM */
       (*tls).flags |= ENCRYPTION_AESGCM as libc::c_int as libc::c_uint;
-      (*tls).MAC_size = 0i32 as libc::c_uint;
+      (*tls).MAC_size = 0 as libc::c_uint;
       (*tls).IV_size = 4i32 as libc::c_uint
     }
   } else {
@@ -2527,7 +2527,7 @@ unsafe extern "C" fn get_server_hello(mut tls: *mut tls_state_t) {
       /*|| cipherid1 == 0x9D*/
       /* 009C,9D are AES-GCM */
       (*tls).flags |= ENCRYPTION_AESGCM as libc::c_int as libc::c_uint;
-      (*tls).MAC_size = 0i32 as libc::c_uint;
+      (*tls).MAC_size = 0 as libc::c_uint;
       (*tls).IV_size = 4i32 as libc::c_uint
     }
   };
@@ -2872,7 +2872,7 @@ unsafe extern "C" fn send_client_key_exchange(mut tls: *mut tls_state_t) {
   let mut iv: [u8; 16] = [0; 16];
   memset(
     iv.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     16i32 as libc::c_ulong,
   );
   aes_encrypt_one_block(
@@ -2885,7 +2885,7 @@ static mut rec_CHANGE_CIPHER_SPEC: [u8; 6] = [
   20i32 as u8,
   3i32 as u8,
   3i32 as u8,
-  0i32 as u8,
+  0 as u8,
   0o1i32 as u8,
   0o1i32 as u8,
 ];
@@ -3058,7 +3058,7 @@ pub unsafe extern "C" fn tls_handshake(mut tls: *mut tls_state_t, mut sni: *cons
       (*tls).inbuf as *const libc::c_void,
       rec_CHANGE_CIPHER_SPEC.as_ptr() as *const libc::c_void,
       6i32 as libc::c_ulong,
-    ) != 0i32
+    ) != 0
   {
     bad_record_die(
       tls,
@@ -3334,14 +3334,14 @@ pub unsafe extern "C" fn tls_run_copy_loop(mut tls: *mut tls_state_t, mut flags:
     events: 0,
     revents: 0,
   }; 2];
-  pfds[0].fd = 0i32;
+  pfds[0].fd = 0;
   pfds[0].events = 0x1i32 as libc::c_short;
   pfds[1].fd = (*tls).ifd;
   pfds[1].events = 0x1i32 as libc::c_short;
   inbuf_size = INBUF_STEP;
   's_36: loop {
     let mut nread: libc::c_int = 0;
-    if safe_poll(pfds.as_mut_ptr(), 2i32 as nfds_t, -1i32) < 0i32 {
+    if safe_poll(pfds.as_mut_ptr(), 2i32 as nfds_t, -1i32) < 0 {
       bb_simple_perror_msg_and_die(b"poll\x00" as *const u8 as *const libc::c_char);
     }
     if pfds[0].revents != 0 {
@@ -3359,7 +3359,7 @@ pub unsafe extern "C" fn tls_run_copy_loop(mut tls: *mut tls_state_t, mut flags:
          */
         pfds[0].fd = -1i32; /* mem usage optimization */
         tls_free_outbuf(tls);
-        if flags & (1i32 << 0i32) as libc::c_uint != 0 {
+        if flags & (1i32 << 0) as libc::c_uint != 0 {
           break;
         }
       } else {

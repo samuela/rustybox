@@ -506,7 +506,7 @@ unsafe extern "C" fn create_icmp_socket(mut lsa: *mut len_and_sockaddr) {
   } else {
     sock = socket(2i32, SOCK_RAW as libc::c_int, 1i32)
   }
-  if sock < 0i32 {
+  if sock < 0 {
     if *bb_errno == 1i32 {
       bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
     }
@@ -536,7 +536,7 @@ unsafe extern "C" fn print_stats_and_exit(mut _junk: libc::c_int) -> ! {
     );
   }
   ul = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted;
-  if ul != 0i32 as libc::c_ulong {
+  if ul != 0 as libc::c_ulong {
     ul = ul
       .wrapping_sub(nrecv)
       .wrapping_mul(100i32 as libc::c_ulong)
@@ -578,7 +578,7 @@ unsafe extern "C" fn print_stats_and_exit(mut _junk: libc::c_int) -> ! {
   }
   /* if condition is true, exit with 1 -- 'failure' */
   exit(
-    (nrecv == 0i32 as libc::c_ulong
+    (nrecv == 0 as libc::c_ulong
       || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us != 0
         && nrecv < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pingcount as libc::c_ulong)
       as libc::c_int,
@@ -607,7 +607,7 @@ unsafe extern "C" fn sendping_tail(
     let mut n: libc::c_uint = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .cur_us
       .wrapping_sub((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us);
-    if n as libc::c_int >= 0i32 {
+    if n as libc::c_int >= 0 {
       print_stats_and_exit(0i32);
     }
   }
@@ -625,7 +625,7 @@ unsafe extern "C" fn sendping_tail(
   if sz != size_pkt {
     bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
   }
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pingcount == 0i32 as libc::c_uint
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pingcount == 0 as libc::c_uint
     || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ntransmitted
       < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pingcount as libc::c_ulong
   {
@@ -641,8 +641,8 @@ unsafe extern "C" fn sendping_tail(
     };
     signal(14i32, sp);
     /* Didn't send all pings yet - schedule next in -i SEC interval */
-    i.it_interval.tv_sec = 0i32 as time_t;
-    i.it_interval.tv_usec = 0i32 as suseconds_t;
+    i.it_interval.tv_sec = 0 as time_t;
+    i.it_interval.tv_usec = 0 as suseconds_t;
     i.it_value.tv_sec = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .interval_us
       .wrapping_div(1000000i32 as libc::c_uint) as time_t;
@@ -662,7 +662,7 @@ unsafe extern "C" fn sendping_tail(
       expire = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .tmax
         .wrapping_div((512i32 * 1024i32) as libc::c_uint);
-      if expire == 0i32 as libc::c_uint {
+      if expire == 0 as libc::c_uint {
         expire = 1i32 as libc::c_uint
       }
     }
@@ -688,7 +688,7 @@ unsafe extern "C" fn sendping4(mut _junk: libc::c_int) {
   );
   (*pkt).icmp_type = 8i32 as u8;
   /*pkt->icmp_code = 0;*/
-  (*pkt).icmp_cksum = 0i32 as u16; /* cksum is calculated with this field set to 0 */
+  (*pkt).icmp_cksum = 0 as u16; /* cksum is calculated with this field set to 0 */
   (*pkt).icmp_hun.ih_idseq.icd_seq = {
     let mut __v: libc::c_ushort = 0; /* don't ++ here, it can be a macro */
     let mut __x: libc::c_ushort =
@@ -880,7 +880,7 @@ unsafe extern "C" fn unpack4(
       .datalen
       .wrapping_add(8i32 as libc::c_uint)
   {
-    return 0i32;
+    return 0;
   }
   /* check IP header */
   iphdr = buf as *mut iphdr; /* not our ping */
@@ -890,9 +890,9 @@ unsafe extern "C" fn unpack4(
   if (*icmppkt).icmp_hun.ih_idseq.icd_id as libc::c_int
     != (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
-  if (*icmppkt).icmp_type as libc::c_int == 0i32 {
+  if (*icmppkt).icmp_type as libc::c_int == 0 {
     let mut recv_seq: u16 = {
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = (*icmppkt).icmp_hun.ih_idseq.icd_seq;
@@ -932,7 +932,7 @@ unsafe extern "C" fn unpack4(
       icmp_type_name((*icmppkt).icmp_type as libc::c_int),
     );
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn unpack6(
   mut packet: *mut libc::c_char,
@@ -947,13 +947,13 @@ unsafe extern "C" fn unpack6(
     < ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).datalen as libc::c_ulong)
       .wrapping_add(::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
   {
-    return 0i32;
+    return 0;
   } /* not our ping */
   icmppkt = packet as *mut icmp6_hdr;
   if (*icmppkt).icmp6_dataun.icmp6_un_data16[0] as libc::c_int
     != (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   if (*icmppkt).icmp6_type as libc::c_int == 129i32 {
     let mut recv_seq: u16 = {
@@ -1005,7 +1005,7 @@ unsafe extern "C" fn unpack6(
       icmp6_type_name((*icmppkt).icmp6_type as libc::c_int),
     );
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ping4(mut lsa: *mut len_and_sockaddr) {
   let mut sockopt: libc::c_int = 0;
@@ -1047,7 +1047,7 @@ unsafe extern "C" fn ping4(mut lsa: *mut len_and_sockaddr) {
     .wrapping_mul(2i32 as libc::c_uint)
     .wrapping_add((7i32 * 1024i32) as libc::c_uint) as libc::c_int; /* giving it a bit of extra room */
   setsockopt_SOL_SOCKET_int(pingsock as libc::c_int, 8i32, sockopt);
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).opt_ttl != 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).opt_ttl != 0 as libc::c_uint {
     setsockopt_int(
       pingsock as libc::c_int,
       IPPROTO_IP as libc::c_int,
@@ -1088,13 +1088,13 @@ unsafe extern "C" fn ping4(mut lsa: *mut len_and_sockaddr) {
         pingsock as libc::c_int,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rcv_packet as *mut libc::c_void,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sizeof_rcv_packet as size_t,
-        0i32,
+        0,
         __SOCKADDR_ARG {
           __sockaddr__: &mut from as *mut sockaddr_in as *mut sockaddr,
         },
         &mut fromlen,
       ) as libc::c_int;
-      if c < 0i32 {
+      if c < 0 {
         if *bb_errno != 4i32 {
           bb_simple_perror_msg(b"recvfrom\x00" as *const u8 as *const libc::c_char);
         }
@@ -1170,7 +1170,7 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
   } else {
     memset(
       &mut filt as *mut icmp6_filter as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<icmp6_filter>() as libc::c_ulong,
     );
   }
@@ -1180,7 +1180,7 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
     1i32,
     &mut filt as *mut icmp6_filter as *const libc::c_void,
     ::std::mem::size_of::<icmp6_filter>() as libc::c_ulong as socklen_t,
-  ) < 0i32
+  ) < 0
   {
     bb_error_msg_and_die(
       b"setsockopt(%s)\x00" as *const u8 as *const libc::c_char,
@@ -1232,8 +1232,8 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
       let mut mp: *mut cmsghdr = std::ptr::null_mut();
       let mut hoplimit: libc::c_int = -1i32;
       msg.msg_controllen = ::std::mem::size_of::<[libc::c_char; 56]>() as libc::c_ulong;
-      c = recvmsg(pingsock as libc::c_int, &mut msg, 0i32) as libc::c_int;
-      if c < 0i32 {
+      c = recvmsg(pingsock as libc::c_int, &mut msg, 0) as libc::c_int;
+      if c < 0 {
         if *bb_errno != 4i32 {
           bb_simple_perror_msg(b"recvfrom\x00" as *const u8 as *const libc::c_char);
         }
@@ -1377,7 +1377,7 @@ unsafe extern "C" fn common_ping_main(
       let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).source_lsa;
       *fresh22 = xdotted2sockaddr(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I,
-        0i32,
+        0,
       );
       let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I;
       *fresh23 = std::ptr::null_mut::<libc::c_char>()
@@ -1386,7 +1386,7 @@ unsafe extern "C" fn common_ping_main(
   }
   if opt & OPT_p as libc::c_int != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern =
-      xstrtou_range(str_p, 16i32, 0i32 as libc::c_uint, 255i32 as libc::c_uint) as u8
+      xstrtou_range(str_p, 16i32, 0 as libc::c_uint, 255i32 as libc::c_uint) as u8
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us != 0 {
     let mut d: libc::c_uint = if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us
@@ -1410,7 +1410,7 @@ unsafe extern "C" fn common_ping_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).myid = getpid() as u16;
   let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hostname;
   *fresh24 = *argv.offset(optind as isize);
-  let mut af: sa_family_t = 0i32 as sa_family_t;
+  let mut af: sa_family_t = 0 as sa_family_t;
   if opt & OPT_IPV4 as libc::c_int != 0 {
     af = 2i32 as sa_family_t
   }
@@ -1419,7 +1419,7 @@ unsafe extern "C" fn common_ping_main(
   }
   lsa = xhost_and_af2sockaddr(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hostname,
-    0i32,
+    0,
     af,
   );
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))

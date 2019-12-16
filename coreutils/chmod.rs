@@ -217,7 +217,7 @@ pub unsafe extern "C" fn chmod_main(
           ) -> libc::c_int,
       ),
       smode as *mut libc::c_void,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     ) == 0
     {
       // depth

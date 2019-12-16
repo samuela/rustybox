@@ -90,14 +90,14 @@ pub unsafe extern "C" fn bb_verror_msg(
   strerr_len = if !strerr.is_null() {
     strlen(strerr)
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   } as libc::c_int;
   msgeol_len = strlen(msg_eol) as libc::c_int;
   /* This costs ~90 bytes of code, but avoids costly
    * malloc()[in vasprintf]+realloc()+memmove()+free() in 99% of cases.
    * ~40% speedup.
    */
-  if ::std::mem::size_of::<[libc::c_char; 80]>() as libc::c_ulong as libc::c_int - applet_len > 0i32
+  if ::std::mem::size_of::<[libc::c_char; 80]>() as libc::c_ulong as libc::c_int - applet_len > 0
   {
     let mut p2: ::std::ffi::VaListImpl;
     /* It is not portable to use va_list twice, need to va_copy it */
@@ -127,7 +127,7 @@ pub unsafe extern "C" fn bb_verror_msg(
   match current_block {
     8236137900636309791 => {
       used = vasprintf(&mut msg, s, p.as_va_list());
-      if used < 0i32 {
+      if used < 0 {
         return;
       }
       /* This is ugly and costs +60 bytes compared to multiple
@@ -145,7 +145,7 @@ pub unsafe extern "C" fn bb_verror_msg(
         let fresh0 = used;
         used = used + 1;
         *msg.offset(fresh0 as isize) = '\n' as i32 as libc::c_char;
-        applet_len = 0i32;
+        applet_len = 0;
         current_block = 10692455896603418738;
       } else {
         msg = msg1;

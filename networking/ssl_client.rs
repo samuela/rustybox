@@ -115,5 +115,5 @@ pub unsafe extern "C" fn ssl_client_main(
   }
   tls_handshake(tls, sni);
   tls_run_copy_loop(tls, (opt & 1i32) as libc::c_uint);
-  return 0i32;
+  return 0;
 }

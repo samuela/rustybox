@@ -98,7 +98,7 @@ pub unsafe extern "C" fn uname_main(
       unknown_str = b"\x00" as *const u8 as *const libc::c_char
       /* -a does not print unknown fields */
     }
-    if toprint == 0i32 as libc::c_uint {
+    if toprint == 0 as libc::c_uint {
       /* no opts => -s (sysname) */
       toprint = 1i32 as libc::c_uint
     }

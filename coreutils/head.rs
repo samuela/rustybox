@@ -127,7 +127,7 @@ unsafe extern "C" fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: lib
   let mut current_block: u64;
   count = count.wrapping_add(1);
   let mut circle: *mut libc::c_uchar = xmalloc(count as size_t) as *mut libc::c_uchar;
-  let mut head: libc::c_uint = 0i32 as libc::c_uint;
+  let mut head: libc::c_uint = 0 as libc::c_uint;
   loop {
     let mut c: libc::c_int = 0;
     c = getc_unlocked(fp);
@@ -152,7 +152,7 @@ unsafe extern "C" fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: lib
       _ => {
         let mut c_0: libc::c_int = 0;
         if head == count {
-          head = 0i32 as libc::c_uint
+          head = 0 as libc::c_uint
         }
         putchar_unlocked(*circle.offset(head as isize) as libc::c_int);
         c_0 = getc_unlocked(fp);
@@ -174,7 +174,7 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
     (count as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
   ) as *mut *mut libc::c_char;
-  let mut head: libc::c_uint = 0i32 as libc::c_uint;
+  let mut head: libc::c_uint = 0 as libc::c_uint;
   loop {
     let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     c = xmalloc_fgets(fp);
@@ -194,13 +194,13 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
   loop {
     match current_block {
       349542114677786389 => {
-        head = 0i32 as libc::c_uint;
+        head = 0 as libc::c_uint;
         break;
       }
       _ => {
         let mut c_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if head == count {
-          head = 0i32 as libc::c_uint
+          head = 0 as libc::c_uint
         }
         fputs_unlocked(*circle.offset(head as isize), stdout);
         c_0 = xmalloc_fgets(fp);
@@ -246,13 +246,13 @@ pub unsafe extern "C" fn head_main(
   let mut current_block: u64;
   let mut count: libc::c_ulong = 10i32 as libc::c_ulong;
   let mut header_threshhold: libc::c_int = 1i32;
-  let mut count_bytes: bool = 0i32 != 0;
-  let mut negative_N: bool = 0i32 != 0;
+  let mut count_bytes: bool = 0 != 0;
+  let mut negative_N: bool = 0 != 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut fmt: *const libc::c_char = std::ptr::null();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   /* Allow legacy syntax of an initial numeric option without -n. */
   if !(*argv.offset(1)).is_null()
     && *(*argv.offset(1)).offset(0) as libc::c_int == '-' as i32
@@ -276,7 +276,7 @@ pub unsafe extern "C" fn head_main(
       /* No size benefit in converting this to getopt32 */
       {
         opt = getopt(argc, argv, head_opts.as_ptr());
-        if !(opt > 0i32) {
+        if !(opt > 0) {
           break;
         }
         match opt {
@@ -310,7 +310,7 @@ pub unsafe extern "C" fn head_main(
   }
   fmt = (b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char).offset(1);
   if argc <= header_threshhold {
-    header_threshhold = 0i32
+    header_threshhold = 0
   }
   if negative_N {
     if count

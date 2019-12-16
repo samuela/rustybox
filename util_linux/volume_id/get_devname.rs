@@ -128,16 +128,16 @@ unsafe extern "C" fn get_label_uuid(
   vid = volume_id_open_node(fd); /* also closes fd */
   if ioctl(
     fd,
-    (2u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-      | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+    (2u32 << 0 + 8i32 + 8i32 + 14i32
+      | (0x12i32 << 0 + 8i32) as libc::c_uint
+      | (114i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32,
     &mut size as *mut u64,
-  ) != 0i32
+  ) != 0
   {
-    size = 0i32 as u64
+    size = 0 as u64
   }
-  if !(volume_id_probe_all(vid, size) != 0i32) {
+  if !(volume_id_probe_all(vid, size) != 0) {
     if (*vid).label[0] as libc::c_int != '\u{0}' as i32
       || (*vid).uuid[0] as libc::c_int != '\u{0}' as i32
       || !(*vid).type_0.is_null()
@@ -151,7 +151,7 @@ unsafe extern "C" fn get_label_uuid(
         ::std::mem::size_of::<[libc::c_char; 37]>() as libc::c_ulong as libc::c_int,
       );
       *type_0 = (*vid).type_0;
-      rv = 0i32
+      rv = 0
     }
   }
   free_volume_id(vid);
@@ -201,7 +201,7 @@ unsafe extern "C" fn uuidcache_check_device(
         bb_basename(device),
         b"ubi\x00" as *const u8 as *const libc::c_char,
         3i32 as libc::c_ulong,
-      ) == 0i32)
+      ) == 0)
   {
     return 1i32;
   }
@@ -245,7 +245,7 @@ unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidC
       ),
       None,
       0 as *mut libc::c_void,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     );
   }
   return uuidCache;
@@ -289,17 +289,17 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
   let mut type_0: *const libc::c_char = std::ptr::null();
   type_0 = type_0;
   let mut fd: libc::c_int = 0;
-  fd = open(device, 0i32);
-  if fd < 0i32 {
-    return 0i32;
+  fd = open(device, 0);
+  if fd < 0 {
+    return 0;
   }
   /* get_label_uuid() closes fd in all cases (success & failure) */
-  if get_label_uuid(fd, &mut label, &mut uuid, &mut type_0) == 0i32 {
+  if get_label_uuid(fd, &mut label, &mut uuid, &mut type_0) == 0 {
     /* uuidcache_addentry() takes ownership of all four params */
     uuidcache_addentry(xstrdup(device), label, uuid, type_0);
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 /* Used by mount and findfs */
 #[no_mangle]
@@ -309,7 +309,7 @@ pub unsafe extern "C" fn get_devname_from_label(
   let mut uc: *mut uuidCache_s = std::ptr::null_mut();
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
-    if *(*uc).label.offset(0) as libc::c_int != 0 && strcmp(spec, (*uc).label) == 0i32 {
+    if *(*uc).label.offset(0) as libc::c_int != 0 && strcmp(spec, (*uc).label) == 0 {
       return xstrdup((*uc).device);
     }
     uc = (*uc).next
@@ -322,7 +322,7 @@ pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) ->
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
     /* case of hex numbers doesn't matter */
-    if strcasecmp(spec, (*uc).uc_uuid) == 0i32 {
+    if strcasecmp(spec, (*uc).uc_uuid) == 0 {
       return xstrdup((*uc).device);
     }
     uc = (*uc).next
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn resolve_mount_spec(mut fsname: *mut *mut libc::c_char) 
     tmp = get_devname_from_label((*fsname).offset(6))
   }
   if tmp == *fsname {
-    return 0i32;
+    return 0;
   }
   if !tmp.is_null() {
     *fsname = tmp

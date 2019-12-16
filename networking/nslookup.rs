@@ -518,16 +518,16 @@ static mut rcodes: [*const libc::c_char; 16] = [
   b"15\x00" as *const u8 as *const libc::c_char,
 ];
 static mut v4_mapped: [libc::c_char; 12] = [
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
   0xffi32 as libc::c_char,
   0xffi32 as libc::c_char,
 ];
@@ -563,19 +563,19 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
   if (*header).aa() == 0 {
     printf(b"Non-authoritative answer:\n\x00" as *const u8 as *const libc::c_char);
   }
-  if ns_initparse(msg, len as libc::c_int, &mut handle) != 0i32 {
+  if ns_initparse(msg, len as libc::c_int, &mut handle) != 0 {
     //printf("Unable to parse reply: %s\n", strerror(errno));
     return -1i32;
   }
-  i = 0i32;
-  while i < handle._counts[ns_s_an as libc::c_int as usize] as libc::c_int + 0i32 {
-    if ns_parserr(&mut handle, ns_s_an, i, &mut rr) != 0i32 {
+  i = 0;
+  while i < handle._counts[ns_s_an as libc::c_int as usize] as libc::c_int + 0 {
+    if ns_parserr(&mut handle, ns_s_an, i, &mut rr) != 0 {
       //printf("Unable to parse resource record: %s\n", strerror(errno));
       return -1i32;
     }
-    rdlen = rr.rdlength as libc::c_int + 0i32;
+    rdlen = rr.rdlength as libc::c_int + 0;
     let mut current_block_86: u64;
-    match (rr.type_0 as libc::c_int + 0i32) as ns_type as libc::c_uint {
+    match (rr.type_0 as libc::c_int + 0) as ns_type as libc::c_uint {
       1 => {
         if rdlen != 4i32 {
           return -1i32;
@@ -643,7 +643,7 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           rr.rdata.offset(0).offset(2),
           dname.as_mut_ptr(),
           ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
-        ) < 0i32
+        ) < 0
         {
           //printf("Cannot uncompress MX domain: %s\n", strerror(errno));
           return -1i32;
@@ -666,10 +666,10 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           return -1i32;
         }
         n = *(rr.rdata.offset(0) as *mut libc::c_uchar) as libc::c_int;
-        if n > 0i32 {
+        if n > 0 {
           memset(
             dname.as_mut_ptr() as *mut libc::c_void,
-            0i32,
+            0,
             ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
           );
           memcpy(
@@ -702,7 +702,7 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           dname.as_mut_ptr(),
           ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
         );
-        if n < 0i32 {
+        if n < 0 {
           //printf("Unable to uncompress domain: %s\n", strerror(errno));
           return -1i32;
         }
@@ -740,7 +740,7 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           dname.as_mut_ptr(),
           ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
         );
-        if n < 0i32 {
+        if n < 0 {
           //printf("Unable to uncompress domain: %s\n", strerror(errno));
           return -1i32;
         }
@@ -756,7 +756,7 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           dname.as_mut_ptr(),
           ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
         );
-        if n < 0i32 {
+        if n < 0 {
           //printf("Unable to uncompress domain: %s\n", strerror(errno));
           return -1i32;
         }
@@ -819,7 +819,7 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
           rr.rdata.offset(0),
           dname.as_mut_ptr(),
           ::std::mem::size_of::<[libc::c_char; 1025]>() as libc::c_ulong,
-        ) < 0i32
+        ) < 0
         {
           //printf("Unable to uncompress domain: %s\n", strerror(errno));
           return -1i32;
@@ -856,8 +856,8 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
     events: 0,
     revents: 0,
   };
-  let mut servfail_retry: libc::c_int = 0i32;
-  let mut n_replies: libc::c_int = 0i32;
+  let mut servfail_retry: libc::c_int = 0;
+  let mut n_replies: libc::c_int = 0;
   //	int save_idx = 0;
   let mut retry_interval: libc::c_uint = 0;
   let mut timeout: libc::c_uint = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -888,13 +888,13 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
   tcur = monotonic_ms() as libc::c_uint;
   tstart = tcur;
   's_78: loop {
-    qn = 0i32;
+    qn = 0;
     while (qn as libc::c_uint) < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query_count {
       if !((*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .query
         .offset(qn as isize))
       .qlen
-        == 0i32 as libc::c_uint)
+        == 0 as libc::c_uint)
       {
         if write(
           pfd.fd,
@@ -930,7 +930,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
         &mut pfd,
         1i32 as nfds_t,
         retry_interval.wrapping_sub(tcur.wrapping_sub(tsent)) as libc::c_int,
-      ) <= 0i32
+      ) <= 0
       {
         current_block = 6236198777448170658;
       } else {
@@ -939,13 +939,13 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
           reply.as_mut_ptr() as *mut libc::c_void,
           ::std::mem::size_of::<[libc::c_uchar; 512]>() as libc::c_ulong,
         ) as libc::c_int;
-        if recvlen < 0i32 {
+        if recvlen < 0 {
           bb_simple_perror_msg(b"read\x00" as *const u8 as *const libc::c_char);
           current_block = 6236198777448170658;
         } else {
           let fresh0 = (*ns).replies;
           (*ns).replies = (*ns).replies + 1;
-          if fresh0 == 0i32 {
+          if fresh0 == 0 {
             printf(
               b"Server:\t\t%s\n\x00" as *const u8 as *const libc::c_char,
               (*ns).name,
@@ -963,7 +963,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
           } else {
             /* Find which query this answer goes with, if any */
             //		qn = save_idx;
-            qn = 0i32;
+            qn = 0;
             loop {
               if memcmp(
                 reply.as_mut_ptr() as *const libc::c_void,
@@ -973,7 +973,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                 .query
                 .as_mut_ptr() as *const libc::c_void,
                 2i32 as libc::c_ulong,
-              ) == 0i32
+              ) == 0
               {
                 current_block = 2122094917359643297;
                 break;
@@ -993,7 +993,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                   .query
                   .offset(qn as isize))
                 .qlen
-                  == 0i32 as libc::c_uint
+                  == 0 as libc::c_uint
                 {
                   current_block = 6236198777448170658;
                 } else {
@@ -1029,7 +1029,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                         .query
                         .offset(qn as isize))
-                      .qlen = 0i32 as libc::c_uint; /* flag: "reply received" */
+                      .qlen = 0 as libc::c_uint; /* flag: "reply received" */
                       tcur = monotonic_ms() as libc::c_uint; /* while() */
                       if option_mask32 & OPT_debug as libc::c_int as libc::c_uint != 0 {
                         printf(
@@ -1038,7 +1038,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                           tcur.wrapping_sub(tstart),
                         );
                       }
-                      if rcode as libc::c_int != 0i32 {
+                      if rcode as libc::c_int != 0 {
                         printf(
                           b"** server can\'t find %s: %s\n\x00" as *const u8 as *const libc::c_char,
                           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1165,17 +1165,17 @@ unsafe extern "C" fn parse_resolvconf() {
       if arg.is_null() {
         continue;
       }
-      if strcmp(p, b"domain\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(p, b"domain\x00" as *const u8 as *const libc::c_char) == 0 {
         /* domain DOM */
         if !((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).have_search_directive == 0) {
           continue;
         }
-      } else if strcmp(p, b"search\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(p, b"search\x00" as *const u8 as *const libc::c_char) == 0 {
         /* search DOM1 DOM2... */
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).have_search_directive =
           1i32 as smalluint
       } else {
-        if strcmp(p, b"nameserver\x00" as *const u8 as *const libc::c_char) != 0i32 {
+        if strcmp(p, b"nameserver\x00" as *const u8 as *const libc::c_char) != 0 {
           continue;
         }
         /* nameserver DNS */
@@ -1242,7 +1242,7 @@ unsafe extern "C" fn add_query(mut type_0: libc::c_int, mut dname: *const libc::
     ns_c_in as libc::c_int,
     type_0,
     0 as *const libc::c_uchar,
-    0i32,
+    0,
     0 as *const libc::c_uchar,
     (*new_q).query.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_uchar; 512]>() as libc::c_ulong as libc::c_int,
@@ -1288,12 +1288,12 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
       addr.as_mut_ptr() as *const libc::c_void,
       v4_mapped.as_ptr() as *const libc::c_void,
       12i32 as libc::c_ulong,
-    ) != 0i32
+    ) != 0
     {
       let mut i: libc::c_int = 0;
       let mut resbuf: [libc::c_char; 80] = [0; 80];
       let mut ptr: *mut libc::c_char = resbuf.as_mut_ptr();
-      i = 0i32;
+      i = 0;
       while i < 16i32 {
         let fresh10 = ptr;
         ptr = ptr.offset(1);
@@ -1353,7 +1353,7 @@ pub unsafe extern "C" fn nslookup_main(
   /* manpage: "Options can also be specified on the command line
    * if they precede the arguments and are prefixed with a hyphen."
    */
-  types = 0i32 as libc::c_uint;
+  types = 0 as libc::c_uint;
   argv = argv.offset(1);
   loop {
     let mut options: *const libc::c_char =
@@ -1380,11 +1380,11 @@ pub unsafe extern "C" fn nslookup_main(
     }
     i = index_in_substrings(options, arg);
     //bb_error_msg("i:%d arg:'%s' val:'%s'", i, arg, val);
-    if i < 0i32 {
+    if i < 0 {
       bb_show_usage();
     }
     if i <= 1i32 {
-      i = 0i32;
+      i = 0;
       loop {
         if i as libc::c_uint
           == (::std::mem::size_of::<[C2RustUnnamed_1; 10]>() as libc::c_ulong)
@@ -1396,7 +1396,7 @@ pub unsafe extern "C" fn nslookup_main(
             val,
           );
         }
-        if strcasecmp(qtypes[i as usize].name.as_ptr(), val) == 0i32 {
+        if strcasecmp(qtypes[i as usize].name.as_ptr(), val) == 0 {
           break;
         }
         i += 1
@@ -1432,11 +1432,11 @@ pub unsafe extern "C" fn nslookup_main(
   } else {
     parse_resolvconf();
     /* Fall back to localhost if we could not find NS in resolv.conf */
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_count == 0i32 as libc::c_uint {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_count == 0 as libc::c_uint {
       add_ns(b"127.0.0.1\x00" as *const u8 as *const libc::c_char);
     }
   }
-  if types == 0i32 as libc::c_uint {
+  if types == 0 as libc::c_uint {
     /* No explicit type given, guess query type.
      * If we can convert the domain argument into a ptr (means that
      * inet_pton() could read it) we assume a PTR request, else
@@ -1453,7 +1453,7 @@ pub unsafe extern "C" fn nslookup_main(
     }
   } else {
     let mut c: libc::c_int = 0;
-    c = 0i32;
+    c = 0;
     while (c as libc::c_uint)
       < (::std::mem::size_of::<[C2RustUnnamed_1; 10]>() as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong)
@@ -1465,7 +1465,7 @@ pub unsafe extern "C" fn nslookup_main(
       c += 1
     }
   }
-  rc = 0i32;
+  rc = 0;
   while (rc as libc::c_uint) < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_count {
     let mut c_0: libc::c_int = 0;
     c_0 = send_queries(
@@ -1473,7 +1473,7 @@ pub unsafe extern "C" fn nslookup_main(
         .server
         .offset(rc as isize),
     );
-    if c_0 > 0i32 {
+    if c_0 > 0 {
       break;
     //FIXME: we "break" even though some queries may still be not answered, and other servers may know them?
     } else {
@@ -1507,8 +1507,8 @@ pub unsafe extern "C" fn nslookup_main(
       }
     }
   }
-  err = 0i32;
-  rc = 0i32;
+  err = 0;
+  rc = 0;
   while (rc as libc::c_uint) < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query_count {
     if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .query

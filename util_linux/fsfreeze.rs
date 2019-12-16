@@ -53,23 +53,23 @@ pub unsafe extern "C" fn fsfreeze_main(
     b"^\x00=1:\xff:\xfe:\xff--\xfe:\xfe--\xff\x00" as *const u8 as *const libc::c_char,
     b"freeze\x00\x00\xffunfreeze\x00\x00\xfe\x00" as *const u8 as *const libc::c_char,
   );
-  fd = xopen(*argv.offset(optind as isize), 0i32);
+  fd = xopen(*argv.offset(optind as isize), 0);
   /* Works with NULL arg on linux-4.8.0 */
   bb_xioctl(
     fd,
     if opts & 1i32 as libc::c_uint != 0 {
-      (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
-        | (('X' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (119i32 << 0i32) as libc::c_uint) as libc::c_ulong)
-        | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0i32 + 8i32 + 8i32
+      (((2u32 | 1u32) << 0 + 8i32 + 8i32 + 14i32
+        | (('X' as i32) << 0 + 8i32) as libc::c_uint
+        | (119i32 << 0) as libc::c_uint) as libc::c_ulong)
+        | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32
     } else {
-      (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
-        | (('X' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (120i32 << 0i32) as libc::c_uint) as libc::c_ulong)
-        | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0i32 + 8i32 + 8i32
+      (((2u32 | 1u32) << 0 + 8i32 + 8i32 + 14i32
+        | (('X' as i32) << 0 + 8i32) as libc::c_uint
+        | (120i32 << 0) as libc::c_uint) as libc::c_ulong)
+        | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32
     } as libc::c_uint,
     0 as *mut libc::c_void,
     b"(opts & 1) ? FIFREEZE : FITHAW\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

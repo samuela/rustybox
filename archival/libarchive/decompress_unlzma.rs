@@ -87,7 +87,7 @@ unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
   ) as libc::c_int;
   //TODO: return -1 instead
   //This will make unlzma delete broken unpacked file on unpack errors
-  if buffer_size <= 0i32 {
+  if buffer_size <= 0 {
     bb_simple_error_msg_and_die(b"unexpected EOF\x00" as *const u8 as *const libc::c_char);
   }
   (*rc).buffer_end = (rc.offset(1) as *mut u8).offset(buffer_size as isize);
@@ -120,7 +120,7 @@ unsafe extern "C" fn rc_init(mut fd: libc::c_int) -> *mut rc_t
   ) as *mut rc_t;
   (*rc).fd = fd;
   /* rc->ptr = rc->buffer_end; */
-  i = 0i32;
+  i = 0;
   while i < 5i32 {
     rc_do_normalize(rc);
     i += 1
@@ -140,7 +140,7 @@ unsafe extern "C" fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut u16) -> libc::c_
   if (*rc).code < (*rc).bound {
     (*rc).range = (*rc).bound;
     *p = (*p as libc::c_int + ((1i32 << 11i32) - *p as libc::c_int >> 5i32)) as u16;
-    return 0i32;
+    return 0;
   }
   (*rc).range = ((*rc).range as libc::c_uint).wrapping_sub((*rc).bound) as u32 as u32;
   (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).bound) as u32 as u32;
@@ -167,7 +167,7 @@ unsafe extern "C" fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
     (*rc).code = ((*rc).code as libc::c_uint).wrapping_sub((*rc).range) as u32 as u32;
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 /* Called twice */
 unsafe extern "C" fn rc_bit_tree_decode(
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   let mut prob2: *mut u16 = std::ptr::null_mut();
   let mut pos_0: u32 = 0;
   let mut current_block: u64;
-  let mut total_written: libc::c_longlong = 0i32 as libc::c_longlong;
+  let mut total_written: libc::c_longlong = 0 as libc::c_longlong;
   let mut header: lzma_header_t = lzma_header_t {
     pos: 0,
     dict_size: 0,
@@ -213,11 +213,11 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   let mut i: libc::c_int = 0;
   let mut buffer: *mut u8 = std::ptr::null_mut();
   let mut buffer_size: u32 = 0;
-  let mut previous_byte: u8 = 0i32 as u8;
-  let mut buffer_pos: size_t = 0i32 as size_t;
-  let mut global_pos: size_t = 0i32 as size_t;
-  let mut len: libc::c_int = 0i32;
-  let mut state: libc::c_int = 0i32;
+  let mut previous_byte: u8 = 0 as u8;
+  let mut buffer_pos: size_t = 0 as size_t;
+  let mut global_pos: size_t = 0 as size_t;
+  let mut len: libc::c_int = 0;
+  let mut state: libc::c_int = 0;
   let mut rep0: u32 = 1i32 as u32;
   let mut rep1: u32 = 1i32 as u32;
   let mut rep2: u32 = 1i32 as u32;
@@ -244,7 +244,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
    */
   header.dict_size = header.dict_size; /*, RC_BUFFER_SIZE); */
   header.dst_size = header.dst_size; /* 0x100 or 0 */
-  if header.dict_size == 0i32 as libc::c_uint {
+  if header.dict_size == 0 as libc::c_uint {
     header.dict_size = header.dict_size.wrapping_add(1)
   }
   buffer_size = if header.dst_size < header.dict_size as libc::c_ulong {
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
     (num_probs as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u16>() as libc::c_ulong),
   ) as *mut u16;
   num_probs += LZMA_LITERAL as libc::c_int - LZMA_BASE_SIZE as libc::c_int;
-  i = 0i32;
+  i = 0;
   while i < num_probs {
     *p.offset(i as isize) = (1i32 << 11i32 >> 1i32) as u16;
     i += 1
@@ -278,10 +278,10 @@ pub unsafe extern "C" fn unpack_lzma_stream(
       .offset(pos_state as isize);
     if rc_is_bit_1(rc, prob) == 0 {
       static mut next_state: [libc::c_char; 12] = [
-        0i32 as libc::c_char,
-        0i32 as libc::c_char,
-        0i32 as libc::c_char,
-        0i32 as libc::c_char,
+        0 as libc::c_char,
+        0 as libc::c_char,
+        0 as libc::c_char,
+        0 as libc::c_char,
         1i32 as libc::c_char,
         2i32 as libc::c_char,
         3i32 as libc::c_char,
@@ -302,7 +302,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
         let mut match_byte: libc::c_int = 0;
         let mut pos: u32 = 0;
         pos = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
-        if (pos as i32) < 0i32 {
+        if (pos as i32) < 0 {
           pos = (pos as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32
         }
         match_byte = *buffer.offset(pos as isize) as libc::c_int;
@@ -345,7 +345,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
         rep2 = rep1;
         rep1 = rep0;
         state = if state < LZMA_NUM_LIT_STATES as libc::c_int {
-          0i32
+          0
         } else {
           3i32
         };
@@ -411,7 +411,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
               (LZMA_LEN_LOW as libc::c_int - LZMA_LEN_CHOICE as libc::c_int
                 + (pos_state << LZMA_LEN_NUM_LOW_BITS as libc::c_int)) as isize,
             );
-            offset = 0i32
+            offset = 0
           } else {
             prob2 = prob2
               .offset((LZMA_LEN_CHOICE_2 as libc::c_int - LZMA_LEN_CHOICE as libc::c_int) as isize);
@@ -496,8 +496,8 @@ pub unsafe extern "C" fn unpack_lzma_stream(
               }
             }
             rep0 = rep0.wrapping_add(1);
-            if rep0 as i32 <= 0i32 {
-              if rep0 == 0i32 as libc::c_uint {
+            if rep0 as i32 <= 0 {
+              if rep0 == 0 as libc::c_uint {
                 current_block = 2884634553824165030;
                 break;
               } else {
@@ -518,7 +518,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
           buffer_pos = buffer_pos.wrapping_add(1);
           *buffer.offset(fresh3 as isize) = previous_byte;
           if buffer_pos == header.dict_size as libc::c_ulong {
-            buffer_pos = 0i32 as size_t;
+            buffer_pos = 0 as size_t;
             global_pos = (global_pos as libc::c_ulong)
               .wrapping_add(header.dict_size as libc::c_ulong) as size_t
               as size_t;
@@ -534,7 +534,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
             total_written += header.dict_size as libc::c_longlong
           }
           len -= 1;
-          if len != 0i32 && buffer_pos < header.dst_size {
+          if len != 0 && buffer_pos < header.dst_size {
             current_block = 11702799181856929651;
           } else {
             break;
@@ -558,7 +558,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
          */
         {
           pos_0 = buffer_pos.wrapping_sub(rep0 as libc::c_ulong) as u32;
-          if (pos_0 as i32) < 0i32 {
+          if (pos_0 as i32) < 0 {
             pos_0 = (pos_0 as libc::c_uint).wrapping_add(header.dict_size) as u32 as u32;
             /* bug 10436 has an example file where this triggers: */
             //if ((i32)pos < 0)

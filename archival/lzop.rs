@@ -173,17 +173,17 @@ unsafe extern "C" fn lzo1x_optimize(
   let ip_end: *mut u8 = in_0.offset(in_len as isize);
   let op_end: *mut u8 = out.offset(*out_len as isize);
   let mut litp: *mut u8 = std::ptr::null_mut();
-  let mut lit: libc::c_uint = 0i32 as libc::c_uint;
+  let mut lit: libc::c_uint = 0 as libc::c_uint;
   let mut next_lit: libc::c_uint = (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
     .wrapping_add(1u32);
   let mut nl: libc::c_uint = 0;
-  let mut o_m1_a: libc::c_ulong = 0i32 as libc::c_ulong;
-  let mut o_m1_b: libc::c_ulong = 0i32 as libc::c_ulong;
-  let mut o_m2: libc::c_ulong = 0i32 as libc::c_ulong;
-  let mut o_m3_a: libc::c_ulong = 0i32 as libc::c_ulong;
-  let mut o_m3_b: libc::c_ulong = 0i32 as libc::c_ulong;
-  *out_len = 0i32 as libc::c_uint;
+  let mut o_m1_a: libc::c_ulong = 0 as libc::c_ulong;
+  let mut o_m1_b: libc::c_ulong = 0 as libc::c_ulong;
+  let mut o_m2: libc::c_ulong = 0 as libc::c_ulong;
+  let mut o_m3_a: libc::c_ulong = 0 as libc::c_ulong;
+  let mut o_m3_b: libc::c_ulong = 0 as libc::c_ulong;
+  *out_len = 0 as libc::c_uint;
   op = out;
   ip = in_0;
   if *ip as libc::c_int > 17i32 {
@@ -212,9 +212,9 @@ unsafe extern "C" fn lzo1x_optimize(
           current_block = 16888526124901371750;
         } else {
           litp = ip.offset(-1);
-          if t == 0i32 as libc::c_uint {
+          if t == 0 as libc::c_uint {
             t = 15i32 as libc::c_uint;
-            while *ip as libc::c_int == 0i32 {
+            while *ip as libc::c_int == 0 {
               t = t.wrapping_add(255i32 as libc::c_uint);
               ip = ip.offset(1)
             }
@@ -234,7 +234,7 @@ unsafe extern "C" fn lzo1x_optimize(
           op = op.offset(1);
           *fresh11 = *fresh10;
           t = t.wrapping_sub(1);
-          if !(t > 0i32 as libc::c_uint) {
+          if !(t > 0 as libc::c_uint) {
             break;
           }
         }
@@ -264,7 +264,7 @@ unsafe extern "C" fn lzo1x_optimize(
           let fresh19 = op;
           op = op.offset(1);
           *fresh19 = *fresh18;
-          lit = 0i32 as libc::c_uint;
+          lit = 0 as libc::c_uint;
           current_block = 3582612801380737862;
         }
       }
@@ -276,7 +276,7 @@ unsafe extern "C" fn lzo1x_optimize(
           op = op.offset(1);
           *fresh58 = *fresh57;
           t = t.wrapping_sub(1);
-          if !(t > 0i32 as libc::c_uint) {
+          if !(t > 0 as libc::c_uint) {
             break;
           }
         }
@@ -297,7 +297,7 @@ unsafe extern "C" fn lzo1x_optimize(
             current_block = 1563163433588720361;
           } else {
             nl = (*ip.offset(-2i32 as isize) as libc::c_int & 3i32) as libc::c_uint;
-            if nl == 0i32 as libc::c_uint
+            if nl == 0 as libc::c_uint
               && lit == 1i32 as libc::c_uint
               && *ip.offset(0) as libc::c_int >= 16i32
             {
@@ -311,9 +311,9 @@ unsafe extern "C" fn lzo1x_optimize(
               );
               o_m1_a = o_m1_a.wrapping_add(1);
               current_block = 1563163433588720361;
-            } else if nl == 0i32 as libc::c_uint
+            } else if nl == 0 as libc::c_uint
               && (*ip.offset(0) as libc::c_int) < 16i32
-              && *ip.offset(0) as libc::c_int != 0i32
+              && *ip.offset(0) as libc::c_int != 0
               && lit
                 .wrapping_add(2i32 as libc::c_uint)
                 .wrapping_add(*ip.offset(0) as libc::c_uint)
@@ -329,7 +329,7 @@ unsafe extern "C" fn lzo1x_optimize(
                 op.wrapping_offset_from(m_pos) as libc::c_long as libc::c_uint,
               );
               litp = litp.offset(2);
-              if lit > 0i32 as libc::c_uint {
+              if lit > 0 as libc::c_uint {
                 memmove(
                   litp.offset(1) as *mut libc::c_void,
                   litp as *const libc::c_void,
@@ -394,9 +394,9 @@ unsafe extern "C" fn lzo1x_optimize(
             nl = (*ip.offset(-2i32 as isize) as libc::c_int & 3i32) as libc::c_uint;
             if t == 1i32 as libc::c_uint
               && lit > 3i32 as libc::c_uint
-              && nl == 0i32 as libc::c_uint
+              && nl == 0 as libc::c_uint
               && (*ip.offset(0) as libc::c_int) < 16i32
-              && *ip.offset(0) as libc::c_int != 0i32
+              && *ip.offset(0) as libc::c_int != 0
               && lit
                 .wrapping_add(3i32 as libc::c_uint)
                 .wrapping_add(*ip.offset(0) as libc::c_uint)
@@ -440,9 +440,9 @@ unsafe extern "C" fn lzo1x_optimize(
         } else {
           if t >= 32i32 as libc::c_uint {
             t &= 31i32 as libc::c_uint;
-            if t == 0i32 as libc::c_uint {
+            if t == 0 as libc::c_uint {
               t = 31i32 as libc::c_uint;
-              while *ip as libc::c_int == 0i32 {
+              while *ip as libc::c_int == 0 {
                 t = t.wrapping_add(255i32 as libc::c_uint);
                 ip = ip.offset(1)
               }
@@ -461,9 +461,9 @@ unsafe extern "C" fn lzo1x_optimize(
             m_pos = op;
             m_pos = m_pos.offset(-(((t & 8i32 as libc::c_uint) << 11i32) as isize));
             t &= 7i32 as libc::c_uint;
-            if t == 0i32 as libc::c_uint {
+            if t == 0 as libc::c_uint {
               t = 7i32 as libc::c_uint;
-              while *ip as libc::c_int == 0i32 {
+              while *ip as libc::c_int == 0 {
                 t = t.wrapping_add(255i32 as libc::c_uint);
                 ip = ip.offset(1)
               }
@@ -488,8 +488,8 @@ unsafe extern "C" fn lzo1x_optimize(
           } else {
             nl = (*ip.offset(-2i32 as isize) as libc::c_int & 3i32) as libc::c_uint;
             if t == 1i32 as libc::c_uint
-              && lit == 0i32 as libc::c_uint
-              && nl == 0i32 as libc::c_uint
+              && lit == 0 as libc::c_uint
+              && nl == 0 as libc::c_uint
               && *ip.offset(0) as libc::c_int >= 16i32
             {
               next_lit = nl;
@@ -504,9 +504,9 @@ unsafe extern "C" fn lzo1x_optimize(
               current_block = 65461189516158820;
             } else if t == 1i32 as libc::c_uint
               && lit <= 3i32 as libc::c_uint
-              && nl == 0i32 as libc::c_uint
+              && nl == 0 as libc::c_uint
               && (*ip.offset(0) as libc::c_int) < 16i32
-              && *ip.offset(0) as libc::c_int != 0i32
+              && *ip.offset(0) as libc::c_int != 0
               && lit
                 .wrapping_add(3i32 as libc::c_uint)
                 .wrapping_add(*ip.offset(0) as libc::c_uint)
@@ -522,7 +522,7 @@ unsafe extern "C" fn lzo1x_optimize(
                 op.wrapping_offset_from(m_pos) as libc::c_long as libc::c_uint,
               );
               litp = litp.offset(2);
-              if lit > 0i32 as libc::c_uint {
+              if lit > 0 as libc::c_uint {
                 memmove(
                   litp.offset(1) as *mut libc::c_void,
                   litp as *const libc::c_void,
@@ -577,7 +577,7 @@ unsafe extern "C" fn lzo1x_optimize(
               op = op.offset(1);
               *fresh56 = *fresh55;
               t = t.wrapping_sub(1);
-              if !(t > 0i32 as libc::c_uint) {
+              if !(t > 0 as libc::c_uint) {
                 break;
               }
             }
@@ -603,7 +603,7 @@ unsafe extern "C" fn lzo1x_optimize(
         next_lit = (2147483647i32 as libc::c_uint)
           .wrapping_mul(2u32)
           .wrapping_add(1u32);
-        if t == 0i32 as libc::c_uint {
+        if t == 0 as libc::c_uint {
           current_block = 11050875288958768710;
         } else {
           current_block = 1121007611148936282;
@@ -633,7 +633,7 @@ unsafe extern "C" fn lzo1x_optimize(
     8050654829899665499 => {
       *out_len = op.wrapping_offset_from(out) as libc::c_long as libc::c_uint;
       return if ip == ip_end {
-        0i32
+        0
       } else if ip < ip_end {
         -8i32
       } else {
@@ -658,21 +658,21 @@ unsafe extern "C" fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: li
   if buf.is_null() {
     return 1i32 as u32;
   }
-  while len > 0i32 as libc::c_uint {
+  while len > 0 as libc::c_uint {
     k = if len < LZO_NMAX as libc::c_int as libc::c_uint {
       len
     } else {
       LZO_NMAX as libc::c_int as libc::c_uint
     };
     len = len.wrapping_sub(k);
-    if k != 0i32 as libc::c_uint {
+    if k != 0 as libc::c_uint {
       loop {
         let fresh60 = buf;
         buf = buf.offset(1);
         s1 = (s1 as libc::c_uint).wrapping_add(*fresh60 as libc::c_uint) as u32 as u32;
         s2 = (s2 as libc::c_uint).wrapping_add(s1) as u32 as u32;
         k = k.wrapping_sub(1);
-        if !(k > 0i32 as libc::c_uint) {
+        if !(k > 0 as libc::c_uint) {
           break;
         }
       }
@@ -699,7 +699,7 @@ unsafe extern "C" fn init_chksum() {
     .f_adler32 = 1i32 as u32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .chksum
-    .f_crc32 = 0i32 as u32;
+    .f_crc32 = 0 as u32;
 }
 unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
   /* We need to handle the two checksums at once, because at the
@@ -739,7 +739,7 @@ unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
 unsafe extern "C" fn read32() -> u32 {
   let mut v: u32 = 0;
   crate::libbb::read_printf::xread(
-    0i32,
+    0,
     &mut v as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
   );
@@ -837,7 +837,7 @@ unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int)
 #[inline(never)]
 unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint; /* LZO_E_OK */
-  let mut r: libc::c_int = 0i32;
+  let mut r: libc::c_int = 0;
   let b1: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(block_size as size_t) as *mut u8;
   let b2: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(
     block_size
@@ -846,7 +846,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       .wrapping_add(3i32 as libc::c_uint) as size_t,
   ) as *mut u8;
   let mut d_adler32: u32 = 1i32 as u32;
-  let mut d_crc32: u32 = 0i32 as u32;
+  let mut d_crc32: u32 = 0 as u32;
   let mut wrk_mem: *mut u8 = std::ptr::null_mut();
   /* Only these methods are possible, see lzo_set_method():
    * -1:    M_LZO1X_1_15
@@ -875,8 +875,8 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
     /* read a block */
     l = crate::libbb::read::full_read(0i32, b1 as *mut libc::c_void, block_size as size_t)
       as libc::c_int;
-    src_len = if l > 0i32 { l } else { 0i32 } as libc::c_uint;
-    if src_len == 0i32 as libc::c_uint {
+    src_len = if l > 0 { l } else { 0 } as libc::c_uint;
+    if src_len == 0 as libc::c_uint {
       write32(0i32 as u32);
       break;
     } else {
@@ -927,7 +927,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           wrk_mem as *mut libc::c_void,
         )
       }
-      if r != 0i32 {
+      if r != 0 {
         /* not LZO_E_OK */
         crate::libbb::verror_msg::bb_error_msg_and_die(
           b"%s: %s\x00" as *const u8 as *const libc::c_char,
@@ -941,7 +941,7 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         if (*h).method as libc::c_int == M_LZO1X_999 as libc::c_int {
           let mut new_len: libc::c_uint = src_len;
           r = lzo1x_optimize(b2, dst_len, b1, &mut new_len);
-          if r != 0i32 || new_len != src_len {
+          if r != 0 || new_len != src_len {
             crate::libbb::verror_msg::bb_error_msg_and_die(
               b"%s: %s\x00" as *const u8 as *const libc::c_char,
               b"internal error\x00" as *const u8 as *const libc::c_char,
@@ -1136,8 +1136,8 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
   let mut dst_len: u32 = 0;
   let mut c_adler32: u32 = 1i32 as u32;
   let mut d_adler32: u32 = 1i32 as u32;
-  let mut c_crc32: u32 = 0i32 as u32;
-  let mut d_crc32: u32 = 0i32 as u32;
+  let mut c_crc32: u32 = 0 as u32;
+  let mut d_crc32: u32 = 0 as u32;
   let mut b1: *mut u8 = std::ptr::null_mut();
   let mut mcs_block_size: u32 = block_size
     .wrapping_add(block_size.wrapping_div(16i32 as libc::c_uint))
@@ -1149,7 +1149,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
     /* read uncompressed block size */
     dst_len = read32();
     /* exit if last block */
-    if dst_len == 0i32 as libc::c_uint {
+    if dst_len == 0 as libc::c_uint {
       break;
     }
     /* error if split file */
@@ -1166,7 +1166,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
     }
     /* read compressed block size */
     src_len = read32();
-    if src_len <= 0i32 as libc::c_uint || src_len > dst_len {
+    if src_len <= 0 as libc::c_uint || src_len > dst_len {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"corrupted data\x00" as *const u8 as *const libc::c_char,
       );
@@ -1221,7 +1221,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
         }
         if h_flags32 as libc::c_long & 0x200i64 != 0 {
           lzo_check(
-            0i32 as u32,
+            0 as u32,
             b1,
             src_len,
             Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
@@ -1234,7 +1234,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       //				r = lzo1x_decompress(b1, src_len, b2, &d /*, NULL*/);
       //			else
       r = crate::archival::libarchive::lzo1x_d::lzo1x_decompress_safe(b1, src_len, b2, &mut d);
-      if r != 0i32 || dst_len != d {
+      if r != 0 || dst_len != d {
         crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"corrupted data\x00" as *const u8 as *const libc::c_char,
         );
@@ -1257,7 +1257,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       }
       if h_flags32 as libc::c_long & 0x100i64 != 0 {
         lzo_check(
-          0i32 as u32,
+          0 as u32,
           dst,
           dst_len,
           Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
@@ -1304,7 +1304,7 @@ static mut lzop_magic: [libc::c_uchar; 9] = [
   0x4ci32 as libc::c_uchar,
   0x5ai32 as libc::c_uchar,
   0x4fi32 as libc::c_uchar,
-  0i32 as libc::c_uchar,
+  0 as libc::c_uchar,
   0xdi32 as libc::c_uchar,
   0xai32 as libc::c_uchar,
   0x1ai32 as libc::c_uchar,
@@ -1314,7 +1314,7 @@ static mut lzop_magic: [libc::c_uchar; 9] = [
 unsafe extern "C" fn check_magic() {
   let mut magic: [libc::c_uchar; 9] = [0; 9];
   crate::libbb::read_printf::xread(
-    0i32,
+    0,
     magic.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_uchar; 9]>() as libc::c_ulong,
   );
@@ -1322,7 +1322,7 @@ unsafe extern "C" fn check_magic() {
     magic.as_mut_ptr() as *const libc::c_void,
     lzop_magic.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_uchar; 9]>() as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"bad magic number\x00" as *const u8 as *const libc::c_char,
@@ -1431,20 +1431,20 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
   if h_version_needed_to_extract < 0x940i32 as libc::c_uint {
     return 3i32;
   }
-  if (*h).method as libc::c_int <= 0i32 {
+  if (*h).method as libc::c_int <= 0 {
     return 14i32;
   }
   /* former lzo_get_method(h): */
   if (*h).method as libc::c_int == M_LZO1X_1 as libc::c_int {
-    if (*h).level as libc::c_int == 0i32 {
+    if (*h).level as libc::c_int == 0 {
       (*h).level = 3i32 as u8
     }
   } else if (*h).method as libc::c_int == M_LZO1X_1_15 as libc::c_int {
-    if (*h).level as libc::c_int == 0i32 {
+    if (*h).level as libc::c_int == 0 {
       (*h).level = 1i32 as u8
     }
   } else if (*h).method as libc::c_int == M_LZO1X_999 as libc::c_int {
-    if (*h).level as libc::c_int == 0i32 {
+    if (*h).level as libc::c_int == 0 {
       (*h).level = 9i32 as u8
     }
   } else {
@@ -1481,7 +1481,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
     return -13i32;
   }
   l = (*h).len_and_name[0] as libc::c_int;
-  if l > 0i32 {
+  if l > 0 {
     /* UNUSED */
     f_read(
       (*h).len_and_name.as_mut_ptr().offset(1) as *mut libc::c_void,
@@ -1502,7 +1502,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
     /* note: the checksum also covers the length */
     init_chksum();
     extra_field_len = f_read32();
-    k = 0i32 as u32;
+    k = 0 as u32;
     while k < extra_field_len {
       f_read(&mut dummy as *mut libc::c_char as *mut libc::c_void, 1i32);
       k = k.wrapping_add(1)
@@ -1513,7 +1513,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
       return 3i32;
     }
   }
-  return 0i32;
+  return 0;
 }
 /* *********************************************************************/
 // compress
@@ -1549,7 +1549,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
   };
   memset(
     &mut header as *mut header_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<header_t>() as libc::c_ulong,
   );
   lzo_set_method(&mut header);
@@ -1684,7 +1684,7 @@ unsafe extern "C" fn do_lzo_decompress() -> libc::c_int {
   };
   check_magic();
   r = read_header(&mut header);
-  if r != 0i32 {
+  if r != 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"header_error %d\x00" as *const u8 as *const libc::c_char,
       r,
@@ -1702,7 +1702,7 @@ unsafe extern "C" fn make_new_name_lzop(
       || strcmp(
         extension.offset(1),
         b"lzo\x00" as *const u8 as *const libc::c_char,
-      ) != 0i32
+      ) != 0
     {
       return crate::libbb::xfuncs_printf::xasprintf(
         b"%s.out\x00" as *const u8 as *const libc::c_char,

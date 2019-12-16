@@ -106,7 +106,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
     devname,
     b"/dev/\x00" as *const u8 as *const libc::c_char,
     5i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     cptr = strchr(devname, ':' as i32);
@@ -131,7 +131,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
     devname = xasprintf(b"/dev/%s\x00" as *const u8 as *const libc::c_char, devname)
   }
   /* Now devname is always "/dev/FOO" */
-  if stat(devname, &mut st) == 0i32
+  if stat(devname, &mut st) == 0
     && st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint
   {
     return st.st_rdev;
@@ -150,7 +150,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
   //free(sysname);
-  if r > 0i32 {
+  if r > 0 {
     devfile[r as usize] = '\u{0}' as i32 as libc::c_char;
     if sscanf(
       devfile.as_mut_ptr(),
@@ -162,7 +162,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
       return bb_makedev(major_num, minor_num) as libc::dev_t;
     }
   }
-  return 0i32 as libc::dev_t;
+  return 0 as libc::dev_t;
 }
 //usage:#define resume_trivial_usage
 //usage:       "BLOCKDEV [OFFSET]"
@@ -182,16 +182,16 @@ pub unsafe extern "C" fn resume_main(
     bb_show_usage();
   }
   resume_device = name_to_dev_t(*argv.offset(0));
-  if gnu_dev_major(resume_device) == 0i32 as libc::c_uint {
+  if gnu_dev_major(resume_device) == 0 as libc::c_uint {
     bb_error_msg_and_die(
       b"invalid resume device: %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
   }
   ofs = if !(*argv.offset(1)).is_null() {
-    xstrtoull(*argv.offset(1), 0i32)
+    xstrtoull(*argv.offset(1), 0)
   } else {
-    0i32 as libc::c_ulonglong
+    0 as libc::c_ulonglong
   };
   fd = xopen(
     b"/sys/power/resume\x00" as *const u8 as *const libc::c_char,

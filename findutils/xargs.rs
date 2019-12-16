@@ -215,50 +215,50 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs
         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs
       {
-        pid = safe_waitpid(-1i32, &mut wstat, 0i32)
+        pid = safe_waitpid(-1i32, &mut wstat, 0)
       } else {
         pid = wait_any_nohang(&mut wstat)
       }
-      if pid > 0i32 {
+      if pid > 0 {
         /* We may have children we don't know about:
          * sh -c 'sleep 1 & exec xargs ...'
          * Do not make G.running_procs go negative.
          */
-        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs != 0i32 {
+        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs != 0 {
           let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs;
           *fresh0 -= 1
         }
-        status = if ((wstat & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        status = if ((wstat & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           (0x180i32) + (wstat & 0x7fi32)
         } else {
           (wstat & 0xff00i32) >> 8i32
         };
-        if status > 0i32 && status < 255i32 {
+        if status > 0 && status < 255i32 {
           /* maybe we have more children? */
           /* else: "bad" status, will bail out */
           /* See below why 123 does not abort */
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode = 123i32 as smalluint;
-          status = 0i32
+          status = 0
         }
-        if !(status == 0i32) {
+        if !(status == 0) {
           break;
         }
       } else {
-        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs != 0i32 {
+        if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs != 0 {
           /* Not in final waitpid() loop,
            * and G.running_procs < G.max_procs: start more procs
            */
           status = spawn((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args);
           /* else: status == -1 (failed to fork or exec) */
-          if status > 0i32 {
+          if status > 0 {
             let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs;
             *fresh1 += 1;
-            status = 0i32
+            status = 0
           }
         } else {
           /* here "status" actually holds pid, or -1 */
           /* final waitpid() loop: must be ECHILD "no more children" */
-          status = 0i32
+          status = 0
         }
         break;
       }
@@ -277,7 +277,7 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
    * 127 if the command is not found
    * 1 if some other error occurred."""
    */
-  if status < 0i32 {
+  if status < 0 {
     bb_simple_perror_msg(
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .args
@@ -293,7 +293,7 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
       status - 0x180i32,
     );
     status = 125i32
-  } else if status != 0i32 {
+  } else if status != 0 {
     if status == 255i32 {
       bb_error_msg(
         b"%s: exited with status 255; aborting\x00" as *const u8 as *const libc::c_char,
@@ -308,10 +308,10 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
        * but does not cause xargs to stop: we return 0.
        */
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode = 123i32 as smalluint;
-      status = 0i32
+      status = 0
     }
   }
-  if status != 0i32 {
+  if status != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode = status as smalluint
   }
   return status;
@@ -358,7 +358,7 @@ unsafe extern "C" fn process_stdin(
 ) -> *mut libc::c_char {
   let mut current_block: u64; /* quote char */
   let mut q: libc::c_char = '\u{0}' as i32 as libc::c_char; /* start of the word */
-  let mut state: libc::c_char = 0i32 as libc::c_char; /* end of the word */
+  let mut state: libc::c_char = 0 as libc::c_char; /* end of the word */
   let mut s: *mut libc::c_char = buf; /* past buffer's end */
   let mut p: *mut libc::c_char = s.offset(strlen(buf) as isize);
   buf = buf.offset(n_max_chars as isize);
@@ -373,14 +373,14 @@ unsafe extern "C" fn process_stdin(
       }
       current_block = 9201467417380152874;
     } else if state as libc::c_int == 2i32 {
-      state = 0i32 as libc::c_char;
+      state = 0 as libc::c_char;
       current_block = 6025286053310698807;
     } else if state as libc::c_int == 1i32 {
       if c != q as libc::c_int {
         current_block = 6025286053310698807;
       } else {
         q = '\u{0}' as i32 as libc::c_char;
-        state = 0i32 as libc::c_char;
+        state = 0 as libc::c_char;
         current_block = 4488286894823169796;
       }
     } else if ({
@@ -440,7 +440,7 @@ unsafe extern "C" fn process_stdin(
         if strcmp(
           s,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str,
-        ) == 0i32
+        ) == 0
         {
           while getchar_unlocked() != -1i32 {}
           p = s;
@@ -450,10 +450,10 @@ unsafe extern "C" fn process_stdin(
       store_param(s);
       s = p;
       n_max_arg -= 1;
-      if n_max_arg == 0i32 {
+      if n_max_arg == 0 {
         break;
       }
-      state = 0i32 as libc::c_char
+      state = 0 as libc::c_char
     }
     if p == buf {
       break;
@@ -489,7 +489,7 @@ unsafe extern "C" fn process0_stdin(
       store_param(s);
       s = p;
       n_max_arg -= 1;
-      if n_max_arg == 0i32 {
+      if n_max_arg == 0 {
         break;
       }
     }
@@ -523,7 +523,7 @@ unsafe extern "C" fn process_stdin_with_replace(
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Free strings from last invocation, if any */
-  i = 0i32; /* empty line */
+  i = 0; /* empty line */
   while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .args
     .is_null()
@@ -563,7 +563,7 @@ unsafe extern "C" fn process_stdin_with_replace(
     *fresh8 = c as libc::c_char;
     if c == '\u{0}' as i32 {
       /* EOL or EOF detected */
-      i = 0i32;
+      i = 0;
       while !(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .argv
         .offset(i as isize))
@@ -576,7 +576,7 @@ unsafe extern "C" fn process_stdin_with_replace(
           arg,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).repl_str,
         ) as libc::c_int;
-        if count != 0i32 {
+        if count != 0 {
           arg = xmalloc_substitute_string(
             arg,
             count,
@@ -636,10 +636,10 @@ pub unsafe extern "C" fn xargs_main(
   let mut opt_a: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str;
   *fresh9 = std::ptr::null();
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx = 0i32;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs = 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx = 0;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 1i32;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode = 0i32 as smalluint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode = 0 as smalluint;
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).repl_str;
   *fresh10 = b"{}\x00" as *const u8 as *const libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eol_ch = '\n' as i32 as libc::c_char;
@@ -656,12 +656,12 @@ pub unsafe extern "C" fn xargs_main(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs as *mut libc::c_int,
     &mut opt_a as *mut *mut libc::c_char,
   );
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs <= 0i32 {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs <= 0 {
     /* -P0 means "run lots of them" */
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 100i32
   }
   if !opt_a.is_null() {
-    xmove_fd(xopen(opt_a, 0i32), 0i32);
+    xmove_fd(xopen(opt_a, 0), 0);
   }
   /* -E ""? You may wonder why not just omit -E?
    * This is used for portability:
@@ -719,8 +719,8 @@ pub unsafe extern "C" fn xargs_main(
     ) as libc::c_int
   }
   /* Account for prepended fixed arguments */
-  let mut n_chars: size_t = 0i32 as size_t;
-  i = 0i32;
+  let mut n_chars: size_t = 0 as size_t;
+  i = 0;
   while !(*argv.offset(i as isize)).is_null() {
     n_chars = (n_chars as libc::c_ulong)
       .wrapping_add(strlen(*argv.offset(i as isize)).wrapping_add(1i32 as libc::c_ulong))
@@ -729,7 +729,7 @@ pub unsafe extern "C" fn xargs_main(
   }
   n_max_chars = (n_max_chars as libc::c_ulong).wrapping_sub(n_chars) as libc::c_int as libc::c_int;
   /* Sanity check */
-  if n_max_chars <= 0i32 {
+  if n_max_chars <= 0 {
     bb_simple_error_msg_and_die(
       b"can\'t fit single argument within argument list size limit\x00" as *const u8
         as *const libc::c_char,
@@ -777,7 +777,7 @@ pub unsafe extern "C" fn xargs_main(
      * args[] will take 160k (!), which will most likely be
      * almost entirely unused.
      */
-    i = 0i32; /* while */
+    i = 0; /* while */
     while !(*argv.offset(i as isize)).is_null() {
       store_param(*argv.offset(i as isize));
       i += 1
@@ -809,7 +809,7 @@ pub unsafe extern "C" fn xargs_main(
       let mut fmt: *const libc::c_char = (b" %s\x00" as *const u8 as *const libc::c_char).offset(1);
       let mut args: *mut *mut libc::c_char =
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
-      i = 0i32;
+      i = 0;
       while !(*args.offset(i as isize)).is_null() {
         fprintf(stderr, fmt, *args.offset(i as isize));
         fmt = b" %s\x00" as *const u8 as *const libc::c_char;
@@ -820,14 +820,14 @@ pub unsafe extern "C" fn xargs_main(
       }
     }
     if opt & OPT_INTERACTIVE as libc::c_int as libc::c_uint == 0 || xargs_ask_confirmation() != 0 {
-      if xargs_exec() != 0i32 {
+      if xargs_exec() != 0 {
         break;
         /* G.xargs_exitcode is set by xargs_exec() */
       }
     } /* final waitpid() loop */
     overlapping_strcpy(buf, rem);
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 0;
   xargs_exec();
   return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xargs_exitcode as libc::c_int;
 }

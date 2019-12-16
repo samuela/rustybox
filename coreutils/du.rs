@@ -97,16 +97,16 @@ unsafe extern "C" fn print(mut size: libc::c_ulonglong, mut filename: *const lib
 unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong {
   let mut statbuf: stat = std::mem::zeroed();
   let mut sum: libc::c_ulonglong = 0;
-  if lstat(filename, &mut statbuf) != 0i32 {
+  if lstat(filename, &mut statbuf) != 0 {
     bb_simple_perror_msg(filename);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;
-    return 0i32 as libc::c_ulonglong;
+    return 0 as libc::c_ulonglong;
   }
   if option_mask32 & OPT_x_one_FS as libc::c_int as libc::c_uint != 0 {
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).du_depth == 0i32 {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).du_depth == 0 {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir_dev = statbuf.st_dev
     } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir_dev != statbuf.st_dev {
-      return 0i32 as libc::c_ulonglong;
+      return 0 as libc::c_ulonglong;
     }
   }
   sum = statbuf.st_blocks as libc::c_ulonglong;
@@ -115,10 +115,10 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
       > (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).du_depth
     {
       /* -H or -L */
-      if stat(filename, &mut statbuf) != 0i32 {
+      if stat(filename, &mut statbuf) != 0 {
         bb_simple_perror_msg(filename);
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;
-        return 0i32 as libc::c_ulonglong;
+        return 0 as libc::c_ulonglong;
       }
       sum = statbuf.st_blocks as libc::c_ulonglong;
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth == 1i32 {
@@ -132,7 +132,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
   {
     /* Add files/directories with links only once */
     if !is_in_ino_dev_hashtable(&mut statbuf).is_null() {
-      return 0i32 as libc::c_ulonglong;
+      return 0 as libc::c_ulonglong;
     }
     add_to_ino_dev_hashtable(&mut statbuf, 0 as *const libc::c_char);
   }
@@ -163,7 +163,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
     }
     closedir(dir);
   } else if option_mask32 & OPT_a_files_too as libc::c_int as libc::c_uint == 0
-    && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).du_depth != 0i32
+    && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).du_depth != 0
   {
     return sum;
   }
@@ -201,7 +201,7 @@ pub unsafe extern "C" fn du_main(
   );
   argv = argv.offset(optind as isize);
   if opt & OPT_h_for_humans as libc::c_int as libc::c_uint != 0 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).disp_unit = 0i32 as libc::c_ulong
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).disp_unit = 0 as libc::c_ulong
   }
   if opt & OPT_m_mbytes as libc::c_int as libc::c_uint != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).disp_unit =
@@ -217,18 +217,18 @@ pub unsafe extern "C" fn du_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth = 2147483647i32
   }
   if opt & OPT_s_total_norecurse as libc::c_int as libc::c_uint != 0 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_print_depth = 0i32
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_print_depth = 0
   }
   /* go through remaining args (if any) */
   if (*argv).is_null() {
     argv = argv.offset(-1);
     *argv = b".\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth == 1i32 {
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth = 0i32
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth = 0
     }
   }
   slink_depth_save = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth;
-  total = 0i32 as libc::c_ulonglong;
+  total = 0 as libc::c_ulonglong;
   loop {
     total = total.wrapping_add(du(*argv));
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).slink_depth = slink_depth_save;

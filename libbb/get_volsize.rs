@@ -211,7 +211,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
   if !override_0.is_null() {
     result = xatoul_range(
       override_0,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       9223372036854775807i64 as libc::c_ulong,
     );
     if result
@@ -235,7 +235,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
     if lseek(
       fd,
       result.wrapping_sub(1i32 as libc::c_ulong) as off64_t,
-      0i32,
+      0,
     ) != -1i32 as off_t
     {
       if extend != 0 {
@@ -250,9 +250,9 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
     }
   } else {
     /* more portable than BLKGETSIZE[64] */
-    result = xlseek(fd, 0i32 as off_t, 2i32) as uoff_t
+    result = xlseek(fd, 0 as off_t, 2i32) as uoff_t
   }
-  xlseek(fd, 0i32 as off_t, 0i32);
+  xlseek(fd, 0 as off_t, 0);
   /* Prevent things like this:
    * $ dd if=/dev/zero of=foo count=1 bs=1024
    * $ mkswap foo

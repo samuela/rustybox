@@ -54,7 +54,7 @@ pub unsafe extern "C" fn fgconsole_main(
     v_signal: 0,
     v_state: 0,
   };
-  vtstat.v_active = 0i32 as libc::c_ushort;
+  vtstat.v_active = 0 as libc::c_ushort;
   bb_xioctl(
     get_console_fd_or_die(),
     VT_GETSTATE as libc::c_int as libc::c_uint,
@@ -65,5 +65,5 @@ pub unsafe extern "C" fn fgconsole_main(
     b"%d\n\x00" as *const u8 as *const libc::c_char,
     vtstat.v_active as libc::c_int,
   );
-  return 0i32;
+  return 0;
 }

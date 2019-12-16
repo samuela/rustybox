@@ -318,10 +318,10 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     // (parameter must be int*, not long* or size_t*)
     bb_xioctl(
       dev,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (104i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (104i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       &mut min_bytes_per_sect as *mut libc::c_int as *mut libc::c_void,
       b"BLKSSZGET\x00" as *const u8 as *const libc::c_char,
     );
@@ -367,7 +367,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     dev,
     0x301i32 as libc::c_ulong,
     &mut geometry as *mut hd_geometry,
-  ) == 0i32
+  ) == 0
     && geometry.sectors as libc::c_int != 0
     && geometry.heads as libc::c_int != 0
   {
@@ -379,13 +379,13 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     // floppy, loop, or regular file
     let mut not_floppy: libc::c_int = ioctl(
       dev,
-      (2u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (2i32 << 0i32 + 8i32) as libc::c_uint
-        | (0x4i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<floppy_struct>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+      (2u32 << 0 + 8i32 + 8i32 + 14i32
+        | (2i32 << 0 + 8i32) as libc::c_uint
+        | (0x4i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<floppy_struct>() as libc::c_ulong) << 0 + 8i32 + 8i32,
       &mut param as *mut floppy_struct,
     );
-    if not_floppy == 0i32 {
+    if not_floppy == 0 {
       // floppy disk
       sect_per_track = param.sect as u16;
       heads = param.head as u8;
@@ -510,7 +510,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
         .wrapping_sub(1i32 as libc::c_uint)
         .wrapping_div(bytes_per_sect.wrapping_div(4i32 as libc::c_uint))
         .wrapping_sub(sect_per_fat) as libc::c_int;
-      if spf_adj <= 0i32 {
+      if spf_adj <= 0 {
         // do not need to adjust sect_per_fat.
         // so, was total_clust too big after all?
         if total_clust <= 0xffffff0i32 as libc::c_uint {
@@ -802,7 +802,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   let mut fat: *mut libc::c_uchar = buf as *mut libc::c_void as *mut libc::c_uchar;
   memset(
     buf as *mut libc::c_void,
-    0i32,
+    0,
     bytes_per_sect.wrapping_mul(2i32 as libc::c_uint) as libc::c_ulong,
   );
   // initial FAT entries
@@ -810,7 +810,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   *(fat as *mut u32).offset(1) = 0xffffffffu32;
   // mark cluster 2 as EOF (used for root dir)
   *(fat as *mut u32).offset(2) = 0xffffff8i32 as u32;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 2i32 as libc::c_uint {
     xwrite(dev, buf as *const libc::c_void, bytes_per_sect as size_t);
     j = 1i32 as libc::c_uint;
@@ -828,7 +828,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   // empty directory is just a set of zero bytes
   memset(
     buf as *mut libc::c_void,
-    0i32,
+    0,
     (sect_per_clust as libc::c_uint).wrapping_mul(bytes_per_sect) as libc::c_ulong,
   );
   if *volume_label.offset(0) != 0 {
@@ -855,6 +855,6 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     buf as *const libc::c_void,
     (sect_per_clust as libc::c_uint).wrapping_mul(bytes_per_sect) as size_t,
   );
-  return 0i32;
+  return 0;
 }
 // cleanup

@@ -159,5 +159,5 @@ pub unsafe extern "C" fn dpkg_deb_main(
   /* Do it */
   crate::archival::libarchive::unpack_ar_archive::unpack_ar_archive(ar_archive);
   /* Cleanup */
-  return 0i32;
+  return 0;
 }

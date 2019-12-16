@@ -123,12 +123,12 @@ pub unsafe extern "C" fn fallocate_main(
   /* posix_fallocate has unusual method of returning error */
   /* maybe use Linux-specific fallocate(int fd, int mode, off_t offset, off_t len) instead? */
   *bb_errno = posix_fallocate(fd, ofs, len);
-  if *bb_errno != 0i32 {
+  if *bb_errno != 0 {
     bb_perror_msg_and_die(
       b"fallocate \'%s\'\x00" as *const u8 as *const libc::c_char,
       *argv,
     );
   }
   /* util-linux also performs fsync(fd); */
-  return 0i32;
+  return 0;
 }

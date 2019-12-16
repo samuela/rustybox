@@ -167,7 +167,7 @@ unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mu
   if *arg.offset(0) as libc::c_int == '+' as i32 {
     arg = arg.offset(1)
   }
-  *(result as *mut libc::c_ulonglong) = bb_strtoull(arg, 0 as *mut *mut libc::c_char, 0i32);
+  *(result as *mut libc::c_ulonglong) = bb_strtoull(arg, 0 as *mut *mut libc::c_char, 0);
   /* both coreutils 6.10 and bash 3.2:
    * $ printf '%x\n' -2
    * fffffffffffffffe
@@ -175,7 +175,7 @@ unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mu
    */
   if *bb_errno != 0 {
     *(result as *mut libc::c_ulonglong) =
-      bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32) as libc::c_ulonglong
+      bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0) as libc::c_ulonglong
   };
 }
 
@@ -183,7 +183,7 @@ unsafe extern "C" fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut
   if *arg.offset(0) as libc::c_int == '+' as i32 {
     arg = arg.offset(1)
   }
-  *(result as *mut libc::c_longlong) = bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32);
+  *(result as *mut libc::c_longlong) = bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0);
 }
 
 unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
@@ -193,7 +193,7 @@ unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut 
   *(result as *mut libc::c_double) = strtod(arg, &mut end);
   if *end.offset(0) != 0 {
     *bb_errno = 34i32;
-    *(result as *mut libc::c_double) = 0i32 as libc::c_double
+    *(result as *mut libc::c_double) = 0 as libc::c_double
   };
 }
 
@@ -206,7 +206,7 @@ unsafe extern "C" fn my_xstrtoull(mut arg: *const libc::c_char) -> libc::c_ulong
     Some(conv_strtoull as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
   ) != 0
   {
-    result = 0i32 as libc::c_ulonglong
+    result = 0 as libc::c_ulonglong
   }
   return result;
 }
@@ -219,7 +219,7 @@ unsafe extern "C" fn my_xstrtoll(mut arg: *const libc::c_char) -> libc::c_longlo
     Some(conv_strtoll as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
   ) != 0
   {
-    result = 0i32 as libc::c_longlong
+    result = 0 as libc::c_longlong
   }
   return result;
 }
@@ -261,7 +261,7 @@ unsafe extern "C" fn print_esc_string(mut str: *const libc::c_char) -> libc::c_i
     }
     putchar_unlocked(c as libc::c_int);
   }
-  return 0i32;
+  return 0;
 }
 
 unsafe extern "C" fn print_direc(
@@ -285,7 +285,7 @@ unsafe extern "C" fn print_direc(
     have_width = std::ptr::null_mut::<libc::c_char>()
   }
   /* multiconvert sets errno = 0, but %s needs it cleared */
-  *bb_errno = 0i32; /* switch */
+  *bb_errno = 0; /* switch */
   match *format.offset(fmt_length.wrapping_sub(1) as isize) as libc::c_int {
     99 => {
       printf(format, *argument as libc::c_int);
@@ -371,7 +371,7 @@ unsafe extern "C" fn get_width_prec(mut str: *const libc::c_char) -> libc::c_int
       b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
       str,
     );
-    v = 0i32
+    v = 0
   }
   return v;
 }
@@ -395,7 +395,7 @@ unsafe extern "C" fn print_formatted(
         f = f.offset(1);
         direc_start = fresh0;
         direc_length = 1;
-        precision = 0i32;
+        precision = 0;
         field_width = precision;
         if *f as libc::c_int == '%' as i32 {
           bb_putchar('%' as i32);

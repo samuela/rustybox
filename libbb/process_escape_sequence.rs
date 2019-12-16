@@ -8,7 +8,7 @@ pub unsafe extern "C" fn bb_process_escape_sequence(
   let mut num_digits: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
   let mut base: libc::c_uint = 0;
-  n = 0i32 as libc::c_uint;
+  n = 0 as libc::c_uint;
   num_digits = n;
   base = 8i32 as libc::c_uint;
   q = *ptr;
@@ -33,14 +33,14 @@ pub unsafe extern "C" fn bb_process_escape_sequence(
        * however, some chars like '@' would map to 9 < base.
        * Do not allow that, map invalid chars to N > base:
        */
-      if d as libc::c_int >= 0i32 {
+      if d as libc::c_int >= 0 {
         d = d.wrapping_add(10i32 as libc::c_uint)
       }
     }
     if d >= base {
       if 1i32 != 0 && base == 16i32 as libc::c_uint {
         num_digits = num_digits.wrapping_sub(1);
-        if num_digits == 0i32 as libc::c_uint {
+        if num_digits == 0 as libc::c_uint {
           /* \x<bad_char>: return '\',
            * leave ptr pointing to x */
           return '\\' as i32 as libc::c_char;
@@ -60,7 +60,7 @@ pub unsafe extern "C" fn bb_process_escape_sequence(
       }
     }
   }
-  if num_digits == 0i32 as libc::c_uint {
+  if num_digits == 0 as libc::c_uint {
     /* Not octal or hex escape sequence.
      * Is it one-letter one? */
     /* bash builtin "echo -e '\ec'" interprets \e as ESC,
