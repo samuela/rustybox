@@ -1375,10 +1375,7 @@ unsafe extern "C" fn common_ping_main(
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).if_index == 0 {
       /* TODO: I'm not sure it takes IPv6 unless in [XX:XX..] format */
       let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).source_lsa;
-      *fresh22 = xdotted2sockaddr(
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I,
-        0,
-      );
+      *fresh22 = xdotted2sockaddr((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I, 0);
       let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).str_I;
       *fresh23 = std::ptr::null_mut::<libc::c_char>()
       /* don't try to bind to device later */

@@ -3735,11 +3735,7 @@ unsafe extern "C" fn showjob(mut jp: *mut job, mut mode: libc::c_int) {
       out,
       b"%s%*c%s%s\x00" as *const u8 as *const libc::c_char,
       s.as_mut_ptr(),
-      if 33i32 - col >= 0 {
-        (33i32) - col
-      } else {
-        0
-      },
+      if 33i32 - col >= 0 { (33i32) - col } else { 0 },
       ' ' as i32,
       if ps == (*jp).ps {
         b"\x00" as *const u8 as *const libc::c_char
@@ -10045,8 +10041,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
              * to reap the zombie and make kill detect that it's gone: */
             dowait(0i32, 0 as *mut job);
             if evalbltin(cmdentry.u.cmd, argc, argv, flags) != 0 {
-              if (*ash_ptr_to_globals_misc).exception_type as libc::c_int == 1i32
-                && spclbltin <= 0
+              if (*ash_ptr_to_globals_misc).exception_type as libc::c_int == 1i32 && spclbltin <= 0
               {
                 force_int_on();
                 current_block = 9756042043304152679;
@@ -11151,11 +11146,7 @@ unsafe extern "C" fn setcmd(
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   if (*argv.offset(1)).is_null() {
-    return showvars(
-      (*ash_ptr_to_globals_misc).nullstr.as_mut_ptr(),
-      0,
-      0x20i32,
-    );
+    return showvars((*ash_ptr_to_globals_misc).nullstr.as_mut_ptr(), 0, 0x20i32);
   }
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,

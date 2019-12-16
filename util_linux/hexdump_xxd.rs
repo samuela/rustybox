@@ -175,12 +175,8 @@ pub unsafe extern "C" fn xxd_main(
   //	if (opt & OPT_a)
   //		dumper->dump_vflag = SKIPNUL; ..does not exist
   if opt & (1i32 << 0) as libc::c_uint != 0 {
-    (*dumper).dump_length = xstrtou_range(
-      opt_l,
-      0,
-      0 as libc::c_uint,
-      2147483647i32 as libc::c_uint,
-    ) as libc::c_int
+    (*dumper).dump_length =
+      xstrtou_range(opt_l, 0, 0 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
     (*dumper).dump_skip = xstrtoull_range(

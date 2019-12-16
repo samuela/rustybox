@@ -870,10 +870,7 @@ pub unsafe extern "C" fn runsv_main(
           );
         }
         buf[r as usize] = 0 as libc::c_char;
-        fd = xopen(
-          b".\x00" as *const u8 as *const libc::c_char,
-          0 | 0o4000i32,
-        );
+        fd = xopen(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
         xchdir(b"./log\x00" as *const u8 as *const libc::c_char);
         mkdir(buf.as_mut_ptr(), 0o700i32 as mode_t);
         if fchdir(fd) == -1i32 {

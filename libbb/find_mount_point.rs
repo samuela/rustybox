@@ -475,8 +475,7 @@ pub unsafe extern "C" fn find_mount_point(
     {
       continue;
     }
-    if strcmp(name, (*mountEntry).mnt_dir) == 0 || strcmp(name, (*mountEntry).mnt_fsname) == 0
-    {
+    if strcmp(name, (*mountEntry).mnt_dir) == 0 || strcmp(name, (*mountEntry).mnt_fsname) == 0 {
       break;
     }
     if !(subdir_too != 0 || block_dev as libc::c_int != 0) {

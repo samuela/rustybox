@@ -4011,8 +4011,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -4584,8 +4583,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -5156,8 +5154,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -5728,8 +5725,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -6300,8 +6296,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -6872,8 +6867,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -7444,8 +7438,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -8016,8 +8009,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -8588,8 +8580,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -9160,8 +9151,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -9732,8 +9722,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -10304,8 +10293,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -10876,8 +10864,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -11448,8 +11435,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -12020,8 +12006,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -12592,8 +12577,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -13164,8 +13148,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -13736,8 +13719,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -14308,8 +14290,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -14880,8 +14861,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -15452,8 +15432,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -16024,8 +16003,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -16596,8 +16574,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -17168,8 +17145,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -17740,8 +17716,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -18312,8 +18287,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -18884,8 +18858,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -19456,8 +19429,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -20028,8 +20000,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -20600,8 +20571,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);
@@ -21172,8 +21142,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     op1,
                     &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg,
                   );
-                  let mut i: libc::c_int =
-                    regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
+                  let mut i: libc::c_int = regexec(re, L.s, 0 as size_t, 0 as *mut regmatch_t, 0);
                   if re == &mut (*(ptr_to_globals as *mut globals2)).evaluate__sreg as *mut regex_t
                   {
                     regfree(re);

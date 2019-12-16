@@ -360,10 +360,7 @@ pub unsafe extern "C" fn cpio_main(
     == OPT_FILE as libc::c_int as libc::c_uint
   {
     /* -F without -o */
-    crate::libbb::xfuncs_printf::xmove_fd(
-      crate::libbb::xfuncs_printf::xopen(cpio_filename, 0),
-      0,
-    );
+    crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(cpio_filename, 0), 0);
   }
   if opt & OPT_PASSTHROUGH as libc::c_int as libc::c_uint != 0 {
     let mut pid: pid_t = 0;

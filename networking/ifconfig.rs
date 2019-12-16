@@ -605,11 +605,9 @@ pub unsafe extern "C" fn ifconfig_main(
               let mut prefix_len: libc::c_int = 0;
               prefix = strchr(host, '/' as i32);
               if !prefix.is_null() {
-                prefix_len = xatou_range(
-                  prefix.offset(1),
-                  0 as libc::c_uint,
-                  128i32 as libc::c_uint,
-                ) as libc::c_int;
+                prefix_len =
+                  xatou_range(prefix.offset(1), 0 as libc::c_uint, 128i32 as libc::c_uint)
+                    as libc::c_int;
                 *prefix = '\u{0}' as i32 as libc::c_char
               }
               loop {

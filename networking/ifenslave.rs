@@ -770,11 +770,8 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
       master_ifname,
     );
   }
-  (*ptr_to_globals).abi_ver = bb_strtou(
-    info.fw_version.as_mut_ptr(),
-    0 as *mut *mut libc::c_char,
-    0,
-  );
+  (*ptr_to_globals).abi_ver =
+    bb_strtou(info.fw_version.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0);
   if *bb_errno != 0 {
     bb_error_msg_and_die(
       b"%s: SIOCETHTOOL error\x00" as *const u8 as *const libc::c_char,

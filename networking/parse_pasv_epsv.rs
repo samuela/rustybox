@@ -299,11 +299,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
       return -1i32;
     }
     *ptr = '\u{0}' as i32 as libc::c_char;
-    port = xatou_range(
-      ptr.offset(1),
-      0 as libc::c_uint,
-      65535i32 as libc::c_uint,
-    ) as libc::c_int
+    port = xatou_range(ptr.offset(1), 0 as libc::c_uint, 65535i32 as libc::c_uint) as libc::c_int
   }
   return port;
 }

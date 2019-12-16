@@ -366,18 +366,15 @@ unsafe extern "C" fn arith_apply(
           }
           (*top_of_stack).second_val_present = op as libc::c_char;
           (*top_of_stack).second_val = right_side_val
-        } else if op as libc::c_int == 0 << 5i32 | 7i32
-          || op as libc::c_int == 2i32 << 5i32 | 2i32
+        } else if op as libc::c_int == 0 << 5i32 | 7i32 || op as libc::c_int == 2i32 << 5i32 | 2i32
         {
           rez |= right_side_val
         } else if op as libc::c_int == 0 << 5i32 | 5i32 {
           rez = (right_side_val != 0 || rez != 0) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0 << 5i32 | 9i32
-          || op as libc::c_int == 1i32 << 5i32 | 2i32
+        } else if op as libc::c_int == 0 << 5i32 | 9i32 || op as libc::c_int == 1i32 << 5i32 | 2i32
         {
           rez &= right_side_val
-        } else if op as libc::c_int == 0 << 5i32 | 8i32
-          || op as libc::c_int == 3i32 << 5i32 | 2i32
+        } else if op as libc::c_int == 0 << 5i32 | 8i32 || op as libc::c_int == 3i32 << 5i32 | 2i32
         {
           rez ^= right_side_val
         } else if op as libc::c_int == 0 << 5i32 | 6i32 {
@@ -392,8 +389,7 @@ unsafe extern "C" fn arith_apply(
           || op as libc::c_int == 7i32 << 5i32 | 2i32
         {
           rez >>= right_side_val
-        } else if op as libc::c_int == 0 << 5i32 | 12i32
-          || op as libc::c_int == 6i32 << 5i32 | 2i32
+        } else if op as libc::c_int == 0 << 5i32 | 12i32 || op as libc::c_int == 6i32 << 5i32 | 2i32
         {
           rez <<= right_side_val
         } else if op as libc::c_int == 1i32 << 5i32 | 11i32 {
@@ -402,21 +398,16 @@ unsafe extern "C" fn arith_apply(
           rez = (rez < right_side_val) as libc::c_int as arith_t
         } else if op as libc::c_int == 3i32 << 5i32 | 11i32 {
           rez = (rez <= right_side_val) as libc::c_int as arith_t
-        } else if op as libc::c_int == 0 << 5i32 | 14i32
-          || op as libc::c_int == 0 << 5i32 | 3i32
-        {
+        } else if op as libc::c_int == 0 << 5i32 | 14i32 || op as libc::c_int == 0 << 5i32 | 3i32 {
           rez *= right_side_val
-        } else if op as libc::c_int == 0 << 5i32 | 13i32
-          || op as libc::c_int == 4i32 << 5i32 | 2i32
+        } else if op as libc::c_int == 0 << 5i32 | 13i32 || op as libc::c_int == 4i32 << 5i32 | 2i32
         {
           rez += right_side_val
         } else if op as libc::c_int == 1i32 << 5i32 | 13i32
           || op as libc::c_int == 5i32 << 5i32 | 2i32
         {
           rez -= right_side_val
-        } else if op as libc::c_int == 0 << 5i32 | 2i32
-          || op as libc::c_int == 0 << 5i32 | 1i32
-        {
+        } else if op as libc::c_int == 0 << 5i32 | 2i32 || op as libc::c_int == 0 << 5i32 | 1i32 {
           rez = right_side_val
         } else if op as libc::c_int == 1i32 << 5i32 | 15i32 {
           let mut c: arith_t = 0;
@@ -450,9 +441,7 @@ unsafe extern "C" fn arith_apply(
              * MAX_NEGATIVE_INT (0x7fff+1 = 0x8000).
              * Make sure to at least not SEGV here:
              */
-            if right_side_val == -1i32 as libc::c_longlong
-              && rez << 1i32 == 0 as libc::c_longlong
-            {
+            if right_side_val == -1i32 as libc::c_longlong && rez << 1i32 == 0 as libc::c_longlong {
               /* MAX_NEGATIVE_INT or 0 */
               right_side_val = 1i32 as arith_t
             }

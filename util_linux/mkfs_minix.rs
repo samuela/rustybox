@@ -240,11 +240,7 @@ unsafe extern "C" fn write_tables() {
     512i32 as size_t,
   );
   msg_eol = b"seek to BLOCK_SIZE failed\x00" as *const u8 as *const libc::c_char;
-  xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   msg_eol = b"can\'t write superblock\x00" as *const u8 as *const libc::c_char;
   xwrite(
     dev_fd as libc::c_int,

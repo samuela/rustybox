@@ -321,8 +321,7 @@ pub unsafe extern "C" fn vconfig_main(
         xatou_range(*argv.offset(3), 0 as libc::c_uint, 7i32 as libc::c_uint) as libc::c_short
     } else if ifr.cmd == ADD_VLAN_CMD as libc::c_int {
       /* add */
-      ifr.u.VID =
-        xatou_range(p, 0 as libc::c_uint, (4096i32 - 1i32) as libc::c_uint) as libc::c_int
+      ifr.u.VID = xatou_range(p, 0 as libc::c_uint, (4096i32 - 1i32) as libc::c_uint) as libc::c_int
     } else if ifr.cmd != DEL_VLAN_CMD as libc::c_int {
       /* set_{egress|ingress}_map */
       ifr.u.skb_priority = xatou(p);

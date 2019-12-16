@@ -453,11 +453,7 @@ unsafe extern "C" fn allocate(
 ) {
   let mut i: u32 = 0;
   //bb_error_msg("ALLOC: [%u][%u][%u]: [%u-%u]:=[%x],[%x]", blocksize, start, end, start/8, blocksize - end/8 - 1, (1 << (start & 7)) - 1, (u8)(0xFF00 >> (end & 7)));
-  memset(
-    bitmap as *mut libc::c_void,
-    0,
-    blocksize as libc::c_ulong,
-  ); //0..7 => 00000000..01111111
+  memset(bitmap as *mut libc::c_void, 0, blocksize as libc::c_ulong); //0..7 => 00000000..01111111
   i = start.wrapping_div(8i32 as libc::c_uint); //0..7 => 00000000..11111110
   memset(bitmap as *mut libc::c_void, 0xffi32, i as libc::c_ulong);
   *bitmap.offset(i as isize) = ((1i32 << (start & 7i32 as libc::c_uint)) - 1i32) as u8;

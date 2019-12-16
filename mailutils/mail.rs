@@ -308,11 +308,8 @@ pub unsafe extern "C" fn get_cred_or_die(mut fd: libc::c_int) {
   if isatty(fd) != 0 {
     (*ptr_to_globals).user =
       bb_ask_noecho(fd, 0, b"User: \x00" as *const u8 as *const libc::c_char);
-    (*ptr_to_globals).pass = bb_ask_noecho(
-      fd,
-      0,
-      b"Password: \x00" as *const u8 as *const libc::c_char,
-    )
+    (*ptr_to_globals).pass =
+      bb_ask_noecho(fd, 0, b"Password: \x00" as *const u8 as *const libc::c_char)
   } else {
     (*ptr_to_globals).user = xmalloc_reads(fd, std::ptr::null_mut::<size_t>());
     (*ptr_to_globals).pass = xmalloc_reads(fd, std::ptr::null_mut::<size_t>())

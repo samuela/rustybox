@@ -444,8 +444,7 @@ pub unsafe extern "C" fn nameif_main(
         current_block_42 = 4567019141635105728;
         break;
       }
-      if !(!(*ch).bus_info.is_null()
-        && strcmp((*ch).bus_info, drvinfo.bus_info.as_mut_ptr()) != 0)
+      if !(!(*ch).bus_info.is_null() && strcmp((*ch).bus_info, drvinfo.bus_info.as_mut_ptr()) != 0)
       {
         if !(!(*ch).driver.is_null() && strcmp((*ch).driver, drvinfo.driver.as_mut_ptr()) != 0) {
           if !((*ch).phy_address != -1i32

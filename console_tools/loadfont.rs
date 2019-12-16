@@ -350,9 +350,7 @@ unsafe extern "C" fn do_loadtable(
               maxct = 1i32
             }
             loop {
-              if tailsz <= 0
-                || (*inbuf as libc::c_int) < 0x80i32
-                || *inbuf as libc::c_int > 0xbfi32
+              if tailsz <= 0 || (*inbuf as libc::c_int) < 0x80i32 || *inbuf as libc::c_int > 0xbfi32
               {
                 bb_simple_error_msg_and_die(
                   b"illegal UTF-8 character\x00" as *const u8 as *const libc::c_char,

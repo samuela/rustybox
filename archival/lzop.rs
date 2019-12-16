@@ -738,11 +738,7 @@ unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
 /* *********************************************************************/
 unsafe extern "C" fn read32() -> u32 {
   let mut v: u32 = 0;
-  crate::libbb::read_printf::xread(
-    0,
-    &mut v as *mut u32 as *mut libc::c_void,
-    4i32 as size_t,
-  );
+  crate::libbb::read_printf::xread(0, &mut v as *mut u32 as *mut libc::c_void, 4i32 as size_t);
   return {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;

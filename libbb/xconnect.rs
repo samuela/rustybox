@@ -791,8 +791,7 @@ unsafe extern "C" fn str2sockaddr(
     ai_canonname: std::ptr::null_mut::<libc::c_char>(),
     ai_next: 0 as *mut addrinfo,
   };
-  if 0 != 0
-    && !is_prefixed_with(host, b"local:\x00" as *const u8 as *const libc::c_char).is_null()
+  if 0 != 0 && !is_prefixed_with(host, b"local:\x00" as *const u8 as *const libc::c_char).is_null()
   {
     let mut sun: *mut sockaddr_un = std::ptr::null_mut();
     r = xzalloc(

@@ -438,12 +438,7 @@ unsafe extern "C" fn console_init() {
     //		fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK);
   }
   s = getenv(b"TERM\x00" as *const u8 as *const libc::c_char);
-  if ioctl(
-    0,
-    0x5600i32 as libc::c_ulong,
-    &mut vtno as *mut libc::c_int,
-  ) != 0
-  {
+  if ioctl(0, 0x5600i32 as libc::c_ulong, &mut vtno as *mut libc::c_int) != 0 {
     /* Not a linux terminal, probably serial console.
      * Force the TERM setting to vt102
      * if TERM is set to linux (the default) */
@@ -522,8 +517,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
 }
 unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
   bb_signals(
-    0
-      + (1i32 << 10i32)
+    0 + (1i32 << 10i32)
       + (1i32 << 12i32)
       + (1i32 << 15i32)
       + (1i32 << 3i32)
@@ -1309,8 +1303,7 @@ pub unsafe extern "C" fn init_main(
      * setting handler without SA_RESTART flag.
      */
     bb_signals_recursive_norestart(
-      0
-        + (1i32 << 2i32)
+      0 + (1i32 << 2i32)
         + (1i32 << 3i32)
         + (1i32 << 30i32)
         + (1i32 << 10i32)

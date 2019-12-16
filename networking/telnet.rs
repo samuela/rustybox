@@ -427,9 +427,7 @@ unsafe extern "C" fn put_iac_subopt(mut c: byte, mut str: *mut libc::c_char) {
 }
 unsafe extern "C" fn put_iac_subopt_autologin() {
   let mut p: *const libc::c_char = std::ptr::null();
-  put_iac4_msb_lsb(
-    ((255i32 << 24i32) + (250i32 << 16i32) + (39i32 << 8i32) + 0) as libc::c_uint,
-  );
+  put_iac4_msb_lsb(((255i32 << 24i32) + (250i32 << 16i32) + (39i32 << 8i32) + 0) as libc::c_uint);
   put_iac4_msb_lsb(
     ((0i32 << 24i32) + (('U' as i32) << 16i32) + (('S' as i32) << 8i32) + 'E' as i32)
       as libc::c_uint,

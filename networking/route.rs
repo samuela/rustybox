@@ -311,11 +311,8 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   prefix = strchr(target, '/' as i32);
   if !prefix.is_null() {
     let mut prefix_len: libc::c_int = 0;
-    prefix_len = xatoul_range(
-      prefix.offset(1),
-      0 as libc::c_ulong,
-      32i32 as libc::c_ulong,
-    ) as libc::c_int;
+    prefix_len =
+      xatoul_range(prefix.offset(1), 0 as libc::c_ulong, 32i32 as libc::c_ulong) as libc::c_int;
     (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
       .sin_addr
       .s_addr = {
@@ -391,11 +388,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         bb_show_usage();
       }
       netmask = args_m1;
-      isnet = INET_resolve(
-        netmask,
-        &mut mask as *mut sockaddr as *mut sockaddr_in,
-        0,
-      );
+      isnet = INET_resolve(netmask, &mut mask as *mut sockaddr as *mut sockaddr_in, 0);
       if isnet < 0 {
         bb_error_msg_and_die(
           b"resolving %s\x00" as *const u8 as *const libc::c_char,

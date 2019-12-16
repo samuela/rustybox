@@ -147,8 +147,7 @@ pub unsafe extern "C" fn vlock_main(
   getopt32(argv, b"^a\x00=0\x00" as *const u8 as *const libc::c_char);
   /* Ignore some signals so that we don't get killed by them */
   bb_signals(
-    0
-      + (1i32 << 20i32)
+    0 + (1i32 << 20i32)
       + (1i32 << 21i32)
       + (1i32 << 22i32)
       + (1i32 << 1i32)

@@ -95,11 +95,7 @@ pub unsafe extern "C" fn setkeycodes_main(
       sc += 0x80i32
     }
     a.scancode = sc as libc::c_uint;
-    a.keycode = xatou_range(
-      *argv.offset(2),
-      0 as libc::c_uint,
-      255i32 as libc::c_uint,
-    );
+    a.keycode = xatou_range(*argv.offset(2), 0 as libc::c_uint, 255i32 as libc::c_uint);
     ioctl_or_perror_and_die(
       fd,
       KDSETKEYCODE as libc::c_int as libc::c_uint,

@@ -1123,8 +1123,7 @@ pub unsafe extern "C" fn nmeter_main(
     (*ptr_to_globals).is26 = (strstr(
       buf.as_mut_ptr(),
       b" 2.4.\x00" as *const u8 as *const libc::c_char,
-    ) == std::ptr::null_mut()) as libc::c_int
-      as smallint
+    ) == std::ptr::null_mut()) as libc::c_int as smallint
   }
   if getopt32(
     argv,

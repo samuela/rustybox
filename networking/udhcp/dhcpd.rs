@@ -1462,8 +1462,7 @@ unsafe extern "C" fn write_leases() {
   i = 0 as libc::c_uint;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases {
     let mut tmp_time: leasetime_t = 0;
-    if !((*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == 0 as libc::c_uint)
-    {
+    if !((*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).lease_nip == 0 as libc::c_uint) {
       /* Screw with the time in the struct, for easier writing */
       tmp_time = (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
       let ref mut fresh12 = (*(ptr_to_globals as *mut dyn_lease).offset(i as isize)).expires;
@@ -2289,8 +2288,7 @@ pub unsafe extern "C" fn udhcpd_main(
   if udhcp_read_interface(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).ifindex,
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip == 0 as libc::c_uint
-    {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip == 0 as libc::c_uint {
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip
     } else {
       0 as *mut u32

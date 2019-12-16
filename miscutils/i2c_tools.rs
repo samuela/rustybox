@@ -215,13 +215,7 @@ unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> i32 {
   return data.byte as i32;
 }
 unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> i32 {
-  return i2c_smbus_access(
-    fd,
-    0 as libc::c_char,
-    val,
-    1i32,
-    0 as *mut i2c_smbus_data,
-  );
+  return i2c_smbus_access(fd, 0 as libc::c_char, val, 1i32, 0 as *mut i2c_smbus_data);
 }
 unsafe extern "C" fn i2c_smbus_read_byte_data(mut fd: libc::c_int, mut cmd: u8) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
@@ -410,12 +404,8 @@ unsafe extern "C" fn i2c_set_slave_addr(
 /* ENABLE_I2CGET || ENABLE_I2CSET || ENABLE_I2CDUMP */
 unsafe extern "C" fn i2c_parse_data_addr(mut data_addr: *const libc::c_char) -> libc::c_int {
   /* Data address must be an 8 bit integer. */
-  return xstrtou_range(
-    data_addr,
-    16i32,
-    0 as libc::c_uint,
-    0xffi32 as libc::c_uint,
-  ) as libc::c_int;
+  return xstrtou_range(data_addr, 16i32, 0 as libc::c_uint, 0xffi32 as libc::c_uint)
+    as libc::c_int;
 }
 /* ENABLE_I2CGET || ENABLE_I2CSET */
 /*
@@ -1873,12 +1863,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
     if !end.is_null() {
       *end = '\u{0}' as i32 as libc::c_char
     }
-    len = xstrtou_range(
-      arg_ptr,
-      0,
-      0 as libc::c_uint,
-      0xffffi32 as libc::c_uint,
-    );
+    len = xstrtou_range(arg_ptr, 0, 0 as libc::c_uint, 0xffffi32 as libc::c_uint);
     if !end.is_null() {
       bus_addr = xstrtou_range(end.offset(1), 0, first, last) as libc::c_int;
       i2c_set_slave_addr(

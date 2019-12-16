@@ -1963,8 +1963,7 @@ pub unsafe extern "C" fn syslogd_main(
   }
   if opts & OPT_rotatecnt as libc::c_int != 0 {
     // -b
-    (*ptr_to_globals).logFileRotate =
-      xatou_range(opt_b, 0 as libc::c_uint, 99i32 as libc::c_uint)
+    (*ptr_to_globals).logFileRotate = xatou_range(opt_b, 0 as libc::c_uint, 99i32 as libc::c_uint)
   }
   if !opt_C.is_null() {
     // -Cn

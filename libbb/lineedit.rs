@@ -3898,12 +3898,7 @@ pub unsafe extern "C" fn read_line_input(
   asm!("" : : : "memory" : "volatile");
   (*lineedit_ptr_to_statics).cmdedit_termw = 80i32 as libc::c_uint;
   (*lineedit_ptr_to_statics).home_pwd_buf = null_str.as_ptr() as *mut libc::c_char;
-  n = get_termios_and_make_raw(
-    0,
-    &mut new_settings,
-    &mut initial_settings,
-    0 | 1i32 << 0,
-  );
+  n = get_termios_and_make_raw(0, &mut new_settings, &mut initial_settings, 0 | 1i32 << 0);
   if n != 0
     || initial_settings.c_lflag & (0o10i32 | 0o2i32) as libc::c_uint == 0o2i32 as libc::c_uint
   {

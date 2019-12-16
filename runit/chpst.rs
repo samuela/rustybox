@@ -296,10 +296,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
   let mut dir: *mut DIR = std::ptr::null_mut();
   let mut d: *mut dirent = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
-  wdir = xopen(
-    b".\x00" as *const u8 as *const libc::c_char,
-    0 | 0o4000i32,
-  );
+  wdir = xopen(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
   xchdir(directory_name);
   dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {

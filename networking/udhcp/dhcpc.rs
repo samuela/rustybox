@@ -2086,11 +2086,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
   match current_block {
     13763002826403452995 => {
       /* verify UDP checksum. IP header has to be modified for this */
-      memset(
-        &mut packet.ip as *mut iphdr as *mut libc::c_void,
-        0,
-        9u64,
-      );
+      memset(&mut packet.ip as *mut iphdr as *mut libc::c_void, 0, 9u64);
       /* ip.xx fields which are not memset: protocol, check, saddr, daddr */
       packet.ip.tot_len = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len; /* yes, this is needed */
       check = packet.udp.c2rust_unnamed.c2rust_unnamed_0.check;

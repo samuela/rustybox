@@ -540,8 +540,7 @@ unsafe extern "C" fn fileaction_dobackup(
   if rpm_getint(1037i32, fileref) & 1i32 << 0 != 0 {
     /* Only need to backup config files */
     stat_res = lstat(filename, &mut oldfile);
-    if stat_res == 0
-      && oldfile.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
+    if stat_res == 0 && oldfile.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     {
       /* File already exists  - really should check MD5's etc to see if different */
       newname = crate::libbb::xfuncs_printf::xasprintf(

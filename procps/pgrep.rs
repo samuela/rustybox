@@ -317,8 +317,7 @@ pub unsafe extern "C" fn pgrep_main(
     scan_mask |= PSSCAN_ARGVN as libc::c_int
   }
   /* One pattern is required, if no -s and no -P */
-  if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null())
-  {
+  if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null()) {
     bb_show_usage();
   }
   if !(*argv.offset(0)).is_null() {

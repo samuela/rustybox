@@ -436,12 +436,7 @@ pub unsafe extern "C" fn nandwrite_main(
   }
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) && cnt != 0 {
     /* We filled entire MTD, but did we reach EOF on input? */
-    if full_read(
-      0,
-      filebuf as *mut libc::c_void,
-      meminfo_writesize as size_t,
-    ) != 0
-    {
+    if full_read(0, filebuf as *mut libc::c_void, meminfo_writesize as size_t) != 0 {
       /* no */
       bb_simple_error_msg_and_die(
         b"not enough space in MTD device\x00" as *const u8 as *const libc::c_char,

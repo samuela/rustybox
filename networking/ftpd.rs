@@ -653,8 +653,7 @@ unsafe extern "C" fn handle_feat(mut status: libc::c_uint) {
 /* Download commands */
 #[inline]
 unsafe extern "C" fn port_active() -> libc::c_int {
-  return ((*ptr_to_globals).port_addr != std::ptr::null_mut())
-    as libc::c_int;
+  return ((*ptr_to_globals).port_addr != std::ptr::null_mut()) as libc::c_int;
 }
 #[inline]
 unsafe extern "C" fn pasv_active() -> libc::c_int {
@@ -739,10 +738,7 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
   );
   (*ptr_to_globals).pasv_listen_fd = fd;
   setsockopt_reuseaddr(fd);
-  set_nport(
-    &mut (*(*ptr_to_globals).local_addr).u.sa,
-    0 as libc::c_uint,
-  );
+  set_nport(&mut (*(*ptr_to_globals).local_addr).u.sa, 0 as libc::c_uint);
   xbind(
     fd,
     &mut (*(*ptr_to_globals).local_addr).u.sa,

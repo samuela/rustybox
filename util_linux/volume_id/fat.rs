@@ -126,9 +126,7 @@ unsafe extern "C" fn get_attr_volume_id(
       if !((*dir).attr as libc::c_int & 0x3fi32 == 0xfi32) {
         if (*dir).attr as libc::c_int & (0x8i32 | 0x10i32) == 0x8i32 {
           /* labels do not have file data */
-          if !((*dir).cluster_high as libc::c_int != 0
-            || (*dir).cluster_low as libc::c_int != 0)
-          {
+          if !((*dir).cluster_high as libc::c_int != 0 || (*dir).cluster_low as libc::c_int != 0) {
             return (*dir).name.as_mut_ptr();
           }
         }

@@ -614,11 +614,7 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
     while fchdir((*ptr_to_globals).fdwdir) == -1i32 {
       pause1cannot(b"change to initial working directory\x00" as *const u8 as *const libc::c_char);
     }
-    return if !(*ld).processor.is_null() {
-      0
-    } else {
-      1i32
-    } as libc::c_uint;
+    return if !(*ld).processor.is_null() { 0 } else { 1i32 } as libc::c_uint;
   }
   (*ld).fnsave[26] = 't' as i32 as libc::c_char;
   memcpy(
@@ -1409,11 +1405,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
       i = 1i32
     }
     poll(&mut input, 1i32 as nfds_t, i * 1000i32);
-    sigprocmask(
-      0,
-      &mut (*ptr_to_globals).blocked_sigset,
-      0 as *mut sigset_t,
-    );
+    sigprocmask(0, &mut (*ptr_to_globals).blocked_sigset, 0 as *mut sigset_t);
     i = ndelay_read(0i32, s as *mut libc::c_void, len as size_t) as libc::c_int;
     if i >= 0 {
       break;
@@ -1613,10 +1605,7 @@ pub unsafe extern "C" fn svlogd_main(
     bb_show_usage();
   }
   // //if (buflen <= linemax) bb_show_usage();
-  (*ptr_to_globals).fdwdir = xopen(
-    b".\x00" as *const u8 as *const libc::c_char,
-    0 | 0o4000i32,
-  );
+  (*ptr_to_globals).fdwdir = xopen(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
   close_on_exec_on((*ptr_to_globals).fdwdir);
   (*ptr_to_globals).dir = xzalloc(
     ((*ptr_to_globals).dirn as libc::c_ulong)
@@ -1641,11 +1630,7 @@ pub unsafe extern "C" fn svlogd_main(
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 17i32);
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 14i32);
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 1i32);
-  sigprocmask(
-    0,
-    &mut (*ptr_to_globals).blocked_sigset,
-    0 as *mut sigset_t,
-  );
+  sigprocmask(0, &mut (*ptr_to_globals).blocked_sigset, 0 as *mut sigset_t);
   bb_signals_recursive_norestart(
     1i32 << 15i32,
     Some(sig_term_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),

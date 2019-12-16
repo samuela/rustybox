@@ -652,11 +652,7 @@ unsafe extern "C" fn write_superblock() {
     (*ptr_to_globals).u.Super.s_state =
       ((*ptr_to_globals).u.Super.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16
   }
-  xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   if BLOCK_SIZE as libc::c_int as libc::c_long
     != full_write(
       dev_fd as libc::c_int,
@@ -752,11 +748,7 @@ unsafe extern "C" fn get_dirsize() {
 }
 
 unsafe extern "C" fn read_superblock() {
-  xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   if BLOCK_SIZE
     != full_read(
       dev_fd as libc::c_int,

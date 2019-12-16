@@ -970,13 +970,7 @@ unsafe extern "C" fn env_matches(mut e: *mut envmatch) -> libc::c_int {
     if val.is_null() {
       return 0;
     }
-    r = regexec(
-      &mut (*e).match_0,
-      val,
-      0 as size_t,
-      0 as *mut regmatch_t,
-      0,
-    );
+    r = regexec(&mut (*e).match_0, val, 0 as size_t, 0 as *mut regmatch_t, 0);
     if r != 0 {
       /* no match */
       return 0;
@@ -1912,11 +1906,7 @@ pub unsafe extern "C" fn mdev_main(
      *	mdev -d
      *	find /sys -name uevent -exec sh -c 'echo add >"{}"' ';'
      */
-    fd = create_and_bind_to_netlink(
-      15i32,
-      1i32 << 0,
-      (2i32 * 1024i32 * 1024i32) as libc::c_uint,
-    );
+    fd = create_and_bind_to_netlink(15i32, 1i32 << 0, (2i32 * 1024i32 * 1024i32) as libc::c_uint);
     /*
      * Make inital scan after the uevent socket is alive and
      * _before_ we fork away.
