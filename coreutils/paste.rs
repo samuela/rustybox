@@ -71,16 +71,16 @@ unsafe extern "C" fn paste_files(
   let mut delim: libc::c_char = 0;
   let mut active_files: libc::c_int = file_cnt;
   let mut i: libc::c_int = 0;
-  while active_files > 0i32 {
-    let mut del_idx: libc::c_int = 0i32;
-    i = 0i32;
+  while active_files > 0 {
+    let mut del_idx: libc::c_int = 0;
+    i = 0;
     while i < file_cnt {
       if !(*files.offset(i as isize)).is_null() {
         line = xmalloc_fgetline(*files.offset(i as isize));
         if line.is_null() {
           fclose_if_not_stdin(*files.offset(i as isize));
           let ref mut fresh0 = *files.offset(i as isize);
-          *fresh0 = 0 as *mut FILE;
+          *fresh0 = std::ptr::null_mut();
           active_files -= 1
         } else {
           fputs_unlocked(line, stdout);
@@ -91,7 +91,7 @@ unsafe extern "C" fn paste_files(
             del_idx = del_idx + 1;
             delim = *delims.offset(fresh1 as isize);
             if del_idx == del_cnt {
-              del_idx = 0i32
+              del_idx = 0
             }
           }
           if delim as libc::c_int != '\u{0}' as i32 {
@@ -112,9 +112,9 @@ unsafe extern "C" fn paste_files_separate(
   let mut next_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while !(*files.offset(i as isize)).is_null() {
-    let mut del_idx: libc::c_int = 0i32;
+    let mut del_idx: libc::c_int = 0;
     line = std::ptr::null_mut::<libc::c_char>();
     loop {
       next_line = xmalloc_fgetline(*files.offset(i as isize));
@@ -128,7 +128,7 @@ unsafe extern "C" fn paste_files_separate(
         del_idx = del_idx + 1;
         delim = *delims.offset(fresh2 as isize);
         if del_idx == del_cnt {
-          del_idx = 0i32
+          del_idx = 0
         }
         if delim as libc::c_int != '\u{0}' as i32 {
           putc_unlocked(delim as libc::c_int, stdout);
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn paste_main(
     &mut delims as *mut *mut libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
     if *delims.offset(0) == 0 {
       bb_simple_error_msg_and_die(
         b"-d \'\' is not supported\x00" as *const u8 as *const libc::c_char,
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn paste_main(
     let ref mut fresh3 = *argv.offset(0);
     *fresh3 = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
-  i = 0i32;
+  i = 0;
   while !(*argv.offset(i as isize)).is_null() {
     let ref mut fresh4 = *argv.offset(i as isize);
     *fresh4 =

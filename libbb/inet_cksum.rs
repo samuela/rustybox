@@ -224,7 +224,7 @@ pub unsafe extern "C" fn inet_cksum(mut addr: *mut u16, mut nleft: libc::c_int) 
    * back all the carry bits from the top 16 bits into the lower
    * 16 bits.
    */
-  let mut sum: libc::c_uint = 0i32 as libc::c_uint;
+  let mut sum: libc::c_uint = 0 as libc::c_uint;
   while nleft > 1i32 {
     let fresh0 = addr;
     addr = addr.offset(1);

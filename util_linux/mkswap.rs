@@ -180,16 +180,12 @@ pub unsafe extern "C" fn mkswap_main(
     bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1 as *const libc::c_void,
     (129i32 * 4i32) as size_t,
   );
-  xlseek(
-    fd,
-    pagesize.wrapping_sub(10i32 as libc::c_uint) as off_t,
-    0i32,
-  );
+  xlseek(fd, pagesize.wrapping_sub(10i32 as libc::c_uint) as off_t, 0);
   xwrite(
     fd,
     SWAPSPACE2.as_ptr() as *const libc::c_void,
     10i32 as size_t,
   );
   fsync(fd);
-  return 0i32;
+  return 0;
 }

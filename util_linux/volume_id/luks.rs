@@ -141,10 +141,10 @@ static mut LUKS_MAGIC: [u8; 6] = [
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut header: *mut luks_phdr = 0 as *mut luks_phdr;
+  let mut header: *mut luks_phdr = std::ptr::null_mut();
   header = volume_id_get_buffer(
     id,
-    0i32 as u64,
+    0 as u64,
     ::std::mem::size_of::<luks_phdr>() as libc::c_ulong,
   ) as *mut luks_phdr;
   if header.is_null() {
@@ -161,5 +161,5 @@ pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c
   //	volume_id_set_usage(id, VOLUME_ID_CRYPTO);
   volume_id_set_uuid(id, (*header).uuid.as_mut_ptr(), UUID_DCE_STRING);
   (*id).type_0 = b"crypto_LUKS\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

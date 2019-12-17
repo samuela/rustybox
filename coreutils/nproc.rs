@@ -59,8 +59,8 @@ pub unsafe extern "C" fn nproc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mask: [libc::c_ulong; 1024] = [0; 1024];
-  let mut count: libc::c_int = 0i32;
-  let mut ignore: libc::c_int = 0i32;
+  let mut count: libc::c_int = 0;
+  let mut ignore: libc::c_int = 0;
   let mut opts: libc::c_int = getopt32long(
     argv,
     b"\xfe:+\x00" as *const u8 as *const libc::c_char,
@@ -71,7 +71,7 @@ pub unsafe extern "C" fn nproc_main(
     let mut cpusd: *mut DIR =
       opendir(b"/sys/devices/system/cpu\x00" as *const u8 as *const libc::c_char);
     if !cpusd.is_null() {
-      let mut de: *mut dirent = 0 as *mut dirent;
+      let mut de: *mut dirent = std::ptr::null_mut();
       loop {
         de = readdir(cpusd);
         if de.is_null() {
@@ -93,13 +93,13 @@ pub unsafe extern "C" fn nproc_main(
       closedir(cpusd);
     }
   } else if sched_getaffinity(
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_ulong; 1024]>() as libc::c_ulong,
     mask.as_mut_ptr() as *mut libc::c_void as *mut cpu_set_t,
-  ) == 0i32
+  ) == 0
   {
     let mut i: libc::c_int = 0;
-    i = 0i32;
+    i = 0;
     while (i as libc::c_uint)
       < (::std::mem::size_of::<[libc::c_ulong; 1024]>() as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong)
@@ -116,9 +116,9 @@ pub unsafe extern "C" fn nproc_main(
     }
   }
   count -= ignore;
-  if count <= 0i32 {
+  if count <= 0 {
     count = 1i32
   }
   printf(b"%u\n\x00" as *const u8 as *const libc::c_char, count);
-  return 0i32;
+  return 0;
 }

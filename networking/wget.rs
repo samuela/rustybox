@@ -460,7 +460,7 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
     return;
   }
   /* Don't save progress to log file */
-  if (*ptr_to_globals).log_fd >= 0i32 {
+  if (*ptr_to_globals).log_fd >= 0 {
     return;
   } /* it's tty */
   if flag == PROGRESS_START as libc::c_int {
@@ -478,11 +478,11 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
   );
   if flag == PROGRESS_END as libc::c_int {
     free((*ptr_to_globals).pmt.curfile as *mut libc::c_char as *mut libc::c_void);
-    (*ptr_to_globals).pmt.curfile = 0 as *const libc::c_char;
-    if notty == 0i32 {
+    (*ptr_to_globals).pmt.curfile = std::ptr::null();
+    if notty == 0 {
       bb_putchar_stderr('\n' as i32 as libc::c_char);
     }
-    (*ptr_to_globals).transferred = 0i32 as off_t
+    (*ptr_to_globals).transferred = 0 as off_t
   };
 }
 /* IPv6 knows scoped address types i.e. link and site local addresses. Link
@@ -566,7 +566,7 @@ unsafe extern "C" fn is_ip_address(mut string: *const libc::c_char) -> libc::c_i
     string,
     &mut sa.sin_addr as *mut in_addr as *mut libc::c_void,
   );
-  if result == 0i32 {
+  if result == 0 {
     let mut sa6: sockaddr_in6 = sockaddr_in6 {
       sin6_family: 0,
       sin6_port: 0,
@@ -588,10 +588,10 @@ unsafe extern "C" fn is_ip_address(mut string: *const libc::c_char) -> libc::c_i
 }
 unsafe extern "C" fn open_socket(mut lsa: *mut len_and_sockaddr) -> *mut FILE {
   let mut fd: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   set_alarm();
   fd = xconnect_stream(lsa);
-  (*ptr_to_globals).die_if_timed_out = 0i32 as smallint;
+  (*ptr_to_globals).die_if_timed_out = 0 as smallint;
   /* glibc 2.4 seems to try seeking on it - ??! */
   /* hopefully it understands what ESPIPE means... */
   fp = fdopen(fd, b"r+\x00" as *const u8 as *const libc::c_char);
@@ -638,7 +638,7 @@ unsafe extern "C" fn fgets_trim_sanitize(
   {
     bb_simple_perror_msg_and_die(b"error getting response\x00" as *const u8 as *const libc::c_char);
   }
-  (*ptr_to_globals).die_if_timed_out = 0i32 as smallint;
+  (*ptr_to_globals).die_if_timed_out = 0 as smallint;
   buf_ptr = strchrnul((*ptr_to_globals).wget_buf.as_mut_ptr(), '\n' as i32);
   c = *buf_ptr;
   /* Disallow any control chars: trim at first char < 0x20 */
@@ -677,7 +677,7 @@ unsafe extern "C" fn ftpcmd(
     fflush(fp);
   }
   /* Read until "Nxx something" is received */
-  (*ptr_to_globals).wget_buf[3] = 0i32 as libc::c_char;
+  (*ptr_to_globals).wget_buf[3] = 0 as libc::c_char;
   loop {
     fgets_trim_sanitize(fp, b"%s\n\x00" as *const u8 as *const libc::c_char);
     if !(!(((*ptr_to_globals).wget_buf[0] as libc::c_int - '0' as i32) as libc::c_uchar
@@ -706,18 +706,18 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
   if !p.is_null() {
     *p = '\u{0}' as i32 as libc::c_char;
     (*h).host = p.offset(3);
-    if strcmp(url, P_FTP.as_ptr()) == 0i32 {
+    if strcmp(url, P_FTP.as_ptr()) == 0 {
       (*h).port = 21i32;
       current_block_19 = 11298138898191919651;
-    } else if strcmp(url, P_FTPS.as_ptr()) == 0i32 {
+    } else if strcmp(url, P_FTPS.as_ptr()) == 0 {
       (*h).port = 990i32;
       (*h).protocol = P_FTPS.as_ptr();
       current_block_19 = 11298138898191919651;
-    } else if strcmp(url, P_HTTPS.as_ptr()) == 0i32 {
+    } else if strcmp(url, P_HTTPS.as_ptr()) == 0 {
       (*h).port = 443i32;
       (*h).protocol = P_HTTPS.as_ptr();
       current_block_19 = 11298138898191919651;
-    } else if strcmp(url, P_HTTP.as_ptr()) == 0i32 {
+    } else if strcmp(url, P_HTTP.as_ptr()) == 0 {
       current_block_19 = 15973521690641649086;
     } else {
       *p = ':' as i32 as libc::c_char;
@@ -784,7 +784,7 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
     // Standard wget and curl do this too.
     *sp = '\u{0}' as i32 as libc::c_char;
     free((*h).user as *mut libc::c_void);
-    (*h).user = xstrdup(percent_decode_in_place((*h).host, 0i32));
+    (*h).user = xstrdup(percent_decode_in_place((*h).host, 0));
     (*h).host = sp.offset(1)
   };
   /* else: h->user remains NULL, or as set by original request
@@ -846,8 +846,8 @@ unsafe extern "C" fn get_sanitized_hdr(mut fp: *mut FILE) -> *mut libc::c_char {
 }
 unsafe extern "C" fn reset_beg_range_to_zero() {
   bb_simple_error_msg(b"restart failed\x00" as *const u8 as *const libc::c_char);
-  (*ptr_to_globals).beg_range = 0i32 as off_t;
-  xlseek((*ptr_to_globals).output_fd, 0i32 as off_t, 0i32);
+  (*ptr_to_globals).beg_range = 0 as off_t;
+  xlseek((*ptr_to_globals).output_fd, 0 as off_t, 0);
   /* Done at the end instead: */
   /* ftruncate(G.output_fd, 0); */
 }
@@ -859,8 +859,8 @@ unsafe extern "C" fn spawn_https_helper_openssl(
   let mut servername: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sp: [libc::c_int; 2] = [0; 2];
   let mut pid: libc::c_int = 0;
-  let mut child_failed: libc::c_int = 0i32;
-  if socketpair(1i32, SOCK_STREAM as libc::c_int, 0i32, sp.as_mut_ptr()) != 0i32 {
+  let mut child_failed: libc::c_int = 0;
+  if socketpair(1i32, SOCK_STREAM as libc::c_int, 0, sp.as_mut_ptr()) != 0 {
     /* Kernel can have AF_UNIX support disabled */
     bb_simple_perror_msg_and_die(b"socketpair\x00" as *const u8 as *const libc::c_char);
   }
@@ -873,16 +873,16 @@ unsafe extern "C" fn spawn_https_helper_openssl(
   fflush_all();
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* Child */
     let mut argv: [*mut libc::c_char; 8] = [0 as *mut libc::c_char; 8];
     close(sp[0]);
-    xmove_fd(sp[1], 0i32);
+    xmove_fd(sp[1], 0);
     xdup2(0i32, 1i32);
     /*
      * openssl s_client -quiet -connect www.kernel.org:443 2>/dev/null
@@ -893,7 +893,7 @@ unsafe extern "C" fn spawn_https_helper_openssl(
     xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o2i32);
     memset(
       &mut argv as *mut [*mut libc::c_char; 8] as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[*mut libc::c_char; 8]>() as libc::c_ulong,
     );
     argv[0] = b"openssl\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -946,7 +946,7 @@ unsafe extern "C" fn spawn_ssl_client(
   if !p.is_null() {
     *p = '\u{0}' as i32 as libc::c_char
   }
-  if socketpair(1i32, SOCK_STREAM as libc::c_int, 0i32, sp.as_mut_ptr()) != 0i32 {
+  if socketpair(1i32, SOCK_STREAM as libc::c_int, 0, sp.as_mut_ptr()) != 0 {
     /* Kernel can have AF_UNIX support disabled */
     bb_simple_perror_msg_and_die(b"socketpair\x00" as *const u8 as *const libc::c_char);
   }
@@ -956,16 +956,16 @@ unsafe extern "C" fn spawn_ssl_client(
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
     })
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* Child */
     close(sp[0]);
-    xmove_fd(sp[1], 0i32);
+    xmove_fd(sp[1], 0);
     xdup2(0i32, 1i32);
     let mut tls: *mut tls_state_t = new_tls_state();
     (*tls).ofd = network_fd;
@@ -986,12 +986,12 @@ unsafe extern "C" fn prepare_ftp_session(
   mut lsa: *mut len_and_sockaddr,
 ) -> *mut FILE {
   let mut current_block: u64;
-  let mut sfp: *mut FILE = 0 as *mut FILE;
+  let mut sfp: *mut FILE = std::ptr::null_mut();
   let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut port: libc::c_int = 0;
   sfp = open_socket(lsa);
   if (*target).protocol == P_FTPS.as_ptr() {
-    spawn_ssl_client((*target).host, fileno_unlocked(sfp), 1i32 << 0i32);
+    spawn_ssl_client((*target).host, fileno_unlocked(sfp), 1i32 << 0);
   }
   if ftpcmd(0 as *const libc::c_char, 0 as *const libc::c_char, sfp) != 220i32 {
     bb_simple_error_msg_and_die((*ptr_to_globals).wget_buf.as_mut_ptr());
@@ -1092,7 +1092,7 @@ unsafe extern "C" fn prepare_ftp_session(
     /* good */
     {
       port = parse_pasv_epsv((*ptr_to_globals).wget_buf.as_mut_ptr());
-      if !(port < 0i32) {
+      if !(port < 0) {
         set_nport(
           &mut (*lsa).u.sa,
           ({
@@ -1125,7 +1125,7 @@ unsafe extern "C" fn prepare_ftp_session(
             sfp,
           ) == 200i32
           {
-            spawn_ssl_client((*target).host, fileno_unlocked(*dfpp), 0i32);
+            spawn_ssl_client((*target).host, fileno_unlocked(*dfpp), 0);
           }
         }
         if (*ptr_to_globals).beg_range != 0 {
@@ -1234,13 +1234,13 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
            * into if (n <= 0) ...
            */
           clearerr(dfp);
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           rdsz = ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong as libc::c_uint;
           if (*ptr_to_globals).got_clen != 0 {
             if (*ptr_to_globals).content_len
               < ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong as off_t
             {
-              if (*ptr_to_globals).content_len as libc::c_int <= 0i32 {
+              if (*ptr_to_globals).content_len as libc::c_int <= 0 {
                 break;
               }
               rdsz = (*ptr_to_globals).content_len as libc::c_uint
@@ -1252,7 +1252,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
             rdsz as size_t,
             dfp,
           ) as libc::c_int;
-          if n > 0i32 {
+          if n > 0 {
             xwrite(
               (*ptr_to_globals).output_fd,
               (*ptr_to_globals).wget_buf.as_mut_ptr() as *const libc::c_void,
@@ -1279,10 +1279,10 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
            * fread does not distinguish between EOF and error.
            */
           /* EOF, not error */
-          } else if safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32) == 0i32 {
-            if second_cnt != 0i32 as libc::c_uint && {
+          } else if safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32) == 0 {
+            if second_cnt != 0 as libc::c_uint && {
               second_cnt = second_cnt.wrapping_sub(1);
-              (second_cnt) == 0i32 as libc::c_uint
+              (second_cnt) == 0 as libc::c_uint
             } {
               progress_meter(PROGRESS_END as libc::c_int);
               bb_simple_error_msg_and_die(
@@ -1314,7 +1314,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
       _ => {
         /* chunk size format is "HEXNUM[;name[=val]]\r\n" */
         fgets_trim_sanitize(dfp, 0 as *const libc::c_char);
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         (*ptr_to_globals).content_len = strtoul(
           (*ptr_to_globals).wget_buf.as_mut_ptr(),
           0 as *mut *mut libc::c_char,
@@ -1339,7 +1339,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
     }
   }
   /* Draw full bar and free its resources */
-  (*ptr_to_globals).chunked = 0i32 as smallint; /* makes it show 100% even for chunked download */
+  (*ptr_to_globals).chunked = 0 as smallint; /* makes it show 100% even for chunked download */
   (*ptr_to_globals).got_clen = 1i32 as smallint; /* makes it show 100% even for download of (formerly) unknown size */
   progress_meter(PROGRESS_END as libc::c_int);
   if (*ptr_to_globals).content_len != 0 {
@@ -1353,7 +1353,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
    * This lets user to ^C if his 99% complete 10 GB file download
    * failed to restart *without* losing the almost complete file.
    */
-  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0i32 as off64_t, 1i32); /* Use proxies if env vars are set  */
+  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0 as off64_t, 1i32); /* Use proxies if env vars are set  */
   if pos != -1i32 as off_t {
     ftruncate((*ptr_to_globals).output_fd, pos); /* socket to web/ftp server         */
   } /* socket to ftp server (data)      */
@@ -1378,9 +1378,9 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   let mut current_block: u64;
   let mut use_proxy: bool = false;
   let mut redir_limit: libc::c_int = 0;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut sfp: *mut FILE = 0 as *mut FILE;
-  let mut dfp: *mut FILE = 0 as *mut FILE;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut sfp: *mut FILE = std::ptr::null_mut();
+  let mut dfp: *mut FILE = std::ptr::null_mut();
   let mut fname_out_alloc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut redirected_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut server: host_info = host_info {
@@ -1408,7 +1408,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   use_proxy = strcmp(
     (*ptr_to_globals).proxy_flag,
     b"off\x00" as *const u8 as *const libc::c_char,
-  ) != 0i32;
+  ) != 0;
   if use_proxy {
     let mut proxy: *mut libc::c_char =
       getenv(if *target.protocol.offset(0) as libc::c_int == 'f' as i32 {
@@ -1453,11 +1453,11 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   }
   (*ptr_to_globals).curfile = bb_get_last_path_component_nostrip((*ptr_to_globals).fname_out);
   /* Determine where to start transfer */
-  (*ptr_to_globals).beg_range = 0i32 as off_t;
+  (*ptr_to_globals).beg_range = 0 as off_t;
   if option_mask32 & WGET_OPT_CONTINUE as libc::c_int as libc::c_uint != 0 {
     (*ptr_to_globals).output_fd = open((*ptr_to_globals).fname_out, 0o1i32);
-    if (*ptr_to_globals).output_fd >= 0i32 {
-      (*ptr_to_globals).beg_range = xlseek((*ptr_to_globals).output_fd, 0i32 as off_t, 2i32)
+    if (*ptr_to_globals).output_fd >= 0 {
+      (*ptr_to_globals).beg_range = xlseek((*ptr_to_globals).output_fd, 0 as off_t, 2i32)
     }
     /* File doesn't exist. We do not create file here yet.
      * We are not sure it exists on remote side */
@@ -1477,8 +1477,8 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
     }
     'c_12021: loop {
       /*G.content_len = 0; - redundant, got_clen = 0 is enough */
-      (*ptr_to_globals).got_clen = 0i32 as smallint;
-      (*ptr_to_globals).chunked = 0i32 as smallint;
+      (*ptr_to_globals).got_clen = 0 as smallint;
+      (*ptr_to_globals).chunked = 0 as smallint;
       if use_proxy as libc::c_int != 0 || *target.protocol.offset(0) as libc::c_int != 'f' as i32 {
         /*not ftp[s]*/
         /*
@@ -1494,10 +1494,10 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
            */
           let mut fd: libc::c_int =
             spawn_https_helper_openssl(server.host, server.port as libc::c_uint);
-          if fd < 0i32 {
+          if fd < 0 {
             /* no openssl? try internal */
             sfp = open_socket(lsa);
-            spawn_ssl_client(server.host, fileno_unlocked(sfp), 0i32);
+            spawn_ssl_client(server.host, fileno_unlocked(sfp), 0);
           } else {
             sfp = fdopen(fd, b"r+\x00" as *const u8 as *const libc::c_char);
             if sfp.is_null() {
@@ -1765,7 +1765,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
               if strcmp(
                 str_tolower(str),
                 b"chunked\x00" as *const u8 as *const libc::c_char,
-              ) != 0i32
+              ) != 0
               {
                 bb_error_msg_and_die(
                   b"transfer encoding \'%s\' is not supported\x00" as *const u8
@@ -1779,7 +1779,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
               continue;
             }
             redir_limit -= 1;
-            if redir_limit == 0i32 {
+            if redir_limit == 0 {
               bb_simple_error_msg_and_die(
                 b"too many redirections\x00" as *const u8 as *const libc::c_char,
               );
@@ -1839,7 +1839,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
     _ => {
       free(lsa as *mut libc::c_void);
       if option_mask32 & WGET_OPT_SPIDER as libc::c_int as libc::c_uint == 0 {
-        if (*ptr_to_globals).output_fd < 0i32 {
+        if (*ptr_to_globals).output_fd < 0 {
           (*ptr_to_globals).output_fd =
             xopen((*ptr_to_globals).fname_out, (*ptr_to_globals).o_flags)
         }
@@ -1896,7 +1896,7 @@ pub unsafe extern "C" fn wget_main(
     -16, 110, 111, 45, 104, 111, 115, 116, 45, 100, 105, 114, 101, 99, 116, 111, 114, 105, 101,
     115, 0, 0, -16, 110, 111, 45, 112, 97, 114, 101, 110, 116, 0, 0, -16, 0,
   ];
-  let mut headers_llist: *mut llist_t = 0 as *mut llist_t;
+  let mut headers_llist: *mut llist_t = std::ptr::null_mut();
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh6 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
@@ -1926,7 +1926,7 @@ pub unsafe extern "C" fn wget_main(
   /* option bits debug */
   argv = argv.offset(optind as isize);
   if !headers_llist.is_null() {
-    let mut size: libc::c_int = 0i32;
+    let mut size: libc::c_int = 0;
     let mut hdr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut ll: *mut llist_t = headers_llist;
     while !ll.is_null() {
@@ -1939,7 +1939,7 @@ pub unsafe extern "C" fn wget_main(
     (*ptr_to_globals).extra_headers = hdr;
     while !headers_llist.is_null() {
       let mut bit: libc::c_int = 0;
-      let mut words: *const libc::c_char = 0 as *const libc::c_char;
+      let mut words: *const libc::c_char = std::ptr::null();
       size = sprintf(
         hdr,
         b"%s\r\n\x00" as *const u8 as *const libc::c_char,
@@ -1993,11 +1993,11 @@ pub unsafe extern "C" fn wget_main(
     argv = argv.offset(1);
     download_one_url(*fresh7);
   }
-  if (*ptr_to_globals).output_fd >= 0i32 {
+  if (*ptr_to_globals).output_fd >= 0 {
     xclose((*ptr_to_globals).output_fd);
   }
-  if (*ptr_to_globals).log_fd >= 0i32 {
+  if (*ptr_to_globals).log_fd >= 0 {
     xclose((*ptr_to_globals).log_fd);
   }
-  return 0i32;
+  return 0;
 }

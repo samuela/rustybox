@@ -52,7 +52,7 @@ pub unsafe extern "C" fn which_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut env_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   /* This sizeof(): bb_default_root_path is shorter than BB_PATH_ROOT_PATH */
   let mut buf: [libc::c_char; 35] = [0; 35];
   env_path = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
@@ -72,7 +72,7 @@ pub unsafe extern "C" fn which_main(
     /* If file contains a slash don't use PATH */
     if !strchr(*argv, '/' as i32).is_null() {
       if file_is_executable(*argv) != 0 {
-        missing = 0i32;
+        missing = 0;
         puts(*argv);
       }
     } else {
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn which_main(
         if p.is_null() {
           break;
         }
-        missing = 0i32;
+        missing = 0;
         puts(p);
         free(p as *mut libc::c_void);
         if option_mask32 == 0 {

@@ -62,11 +62,11 @@ pub unsafe extern "C" fn tac_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut name: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut f: *mut FILE = 0 as *mut FILE;
-  let mut line: *mut lstring = 0 as *mut lstring;
-  let mut list: *mut llist_t = 0 as *mut llist_t;
-  let mut retval: libc::c_int = 0i32;
+  let mut name: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut f: *mut FILE = std::ptr::null_mut();
+  let mut line: *mut lstring = std::ptr::null_mut();
+  let mut list: *mut llist_t = std::ptr::null_mut();
+  let mut retval: libc::c_int = 0;
   /* tac from coreutils 6.9 supports:
          -b, --before
                 attach the separator before instead of after
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn tac_main(
       /* error message is printed by fopen_or_warn_stdin */
       retval = 1i32
     } else {
-      i = 0i32;
+      i = 0;
       *bb_errno = i;
       loop {
         ch = getc_unlocked(f);
@@ -114,7 +114,7 @@ pub unsafe extern "C" fn tac_main(
           i = i + 1;
           *(*line).buf.as_mut_ptr().offset(fresh0 as isize) = ch as libc::c_char
         }
-        if ch == '\n' as i32 || ch == -1i32 && i != 0i32 {
+        if ch == '\n' as i32 || ch == -1i32 && i != 0 {
           line = xrealloc(
             line as *mut libc::c_void,
             (i as libc::c_ulong)
@@ -122,8 +122,8 @@ pub unsafe extern "C" fn tac_main(
           ) as *mut lstring;
           (*line).size = i;
           llist_add_to(&mut list, line as *mut libc::c_void);
-          line = 0 as *mut lstring;
-          i = 0i32
+          line = std::ptr::null_mut();
+          i = 0
         }
         if !(ch != -1i32) {
           break;

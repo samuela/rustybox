@@ -61,7 +61,7 @@ pub unsafe extern "C" fn cksum_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut crc32_table: *mut u32 = crc32_filltable(0 as *mut u32, 1i32); /* coreutils 6.9 compat */
-  let mut exit_code: libc::c_int = 0i32;
+  let mut exit_code: libc::c_int = 0;
   getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   loop {
@@ -72,11 +72,11 @@ pub unsafe extern "C" fn cksum_main(
     } else {
       bb_msg_standard_input.as_ptr()
     });
-    if fd < 0i32 {
+    if fd < 0 {
       exit_code = 1i32
     } else {
-      crc = 0i32 as u32;
-      filesize = 0i32 as off_t;
+      crc = 0 as u32;
+      filesize = 0 as off_t;
       loop {
         let mut t: uoff_t = 0;
         let mut bytes_read: libc::c_int = safe_read(
@@ -84,15 +84,15 @@ pub unsafe extern "C" fn cksum_main(
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
         ) as libc::c_int;
-        if bytes_read > 0i32 {
+        if bytes_read > 0 {
           filesize += bytes_read as libc::c_long
         } else {
           /* Checksum filesize bytes, LSB first, and exit */
           close(fd); /* break flag */
           fd = -1i32;
           t = filesize as uoff_t;
-          bytes_read = 0i32;
-          while t != 0i32 as libc::c_ulong {
+          bytes_read = 0;
+          while t != 0 as libc::c_ulong {
             let fresh0 = bytes_read;
             bytes_read = bytes_read + 1;
             *bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) = t as u8 as libc::c_char;
@@ -105,7 +105,7 @@ pub unsafe extern "C" fn cksum_main(
           bytes_read as libc::c_uint,
           crc32_table,
         );
-        if fd < 0i32 {
+        if fd < 0 {
           break;
         }
       }

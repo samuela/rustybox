@@ -153,7 +153,7 @@ pub struct nilfs2_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_nilfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut sb: *mut nilfs2_super_block = 0 as *mut nilfs2_super_block;
+  let mut sb: *mut nilfs2_super_block = std::ptr::null_mut();
   // Primary super block
   sb = volume_id_get_buffer(
     id,
@@ -177,5 +177,5 @@ pub unsafe extern "C" fn volume_id_probe_nilfs(mut id: *mut volume_id) -> libc::
   if (*sb).s_rev_level == 2i32 as libc::c_uint {
     (*id).type_0 = b"nilfs2\x00" as *const u8 as *const libc::c_char
   }
-  return 0i32;
+  return 0;
 }

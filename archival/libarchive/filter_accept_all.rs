@@ -12,7 +12,7 @@ pub unsafe extern "C" fn filter_accept_all(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
   if !(*(*archive_handle).file_header).name.is_null() {
-    return 0i32 as libc::c_char;
+    return 0 as libc::c_char;
   }
   return 1i32 as libc::c_char;
 }

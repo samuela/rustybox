@@ -99,7 +99,7 @@ pub static mut bb_PATH_root_path: [libc::c_char; 35] = [
 /* explicitly = 0, otherwise gcc may make it a common variable
  * and it will end up in bss */
 #[no_mangle]
-pub static mut const_int_0: libc::c_int = 0i32;
+pub static mut const_int_0: libc::c_int = 0;
 
 /* This is usually something like "/var/adm/wtmp" or "/var/log/wtmp" */
 #[no_mangle]

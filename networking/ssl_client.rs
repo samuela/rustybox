@@ -83,8 +83,8 @@ pub unsafe extern "C" fn ssl_client_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut tls: *mut tls_state_t = 0 as *mut tls_state_t;
-  let mut sni: *const libc::c_char = 0 as *const libc::c_char;
+  let mut tls: *mut tls_state_t = std::ptr::null_mut();
+  let mut sni: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_int = 0;
   // INIT_G();
   tls = new_tls_state();
@@ -115,5 +115,5 @@ pub unsafe extern "C" fn ssl_client_main(
   }
   tls_handshake(tls, sni);
   tls_run_copy_loop(tls, (opt & 1i32) as libc::c_uint);
-  return 0i32;
+  return 0;
 }

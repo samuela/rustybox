@@ -31,7 +31,7 @@ pub unsafe extern "C" fn printable_string2(
   mut str: *const libc::c_char,
 ) -> *const libc::c_char {
   let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   s = str;
   loop {
     let mut c: libc::c_uchar = *s as libc::c_uchar;

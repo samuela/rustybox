@@ -291,7 +291,7 @@ pub unsafe extern "C" fn bb_die_memory_exhausted() -> ! {
 #[no_mangle]
 pub unsafe extern "C" fn malloc_or_warn(mut size: size_t) -> *mut libc::c_void {
   let mut ptr: *mut libc::c_void = malloc(size);
-  if ptr.is_null() && size != 0i32 as libc::c_ulong {
+  if ptr.is_null() && size != 0 as libc::c_ulong {
     bb_simple_error_msg(bb_msg_memory_exhausted.as_ptr());
   }
   return ptr;
@@ -299,7 +299,7 @@ pub unsafe extern "C" fn malloc_or_warn(mut size: size_t) -> *mut libc::c_void {
 // Die if we can't allocate size bytes of memory.
 pub unsafe fn xmalloc(mut size: size_t) -> *mut libc::c_void {
   let mut ptr: *mut libc::c_void = malloc(size);
-  if ptr.is_null() && size != 0i32 as libc::c_ulong {
+  if ptr.is_null() && size != 0 as libc::c_ulong {
     bb_die_memory_exhausted();
   }
   return ptr;
@@ -313,7 +313,7 @@ pub unsafe extern "C" fn xrealloc(
   mut size: size_t,
 ) -> *mut libc::c_void {
   ptr = realloc(ptr, size);
-  if ptr.is_null() && size != 0i32 as libc::c_ulong {
+  if ptr.is_null() && size != 0 as libc::c_ulong {
     bb_die_memory_exhausted();
   }
   return ptr;
@@ -323,7 +323,7 @@ pub unsafe extern "C" fn xrealloc(
 #[no_mangle]
 pub unsafe extern "C" fn xzalloc(mut size: size_t) -> *mut libc::c_void {
   let mut ptr: *mut libc::c_void = xmalloc(size);
-  memset(ptr, 0i32, size);
+  memset(ptr, 0, size);
   return ptr;
 }
 // Die if we can't copy a string to freshly allocated memory.
@@ -403,7 +403,7 @@ pub unsafe extern "C" fn xopen3(
 ) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = open(pathname, flags, mode);
-  if ret < 0i32 {
+  if ret < 0 {
     bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       pathname,
@@ -428,7 +428,7 @@ pub unsafe extern "C" fn open3_or_warn(
 ) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = open(pathname, flags, mode);
-  if ret < 0i32 {
+  if ret < 0 {
     bb_perror_msg(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       pathname,
@@ -450,7 +450,7 @@ pub unsafe extern "C" fn open_or_warn(
  */
 #[no_mangle]
 pub unsafe extern "C" fn xopen_nonblocking(mut pathname: *const libc::c_char) -> libc::c_int {
-  return xopen(pathname, 0i32 | 0o4000i32);
+  return xopen(pathname, 0 | 0o4000i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xopen_as_uid_gid(
@@ -583,7 +583,7 @@ pub unsafe extern "C" fn xlseek(
 #[no_mangle]
 pub unsafe extern "C" fn xmkstemp(mut template: *mut libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = mkstemp(template);
-  if fd < 0i32 {
+  if fd < 0 {
     bb_perror_msg_and_die(
       b"can\'t create temp file \'%s\'\x00" as *const u8 as *const libc::c_char,
       template,
@@ -638,7 +638,7 @@ pub unsafe extern "C" fn xasprintf(
   let mut string_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   p = args.clone();
   r = vasprintf(&mut string_ptr, format, p.as_va_list());
-  if r < 0i32 {
+  if r < 0 {
     bb_die_memory_exhausted();
   }
   return string_ptr;
@@ -745,7 +745,7 @@ pub unsafe extern "C" fn xchroot(mut path: *const libc::c_char) {
 // Print a warning message if opendir() fails, but don't die.
 #[no_mangle]
 pub unsafe extern "C" fn warn_opendir(mut path: *const libc::c_char) -> *mut DIR {
-  let mut dp: *mut DIR = 0 as *mut DIR;
+  let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
     bb_perror_msg(
@@ -758,7 +758,7 @@ pub unsafe extern "C" fn warn_opendir(mut path: *const libc::c_char) -> *mut DIR
 // Die with an error message if opendir() fails.
 #[no_mangle]
 pub unsafe extern "C" fn xopendir(mut path: *const libc::c_char) -> *mut DIR {
-  let mut dp: *mut DIR = 0 as *mut DIR;
+  let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
     bb_perror_msg_and_die(
@@ -776,7 +776,7 @@ pub unsafe extern "C" fn xsocket(
   mut protocol: libc::c_int,
 ) -> libc::c_int {
   let mut r: libc::c_int = socket(domain, type_0, protocol);
-  if r < 0i32 {
+  if r < 0 {
     /* Hijack vaguely related config option */
     bb_simple_perror_msg_and_die(b"socket\x00" as *const u8 as *const libc::c_char);
   }
@@ -821,7 +821,7 @@ pub unsafe extern "C" fn xsendto(
     s,
     buf,
     len,
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG { __sockaddr__: to },
     tolen,
   );
@@ -872,7 +872,7 @@ pub unsafe extern "C" fn ioctl_or_perror_and_die(
   let mut ret: libc::c_int = 0;
   let mut p: ::std::ffi::VaListImpl;
   ret = ioctl(fd, request as libc::c_ulong, argp);
-  if ret < 0i32 {
+  if ret < 0 {
     p = args.clone();
     bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
     /* xfunc_die can actually longjmp, so be nice */
@@ -890,7 +890,7 @@ pub unsafe extern "C" fn ioctl_or_perror(
 ) -> libc::c_int {
   let mut p: ::std::ffi::VaListImpl;
   let mut ret: libc::c_int = ioctl(fd, request as libc::c_ulong, argp);
-  if ret < 0i32 {
+  if ret < 0 {
     p = args.clone();
     bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
   }
@@ -905,7 +905,7 @@ pub unsafe extern "C" fn bb_ioctl_or_warn(
 ) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = ioctl(fd, request as libc::c_ulong, argp);
-  if ret < 0i32 {
+  if ret < 0 {
     bb_simple_perror_msg(ioctl_name);
   }
   return ret;
@@ -921,7 +921,7 @@ pub unsafe extern "C" fn bb_xioctl(
 ) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = ioctl(fd, request as libc::c_ulong, argp);
-  if ret < 0i32 {
+  if ret < 0 {
     bb_simple_perror_msg_and_die(ioctl_name);
   }
   return ret;
@@ -1134,11 +1134,8 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
    */
   let mut pid: pid_t = 0;
   let mut i: libc::c_int = 0;
-  i = open(
-    b"/dev/urandom\x00" as *const u8 as *const libc::c_char,
-    0i32,
-  );
-  if i >= 0i32 {
+  i = open(b"/dev/urandom\x00" as *const u8 as *const libc::c_char, 0);
+  if i >= 0 {
     read(i, buf as *mut libc::c_void, 16i32 as size_t);
     close(i);
   }
@@ -1148,17 +1145,17 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
   srand(monotonic_us() as libc::c_uint); /* pulls in printf */
   pid = getpid();
   loop {
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       let ref mut fresh0 = *buf.offset(i as isize);
       *fresh0 = (*fresh0 as libc::c_int ^ rand() >> 5i32) as u8;
       i += 1
     }
-    if pid == 0i32 {
+    if pid == 0 {
       break;
     }
     srand(pid as libc::c_uint);
-    pid = 0i32
+    pid = 0
   }
   /* version = 4 */
   *buf.offset((4i32 + 2i32) as isize) =
@@ -1171,7 +1168,7 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
 pub unsafe extern "C" fn xfork() -> pid_t {
   let mut pid: pid_t = 0;
   pid = fork();
-  if pid < 0i32 {
+  if pid < 0 {
     /* wtf? */
     bb_simple_perror_msg_and_die((b"vfork\x00" as *const u8 as *const libc::c_char).offset(1));
   }
@@ -1492,15 +1489,15 @@ pub unsafe extern "C" fn xvfork_parent_waits_and_exits() {
   fflush_all();
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
   };
-  if pid > 0i32 {
+  if pid > 0 {
     /* Parent */
     let mut exit_status: libc::c_int = wait_for_exitstatus(pid);
-    if ((exit_status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+    if ((exit_status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
       kill_myself_with_sig(exit_status & 0x7fi32);
     }
     _exit((exit_status & 0xff00i32) >> 8i32);

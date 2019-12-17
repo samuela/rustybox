@@ -290,11 +290,11 @@ unsafe extern "C" fn ask_and_unlink(
       dest,
     );
     if bb_ask_y_confirmation() == 0 {
-      return 0i32;
+      return 0;
     }
     /* not allowed to overwrite */
   } /* do not use errno from unlink */
-  if unlink(dest) < 0i32 {
+  if unlink(dest) < 0 {
     *bb_errno = e;
     bb_perror_msg(
       b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -333,8 +333,8 @@ pub unsafe extern "C" fn copy_file(
   /* NB: each struct stat is ~100 bytes */
   let mut source_stat: stat = std::mem::zeroed();
   let mut dest_stat: stat = std::mem::zeroed();
-  let mut retval: smallint = 0i32 as smallint;
-  let mut dest_exists: smallint = 0i32 as smallint;
+  let mut retval: smallint = 0 as smallint;
+  let mut dest_exists: smallint = 0 as smallint;
   let mut ovr: smallint = 0;
   /* Inverse of cp -d ("cp without -d") */
   if (if flags & FILEUTILS_DEREFERENCE as libc::c_int + FILEUTILS_DEREFERENCE_L0 as libc::c_int != 0
@@ -344,7 +344,7 @@ pub unsafe extern "C" fn copy_file(
     Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
   })
   .expect("non-null function pointer")(source, &mut source_stat)
-    < 0i32
+    < 0
   {
     /* This may be a dangling symlink.
      * Making [sym]links to dangling symlinks works, so... */
@@ -358,7 +358,7 @@ pub unsafe extern "C" fn copy_file(
       return -1i32;
     }
   } else {
-    if lstat(dest, &mut dest_stat) < 0i32 {
+    if lstat(dest, &mut dest_stat) < 0 {
       if *bb_errno != 2i32 {
         bb_perror_msg(
           b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -378,10 +378,10 @@ pub unsafe extern "C" fn copy_file(
       dest_exists = 1i32 as smallint
     }
     if source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-      let mut dp: *mut DIR = 0 as *mut DIR;
-      let mut tp: *const libc::c_char = 0 as *const libc::c_char;
-      let mut d: *mut dirent = 0 as *mut dirent;
-      let mut saved_umask: mode_t = 0i32 as mode_t;
+      let mut dp: *mut DIR = std::ptr::null_mut();
+      let mut tp: *const libc::c_char = std::ptr::null();
+      let mut d: *mut dirent = std::ptr::null_mut();
+      let mut saved_umask: mode_t = 0 as mode_t;
       if flags & FILEUTILS_RECUR as libc::c_int == 0 {
         bb_error_msg(
           b"omitting directory \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -419,7 +419,7 @@ pub unsafe extern "C" fn copy_file(
         }
         /* Allow owner to access new dir (at least for now) */
         mode |= (0o400i32 | 0o200i32 | 0o100i32) as libc::c_uint;
-        if mkdir(dest, mode) < 0i32 {
+        if mkdir(dest, mode) < 0 {
           umask(saved_umask);
           bb_perror_msg(
             b"can\'t create directory \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn copy_file(
         }
         umask(saved_umask);
         /* need stat info for add_to_ino_dev_hashtable */
-        if lstat(dest, &mut dest_stat) < 0i32 {
+        if lstat(dest, &mut dest_stat) < 0 {
           bb_perror_msg(
             b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
             dest,
@@ -461,7 +461,7 @@ pub unsafe extern "C" fn copy_file(
             new_source,
             new_dest,
             flags & !(FILEUTILS_DEREFERENCE_L0 as libc::c_int),
-          ) < 0i32
+          ) < 0
           {
             retval = -1i32 as smallint
           }
@@ -469,7 +469,7 @@ pub unsafe extern "C" fn copy_file(
           free(new_dest as *mut libc::c_void);
         }
         closedir(dp);
-        if dest_exists == 0 && chmod(dest, source_stat.st_mode & !saved_umask) < 0i32 {
+        if dest_exists == 0 && chmod(dest, source_stat.st_mode & !saved_umask) < 0 {
           bb_perror_msg(
             b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
             b"permissions\x00" as *const u8 as *const libc::c_char,
@@ -483,16 +483,16 @@ pub unsafe extern "C" fn copy_file(
       if dest_exists != 0 {
         if flags & FILEUTILS_UPDATE as libc::c_int != 0 {
           if source_stat.st_mtime <= dest_stat.st_mtime {
-            return 0i32;
+            return 0;
             /* source file must be newer */
           }
         }
         if flags & FILEUTILS_RMDEST as libc::c_int != 0 {
           ovr = ask_and_unlink(dest, flags) as smallint;
-          if ovr as libc::c_int <= 0i32 {
+          if ovr as libc::c_int <= 0 {
             return ovr as libc::c_int;
           }
-          dest_exists = 0i32 as smallint
+          dest_exists = 0 as smallint
         }
       }
       if flags & (FILEUTILS_MAKE_SOFTLINK as libc::c_int | FILEUTILS_MAKE_HARDLINK as libc::c_int)
@@ -521,15 +521,15 @@ pub unsafe extern "C" fn copy_file(
                 & FILEUTILS_DEREFERENCE as libc::c_int + FILEUTILS_DEREFERENCE_L0 as libc::c_int
                 == 0
             {
-              let mut link_target: *const libc::c_char = 0 as *const libc::c_char;
+              let mut link_target: *const libc::c_char = std::ptr::null();
               link_target = is_in_ino_dev_hashtable(&mut source_stat);
               if !link_target.is_null() {
-                if link(link_target, dest) < 0i32 {
+                if link(link_target, dest) < 0 {
                   ovr = ask_and_unlink(dest, flags) as smallint;
-                  if ovr as libc::c_int <= 0i32 {
+                  if ovr as libc::c_int <= 0 {
                     return ovr as libc::c_int;
                   }
-                  if link(link_target, dest) < 0i32 {
+                  if link(link_target, dest) < 0 {
                     bb_perror_msg(
                       b"can\'t create link \'%s\'\x00" as *const u8 as *const libc::c_char,
                       dest,
@@ -537,12 +537,12 @@ pub unsafe extern "C" fn copy_file(
                     return -1i32;
                   }
                 }
-                return 0i32;
+                return 0;
               }
               add_to_ino_dev_hashtable(&mut source_stat, dest);
             }
-            src_fd = open_or_warn(source, 0i32);
-            if src_fd < 0i32 {
+            src_fd = open_or_warn(source, 0);
+            if src_fd < 0 {
               return -1i32;
             }
             /* Do not try to open with weird mode fields */
@@ -563,13 +563,13 @@ pub unsafe extern "C" fn copy_file(
             }
             if dst_fd == -1i32 {
               ovr = ask_and_unlink(dest, flags) as smallint;
-              if ovr as libc::c_int <= 0i32 {
+              if ovr as libc::c_int <= 0 {
                 close(src_fd);
                 return ovr as libc::c_int;
               }
               /* It shouldn't exist. If it exists, do not open (symlink attack?) */
               dst_fd = open3_or_warn(dest, 0o1i32 | 0o100i32 | 0o200i32, new_mode as libc::c_int);
-              if dst_fd < 0i32 {
+              if dst_fd < 0 {
                 close(src_fd);
                 return -1i32;
               }
@@ -577,13 +577,13 @@ pub unsafe extern "C" fn copy_file(
             if flags & FILEUTILS_REFLINK as libc::c_int != 0 {
               retval = ioctl(
                 dst_fd,
-                (1u32 << 0i32 + 8i32 + 8i32 + 14i32
-                  | (0x94i32 << 0i32 + 8i32) as libc::c_uint
-                  | (9i32 << 0i32) as libc::c_uint) as libc::c_ulong
-                  | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+                (1u32 << 0 + 8i32 + 8i32 + 14i32
+                  | (0x94i32 << 0 + 8i32) as libc::c_uint
+                  | (9i32 << 0) as libc::c_uint) as libc::c_ulong
+                  | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32,
                 src_fd,
               ) as smallint;
-              if retval as libc::c_int == 0i32 {
+              if retval as libc::c_int == 0 {
                 current_block = 10903821241939442503;
               } else if flags & FILEUTILS_REFLINK_ALWAYS as libc::c_int != 0 {
                 bb_perror_msg(
@@ -595,7 +595,7 @@ pub unsafe extern "C" fn copy_file(
               } else {
                 /* reflink did not work */
                 /* fall through to standard copy */
-                retval = 0i32 as smallint;
+                retval = 0 as smallint;
                 current_block = 3921975509081277429;
               }
             } else {
@@ -610,7 +610,7 @@ pub unsafe extern "C" fn copy_file(
               _ => {}
             }
             /* Careful with writing... */
-            if close(dst_fd) < 0i32 {
+            if close(dst_fd) < 0 {
               bb_perror_msg(
                 b"error writing to \'%s\'\x00" as *const u8 as *const libc::c_char,
                 dest,
@@ -639,7 +639,7 @@ pub unsafe extern "C" fn copy_file(
             if dest_exists != 0 {
               *bb_errno = 17i32;
               ovr = ask_and_unlink(dest, flags) as smallint;
-              if ovr as libc::c_int <= 0i32 {
+              if ovr as libc::c_int <= 0 {
                 return ovr as libc::c_int;
               }
             }
@@ -647,7 +647,7 @@ pub unsafe extern "C" fn copy_file(
               let mut lpath: *mut libc::c_char = xmalloc_readlink_or_warn(source);
               if !lpath.is_null() {
                 let mut r: libc::c_int = symlink(lpath, dest);
-                if r < 0i32 {
+                if r < 0 {
                   /* shared message */
                   bb_perror_msg(
                     b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8
@@ -661,7 +661,7 @@ pub unsafe extern "C" fn copy_file(
                 }
                 free(lpath as *mut libc::c_void);
                 if flags & FILEUTILS_PRESERVE_STATUS as libc::c_int != 0 {
-                  if lchown(dest, source_stat.st_uid, source_stat.st_gid) < 0i32 {
+                  if lchown(dest, source_stat.st_uid, source_stat.st_gid) < 0 {
                     bb_perror_msg(
                       b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                       b"ownership\x00" as *const u8 as *const libc::c_char,
@@ -677,7 +677,7 @@ pub unsafe extern "C" fn copy_file(
                 || source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o140000i32 as libc::c_uint
                 || source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o10000i32 as libc::c_uint
               {
-                if mknod(dest, source_stat.st_mode, source_stat.st_rdev) < 0i32 {
+                if mknod(dest, source_stat.st_mode, source_stat.st_rdev) < 0 {
                   bb_perror_msg(
                     b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
                     dest,
@@ -712,17 +712,17 @@ pub unsafe extern "C" fn copy_file(
               }; 2];
               times[0].tv_sec = source_stat.st_mtime;
               times[1].tv_sec = times[0].tv_sec;
-              times[0].tv_usec = 0i32 as suseconds_t;
+              times[0].tv_usec = 0 as suseconds_t;
               times[1].tv_usec = times[0].tv_usec;
               /* BTW, utimes sets usec-precision time - just FYI */
-              if utimes(dest, times.as_mut_ptr() as *const timeval) < 0i32 {
+              if utimes(dest, times.as_mut_ptr() as *const timeval) < 0 {
                 bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                   b"times\x00" as *const u8 as *const libc::c_char,
                   dest,
                 );
               }
-              if chown(dest, source_stat.st_uid, source_stat.st_gid) < 0i32 {
+              if chown(dest, source_stat.st_uid, source_stat.st_gid) < 0 {
                 source_stat.st_mode &= !(0o4000i32 | 0o2000i32) as libc::c_uint;
                 bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -730,7 +730,7 @@ pub unsafe extern "C" fn copy_file(
                   dest,
                 );
               }
-              if chmod(dest, source_stat.st_mode) < 0i32 {
+              if chmod(dest, source_stat.st_mode) < 0 {
                 bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                   b"permissions\x00" as *const u8 as *const libc::c_char,
@@ -767,12 +767,12 @@ pub unsafe extern "C" fn copy_file(
       link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
     )
   };
-  if lf.expect("non-null function pointer")(source, dest) < 0i32 {
+  if lf.expect("non-null function pointer")(source, dest) < 0 {
     ovr = ask_and_unlink(dest, flags) as smallint;
-    if ovr as libc::c_int <= 0i32 {
+    if ovr as libc::c_int <= 0 {
       return ovr as libc::c_int;
     }
-    if lf.expect("non-null function pointer")(source, dest) < 0i32 {
+    if lf.expect("non-null function pointer")(source, dest) < 0 {
       bb_perror_msg(
         b"can\'t create link \'%s\'\x00" as *const u8 as *const libc::c_char,
         dest,
@@ -782,5 +782,5 @@ pub unsafe extern "C" fn copy_file(
   }
   /* _Not_ jumping to preserve_mode_ugid_time:
    * (sym)links don't have those */
-  return 0i32;
+  return 0;
 }

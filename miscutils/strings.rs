@@ -45,10 +45,10 @@ pub unsafe extern "C" fn strings_main(
 ) -> libc::c_int {
   let mut n: libc::c_int = 0;
   let mut c: libc::c_int = 0;
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut count: libc::c_uint = 0;
   let mut offset: off_t = 0;
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt: *const libc::c_char = b"%s: \x00" as *const u8 as *const libc::c_char;
   let mut n_arg: *const libc::c_char = b"4\x00" as *const u8 as *const libc::c_char;
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn strings_main(
   if *radix.offset(0) as libc::c_int != 'd' as i32
     && *radix.offset(0) as libc::c_int != 'o' as i32
     && *radix.offset(0) as libc::c_int != 'x' as i32
-    || *radix.offset(1) as libc::c_int != 0i32
+    || *radix.offset(1) as libc::c_int != 0
   {
     bb_show_usage();
   }
@@ -85,8 +85,8 @@ pub unsafe extern "C" fn strings_main(
     if file.is_null() {
       status = 1i32
     } else {
-      offset = 0i32 as off_t;
-      count = 0i32 as libc::c_uint;
+      offset = 0 as off_t;
+      count = 0 as libc::c_uint;
       loop {
         c = getc_unlocked(file);
         if (c - 0x20i32) as libc::c_uint <= (0x7ei32 - 0x20i32) as libc::c_uint || c == '\t' as i32
@@ -110,7 +110,7 @@ pub unsafe extern "C" fn strings_main(
           if count > n as libc::c_uint {
             bb_putchar('\n' as i32);
           }
-          count = 0i32 as libc::c_uint
+          count = 0 as libc::c_uint
         }
         offset += 1;
         if !(c != -1i32) {

@@ -300,16 +300,16 @@ unsafe extern "C" fn ParseField(
   /*if (base == NULL)
   return;*/
   {
-    let mut skip: libc::c_int = 0i32;
+    let mut skip: libc::c_int = 0;
     /* Handle numeric digit or symbol or '*' */
     if *ptr as libc::c_int == '*' as i32 {
-      n1 = 0i32; /* everything will be filled */
+      n1 = 0; /* everything will be filled */
       n2 = modvalue - 1i32; /* gcc likes temp var for &endp */
       skip = 1i32;
       ptr = ptr.offset(1)
     } else if (*ptr as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
       let mut endp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      if n1 < 0i32 {
+      if n1 < 0 {
         n1 = (strtol(ptr, &mut endp, 10i32) + off as libc::c_long) as libc::c_int
       } else {
         n2 = (strtol(ptr, &mut endp, 10i32) + off as libc::c_long) as libc::c_int
@@ -318,12 +318,12 @@ unsafe extern "C" fn ParseField(
       skip = 1i32
     } else if !names.is_null() {
       let mut i: libc::c_int = 0;
-      i = 0i32;
+      i = 0;
       while *names.offset(i as isize) != 0 {
         /* was using strncmp before... */
-        if strncasecmp(ptr, &*names.offset(i as isize), 3i32 as libc::c_ulong) == 0i32 {
+        if strncasecmp(ptr, &*names.offset(i as isize), 3i32 as libc::c_ulong) == 0 {
           ptr = ptr.offset(3);
-          if n1 < 0i32 {
+          if n1 < 0 {
             n1 = i / 3i32
           } else {
             n2 = i / 3i32
@@ -336,18 +336,18 @@ unsafe extern "C" fn ParseField(
       }
     }
     /* handle optional range '-' */
-    if skip == 0i32 {
+    if skip == 0 {
       current_block = 1165395826853565909;
       break;
     }
-    if *ptr as libc::c_int == '-' as i32 && n2 < 0i32 {
+    if *ptr as libc::c_int == '-' as i32 && n2 < 0 {
       ptr = ptr.offset(1)
     } else {
       /*
        * collapse single-value ranges, handle skipmark, and fill
        * in the character array appropriately.
        */
-      if n2 < 0i32 {
+      if n2 < 0 {
         n2 = n1
       }
       if *ptr as libc::c_int == '/' as i32 {
@@ -366,12 +366,12 @@ unsafe extern "C" fn ParseField(
       loop {
         n1 = (n1 + 1i32) % modvalue;
         s0 -= 1;
-        if s0 == 0i32 {
+        if s0 == 0 {
           *ary.offset((n1 % modvalue) as isize) = 1i32 as libc::c_char;
           s0 = skip
         }
         failsafe -= 1;
-        if failsafe == 0i32 {
+        if failsafe == 0 {
           current_block = 1165395826853565909;
           break 's_14;
         }
@@ -396,7 +396,7 @@ unsafe extern "C" fn ParseField(
           && logmode as libc::c_int != LOGMODE_SYSLOG as libc::c_int
         {
           let mut i_0: libc::c_int = 0;
-          i_0 = 0i32;
+          i_0 = 0;
           while i_0 < modvalue {
             fprintf(
               stderr,
@@ -420,26 +420,26 @@ unsafe extern "C" fn ParseField(
 }
 unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
   let mut i: libc::c_uint = 0;
-  let mut weekUsed: libc::c_int = 0i32;
-  let mut daysUsed: libc::c_int = 0i32;
-  i = 0i32 as libc::c_uint;
+  let mut weekUsed: libc::c_int = 0;
+  let mut daysUsed: libc::c_int = 0;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<libc::c_char>() as libc::c_ulong) as libc::c_uint
   {
-    if (*line).cl_Dow[i as usize] as libc::c_int == 0i32 {
+    if (*line).cl_Dow[i as usize] as libc::c_int == 0 {
       weekUsed = 1i32;
       break;
     } else {
       i = i.wrapping_add(1)
     }
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<libc::c_char>() as libc::c_ulong) as libc::c_uint
   {
-    if (*line).cl_Days[i as usize] as libc::c_int == 0i32 {
+    if (*line).cl_Days[i as usize] as libc::c_int == 0 {
       daysUsed = 1i32;
       break;
     } else {
@@ -450,14 +450,14 @@ unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
     if weekUsed != 0 {
       memset(
         (*line).cl_Days.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
       );
     } else {
       /* daysUsed */
       memset(
         (*line).cl_Dow.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong,
       );
     }
@@ -485,23 +485,23 @@ unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
 unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
   let mut pfile: *mut *mut CronFile =
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
-  let mut file: *mut CronFile = 0 as *mut CronFile;
+  let mut file: *mut CronFile = std::ptr::null_mut();
   loop {
     file = *pfile;
     if file.is_null() {
       break;
     }
-    if strcmp(userName, (*file).cf_username) == 0i32 {
+    if strcmp(userName, (*file).cf_username) == 0 {
       let mut pline: *mut *mut CronLine = &mut (*file).cf_lines;
-      let mut line: *mut CronLine = 0 as *mut CronLine;
-      (*file).cf_has_running = 0i32 as smallint;
+      let mut line: *mut CronLine = std::ptr::null_mut();
+      (*file).cf_has_running = 0 as smallint;
       (*file).cf_deleted = 1i32 as smallint;
       loop {
         line = *pline;
         if line.is_null() {
           break;
         }
-        if (*line).cl_pid > 0i32 {
+        if (*line).cl_pid > 0 {
           (*file).cf_has_running = 1i32 as smallint;
           pline = &mut (*line).cl_next
         } else {
@@ -510,7 +510,7 @@ unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
           free(line as *mut libc::c_void);
         }
       }
-      if (*file).cf_has_running as libc::c_int == 0i32 {
+      if (*file).cf_has_running as libc::c_int == 0 {
         *pfile = (*file).cf_next;
         free((*file).cf_username as *mut libc::c_void);
         free(file as *mut libc::c_void);
@@ -521,7 +521,7 @@ unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
   }
 }
 unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut sbuf: stat = std::mem::zeroed();
   let mut maxLines: libc::c_int = 0;
   let mut tokens: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
@@ -539,21 +539,20 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   if parser.is_null() {
     return;
   }
-  maxLines = if strcmp(fileName, b"root\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  maxLines = if strcmp(fileName, b"root\x00" as *const u8 as *const libc::c_char) == 0 {
     65535i32
   } else {
     256i32
   };
-  if fstat(fileno_unlocked((*parser).fp), &mut sbuf) == 0i32 && sbuf.st_uid == 0i32 as libc::c_uint
-  {
+  if fstat(fileno_unlocked((*parser).fp), &mut sbuf) == 0 && sbuf.st_uid == 0 as libc::c_uint {
     let mut file: *mut CronFile =
       xzalloc(::std::mem::size_of::<CronFile>() as libc::c_ulong) as *mut CronFile;
-    let mut pline: *mut *mut CronLine = 0 as *mut *mut CronLine;
+    let mut pline: *mut *mut CronLine = std::ptr::null_mut();
     let mut n: libc::c_int = 0;
     (*file).cf_username = xstrdup(fileName);
     pline = &mut (*file).cf_lines;
     's_80: loop {
-      let mut line: *mut CronLine = 0 as *mut CronLine;
+      let mut line: *mut CronLine = std::ptr::null_mut();
       maxLines -= 1;
       if maxLines == 0 {
         bb_error_msg(
@@ -678,7 +677,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
               continue;
             }
             loop {
-              if strcmp((*e).name, tokens[0].offset(1)) == 0i32 {
+              if strcmp((*e).name, tokens[0].offset(1)) == 0 {
                 /*
                  * tokens[1] is only the first word of command,
                  * can'r use it.
@@ -722,7 +721,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
               (*file).cf_username,
               (*line).cl_Mins.as_mut_ptr(),
               60i32,
-              0i32,
+              0,
               0 as *const libc::c_char,
               tokens[0],
             );
@@ -730,7 +729,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
               (*file).cf_username,
               (*line).cl_Hrs.as_mut_ptr(),
               24i32,
-              0i32,
+              0,
               0 as *const libc::c_char,
               tokens[1],
             );
@@ -738,7 +737,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
               (*file).cf_username,
               (*line).cl_Days.as_mut_ptr(),
               32i32,
-              0i32,
+              0,
               0 as *const libc::c_char,
               tokens[2],
             );
@@ -754,7 +753,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
               (*file).cf_username,
               (*line).cl_Dow.as_mut_ptr(),
               7i32,
-              0i32,
+              0,
               DowAry.as_ptr(),
               tokens[4],
             );
@@ -773,7 +772,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
         }
       }
     }
-    *pline = 0 as *mut CronLine;
+    *pline = std::ptr::null_mut();
     (*file).cf_next = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
     *fresh0 = file
@@ -783,7 +782,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   free(shell as *mut libc::c_void);
 }
 unsafe extern "C" fn process_cron_update_file() {
-  let mut fi: *mut FILE = 0 as *mut FILE;
+  let mut fi: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 256] = [0; 256];
   fi = fopen_for_read(b"cron.update\x00" as *const u8 as *const libc::c_char);
   if !fi.is_null() {
@@ -803,7 +802,7 @@ unsafe extern "C" fn process_cron_update_file() {
   };
 }
 unsafe extern "C" fn rescan_crontab_dir() {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
+  let mut file: *mut CronFile = std::ptr::null_mut();
   's_5: loop
   /* Delete all files until we only have ones with running jobs (or none) */
   {
@@ -826,7 +825,7 @@ unsafe extern "C" fn rescan_crontab_dir() {
   xchdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name);
   /* Scan directory and add associated users */
   let mut dir: *mut DIR = opendir(b".\x00" as *const u8 as *const libc::c_char);
-  let mut den: *mut dirent = 0 as *mut dirent;
+  let mut den: *mut dirent = std::ptr::null_mut();
   /* xopendir exists, but "can't open '.'" is not informative */
   if dir.is_null() {
     bb_error_msg_and_die(
@@ -889,7 +888,7 @@ unsafe extern "C" fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::
 unsafe extern "C" fn change_user(mut pas: *mut passwd) {
   /* careful: we're after vfork! */
   change_identity(pas); /* - initgroups, setgid, setuid */
-  if chdir((*pas).pw_dir) < 0i32 {
+  if chdir((*pas).pw_dir) < 0 {
     bb_error_msg(
       b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*pas).pw_dir,
@@ -905,9 +904,9 @@ unsafe extern "C" fn fork_job(
   mut run_sendmail: bool,
 ) -> pid_t {
   let mut current_block: u64;
-  let mut pas: *mut passwd = 0 as *mut passwd;
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
-  let mut prog: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pas: *mut passwd = std::ptr::null_mut();
+  let mut shell: *const libc::c_char = std::ptr::null();
+  let mut prog: *const libc::c_char = std::ptr::null();
   let mut sv_logmode: smallint = 0;
   let mut pid: pid_t = 0;
   /* prepare things before vfork */
@@ -932,7 +931,7 @@ unsafe extern "C" fn fork_job(
     set_env_vars(pas, shell);
     sv_logmode = logmode;
     pid = vfork();
-    if pid == 0i32 {
+    if pid == 0 {
       /* CHILD */
       /* initgroups, setgid, setuid, and chdir to home or CRON_DIR */
       change_user(pas);
@@ -940,11 +939,11 @@ unsafe extern "C" fn fork_job(
         b"child running %s\x00" as *const u8 as *const libc::c_char,
         prog,
       );
-      if mailFd >= 0i32 {
+      if mailFd >= 0 {
         xmove_fd(
           mailFd,
           if run_sendmail as libc::c_int != 0 {
-            0i32
+            0
           } else {
             1i32
           },
@@ -981,7 +980,7 @@ unsafe extern "C" fn fork_job(
       );
     }
     logmode = sv_logmode;
-    if pid < 0i32 {
+    if pid < 0 {
       bb_simple_perror_msg(b"vfork\x00" as *const u8 as *const libc::c_char);
       current_block = 12835897963350252569;
     } else {
@@ -989,14 +988,14 @@ unsafe extern "C" fn fork_job(
     }
   }
   match current_block {
-    12835897963350252569 => pid = 0i32,
+    12835897963350252569 => pid = 0,
     _ => {}
   }
   /*
    * Close the mail file descriptor.. we can't just leave it open in
    * a structure, closing it later, because we might run out of descriptors
    */
-  if mailFd >= 0i32 {
+  if mailFd >= 0 {
     close(mailFd);
   }
   return pid;
@@ -1007,8 +1006,8 @@ unsafe extern "C" fn start_one_job(
 ) -> pid_t {
   let mut mailFile: [libc::c_char; 128] = [0; 128];
   let mut mailFd: libc::c_int = -1i32;
-  (*line).cl_pid = 0i32;
-  (*line).cl_empty_mail_size = 0i32;
+  (*line).cl_pid = 0;
+  (*line).cl_empty_mail_size = 0;
   if !(*line).cl_mailto.is_null() {
     /* Open mail file (owner is root so nobody can screw with it) */
     snprintf(
@@ -1024,14 +1023,14 @@ unsafe extern "C" fn start_one_job(
       0o100i32 | 0o1000i32 | 0o1i32 | 0o200i32 | 0o2000i32,
       0o600i32,
     );
-    if mailFd >= 0i32 {
+    if mailFd >= 0 {
       dprintf(
         mailFd,
         b"To: %s\nSubject: cron: %s\n\n\x00" as *const u8 as *const libc::c_char,
         (*line).cl_mailto,
         (*line).cl_cmd,
       );
-      (*line).cl_empty_mail_size = lseek(mailFd, 0i32 as off64_t, 1i32) as libc::c_int
+      (*line).cl_empty_mail_size = lseek(mailFd, 0 as off64_t, 1i32) as libc::c_int
     } else {
       bb_error_msg(
         b"can\'t create mail file %s for user %s, discarding output\x00" as *const u8
@@ -1041,9 +1040,9 @@ unsafe extern "C" fn start_one_job(
       );
     }
   }
-  (*line).cl_pid = fork_job(user, mailFd, line, 0i32 != 0);
-  if mailFd >= 0i32 {
-    if (*line).cl_pid <= 0i32 {
+  (*line).cl_pid = fork_job(user, mailFd, line, 0 != 0);
+  if mailFd >= 0 {
+    if (*line).cl_pid <= 0 {
       unlink(mailFile.as_mut_ptr());
     } else {
       /* rename mail-file based on pid of process */
@@ -1068,12 +1067,12 @@ unsafe extern "C" fn process_finished_job(mut user: *const libc::c_char, mut lin
   let mut mailFile: [libc::c_char; 128] = [0; 128];
   let mut sbuf: stat = std::mem::zeroed();
   pid = (*line).cl_pid;
-  (*line).cl_pid = 0i32;
-  if pid <= 0i32 {
+  (*line).cl_pid = 0;
+  if pid <= 0 {
     /* No job */
     return;
   }
-  if (*line).cl_empty_mail_size <= 0i32 {
+  if (*line).cl_empty_mail_size <= 0 {
     /* End of job and no mail file, or end of sendmail job */
     return;
   }
@@ -1089,21 +1088,21 @@ unsafe extern "C" fn process_finished_job(mut user: *const libc::c_char, mut lin
     user,
     pid,
   );
-  mailFd = open(mailFile.as_mut_ptr(), 0i32);
+  mailFd = open(mailFile.as_mut_ptr(), 0);
   unlink(mailFile.as_mut_ptr());
-  if mailFd < 0i32 {
+  if mailFd < 0 {
     return;
   }
-  if fstat(mailFd, &mut sbuf) < 0i32
-    || sbuf.st_uid != 0i32 as libc::c_uint
-    || sbuf.st_nlink != 0i32 as libc::c_ulong
+  if fstat(mailFd, &mut sbuf) < 0
+    || sbuf.st_uid != 0 as libc::c_uint
+    || sbuf.st_nlink != 0 as libc::c_ulong
     || sbuf.st_size == (*line).cl_empty_mail_size as libc::c_long
     || !(sbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
     close(mailFd);
     return;
   }
-  (*line).cl_empty_mail_size = 0i32;
+  (*line).cl_empty_mail_size = 0;
   /* if (line->cl_mailto) - always true if cl_empty_mail_size was nonzero */
   (*line).cl_pid = fork_job(user, mailFd, line, 1i32 != 0);
 }
@@ -1119,9 +1118,9 @@ unsafe extern "C" fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
   /* Find jobs > t1 and <= t2 */
   t = t1 - t1 % 60i32 as libc::c_long;
   while t <= t2 {
-    let mut ptm: *mut tm = 0 as *mut tm;
-    let mut file: *mut CronFile = 0 as *mut CronFile;
-    let mut line: *mut CronLine = 0 as *mut CronLine;
+    let mut ptm: *mut tm = std::ptr::null_mut();
+    let mut file: *mut CronFile = std::ptr::null_mut();
+    let mut line: *mut CronLine = std::ptr::null_mut();
     if !(t <= t1) {
       ptm = localtime(&mut t);
       file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
@@ -1148,13 +1147,13 @@ unsafe extern "C" fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
                 (*line).cl_pid,
                 (*line).cl_cmd,
               );
-              if (*line).cl_pid > 0i32 {
+              if (*line).cl_pid > 0 {
                 log8(
                   b"user %s: process already running: %s\x00" as *const u8 as *const libc::c_char,
                   (*file).cf_username,
                   (*line).cl_cmd,
                 );
-              } else if (*line).cl_pid == 0i32 {
+              } else if (*line).cl_pid == 0 {
                 (*line).cl_pid = -1i32;
                 (*file).cf_wants_starting = 1i32 as smallint
               }
@@ -1172,22 +1171,22 @@ unsafe extern "C" fn touch_reboot_file() -> libc::c_int {
   let mut fd: libc::c_int = open(
     b"/var/run/crond.reboot\x00" as *const u8 as *const libc::c_char,
     0o1i32 | 0o100i32 | 0o200i32 | 0o1000i32,
-    0i32,
+    0,
   );
-  if fd >= 0i32 {
+  if fd >= 0 {
     close(fd);
     return 1i32;
   }
   /* File (presumably) exists - this is not the first run after reboot */
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
-  let mut line: *mut CronLine = 0 as *mut CronLine;
+  let mut file: *mut CronFile = std::ptr::null_mut();
+  let mut line: *mut CronLine = std::ptr::null_mut();
   file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
   while !file.is_null() {
     if !((*file).cf_wants_starting == 0) {
-      (*file).cf_wants_starting = 0i32 as smallint;
+      (*file).cf_wants_starting = 0 as smallint;
       line = (*file).cf_lines;
       while !line.is_null() {
         let mut pid: pid_t = 0;
@@ -1199,10 +1198,10 @@ unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
             pid,
             (*line).cl_cmd,
           );
-          if pid < 0i32 {
+          if pid < 0 {
             (*file).cf_wants_starting = 1i32 as smallint
           }
-          if pid > 0i32 {
+          if pid > 0 {
             (*file).cf_has_running = 1i32 as smallint
           }
         }
@@ -1217,22 +1216,22 @@ unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
  * all done.
  */
 unsafe extern "C" fn check_completions() -> libc::c_int {
-  let mut file: *mut CronFile = 0 as *mut CronFile;
-  let mut line: *mut CronLine = 0 as *mut CronLine;
-  let mut num_still_running: libc::c_int = 0i32;
+  let mut file: *mut CronFile = std::ptr::null_mut();
+  let mut line: *mut CronLine = std::ptr::null_mut();
+  let mut num_still_running: libc::c_int = 0;
   file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
   while !file.is_null() {
     if !((*file).cf_has_running == 0) {
-      (*file).cf_has_running = 0i32 as smallint;
+      (*file).cf_has_running = 0 as smallint;
       let mut current_block_5: u64;
       line = (*file).cf_lines;
       while !line.is_null() {
         let mut r: libc::c_int = 0;
-        if !((*line).cl_pid <= 0i32) {
+        if !((*line).cl_pid <= 0) {
           r = waitpid((*line).cl_pid, 0 as *mut libc::c_int, 1i32);
-          if r < 0i32 || r == (*line).cl_pid {
+          if r < 0 || r == (*line).cl_pid {
             process_finished_job((*file).cf_username, line);
-            if (*line).cl_pid == 0i32 {
+            if (*line).cl_pid == 0 {
               current_block_5 = 2473556513754201174;
             } else {
               current_block_5 = 12349973810996921269;
@@ -1269,7 +1268,7 @@ unsafe extern "C" fn reopen_logfile_to_stderr() {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).log_filename,
       0o1i32 | 0o100i32 | 0o2000i32,
     );
-    if logfd >= 0i32 {
+    if logfd >= 0 {
       xmove_fd(logfd, 2i32);
     }
   };
@@ -1365,16 +1364,16 @@ pub unsafe extern "C" fn crond_main(
     if stat(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name,
       &mut sbuf,
-    ) != 0i32
+    ) != 0
     {
-      sbuf.st_mtime = 0i32 as time_t
+      sbuf.st_mtime = 0 as time_t
     } /* force update (once) if dir was deleted */
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime != sbuf.st_mtime {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_mtime = sbuf.st_mtime;
       rescan = 1i32 as libc::c_uint
     }
     rescan = rescan.wrapping_sub(1);
-    if rescan == 0i32 as libc::c_uint {
+    if rescan == 0 as libc::c_uint {
       rescan = 60i32 as libc::c_uint;
       rescan_crontab_dir();
     }
@@ -1391,7 +1390,7 @@ pub unsafe extern "C" fn crond_main(
       flag_starting_jobs(t1, t2);
       start_jobs(-1i32);
       sleep_time = 60i32 as libc::c_uint;
-      if check_completions() > 0i32 {
+      if check_completions() > 0 {
         /* some jobs are still running */
         sleep_time = 10i32 as libc::c_uint
       }

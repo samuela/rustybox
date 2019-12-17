@@ -81,50 +81,50 @@ static mut bdcmd_names: [libc::c_char; 82] = [
   102, 108, 117, 115, 104, 98, 117, 102, 115, 0, 114, 101, 114, 101, 97, 100, 112, 116, 0, 0,
 ];
 static mut bdcmd_ioctl: [u32; 11] = [
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (93i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (93i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (94i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (104i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (112i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
-  ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (113i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
-  ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (96i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (114i32 << 0i32) as libc::c_uint) as libc::c_ulong
-    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0i32 + 8i32 + 8i32) as u32,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (97i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
-  0u32 << 0i32 + 8i32 + 8i32 + 14i32
-    | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-    | (95i32 << 0i32) as libc::c_uint
-    | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (93i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (93i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (94i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (104i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  ((2u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (112i32 << 0) as libc::c_uint) as libc::c_ulong
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32) as u32,
+  ((1u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (113i32 << 0) as libc::c_uint) as libc::c_ulong
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32) as u32,
+  ((2u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (114i32 << 0) as libc::c_uint) as libc::c_ulong
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32) as u32,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (96i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  ((2u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (114i32 << 0) as libc::c_uint) as libc::c_ulong
+    | (::std::mem::size_of::<size_t>() as libc::c_ulong) << 0 + 8i32 + 8i32) as u32,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (97i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
+  0u32 << 0 + 8i32 + 8i32 + 14i32
+    | (0x12i32 << 0 + 8i32) as libc::c_uint
+    | (95i32 << 0) as libc::c_uint
+    | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
 ];
 static mut bdcmd_flags: [u8; 11] = [
   (ARG_INT as libc::c_int + FL_NORESULT as libc::c_int) as u8,
@@ -142,7 +142,7 @@ static mut bdcmd_flags: [u8; 11] = [
 unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
   if *s.offset(0) as libc::c_int == '-' as i32 && *s.offset(1) as libc::c_int == '-' as i32 {
     let mut n: libc::c_int = index_in_strings(bdcmd_names.as_ptr(), s.offset(2));
-    if n >= 0i32 {
+    if n >= 0 {
       return n as libc::c_uint;
     }
   }
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn blockdev_main(
   bdcmd = find_cmd(*argv);
   /* setrw translates to BLKROSET(0), most other ioctls don't care... */
   /* ...setro will do BLKROSET(1) */
-  u64 = (bdcmd == 0i32 as libc::c_uint) as libc::c_int as u64;
+  u64 = (bdcmd == 0 as libc::c_uint) as libc::c_int as u64;
   if bdcmd == 5i32 as libc::c_uint {
     /* ...setbsz is BLKBSZSET(bytes) */
     argv = argv.offset(1);
@@ -176,7 +176,7 @@ pub unsafe extern "C" fn blockdev_main(
   if (*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null() {
     bb_show_usage();
   }
-  fd = xopen(*argv.offset(0), 0i32);
+  fd = xopen(*argv.offset(0), 0);
   ioctl_val_on_stack.u64_0 = u64;
   flags = bdcmd_flags[bdcmd as usize] as libc::c_uint;
   if ioctl(
@@ -227,5 +227,5 @@ pub unsafe extern "C" fn blockdev_main(
     }
     _ => {}
   }
-  return 0i32;
+  return 0;
 }

@@ -210,7 +210,7 @@ pub unsafe extern "C" fn send_to_from(
     msg_flags: 0,
   };
   let mut u: C2RustUnnamed_1 = C2RustUnnamed_1 { cmsg: [0; 32] };
-  let mut cmsgptr: *mut cmsghdr = 0 as *mut cmsghdr;
+  let mut cmsgptr: *mut cmsghdr = std::ptr::null_mut();
   if (*from).sa_family as libc::c_int != 2i32 && (*from).sa_family as libc::c_int != 10i32 {
     /* ANY local address */
     return sendto(
@@ -227,12 +227,12 @@ pub unsafe extern "C" fn send_to_from(
   iov[0].iov_len = len;
   memset(
     &mut u as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   memset(
     &mut msg as *mut msghdr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<msghdr>() as libc::c_ulong,
   );
   msg.msg_name = to as *mut sockaddr as *mut libc::c_void;
@@ -254,7 +254,7 @@ pub unsafe extern "C" fn send_to_from(
    * of received packet (our local address) was IPv4.
    */
   if (*from).sa_family as libc::c_int == 2i32 {
-    let mut pktptr: *mut in_pktinfo = 0 as *mut in_pktinfo;
+    let mut pktptr: *mut in_pktinfo = std::ptr::null_mut();
     (*cmsgptr).cmsg_level = IPPROTO_IP as libc::c_int;
     (*cmsgptr).cmsg_type = 8i32;
     (*cmsgptr).cmsg_len = ((::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
@@ -272,7 +272,7 @@ pub unsafe extern "C" fn send_to_from(
      */
     (*pktptr).ipi_spec_dst = (*(from as *mut sockaddr_in)).sin_addr
   } else if (*from).sa_family as libc::c_int == 10i32 {
-    let mut pktptr_0: *mut in6_pktinfo = 0 as *mut in6_pktinfo;
+    let mut pktptr_0: *mut in6_pktinfo = std::ptr::null_mut();
     (*cmsgptr).cmsg_level = IPPROTO_IPV6 as libc::c_int;
     (*cmsgptr).cmsg_type = 50i32;
     (*cmsgptr).cmsg_len = ((::std::mem::size_of::<cmsghdr>() as libc::c_ulong)
@@ -520,7 +520,7 @@ pub unsafe extern "C" fn recv_from_to(
     iov_len: 0,
   }; 1];
   let mut u: C2RustUnnamed_2 = C2RustUnnamed_2 { cmsg: [0; 32] };
-  let mut cmsgptr: *mut cmsghdr = 0 as *mut cmsghdr;
+  let mut cmsgptr: *mut cmsghdr = std::ptr::null_mut();
   let mut msg: msghdr = msghdr {
     msg_name: 0 as *mut libc::c_void,
     msg_namelen: 0,
@@ -535,7 +535,7 @@ pub unsafe extern "C" fn recv_from_to(
   iov[0].iov_len = len;
   memset(
     &mut msg as *mut msghdr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<msghdr>() as libc::c_ulong,
   );
   msg.msg_name = from as *mut libc::c_void;

@@ -97,8 +97,8 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_p_proto: C2RustUnnamed = 1;
 unsafe extern "C" fn tcsetattr_serial_or_warn(mut state: *mut termios) -> libc::c_int {
   let mut ret: libc::c_int = 0;
-  ret = tcsetattr(3i32, 0i32, state);
-  if ret != 0i32 {
+  ret = tcsetattr(3i32, 0, state);
+  if ret != 0 {
     bb_simple_perror_msg(b"tcsetattr\x00" as *const u8 as *const libc::c_char);
     return 1i32;
     /* used as exitcode */
@@ -135,8 +135,8 @@ unsafe extern "C" fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
       as *const libc::c_void,
     ::std::mem::size_of::<termios>() as libc::c_ulong,
   );
-  cfsetispeed(&mut state, 0i32 as speed_t);
-  cfsetospeed(&mut state, 0i32 as speed_t);
+  cfsetispeed(&mut state, 0 as speed_t);
+  cfsetospeed(&mut state, 0 as speed_t);
   exitcode |= tcsetattr_serial_or_warn(&mut state);
   sleep(1i32 as libc::c_uint);
   /* Restore line status */
@@ -176,8 +176,8 @@ pub unsafe extern "C" fn slattach_main(
   };
   let mut proto: *const libc::c_char = b"cslip\x00" as *const u8 as *const libc::c_char;
   /* 8 */
-  let mut extcmd: *const libc::c_char = 0 as *const libc::c_char; /* Command to execute after hangup */
-  let mut baud_str: *const libc::c_char = 0 as *const libc::c_char; /* for compiler */
+  let mut extcmd: *const libc::c_char = std::ptr::null(); /* Command to execute after hangup */
+  let mut baud_str: *const libc::c_char = std::ptr::null(); /* for compiler */
   let mut baud_code: libc::c_int = 0;
   baud_code = baud_code;
   /* Parse command line options */
@@ -191,7 +191,7 @@ pub unsafe extern "C" fn slattach_main(
   /*argc -= optind;*/
   argv = argv.offset(optind as isize);
   encap = index_in_strings(proto_names.as_ptr(), proto);
-  if encap < 0i32 {
+  if encap < 0 {
     invarg_1_to_2(proto, b"protocol\x00" as *const u8 as *const libc::c_char);
   }
   if encap > 3i32 {
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn slattach_main(
   /* We want to know if the baud rate is valid before we start touching the ttys */
   if opt & OPT_s_baud as libc::c_int != 0 {
     baud_code = tty_value_to_baud(xatoi(baud_str) as libc::c_uint) as libc::c_int;
-    if baud_code < 0i32 {
+    if baud_code < 0 {
       invarg_1_to_2(
         baud_str,
         b"baud rate\x00" as *const u8 as *const libc::c_char,
@@ -209,7 +209,7 @@ pub unsafe extern "C" fn slattach_main(
   }
   /* Open tty */
   fd = open(*argv, 0o2i32 | 0o4000i32);
-  if fd < 0i32 {
+  if fd < 0 {
     let mut buf: *mut libc::c_char =
       concat_path_file(b"/dev\x00" as *const u8 as *const libc::c_char, *argv);
     fd = xopen(buf, 0o2i32 | 0o4000i32);
@@ -221,7 +221,7 @@ pub unsafe extern "C" fn slattach_main(
   if tcgetattr(
     3i32,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).saved_state,
-  ) != 0i32
+  ) != 0
   {
     bb_simple_perror_msg_and_die(b"tcgetattr\x00" as *const u8 as *const libc::c_char);
   }
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn slattach_main(
   /* Trap signals in order to restore tty states upon exit */
   if opt & OPT_e_quit as libc::c_int == 0 {
     bb_signals(
-      0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
+      0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
       Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
   }
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn slattach_main(
     /* raw not suppressed */
     memset(
       &mut state.c_cc as *mut [cc_t; 32] as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[cc_t; 32]>() as libc::c_ulong,
     );
     state.c_cc[6] = 1i32 as cc_t;
@@ -264,10 +264,10 @@ pub unsafe extern "C" fn slattach_main(
       | (if opt & OPT_L_local as libc::c_int != 0 {
         0o4000i32
       } else {
-        0i32
+        0
       })) as libc::c_uint
       | (if opt & OPT_F_noflow as libc::c_int != 0 {
-        0i32 as libc::c_uint
+        0 as libc::c_uint
       } else {
         0o20000000000u32
       });
@@ -304,7 +304,7 @@ pub unsafe extern "C" fn slattach_main(
       {
         /* Exit now if option -e was passed */
         if opt & OPT_e_quit as libc::c_int != 0 {
-          return 0i32;
+          return 0;
         }
         /* If we're not requested to watch, just keep descriptor open
          * until we are killed */

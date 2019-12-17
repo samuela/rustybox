@@ -74,7 +74,7 @@ unsafe extern "C" fn rtnl_tab_initialize(
 ) {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut fullname: [libc::c_char; 33] = [0; 33];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   sprintf(
     fullname.as_mut_ptr(),
     b"/etc/iproute2/rt_%s\x00" as *const u8 as *const libc::c_char,
@@ -91,7 +91,7 @@ unsafe extern "C" fn rtnl_tab_initialize(
     b"# \t\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    let mut id: libc::c_uint = bb_strtou(token[0], 0 as *mut *mut libc::c_char, 0i32);
+    let mut id: libc::c_uint = bb_strtou(token[0], 0 as *mut *mut libc::c_char, 0);
     if id > 1023i32 as libc::c_uint {
       bb_error_msg(
         b"database %s is corrupted at line %d\x00" as *const u8 as *const libc::c_char,
@@ -113,17 +113,17 @@ unsafe extern "C" fn rtnl_a2n(
   mut base: libc::c_int,
 ) -> libc::c_int {
   let mut i: libc::c_uint = 0;
-  if !(*tab).cached_str.is_null() && strcmp((*tab).cached_str, arg) == 0i32 {
+  if !(*tab).cached_str.is_null() && strcmp((*tab).cached_str, arg) == 0 {
     *id = (*tab).cached_result;
-    return 0i32;
+    return 0;
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i <= 1023i32 as libc::c_uint {
-    if !(*tab).tab[i as usize].is_null() && strcmp((*tab).tab[i as usize], arg) == 0i32 {
+    if !(*tab).tab[i as usize].is_null() && strcmp((*tab).tab[i as usize], arg) == 0 {
       (*tab).cached_str = (*tab).tab[i as usize];
       (*tab).cached_result = i;
       *id = i;
-      return 0i32;
+      return 0;
     }
     i = i.wrapping_add(1)
   }
@@ -132,7 +132,7 @@ unsafe extern "C" fn rtnl_a2n(
     return -1i32;
   }
   *id = i;
-  return 0i32;
+  return 0;
 }
 static mut rtnl_rtprot_tab: *mut rtnl_tab_t = 0 as *const rtnl_tab_t as *mut rtnl_tab_t;
 unsafe extern "C" fn rtnl_rtprot_initialize() {
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn rtnl_rtprot_a2n(
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtprot_initialize();
-  return rtnl_a2n(rtnl_rtprot_tab, id, arg, 0i32);
+  return rtnl_a2n(rtnl_rtprot_tab, id, arg, 0);
 }
 static mut rtnl_rtscope_tab: *mut rtnl_tab_t = 0 as *const rtnl_tab_t as *mut rtnl_tab_t;
 unsafe extern "C" fn rtnl_rtscope_initialize() {
@@ -194,7 +194,7 @@ unsafe extern "C" fn rtnl_rtscope_initialize() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rtscope_n2a(mut id: libc::c_int) -> *const libc::c_char {
-  if id < 0i32 || id > 1023i32 {
+  if id < 0 || id > 1023i32 {
     return itoa(id);
   }
   rtnl_rtscope_initialize();
@@ -209,7 +209,7 @@ pub unsafe extern "C" fn rtnl_rtscope_a2n(
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtscope_initialize();
-  return rtnl_a2n(rtnl_rtscope_tab, id, arg, 0i32);
+  return rtnl_a2n(rtnl_rtscope_tab, id, arg, 0);
 }
 static mut rtnl_rtrealm_tab: *mut rtnl_tab_t = 0 as *const rtnl_tab_t as *mut rtnl_tab_t;
 unsafe extern "C" fn rtnl_rtrealm_initialize() {
@@ -230,11 +230,11 @@ pub unsafe extern "C" fn rtnl_rtrealm_a2n(
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rtrealm_initialize();
-  return rtnl_a2n(rtnl_rtrealm_tab, id, arg, 0i32);
+  return rtnl_a2n(rtnl_rtrealm_tab, id, arg, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rtrealm_n2a(mut id: libc::c_int) -> *const libc::c_char {
-  if id < 0i32 || id > 1023i32 {
+  if id < 0 || id > 1023i32 {
     return itoa(id);
   }
   rtnl_rtrealm_initialize();
@@ -258,7 +258,7 @@ unsafe extern "C" fn rtnl_rtdsfield_initialize() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_dsfield_n2a(mut id: libc::c_int) -> *const libc::c_char {
-  if id < 0i32 || id > 1023i32 {
+  if id < 0 || id > 1023i32 {
     return itoa(id);
   }
   rtnl_rtdsfield_initialize();
@@ -293,7 +293,7 @@ unsafe extern "C" fn rtnl_rttable_initialize() {
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_rttable_n2a(mut id: libc::c_int) -> *const libc::c_char {
-  if id < 0i32 || id > 1023i32 {
+  if id < 0 || id > 1023i32 {
     return itoa(id);
   }
   rtnl_rttable_initialize();
@@ -308,5 +308,5 @@ pub unsafe extern "C" fn rtnl_rttable_a2n(
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
   rtnl_rttable_initialize();
-  return rtnl_a2n(rtnl_rttable_tab, id, arg, 0i32);
+  return rtnl_a2n(rtnl_rttable_tab, id, arg, 0);
 }

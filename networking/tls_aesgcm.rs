@@ -27,7 +27,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   let mut carryIn: libc::c_ulong = if *x.offset(15) as libc::c_int & 0x1i32 != 0 {
     (0xe1i32 as libc::c_ulong) << 64i32 - 8i32
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   };
   // 64-bit code: need to process only 2 words
   let mut tt: libc::c_ulong = {
@@ -131,11 +131,11 @@ unsafe extern "C" fn GMULT(mut X: *mut byte, mut Y: *mut byte) {
   let mut i: libc::c_int = 0;
   memset(
     Z.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     16i32 as libc::c_ulong,
   );
   //XMEMCPY(V, X, AES_BLOCK_SIZE);
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     let mut y: u32 = (0x800000i32 | *Y.offset(i as isize) as libc::c_int) as u32;
     loop {
@@ -149,7 +149,7 @@ unsafe extern "C" fn GMULT(mut X: *mut byte, mut Y: *mut byte) {
       } // was V, not X
       RIGHTSHIFTX(X);
       y = y << 1i32;
-      if (y as i32) < 0i32 {
+      if (y as i32) < 0 {
         break;
       }
     }
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
   //        }
   //    }
   /* Hash in C, the Ciphertext */
-  if cSz != 0i32 as libc::c_uint {
+  if cSz != 0 as libc::c_uint {
     /*&& c != NULL*/
     blocks = cSz.wrapping_div(16i32 as libc::c_uint);
     partial = cSz.wrapping_rem(16i32 as libc::c_uint);
@@ -222,7 +222,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       GMULT(x.as_mut_ptr(), h);
       c = c.offset(16)
     }
-    if partial != 0i32 as libc::c_uint {
+    if partial != 0 as libc::c_uint {
       //XMEMSET(scratch, 0, AES_BLOCK_SIZE);
       //XMEMCPY(scratch, c, partial);
       //xorbuf(x, scratch, AES_BLOCK_SIZE);

@@ -34,7 +34,7 @@ pub type C2RustUnnamed = libc::c_uint;
 static mut speeds: [speed_map; 31] = [speed_map { speed: 0, value: 0 }; 31];
 #[no_mangle]
 pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   loop {
     if speed == speeds[i as usize].speed as libc::c_uint {
       if speeds[i as usize].value as libc::c_uint & 0x8000u32 != 0 {
@@ -48,7 +48,7 @@ pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
       break;
     }
   }
-  return 0i32 as libc::c_uint;
+  return 0 as libc::c_uint;
 }
 
 /*
@@ -446,7 +446,7 @@ pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
 /* This structure defines hardware protocols and their handlers. */
 #[no_mangle]
 pub unsafe extern "C" fn tty_value_to_baud(mut value: libc::c_uint) -> speed_t {
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   loop {
     if value == tty_baud_to_value(speeds[i as usize].speed as speed_t) {
       return speeds[i as usize].speed as speed_t;
@@ -462,8 +462,8 @@ unsafe extern "C" fn run_static_initializers() {
   speeds = [
     {
       let mut init = speed_map {
-        speed: 0i32 as libc::c_ushort,
-        value: 0i32 as libc::c_ushort,
+        speed: 0 as libc::c_ushort,
+        value: 0 as libc::c_ushort,
       };
       init
     },

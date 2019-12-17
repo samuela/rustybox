@@ -355,7 +355,7 @@ unsafe extern "C" fn send_pack(
   let mut err: libc::c_int = 0;
   let mut buf: [libc::c_uchar; 256] = [0; 256];
   let mut ah: *mut arphdr = buf.as_mut_ptr() as *mut arphdr;
-  let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut p: *mut libc::c_uchar = std::ptr::null_mut();
   (*ah).ar_hrd = {
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = 1i32 as libc::c_ushort;
@@ -462,7 +462,7 @@ unsafe extern "C" fn send_pack(
     3i32,
     buf.as_mut_ptr() as *const libc::c_void,
     p.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long as size_t,
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: HE as *mut sockaddr,
     },
@@ -496,20 +496,20 @@ unsafe extern "C" fn finish() -> ! {
 unsafe extern "C" fn catcher() {
   let mut now: libc::c_uint = 0;
   now = monotonic_us() as libc::c_uint;
-  if (*ptr_to_globals).start == 0i32 as libc::c_uint {
+  if (*ptr_to_globals).start == 0 as libc::c_uint {
     (*ptr_to_globals).start = now
   }
-  if (*ptr_to_globals).count == 0i32
+  if (*ptr_to_globals).count == 0
     || (*ptr_to_globals).timeout_us != 0
       && now.wrapping_sub((*ptr_to_globals).start) > (*ptr_to_globals).timeout_us
   {
     finish();
   }
   /* count < 0 means "infinite count" */
-  if (*ptr_to_globals).count > 0i32 {
+  if (*ptr_to_globals).count > 0 {
     (*ptr_to_globals).count -= 1
   }
-  if (*ptr_to_globals).last == 0i32 as libc::c_uint
+  if (*ptr_to_globals).last == 0 as libc::c_uint
     || now.wrapping_sub((*ptr_to_globals).last) > 500000i32 as libc::c_uint
   {
     send_pack(
@@ -518,7 +518,7 @@ unsafe extern "C" fn catcher() {
       &mut (*ptr_to_globals).me,
       &mut (*ptr_to_globals).he,
     );
-    if (*ptr_to_globals).count == 0i32
+    if (*ptr_to_globals).count == 0
       && option_mask32 & UNSOLICITED as libc::c_int as libc::c_uint != 0
     {
       finish();
@@ -537,7 +537,7 @@ unsafe extern "C" fn recv_pack(
   let mut dst_ip: in_addr = in_addr { s_addr: 0 };
   /* moves below assume in_addr is 4 bytes big, ensure that */
   /* Filter out wild packets */
-  if (*FROM).sll_pkttype as libc::c_int != 0i32
+  if (*FROM).sll_pkttype as libc::c_int != 0
     && (*FROM).sll_pkttype as libc::c_int != 1i32
     && (*FROM).sll_pkttype as libc::c_int != 2i32
   {
@@ -674,13 +674,13 @@ unsafe extern "C" fn recv_pack(
     p as *const libc::c_void,
     &mut (*ptr_to_globals).me.sll_addr as *mut [libc::c_uchar; 8] as *const libc::c_void,
     (*ptr_to_globals).me.sll_halen as libc::c_ulong,
-  ) == 0i32
+  ) == 0
     || (*ptr_to_globals).src.s_addr != 0 && (*ptr_to_globals).src.s_addr != dst_ip.s_addr
   {
     return;
   }
   if option_mask32 & QUIET as libc::c_int as libc::c_uint == 0 {
-    let mut s_printed: libc::c_int = 0i32;
+    let mut s_printed: libc::c_int = 0;
     /* DAD packet was:
       src_ip = 0 (or some src)
       src_hw = ME
@@ -698,7 +698,7 @@ unsafe extern "C" fn recv_pack(
     printf(
       b"%scast re%s from %s [%02x:%02x:%02x:%02x:%02x:%02x]\x00" as *const u8
         as *const libc::c_char,
-      if (*FROM).sll_pkttype as libc::c_int == 0i32 {
+      if (*FROM).sll_pkttype as libc::c_int == 0 {
         b"Uni\x00" as *const u8 as *const libc::c_char
       } else {
         b"Broad\x00" as *const u8 as *const libc::c_char
@@ -775,7 +775,7 @@ unsafe extern "C" fn recv_pack(
     fflush_all();
   }
   (*ptr_to_globals).received = (*ptr_to_globals).received.wrapping_add(1);
-  if (*FROM).sll_pkttype as libc::c_int != 0i32 {
+  if (*FROM).sll_pkttype as libc::c_int != 0 {
     (*ptr_to_globals).brd_recv = (*ptr_to_globals).brd_recv.wrapping_add(1)
   }
   if (*ah).ar_op as libc::c_int
@@ -826,7 +826,7 @@ pub unsafe extern "C" fn arping_main(
   *fresh33 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).count = -1i32;
-  xmove_fd(xsocket(17i32, SOCK_DGRAM as libc::c_int, 0i32), 3i32);
+  xmove_fd(xsocket(17i32, SOCK_DGRAM as libc::c_int, 0), 3i32);
   // If you ever change SUID_DROP to SUID_REQUIRE,
   // drop suid root privileges here:
   //xsetuid(getuid());
@@ -843,7 +843,7 @@ pub unsafe extern "C" fn arping_main(
   if opt & TIMEOUT as libc::c_int as libc::c_uint != 0 {
     (*ptr_to_globals).timeout_us = xatou_range(
       str_timeout,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       (2147483647i32 / 2000000i32) as libc::c_uint,
     )
     .wrapping_mul(1000000i32 as libc::c_uint)
@@ -889,8 +889,8 @@ pub unsafe extern "C" fn arping_main(
     return (!option_mask32 & DAD as libc::c_int as libc::c_uint) as libc::c_int;
   }
   /* if (!inet_aton(target, &dst)) - not needed */
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  lsa = xhost_and_af2sockaddr(target, 0i32, 2i32 as sa_family_t);
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  lsa = xhost_and_af2sockaddr(target, 0, 2i32 as sa_family_t);
   (*ptr_to_globals).dst = (*lsa).u.sin.sin_addr;
   if !source.is_null() && inet_aton(source, &mut (*ptr_to_globals).src) == 0 {
     bb_error_msg_and_die(
@@ -900,13 +900,13 @@ pub unsafe extern "C" fn arping_main(
   }
   if option_mask32 & (DAD as libc::c_int | UNSOLICITED as libc::c_int) as libc::c_uint
     == UNSOLICITED as libc::c_int as libc::c_uint
-    && (*ptr_to_globals).src.s_addr == 0i32 as libc::c_uint
+    && (*ptr_to_globals).src.s_addr == 0 as libc::c_uint
   {
     (*ptr_to_globals).src = (*ptr_to_globals).dst
   }
   if option_mask32 & DAD as libc::c_int as libc::c_uint == 0 || (*ptr_to_globals).src.s_addr != 0 {
     /*struct sockaddr_in probe_saddr;*/
-    let mut probe_fd: libc::c_int = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+    let mut probe_fd: libc::c_int = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
     setsockopt_bindtodevice(probe_fd, device);
     /*memset(&G.probe_saddr, 0, sizeof(G.probe_saddr)); - zeroed by INIT_G */
     (*ptr_to_globals).probe_saddr.sin_family = 2i32 as sa_family_t; /* !(option_mask32 & DAD) case */
@@ -938,7 +938,7 @@ pub unsafe extern "C" fn arping_main(
         __v
       };
       (*ptr_to_globals).probe_saddr.sin_addr = (*ptr_to_globals).dst;
-      if setsockopt_SOL_SOCKET_1(probe_fd, 5i32) != 0i32 {
+      if setsockopt_SOL_SOCKET_1(probe_fd, 5i32) != 0 {
         bb_perror_msg(
           b"setsockopt(%s)\x00" as *const u8 as *const libc::c_char,
           b"SO_DONTROUTE\x00" as *const u8 as *const libc::c_char,
@@ -996,7 +996,7 @@ pub unsafe extern "C" fn arping_main(
   //never happens:
   //if (getsockname(sock_fd, (struct sockaddr *) &me, &alen) == -1)
   //	bb_perror_msg_and_die("getsockname");
-  if (*ptr_to_globals).me.sll_halen as libc::c_int == 0i32 {
+  if (*ptr_to_globals).me.sll_halen as libc::c_int == 0 {
     bb_error_msg(
       err_str,
       b"is not ARPable (no ll address)\x00" as *const u8 as *const libc::c_char,
@@ -1062,7 +1062,7 @@ pub unsafe extern "C" fn arping_main(
       3i32,
       (*ptr_to_globals).packet.as_mut_ptr() as *mut libc::c_void,
       ::std::mem::size_of::<[libc::c_uchar; 4096]>() as libc::c_ulong,
-      0i32,
+      0,
       __SOCKADDR_ARG {
         __sockaddr__: &mut from as *mut sockaddr_ll as *mut sockaddr,
       },
@@ -1070,7 +1070,7 @@ pub unsafe extern "C" fn arping_main(
     ) as libc::c_int;
     /* Don't allow SIGALRMs while we process the reply */
     sigprocmask(0i32, &mut (*ptr_to_globals).sset, 0 as *mut sigset_t);
-    if cc < 0i32 {
+    if cc < 0 {
       bb_simple_perror_msg(b"recvfrom\x00" as *const u8 as *const libc::c_char);
     } else {
       recv_pack((*ptr_to_globals).packet.as_mut_ptr(), cc, &mut from);

@@ -160,7 +160,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
           }
         }
         n = n.wrapping_sub(1);
-        if !(n != 0i32 as libc::c_uint) {
+        if !(n != 0 as libc::c_uint) {
           current_block = 4808432441040389987;
           break;
         }
@@ -194,7 +194,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
              * hardlink2 -> hardlink1
              * hardlink1 -> hardlink1 <== !!!
              */
-            if strcmp(hard_link, dst_name) == 0i32 {
+            if strcmp(hard_link, dst_name) == 0 {
               current_block = 9521147444787763968;
             } else {
               current_block = 5494826135382683477;
@@ -299,7 +299,7 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
               }
               16384 => {
                 res = mkdir(dst_name, (*file_header).mode);
-                if res != 0i32 && *bb_errno != 21i32 && *bb_errno != 17i32 {
+                if res != 0 && *bb_errno != 21i32 && *bb_errno != 17i32 {
                   crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t make dir %s\x00" as *const u8 as *const libc::c_char,
                     dst_name,
@@ -334,12 +334,12 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
                   &mut (*archive_handle).link_placeholders,
                   (*file_header).link_target,
                   dst_name,
-                  0i32,
+                  0,
                 );
               }
               49152 | 24576 | 8192 | 4096 => {
                 res = mknod(dst_name, (*file_header).mode, (*file_header).device);
-                if res != 0i32 {
+                if res != 0 {
                   crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t create node %s\x00" as *const u8 as *const libc::c_char,
                     dst_name,
@@ -381,14 +381,14 @@ pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handl
               if (*archive_handle).ah_flags & (1i32 << 5i32) as libc::c_uint == 0 {
                 chmod(dst_name, (*file_header).mode);
               }
-              if (*archive_handle).ah_flags & (1i32 << 0i32) as libc::c_uint != 0 {
+              if (*archive_handle).ah_flags & (1i32 << 0) as libc::c_uint != 0 {
                 let mut t: [timeval; 2] = [timeval {
                   tv_sec: 0,
                   tv_usec: 0,
                 }; 2];
                 t[0].tv_sec = (*file_header).mtime;
                 t[1].tv_sec = t[0].tv_sec;
-                t[0].tv_usec = 0i32 as suseconds_t;
+                t[0].tv_usec = 0 as suseconds_t;
                 t[1].tv_usec = t[0].tv_usec;
                 utimes(dst_name, t.as_mut_ptr() as *const timeval);
               }

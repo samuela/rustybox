@@ -293,11 +293,11 @@ pub unsafe extern "C" fn safe_poll(
 ) -> libc::c_int {
   loop {
     let mut n: libc::c_int = poll(ufds, nfds, timeout);
-    if n >= 0i32 {
+    if n >= 0 {
       return n;
     }
     /* Make sure we inch towards completion */
-    if timeout > 0i32 {
+    if timeout > 0 {
       timeout -= 1
     }
     /* E.g. strace causes poll to return this */

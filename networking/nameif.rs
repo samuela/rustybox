@@ -222,8 +222,8 @@ unsafe extern "C" fn nameif_parse_selector(
   mut ch: *mut ethtable_t,
   mut selector: *mut libc::c_char,
 ) {
-  let mut lmac: *mut ether_addr = 0 as *mut ether_addr;
-  let mut found_selector: libc::c_int = 0i32;
+  let mut lmac: *mut ether_addr = std::ptr::null_mut();
+  let mut found_selector: libc::c_int = 0;
   while *selector != 0 {
     let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     selector = skip_whitespace(selector);
@@ -263,7 +263,7 @@ unsafe extern "C" fn nameif_parse_selector(
           {
             4i32
           } else {
-            0i32
+            0
           }) as isize,
         ),
         lmac,
@@ -278,7 +278,7 @@ unsafe extern "C" fn nameif_parse_selector(
     }
     selector = next
   }
-  if found_selector == 0i32 {
+  if found_selector == 0 {
     bb_error_msg_and_die(
       b"no selectors found for %s\x00" as *const u8 as *const libc::c_char,
       (*ch).ifname,
@@ -290,7 +290,7 @@ unsafe extern "C" fn prepend_new_eth_table(
   mut ifname: *mut libc::c_char,
   mut selector: *mut libc::c_char,
 ) {
-  let mut ch: *mut ethtable_t = 0 as *mut ethtable_t;
+  let mut ch: *mut ethtable_t = std::ptr::null_mut();
   if strlen(ifname) >= 16i32 as libc::c_ulong {
     bb_error_msg_and_die(
       b"interface name \'%s\' too long\x00" as *const u8 as *const libc::c_char,
@@ -311,11 +311,11 @@ pub unsafe extern "C" fn nameif_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut clist: *mut ethtable_t = 0 as *mut ethtable_t;
+  let mut clist: *mut ethtable_t = std::ptr::null_mut();
   let mut fname: *const libc::c_char = b"/etc/mactab\x00" as *const u8 as *const libc::c_char;
   let mut ctl_sk: libc::c_int = 0;
-  let mut ch: *mut ethtable_t = 0 as *mut ethtable_t;
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut ch: *mut ethtable_t = std::ptr::null_mut();
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   if 1i32 as libc::c_uint
     & getopt32(
@@ -325,7 +325,7 @@ pub unsafe extern "C" fn nameif_main(
     )
     != 0
   {
-    openlog(applet_name, 0i32, 16i32 << 3i32);
+    openlog(applet_name, 0, 16i32 << 3i32);
     /* Why not just "="? I assume logging to stderr
      * can't hurt. 2>/dev/null if you don't like it: */
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
@@ -355,7 +355,7 @@ pub unsafe extern "C" fn nameif_main(
     }
     config_close(parser);
   }
-  ctl_sk = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  ctl_sk = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   parser = config_open2(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
     Some(xfopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
@@ -413,14 +413,14 @@ pub unsafe extern "C" fn nameif_main(
     /* Find the current interface name and copy it to ifr.ifr_name */
     memset(
       &mut ifr as *mut ifreq as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<ifreq>() as libc::c_ulong,
     );
     strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), token[0]);
     /* Check for phy address */
     memset(
       &mut eth_settings as *mut ethtool_cmd as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<ethtool_cmd>() as libc::c_ulong,
     );
     eth_settings.cmd = 0x1i32 as u32;
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn nameif_main(
     /* Check for driver etc. */
     memset(
       &mut drvinfo as *mut ethtool_drvinfo as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<ethtool_drvinfo>() as libc::c_ulong,
     );
     drvinfo.cmd = 0x3i32 as u32;
@@ -444,10 +444,9 @@ pub unsafe extern "C" fn nameif_main(
         current_block_42 = 4567019141635105728;
         break;
       }
-      if !(!(*ch).bus_info.is_null()
-        && strcmp((*ch).bus_info, drvinfo.bus_info.as_mut_ptr()) != 0i32)
+      if !(!(*ch).bus_info.is_null() && strcmp((*ch).bus_info, drvinfo.bus_info.as_mut_ptr()) != 0)
       {
-        if !(!(*ch).driver.is_null() && strcmp((*ch).driver, drvinfo.driver.as_mut_ptr()) != 0i32) {
+        if !(!(*ch).driver.is_null() && strcmp((*ch).driver, drvinfo.driver.as_mut_ptr()) != 0) {
           if !((*ch).phy_address != -1i32
             && (*ch).phy_address != eth_settings.phy_address as libc::c_int)
           {
@@ -456,7 +455,7 @@ pub unsafe extern "C" fn nameif_main(
                 (*ch).mac as *const libc::c_void,
                 ifr.ifr_ifru.ifru_hwaddr.sa_data.as_mut_ptr() as *const libc::c_void,
                 6i32 as libc::c_ulong,
-              ) != 0i32)
+              ) != 0)
             {
               current_block_42 = 7506631333841133343;
               break;
@@ -473,7 +472,7 @@ pub unsafe extern "C" fn nameif_main(
       _ =>
       /* if we came here, all selectors have matched */
       {
-        if strcmp(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), (*ch).ifname) != 0i32 {
+        if strcmp(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), (*ch).ifname) != 0 {
           strcpy(ifr.ifr_ifru.ifru_newname.as_mut_ptr(), (*ch).ifname);
           ioctl_or_perror_and_die(
             ctl_sk,
@@ -496,5 +495,5 @@ pub unsafe extern "C" fn nameif_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

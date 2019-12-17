@@ -95,5 +95,5 @@ pub unsafe extern "C" fn pwdx_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

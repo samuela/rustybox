@@ -58,27 +58,27 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
   static mut sg_commands: [[libc::c_char; 6]; 3] = [
     [
       0x1ei32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
     ],
     [
       0x1bi32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
       1i32 as libc::c_char,
-      0i32 as libc::c_char,
+      0 as libc::c_char,
     ],
     [
       0x1bi32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
-      0i32 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
+      0 as libc::c_char,
       2i32 as libc::c_char,
-      0i32 as libc::c_char,
+      0 as libc::c_char,
     ],
   ];
   let mut i: libc::c_uint = 0;
@@ -112,7 +112,7 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
     3i32,
     0x2282i32 as libc::c_ulong,
     &mut i as *mut libc::c_uint,
-  ) < 0i32
+  ) < 0
     || i < 30000i32 as libc::c_uint
   {
     bb_simple_error_msg_and_die(
@@ -121,7 +121,7 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
   }
   memset(
     &mut io_hdr as *mut sg_io_hdr_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sg_io_hdr_t>() as libc::c_ulong,
   );
   io_hdr.interface_id = 'S' as i32;
@@ -132,7 +132,7 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
   io_hdr.dxferp = inqBuff.as_mut_ptr() as *mut libc::c_void;
   io_hdr.sbp = sense_buffer.as_mut_ptr();
   io_hdr.timeout = 2000i32 as libc::c_uint;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 3i32 as libc::c_uint {
     io_hdr.cmdp = sg_commands[i as usize].as_ptr() as *mut libc::c_void as *mut libc::c_uchar;
     ioctl_or_perror_and_die(
@@ -147,10 +147,10 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
   /* force kernel to reread partition table when new disc is inserted */
   ioctl(
     3i32,
-    (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-      | (95i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+    (0u32 << 0 + 8i32 + 8i32 + 14i32
+      | (0x12i32 << 0 + 8i32) as libc::c_uint
+      | (95i32 << 0) as libc::c_uint
+      | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
   );
 }
 unsafe extern "C" fn eject_cdrom(mut flags: libc::c_uint, mut dev: *const libc::c_char) {
@@ -174,7 +174,7 @@ pub unsafe extern "C" fn eject_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut flags: libc::c_uint = 0;
-  let mut device: *const libc::c_char = 0 as *const libc::c_char;
+  let mut device: *const libc::c_char = std::ptr::null();
   flags = getopt32(
     argv,
     b"^tTs\x00?1:t--T:T--t\x00" as *const u8 as *const libc::c_char,
@@ -199,5 +199,5 @@ pub unsafe extern "C" fn eject_main(
   } else {
     eject_cdrom(flags, device);
   }
-  return 0i32;
+  return 0;
 }

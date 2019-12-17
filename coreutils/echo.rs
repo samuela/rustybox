@@ -481,13 +481,13 @@ pub unsafe extern "C" fn echo_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* not an option arg, echo it */
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut arg: *const libc::c_char = std::ptr::null();
   let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buflen: libc::c_uint = 0;
   let mut nflag: libc::c_char = 1i32 as libc::c_char;
-  let mut eflag: libc::c_char = 0i32 as libc::c_char;
+  let mut eflag: libc::c_char = 0 as libc::c_char;
   's_23: loop {
     argv = argv.offset(1);
     arg = *argv;
@@ -508,7 +508,7 @@ pub unsafe extern "C" fn echo_main(
     e = eflag;
     loop {
       if *arg as libc::c_int == 'n' as i32 {
-        n = 0i32 as libc::c_char
+        n = 0 as libc::c_char
       } else if *arg as libc::c_int == 'e' as i32 {
         e = '\\' as i32 as libc::c_char
       } else if *arg as libc::c_int != 'E' as i32 {
@@ -524,7 +524,7 @@ pub unsafe extern "C" fn echo_main(
   }
   /* "-ccc" arg with one of c's invalid, echo it */
   /* arg consisting from just "-" also handled here */
-  buflen = 0i32 as libc::c_uint; /* +1 is needed for "no args" case */
+  buflen = 0 as libc::c_uint; /* +1 is needed for "no args" case */
   pp = argv;
   loop {
     arg = *pp;
@@ -605,7 +605,7 @@ pub unsafe extern "C" fn echo_main(
   /* "\c" means cancel newline and
    * ignore all subsequent chars. */
   /* Careful to error out on partial writes too (think ENOSPC!) */
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   /*r =*/
   full_write(
     1i32,
@@ -617,7 +617,7 @@ pub unsafe extern "C" fn echo_main(
     bb_simple_perror_msg(b"write error\x00" as *const u8 as *const libc::c_char);
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 /*
  * Copyright (c) 1991, 1993

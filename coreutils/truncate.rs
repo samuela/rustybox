@@ -47,7 +47,7 @@ pub unsafe extern "C" fn truncate_main(
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
   let mut flags: libc::c_int = 0o1i32 | 0o4000i32;
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   let mut size_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut size: off_t = 0;
   opts = getopt32(
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn truncate_main(
   argv = argv.offset(optind as isize);
   while !(*argv).is_null() {
     let mut fd: libc::c_int = open(*argv, flags, 0o666i32);
-    if fd < 0i32 {
+    if fd < 0 {
       if *bb_errno != 2i32 || opts & OPT_NOCREATE as libc::c_int as libc::c_uint == 0 {
         bb_perror_msg(b"%s: open\x00" as *const u8 as *const libc::c_char, *argv);
         ret = 1i32

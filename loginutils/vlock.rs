@@ -94,7 +94,7 @@ unsafe extern "C" fn release_vt(mut _signo: libc::c_int) {
   /* If -a, param is 0, which means:
    * "no, kernel, we don't allow console switch away from us!" */
   ioctl(
-    0i32,
+    0,
     0x5605i32 as libc::c_ulong,
     (option_mask32 == 0) as libc::c_int as libc::c_ulong,
   );
@@ -142,13 +142,12 @@ pub unsafe extern "C" fn vlock_main(
     c_ispeed: 0,
     c_ospeed: 0,
   };
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   pw = xgetpwuid(getuid());
   getopt32(argv, b"^a\x00=0\x00" as *const u8 as *const libc::c_char);
   /* Ignore some signals so that we don't get killed by them */
   bb_signals(
-    0i32
-      + (1i32 << 20i32)
+    0 + (1i32 << 20i32)
       + (1i32 << 21i32)
       + (1i32 << 22i32)
       + (1i32 << 1i32)
@@ -174,11 +173,11 @@ pub unsafe extern "C" fn vlock_main(
    * (or die if we have none) */
   xmove_fd(
     xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0o2i32),
-    0i32,
+    0,
   );
   xdup2(0i32, 1i32);
   bb_xioctl(
-    0i32,
+    0,
     0x5601i32 as libc::c_uint,
     &mut vtm as *mut vt_mode as *mut libc::c_void,
     b"VT_GETMODE\x00" as *const u8 as *const libc::c_char,
@@ -203,7 +202,7 @@ pub unsafe extern "C" fn vlock_main(
         .offset((option_mask32 == 0) as libc::c_int as isize),
       (*pw).pw_name,
     );
-    if ask_and_check_password(pw) > 0i32 {
+    if ask_and_check_password(pw) > 0 {
       break;
     }
     bb_do_delay(3i32);

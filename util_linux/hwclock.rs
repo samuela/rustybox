@@ -143,7 +143,7 @@ unsafe extern "C" fn read_rtc(
 ) -> time_t {
   let mut tm_time: tm = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
-  fd = rtc_xopen(pp_rtcname, 0i32);
+  fd = rtc_xopen(pp_rtcname, 0);
   rtc_read_tm(&mut tm_time, fd);
   return rtc_tm2time(&mut tm_time, utc);
 }
@@ -170,9 +170,9 @@ unsafe extern "C" fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut 
    * daylight!=0 means "this timezone has some DST
    * during the year", not "DST is in effect now".
    */
-  tz.tz_dsttime = 0i32;
+  tz.tz_dsttime = 0;
   tv.tv_sec = read_rtc(pp_rtcname, utc);
-  tv.tv_usec = 0i32 as suseconds_t;
+  tv.tv_usec = 0 as suseconds_t;
   if settimeofday(&mut tv, &mut tz) != 0 {
     bb_simple_perror_msg_and_die(b"settimeofday\x00" as *const u8 as *const libc::c_char);
   };
@@ -206,13 +206,13 @@ unsafe extern "C" fn from_sys_clock(
       localtime_r(&mut t, &mut tm_time);
     }
   }
-  tm_time.tm_isdst = 0i32;
+  tm_time.tm_isdst = 0;
   bb_xioctl(
     rtc,
-    ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (('p' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (0xai32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    ((1u32 << 0 + 8i32 + 8i32 + 14i32
+      | (('p' as i32) << 0 + 8i32) as libc::c_uint
+      | (0xai32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<linux_rtc_time>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     &mut tm_time as *mut tm as *mut libc::c_void,
     b"RTC_SET_TIME\x00" as *const u8 as *const libc::c_char,
@@ -233,7 +233,7 @@ unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
     tv_sec: 0,
     tv_usec: 0,
   };
-  let mut broken: *mut tm = 0 as *mut tm;
+  let mut broken: *mut tm = std::ptr::null_mut();
   let mut tz: timezone = timezone {
     tz_minuteswest: 0,
     tz_dsttime: 0,
@@ -241,10 +241,10 @@ unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
   gettimeofday(&mut tv, 0 as *mut timezone);
   broken = localtime(&mut tv.tv_sec);
   tz.tz_minuteswest = (timezone / 60i32 as libc::c_long) as libc::c_int;
-  if (*broken).tm_isdst > 0i32 {
+  if (*broken).tm_isdst > 0 {
     tz.tz_minuteswest -= 60i32
   }
-  tz.tz_dsttime = 0i32;
+  tz.tz_dsttime = 0;
   gettimeofday(&mut tv, 0 as *mut timezone);
   if utc == 0 {
     tv.tv_sec += (tz.tz_minuteswest * 60i32) as libc::c_long
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn hwclock_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut rtcname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut rtcname: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_uint = 0;
   let mut utc: libc::c_int = 0;
   static mut hwclock_longopts: [libc::c_char; 60] = [
@@ -290,5 +290,5 @@ pub unsafe extern "C" fn hwclock_main(
     /* default HWCLOCK_OPT_SHOW */
     show_clock(&mut rtcname, utc);
   }
-  return 0i32;
+  return 0;
 }

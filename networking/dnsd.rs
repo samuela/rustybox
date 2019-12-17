@@ -273,16 +273,16 @@ pub struct dns_entry {
  * Insert length of substrings instead of dots
  */
 unsafe extern "C" fn undot(mut rip: *mut libc::c_char) {
-  let mut i: libc::c_int = 0i32;
-  let mut s: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
+  let mut s: libc::c_int = 0;
   while *rip.offset(i as isize) != 0 {
     i += 1
   }
   i -= 1;
-  while i >= 0i32 {
+  while i >= 0 {
     if *rip.offset(i as isize) as libc::c_int == '.' as i32 {
       *rip.offset(i as isize) = s as libc::c_char;
-      s = 0i32
+      s = 0
     } else {
       s += 1
     }
@@ -294,11 +294,11 @@ unsafe extern "C" fn undot(mut rip: *mut libc::c_char) {
  */
 unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut dns_entry {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
-  let mut m: *mut dns_entry = 0 as *mut dns_entry;
-  let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
-  let mut nextp: *mut *mut dns_entry = 0 as *mut *mut dns_entry;
-  conf_data = 0 as *mut dns_entry;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
+  let mut m: *mut dns_entry = std::ptr::null_mut();
+  let mut conf_data: *mut dns_entry = std::ptr::null_mut();
+  let mut nextp: *mut *mut dns_entry = std::ptr::null_mut();
+  conf_data = std::ptr::null_mut();
   nextp = &mut conf_data;
   parser = config_open(fileconf);
   while config_read(
@@ -310,7 +310,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
   {
     let mut ip: in_addr = in_addr { s_addr: 0 };
     let mut v32: u32 = 0;
-    if inet_aton(token[1], &mut ip) == 0i32 {
+    if inet_aton(token[1], &mut ip) == 0 {
       bb_error_msg(
         b"error at line %u, skipping\x00" as *const u8 as *const libc::c_char,
         (*parser).lineno,
@@ -414,7 +414,7 @@ unsafe extern "C" fn table_lookup(
          * [65+32]<65 same chars>1   <31 same chars>NUL
          * This example seems to be the minimal case when false match occurs.
          */
-        if strcasecmp((*d).name.as_mut_ptr(), query_string) != 0i32 {
+        if strcasecmp((*d).name.as_mut_ptr(), query_string) != 0 {
           current_block_5 = 137226434401907431;
         } else {
           current_block_5 = 820271813250567934;
@@ -602,21 +602,21 @@ unsafe extern "C" fn process_packet(
   mut conf_ttl: u32,
   mut buf: *mut u8,
 ) -> libc::c_int {
-  let mut head: *mut dns_head = 0 as *mut dns_head;
-  let mut unaligned_type_class: *mut type_and_class = 0 as *mut type_and_class;
-  let mut err_msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut head: *mut dns_head = std::ptr::null_mut();
+  let mut unaligned_type_class: *mut type_and_class = std::ptr::null_mut();
+  let mut err_msg: *const libc::c_char = std::ptr::null();
   let mut query_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut answstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut answb: *mut u8 = 0 as *mut u8;
+  let mut answb: *mut u8 = std::ptr::null_mut();
   let mut outr_rlen: u16 = 0;
   let mut outr_flags: u16 = 0;
   let mut type_0: u16 = 0;
   let mut class: u16 = 0;
   let mut query_len: libc::c_int = 0;
   head = buf as *mut dns_head;
-  if (*head).nquer as libc::c_int == 0i32 {
+  if (*head).nquer as libc::c_int == 0 {
     bb_simple_error_msg(b"packet has 0 queries, ignored\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
     /* don't reply */
   }
   if (*head).flags as libc::c_int
@@ -641,7 +641,7 @@ unsafe extern "C" fn process_packet(
   {
     /* QR bit */
     bb_simple_error_msg(b"response packet, ignored\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
     /* don't reply */
   }
   /* QR = 1 "response", RCODE = 4 "Not Implemented" */
@@ -662,7 +662,7 @@ unsafe extern "C" fn process_packet(
     }
     __v
   };
-  err_msg = 0 as *const libc::c_char;
+  err_msg = std::ptr::null();
   /* start of query string */
   query_string = head.offset(1) as *mut libc::c_void as *mut libc::c_char;
   /* caller guarantees strlen is <= MAX_PACK_LEN */
@@ -694,7 +694,7 @@ unsafe extern "C" fn process_packet(
       }
       __v
     }) as libc::c_int
-    != 0i32
+    != 0
   {
     err_msg = b"opcode != 0\x00" as *const u8 as *const libc::c_char
   } else {
@@ -885,7 +885,7 @@ unsafe extern "C" fn process_packet(
           }
           outr_flags = {
             let mut __v: libc::c_ushort = 0;
-            let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0i32) as libc::c_ushort;
+            let mut __x: libc::c_ushort = (0x8000i32 | 0x400i32 | 0) as libc::c_ushort;
             if false {
               __v = (__x as libc::c_int >> 8i32 & 0xffi32 | (__x as libc::c_int & 0xffi32) << 8i32)
                 as libc::c_ushort
@@ -942,7 +942,7 @@ unsafe extern "C" fn process_packet(
       }
       __v
     }) as libc::c_int
-    != 0i32
+    != 0
   {
     /* not a positive response */
     if option_mask32 & 1i32 as libc::c_uint != 0 {
@@ -957,11 +957,11 @@ unsafe extern "C" fn process_packet(
       ); // why???
     }
     if option_mask32 & 2i32 as libc::c_uint != 0 {
-      return 0i32;
+      return 0;
     }
   }
   (*head).flags = ((*head).flags as libc::c_int | outr_flags as libc::c_int) as u16;
-  (*head).nadd = 0i32 as u16;
+  (*head).nadd = 0 as u16;
   (*head).nauth = (*head).nadd;
   (*head).nquer = {
     let mut __v: libc::c_ushort = 0;
@@ -990,13 +990,13 @@ pub unsafe extern "C" fn dnsd_main(
   let mut listen_interface: *const libc::c_char =
     b"0.0.0.0\x00" as *const u8 as *const libc::c_char;
   let mut fileconf: *const libc::c_char = b"/etc/dnsd.conf\x00" as *const u8 as *const libc::c_char;
-  let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
+  let mut conf_data: *mut dns_entry = std::ptr::null_mut();
   let mut conf_ttl: u32 = DEFAULT_TTL as libc::c_int as u32;
   let mut sttl: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sport: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut from: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut from: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut to: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut lsa_size: libc::c_uint = 0;
   let mut udps: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
@@ -1034,7 +1034,7 @@ pub unsafe extern "C" fn dnsd_main(
   udps = xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
-    0i32,
+    0,
   );
   xbind(udps, &mut (*lsa).u.sa, (*lsa).len);
   socket_want_pktinfo(udps);
@@ -1063,7 +1063,7 @@ pub unsafe extern "C" fn dnsd_main(
       udps,
       buf.as_mut_ptr() as *mut libc::c_void,
       (MAX_PACK_LEN as libc::c_int + 1i32) as size_t,
-      0i32,
+      0,
       &mut (*from).u.sa,
       &mut (*to).u.sa,
       (*lsa).len,
@@ -1079,14 +1079,14 @@ pub unsafe extern "C" fn dnsd_main(
       }
       buf[r as usize] = '\u{0}' as i32 as u8;
       r = process_packet(conf_data, conf_ttl, buf.as_mut_ptr());
-      if r <= 0i32 {
+      if r <= 0 {
         continue;
       }
       send_to_from(
         udps,
         buf.as_mut_ptr() as *mut libc::c_void,
         r as size_t,
-        0i32,
+        0,
         &mut (*from).u.sa,
         &mut (*to).u.sa,
         (*lsa).len,

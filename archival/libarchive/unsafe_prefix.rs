@@ -36,7 +36,7 @@ pub unsafe extern "C" fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *c
     }
   }
   if cp != str {
-    static mut warned: smallint = 0i32 as smallint;
+    static mut warned: smallint = 0 as smallint;
     if warned == 0 {
       warned = 1i32 as smallint;
       bb_error_msg(

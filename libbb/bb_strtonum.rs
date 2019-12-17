@@ -108,7 +108,7 @@ pub unsafe extern "C" fn bb_strtoull(
     return ret_ERANGE();
   }
   /* not 100% correct for lib func, but convenient for the caller */
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   v = strtoull(arg, endp, base);
   return handle_errors(v, endp);
 }
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn bb_strtoll(
   if bb_ascii_isalnum(first as libc::c_uchar) == 0 {
     return ret_ERANGE() as libc::c_longlong;
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   v = strtoll(arg, endp, base) as libc::c_ulonglong;
   return handle_errors(v, endp) as libc::c_longlong;
 }
@@ -155,7 +155,7 @@ pub unsafe extern "C" fn bb_strtou(
   if bb_ascii_isalnum(*arg.offset(0) as libc::c_uchar) == 0 {
     return ret_ERANGE() as libc::c_uint;
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   v = strtoul(arg, endp, base);
   if v
     > (2147483647i32 as libc::c_uint)
@@ -213,7 +213,7 @@ pub unsafe extern "C" fn bb_strtoi(
   if bb_ascii_isalnum(first as libc::c_uchar) == 0 {
     return ret_ERANGE() as libc::c_int;
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   v = strtol(arg, endp, base);
   if v > 2147483647i32 as libc::c_long {
     return ret_ERANGE() as libc::c_int;

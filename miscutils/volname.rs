@@ -61,7 +61,7 @@ pub unsafe extern "C" fn volname_main(
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut buffer: [libc::c_char; 32] = [0; 32];
-  let mut device: *const libc::c_char = 0 as *const libc::c_char;
+  let mut device: *const libc::c_char = std::ptr::null();
   device = b"/dev/cdrom\x00" as *const u8 as *const libc::c_char;
   if !(*argv.offset(1)).is_null() {
     device = *argv.offset(1);
@@ -69,8 +69,8 @@ pub unsafe extern "C" fn volname_main(
       bb_show_usage();
     }
   }
-  fd = xopen(device, 0i32);
-  xlseek(fd, 32808i32 as off_t, 0i32);
+  fd = xopen(device, 0);
+  xlseek(fd, 32808i32 as off_t, 0);
   xread(
     fd,
     buffer.as_mut_ptr() as *mut libc::c_void,
@@ -80,5 +80,5 @@ pub unsafe extern "C" fn volname_main(
     b"%32.32s\n\x00" as *const u8 as *const libc::c_char,
     buffer.as_mut_ptr(),
   );
-  return 0i32;
+  return 0;
 }

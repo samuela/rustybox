@@ -326,14 +326,14 @@ unsafe extern "C" fn generate_output(
   mut optstr: *const libc::c_char,
   mut longopts: *const option,
 ) -> libc::c_int {
-  let mut exit_code: libc::c_int = 0i32; /* We assume everything will be OK */
+  let mut exit_code: libc::c_int = 0; /* We assume everything will be OK */
   if option_mask32 & OPT_q as libc::c_int as libc::c_uint != 0 {
     /* No error reporting from getopt(3) */
-    opterr = 0i32
+    opterr = 0
   }
   /* We used it already in main() in getopt32(),
    * we *must* reset getopt(3): */
-  optind = 0i32;
+  optind = 0;
   loop {
     let mut longindex: libc::c_int = 0;
     let mut opt: libc::c_int = if option_mask32 & OPT_a as libc::c_int as libc::c_uint != 0 {
@@ -368,7 +368,7 @@ unsafe extern "C" fn generate_output(
           normalize(optarg),
         );
       } else {
-        let mut charptr: *const libc::c_char = 0 as *const libc::c_char;
+        let mut charptr: *const libc::c_char = std::ptr::null();
         printf(b" -%c\x00" as *const u8 as *const libc::c_char, opt);
         charptr = strchr(optstr, opt);
         if !charptr.is_null() && {
@@ -412,7 +412,7 @@ unsafe extern "C" fn add_long_options(
   mut long_options: *mut option,
   mut options: *mut libc::c_char,
 ) -> *mut option {
-  let mut long_nr: libc::c_int = 0i32;
+  let mut long_nr: libc::c_int = 0;
   let mut arg_opt: libc::c_int = 0;
   let mut tlen: libc::c_int = 0;
   let mut tokptr: *mut libc::c_char =
@@ -423,7 +423,7 @@ unsafe extern "C" fn add_long_options(
     }
   }
   while !tokptr.is_null() {
-    arg_opt = 0i32;
+    arg_opt = 0;
     tlen = strlen(tokptr) as libc::c_int;
     if tlen != 0 {
       tlen -= 1;
@@ -434,7 +434,7 @@ unsafe extern "C" fn add_long_options(
           arg_opt = 2i32
         }
         *tokptr.offset(tlen as isize) = '\u{0}' as i32 as libc::c_char;
-        if tlen == 0i32 {
+        if tlen == 0 {
           bb_simple_error_msg_and_die(
             b"empty long option specified\x00" as *const u8 as *const libc::c_char,
           );
@@ -461,13 +461,13 @@ unsafe extern "C" fn add_long_options(
   return long_options;
 }
 unsafe extern "C" fn set_shell(mut new_shell: *const libc::c_char) {
-  if strcmp(new_shell, b"bash\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(new_shell, b"sh\x00" as *const u8 as *const libc::c_char) == 0i32
+  if strcmp(new_shell, b"bash\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(new_shell, b"sh\x00" as *const u8 as *const libc::c_char) == 0
   {
     return;
   }
-  if strcmp(new_shell, b"tcsh\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(new_shell, b"csh\x00" as *const u8 as *const libc::c_char) == 0i32
+  if strcmp(new_shell, b"tcsh\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(new_shell, b"csh\x00" as *const u8 as *const libc::c_char) == 0
   {
     option_mask32 |= SHELL_IS_TCSH as libc::c_int as libc::c_uint
   } else {
@@ -501,17 +501,17 @@ pub unsafe extern "C" fn getopt_main(
   let mut optstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
-  let mut compatible: *const libc::c_char = 0 as *const libc::c_char;
+  let mut compatible: *const libc::c_char = std::ptr::null();
   let mut s_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut long_options: *mut option = 0 as *mut option;
-  let mut l_arg: *mut llist_t = 0 as *mut llist_t;
+  let mut long_options: *mut option = std::ptr::null_mut();
+  let mut l_arg: *mut llist_t = std::ptr::null_mut();
   compatible = getenv(b"GETOPT_COMPATIBLE\x00" as *const u8 as *const libc::c_char);
   if (*argv.offset(1)).is_null() {
     if !compatible.is_null() {
       /* For some reason, the original getopt gave no error
        * when there were no arguments. */
       puts(b" --\x00" as *const u8 as *const libc::c_char); /* quoting off */
-      return 0i32;
+      return 0;
     }
     bb_simple_error_msg_and_die(
       b"missing optstring argument\x00" as *const u8 as *const libc::c_char,

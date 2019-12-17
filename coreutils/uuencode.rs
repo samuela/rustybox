@@ -94,8 +94,8 @@ pub unsafe extern "C" fn uuencode_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut stat_buf: stat = std::mem::zeroed();
-  let mut src_fd: libc::c_int = 0i32;
-  let mut tbl: *const libc::c_char = 0 as *const libc::c_char;
+  let mut src_fd: libc::c_int = 0;
+  let mut tbl: *const libc::c_char = std::ptr::null();
   let mut mode: mode_t = 0;
   let mut src_buf: [libc::c_char; 45] = [0; 45];
   let mut dst_buf: [libc::c_char; 61] = [0; 61];
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn uuencode_main(
   }
   argv = argv.offset(optind as isize);
   if !(*argv.offset(1)).is_null() {
-    src_fd = xopen(*argv.offset(0), 0i32);
+    src_fd = xopen(*argv.offset(0), 0);
     fstat(src_fd, &mut stat_buf);
     mode = stat_buf.st_mode
       & (0o400i32

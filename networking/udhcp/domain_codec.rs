@@ -44,12 +44,12 @@ pub unsafe extern "C" fn dname_dec(
   /* note: "return NULL" below are leak-safe since
    * dst isn't allocated yet */
   {
-    let mut c: *const u8 = 0 as *const u8;
+    let mut c: *const u8 = std::ptr::null();
     let mut crtpos: libc::c_uint = 0;
     let mut retpos: libc::c_uint = 0;
     let mut depth: libc::c_uint = 0;
     let mut len: libc::c_uint = 0;
-    len = 0i32 as libc::c_uint;
+    len = 0 as libc::c_uint;
     depth = len;
     retpos = depth;
     crtpos = retpos;
@@ -61,7 +61,7 @@ pub unsafe extern "C" fn dname_dec(
           /* no offset to jump to? abort */
           return std::ptr::null_mut::<libc::c_char>();
         }
-        if retpos == 0i32 as libc::c_uint {
+        if retpos == 0 as libc::c_uint {
           /* jump */
           /* toplevel? save return spot */
           retpos = crtpos.wrapping_add(2i32 as libc::c_uint)
@@ -92,16 +92,16 @@ pub unsafe extern "C" fn dname_dec(
         crtpos = crtpos.wrapping_add((*c as libc::c_int + 1i32) as libc::c_uint)
       } else {
         /* NUL: end of current domain name */
-        if retpos == 0i32 as libc::c_uint {
+        if retpos == 0 as libc::c_uint {
           /* toplevel? keep going */
           crtpos = crtpos.wrapping_add(1)
         } else {
           /* return to toplevel saved spot */
           crtpos = retpos;
-          depth = 0i32 as libc::c_uint;
+          depth = 0 as libc::c_uint;
           retpos = depth
         }
-        if !dst.is_null() && len != 0i32 as libc::c_uint {
+        if !dst.is_null() && len != 0 as libc::c_uint {
           /* \4host\3com\0\4host and we are at \0:
            * \3com was converted to "com.", change dot to space.
            */
@@ -136,9 +136,9 @@ pub unsafe extern "C" fn dname_dec(
  */
 unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
   let mut c: u8 = 0;
-  let mut res: *mut u8 = 0 as *mut u8;
-  let mut lenptr: *mut u8 = 0 as *mut u8;
-  let mut dst: *mut u8 = 0 as *mut u8;
+  let mut res: *mut u8 = std::ptr::null_mut();
+  let mut lenptr: *mut u8 = std::ptr::null_mut();
+  let mut dst: *mut u8 = std::ptr::null_mut();
   let mut len: libc::c_int = 0;
   res = xmalloc(strlen(src).wrapping_add(2i32 as libc::c_ulong)) as *mut u8;
   lenptr = res;
@@ -153,7 +153,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
       len = (dst.wrapping_offset_from(lenptr) as libc::c_long - 1) as libc::c_int;
       /* label too long, too short, or two '.'s in a row? abort */
       if len > 63i32
-        || len == 0i32
+        || len == 0
         || c as libc::c_int == '.' as i32 && *src as libc::c_int == '.' as i32
       {
         free(res as *mut libc::c_void);
@@ -181,7 +181,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
     free(res as *mut libc::c_void);
     return 0 as *mut u8;
   }
-  *dst = 0i32 as u8;
+  *dst = 0 as u8;
   return res;
 }
 /* Returns the offset within cstr at which dname can be found, or -1 */
@@ -190,11 +190,11 @@ unsafe extern "C" fn find_offset(
   mut clen: libc::c_int,
   mut dname: *const u8,
 ) -> libc::c_int {
-  let mut c: *const u8 = 0 as *const u8;
-  let mut d: *const u8 = 0 as *const u8;
+  let mut c: *const u8 = std::ptr::null();
+  let mut d: *const u8 = std::ptr::null();
   let mut off: libc::c_int = 0;
   /* find all labels in cstr */
-  off = 0i32;
+  off = 0;
   while off < clen {
     c = cstr.offset(off as isize);
     if *c as libc::c_int & 0xc0i32 == 0xc0i32 {
@@ -209,7 +209,7 @@ unsafe extern "C" fn find_offset(
           c as *const libc::c_void,
           d as *const libc::c_void,
           len1 as libc::c_ulong,
-        ) != 0i32
+        ) != 0
         {
           break;
         }
@@ -352,19 +352,19 @@ pub unsafe extern "C" fn dname_enc(
   mut src: *const libc::c_char,
   mut retlen: *mut libc::c_int,
 ) -> *mut u8 {
-  let mut d: *mut u8 = 0 as *mut u8;
-  let mut dname: *mut u8 = 0 as *mut u8;
+  let mut d: *mut u8 = std::ptr::null_mut();
+  let mut dname: *mut u8 = std::ptr::null_mut();
   let mut off: libc::c_int = 0;
   dname = convert_dname(src);
   if dname.is_null() {
-    *retlen = 0i32;
+    *retlen = 0;
     return 0 as *mut u8;
   }
   d = dname;
   while *d != 0 {
     if !cstr.is_null() {
       off = find_offset(cstr, clen, d);
-      if off >= 0i32 {
+      if off >= 0 {
         /* found a match, add pointer and return */
         let fresh3 = d;
         d = d.offset(1);

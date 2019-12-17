@@ -387,8 +387,8 @@ static mut tcp_state: [*const libc::c_char; 12] = [
 /* Deliberately truncating long to unsigned *int* */
 unsafe extern "C" fn prg_cache_add(mut inode: libc::c_long, mut name: *mut libc::c_char) {
   let mut hi: libc::c_uint = (inode as libc::c_uint).wrapping_rem(211i32 as libc::c_uint);
-  let mut pnp: *mut *mut prg_node = 0 as *mut *mut prg_node;
-  let mut pn: *mut prg_node = 0 as *mut prg_node;
+  let mut pnp: *mut *mut prg_node = std::ptr::null_mut();
+  let mut pn: *mut prg_node = std::ptr::null_mut();
   (*ptr_to_globals).prg_cache_loaded = 2i32 as smallint;
   pnp = (*ptr_to_globals).prg_hash.as_mut_ptr().offset(hi as isize);
   loop {
@@ -410,7 +410,7 @@ unsafe extern "C" fn prg_cache_add(mut inode: libc::c_long, mut name: *mut libc:
 }
 unsafe extern "C" fn prg_cache_get(mut inode: libc::c_long) -> *const libc::c_char {
   let mut hi: libc::c_uint = (inode as libc::c_uint).wrapping_rem(211i32 as libc::c_uint);
-  let mut pn: *mut prg_node = 0 as *mut prg_node;
+  let mut pn: *mut prg_node = std::ptr::null_mut();
   pn = (*ptr_to_globals).prg_hash[hi as usize];
   while !pn.is_null() {
     if (*pn).inode == inode {
@@ -429,7 +429,7 @@ unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> lib
         .offset(::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as isize)
         .offset(-1),
       &mut lname as *mut *const libc::c_char as *mut *mut libc::c_char,
-      0i32,
+      0,
     ) as libc::c_long;
     if *lname as libc::c_int != ']' as i32 {
       inode = -1i32 as libc::c_long
@@ -441,7 +441,7 @@ unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> lib
         .offset(::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as isize)
         .offset(-1),
       0 as *mut *mut libc::c_char,
-      0i32,
+      0,
     ) as libc::c_long;
     if *bb_errno != 0 {
       /* not NUL terminated? */
@@ -475,13 +475,13 @@ unsafe extern "C" fn dir_act(
   mut _userData: *mut libc::c_void,
   mut depth: libc::c_int,
 ) -> libc::c_int {
-  let mut pid: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pid: *const libc::c_char = std::ptr::null();
   let mut pid_slash_progname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_pid_fname: [libc::c_char; 41] = [0; 41];
   let mut cmdline_buf: [libc::c_char; 512] = [0; 512];
   let mut n: libc::c_int = 0;
   let mut len: libc::c_int = 0;
-  if depth == 0i32 {
+  if depth == 0 {
     /* "/proc" itself */
     return 1i32;
   } /* point after "/proc/" */
@@ -504,8 +504,8 @@ unsafe extern "C" fn dir_act(
     (::std::mem::size_of::<[libc::c_char; 512]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
-  if n < 0i32 {
-    return 0i32;
+  if n < 0 {
+    return 0;
   }
   cmdline_buf[n as usize] = '\u{0}' as i32 as libc::c_char;
   /* go through all files in /proc/PID/fd and check whether they are sockets */
@@ -531,11 +531,11 @@ unsafe extern "C" fn dir_act(
     ),
     None,
     pid_slash_progname as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
   free(pid_slash_progname as *mut libc::c_void);
   if n == 0 {
-    return 0i32;
+    return 0;
   }
   return 2i32;
   /* caller should not recurse further into this dir */
@@ -557,7 +557,7 @@ unsafe extern "C" fn prg_cache_load() {
         ) -> libc::c_int,
     ),
     0 as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
   if load_ok != 0 {
     return;
@@ -731,7 +731,7 @@ unsafe extern "C" fn scan_inet_proc_line(
     build_ipv4_addr(local_addr.as_mut_ptr(), &mut (*param).localaddr.sin);
     build_ipv4_addr(rem_addr.as_mut_ptr(), &mut (*param).remaddr.sin);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_inet_line(
   mut param: *mut inet_params,
@@ -800,7 +800,7 @@ unsafe extern "C" fn tcp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   };
   memset(
     &mut param as *mut inet_params as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_params>() as libc::c_ulong,
   );
   if scan_inet_proc_line(&mut param, line) != 0 {
@@ -812,11 +812,11 @@ unsafe extern "C" fn tcp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
     b"tcp\x00" as *const u8 as *const libc::c_char,
     param.rem_port,
   );
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut have_remaddr: libc::c_int = 0;
-  let mut state_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut state_str: *const libc::c_char = std::ptr::null();
   let mut param: inet_params = inet_params {
     local_port: 0,
     rem_port: 0,
@@ -840,7 +840,7 @@ unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   };
   memset(
     &mut param as *mut inet_params as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_params>() as libc::c_ulong,
   );
   if scan_inet_proc_line(&mut param, line) != 0 {
@@ -859,14 +859,14 @@ unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
       | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[3]
       != 0
     || param.remaddr.sa.sa_family as libc::c_int == 2i32
-      && param.remaddr.sin.sin_addr.s_addr != 0i32 as libc::c_uint) as libc::c_int;
+      && param.remaddr.sin.sin_addr.s_addr != 0 as libc::c_uint) as libc::c_int;
   print_inet_line(
     &mut param,
     state_str,
     b"udp\x00" as *const u8 as *const libc::c_char,
     have_remaddr,
   );
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn raw_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut have_remaddr: libc::c_int = 0;
@@ -901,14 +901,14 @@ unsafe extern "C" fn raw_do_one(mut line: *mut libc::c_char) -> libc::c_int {
       | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[3]
       != 0
     || param.remaddr.sa.sa_family as libc::c_int == 2i32
-      && param.remaddr.sin.sin_addr.s_addr != 0i32 as libc::c_uint) as libc::c_int;
+      && param.remaddr.sin.sin_addr.s_addr != 0 as libc::c_uint) as libc::c_int;
   print_inet_line(
     &mut param,
     itoa(param.state),
     b"raw\x00" as *const u8 as *const libc::c_char,
     have_remaddr,
   );
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut refcnt: libc::c_ulong = 0;
@@ -919,17 +919,17 @@ unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut state: libc::c_int = 0;
   let mut num: libc::c_int = 0;
   let mut path_ofs: libc::c_int = 0;
-  let mut ss_proto: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ss_state: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ss_type: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ss_proto: *const libc::c_char = std::ptr::null();
+  let mut ss_state: *const libc::c_char = std::ptr::null();
+  let mut ss_type: *const libc::c_char = std::ptr::null();
   let mut ss_flags: [libc::c_char; 32] = [0; 32];
   /* 2.6.15 may report lines like "... @/tmp/fam-user-^@^@^@^@^@^@^@..."
    * Other users report long lines filled by NUL bytes.
    * (those ^@ are NUL bytes too). We see them as empty lines. */
   if *line.offset(0) == 0 {
-    return 0i32;
+    return 0;
   } /* paranoia */
-  path_ofs = 0i32;
+  path_ofs = 0;
   num = sscanf(
     line,
     b"%*p: %lX %lX %lX %X %X %lu %n\x00" as *const u8 as *const libc::c_char,
@@ -949,10 +949,10 @@ unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
     if state == SS_UNCONNECTED as libc::c_int && unix_flags & (1i32 << 16i32) as libc::c_ulong != 0
     {
       if (*ptr_to_globals).flags as libc::c_int & 0x2i32 == 0 {
-        return 0i32;
+        return 0;
       }
     } else if (*ptr_to_globals).flags as libc::c_int & 0x1i32 == 0 {
-      return 0i32;
+      return 0;
     }
   }
   match proto {
@@ -1035,21 +1035,21 @@ unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
     fputc_printable(*fresh6 as libc::c_int, stdout);
   }
   bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn do_info(
   mut file: *const libc::c_char,
   mut proc_0: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) {
   let mut lnr: libc::c_int = 0;
-  let mut procinfo: *mut FILE = 0 as *mut FILE;
+  let mut procinfo: *mut FILE = std::ptr::null_mut();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* _stdin is just to save "r" param */
   procinfo = fopen_or_warn_stdin(file);
   if procinfo.is_null() {
     return;
   }
-  lnr = 0i32;
+  lnr = 0;
   loop
   /* Why xmalloc_fgets_str? because it doesn't stop on NULs */
   {
@@ -1106,7 +1106,7 @@ pub unsafe extern "C" fn netstat_main(
       (*ptr_to_globals).flags as libc::c_int & 0x4i32,
       (opt & OPT_extended as libc::c_int as libc::c_uint == 0) as libc::c_int,
     );
-    return 0i32;
+    return 0;
   }
   (*ptr_to_globals).addr_width = 23i32 as libc::c_uint;
   if opt & OPT_wide as libc::c_int as libc::c_uint != 0 {
@@ -1193,5 +1193,5 @@ pub unsafe extern "C" fn netstat_main(
       Some(unix_do_one as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
     );
   }
-  return 0i32;
+  return 0;
 }

@@ -58,7 +58,7 @@ pub unsafe extern "C" fn kbd_mode_main(
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0; /* clear -C bit, see (*) */
   let mut opt: libc::c_uint = 0;
-  let mut tty_name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut tty_name: *const libc::c_char = std::ptr::null();
   opt = getopt32(
     argv,
     b"sakuC:\x00" as *const u8 as *const libc::c_char,
@@ -85,7 +85,7 @@ pub unsafe extern "C" fn kbd_mode_main(
       &mut m as *mut libc::c_int as *mut libc::c_void,
       b"KDGKBMODE\x00" as *const u8 as *const libc::c_char,
     );
-    if m == 0i32 {
+    if m == 0 {
       mode = b"raw (scancode)\x00" as *const u8 as *const libc::c_char
     } else if m == 0x1i32 {
       mode = b"default (ASCII)\x00" as *const u8 as *const libc::c_char
@@ -125,5 +125,5 @@ pub unsafe extern "C" fn kbd_mode_main(
       b"KDSKBMODE\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }

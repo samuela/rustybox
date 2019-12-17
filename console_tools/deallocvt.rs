@@ -47,7 +47,7 @@ pub unsafe extern "C" fn deallocvt_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* num = 0 deallocate all unused consoles */
-  let mut num: libc::c_int = 0i32;
+  let mut num: libc::c_int = 0;
   if !(*argv.offset(1)).is_null() {
     if !(*argv.offset(2)).is_null() {
       bb_show_usage();
@@ -61,5 +61,5 @@ pub unsafe extern "C" fn deallocvt_main(
     num as ptrdiff_t as *mut libc::c_void,
     b"VT_DISALLOCATE\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

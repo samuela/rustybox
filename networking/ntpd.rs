@@ -719,7 +719,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //double   cluster_offset;        // s.offset
 //double   cluster_jitter;        // s.jitter
 unsafe extern "C" fn LOG2D(mut a: libc::c_int) -> libc::c_double {
-  if a < 0i32 {
+  if a < 0 {
     return 1.0f64 / (1u64 << -a) as libc::c_double;
   }
   return (1u64 << a) as libc::c_double;
@@ -998,7 +998,7 @@ unsafe extern "C" fn filter_datapoints(mut p: *mut peer_t) {
   let mut idx: libc::c_int = 0;
   let mut sum: libc::c_double = 0.;
   let mut wavg: libc::c_double = 0.;
-  let mut fdp: *mut datapoint_t = 0 as *mut datapoint_t;
+  let mut fdp: *mut datapoint_t = std::ptr::null_mut();
   fdp = (*p).filter_datapoint.as_mut_ptr();
   idx = (*p).datapoint_idx;
   /* filter_offset: simply use the most recent value */
@@ -1010,9 +1010,9 @@ unsafe extern "C" fn filter_datapoints(mut p: *mut peer_t) {
    *                     ---     2
    *                     i=0
    */
-  wavg = 0i32 as libc::c_double;
-  sum = 0i32 as libc::c_double;
-  i = 0i32;
+  wavg = 0 as libc::c_double;
+  sum = 0 as libc::c_double;
+  i = 0;
   while i < 8i32 {
     sum += dispersion(&mut *fdp.offset(idx as isize)) / (2i32 << i) as libc::c_double;
     wavg += (*fdp.offset(idx as isize)).d_offset;
@@ -1032,8 +1032,8 @@ unsafe extern "C" fn filter_datapoints(mut p: *mut peer_t) {
    * where n is the number of valid datapoints in the filter (n > 1);
    * if filter_jitter < precision then filter_jitter = precision
    */
-  sum = 0i32 as libc::c_double;
-  i = 0i32;
+  sum = 0 as libc::c_double;
+  i = 0;
   while i < 8i32 {
     sum += SQUARE(wavg - (*fdp.offset(i as isize)).d_offset);
     i += 1
@@ -1063,11 +1063,11 @@ unsafe extern "C" fn reset_peer_stats(mut p: *mut peer_t, mut offset: libc::c_do
    * in this scenario, because we see large offsets and end up with
    * no good peer to select).
    */
-  i = 0i32;
+  i = 0;
   while i < 8i32 {
     if small_ofs {
       (*p).filter_datapoint[i as usize].d_recv_time += offset;
-      if (*p).filter_datapoint[i as usize].d_offset != 0i32 as libc::c_double {
+      if (*p).filter_datapoint[i as usize].d_offset != 0 as libc::c_double {
         (*p).filter_datapoint[i as usize].d_offset -= offset
         //bb_error_msg("p->filter_datapoint[%d].d_offset %f -> %f",
         //	i,
@@ -1076,7 +1076,7 @@ unsafe extern "C" fn reset_peer_stats(mut p: *mut peer_t, mut offset: libc::c_do
       }
     } else {
       (*p).filter_datapoint[i as usize].d_recv_time = (*ptr_to_globals).cur_time;
-      (*p).filter_datapoint[i as usize].d_offset = 0i32 as libc::c_double
+      (*p).filter_datapoint[i as usize].d_offset = 0 as libc::c_double
       /*p->filter_datapoint[i].d_dispersion = MAXDISP;*/
     }
     i += 1
@@ -1104,7 +1104,7 @@ unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_s
     (*p).p_lsa = lsa;
     (*p).p_dotted = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
     if 3i32 != 0 && (*ptr_to_globals).verbose != 0 {
-      if strcmp((*p).p_hostname.as_mut_ptr(), (*p).p_dotted) != 0i32 {
+      if strcmp((*p).p_hostname.as_mut_ptr(), (*p).p_dotted) != 0 {
         bb_error_msg(
           b"\'%s\' is %s\x00" as *const u8 as *const libc::c_char,
           (*p).p_hostname.as_mut_ptr(),
@@ -1112,15 +1112,15 @@ unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_s
         );
       }
     }
-    (*p).dns_errors = 0i32 as u8;
+    (*p).dns_errors = 0 as u8;
     return lsa;
   }
   (*p).dns_errors = ((((*p).dns_errors as libc::c_int) << 1i32 | 1i32) & 0x3fi32) as u8;
   return lsa;
 }
 unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut key_entry_t) {
-  let mut item: *mut llist_t = 0 as *mut llist_t;
-  let mut p: *mut peer_t = 0 as *mut peer_t;
+  let mut item: *mut llist_t = std::ptr::null_mut();
+  let mut p: *mut peer_t = std::ptr::null_mut();
   p = xzalloc((::std::mem::size_of::<peer_t>() as libc::c_ulong).wrapping_add(strlen(s)))
     as *mut peer_t;
   strcpy((*p).p_hostname.as_mut_ptr(), s);
@@ -1137,7 +1137,7 @@ unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut k
     item = (*ptr_to_globals).ntp_peers;
     while !item.is_null() {
       let mut pp: *mut peer_t = (*item).data as *mut peer_t;
-      if !(*pp).p_dotted.is_null() && strcmp((*p).p_dotted, (*pp).p_dotted) == 0i32 {
+      if !(*pp).p_dotted.is_null() && strcmp((*p).p_dotted, (*pp).p_dotted) == 0 {
         bb_error_msg(
           b"duplicate peer %s (%s)\x00" as *const u8 as *const libc::c_char,
           s,
@@ -1164,7 +1164,7 @@ unsafe extern "C" fn do_sendto(
   mut len: ssize_t,
 ) -> libc::c_int {
   let mut ret: ssize_t = 0;
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   if from.is_null() {
     ret = sendto(
       fd,
@@ -1189,7 +1189,7 @@ unsafe extern "C" fn do_sendto(
     bb_simple_perror_msg(b"send failed\x00" as *const u8 as *const libc::c_char);
     return -1i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn hash(
   mut key_entry: *mut key_entry_t,
@@ -1293,7 +1293,7 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
   if (*p).p_fd == -1i32 {
     let mut fd: libc::c_int = 0;
     let mut family: libc::c_int = 0;
-    let mut local_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+    let mut local_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
     family = (*(*p).p_lsa).u.sa.sa_family as libc::c_int;
     fd = xsocket_type(&mut local_lsa, family, SOCK_DGRAM as libc::c_int);
     (*p).p_fd = fd;
@@ -1440,7 +1440,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char, mut offset: lib
 }
 #[inline(never)]
 unsafe extern "C" fn step_time(mut offset: libc::c_double) {
-  let mut item: *mut llist_t = 0 as *mut llist_t;
+  let mut item: *mut llist_t = std::ptr::null_mut();
   let mut dtime: libc::c_double = 0.;
   let mut tvc: timeval = timeval {
     tv_sec: 0,
@@ -1498,7 +1498,7 @@ unsafe extern "C" fn step_time(mut offset: libc::c_double) {
     //bb_error_msg("offset:%+f pp->next_action_time:%f -> %f",
     //	offset, pp->next_action_time, pp->next_action_time + offset);
     (*pp).next_action_time += offset;
-    if (*pp).p_fd >= 0i32 {
+    if (*pp).p_fd >= 0 {
       /* We wait for reply from this peer too.
        * But due to step we are doing, reply's data is no longer
        * useful (in fact, it'll be bogus). Stop waiting for it.
@@ -1517,7 +1517,7 @@ unsafe extern "C" fn clamp_pollexp_and_set_MAXSTRAT() {
   if (*ptr_to_globals).poll_exp as libc::c_int > 9i32 {
     (*ptr_to_globals).poll_exp = 9i32 as u8
   }
-  (*ptr_to_globals).polladj_count = 0i32;
+  (*ptr_to_globals).polladj_count = 0;
   (*ptr_to_globals).stratum = 16i32 as u8;
 }
 unsafe extern "C" fn compare_point_edge(
@@ -1543,7 +1543,7 @@ unsafe extern "C" fn compare_survivor_metric(
   return ((*a).metric > (*b).metric) as libc::c_int;
 }
 unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_int {
-  if (*p).reachable_bits as libc::c_int & (*p).reachable_bits as libc::c_int - 1i32 == 0i32 {
+  if (*p).reachable_bits as libc::c_int & (*p).reachable_bits as libc::c_int - 1i32 == 0 {
     /* One or zero bits in reachable_bits */
     if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
       bb_error_msg(
@@ -1551,7 +1551,7 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
         (*p).p_dotted,
       );
     }
-    return 0i32;
+    return 0;
   }
   /* we filter out such packets earlier */
   /* rd is root_distance(p) */
@@ -1568,7 +1568,7 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
         (*p).filter_jitter,
       );
     }
-    return 0i32;
+    return 0;
   }
   //TODO
   //	/* Do we have a loop? */
@@ -1578,8 +1578,8 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
 }
 unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   let mut current_block: u64;
-  let mut p: *mut peer_t = 0 as *mut peer_t;
-  let mut item: *mut llist_t = 0 as *mut llist_t;
+  let mut p: *mut peer_t = std::ptr::null_mut();
+  let mut item: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut size: libc::c_int =
@@ -1611,7 +1611,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   );
   let mut num_survivors: libc::c_uint = 0;
   /* Selection */
-  num_points = 0i32 as libc::c_uint;
+  num_points = 0 as libc::c_uint;
   item = (*ptr_to_globals).ntp_peers;
   while !item.is_null() {
     let mut rd: libc::c_double = 0.;
@@ -1639,7 +1639,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
       num_points = num_points.wrapping_add(1);
       let ref mut fresh28 = (*point.as_mut_ptr().offset(num_points as isize)).p;
       *fresh28 = p;
-      (*point.as_mut_ptr().offset(num_points as isize)).type_0 = 0i32;
+      (*point.as_mut_ptr().offset(num_points as isize)).type_0 = 0;
       (*point.as_mut_ptr().offset(num_points as isize)).edge = offset;
       (*point.as_mut_ptr().offset(num_points as isize)).opt_rd = rd;
       num_points = num_points.wrapping_add(1);
@@ -1653,7 +1653,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
     }
   }
   num_candidates = num_points.wrapping_div(3i32 as libc::c_uint);
-  if num_candidates == 0i32 as libc::c_uint {
+  if num_candidates == 0 as libc::c_uint {
     if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
       bb_error_msg(
         b"no valid datapoints%s\x00" as *const u8 as *const libc::c_char,
@@ -1682,14 +1682,14 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
    * and the midpoint of each truechimer represents
    * the candidates available to the cluster algorithm.
    */
-  num_falsetickers = 0i32 as libc::c_uint;
+  num_falsetickers = 0 as libc::c_uint;
   loop {
     let mut c: libc::c_int = 0;
-    let mut num_midpoints: libc::c_uint = 0i32 as libc::c_uint;
+    let mut num_midpoints: libc::c_uint = 0 as libc::c_uint;
     low = (1i32 << 9i32) as libc::c_double;
     high = -(1i32 << 9i32) as libc::c_double;
-    c = 0i32;
-    i = 0i32;
+    c = 0;
+    i = 0;
     while (i as libc::c_uint) < num_points {
       /* We want to do:
        * if (point[i].type == -1) c++;
@@ -1702,21 +1702,21 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
         low = (*point.as_mut_ptr().offset(i as isize)).edge;
         break;
       } else {
-        if (*point.as_mut_ptr().offset(i as isize)).type_0 == 0i32 {
+        if (*point.as_mut_ptr().offset(i as isize)).type_0 == 0 {
           num_midpoints = num_midpoints.wrapping_add(1)
         }
         i += 1
       }
     }
-    c = 0i32;
+    c = 0;
     i = num_points.wrapping_sub(1i32 as libc::c_uint) as libc::c_int;
-    while i >= 0i32 {
+    while i >= 0 {
       c += (*point.as_mut_ptr().offset(i as isize)).type_0;
       if c as libc::c_uint >= num_candidates.wrapping_sub(num_falsetickers) {
         high = (*point.as_mut_ptr().offset(i as isize)).edge;
         break;
       } else {
-        if (*point.as_mut_ptr().offset(i as isize)).type_0 == 0i32 {
+        if (*point.as_mut_ptr().offset(i as isize)).type_0 == 0 {
           num_midpoints = num_midpoints.wrapping_add(1)
         }
         i -= 1
@@ -1759,8 +1759,8 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
    * first by stratum and then by root distance.
    * All other things being equal, this is the order of preference.
    */
-  num_survivors = 0i32 as libc::c_uint;
-  i = 0i32;
+  num_survivors = 0 as libc::c_uint;
+  i = 0;
   while (i as libc::c_uint) < num_points {
     if !((*point.as_mut_ptr().offset(i as isize)).edge < low
       || (*point.as_mut_ptr().offset(i as isize)).edge > high)
@@ -1839,21 +1839,21 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
        * we stop if the number of survivors
        * is less than or equal to MIN_CLUSTERED (3).
        */
-      i = 0i32;
+      i = 0;
       while (i as libc::c_uint) < num_survivors {
         let mut selection_jitter_sq: libc::c_double = 0.;
         p = (*survivor.as_mut_ptr().offset(i as isize)).p;
-        if i == 0i32 || (*p).filter_jitter < min_jitter {
+        if i == 0 || (*p).filter_jitter < min_jitter {
           min_jitter = (*p).filter_jitter
         }
-        selection_jitter_sq = 0i32 as libc::c_double;
-        j = 0i32;
+        selection_jitter_sq = 0 as libc::c_double;
+        j = 0;
         while (j as libc::c_uint) < num_survivors {
           let mut q: *mut peer_t = (*survivor.as_mut_ptr().offset(j as isize)).p;
           selection_jitter_sq += SQUARE((*p).filter_offset - (*q).filter_offset);
           j += 1
         }
-        if i == 0i32 || selection_jitter_sq > max_selection_jitter {
+        if i == 0 || selection_jitter_sq > max_selection_jitter {
           max_selection_jitter = selection_jitter_sq;
           max_idx = i as libc::c_uint
         }
@@ -2026,7 +2026,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
         (*p).p_dotted,
       );
     }
-    return 0i32;
+    return 0;
     /* "leave poll interval as is" */
   }
   /* Clock state machine transition function. This is where the
@@ -2072,7 +2072,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
     clamp_pollexp_and_set_MAXSTRAT();
     run_script(b"step\x00" as *const u8 as *const libc::c_char, offset);
     recv_time += offset;
-    offset = 0i32 as libc::c_double;
+    offset = 0 as libc::c_double;
     abs_offset = offset;
     set_new_values(4i32, offset, recv_time);
   } else {
@@ -2104,7 +2104,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
             b"transitioning to FREQ, datapoint ignored\x00" as *const u8 as *const libc::c_char,
           );
         }
-        return 0i32;
+        return 0;
       }
       _ => {
         /* this is dead code for now */
@@ -2142,10 +2142,10 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
     memset(
       &mut tmx as *mut timex as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<timex>() as libc::c_ulong,
     ); // | ADJ_MAXERROR | ADJ_ESTERROR;
-    if adjtimex(&mut tmx) < 0i32 {
+    if adjtimex(&mut tmx) < 0 {
       bb_simple_perror_msg_and_die(b"adjtimex\x00" as *const u8 as *const libc::c_char);
       /* usec */
     }
@@ -2159,7 +2159,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   }
   memset(
     &mut tmx as *mut timex as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<timex>() as libc::c_ulong,
   );
   tmx.modes = (0x1i32 | 0x10i32 | 0x20i32) as libc::c_uint;
@@ -2173,7 +2173,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
     }
   }
   tmx.status = 0x1i32;
-  if (*ptr_to_globals).FREQHOLD_cnt != 0i32 {
+  if (*ptr_to_globals).FREQHOLD_cnt != 0 {
     /* man adjtimex on STA_FREQHOLD:
      * "Normally adjustments made via ADJ_OFFSET result in dampened
      * frequency adjustments also being made.
@@ -2186,7 +2186,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
      * If ntpd was restarted due to e.g. switch to another network,
      * this destroys already well-established tmx.freq value.
      */
-    if (*ptr_to_globals).FREQHOLD_cnt < 0i32 {
+    if (*ptr_to_globals).FREQHOLD_cnt < 0 {
       /* Initialize it */
       // Example: a laptop whose clock runs slower when hibernated,
       // after wake up it still has good tmx.freq, but accumulated ~0.5 sec offset:
@@ -2254,12 +2254,12 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
     tmx.constant -= 1
   }
   if tmx.constant < 0 {
-    tmx.constant = 0i32 as __syscall_slong_t
+    tmx.constant = 0 as __syscall_slong_t
   }
   //tmx.esterror = (u32)(clock_jitter * 1e6);
   //tmx.maxerror = (u32)((sys_rootdelay / 2 + sys_rootdisp) * 1e6);
   rc = adjtimex(&mut tmx);
-  if rc < 0i32 {
+  if rc < 0 {
     bb_simple_perror_msg_and_die(b"adjtimex\x00" as *const u8 as *const libc::c_char);
   }
   /* NB: here kernel returns constant == G.poll_exp, not == G.poll_exp - 4.
@@ -2317,7 +2317,7 @@ unsafe extern "C" fn poll_interval(mut upper_bound: libc::c_int) -> libc::c_uint
 unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
   (*ptr_to_globals).polladj_count += count;
   if (*ptr_to_globals).polladj_count > 40i32 {
-    (*ptr_to_globals).polladj_count = 0i32;
+    (*ptr_to_globals).polladj_count = 0;
     if ((*ptr_to_globals).poll_exp as libc::c_int) < 12i32 {
       (*ptr_to_globals).poll_exp = (*ptr_to_globals).poll_exp.wrapping_add(1);
       if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
@@ -2329,11 +2329,11 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
       }
     }
   } else if (*ptr_to_globals).polladj_count < -40i32
-    || count < 0i32 && (*ptr_to_globals).poll_exp as libc::c_int > 9i32
+    || count < 0 && (*ptr_to_globals).poll_exp as libc::c_int > 9i32
   {
-    (*ptr_to_globals).polladj_count = 0i32;
+    (*ptr_to_globals).polladj_count = 0;
     if (*ptr_to_globals).poll_exp as libc::c_int > 5i32 {
-      let mut item: *mut llist_t = 0 as *mut llist_t;
+      let mut item: *mut llist_t = std::ptr::null_mut();
       (*ptr_to_globals).poll_exp = (*ptr_to_globals).poll_exp.wrapping_sub(1);
       /* Correct p->next_action_time in each peer
        * which waits for sending, so that they send earlier.
@@ -2344,7 +2344,7 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
       item = (*ptr_to_globals).ntp_peers;
       while !item.is_null() {
         let mut pp: *mut peer_t = (*item).data as *mut peer_t;
-        if (*pp).p_fd < 0i32 {
+        if (*pp).p_fd < 0 {
           (*pp).next_action_time -=
             (1i32 << (*ptr_to_globals).poll_exp as libc::c_int) as libc::c_double
         }
@@ -2411,9 +2411,9 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
   let mut prev_delay: libc::c_double = 0.;
   let mut delay: libc::c_double = 0.;
   let mut interval: libc::c_uint = 0;
-  let mut datapoint: *mut datapoint_t = 0 as *mut datapoint_t;
-  let mut q: *mut peer_t = 0 as *mut peer_t;
-  offset = 0i32 as libc::c_double;
+  let mut datapoint: *mut datapoint_t = std::ptr::null_mut();
+  let mut q: *mut peer_t = std::ptr::null_mut();
+  offset = 0 as libc::c_double;
   /* We can recvfrom here and check from.IP, but some multihomed
    * ntp servers reply from their *other IP*.
    * TODO: maybe we should check at least what we can: from.port == 123?
@@ -2478,7 +2478,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
       close((*p).p_fd);
       (*p).p_fd = -1i32;
       if msg.m_status as libc::c_int & LI_ALARM as libc::c_int == LI_ALARM as libc::c_int
-        || msg.m_stratum as libc::c_int == 0i32
+        || msg.m_stratum as libc::c_int == 0
         || msg.m_stratum as libc::c_int > NTP_MAXSTRATUM as libc::c_int
       {
         current_block = 5634871135123216486;
@@ -2535,7 +2535,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
        * it's better to just ignore it than use its much less precise value.
        */
       prev_delay = (*p).p_raw_delay;
-      (*p).p_raw_delay = if delay < 0i32 as libc::c_double {
+      (*p).p_raw_delay = if delay < 0 as libc::c_double {
         0.0f64
       } else {
         delay
@@ -2578,7 +2578,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         (*p).datapoint_idx = if (*p).reachable_bits as libc::c_int != 0 {
           ((*p).datapoint_idx + 1i32) % 8i32
         } else {
-          0i32
+          0
         };
         datapoint = &mut *(*p)
           .filter_datapoint
@@ -2591,7 +2591,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         if (*p).reachable_bits == 0 {
           /* 1st datapoint ever - replicate offset in every element */
           let mut i: libc::c_int = 0;
-          i = 0i32;
+          i = 0;
           while i < 8i32 {
             (*p).filter_datapoint[i as usize].d_offset = offset;
             i += 1
@@ -2612,7 +2612,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         /* Muck with statictics and update the clock */
         filter_datapoints(p);
         q = select_and_cluster();
-        rc = 0i32;
+        rc = 0;
         if !q.is_null() {
           if option_mask32 & OPT_w as libc::c_int as libc::c_uint == 0 {
             rc = update_local_clock(q)
@@ -2626,7 +2626,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         match current_block {
           8536721194329258740 => {}
           _ => {
-            if rc != 0i32 {
+            if rc != 0 {
               /* No peer selected.
                * If poll interval is small, increase it.
                */
@@ -2636,11 +2636,11 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
                * is increased, otherwise it is decreased. A bit of hysteresis
                * helps calm the dance. Works best using burst mode.
                */
-              if rc > 0i32 && (*ptr_to_globals).offset_to_jitter_ratio <= 4i32 as libc::c_uint {
+              if rc > 0 && (*ptr_to_globals).offset_to_jitter_ratio <= 4i32 as libc::c_uint {
                 current_block = 8536721194329258740;
               } else {
                 if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-                  if rc > 0i32 {
+                  if rc > 0 {
                     bb_error_msg(
                       b"want smaller interval: offset/jitter = %u\x00" as *const u8
                         as *const libc::c_char,
@@ -2692,8 +2692,8 @@ unsafe extern "C" fn recv_and_process_client_pkt()
 {
   let mut size: ssize_t = 0;
   //u8          version;
-  let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut from: *mut sockaddr = 0 as *mut sockaddr;
+  let mut to: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut from: *mut sockaddr = std::ptr::null_mut();
   // TODO use std::mem::zeroed()
   let mut msg: msg_t = msg_t {
     m_status: 0,
@@ -2776,7 +2776,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     /* Build a reply packet */
     memset(
       &mut msg as *mut msg_t as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<msg_t>() as libc::c_ulong,
     );
     msg.m_status = if ((*ptr_to_globals).stratum as libc::c_int) < 16i32 {
@@ -2798,7 +2798,7 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     /* this time was obtained between poll() and recv() */
     msg.m_rectime = d_to_lfp((*ptr_to_globals).cur_time); /* this instant */
     msg.m_xmttime = d_to_lfp(gettime1900d());
-    if (*ptr_to_globals).peer_cnt == 0i32 as libc::c_uint {
+    if (*ptr_to_globals).peer_cnt == 0 as libc::c_uint {
       /* we have no peers: "stratum 1 server" mode. reftime = our own time */
       (*ptr_to_globals).reftime = (*ptr_to_globals).cur_time
     }
@@ -2930,8 +2930,8 @@ unsafe extern "C" fn find_key_entry(
 unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   let mut current_block: u64;
   let mut opts: libc::c_uint = 0;
-  let mut peers: *mut llist_t = 0 as *mut llist_t;
-  let mut key_entries: *mut llist_t = 0 as *mut llist_t;
+  let mut peers: *mut llist_t = std::ptr::null_mut();
+  let mut key_entries: *mut llist_t = std::ptr::null_mut();
   let mut key_file_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(getpid() as libc::c_uint);
   if getuid() != 0 {
@@ -2940,16 +2940,16 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   /* Set some globals */
   (*ptr_to_globals).discipline_jitter = 0.002f64; /* speeds up initial sync */
   (*ptr_to_globals).stratum = 16i32 as u8; /* sets G.cur_time too */
-  if 0i32 != 0i32 {
-    (*ptr_to_globals).poll_exp = 0i32 as u8
+  if 0 != 0 {
+    (*ptr_to_globals).poll_exp = 0 as u8
   }
   (*ptr_to_globals).last_update_recv_time = gettime1900d();
   (*ptr_to_globals).reftime = (*ptr_to_globals).last_update_recv_time;
   (*ptr_to_globals).last_script_run = (*ptr_to_globals).reftime;
   (*ptr_to_globals).FREQHOLD_cnt = -1i32;
   /* Parse options */
-  peers = 0 as *mut llist_t;
-  key_entries = 0 as *mut llist_t;
+  peers = std::ptr::null_mut();
+  key_entries = std::ptr::null_mut();
   opts = getopt32(
     argv,
     b"^nqNxk:wp:*S:lI:d46aAbgL\x00=0:dd:wn:Il\x00" as *const u8 as *const libc::c_char,
@@ -2979,7 +2979,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   }
   /* I hesitate to set -20 prio. -15 should be high enough for timekeeping */
   if opts & OPT_N as libc::c_int as libc::c_uint != 0 {
-    setpriority(PRIO_PROCESS, 0i32 as id_t, -15i32);
+    setpriority(PRIO_PROCESS, 0 as id_t, -15i32);
   }
   if opts & OPT_n as libc::c_int as libc::c_uint == 0 {
     bb_daemonize_or_rexec(DAEMON_DEVNULL_STDIO as libc::c_int);
@@ -2987,7 +2987,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   }
   if opts & OPT_k as libc::c_int as libc::c_uint != 0 {
     let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
-    let mut parser: *mut parser_t = 0 as *mut parser_t;
+    let mut parser: *mut parser_t = std::ptr::null_mut();
     parser = config_open(key_file_path);
     while config_read(
       parser,
@@ -2999,7 +2999,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       b"# \t\x00" as *const u8 as *const libc::c_char,
     ) == 3i32
     {
-      let mut key_entry: *mut key_entry_t = 0 as *mut key_entry_t;
+      let mut key_entry: *mut key_entry_t = std::ptr::null_mut();
       let mut buffer: [libc::c_char; 40] = [0; 40];
       let mut hash_type: smalluint = 0;
       let mut msg_size: smalluint = 0;
@@ -3012,7 +3012,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         tokens[1],
         b"sha\x00" as *const u8 as *const libc::c_char,
         3i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       {
         /* supports 'sha' and 'sha1' formats */
         hash_type = HASH_SHA1 as libc::c_int as smalluint
@@ -3086,12 +3086,12 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   if !peers.is_null() {
     while !peers.is_null() {
       let mut peer: *mut libc::c_char = llist_pop(&mut peers) as *mut libc::c_char;
-      let mut key_entry_0: *mut key_entry_t = 0 as *mut key_entry_t;
+      let mut key_entry_0: *mut key_entry_t = std::ptr::null_mut();
       if strncmp(
         peer,
         b"keyno:\x00" as *const u8 as *const libc::c_char,
         6i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       {
         let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut key_id: libc::c_int = 0;
@@ -3109,7 +3109,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       add_peers(peer, key_entry_0);
     }
   } else {
-    let mut parser_0: *mut parser_t = 0 as *mut parser_t;
+    let mut parser_0: *mut parser_t = std::ptr::null_mut();
     let mut token: [*mut libc::c_char; 5] = [0 as *mut libc::c_char; 5];
     parser_0 = config_open(b"/etc/ntp.conf\x00" as *const u8 as *const libc::c_char);
     while config_read(
@@ -3120,13 +3120,13 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       b"# \t\x00" as *const u8 as *const libc::c_char,
     ) != 0
     {
-      if strcmp(token[0], b"server\x00" as *const u8 as *const libc::c_char) == 0i32
+      if strcmp(token[0], b"server\x00" as *const u8 as *const libc::c_char) == 0
         && !token[1].is_null()
       {
-        let mut key_entry_1: *mut key_entry_t = 0 as *mut key_entry_t;
+        let mut key_entry_1: *mut key_entry_t = std::ptr::null_mut();
         if !token[2].is_null()
           && !token[3].is_null()
-          && strcmp(token[2], b"key\x00" as *const u8 as *const libc::c_char) == 0i32
+          && strcmp(token[2], b"key\x00" as *const u8 as *const libc::c_char) == 0
         {
           let mut key_id_0: libc::c_uint =
             xatou_range(token[3], 1i32 as libc::c_uint, 65535i32 as libc::c_uint);
@@ -3144,7 +3144,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
     }
     config_close(parser_0);
   }
-  if (*ptr_to_globals).peer_cnt == 0i32 as libc::c_uint {
+  if (*ptr_to_globals).peer_cnt == 0 as libc::c_uint {
     if opts & OPT_l as libc::c_int as libc::c_uint == 0 {
       bb_show_usage();
     }
@@ -3169,11 +3169,11 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
     alarm(10i32 as libc::c_uint);
   }
   bb_signals(
-    0i32 | 1i32 << 15i32 | 1i32 << 2i32 | 1i32 << 14i32,
+    0 | 1i32 << 15i32 | 1i32 << 2i32 | 1i32 << 14i32,
     Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   bb_signals(
-    0i32 | 1i32 << 13i32 | 1i32 << 17i32,
+    0 | 1i32 << 13i32 | 1i32 << 17i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   //TODO: free unused elements of key_entries?
@@ -3210,12 +3210,12 @@ pub unsafe extern "C" fn ntpd_main(
     discipline_jitter: 0.,
     offset_to_jitter_ratio: 0,
   };
-  let mut pfd: *mut pollfd = 0 as *mut pollfd;
-  let mut idx2peer: *mut *mut peer_t = 0 as *mut *mut peer_t;
+  let mut pfd: *mut pollfd = std::ptr::null_mut();
+  let mut idx2peer: *mut *mut peer_t = std::ptr::null_mut();
   let mut cnt: libc::c_uint = 0;
   memset(
     &mut G as *mut globals as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
   let ref mut fresh31 =
@@ -3241,7 +3241,7 @@ pub unsafe extern "C" fn ntpd_main(
    */
   cnt = G.peer_cnt.wrapping_mul((4i32 + 1i32) as libc::c_uint); /* while (!bb_got_signal) */
   while bb_got_signal == 0 {
-    let mut item: *mut llist_t = 0 as *mut llist_t;
+    let mut item: *mut llist_t = std::ptr::null_mut();
     let mut i: libc::c_uint = 0;
     let mut j: libc::c_uint = 0;
     let mut nfds: libc::c_int = 0;
@@ -3252,7 +3252,7 @@ pub unsafe extern "C" fn ntpd_main(
     if nextaction < G.cur_time + 1i32 as libc::c_double {
       nextaction = G.cur_time + 1i32 as libc::c_double
     }
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     if G.listen_fd != -1i32 {
       (*pfd.offset(0)).fd = G.listen_fd;
       (*pfd.offset(0)).events = 0x1i32 as libc::c_short;
@@ -3266,11 +3266,11 @@ pub unsafe extern "C" fn ntpd_main(
         if (*p).p_fd == -1i32 {
           /* Time to send new req */
           cnt = cnt.wrapping_sub(1);
-          if cnt == 0i32 as libc::c_uint {
+          if cnt == 0 as libc::c_uint {
             if 3i32 >= 4i32 && G.verbose >= 4i32 as libc::c_uint {
               bb_simple_error_msg(b"disabling burst mode\x00" as *const u8 as *const libc::c_char);
             }
-            G.polladj_count = 0i32;
+            G.polladj_count = 0;
             G.poll_exp = 5i32 as u8
           }
           send_query_to_peer(p);
@@ -3291,7 +3291,7 @@ pub unsafe extern "C" fn ntpd_main(
             timeout,
           );
           /* What if don't see it because it changed its IP? */
-          if (*p).reachable_bits as libc::c_int == 0i32 {
+          if (*p).reachable_bits as libc::c_int == 0 {
             resolve_peer_hostname(p);
           }
           set_next(p, timeout as libc::c_uint);
@@ -3300,7 +3300,7 @@ pub unsafe extern "C" fn ntpd_main(
       if (*p).next_action_time < nextaction {
         nextaction = (*p).next_action_time
       }
-      if (*p).p_fd >= 0i32 {
+      if (*p).p_fd >= 0 {
         /* Wait for reply from this peer */
         (*pfd.offset(i as isize)).fd = (*p).p_fd; /* (nextaction - G.cur_time) rounds down, compensating */
         (*pfd.offset(i as isize)).events = 0x1i32 as libc::c_short;
@@ -3311,8 +3311,8 @@ pub unsafe extern "C" fn ntpd_main(
       item = (*item).link
     }
     timeout = (nextaction - G.cur_time) as libc::c_int;
-    if timeout < 0i32 {
-      timeout = 0i32
+    if timeout < 0 {
+      timeout = 0
     }
     timeout += 1;
     /* Here we may block */
@@ -3324,11 +3324,11 @@ pub unsafe extern "C" fn ntpd_main(
          * reduces clutter in logs.
          */
         nfds = poll(pfd, i as nfds_t, 1000i32); /* sets G.cur_time */
-        if nfds != 0i32 {
+        if nfds != 0 {
           current_block = 4356998877126854527; /* poll was interrupted by a signal */
         } else {
           timeout -= 1;
-          if timeout <= 0i32 {
+          if timeout <= 0 {
             current_block = 4356998877126854527;
           } else {
             current_block = 17836213544692497527;
@@ -3357,7 +3357,7 @@ pub unsafe extern "C" fn ntpd_main(
       _ => {}
     }
     gettime1900d();
-    if nfds <= 0i32 {
+    if nfds <= 0 {
       let mut ct: libc::c_double = 0.;
       let mut dns_error: libc::c_int = 0;
       if bb_got_signal != 0 {
@@ -3377,7 +3377,7 @@ pub unsafe extern "C" fn ntpd_main(
        * this way, we almost never overlap DNS resolution with
        * "request-reply" packet round trip.
        */
-      dns_error = 0i32;
+      dns_error = 0;
       ct = G.cur_time;
       item = G.ntp_peers;
       while !item.is_null() {
@@ -3405,7 +3405,7 @@ pub unsafe extern "C" fn ntpd_main(
       }
     } else {
       /* Process any received packets */
-      j = 0i32 as libc::c_uint;
+      j = 0 as libc::c_uint;
       if G.listen_fd != -1i32 {
         if (*pfd.offset(0)).revents != 0 {
           /* & (POLLIN|POLLERR)*/
@@ -3416,7 +3416,7 @@ pub unsafe extern "C" fn ntpd_main(
         }
         j = 1i32 as libc::c_uint
       }
-      while nfds != 0i32 && j < i {
+      while nfds != 0 && j < i {
         if (*pfd.offset(j as isize)).revents != 0 {
           /* & (POLLIN|POLLERR)*/
           /*

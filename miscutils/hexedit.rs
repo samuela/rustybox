@@ -179,8 +179,8 @@ unsafe extern "C" fn format_line(
 ) -> libc::c_int {
   let mut ofs_pos: libc::c_int = 0;
   let mut text: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut end: *mut u8 = 0 as *mut u8;
-  let mut end1: *mut u8 = 0 as *mut u8;
+  let mut end: *mut u8 = std::ptr::null_mut();
+  let mut end1: *mut u8 = std::ptr::null_mut();
   /* Can be more than 4Gb, thus >8 chars, thus use a variable - don't assume 8! */
   ofs_pos = sprintf(
     hex,
@@ -241,7 +241,7 @@ unsafe extern "C" fn format_line(
   return ofs_pos;
 }
 unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
-  let mut data: *mut u8 = 0 as *mut u8;
+  let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
   let mut i: libc::c_uint = 0;
   let mut pos: libc::c_uint = 0;
@@ -251,15 +251,15 @@ unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
     .wrapping_div(16i32 as libc::c_uint)
     .wrapping_sub((*ptr_to_globals).height)
     .wrapping_add(1i32 as libc::c_uint);
-  if (i as libc::c_int) < 0i32 {
-    i = 0i32 as libc::c_uint
+  if (i as libc::c_int) < 0 {
+    i = 0 as libc::c_uint
   }
   data = (*ptr_to_globals)
     .baseaddr
     .offset(i.wrapping_mul(16i32 as libc::c_uint) as isize);
   offset = (*ptr_to_globals).offset + i.wrapping_mul(16i32 as libc::c_uint) as libc::c_long;
   cursor = cursor.wrapping_sub(i.wrapping_mul(16i32 as libc::c_uint));
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   pos = i;
   while i < (*ptr_to_globals).height {
     let mut buf: [libc::c_char; 88] = [0; 88];
@@ -284,7 +284,7 @@ unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
 }
 unsafe extern "C" fn redraw_cur_line() {
   let mut buf: [libc::c_char; 88] = [0; 88];
-  let mut data: *mut u8 = 0 as *mut u8;
+  let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
   let mut column: libc::c_int = 0;
   column = (0xfi32 as libc::c_ulong & (*ptr_to_globals).current_byte as uintptr_t) as libc::c_int;
@@ -337,7 +337,7 @@ unsafe extern "C" fn move_mapping_further() -> libc::c_int {
   let mut pos: libc::c_uint = 0;
   let mut pagesize: libc::c_uint = 0;
   if (*ptr_to_globals).size - (*ptr_to_globals).offset < (64i32 * 1024i32) as libc::c_long {
-    return 0i32;
+    return 0;
   }
   pagesize = 4096i32 as libc::c_uint;
   pos = (*ptr_to_globals)
@@ -361,13 +361,13 @@ unsafe extern "C" fn move_mapping_further() -> libc::c_int {
     }
     return remap(pos);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
   let mut pos: libc::c_uint = 0;
   let mut pagesize: libc::c_uint = 0;
   if (*ptr_to_globals).offset == 0 {
-    return 0i32;
+    return 0;
   }
   pagesize = 4096i32 as libc::c_uint;
   pos = (*ptr_to_globals)
@@ -405,17 +405,17 @@ pub unsafe extern "C" fn hexedit_main(
   setvbuf(
     stdout,
     xmalloc(sz as size_t) as *mut libc::c_char,
-    0i32,
+    0,
     sz as size_t,
   );
   getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   (*ptr_to_globals).fd = xopen(*argv, 0o2i32);
-  (*ptr_to_globals).size = xlseek((*ptr_to_globals).fd, 0i32 as off_t, 2i32);
+  (*ptr_to_globals).size = xlseek((*ptr_to_globals).fd, 0 as off_t, 2i32);
   /* TERMIOS_RAW_CRNL suppresses \n -> \r\n translation, helps with down-arrow */
   printf(b"\x1b[?1049h\x00" as *const u8 as *const libc::c_char);
   set_termios_to_raw(
-    0i32,
+    0,
     &mut (*ptr_to_globals).orig_termios,
     1i32 << 1i32 | 1i32 << 2i32,
   );
@@ -443,7 +443,7 @@ pub unsafe extern "C" fn hexedit_main(
     if bb_got_signal == 0 {
       key = read_key(0i32, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32) as i32
     }
-    (*ptr_to_globals).in_read_key = 0i32 as smallint;
+    (*ptr_to_globals).in_read_key = 0 as smallint;
     if bb_got_signal != 0 {
       key = 'X' as i32 & !0x60i32 as u8 as libc::c_int
     }
@@ -474,11 +474,11 @@ pub unsafe extern "C" fn hexedit_main(
         }
         -5 => {
           if (*ptr_to_globals).half != 0 {
-            (*ptr_to_globals).half = 0i32 as smallint;
+            (*ptr_to_globals).half = 0 as smallint;
             printf(b"\x1b[D\x00" as *const u8 as *const libc::c_char);
             current_block_97 = 1966075811433896587;
           } else if 0xfi32 as libc::c_ulong & (*ptr_to_globals).current_byte as uintptr_t
-            == 0i32 as libc::c_ulong
+            == 0 as libc::c_ulong
           {
             /* leftmost pos, wrap to prev line */
             if (*ptr_to_globals).current_byte == (*ptr_to_globals).baseaddr {
@@ -524,18 +524,18 @@ pub unsafe extern "C" fn hexedit_main(
             b"Go to (dec,0Xhex,0oct): \x00" as *const u8 as *const libc::c_char,
             buf.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 28]>() as libc::c_ulong as libc::c_int,
-          ) > 0i32
+          ) > 0
           {
             let mut t: off_t = 0;
             let mut cursor: libc::c_uint = 0;
-            t = bb_strtoull(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0i32) as off_t;
+            t = bb_strtoull(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0) as off_t;
             if t >= (*ptr_to_globals).size {
               t = (*ptr_to_globals).size - 1
             }
             cursor = (t & (4096i32 - 1i32) as libc::c_long) as libc::c_uint;
             t -= cursor as libc::c_long;
             if t < 0 {
-              t = 0i32 as off_t;
+              t = 0 as off_t;
               cursor = t as libc::c_uint
             }
             if t != 0 && cursor < 0x1ffi32 as libc::c_uint {
@@ -562,7 +562,7 @@ pub unsafe extern "C" fn hexedit_main(
       match current_block_97 {
         557539052108834644 => {
           restore_term();
-          return 0i32;
+          return 0;
         }
         4691753191039046465 =>
         /* fall through */
@@ -572,7 +572,7 @@ pub unsafe extern "C" fn hexedit_main(
               /* already at EOF; extend the file */
               (*ptr_to_globals).size += 1;
               if (*ptr_to_globals).size <= 0
-                || ftruncate((*ptr_to_globals).fd, (*ptr_to_globals).size) != 0i32
+                || ftruncate((*ptr_to_globals).fd, (*ptr_to_globals).size) != 0
               {
                 /* error extending? (e.g. block dev) */
                 (*ptr_to_globals).size -= 1;
@@ -622,10 +622,10 @@ pub unsafe extern "C" fn hexedit_main(
               );
               current_block_97 = 1966075811433896587;
             } else {
-              (*ptr_to_globals).half = 0i32 as smallint;
+              (*ptr_to_globals).half = 0 as smallint;
               (*ptr_to_globals).current_byte = (*ptr_to_globals).current_byte.offset(1);
               if 0xfi32 as libc::c_ulong & (*ptr_to_globals).current_byte as uintptr_t
-                == 0i32 as libc::c_ulong
+                == 0 as libc::c_ulong
               {
                 /* rightmost pos, wrap to next line */
                 if (*ptr_to_globals).current_byte == (*ptr_to_globals).eof_byte {
@@ -701,7 +701,7 @@ pub unsafe extern "C" fn hexedit_main(
             current_block_97 = 1966075811433896587;
           }
           _ => {
-            if (*ptr_to_globals).row != 0i32 as libc::c_uint {
+            if (*ptr_to_globals).row != 0 as libc::c_uint {
               (*ptr_to_globals).row = (*ptr_to_globals).row.wrapping_sub(1);
               printf(b"\x1b[A\x00" as *const u8 as *const libc::c_char);
             /* up (won't scroll) */

@@ -518,7 +518,7 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
     b"# \t\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    if strcmp(buf, short_tty) == 0i32 {
+    if strcmp(buf, short_tty) == 0 {
       break;
     }
     buf = std::ptr::null_mut::<libc::c_char>()
@@ -528,5 +528,5 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
    * or line was found which equals short_tty.
    * In all these cases, we report "this tty is secure".
    */
-  return (buf != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int;
+  return (buf != std::ptr::null_mut()) as libc::c_int;
 }

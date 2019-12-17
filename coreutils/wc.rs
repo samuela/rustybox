@@ -124,23 +124,23 @@ pub unsafe extern "C" fn wc_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fp: *mut FILE = std::ptr::null_mut();
+  let mut s: *const libc::c_char = std::ptr::null();
   let mut u: libc::c_uint = 0;
   let mut linepos: libc::c_uint = 0;
   let mut in_word: smallint = 0;
-  let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut arg: *const libc::c_char = std::ptr::null();
   let mut start_fmt: *const libc::c_char =
     (b" %9llu\x00" as *const u8 as *const libc::c_char).offset(1);
   let mut fname_fmt: *const libc::c_char = b" %s\n\x00" as *const u8 as *const libc::c_char;
-  let mut pcounts: *mut libc::c_ulonglong = 0 as *mut libc::c_ulonglong;
+  let mut pcounts: *mut libc::c_ulonglong = std::ptr::null_mut();
   let mut counts: [libc::c_ulonglong; 5] = [0; 5];
   let mut totals: [libc::c_ulonglong; 5] = [0; 5];
   let mut num_files: libc::c_int = 0;
-  let mut status: smallint = 0i32 as smallint;
+  let mut status: smallint = 0 as smallint;
   let mut print_type: libc::c_uint = 0;
   print_type = getopt32(argv, b"lwmcL\x00" as *const u8 as *const libc::c_char);
-  if print_type == 0i32 as libc::c_uint {
+  if print_type == 0 as libc::c_uint {
     print_type = (1i32 << WC_LINES as libc::c_int
       | 1i32 << WC_WORDS as libc::c_int
       | 1i32 << WC_BYTES as libc::c_int) as libc::c_uint
@@ -160,18 +160,18 @@ pub unsafe extern "C" fn wc_main(
   }
   memset(
     totals.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_ulonglong; 5]>() as libc::c_ulong,
   );
   pcounts = counts.as_mut_ptr();
-  num_files = 0i32;
+  num_files = 0;
   loop {
     let fresh0 = argv;
     argv = argv.offset(1);
     arg = *fresh0;
     if !arg.is_null() {
-      fp = 0 as *mut FILE;
-      s = 0 as *const libc::c_char;
+      fp = std::ptr::null_mut();
+      s = std::ptr::null();
       u = 0;
       linepos = 0;
       in_word = 0;
@@ -183,11 +183,11 @@ pub unsafe extern "C" fn wc_main(
       } else {
         memset(
           counts.as_mut_ptr() as *mut libc::c_void,
-          0i32,
+          0,
           ::std::mem::size_of::<[libc::c_ulonglong; 5]>() as libc::c_ulong,
         );
-        linepos = 0i32 as libc::c_uint;
-        in_word = 0i32 as smallint;
+        linepos = 0 as libc::c_uint;
+        in_word = 0 as smallint;
         let mut current_block_46: u64;
         loop {
           let mut c: libc::c_int = 0;
@@ -246,14 +246,14 @@ pub unsafe extern "C" fn wc_main(
                   counts[WC_LINES as libc::c_int as usize].wrapping_add(1)
               }
               if c != '\u{b}' as i32 {
-                linepos = 0i32 as libc::c_uint
+                linepos = 0 as libc::c_uint
               }
             }
             _ => {}
           }
           counts[WC_WORDS as libc::c_int as usize] =
             counts[WC_WORDS as libc::c_int as usize].wrapping_add(in_word as libc::c_ulonglong);
-          in_word = 0i32 as smallint;
+          in_word = 0 as smallint;
           if c == -1i32 {
             break;
           }
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn wc_main(
       if !(num_files > 1i32) {
         break; /* Make sure we don't get here again. */
       }
-      num_files = 0i32;
+      num_files = 0;
       arg = b"total\x00" as *const u8 as *const libc::c_char;
       pcounts = totals.as_mut_ptr();
       argv = argv.offset(-1)
@@ -282,7 +282,7 @@ pub unsafe extern "C" fn wc_main(
      * (saves results for all files, finds max col len etc...)
      * we won't try that hard, it will bloat us too much */
     s = start_fmt;
-    u = 0i32 as libc::c_uint;
+    u = 0 as libc::c_uint;
     loop {
       if print_type & (1i32 << u) as libc::c_uint != 0 {
         printf(s, *pcounts.offset(u as isize));

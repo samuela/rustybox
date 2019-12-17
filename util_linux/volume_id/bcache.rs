@@ -179,7 +179,7 @@ static mut bcache_magic: [libc::c_char; 16] = [
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc::c_int
 /*,uint64_t off*/ {
-  let mut sb: *mut bcache_super_block = 0 as *mut bcache_super_block;
+  let mut sb: *mut bcache_super_block = std::ptr::null_mut();
   sb = volume_id_get_buffer(
     id,
     0x1000i32 as u64,
@@ -192,12 +192,12 @@ pub unsafe extern "C" fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc:
     (*sb).magic.as_mut_ptr() as *const libc::c_void,
     bcache_magic.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
   volume_id_set_label_string(id, (*sb).label.as_mut_ptr(), 32i32 as size_t);
   volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
   (*id).type_0 = b"bcache\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

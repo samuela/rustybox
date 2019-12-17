@@ -63,7 +63,7 @@ pub unsafe extern "C" fn runlevel_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ut: *mut utmpx = 0 as *mut utmpx;
+  let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut prev: libc::c_char = 0;
   if !(*argv.offset(1)).is_null() {
     utmpxname(*argv.offset(1));
@@ -76,7 +76,7 @@ pub unsafe extern "C" fn runlevel_main(
     }
     if (*ut).ut_type as libc::c_int == 1i32 {
       prev = ((*ut).ut_pid / 256i32) as libc::c_char;
-      if prev as libc::c_int == 0i32 {
+      if prev as libc::c_int == 0 {
         prev = 'N' as i32 as libc::c_char
       }
       printf(
@@ -84,7 +84,7 @@ pub unsafe extern "C" fn runlevel_main(
         prev as libc::c_int,
         (*ut).ut_pid % 256i32,
       );
-      return 0i32;
+      return 0;
     }
   }
   puts(b"unknown\x00" as *const u8 as *const libc::c_char);

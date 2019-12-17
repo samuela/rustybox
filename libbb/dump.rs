@@ -146,20 +146,20 @@ pub unsafe extern "C" fn alloc_dumper() -> *mut dumper_t {
 }
 #[inline(never)]
 unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
-  let mut fu: *mut FU = 0 as *mut FU;
+  let mut fu: *mut FU = std::ptr::null_mut();
   let mut bcnt: libc::c_int = 0;
   let mut cur_size: libc::c_int = 0;
   let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut prec: libc::c_int = 0;
   /* figure out the data block size needed for each format unit */
-  cur_size = 0i32;
+  cur_size = 0;
   fu = (*fs).nextfu;
   while !fu.is_null() {
     if (*fu).bcnt != 0 {
       cur_size += (*fu).bcnt * (*fu).reps
     } else {
-      prec = 0i32;
+      prec = 0;
       bcnt = prec;
       fmt = (*fu).fmt;
       while *fmt != 0 {
@@ -220,17 +220,17 @@ unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
 }
 #[inline(never)]
 unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
-  let mut e: *const libc::c_char = 0 as *const libc::c_char;
+  let mut e: *const libc::c_char = std::ptr::null();
   let mut current_block: u64;
-  let mut fu: *mut FU = 0 as *mut FU;
+  let mut fu: *mut FU = std::ptr::null_mut();
   fu = (*fs).nextfu;
   while !fu.is_null() {
-    let mut pr: *mut PR = 0 as *mut PR;
+    let mut pr: *mut PR = std::ptr::null_mut();
     let mut p1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p3: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut fmtp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut nconv: libc::c_int = 0i32;
+    let mut nconv: libc::c_int = 0;
     /*
      * break each format unit into print units; each
      * conversion character gets its own.
@@ -238,8 +238,8 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
     fmtp = (*fu).fmt;
     while *fmtp != 0 {
       let mut len: libc::c_uint = 0;
-      let mut prec: *const libc::c_char = 0 as *const libc::c_char;
-      let mut byte_count_str: *const libc::c_char = 0 as *const libc::c_char;
+      let mut prec: *const libc::c_char = std::ptr::null();
+      let mut byte_count_str: *const libc::c_char = std::ptr::null();
       /* DBU:[dvae@cray.com] zalloc so that forward ptrs start out NULL */
       pr = xzalloc(::std::mem::size_of::<PR>() as libc::c_ulong) as *mut PR;
       if (*fu).nextpr.is_null() {
@@ -257,7 +257,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
          * get precision for %s -- if have a byte count, don't
          * need it.
          */
-        prec = 0 as *const libc::c_char;
+        prec = std::ptr::null();
         if (*fu).bcnt != 0 {
           loop
           /* skip to conversion character */
@@ -301,7 +301,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         } else {
           if *p1 as libc::c_int == 'l' as i32 {
             /* %ld etc */
-            e = 0 as *const libc::c_char; /* "diouxX"? */
+            e = std::ptr::null(); /* "diouxX"? */
             p2 = p2.offset(1);
             p1 = p1.offset(1);
             current_block = 525212256790890415;
@@ -320,7 +320,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
           } else if *p1 as libc::c_int == 's' as i32 {
             (*pr).flags = 0x80i32 as libc::c_uint;
             (*pr).bcnt = (*fu).bcnt;
-            if (*fu).bcnt == 0i32 {
+            if (*fu).bcnt == 0 {
               if prec.is_null() {
                 bb_simple_error_msg_and_die(
                   b"%%s needs precision or byte count\x00" as *const u8 as *const libc::c_char,
@@ -597,7 +597,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
             if (*fu).bcnt != 0 {
               while !((*fu).bcnt == *byte_count_str as libc::c_int) {
                 byte_count_str = byte_count_str.offset(1);
-                if *byte_count_str as libc::c_int == 0i32 {
+                if *byte_count_str as libc::c_int == 0 {
                   bb_error_msg_and_die(
                     b"bad byte count for conversion character %s\x00" as *const u8
                       as *const libc::c_char,
@@ -666,7 +666,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
      * if format unit byte count not specified, figure it out
      * so can adjust rep count later.
      */
-    if (*fu).bcnt == 0i32 {
+    if (*fu).bcnt == 0 {
       pr = (*fu).nextpr;
       while !pr.is_null() {
         (*fu).bcnt += (*pr).bcnt;
@@ -694,7 +694,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
       (*fu).reps += ((*dumper).blocksize - (*fs).bcnt) / (*fu).bcnt
     }
     if (*fu).reps > 1i32 && !(*fu).nextpr.is_null() {
-      let mut pr_0: *mut PR = 0 as *mut PR;
+      let mut pr_0: *mut PR = std::ptr::null_mut();
       let mut p1_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut p2_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       pr_0 = (*fu).nextpr;
@@ -734,12 +734,12 @@ unsafe extern "C" fn do_skip(mut dumper: *mut priv_dumper_t, mut fname: *const l
     (*dumper).address += sbuf.st_size;
     return;
   }
-  if fseeko(stdin, (*dumper).pub_0.dump_skip, 0i32) != 0 {
+  if fseeko(stdin, (*dumper).pub_0.dump_skip, 0) != 0 {
     bb_simple_perror_msg_and_die(fname);
   }
   (*dumper).address += (*dumper).pub_0.dump_skip;
   (*dumper).savaddress = (*dumper).address;
-  (*dumper).pub_0.dump_skip = 0i32 as off_t;
+  (*dumper).pub_0.dump_skip = 0 as off_t;
 }
 #[inline(never)]
 unsafe extern "C" fn next(mut dumper: *mut priv_dumper_t) -> libc::c_int {
@@ -755,7 +755,7 @@ unsafe extern "C" fn next(mut dumper: *mut priv_dumper_t) -> libc::c_int {
         }
       }
     } else if (*dumper).next__done != 0 {
-      return 0i32;
+      return 0;
     }
     (*dumper).next__done = 1i32 as smallint;
     if (*dumper).pub_0.dump_skip != 0 {
@@ -781,7 +781,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
   let mut nread: libc::c_int = 0;
   let mut blocksize: libc::c_int = (*dumper).blocksize;
   if (*dumper).get__curp.is_null() {
-    (*dumper).address = 0i32 as off_t;
+    (*dumper).address = 0 as off_t;
     (*dumper).get__curp = xmalloc(blocksize as size_t) as *mut libc::c_uchar;
     (*dumper).get__savp = xzalloc(blocksize as size_t) as *mut libc::c_uchar
   /* need to be initialized */
@@ -793,7 +793,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
     (*dumper).address = (*dumper).savaddress
   }
   need = blocksize;
-  nread = 0i32;
+  nread = 0;
   loop {
     /*
      * if read the right number of bytes, or at EOF for one file,
@@ -812,7 +812,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
           (*dumper).get__curp as *const libc::c_void,
           (*dumper).get__savp as *const libc::c_void,
           nread as libc::c_ulong,
-        ) == 0i32
+        ) == 0
       {
         /* same data? */
         if (*dumper).pub_0.dump_vflag as libc::c_int != DUP as libc::c_int {
@@ -822,7 +822,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
       }
       memset(
         (*dumper).get__curp.offset(nread as isize) as *mut libc::c_void,
-        0i32,
+        0,
         need as libc::c_ulong,
       );
       (*dumper).eaddress = (*dumper).address + nread as libc::c_long;
@@ -840,25 +840,25 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
       } as size_t,
       stdin,
     ) as libc::c_int;
-    if n == 0i32 {
+    if n == 0 {
       if ferror_unlocked(stdin) != 0 {
         bb_simple_perror_msg(*(*dumper).argv.offset(-1i32 as isize));
       }
       (*dumper).get__ateof = 1i32 as smallint
     } else {
-      (*dumper).get__ateof = 0i32 as smallint;
+      (*dumper).get__ateof = 0 as smallint;
       if (*dumper).pub_0.dump_length != -1i32 {
         (*dumper).pub_0.dump_length -= n
       }
       need -= n;
-      if need == 0i32 {
+      if need == 0 {
         if (*dumper).pub_0.dump_vflag as libc::c_int == ALL as libc::c_int
           || (*dumper).pub_0.dump_vflag as libc::c_int == FIRST as libc::c_int
           || memcmp(
             (*dumper).get__curp as *const libc::c_void,
             (*dumper).get__savp as *const libc::c_void,
             blocksize as libc::c_ulong,
-          ) != 0i32
+          ) != 0
         {
           /* not same data? */
           if (*dumper).pub_0.dump_vflag as libc::c_int == DUP as libc::c_int
@@ -875,7 +875,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
         (*dumper).savaddress += blocksize as libc::c_long;
         (*dumper).address = (*dumper).savaddress;
         need = blocksize;
-        nread = 0i32
+        nread = 0
       } else {
         nread += n
       }
@@ -915,7 +915,7 @@ unsafe extern "C" fn bpad(mut pr: *mut PR) {
     let fresh4 = p2;
     p2 = p2.offset(1);
     *fresh4 = *fresh3;
-    if !(*fresh4 as libc::c_int != 0i32) {
+    if !(*fresh4 as libc::c_int != 0) {
       break;
     }
   }
@@ -999,12 +999,12 @@ unsafe extern "C" fn conv_u(mut pr: *mut PR, mut p: *mut libc::c_uchar) {
   };
 }
 unsafe extern "C" fn display(mut dumper: *mut priv_dumper_t) {
-  let mut fs: *mut FS = 0 as *mut FS;
-  let mut fu: *mut FU = 0 as *mut FU;
-  let mut pr: *mut PR = 0 as *mut PR;
+  let mut fs: *mut FS = std::ptr::null_mut();
+  let mut fu: *mut FU = std::ptr::null_mut();
+  let mut pr: *mut PR = std::ptr::null_mut();
   let mut cnt: libc::c_int = 0;
-  let mut bp: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut savebp: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut bp: *mut libc::c_uchar = std::ptr::null_mut();
+  let mut savebp: *mut libc::c_uchar = std::ptr::null_mut();
   let mut saveaddress: off_t = 0;
   let mut savech: libc::c_uchar = '\u{0}' as i32 as libc::c_uchar;
   loop {
@@ -1194,10 +1194,10 @@ pub unsafe extern "C" fn bb_dump_dump(
   mut pub_dumper: *mut dumper_t,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut tfs: *mut FS = 0 as *mut FS;
+  let mut tfs: *mut FS = std::ptr::null_mut();
   let mut blocksize: libc::c_int = 0;
   /* figure out the data block size */
-  blocksize = 0i32;
+  blocksize = 0;
   tfs = (*(pub_dumper as *mut priv_dumper_t)).pub_0.fshead;
   while !tfs.is_null() {
     (*tfs).bcnt = bb_dump_size(tfs);
@@ -1220,11 +1220,11 @@ pub unsafe extern "C" fn bb_dump_dump(
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *const libc::c_char) {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut tfs: *mut FS = 0 as *mut FS;
-  let mut tfu: *mut FU = 0 as *mut FU;
-  let mut nextfupp: *mut *mut FU = 0 as *mut *mut FU;
-  let mut savep: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
+  let mut tfs: *mut FS = std::ptr::null_mut();
+  let mut tfu: *mut FU = std::ptr::null_mut();
+  let mut nextfupp: *mut *mut FU = std::ptr::null_mut();
+  let mut savep: *const libc::c_char = std::ptr::null();
   /* start new linked list of format units */
   tfs = xzalloc(::std::mem::size_of::<FS>() as libc::c_ulong) as *mut FS; /*DBU:[dave@cray.com] start out NULL */
   if (*(pub_dumper as *mut priv_dumper_t)).pub_0.fshead.is_null() {

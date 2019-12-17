@@ -117,14 +117,14 @@ pub unsafe extern "C" fn readprofile_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut map: *mut FILE = 0 as *mut FILE; /* current and next address */
-  let mut mapFile: *const libc::c_char = 0 as *const libc::c_char; /* current and next name */
-  let mut proFile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut map: *mut FILE = std::ptr::null_mut(); /* current and next address */
+  let mut mapFile: *const libc::c_char = std::ptr::null(); /* current and next name */
+  let mut proFile: *const libc::c_char = std::ptr::null();
   let mut indx: libc::c_ulong = 0;
   let mut len: size_t = 0;
   let mut add0: u64 = 0;
   let mut step: libc::c_uint = 0;
-  let mut buf: *mut libc::c_uint = 0 as *mut libc::c_uint;
+  let mut buf: *mut libc::c_uint = std::ptr::null_mut();
   let mut total: libc::c_uint = 0;
   let mut fn_len: libc::c_uint = 0;
   let mut fn_add: libc::c_ulonglong = 0;
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn readprofile_main(
   let mut opt: libc::c_uint = 0;
   proFile = b"/proc/profile\x00" as *const u8 as *const libc::c_char;
   mapFile = b"/boot/System.map\x00" as *const u8 as *const libc::c_char;
-  multiplier = 0i32;
+  multiplier = 0;
   opt = getopt32(
     argv,
     b"M:+m:p:nabsirv\x00" as *const u8 as *const libc::c_char,
@@ -168,7 +168,7 @@ pub unsafe extern "C" fn readprofile_main(
       to_write as size_t,
     );
     close(fd);
-    return 0i32;
+    return 0;
   }
   /*
    * Use an fd for the profiling buffer, to skip stdio overhead
@@ -185,9 +185,9 @@ pub unsafe extern "C" fn readprofile_main(
   len = (len as libc::c_ulong).wrapping_div(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
     as size_t as size_t;
   if opt & OPT_n as libc::c_int as libc::c_uint == 0 {
-    let mut big: libc::c_int = 0i32;
-    let mut small: libc::c_int = 0i32;
-    let mut p: *mut libc::c_uint = 0 as *mut libc::c_uint;
+    let mut big: libc::c_int = 0;
+    let mut small: libc::c_int = 0;
+    let mut p: *mut libc::c_uint = std::ptr::null_mut();
     p = buf.offset(1);
     while p < buf.offset(len as isize) {
       if *p
@@ -291,10 +291,10 @@ pub unsafe extern "C" fn readprofile_main(
       b"Sampling_step: %u\n\x00" as *const u8 as *const libc::c_char,
       step,
     );
-    return 0i32;
+    return 0;
   }
   map = xfopen_for_read(mapFile);
-  add0 = 0i32 as u64;
+  add0 = 0 as u64;
   maplineno = 1i32;
   while !fgets_unlocked(mapline.as_mut_ptr(), 128i32, map).is_null() {
     if sscanf(
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn readprofile_main(
     if strcmp(
       fn_name.as_mut_ptr(),
       b"_stext\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       /* only elf works like this */
       add0 = fn_add as u64;
@@ -332,7 +332,7 @@ pub unsafe extern "C" fn readprofile_main(
   /*
    * Main loop.
    */
-  total = 0i32 as libc::c_uint;
+  total = 0 as libc::c_uint;
   indx = 1i32 as libc::c_ulong;
   while !fgets_unlocked(mapline.as_mut_ptr(), 128i32, map).is_null() {
     let mut header_printed: bool = false;
@@ -351,11 +351,11 @@ pub unsafe extern "C" fn readprofile_main(
         maplineno,
       );
     }
-    header_printed = 0i32 != 0;
+    header_printed = 0 != 0;
     /* ignore any LEADING (before a '[tT]' symbol is found)
     Absolute symbols */
     if (mode[0] as libc::c_int == 'A' as i32 || mode[0] as libc::c_int == '?' as i32)
-      && total == 0i32 as libc::c_uint
+      && total == 0 as libc::c_uint
     {
       continue;
     }
@@ -369,7 +369,7 @@ pub unsafe extern "C" fn readprofile_main(
         b"profile address out of range. Wrong map file?\x00" as *const u8 as *const libc::c_char,
       );
     }
-    this = 0i32 as libc::c_uint;
+    this = 0 as libc::c_uint;
     while (indx as libc::c_ulonglong)
       < next_add
         .wrapping_sub(add0 as libc::c_ulonglong)
@@ -400,7 +400,7 @@ pub unsafe extern "C" fn readprofile_main(
     }
     total = total.wrapping_add(this);
     if opt & OPT_b as libc::c_int as libc::c_uint != 0 {
-      if opt & OPT_v as libc::c_int as libc::c_uint != 0 || this > 0i32 as libc::c_uint {
+      if opt & OPT_v as libc::c_int as libc::c_uint != 0 || this > 0 as libc::c_uint {
         printf(
           b"  total\t\t\t\t%u\n\x00" as *const u8 as *const libc::c_char,
           this,
@@ -408,7 +408,7 @@ pub unsafe extern "C" fn readprofile_main(
       }
     } else if (this != 0 || opt & OPT_a as libc::c_int as libc::c_uint != 0) && {
       fn_len = next_add.wrapping_sub(fn_add) as libc::c_uint;
-      (fn_len) != 0i32 as libc::c_uint
+      (fn_len) != 0 as libc::c_uint
     } {
       if opt & OPT_v as libc::c_int as libc::c_uint != 0 {
         printf(
@@ -466,7 +466,7 @@ pub unsafe extern "C" fn readprofile_main(
   if opt & OPT_v as libc::c_int as libc::c_uint != 0 {
     printf(
       b"%016x %-40s %6u %8.4f\n\x00" as *const u8 as *const libc::c_char,
-      0i32,
+      0,
       b"total\x00" as *const u8 as *const libc::c_char,
       total,
       total as libc::c_double / fn_add.wrapping_sub(add0 as libc::c_ulonglong) as libc::c_double,
@@ -479,5 +479,5 @@ pub unsafe extern "C" fn readprofile_main(
       total as libc::c_double / fn_add.wrapping_sub(add0 as libc::c_ulonglong) as libc::c_double,
     );
   }
-  return 0i32;
+  return 0;
 }

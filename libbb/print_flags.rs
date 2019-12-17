@@ -23,7 +23,7 @@ pub unsafe extern "C" fn print_flags_separated(
   mut flags: libc::c_int,
   mut separator: *const libc::c_char,
 ) -> libc::c_int {
-  let mut need_separator: *const libc::c_char = 0 as *const libc::c_char;
+  let mut need_separator: *const libc::c_char = std::ptr::null();
   while *labels != 0 {
     if flags & *masks != 0 {
       printf(

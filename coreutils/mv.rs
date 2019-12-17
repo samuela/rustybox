@@ -116,12 +116,12 @@ pub unsafe extern "C" fn mv_main(
   let mut source_exists: libc::c_int = 0;
   let mut current_block: u64;
   let mut dest_stat: stat = std::mem::zeroed();
-  let mut last: *const libc::c_char = 0 as *const libc::c_char;
-  let mut dest: *const libc::c_char = 0 as *const libc::c_char;
+  let mut last: *const libc::c_char = std::ptr::null();
+  let mut dest: *const libc::c_char = std::ptr::null();
   let mut flags: libc::c_uint = 0;
   let mut dest_exists: libc::c_int = 0;
-  let mut status: libc::c_int = 0i32;
-  let mut copy_flag: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
+  let mut copy_flag: libc::c_int = 0;
   /* Need at least two arguments.
    * If more than one of -f, -i, -n is specified , only the final one
    * takes effect (it unsets previous options).
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn mv_main(
   last = *argv.offset((argc - 1i32) as isize);
   if argc == 2i32 {
     dest_exists = cp_mv_stat(last, &mut dest_stat);
-    if dest_exists < 0i32 {
+    if dest_exists < 0 {
       return 1i32;
     }
     if dest_exists & 2i32 == 0 {
@@ -155,7 +155,7 @@ pub unsafe extern "C" fn mv_main(
       17407779659766490442 => {
         dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
         dest_exists = cp_mv_stat(dest, &mut dest_stat);
-        if !(dest_exists < 0i32) {
+        if !(dest_exists < 0) {
           current_block = 4372395669998863707;
           continue;
         }
@@ -165,15 +165,15 @@ pub unsafe extern "C" fn mv_main(
         if dest_exists != 0 {
           if flags & (1i32 << 2i32) as libc::c_uint != 0 {
             current_block = 11386481267603146021;
-          } else if flags & (1i32 << 0i32) as libc::c_uint == 0
-            && (access(dest, 2i32) < 0i32 && isatty(0i32) != 0
+          } else if flags & (1i32 << 0) as libc::c_uint == 0
+            && (access(dest, 2i32) < 0 && isatty(0i32) != 0
               || flags & (1i32 << 1i32) as libc::c_uint != 0)
           {
             if fprintf(
               stderr,
               b"mv: overwrite \'%s\'? \x00" as *const u8 as *const libc::c_char,
               dest,
-            ) < 0i32
+            ) < 0
             {
               current_block = 6059157660367733168;
             } else if bb_ask_y_confirmation() == 0 {
@@ -191,7 +191,7 @@ pub unsafe extern "C" fn mv_main(
           11386481267603146021 => {}
           6059157660367733168 => {}
           _ => {
-            if rename(*argv, dest) < 0i32 {
+            if rename(*argv, dest) < 0 {
               source_stat = std::mem::zeroed();
               source_exists = 0;
               if *bb_errno != 18i32 || {
@@ -241,7 +241,7 @@ pub unsafe extern "C" fn mv_main(
                   match current_block {
                     6059157660367733168 => {}
                     _ => {
-                      if unlink(dest) < 0i32 {
+                      if unlink(dest) < 0 {
                         bb_perror_msg(
                           b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
                           dest,
@@ -263,11 +263,11 @@ pub unsafe extern "C" fn mv_main(
                      * instead of "create same device node" */
                     copy_flag =
                       FILEUTILS_RECUR as libc::c_int | FILEUTILS_PRESERVE_STATUS as libc::c_int;
-                    if copy_file(*argv, dest, copy_flag) >= 0i32
+                    if copy_file(*argv, dest, copy_flag) >= 0
                       && remove_file(
                         *argv,
                         FILEUTILS_RECUR as libc::c_int | FILEUTILS_FORCE as libc::c_int,
-                      ) >= 0i32
+                      ) >= 0
                     {
                       current_block = 11386481267603146021;
                     } else {

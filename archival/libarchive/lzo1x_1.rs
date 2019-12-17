@@ -38,18 +38,18 @@ unsafe extern "C" fn do_compress(
   mut wrkmem: *mut libc::c_void,
 ) -> libc::c_uint {
   let mut current_block: u64;
-  let mut ip: *const u8 = 0 as *const u8;
-  let mut op: *mut u8 = 0 as *mut u8;
+  let mut ip: *const u8 = std::ptr::null();
+  let mut op: *mut u8 = std::ptr::null_mut();
   let in_end: *const u8 = in_0.offset(in_len as isize);
   let ip_end: *const u8 = in_0.offset(in_len as isize).offset(-8).offset(-5);
-  let mut ii: *const u8 = 0 as *const u8;
+  let mut ii: *const u8 = std::ptr::null();
   let dict: *mut *const libc::c_void = wrkmem as *mut *const libc::c_void;
   op = out;
   ip = in_0;
   ii = ip;
   ip = ip.offset(4);
   loop {
-    let mut m_pos: *const u8 = 0 as *const u8;
+    let mut m_pos: *const u8 = std::ptr::null();
     let mut m_off: libc::c_uint = 0;
     let mut m_len: libc::c_uint = 0;
     let mut dindex: libc::c_uint = 0;
@@ -67,7 +67,7 @@ unsafe extern "C" fn do_compress(
     if !((m_pos as uintptr_t) < in_0 as uintptr_t
       || {
         m_off = ip.wrapping_offset_from(m_pos) as libc::c_long as libc::c_uint;
-        (m_off) <= 0i32 as libc::c_uint
+        (m_off) <= 0 as libc::c_uint
       }
       || m_off > 0xbfffi32 as libc::c_uint)
     {
@@ -87,7 +87,7 @@ unsafe extern "C" fn do_compress(
         if (m_pos as uintptr_t) < in_0 as uintptr_t
           || {
             m_off = ip.wrapping_offset_from(m_pos) as libc::c_long as libc::c_uint;
-            (m_off) <= 0i32 as libc::c_uint
+            (m_off) <= 0 as libc::c_uint
           }
           || m_off > 0xbfffi32 as libc::c_uint
         {
@@ -111,8 +111,7 @@ unsafe extern "C" fn do_compress(
               let ref mut fresh1 = *dict.offset(dindex as isize);
               *fresh1 = ip as *const libc::c_void;
               /* store current literal run */
-              if ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint > 0i32 as libc::c_uint
-              {
+              if ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint > 0 as libc::c_uint {
                 let mut t: libc::c_uint =
                   ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint;
                 if t <= 3i32 as libc::c_uint {
@@ -126,12 +125,12 @@ unsafe extern "C" fn do_compress(
                   let mut tt: libc::c_uint = t.wrapping_sub(18i32 as libc::c_uint);
                   let fresh4 = op;
                   op = op.offset(1);
-                  *fresh4 = 0i32 as u8;
+                  *fresh4 = 0 as u8;
                   while tt > 255i32 as libc::c_uint {
                     tt = tt.wrapping_sub(255i32 as libc::c_uint);
                     let fresh5 = op;
                     op = op.offset(1);
-                    *fresh5 = 0i32 as u8
+                    *fresh5 = 0 as u8
                   }
                   let fresh6 = op;
                   op = op.offset(1);
@@ -144,7 +143,7 @@ unsafe extern "C" fn do_compress(
                   op = op.offset(1);
                   *fresh8 = *fresh7;
                   t = t.wrapping_sub(1);
-                  if !(t > 0i32 as libc::c_uint) {
+                  if !(t > 0 as libc::c_uint) {
                     break;
                   }
                 }
@@ -231,7 +230,7 @@ unsafe extern "C" fn do_compress(
                     m_len = m_len.wrapping_sub(33i32 as libc::c_uint);
                     let fresh20 = op;
                     op = op.offset(1);
-                    *fresh20 = (32i32 | 0i32) as u8;
+                    *fresh20 = (32i32 | 0) as u8;
                     current_block_67 = 9936362640277870553;
                   }
                 } else {
@@ -259,7 +258,7 @@ unsafe extern "C" fn do_compress(
                       m_len = m_len.wrapping_sub(255i32 as libc::c_uint);
                       let fresh23 = op;
                       op = op.offset(1);
-                      *fresh23 = 0i32 as u8
+                      *fresh23 = 0 as u8
                     }
                     let fresh24 = op;
                     op = op.offset(1);
@@ -352,7 +351,7 @@ pub unsafe extern "C" fn lzo1x_1_compress(
     t = do_compress(in_0, in_len, op, out_len, wrkmem);
     op = op.offset(*out_len as isize)
   }
-  if t > 0i32 as libc::c_uint {
+  if t > 0 as libc::c_uint {
     let mut ii: *const u8 = in_0.offset(in_len as isize).offset(-(t as isize));
     if op == out && t <= 238i32 as libc::c_uint {
       let fresh27 = op;
@@ -369,12 +368,12 @@ pub unsafe extern "C" fn lzo1x_1_compress(
       let mut tt: libc::c_uint = t.wrapping_sub(18i32 as libc::c_uint);
       let fresh30 = op;
       op = op.offset(1);
-      *fresh30 = 0i32 as u8;
+      *fresh30 = 0 as u8;
       while tt > 255i32 as libc::c_uint {
         tt = tt.wrapping_sub(255i32 as libc::c_uint);
         let fresh31 = op;
         op = op.offset(1);
-        *fresh31 = 0i32 as u8
+        *fresh31 = 0 as u8
       }
       let fresh32 = op;
       op = op.offset(1);
@@ -387,7 +386,7 @@ pub unsafe extern "C" fn lzo1x_1_compress(
       op = op.offset(1);
       *fresh34 = *fresh33;
       t = t.wrapping_sub(1);
-      if !(t > 0i32 as libc::c_uint) {
+      if !(t > 0 as libc::c_uint) {
         break;
       }
     }
@@ -397,11 +396,11 @@ pub unsafe extern "C" fn lzo1x_1_compress(
   *fresh35 = (16i32 | 1i32) as u8;
   let fresh36 = op;
   op = op.offset(1);
-  *fresh36 = 0i32 as u8;
+  *fresh36 = 0 as u8;
   let fresh37 = op;
   op = op.offset(1);
-  *fresh37 = 0i32 as u8;
+  *fresh37 = 0 as u8;
   *out_len = op.wrapping_offset_from(out) as libc::c_long as libc::c_uint;
-  return 0i32;
+  return 0;
   /*LZO_E_OK*/
 }

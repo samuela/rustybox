@@ -118,7 +118,7 @@ unsafe extern "C" fn xget1(mut fd: libc::c_int, mut t: *mut termios, mut oldt: *
     fd,
     t,
     oldt,
-    0i32 | 1i32 << 0i32 | 1i32 << 3i32 | (1i32 << 1i32 | 1i32 << 2i32),
+    0 | 1i32 << 0 | 1i32 << 3i32 | (1i32 << 1i32 | 1i32 << 2i32),
   );
 }
 unsafe extern "C" fn xset1(
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn microcom_main(
     0o100i32 | 0o1i32 | 0o1000i32 | 0o200i32,
     0o644i32,
   );
-  if sfd < 0i32 {
+  if sfd < 0 {
     // device already locked -> bail out
     if *bb_errno == 17i32 {
       bb_perror_msg_and_die(
@@ -227,14 +227,14 @@ pub unsafe extern "C" fn microcom_main(
   }
   // setup signals
   bb_signals(
-    0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
+    0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
     Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   // error exit code if we fail to open the device
   bb_got_signal = 1i32 as smallint;
   // open device
   sfd = open_or_warn(*argv.offset(0), 0o2i32 | 0o400i32 | 0o4000i32);
-  if !(sfd < 0i32) {
+  if !(sfd < 0) {
     fcntl(sfd, 4i32, 0o2i32);
     // put device to "raw mode"
     xget1(sfd, &mut tio, &mut tiosfd);
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn microcom_main(
       if isatty(0i32) != 0 {
         xget1(0i32, &mut tio, &mut tio0);
         if xset1(
-          0i32,
+          0,
           &mut tio,
           b"stdin\x00" as *const u8 as *const libc::c_char,
         ) != 0
@@ -264,17 +264,17 @@ pub unsafe extern "C" fn microcom_main(
           // main loop: check with poll(), then read/write bytes across
           pfd[0].fd = sfd;
           pfd[0].events = 0x1i32 as libc::c_short;
-          pfd[1].fd = 0i32;
+          pfd[1].fd = 0;
           pfd[1].events = 0x1i32 as libc::c_short;
-          bb_got_signal = 0i32 as smallint;
+          bb_got_signal = 0 as smallint;
           nfd = 2i32;
           // Not safe_poll: we want to exit on signal
-          while bb_got_signal == 0 && poll(pfd.as_mut_ptr(), nfd as nfds_t, timeout) > 0i32 {
+          while bb_got_signal == 0 && poll(pfd.as_mut_ptr(), nfd as nfds_t, timeout) > 0 {
             if nfd > 1i32 && pfd[1].revents as libc::c_int != 0 {
               let mut c: libc::c_char = 0;
               // read from stdin -> write to device
               if safe_read(
-                0i32,
+                0,
                 &mut c as *mut libc::c_char as *mut libc::c_void,
                 1i32 as size_t,
               ) < 1
@@ -285,8 +285,8 @@ pub unsafe extern "C" fn microcom_main(
                 // do we need special processing?
                 if opts & OPT_X as libc::c_int as libc::c_uint == 0 {
                   // ^@ sends Break
-                  if 0i32 == c as libc::c_int {
-                    tcsendbreak(sfd, 0i32);
+                  if 0 == c as libc::c_int {
+                    tcsendbreak(sfd, 0);
                     current_block = 13460095289871124136;
                   } else {
                     // ^X exits
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn microcom_main(
                       &mut c as *mut libc::c_char as *const libc::c_void,
                       1i32 as size_t,
                     );
-                    if delay >= 0i32 {
+                    if delay >= 0 {
                       safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, delay);
                     }
                   }

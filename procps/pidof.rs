@@ -111,7 +111,7 @@ pub unsafe extern "C" fn pidof_main(
 ) -> libc::c_int {
   let mut first: libc::c_uint = 1i32 as libc::c_uint;
   let mut opt: libc::c_uint = 0;
-  let mut omits: *mut llist_t = 0 as *mut llist_t;
+  let mut omits: *mut llist_t = std::ptr::null_mut();
   /* do unconditional option parsing */
   opt = getopt32(
     argv,
@@ -131,8 +131,8 @@ pub unsafe extern "C" fn pidof_main(
   /* Looks like everything is set to go.  */
   argv = argv.offset(optind as isize);
   while !(*argv).is_null() {
-    let mut pidList: *mut pid_t = 0 as *mut pid_t;
-    let mut pl: *mut pid_t = 0 as *mut pid_t;
+    let mut pidList: *mut pid_t = std::ptr::null_mut();
+    let mut pl: *mut pid_t = std::ptr::null_mut();
     /* reverse the pidlist like GNU pidof does.  */
     pidList = pidlist_reverse(find_pid_by_name(*argv));
     let mut current_block_11: u64;
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn pidof_main(
             (b" %u\x00" as *const u8 as *const libc::c_char).offset(first as isize),
             *pl as libc::c_uint,
           );
-          first = 0i32 as libc::c_uint;
+          first = 0 as libc::c_uint;
           if 1i32 != 0 && opt & OPT_SINGLE as libc::c_int as libc::c_uint != 0 {
             break;
           }

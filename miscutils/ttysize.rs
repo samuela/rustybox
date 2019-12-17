@@ -47,9 +47,9 @@ pub unsafe extern "C" fn ttysize_main(
   };
   w = 80i32 as libc::c_uint;
   h = 24i32 as libc::c_uint;
-  if ioctl(0i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0i32
-    || ioctl(1i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0i32
-    || ioctl(2i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0i32
+  if ioctl(0i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0
+    || ioctl(1i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0
+    || ioctl(2i32, 0x5413i32 as libc::c_ulong, &mut wsz as *mut winsize) == 0
   {
     w = wsz.ws_col as libc::c_uint;
     h = wsz.ws_row as libc::c_uint
@@ -57,8 +57,8 @@ pub unsafe extern "C" fn ttysize_main(
   if (*argv.offset(1)).is_null() {
     printf(b"%u %u\x00" as *const u8 as *const libc::c_char, w, h);
   } else {
-    let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-    let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+    let mut fmt: *const libc::c_char = std::ptr::null();
+    let mut arg: *const libc::c_char = std::ptr::null();
     fmt = (b"%u %u\x00" as *const u8 as *const libc::c_char).offset(3);
     loop {
       argv = argv.offset(1);
@@ -78,5 +78,5 @@ pub unsafe extern "C" fn ttysize_main(
     }
   }
   bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }

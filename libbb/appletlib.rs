@@ -145,7 +145,7 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
  * This makes (shared busybox) + libbusybox smaller.
  * (--gc-sections would be even better....)
  */
-pub static mut applet_name: *const libc::c_char = 0 as *const libc::c_char;
+pub static mut applet_name: *const libc::c_char = std::ptr::null();
 
 static mut ruid: uid_t = 0; /* real uid */
 
@@ -183,10 +183,10 @@ unsafe fn parse_config_file() {
   /* Don't depend on the tools to combine strings. */
   let config_file = "/etc/rustybox.conf";
 
-  let mut sct_head: *mut suid_config_t = 0 as *mut suid_config_t;
+  let mut sct_head: *mut suid_config_t = std::ptr::null_mut();
   let mut applet_no: libc::c_int = 0;
-  let mut f: *mut libc::FILE = 0 as *mut libc::FILE;
-  let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut f: *mut libc::FILE = std::ptr::null_mut();
+  let mut errmsg: *const libc::c_char = std::ptr::null();
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
   let mut st: libc::stat = std::mem::zeroed();
@@ -211,7 +211,7 @@ unsafe fn parse_config_file() {
   }
 
   suid_cfg_readable = true;
-  sct_head = 0 as *mut suid_config_t;
+  sct_head = std::ptr::null_mut();
   lc = 0;
   section = 0;
 
@@ -270,7 +270,7 @@ unsafe fn parse_config_file() {
           /* Missing name? */
           errmsg = b"section header\x00" as *const u8 as *const libc::c_char;
           break;
-        } else if strcasecmp(s, b"SUID\x00" as *const u8 as *const libc::c_char) == 0i32 {
+        } else if strcasecmp(s, b"SUID\x00" as *const u8 as *const libc::c_char) == 0 {
           section = 1i32 as smallint
         } else {
           /* Right now we only have one section so just check it.
@@ -309,7 +309,7 @@ unsafe fn parse_config_file() {
           };
 
           let mut i: libc::c_uint = 0;
-          let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
+          let mut sct: *mut suid_config_t = std::ptr::null_mut();
           /* Note: We currently don't check for duplicates!
            * The last config line for each applet will be the
            * one used since we insert at the head of the list.
@@ -321,7 +321,7 @@ unsafe fn parse_config_file() {
           sct_head = sct;
           /* Get the specified mode. */
           e_0 = skip_whitespace(e_0.offset(1));
-          i = 0i32 as libc::c_uint;
+          i = 0 as libc::c_uint;
           while i < 3i32 as libc::c_uint {
             /* There are 4 chars for each of user/group/other.
              * "x-xx" instead of "x-" are to make
@@ -333,13 +333,13 @@ unsafe fn parse_config_file() {
               0o4000i32 as libc::c_ushort,
               (0o4000i32 | 0o100i32) as libc::c_ushort,
               0o100i32 as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
               0o2000i32 as libc::c_ushort,
               (0o2000i32 | 0o100i32 >> 3i32) as libc::c_ushort,
               (0o100i32 >> 3i32) as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
               (0o100i32 >> 3i32 >> 3i32) as libc::c_ushort,
-              0i32 as libc::c_ushort,
+              0 as libc::c_ushort,
             ];
             let mut q: *const libc::c_char = strchrnul(
               mode_chars
@@ -378,7 +378,7 @@ unsafe fn parse_config_file() {
             break;
           } else {
             *e_0 = ':' as i32 as libc::c_char;
-            if !(get_uidgid(&mut (*sct).m_ugid, s) == 0i32) {
+            if !(get_uidgid(&mut (*sct).m_ugid, s) == 0) {
               continue;
             }
             errmsg = b"unknown user/group\x00" as *const u8 as *const libc::c_char;
@@ -416,7 +416,7 @@ unsafe fn parse_config_file() {
 unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> bool {
   let mut grp: *mut group = bb_internal_getgrgid(g); /* real gid */
   if !grp.is_null() {
-    let mut mem: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* run by root - no need to check more */
+    let mut mem: *mut *mut libc::c_char = std::ptr::null_mut(); /* run by root - no need to check more */
     mem = (*grp).gr_mem;
     while !(*mem).is_null() {
       let mut pwd: *mut passwd = bb_internal_getpwnam(*mem);
@@ -443,7 +443,7 @@ unsafe fn check_suid(applet_no: usize) {
 
   if suid_cfg_readable {
     let mut uid: uid_t = 0;
-    let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
+    let mut sct: *mut suid_config_t = std::ptr::null_mut();
     let mut m: mode_t = 0;
     sct = suid_config;
     loop {

@@ -168,7 +168,7 @@ pub union C2RustUnnamed_0 {
 //usage:     "\n	-T	Minimum rtt (default 5 ms, increase for congested hosts)"
 /* debugging */
 unsafe extern "C" fn port_name(mut port: libc::c_uint) -> *const libc::c_char {
-  let mut server: *mut servent = 0 as *mut servent;
+  let mut server: *mut servent = std::ptr::null_mut();
   server = getservbyport(
     ({
       let mut __v: libc::c_ushort = 0;
@@ -209,15 +209,15 @@ pub unsafe extern "C" fn pscan_main(
    * Rule of thumb: with min_rtt of N msec, scanning 1000 ports
    * will take N seconds at absolute minimum */
   let mut opt_min_rtt: *const libc::c_char = b"5\x00" as *const u8 as *const libc::c_char; /* -T: default min rtt in msec */
-  let mut result_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut lsap: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut result_str: *const libc::c_char = std::ptr::null();
+  let mut lsap: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut port: libc::c_uint = 0;
   let mut max_port: libc::c_uint = 0;
   let mut nports: libc::c_uint = 0;
-  let mut closed_ports: libc::c_uint = 0i32 as libc::c_uint;
-  let mut open_ports: libc::c_uint = 0i32 as libc::c_uint;
+  let mut closed_ports: libc::c_uint = 0 as libc::c_uint;
+  let mut open_ports: libc::c_uint = 0 as libc::c_uint;
   /* all in usec */
   let mut timeout: libc::c_uint = 0;
   let mut min_rtt: libc::c_uint = 0;
@@ -286,12 +286,12 @@ pub unsafe extern "C" fn pscan_main(
     s = xsocket(
       (*lsap).u.sa.sa_family as libc::c_int,
       SOCK_STREAM as libc::c_int,
-      0i32,
+      0,
     );
     /* We need unblocking socket so we don't need to wait for ETIMEOUT. */
     /* Nonblocking connect typically "fails" with errno == EINPROGRESS */
     ndelay_on(s);
-    result_str = 0 as *const libc::c_char;
+    result_str = std::ptr::null();
     start = monotonic_us() as libc::c_uint;
     if connect(
       s,
@@ -299,7 +299,7 @@ pub unsafe extern "C" fn pscan_main(
         __sockaddr__: &mut (*lsap).u.sa,
       },
       (*lsap).len,
-    ) == 0i32
+    ) == 0
     {
       current_block_42 = 3964065496216564342;
     } else {
@@ -307,7 +307,7 @@ pub unsafe extern "C" fn pscan_main(
       if *bb_errno != 11i32 && *bb_errno != 115i32 && *bb_errno != 111i32 {
         bb_perror_nomsg_and_die();
       }
-      diff = 0i32 as libc::c_uint;
+      diff = 0 as libc::c_uint;
       current_block_42 = 17281240262373992796;
     }
     loop {
@@ -386,5 +386,5 @@ pub unsafe extern "C" fn pscan_main(
     open_ports,
     nports.wrapping_sub(closed_ports.wrapping_add(open_ports)),
   );
-  return 0i32;
+  return 0;
 }

@@ -76,8 +76,8 @@ pub unsafe extern "C" fn get_uidgid(
   mut u: *mut bb_uidgid_t,
   mut ug: *const libc::c_char,
 ) -> libc::c_int {
-  let mut pwd: *mut passwd = 0 as *mut passwd;
-  let mut gr: *mut group = 0 as *mut group;
+  let mut pwd: *mut passwd = std::ptr::null_mut();
+  let mut gr: *mut group = std::ptr::null_mut();
   let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut group: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut n: libc::c_uint = 0;
@@ -102,7 +102,7 @@ pub unsafe extern "C" fn get_uidgid(
     /* it is not numeric */
     pwd = bb_internal_getpwnam(user);
     if pwd.is_null() {
-      return 0i32;
+      return 0;
     }
     (*u).uid = (*pwd).pw_uid;
     (*u).gid = (*pwd).pw_gid
@@ -115,7 +115,7 @@ pub unsafe extern "C" fn get_uidgid(
     }
     gr = bb_internal_getgrnam(group);
     if gr.is_null() {
-      return 0i32;
+      return 0;
     }
     (*u).gid = (*gr).gr_gid
   }

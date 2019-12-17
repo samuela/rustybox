@@ -246,7 +246,7 @@ pub unsafe extern "C" fn xmalloc_reads(
 ) -> *mut libc::c_char {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut sz: size_t = 0i32 as size_t;
+  let mut sz: size_t = 0 as size_t;
   let mut maxsz: size_t = if !maxsz_p.is_null() {
     *maxsz_p
   } else {
@@ -308,7 +308,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
     (2147483647i32 - 4095i32) as libc::c_ulong
   };
   /* Estimate file size */
-  st.st_size = 0i32 as off_t; /* in case fstat fails, assume 0 */
+  st.st_size = 0 as off_t; /* in case fstat fails, assume 0 */
   fstat(fd, &mut st);
   /* /proc/N/stat files report st_size 0 */
   /* In order to make such files readable, we add small const */
@@ -361,7 +361,7 @@ pub unsafe extern "C" fn xmalloc_read(
     fd,
     maxsz_p,
     std::ptr::null_mut::<libc::c_char>(),
-    0i32 as size_t,
+    0 as size_t,
   );
 }
 // Read (potentially big) files in one go. File size is estimated
@@ -373,8 +373,8 @@ pub unsafe extern "C" fn xmalloc_open_read_close(
 ) -> *mut libc::c_void {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
-  fd = open(filename, 0i32);
-  if fd < 0i32 {
+  fd = open(filename, 0);
+  if fd < 0 {
     return 0 as *mut libc::c_void;
   }
   buf = xmalloc_read(fd, maxsz_p) as *mut libc::c_char;

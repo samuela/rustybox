@@ -186,8 +186,8 @@ pub struct sysv_super {
 pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut vs: *mut sysv_super = 0 as *mut sysv_super;
-  let mut xs: *mut xenix_super = 0 as *mut xenix_super;
+  let mut vs: *mut sysv_super = std::ptr::null_mut();
+  let mut xs: *mut xenix_super = std::ptr::null_mut();
   let mut boff: libc::c_uint = 0;
   boff = 0x200i32 as libc::c_uint;
   loop {
@@ -289,5 +289,5 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
     _ => {}
   }
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
-  return 0i32;
+  return 0;
 }

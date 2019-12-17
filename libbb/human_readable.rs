@@ -53,16 +53,16 @@ pub unsafe extern "C" fn make_human_readable_str(
     'Y' as i32 as libc::c_char,
   ]; /* 0..9 - the fractional digit */
   let mut frac: libc::c_uint = 0; /* Deal with rounding */
-  let mut u: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-  if val == 0i32 as libc::c_ulonglong {
+  let mut u: *const libc::c_char = std::ptr::null();
+  let mut fmt: *const libc::c_char = std::ptr::null();
+  if val == 0 as libc::c_ulonglong {
     return b"0\x00" as *const u8 as *const libc::c_char;
   }
   fmt = b"%llu\x00" as *const u8 as *const libc::c_char;
   if block_size > 1i32 as libc::c_ulong {
     val = val.wrapping_mul(block_size as libc::c_ulonglong)
   }
-  frac = 0i32 as libc::c_uint;
+  frac = 0 as libc::c_uint;
   u = unit_chars.as_ptr();
   if display_unit != 0 {
     val = val.wrapping_add(display_unit.wrapping_div(2i32 as libc::c_ulong) as libc::c_ulonglong);
@@ -84,10 +84,10 @@ pub unsafe extern "C" fn make_human_readable_str(
     if frac >= 10i32 as libc::c_uint {
       /* we need to round up here */
       val = val.wrapping_add(1);
-      frac = 0i32 as libc::c_uint
+      frac = 0 as libc::c_uint
     }
     /* If block_size is 0, dont print fractional part */
-    if block_size == 0i32 as libc::c_ulong {
+    if block_size == 0 as libc::c_ulong {
       if frac >= 5i32 as libc::c_uint {
         val = val.wrapping_add(1)
       }
@@ -106,11 +106,11 @@ pub unsafe extern "C" fn smart_ulltoa5(
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c: libc::c_char = 0;
   let mut v: libc::c_uint = 0;
   let mut u: libc::c_uint = 0;
-  let mut idx: libc::c_uint = 0i32 as libc::c_uint;
+  let mut idx: libc::c_uint = 0 as libc::c_uint;
   if ul > 99999i32 as libc::c_ulonglong {
     // do not scale if 99999 or less
     ul = ul.wrapping_mul(10i32 as libc::c_ulonglong); // ullong divisions are expensive, avoid them
@@ -477,11 +477,11 @@ pub unsafe extern "C" fn smart_ulltoa4(
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,
 ) -> *mut libc::c_char {
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c: libc::c_char = 0;
   let mut v: libc::c_uint = 0;
   let mut u: libc::c_uint = 0;
-  let mut idx: libc::c_uint = 0i32 as libc::c_uint;
+  let mut idx: libc::c_uint = 0 as libc::c_uint;
   if ul > 9999i32 as libc::c_ulonglong {
     // do not scale if 9999 or less
     ul = ul.wrapping_mul(10i32 as libc::c_ulonglong); // ullong divisions are expensive, avoid them

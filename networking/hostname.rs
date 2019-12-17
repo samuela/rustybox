@@ -176,7 +176,7 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
       b"# \t\x00" as *const u8 as *const libc::c_char,
     ) != 0
     {
-      do_sethostname(s, 0i32);
+      do_sethostname(s, 0);
     }
   } else if sethostname(s, strlen(s)) != 0 {
     //		if (errno == EPERM)
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn hostname_main(
   }
   if opts & OPT_dfi as libc::c_int as libc::c_uint != 0 {
     /* Cases when we need full hostname (or its part) */
-    let mut hp: *mut hostent = 0 as *mut hostent;
+    let mut hp: *mut hostent = std::ptr::null_mut();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     hp = xgethostbyname(buf);
     p = strchrnul((*hp).h_name, '.' as i32);
@@ -295,10 +295,10 @@ pub unsafe extern "C" fn hostname_main(
     do_sethostname(hostname_str, 1i32);
   } else if !(*argv.offset(0)).is_null() {
     /* Set the hostname */
-    do_sethostname(*argv.offset(0), 0i32);
+    do_sethostname(*argv.offset(0), 0);
   } else {
     /* Just print the current hostname */
     puts(buf);
   }
-  return 0i32;
+  return 0;
 }

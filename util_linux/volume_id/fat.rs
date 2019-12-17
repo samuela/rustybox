@@ -113,11 +113,11 @@ unsafe extern "C" fn get_attr_volume_id(
 ) -> *mut u8 {
   loop {
     count -= 1;
-    if !(count >= 0i32) {
+    if !(count >= 0) {
       break;
     }
     /* end marker */
-    if (*dir).name[0] as libc::c_int == 0i32 {
+    if (*dir).name[0] as libc::c_int == 0 {
       break;
     }
     /* empty entry */
@@ -126,9 +126,7 @@ unsafe extern "C" fn get_attr_volume_id(
       if !((*dir).attr as libc::c_int & 0x3fi32 == 0xfi32) {
         if (*dir).attr as libc::c_int & (0x8i32 | 0x10i32) == 0x8i32 {
           /* labels do not have file data */
-          if !((*dir).cluster_high as libc::c_int != 0i32
-            || (*dir).cluster_low as libc::c_int != 0i32)
-          {
+          if !((*dir).cluster_high as libc::c_int != 0 || (*dir).cluster_low as libc::c_int != 0) {
             return (*dir).name.as_mut_ptr();
           }
         }
@@ -205,8 +203,8 @@ unsafe extern "C" fn get_attr_volume_id(
 pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
 /*,u64 fat_partition_off*/ {
   let mut current_block: u64;
-  let mut vs: *mut vfat_super_block = 0 as *mut vfat_super_block;
-  let mut dir: *mut vfat_dir_entry = 0 as *mut vfat_dir_entry;
+  let mut vs: *mut vfat_super_block = std::ptr::null_mut();
+  let mut dir: *mut vfat_dir_entry = std::ptr::null_mut();
   let mut sector_size_bytes: u16 = 0;
   let mut dir_entries: u16 = 0;
   let mut sect_count: u32 = 0;
@@ -217,12 +215,12 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   let mut cluster_count: u32 = 0;
   let mut root_start_off: u64 = 0;
   let mut start_data_sct: u32 = 0;
-  let mut buf: *mut u8 = 0 as *mut u8;
+  let mut buf: *mut u8 = std::ptr::null_mut();
   let mut buf_size: u32 = 0;
-  let mut label: *mut u8 = 0 as *mut u8;
+  let mut label: *mut u8 = std::ptr::null_mut();
   let mut next_cluster: u32 = 0;
   let mut maxloop: libc::c_int = 0;
-  vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+  vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
   if vs.is_null() {
     return -1i32;
   }
@@ -233,7 +231,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
     (*vs).sysid.as_mut_ptr() as *const libc::c_void,
     b"NTFS\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     4i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     return -1i32;
   }
@@ -241,31 +239,31 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
     (*vs).type_0.fat32.magic.as_mut_ptr() as *const libc::c_void,
     b"MSWIN\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     5i32 as libc::c_ulong,
-  ) == 0i32)
+  ) == 0)
   {
     if !(memcmp(
       (*vs).type_0.fat32.magic.as_mut_ptr() as *const libc::c_void,
       b"FAT32   \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       8i32 as libc::c_ulong,
-    ) == 0i32)
+    ) == 0)
     {
       if !(memcmp(
         (*vs).type_0.fat.magic.as_mut_ptr() as *const libc::c_void,
         b"FAT16   \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         8i32 as libc::c_ulong,
-      ) == 0i32)
+      ) == 0)
       {
         if !(memcmp(
           (*vs).type_0.fat.magic.as_mut_ptr() as *const libc::c_void,
           b"MSDOS\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           5i32 as libc::c_ulong,
-        ) == 0i32)
+        ) == 0)
         {
           if !(memcmp(
             (*vs).type_0.fat.magic.as_mut_ptr() as *const libc::c_void,
             b"FAT12   \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             8i32 as libc::c_ulong,
-          ) == 0i32)
+          ) == 0)
           {
             /*
              * There are old floppies out there without a magic, so we check
@@ -279,11 +277,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
               return -1i32;
             }
             /* heads check */
-            if (*vs).heads as libc::c_int == 0i32 {
+            if (*vs).heads as libc::c_int == 0 {
               return -1i32;
             }
             /* cluster size check */
-            if (*vs).sectors_per_cluster as libc::c_int == 0i32
+            if (*vs).sectors_per_cluster as libc::c_int == 0
               || (*vs).sectors_per_cluster as libc::c_int
                 & (*vs).sectors_per_cluster as libc::c_int - 1i32
                 != 0
@@ -314,11 +312,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   }
   reserved_sct = (*vs).reserved_sct;
   sect_count = (*vs).sectors as u32;
-  if sect_count == 0i32 as libc::c_uint {
+  if sect_count == 0 as libc::c_uint {
     sect_count = (*vs).total_sect
   }
   fat_size_sct = (*vs).fat_length as u32;
-  if fat_size_sct == 0i32 as libc::c_uint {
+  if fat_size_sct == 0 as libc::c_uint {
     fat_size_sct = (*vs).type_0.fat32.fat32_length
   }
   fat_size_sct =
@@ -408,8 +406,8 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       7641562720398393250 => {}
       _ => {
         // TODO: why was this translated this way?
-        // (maxloop) == 0i32;
-        vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+        // (maxloop) == 0;
+        vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
         if vs.is_null() {
           return -1i32;
         }
@@ -418,7 +416,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
             label as *const libc::c_void,
             b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             11i32 as libc::c_ulong,
-          ) != 0i32
+          ) != 0
         {
           //		volume_id_set_label_raw(id, label, 11);
           volume_id_set_label_string(id, label, 11i32 as size_t);
@@ -426,7 +424,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
           (*vs).type_0.fat32.label.as_mut_ptr() as *const libc::c_void,
           b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           11i32 as libc::c_ulong,
-        ) != 0i32
+        ) != 0
         {
           //		volume_id_set_label_raw(id, vs->type.fat32.label, 11);
           volume_id_set_label_string(id, (*vs).type_0.fat32.label.as_mut_ptr(), 11i32 as size_t);
@@ -448,7 +446,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
     ) as *mut u8;
     if !buf.is_null() {
       label = get_attr_volume_id(buf as *mut vfat_dir_entry, dir_entries as libc::c_int);
-      vs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+      vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
       if vs.is_null() {
         return -1i32;
       }
@@ -457,7 +455,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
           label as *const libc::c_void,
           b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           11i32 as libc::c_ulong,
-        ) != 0i32
+        ) != 0
       {
         //		volume_id_set_label_raw(id, label, 11);
         volume_id_set_label_string(id, label, 11i32 as size_t);
@@ -465,7 +463,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         (*vs).type_0.fat.label.as_mut_ptr() as *const libc::c_void,
         b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         11i32 as libc::c_ulong,
-      ) != 0i32
+      ) != 0
       {
         //		volume_id_set_label_raw(id, vs->type.fat.label, 11);
         volume_id_set_label_string(id, (*vs).type_0.fat.label.as_mut_ptr(), 11i32 as size_t);
@@ -475,5 +473,5 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   }
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"vfat\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

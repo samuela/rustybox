@@ -533,7 +533,7 @@ unsafe extern "C" fn print_ascii(
     if !(fresh11 != 0) {
       break;
     }
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
+    let mut s: *const libc::c_char = std::ptr::null();
     let fresh12 = block;
     block = block.offset(1);
     let mut c: libc::c_uint = *(fresh12 as *mut libc::c_uchar) as libc::c_uint;
@@ -623,7 +623,7 @@ unsafe extern "C" fn check_and_close() {
     }
     fclose_if_not_stdin((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream);
     let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream;
-    *fresh16 = 0 as *mut FILE
+    *fresh16 = std::ptr::null_mut()
   }
   if ferror_unlocked(stdout) != 0 {
     bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
@@ -651,14 +651,14 @@ unsafe extern "C" fn decode_one_format(
   let mut size_spec: size_spec = NO_SIZE;
   let mut size: libc::c_uint = 0;
   let mut fmt: output_format = SIGNED_DECIMAL;
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut print_function: Option<
     unsafe extern "C" fn(_: size_t, _: *const libc::c_char, _: *const libc::c_char) -> (),
   > = None;
   let mut c: libc::c_uint = 0;
-  let mut field_width: libc::c_uint = 0i32 as libc::c_uint;
+  let mut field_width: libc::c_uint = 0 as libc::c_uint;
   let mut pos: libc::c_int = 0;
   match *s as libc::c_int {
     100 | 111 | 117 | 120 => {
@@ -671,7 +671,7 @@ unsafe extern "C" fn decode_one_format(
       if p.is_null() || *p as libc::c_int == '\u{0}' as i32 {
         size = ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_uint;
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-          size = bb_strtou(s, &mut end, 0i32);
+          size = bb_strtou(s, &mut end, 0);
           if *bb_errno == 34i32
             || (::std::mem::size_of::<ulonglong_t>() as libc::c_ulong) < size as libc::c_ulong
             || integral_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
@@ -818,7 +818,7 @@ unsafe extern "C" fn decode_one_format(
       if p.is_null() || *p as libc::c_int == '\u{0}' as i32 {
         size = ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as libc::c_uint;
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-          size = bb_strtou(s, &mut end, 0i32);
+          size = bb_strtou(s, &mut end, 0);
           if *bb_errno == 34i32
             || size as libc::c_ulong > ::std::mem::size_of::<longdouble_t>() as libc::c_ulong
             || fp_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
@@ -973,7 +973,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
     if fstat(
       fileno_unlocked((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream),
       &mut file_stats,
-    ) == 0i32
+    ) == 0
       && file_stats.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
       && file_stats.st_size > 0
     {
@@ -985,7 +985,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream,
           n_skip,
           1i32,
-        ) != 0i32
+        ) != 0
         {
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint
         }
@@ -1038,7 +1038,7 @@ unsafe extern "C" fn decode_format_string(mut s: *const libc::c_char) {
       hexl_mode_trailer: 0,
       field_width: 0,
     };
-    let mut next: *const libc::c_char = 0 as *const libc::c_char;
+    let mut next: *const libc::c_char = std::ptr::null();
     next = decode_one_format(s_orig, s, &mut tspec);
     s = next;
     let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).spec;
@@ -1134,7 +1134,7 @@ unsafe extern "C" fn write_block(
       prev_block as *const libc::c_void,
       curr_block as *const libc::c_void,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).bytes_per_block as libc::c_ulong,
-    ) == 0i32
+    ) == 0
   {
     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).prev_pair_equal {
       puts(b"*\x00" as *const u8 as *const libc::c_char);
@@ -1142,10 +1142,10 @@ unsafe extern "C" fn write_block(
     }
   } else {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).not_first = 1i32 != 0;
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).prev_pair_equal = 0i32 != 0;
-    i = 0i32 as libc::c_uint;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).prev_pair_equal = 0 != 0;
+    i = 0 as libc::c_uint;
     while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).n_specs {
-      if i == 0i32 as libc::c_uint {
+      if i == 0 as libc::c_uint {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .format_address
           .expect("non-null function pointer")(
@@ -1212,8 +1212,8 @@ unsafe extern "C" fn read_block(
   mut block: *mut libc::c_char,
   mut n_bytes_in_buffer: *mut size_t,
 ) {
-  *n_bytes_in_buffer = 0i32 as size_t;
-  if n == 0i32 as libc::c_ulong {
+  *n_bytes_in_buffer = 0 as size_t;
+  if n == 0 as libc::c_ulong {
     return;
   }
   while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1245,7 +1245,7 @@ with the format specs.  */
 unsafe extern "C" fn get_lcm() -> libc::c_int {
   let mut i: size_t = 0;
   let mut l_c_m: libc::c_int = 1i32;
-  i = 0i32 as size_t;
+  i = 0 as size_t;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).n_specs as libc::c_ulong {
     l_c_m = lcm(
       l_c_m as libc::c_uint,
@@ -1278,12 +1278,12 @@ unsafe extern "C" fn dump(mut current_offset: off_t, mut end_offset: off_t) {
   ) as *mut libc::c_char;
   block[1] =
     block[0].offset((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).bytes_per_block as isize);
-  idx = 0i32;
+  idx = 0;
   if option_mask32 & OPT_N as libc::c_int as libc::c_uint != 0 {
     loop {
       let mut n_needed: size_t = 0;
       if current_offset >= end_offset {
-        n_bytes_read = 0i32 as size_t;
+        n_bytes_read = 0 as size_t;
         break;
       } else {
         n_needed = if end_offset - current_offset
@@ -1333,7 +1333,7 @@ unsafe extern "C" fn dump(mut current_offset: off_t, mut end_offset: off_t) {
       idx ^= 1i32
     }
   }
-  if n_bytes_read > 0i32 as libc::c_ulong {
+  if n_bytes_read > 0 as libc::c_ulong {
     let mut l_c_m: libc::c_int = 0;
     let mut bytes_to_write: size_t = 0;
     l_c_m = get_lcm();
@@ -1347,7 +1347,7 @@ unsafe extern "C" fn dump(mut current_offset: off_t, mut end_offset: off_t) {
     );
     memset(
       block[idx as usize].offset(n_bytes_read as isize) as *mut libc::c_void,
-      0i32,
+      0,
       bytes_to_write.wrapping_sub(n_bytes_read),
     );
     write_block(
@@ -1408,7 +1408,7 @@ unsafe extern "C" fn dump_strings(mut address: off_t, mut end_offset: off_t) {
         current_block = 2480299350034459858;
         break 's_11;
       }
-      i = 0i32 as size_t;
+      i = 0 as size_t;
       while option_mask32 & OPT_N as libc::c_int as libc::c_uint == 0 || address < end_offset {
         if i == bufsize as libc::c_ulong {
           bufsize = bufsize.wrapping_add(bufsize.wrapping_div(8i32 as libc::c_uint));
@@ -1447,7 +1447,7 @@ unsafe extern "C" fn dump_strings(mut address: off_t, mut end_offset: off_t) {
       }
     }
     /* If we get here, the string is all printable and NUL-terminated */
-    *buf.offset(i as isize) = 0i32 as libc::c_uchar;
+    *buf.offset(i as isize) = 0 as libc::c_uchar;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .format_address
       .expect("non-null function pointer")(
@@ -1456,7 +1456,7 @@ unsafe extern "C" fn dump_strings(mut address: off_t, mut end_offset: off_t) {
         .wrapping_sub(1i32 as libc::c_ulong) as off_t,
       ' ' as i32 as libc::c_char,
     );
-    i = 0i32 as size_t;
+    i = 0 as size_t;
     loop {
       c = *buf.offset(i as isize) as libc::c_int;
       if !(c != 0) {
@@ -1527,7 +1527,7 @@ unsafe extern "C" fn parse_old_offset(
     {
       let mut init = suffix_mult {
         suffix: [0, 0, 0, 0],
-        mult: 0i32 as libc::c_uint,
+        mult: 0 as libc::c_uint,
       };
       init
     },
@@ -1539,7 +1539,7 @@ unsafe extern "C" fn parse_old_offset(
     s = s.offset(1)
   } /* not a number */
   if !((*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
-    return 0i32;
+    return 0;
   }
   /* Determine the radix we'll use to interpret S.  If there is a '.',
    * it's decimal, otherwise, if the string begins with '0X'or '0x',
@@ -1573,19 +1573,19 @@ pub unsafe extern "C" fn od_main(
     105, 99, 97, 116, 101, 115, 0, 0, 118, 115, 116, 114, 105, 110, 103, 115, 0, 2, 83, 119, 105,
     100, 116, 104, 0, 2, 119, 116, 114, 97, 100, 105, 116, 105, 111, 110, 97, 108, 0, 0, -1, 0,
   ];
-  let mut str_A: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_N: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_j: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_A: *const libc::c_char = std::ptr::null();
+  let mut str_N: *const libc::c_char = std::ptr::null();
+  let mut str_j: *const libc::c_char = std::ptr::null();
   let mut str_S: *const libc::c_char = b"3\x00" as *const u8 as *const libc::c_char;
-  let mut lst_t: *mut llist_t = 0 as *mut llist_t;
+  let mut lst_t: *mut llist_t = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut l_c_m: libc::c_int = 0;
   /* The number of input bytes to skip before formatting and writing.  */
-  let mut n_bytes_to_skip: off_t = 0i32 as off_t;
+  let mut n_bytes_to_skip: off_t = 0 as off_t;
   /* The offset of the first byte after the last byte to be formatted.  */
-  let mut end_offset: off_t = 0i32 as off_t;
+  let mut end_offset: off_t = 0 as off_t;
   /* The maximum number of bytes that will be formatted.  */
-  let mut max_bytes_to_format: off_t = 0i32 as off_t;
+  let mut max_bytes_to_format: off_t = 0 as off_t;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).bytes_per_block = 32i32 as libc::c_uint;
   strcpy(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1647,7 +1647,7 @@ pub unsafe extern "C" fn od_main(
       doxn_address_pad_len_char[pos as usize] as libc::c_char
   }
   if opt & OPT_N as libc::c_int as libc::c_uint != 0 {
-    max_bytes_to_format = xstrtoull_sfx(str_N, 0i32, bkm_suffixes.as_ptr()) as off_t
+    max_bytes_to_format = xstrtoull_sfx(str_N, 0, bkm_suffixes.as_ptr()) as off_t
   }
   if opt & OPT_a as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"a\x00" as *const u8 as *const libc::c_char);
@@ -1671,7 +1671,7 @@ pub unsafe extern "C" fn od_main(
     decode_format_string(b"d2\x00" as *const u8 as *const libc::c_char);
   }
   if opt & OPT_j as libc::c_int as libc::c_uint != 0 {
-    n_bytes_to_skip = xstrtoull_sfx(str_j, 0i32, bkm_suffixes.as_ptr()) as off_t
+    n_bytes_to_skip = xstrtoull_sfx(str_j, 0, bkm_suffixes.as_ptr()) as off_t
   }
   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"d4\x00" as *const u8 as *const libc::c_char);
@@ -1690,7 +1690,7 @@ pub unsafe extern "C" fn od_main(
   }
   if opt & OPT_S as libc::c_int as libc::c_uint != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).string_min =
-      xstrtou_sfx(str_S, 0i32, bkm_suffixes.as_ptr())
+      xstrtou_sfx(str_S, 0, bkm_suffixes.as_ptr())
   }
   // Bloat:
   //if ((option_mask32 & OPT_S) && G.n_specs > 0)
@@ -1788,7 +1788,7 @@ pub unsafe extern "C" fn od_main(
       );
     }
   }
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).n_specs == 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).n_specs == 0 as libc::c_uint {
     decode_format_string(b"o2\x00" as *const u8 as *const libc::c_char);
     /*G.n_specs = 1; - done by decode_format_string */
   }
@@ -1821,7 +1821,7 @@ pub unsafe extern "C" fn od_main(
       || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .bytes_per_block
         .wrapping_rem(l_c_m as libc::c_uint)
-        != 0i32 as libc::c_uint
+        != 0 as libc::c_uint
     {
       bb_error_msg(
         b"warning: invalid width %u; using %d instead\x00" as *const u8 as *const libc::c_char,

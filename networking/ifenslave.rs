@@ -371,7 +371,7 @@ unsafe extern "C" fn clear_if_addr(mut ifname: *mut libc::c_char) -> libc::c_int
   ifr.ifr_ifru.ifru_addr.sa_family = 2i32 as sa_family_t;
   memset(
     ifr.ifr_ifru.ifru_addr.sa_data.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong,
   );
   return set_ifrname_and_do_ioctl(0x8916i32 as libc::c_uint, &mut ifr, ifname);
@@ -421,7 +421,7 @@ unsafe extern "C" fn set_if_addr(
   };
   let mut res: libc::c_int = 0;
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[C2RustUnnamed_3; 4]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<C2RustUnnamed_3>() as libc::c_ulong) as libc::c_uint
@@ -431,11 +431,11 @@ unsafe extern "C" fn set_if_addr(
       &mut ifr,
       master_ifname,
     );
-    if res < 0i32 {
+    if res < 0 {
       ifr.ifr_ifru.ifru_addr.sa_family = 2i32 as sa_family_t;
       memset(
         ifr.ifr_ifru.ifru_addr.sa_data.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong,
       );
     }
@@ -444,12 +444,12 @@ unsafe extern "C" fn set_if_addr(
       &mut ifr,
       slave_ifname,
     );
-    if res < 0i32 {
+    if res < 0 {
       return res;
     }
     i = i.wrapping_add(1)
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn change_active(
   mut master_ifname: *mut libc::c_char,
@@ -661,7 +661,7 @@ unsafe extern "C" fn enslave(
       {
         current_block = 14714681040628071429;
       } else {
-        return 0i32;
+        return 0;
       }
     }
     _ => {}
@@ -674,7 +674,7 @@ unsafe extern "C" fn enslave(
         master_ifname,
         &mut (*ptr_to_globals).master.hwaddr.ifr_ifru.ifru_hwaddr,
       );
-      (*ptr_to_globals).hwaddr_set = 0i32 as smallint
+      (*ptr_to_globals).hwaddr_set = 0 as smallint
     }
     _ => {}
   }
@@ -694,7 +694,7 @@ unsafe extern "C" fn release(
       },
     },
   };
-  let mut res: libc::c_int = 0i32;
+  let mut res: libc::c_int = 0;
   if (*ptr_to_globals).slave.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_SLAVE as libc::c_int
     == 0
   {
@@ -705,8 +705,8 @@ unsafe extern "C" fn release(
     return 1i32;
   }
   strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
-  if set_ifrname_and_do_ioctl(0x8991i32 as libc::c_uint, &mut ifr, master_ifname) < 0i32
-    && ioctl_on_skfd((0x89f0i32 + 1i32) as libc::c_uint, &mut ifr) < 0i32
+  if set_ifrname_and_do_ioctl(0x8991i32 as libc::c_uint, &mut ifr, master_ifname) < 0
+    && ioctl_on_skfd((0x89f0i32 + 1i32) as libc::c_uint, &mut ifr) < 0
   {
     return 1i32;
   }
@@ -750,7 +750,7 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
   };
   memset(
     &mut ifr as *mut ifreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   ifr.ifr_ifru.ifru_data = &mut info as *mut ethtool_drvinfo as caddr_t as *mut libc::c_void;
@@ -761,7 +761,7 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
     b"ifenslave\x00" as *const u8 as *const libc::c_char,
   );
   strcpy(info.fw_version.as_mut_ptr(), utoa(2i32 as libc::c_uint));
-  if set_ifrname_and_do_ioctl(0x8946i32 as libc::c_uint, &mut ifr, master_ifname) < 0i32 {
+  if set_ifrname_and_do_ioctl(0x8946i32 as libc::c_uint, &mut ifr, master_ifname) < 0 {
     if *bb_errno == 95i32 {
       return;
     }
@@ -770,11 +770,8 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
       master_ifname,
     );
   }
-  (*ptr_to_globals).abi_ver = bb_strtou(
-    info.fw_version.as_mut_ptr(),
-    0 as *mut *mut libc::c_char,
-    0i32,
-  );
+  (*ptr_to_globals).abi_ver =
+    bb_strtou(info.fw_version.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0);
   if *bb_errno != 0 {
     bb_error_msg_and_die(
       b"%s: SIOCETHTOOL error\x00" as *const u8 as *const libc::c_char,
@@ -812,11 +809,11 @@ pub unsafe extern "C" fn ifenslave_main(
   /* No interface names - show all interfaces. */
   if master_ifname.is_null() {
     display_interfaces(0 as *mut libc::c_char);
-    return 0i32;
+    return 0;
   }
   /* Open a basic socket */
   xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
     skfd as libc::c_int,
   );
   /* Exchange abi version with bonding module */
@@ -836,7 +833,7 @@ pub unsafe extern "C" fn ifenslave_main(
      * configuration for this interface
      */
     display_interfaces(master_ifname);
-    return 0i32;
+    return 0;
   }
   if get_if_settings(master_ifname, &mut (*ptr_to_globals).master) != 0 {
     /* Probably a good reason not to go on */
@@ -874,10 +871,10 @@ pub unsafe extern "C" fn ifenslave_main(
       );
     }
     change_active(master_ifname, slave_ifname);
-    return 0i32;
+    return 0;
   }
   /* Accepts multiple slaves */
-  res = 0i32;
+  res = 0;
   loop {
     if opt & OPT_d as libc::c_int as libc::c_uint != 0 {
       /* Detach a slave interface from the master */

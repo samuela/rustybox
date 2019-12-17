@@ -65,12 +65,12 @@ unsafe extern "C" fn sync_common(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut ret: libc::c_int = 0;
-  ret = 0i32;
+  ret = 0;
   loop {
     /* GNU "sync FILE" uses O_NONBLOCK open */
-    let mut fd: libc::c_int = open_or_warn(*argv, 0o400i32 | 0i32 | 0o4000i32);
+    let mut fd: libc::c_int = open_or_warn(*argv, 0o400i32 | 0 | 0o4000i32);
     /* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
-    if fd < 0i32 {
+    if fd < 0 {
       ret = 1i32
     } else {
       if opts & OPT_SYNCFS as libc::c_int != 0 {
@@ -83,7 +83,7 @@ unsafe extern "C" fn sync_common(
         fdatasync(fd)
       } else {
         fsync(fd)
-      }) != 0i32
+      }) != 0
       {
         bb_simple_perror_msg(*argv);
         ret = 1i32
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn sync_main(
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
     sync();
-    return 0i32;
+    return 0;
   }
   return sync_common(opts as libc::c_int, argv);
 }

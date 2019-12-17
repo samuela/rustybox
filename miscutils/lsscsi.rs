@@ -64,7 +64,7 @@ unsafe extern "C" fn get_line(
 ) -> *mut libc::c_char {
   let mut bufsize: libc::c_uint = *bufsize_p;
   let mut sz: ssize_t = 0;
-  if bufsize.wrapping_sub(2i32 as libc::c_uint) as libc::c_int <= 0i32 {
+  if bufsize.wrapping_sub(2i32 as libc::c_uint) as libc::c_int <= 0 {
     return buf;
   }
   sz = open_read_close(
@@ -88,8 +88,8 @@ pub unsafe extern "C" fn lsscsi_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut de: *mut dirent = 0 as *mut dirent;
-  let mut dir: *mut DIR = 0 as *mut DIR;
+  let mut de: *mut dirent = std::ptr::null_mut();
+  let mut dir: *mut DIR = std::ptr::null_mut();
   xchdir(scsi_dir.as_ptr());
   dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {
@@ -100,11 +100,11 @@ pub unsafe extern "C" fn lsscsi_main(
     let mut buf: [libc::c_char; 256] = [0; 256];
     let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut bufsize: libc::c_uint = 0;
-    let mut vendor: *const libc::c_char = 0 as *const libc::c_char;
-    let mut type_str: *const libc::c_char = 0 as *const libc::c_char;
-    let mut type_name: *const libc::c_char = 0 as *const libc::c_char;
-    let mut model: *const libc::c_char = 0 as *const libc::c_char;
-    let mut rev: *const libc::c_char = 0 as *const libc::c_char;
+    let mut vendor: *const libc::c_char = std::ptr::null();
+    let mut type_str: *const libc::c_char = std::ptr::null();
+    let mut type_name: *const libc::c_char = std::ptr::null();
+    let mut model: *const libc::c_char = std::ptr::null();
+    let mut rev: *const libc::c_char = std::ptr::null();
     let mut type_0: libc::c_uint = 0;
     if !(((*de).d_name[0] as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
       continue;
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn lsscsi_main(
     if strchr((*de).d_name.as_mut_ptr(), ':' as i32).is_null() {
       continue;
     }
-    if chdir((*de).d_name.as_mut_ptr()) != 0i32 {
+    if chdir((*de).d_name.as_mut_ptr()) != 0 {
       continue;
     }
     bufsize = ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_uint;
@@ -171,5 +171,5 @@ pub unsafe extern "C" fn lsscsi_main(
      */
     xchdir(scsi_dir.as_ptr());
   }
-  return 0i32;
+  return 0;
 }

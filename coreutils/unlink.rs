@@ -34,5 +34,5 @@ pub unsafe extern "C" fn unlink_main(
   getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   xunlink(*argv.offset(0));
-  return 0i32;
+  return 0;
 }

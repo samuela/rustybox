@@ -140,7 +140,7 @@ static mut sbox: [u8; 256] = [
   0x84i32 as u8,
   0x53i32 as u8,
   0xd1i32 as u8,
-  0i32 as u8,
+  0 as u8,
   0xedi32 as u8,
   0x20i32 as u8,
   0xfci32 as u8,
@@ -415,7 +415,7 @@ static mut rsbox: [u8; 256] = [
   0x90i32 as u8,
   0xd8i32 as u8,
   0xabi32 as u8,
-  0i32 as u8,
+  0 as u8,
   0x8ci32 as u8,
   0xbci32 as u8,
   0xd3i32 as u8,
@@ -617,7 +617,7 @@ unsafe extern "C" fn KeyExpansion(
     (6i32 as libc::c_uint).wrapping_add(key_len.wrapping_div(4i32 as libc::c_uint)) as libc::c_int;
   words_RoundKey = (28i32 as libc::c_uint).wrapping_add(key_len) as libc::c_int;
   // The first round key is the key itself.
-  i = 0i32;
+  i = 0;
   while i < words_key {
     *RoundKey.offset(i as isize) = {
       let mut v: u32 = 0;
@@ -646,12 +646,12 @@ unsafe extern "C" fn KeyExpansion(
   }
   // i == words_key now
   // All other round keys are found from the previous round keys.
-  k = 0i32;
+  k = 0;
   j = k;
   while i < words_RoundKey {
     let mut tempa: u32 = 0;
     tempa = *RoundKey.offset((i - 1i32) as isize);
-    if j == 0i32 {
+    if j == 0 {
       // RotWord(): rotates the 4 bytes in a word to the left once.
       tempa = tempa << 8i32 | tempa >> 24i32;
       tempa = Subword(tempa);
@@ -662,7 +662,7 @@ unsafe extern "C" fn KeyExpansion(
     *RoundKey.offset(i as isize) = *RoundKey.offset((i - words_key) as isize) ^ tempa;
     j += 1;
     if j == words_key {
-      j = 0i32;
+      j = 0;
       k += 1
     }
     i += 1
@@ -673,12 +673,12 @@ unsafe extern "C" fn KeyExpansion(
 // The round key is added to the state by an XOR function.
 unsafe extern "C" fn AddRoundKey(mut astate: *mut libc::c_uint, mut RoundKeys: *const u32) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     let fresh3 = RoundKeys;
     RoundKeys = RoundKeys.offset(1);
     let mut n: u32 = *fresh3;
-    *astate.offset((i + 0i32) as isize) ^= n >> 24i32;
+    *astate.offset((i + 0) as isize) ^= n >> 24i32;
     *astate.offset((i + 1i32) as isize) ^= n >> 16i32 & 255i32 as libc::c_uint;
     *astate.offset((i + 2i32) as isize) ^= n >> 8i32 & 255i32 as libc::c_uint;
     *astate.offset((i + 3i32) as isize) ^= n & 255i32 as libc::c_uint;
@@ -689,7 +689,7 @@ unsafe extern "C" fn AddRoundKey(mut astate: *mut libc::c_uint, mut RoundKeys: *
 // state matrix with values in an S-box.
 unsafe extern "C" fn SubBytes(mut astate: *mut libc::c_uint) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     *astate.offset(i as isize) = sbox[*astate.offset(i as isize) as usize] as libc::c_uint;
     i += 1
@@ -727,7 +727,7 @@ unsafe extern "C" fn ShiftRows(mut astate: *mut libc::c_uint) {
 // MixColumns function mixes the columns of the state matrix
 unsafe extern "C" fn MixColumns(mut astate: *mut libc::c_uint) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     let mut a: libc::c_uint = 0;
     let mut b: libc::c_uint = 0;
@@ -737,7 +737,7 @@ unsafe extern "C" fn MixColumns(mut astate: *mut libc::c_uint) {
     let mut y: libc::c_uint = 0;
     let mut z: libc::c_uint = 0;
     let mut t: libc::c_uint = 0;
-    a = *astate.offset((i + 0i32) as isize);
+    a = *astate.offset((i + 0) as isize);
     b = *astate.offset((i + 1i32) as isize);
     c = *astate.offset((i + 2i32) as isize);
     d = *astate.offset((i + 3i32) as isize);
@@ -745,7 +745,7 @@ unsafe extern "C" fn MixColumns(mut astate: *mut libc::c_uint) {
     y = a ^ b << 1i32 ^ c ^ c << 1i32 ^ d;
     z = a ^ b ^ c << 1i32 ^ d ^ d << 1i32;
     t = a ^ a << 1i32 ^ b ^ c ^ d << 1i32;
-    *astate.offset((i + 0i32) as isize) =
+    *astate.offset((i + 0) as isize) =
       x ^ (-((x >> 8i32) as libc::c_int) & 0x11bi32) as libc::c_uint;
     *astate.offset((i + 1i32) as isize) =
       y ^ (-((y >> 8i32) as libc::c_int) & 0x11bi32) as libc::c_uint;
@@ -760,7 +760,7 @@ unsafe extern "C" fn MixColumns(mut astate: *mut libc::c_uint) {
 // state matrix with values in an S-box.
 unsafe extern "C" fn InvSubBytes(mut astate: *mut libc::c_uint) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     *astate.offset(i as isize) = rsbox[*astate.offset(i as isize) as usize] as libc::c_uint;
     i += 1
@@ -799,7 +799,7 @@ unsafe extern "C" fn Multiply(mut x: libc::c_uint) -> libc::c_uint {
 // Please use the references to gain more information.
 unsafe extern "C" fn InvMixColumns(mut astate: *mut libc::c_uint) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     let mut a: libc::c_uint = 0;
     let mut b: libc::c_uint = 0;
@@ -809,7 +809,7 @@ unsafe extern "C" fn InvMixColumns(mut astate: *mut libc::c_uint) {
     let mut y: libc::c_uint = 0;
     let mut z: libc::c_uint = 0;
     let mut t: libc::c_uint = 0;
-    a = *astate.offset((i + 0i32) as isize);
+    a = *astate.offset((i + 0) as isize);
     b = *astate.offset((i + 1i32) as isize);
     c = *astate.offset((i + 2i32) as isize);
     d = *astate.offset((i + 3i32) as isize);
@@ -857,7 +857,7 @@ unsafe extern "C" fn InvMixColumns(mut astate: *mut libc::c_uint) {
       ^ d << 1i32
       ^ d << 2i32
       ^ d << 3i32;
-    *astate.offset((i + 0i32) as isize) = Multiply(x);
+    *astate.offset((i + 0) as isize) = Multiply(x);
     *astate.offset((i + 1i32) as isize) = Multiply(y);
     *astate.offset((i + 2i32) as isize) = Multiply(z);
     *astate.offset((i + 3i32) as isize) = Multiply(t);
@@ -873,7 +873,7 @@ unsafe extern "C" fn aes_encrypt_1(mut aes: *mut tls_aes, mut astate: *mut libc:
     SubBytes(astate);
     ShiftRows(astate);
     rounds = rounds.wrapping_sub(1);
-    if rounds == 0i32 as libc::c_uint {
+    if rounds == 0 as libc::c_uint {
       break;
     }
     MixColumns(astate);
@@ -898,13 +898,13 @@ pub unsafe extern "C" fn aes_encrypt_one_block(
   let mut i: libc::c_uint = 0;
   let mut pt: *const u8 = data as *const u8;
   let mut ct: *mut u8 = dst as *mut u8;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 16i32 as libc::c_uint {
     astate[i as usize] = *pt.offset(i as isize) as libc::c_uint;
     i = i.wrapping_add(1)
   }
   aes_encrypt_1(aes, astate.as_mut_ptr());
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 16i32 as libc::c_uint {
     *ct.offset(i as isize) = astate[i as usize] as u8;
     i = i.wrapping_add(1)
@@ -926,21 +926,21 @@ pub unsafe extern "C" fn aes_cbc_encrypt(
     iv,
     16i32 as libc::c_ulong,
   );
-  while len > 0i32 as libc::c_ulong {
+  while len > 0 as libc::c_ulong {
     /* almost aes_encrypt_one_block(rounds, RoundKey, pt, ct);
      * but xor'ing of IV with plaintext[] is combined
      * with plaintext[] -> astate[]
      */
     let mut i: libc::c_int = 0;
     let mut astate: [libc::c_uint; 16] = [0; 16];
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       astate[i as usize] =
         (*pt.offset(i as isize) as libc::c_int ^ iv2[i as usize] as libc::c_int) as libc::c_uint;
       i += 1
     }
     aes_encrypt_1(aes, astate.as_mut_ptr());
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       let ref mut fresh4 = *ct.offset(i as isize);
       *fresh4 = astate[i as usize] as u8;
@@ -963,7 +963,7 @@ unsafe extern "C" fn aes_decrypt_1(mut aes: *mut tls_aes, mut astate: *mut libc:
     RoundKey = RoundKey.offset(-4);
     AddRoundKey(astate, RoundKey);
     rounds = rounds.wrapping_sub(1);
-    if rounds == 0i32 as libc::c_uint {
+    if rounds == 0 as libc::c_uint {
       break;
     }
     InvMixColumns(astate);
@@ -987,8 +987,8 @@ pub unsafe extern "C" fn aes_cbc_decrypt(
 ) {
   let mut iv2: [u8; 16] = [0; 16];
   let mut iv3: [u8; 16] = [0; 16];
-  let mut ivbuf: *mut u8 = 0 as *mut u8;
-  let mut ivnext: *mut u8 = 0 as *mut u8;
+  let mut ivbuf: *mut u8 = std::ptr::null_mut();
+  let mut ivnext: *mut u8 = std::ptr::null_mut();
   let mut ct: *const u8 = data as *const u8;
   let mut pt: *mut u8 = dst as *mut u8;
   ivbuf = memcpy(
@@ -1007,14 +1007,14 @@ pub unsafe extern "C" fn aes_cbc_decrypt(
      */
     let mut i: libc::c_int = 0;
     let mut astate: [libc::c_uint; 16] = [0; 16];
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       astate[i as usize] = *ct.offset(i as isize) as libc::c_uint;
       *ivnext.offset(i as isize) = astate[i as usize] as u8;
       i += 1
     }
     aes_decrypt_1(aes, astate.as_mut_ptr());
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       *pt.offset(i as isize) =
         (astate[i as usize] ^ *ivbuf.offset(i as isize) as libc::c_uint) as u8;

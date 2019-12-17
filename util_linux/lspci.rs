@@ -141,15 +141,15 @@ unsafe extern "C" fn fileAction(
   mut _userData: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
   let mut pci_slot_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut driver: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pci_class: libc::c_int = 0i32;
-  let mut pci_vid: libc::c_int = 0i32;
-  let mut pci_did: libc::c_int = 0i32;
-  let mut pci_subsys_vid: libc::c_int = 0i32;
-  let mut pci_subsys_did: libc::c_int = 0i32;
+  let mut pci_class: libc::c_int = 0;
+  let mut pci_vid: libc::c_int = 0;
+  let mut pci_did: libc::c_int = 0;
+  let mut pci_subsys_vid: libc::c_int = 0;
+  let mut pci_subsys_did: libc::c_int = 0;
   let mut uevent_filename: *mut libc::c_char =
     concat_path_file(fileName, b"/uevent\x00" as *const u8 as *const libc::c_char);
   parser = config_open2(
@@ -164,21 +164,21 @@ unsafe extern "C" fn fileAction(
     b"\x00:=\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    if strcmp(tokens[0], b"DRIVER\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(tokens[0], b"DRIVER\x00" as *const u8 as *const libc::c_char) == 0 {
       driver = xstrdup(tokens[1])
     } else if strcmp(
       tokens[0],
       b"PCI_CLASS\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       pci_class = (xstrtou(tokens[1], 16i32) >> 8i32) as libc::c_int
-    } else if strcmp(tokens[0], b"PCI_ID\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    } else if strcmp(tokens[0], b"PCI_ID\x00" as *const u8 as *const libc::c_char) == 0 {
       pci_vid = xstrtou(tokens[1], 16i32) as libc::c_int;
       pci_did = xstrtou(tokens[2], 16i32) as libc::c_int
     } else if strcmp(
       tokens[0],
       b"PCI_SUBSYS_ID\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       pci_subsys_vid = xstrtou(tokens[1], 16i32) as libc::c_int;
       pci_subsys_did = xstrtou(tokens[2], 16i32) as libc::c_int
@@ -186,7 +186,7 @@ unsafe extern "C" fn fileAction(
       if !(strcmp(
         tokens[0],
         b"PCI_SLOT_NAME\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32)
+      ) == 0)
       {
         continue;
       }
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn lspci_main(
     ),
     None,
     0 as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
-  return 0i32;
+  return 0;
 }

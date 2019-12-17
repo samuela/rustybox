@@ -269,8 +269,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -278,8 +278,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -287,8 +287,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -296,8 +296,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -305,8 +305,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: 8i32 as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -314,8 +314,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: 8i32 as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -323,8 +323,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -332,8 +332,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -341,8 +341,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -350,8 +350,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -359,8 +359,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -368,8 +368,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: 8i32 as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -377,8 +377,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: 8i32 as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -386,8 +386,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -395,8 +395,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -404,8 +404,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -413,8 +413,8 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: combination as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
-      bits: 0i32 as tcflag_t,
+      mask: 0 as u16,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -422,7 +422,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
@@ -431,7 +431,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
@@ -440,7 +440,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10000000000i32 as tcflag_t,
     };
     init
@@ -448,16 +448,16 @@ static mut mode_info: [mode_info; 89] = [
   {
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
-      flags: 0i32 as u8,
+      flags: 0 as u8,
       mask: 0o60i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
   {
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
-      flags: 0i32 as u8,
+      flags: 0 as u8,
       mask: 0o60i32 as u16,
       bits: 0o20i32 as tcflag_t,
     };
@@ -466,7 +466,7 @@ static mut mode_info: [mode_info; 89] = [
   {
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
-      flags: 0i32 as u8,
+      flags: 0 as u8,
       mask: 0o60i32 as u16,
       bits: 0o40i32 as tcflag_t,
     };
@@ -475,7 +475,7 @@ static mut mode_info: [mode_info; 89] = [
   {
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
-      flags: 0i32 as u8,
+      flags: 0 as u8,
       mask: 0o60i32 as u16,
       bits: 0o60i32 as tcflag_t,
     };
@@ -485,7 +485,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
@@ -494,7 +494,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: (4i32 | 8i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
@@ -503,7 +503,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
@@ -512,7 +512,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
@@ -521,7 +521,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
@@ -530,7 +530,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: control as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20000000000u32,
     };
     init
@@ -539,7 +539,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
@@ -548,7 +548,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
@@ -557,7 +557,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
@@ -566,7 +566,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
@@ -575,7 +575,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
@@ -584,7 +584,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
@@ -593,7 +593,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
@@ -602,7 +602,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
@@ -611,7 +611,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
@@ -620,7 +620,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: 4i32 as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
@@ -629,7 +629,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
@@ -638,7 +638,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (8i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
@@ -647,7 +647,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
@@ -656,7 +656,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
@@ -665,7 +665,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20000i32 as tcflag_t,
     };
     init
@@ -674,7 +674,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: input as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o40000i32 as tcflag_t,
     };
     init
@@ -683,7 +683,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
@@ -692,7 +692,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
@@ -701,7 +701,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
@@ -710,7 +710,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
@@ -719,7 +719,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
@@ -728,7 +728,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
@@ -737,7 +737,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
@@ -746,7 +746,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: output as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
@@ -765,7 +765,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o400i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -801,7 +801,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o3000i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -837,7 +837,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o14000i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -855,7 +855,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o20000i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -873,7 +873,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o40000i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -891,7 +891,7 @@ static mut mode_info: [mode_info; 89] = [
       type_0: output as libc::c_int as u8,
       flags: 1i32 as u8,
       mask: 0o100000i32 as u16,
-      bits: 0i32 as tcflag_t,
+      bits: 0 as tcflag_t,
     };
     init
   },
@@ -899,7 +899,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1i32 as tcflag_t,
     };
     init
@@ -908,7 +908,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2i32 as tcflag_t,
     };
     init
@@ -917,7 +917,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o100000i32 as tcflag_t,
     };
     init
@@ -926,7 +926,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10i32 as tcflag_t,
     };
     init
@@ -935,7 +935,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
@@ -944,7 +944,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (8i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o20i32 as tcflag_t,
     };
     init
@@ -953,7 +953,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o40i32 as tcflag_t,
     };
     init
@@ -962,7 +962,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o100i32 as tcflag_t,
     };
     init
@@ -971,7 +971,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o200i32 as tcflag_t,
     };
     init
@@ -980,7 +980,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4i32 as tcflag_t,
     };
     init
@@ -989,7 +989,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o400i32 as tcflag_t,
     };
     init
@@ -998,7 +998,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
@@ -1007,7 +1007,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (8i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o2000i32 as tcflag_t,
     };
     init
@@ -1016,7 +1016,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
@@ -1025,7 +1025,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (8i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o1000i32 as tcflag_t,
     };
     init
@@ -1034,7 +1034,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (1i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
@@ -1043,7 +1043,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (8i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o4000i32 as tcflag_t,
     };
     init
@@ -1052,7 +1052,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o10000i32 as tcflag_t,
     };
     init
@@ -1061,7 +1061,7 @@ static mut mode_info: [mode_info; 89] = [
     let mut init = mode_info {
       type_0: local as libc::c_int as u8,
       flags: (2i32 | 4i32) as u8,
-      mask: 0i32 as u16,
+      mask: 0 as u16,
       bits: 0o200000i32 as tcflag_t,
     };
     init
@@ -1078,7 +1078,7 @@ static mut control_info: [control_info; 17] = [
   {
     let mut init = control_info {
       saneval: ('c' as i32 & 0o37i32) as u8,
-      offset: 0i32 as u8,
+      offset: 0 as u8,
     };
     init
   },
@@ -1189,7 +1189,7 @@ static mut control_info: [control_info; 17] = [
   },
   {
     let mut init = control_info {
-      saneval: 0i32 as u8,
+      saneval: 0 as u8,
       offset: 5i32 as u8,
     };
     init
@@ -1245,7 +1245,7 @@ unsafe extern "C" fn wrapf(mut message: *const libc::c_char, mut args: ...) {
   {
     return;
   }
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col > 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col > 0 as libc::c_uint {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col;
     *fresh0 = (*fresh0).wrapping_add(1);
     if buf[0] as libc::c_int != '\n' as i32 {
@@ -1254,7 +1254,7 @@ unsafe extern "C" fn wrapf(mut message: *const libc::c_char, mut args: ...) {
         .wrapping_add(buflen)
         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col
       {
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0i32 as libc::c_uint;
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint;
         bb_putchar('\n' as i32);
       } else {
         bb_putchar(' ' as i32);
@@ -1265,11 +1265,11 @@ unsafe extern "C" fn wrapf(mut message: *const libc::c_char, mut args: ...) {
   let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col;
   *fresh1 = (*fresh1).wrapping_add(buflen);
   if buf[buflen.wrapping_sub(1i32 as libc::c_uint) as usize] as libc::c_int == '\n' as i32 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0i32 as libc::c_uint
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint
   };
 }
 unsafe extern "C" fn newline() {
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col != 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col != 0 as libc::c_uint {
     wrapf(b"\n\x00" as *const u8 as *const libc::c_char);
   };
 }
@@ -1277,10 +1277,10 @@ unsafe extern "C" fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_in
   let mut current_block: u64;
   let mut win: winsize = {
     let mut init = winsize {
-      ws_row: 0i32 as libc::c_ushort,
-      ws_col: 0i32 as libc::c_ushort,
-      ws_xpixel: 0i32 as libc::c_ushort,
-      ws_ypixel: 0i32 as libc::c_ushort,
+      ws_row: 0 as libc::c_ushort,
+      ws_col: 0 as libc::c_ushort,
+      ws_xpixel: 0 as libc::c_ushort,
+      ws_ypixel: 0 as libc::c_ushort,
     };
     init
   };
@@ -1290,7 +1290,7 @@ unsafe extern "C" fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_in
     } else {
       memset(
         &mut win as *mut winsize as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<winsize>() as libc::c_ulong,
       );
       current_block = 735147466149431745;
@@ -1300,14 +1300,14 @@ unsafe extern "C" fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_in
   }
   match current_block {
     735147466149431745 => {
-      if rows >= 0i32 {
+      if rows >= 0 {
         win.ws_row = rows as libc::c_ushort
       }
-      if cols >= 0i32 {
+      if cols >= 0 {
         win.ws_col = cols as libc::c_ushort
       }
       if ioctl(
-        0i32,
+        0,
         0x5414i32 as libc::c_ulong,
         &mut win as *mut winsize as *mut libc::c_char,
       ) != 0
@@ -1375,14 +1375,14 @@ static mut stty_suffixes: [suffix_mult; 4] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },
 ];
 unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_info {
   let mut i: libc::c_int = index_in_strings(mode_name.as_ptr(), name);
-  return if i >= 0i32 {
+  return if i >= 0 {
     &*mode_info.as_ptr().offset(i as isize) as *const mode_info
   } else {
     0 as *const mode_info
@@ -1390,7 +1390,7 @@ unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_inf
 }
 unsafe extern "C" fn find_control(mut name: *const libc::c_char) -> *const control_info {
   let mut i: libc::c_int = index_in_strings(control_name.as_ptr(), name);
-  return if i >= 0i32 {
+  return if i >= 0 {
     &*control_info.as_ptr().offset(i as isize) as *const control_info
   } else {
     0 as *const control_info
@@ -1403,8 +1403,8 @@ unsafe extern "C" fn find_param(mut name: *const libc::c_char) -> libc::c_int {
     0, 111, 115, 112, 101, 101, 100, 0, 0,
   ];
   let mut i: libc::c_int = index_in_strings(params.as_ptr(), name) + 1i32;
-  if i == 0i32 {
-    return 0i32;
+  if i == 0 {
+    return 0;
   }
   if i != 5i32 && i != 6i32 {
     i |= 0x80i32
@@ -1434,14 +1434,14 @@ unsafe extern "C" fn recover_mode(
     &mut n as *mut libc::c_int,
   ) != 4i32
   {
-    return 0i32;
+    return 0;
   }
   (*mode).c_iflag = iflag as tcflag_t;
   (*mode).c_oflag = oflag as tcflag_t;
   (*mode).c_cflag = cflag as tcflag_t;
   (*mode).c_lflag = lflag as tcflag_t;
   arg = arg.offset(n as isize);
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     if sscanf(
       arg,
@@ -1450,7 +1450,7 @@ unsafe extern "C" fn recover_mode(
       &mut n as *mut libc::c_int,
     ) != 1i32
     {
-      return 0i32;
+      return 0;
     }
     (*mode).c_cc[i as usize] = chr as cc_t;
     arg = arg.offset(n as isize);
@@ -1458,7 +1458,7 @@ unsafe extern "C" fn recover_mode(
   }
   /* Fail if there are too many fields */
   if *arg as libc::c_int != '\u{0}' as i32 {
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -1471,7 +1471,7 @@ unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut _dummy: l
     (*mode).c_cflag as libc::c_ulong,
     (*mode).c_lflag as libc::c_ulong,
   );
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     printf(
       b":%x\x00" as *const u8 as *const libc::c_char,
@@ -1489,7 +1489,7 @@ unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_
   let mut ospeed: libc::c_ulong = 0;
   ispeed = cfgetispeed(mode) as libc::c_ulong;
   ospeed = cfgetospeed(mode) as libc::c_ulong;
-  if ispeed == 0i32 as libc::c_ulong || ispeed == ospeed {
+  if ispeed == 0 as libc::c_ulong || ispeed == ospeed {
     ispeed = ospeed;
     //________ 0123 4 5 6 7 8 9
     fmt_str = b"%lu\n\x00\x00\x00\x00\x00speed %lu baud;\x00" as *const u8 as *const libc::c_char
@@ -1505,7 +1505,7 @@ unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_
 }
 unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) {
   let mut i: libc::c_int = 0;
-  let mut bitsp: *mut tcflag_t = 0 as *mut tcflag_t;
+  let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   let mut mask: libc::c_ulong = 0;
   let mut prev_type: libc::c_int = control as libc::c_int;
   display_speed(mode, 1i32);
@@ -1516,7 +1516,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
     b"line = %u;\n\x00" as *const u8 as *const libc::c_char,
     (*mode).c_line as libc::c_int,
   );
-  i = 0i32;
+  i = 0;
   while i != CIDX_min as libc::c_int {
     let mut ch: libc::c_char = 0;
     let mut buf10: [libc::c_char; 10] = [0; 10];
@@ -1529,7 +1529,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
         b"<undef>\x00" as *const u8 as *const libc::c_char,
       );
     } else {
-      visible(ch as libc::c_uint, buf10.as_mut_ptr(), 0i32);
+      visible(ch as libc::c_uint, buf10.as_mut_ptr(), 0);
     }
     wrapf(
       b"%s = %s;\x00" as *const u8 as *const libc::c_char,
@@ -1544,7 +1544,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
     (*mode).c_cc[5] as libc::c_int,
   );
   newline();
-  i = 0i32;
+  i = 0;
   while i < NUM_mode_info as libc::c_int {
     if !(mode_info[i as usize].flags as libc::c_int & 8i32 != 0) {
       if mode_info[i as usize].type_0 as libc::c_int != prev_type {
@@ -1579,12 +1579,12 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
 }
 unsafe extern "C" fn sane_mode(mut mode: *mut termios) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < NUM_control_info as libc::c_int {
     (*mode).c_cc[control_info[i as usize].offset as usize] = control_info[i as usize].saneval;
     i += 1
   }
-  i = 0i32;
+  i = 0;
   while i < NUM_mode_info as libc::c_int {
     let mut val: tcflag_t = 0;
     let mut bitsp: *mut tcflag_t =
@@ -1605,7 +1605,7 @@ unsafe extern "C" fn set_mode(
   mut reversed: libc::c_int,
   mut mode: *mut termios,
 ) {
-  let mut bitsp: *mut tcflag_t = 0 as *mut tcflag_t;
+  let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   bitsp = get_ptr_to_tcflag((*info).type_0 as libc::c_uint, mode);
   if !bitsp.is_null() {
     let mut val: tcflag_t = *bitsp & !((*info).mask as libc::c_int) as libc::c_uint;
@@ -1724,11 +1724,11 @@ unsafe extern "C" fn set_mode(
       (*mode).c_lflag |= (0o1i32 | 0o2i32) as libc::c_uint
     } else {
       /* Raw mode */
-      (*mode).c_iflag = 0i32 as tcflag_t; /* ^C */
+      (*mode).c_iflag = 0 as tcflag_t; /* ^C */
       (*mode).c_oflag &= !0o1i32 as libc::c_uint; /* DEL */
       (*mode).c_lflag &= !(0o1i32 | 0o2i32 | 0o4i32) as libc::c_uint; /* ^U */
       (*mode).c_cc[6] = 1i32 as cc_t;
-      (*mode).c_cc[5] = 0i32 as cc_t
+      (*mode).c_cc[5] = 0 as cc_t
     }
   } else if info
     == &*mode_info
@@ -1746,7 +1746,7 @@ unsafe extern "C" fn set_mode(
     if reversed != 0 {
       (*mode).c_oflag = (*mode).c_oflag & !0o14000i32 as libc::c_uint | 0o14000i32 as libc::c_uint
     } else {
-      (*mode).c_oflag = (*mode).c_oflag & !0o14000i32 as libc::c_uint | 0i32 as libc::c_uint
+      (*mode).c_oflag = (*mode).c_oflag & !0o14000i32 as libc::c_uint | 0 as libc::c_uint
     }
   } else if info
     == &*mode_info.as_ptr().offset(IDX_lcase as libc::c_int as isize) as *const mode_info
@@ -1790,7 +1790,7 @@ unsafe extern "C" fn set_control_char_or_die(
   {
     value = xatoul_range_sfx(
       arg,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       0xffi32 as libc::c_ulong,
       stty_suffixes.as_ptr(),
     ) as libc::c_uchar
@@ -1798,8 +1798,8 @@ unsafe extern "C" fn set_control_char_or_die(
     || *arg.offset(1) as libc::c_int == '\u{0}' as i32
   {
     value = *arg.offset(0) as libc::c_uchar
-  } else if strcmp(arg, b"^-\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(arg, b"undef\x00" as *const u8 as *const libc::c_char) == 0i32
+  } else if strcmp(arg, b"^-\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(arg, b"undef\x00" as *const u8 as *const libc::c_char) == 0
   {
     value = '\u{0}' as i32 as libc::c_uchar
   } else if *arg.offset(0) as libc::c_int == '^' as i32 {
@@ -1811,7 +1811,7 @@ unsafe extern "C" fn set_control_char_or_die(
   } else {
     value = xatoul_range_sfx(
       arg,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       0xffi32 as libc::c_ulong,
       stty_suffixes.as_ptr(),
     ) as libc::c_uchar
@@ -1835,25 +1835,25 @@ pub unsafe extern "C" fn stty_main(
     c_ospeed: 0,
   };
   let mut output_func: Option<unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ()> = None;
-  let mut file_name: *const libc::c_char = 0 as *const libc::c_char;
-  let mut display_all: libc::c_int = 0i32;
+  let mut file_name: *const libc::c_char = std::ptr::null();
+  let mut display_all: libc::c_int = 0;
   let mut stty_state: libc::c_int = 0;
   let mut k: libc::c_int = 0;
   let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name;
   *fresh2 = bb_msg_standard_input.as_ptr();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col = 80i32 as libc::c_uint;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0i32 as libc::c_uint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint;
   stty_state = 1i32 << 4i32;
   output_func = Some(do_display as unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ());
   /* First pass: only parse/verify command line params */
-  k = 0i32;
+  k = 0;
   's_59: loop {
     k += 1;
     if (*argv.offset(k as isize)).is_null() {
       break;
     }
-    let mut mp: *const mode_info = 0 as *const mode_info;
-    let mut cp: *const control_info = 0 as *const control_info;
+    let mut mp: *const mode_info = std::ptr::null();
+    let mut cp: *const control_info = std::ptr::null();
     let mut arg: *const libc::c_char = *argv.offset(k as isize);
     let mut argnext: *const libc::c_char = *argv.offset((k + 1i32) as isize);
     let mut param: libc::c_int = 0;
@@ -1867,7 +1867,7 @@ pub unsafe extern "C" fn stty_main(
         }
       } else {
         /* It is an option - parse it */
-        i = 0i32; /* "-Fdevice" ? */
+        i = 0; /* "-Fdevice" ? */
         loop {
           i += 1;
           if !(*arg.offset(i as isize) != 0) {
@@ -2010,7 +2010,7 @@ pub unsafe extern "C" fn stty_main(
     *fresh4 = file_name;
     xmove_fd(
       xopen_nonblocking((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name),
-      0i32,
+      0,
     );
     ndelay_off(0i32);
   }
@@ -2018,7 +2018,7 @@ pub unsafe extern "C" fn stty_main(
   spurious difference in an uninitialized portion of the structure */
   memset(
     &mut mode as *mut termios as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<termios>() as libc::c_ulong,
   );
   if tcgetattr(0i32, &mut mode) != 0 {
@@ -2028,10 +2028,10 @@ pub unsafe extern "C" fn stty_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col =
       get_terminal_width(1i32) as libc::c_uint;
     output_func.expect("non-null function pointer")(&mut mode, display_all);
-    return 0i32;
+    return 0;
   }
   /* Second pass: perform actions */
-  k = 0i32;
+  k = 0;
   loop
   /* It is an option - already parsed. Skip it */
   {
@@ -2039,8 +2039,8 @@ pub unsafe extern "C" fn stty_main(
     if (*argv.offset(k as isize)).is_null() {
       break;
     }
-    let mut mp_0: *const mode_info = 0 as *const mode_info;
-    let mut cp_0: *const control_info = 0 as *const control_info;
+    let mut mp_0: *const mode_info = std::ptr::null();
+    let mut cp_0: *const control_info = std::ptr::null();
     let mut arg_0: *const libc::c_char = *argv.offset(k as isize);
     let mut argnext_0: *const libc::c_char = *argv.offset((k + 1i32) as isize);
     let mut param_0: libc::c_int = 0;
@@ -2048,19 +2048,19 @@ pub unsafe extern "C" fn stty_main(
       mp_0 = find_mode(arg_0.offset(1));
       if !mp_0.is_null() {
         set_mode(mp_0, 1i32, &mut mode);
-        stty_state |= 1i32 << 0i32
+        stty_state |= 1i32 << 0
       }
     } else {
       mp_0 = find_mode(arg_0);
       if !mp_0.is_null() {
-        set_mode(mp_0, 0i32, &mut mode);
-        stty_state |= 1i32 << 0i32
+        set_mode(mp_0, 0, &mut mode);
+        stty_state |= 1i32 << 0
       } else {
         cp_0 = find_control(arg_0);
         if !cp_0.is_null() {
           k += 1;
           set_control_char_or_die(cp_0, argnext_0, &mut mode);
-          stty_state |= 1i32 << 0i32
+          stty_state |= 1i32 << 0
         } else {
           param_0 = find_param(arg_0);
           if param_0 & param_need_arg as libc::c_int != 0 {
@@ -2069,7 +2069,7 @@ pub unsafe extern "C" fn stty_main(
           match param_0 {
             129 => {
               mode.c_line = xatoul_sfx(argnext_0, stty_suffixes.as_ptr()) as cc_t;
-              stty_state |= 1i32 << 0i32
+              stty_state |= 1i32 << 0
               /* else - impossible (caught in the first pass):
               bb_error_msg_and_die("invalid argument '%s'", arg); */
             }
@@ -2089,23 +2089,23 @@ pub unsafe extern "C" fn stty_main(
               );
             }
             6 => {
-              display_speed(&mut mode, 0i32);
+              display_speed(&mut mode, 0);
             }
             135 => {
               set_speed_or_die(input_speed, argnext_0, &mut mode);
-              stty_state |= 1i32 << 0i32 | 1i32 << 1i32
+              stty_state |= 1i32 << 0 | 1i32 << 1i32
             }
             136 => {
               set_speed_or_die(output_speed, argnext_0, &mut mode);
-              stty_state |= 1i32 << 0i32 | 1i32 << 1i32
+              stty_state |= 1i32 << 0 | 1i32 << 1i32
             }
             _ => {
               if recover_mode(arg_0, &mut mode) == 1i32 {
-                stty_state |= 1i32 << 0i32
+                stty_state |= 1i32 << 0
               } else {
                 /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */
                 set_speed_or_die(both_speeds, arg_0, &mut mode);
-                stty_state |= 1i32 << 0i32 | 1i32 << 1i32
+                stty_state |= 1i32 << 0 | 1i32 << 1i32
               }
             }
           }
@@ -2113,7 +2113,7 @@ pub unsafe extern "C" fn stty_main(
       }
     }
   }
-  if stty_state & 1i32 << 0i32 != 0 {
+  if stty_state & 1i32 << 0 != 0 {
     let mut new_mode: termios = termios {
       c_iflag: 0,
       c_oflag: 0,
@@ -2137,7 +2137,7 @@ pub unsafe extern "C" fn stty_main(
     spurious difference in an uninitialized portion of the structure */
     memset(
       &mut new_mode as *mut termios as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<termios>() as libc::c_ulong,
     );
     if tcgetattr(0i32, &mut new_mode) != 0 {
@@ -2147,7 +2147,7 @@ pub unsafe extern "C" fn stty_main(
       &mut mode as *mut termios as *const libc::c_void,
       &mut new_mode as *mut termios as *const libc::c_void,
       ::std::mem::size_of::<termios>() as libc::c_ulong,
-    ) != 0i32
+    ) != 0
     {
       /*
        * I think the below chunk is not necessary on Linux.
@@ -2160,5 +2160,5 @@ pub unsafe extern "C" fn stty_main(
       );
     }
   }
-  return 0i32;
+  return 0;
 }

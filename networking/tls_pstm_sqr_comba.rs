@@ -95,20 +95,20 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
   let mut c0: pstm_digit = 0;
   let mut c1: pstm_digit = 0;
   let mut c2: pstm_digit = 0;
-  let mut dst: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut dst: *mut pstm_digit = std::ptr::null_mut();
   let mut tt: pstm_word = 0;
-  paDfail = 0i32;
+  paDfail = 0;
   /* get size of output and trim */
   pa = (*A).used + (*A).used;
   /* number of output digits to produce */
-  c2 = 0i32 as pstm_digit;
+  c2 = 0 as pstm_digit;
   c1 = c2;
   c0 = c1;
   /*
     If b is not large enough grow it and continue
   */
   if (*B).alloc < pa {
-    if pstm_grow(B, pa) != 0i32 {
+    if pstm_grow(B, pa) != 0 {
       return -8i32;
     }
   } /* have a paD, but it's not big enough */
@@ -123,7 +123,7 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
     //bbox
     } else {
       dst = paD;
-      memset(dst as *mut libc::c_void, 0i32, paDlen as libc::c_ulong);
+      memset(dst as *mut libc::c_void, 0, paDlen as libc::c_ulong);
     }
   } else {
     dst = xzalloc(
@@ -131,13 +131,13 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
     ) as *mut pstm_digit
     //bbox
   }
-  ix = 0i32;
+  ix = 0;
   while ix < pa {
     let mut tx: int32 = 0;
     let mut ty: int32 = 0;
     let mut iy: int32 = 0;
-    let mut tmpy: *mut pstm_digit = 0 as *mut pstm_digit;
-    let mut tmpx: *mut pstm_digit = 0 as *mut pstm_digit;
+    let mut tmpy: *mut pstm_digit = std::ptr::null_mut();
+    let mut tmpx: *mut pstm_digit = std::ptr::null_mut();
     /* get offsets into the two bignums */
     ty = if (*A).used - 1i32 < ix {
       ((*A).used) - 1i32
@@ -170,9 +170,9 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
     /* forward carries */
     c0 = c1;
     c1 = c2;
-    c2 = 0i32 as pstm_digit;
+    c2 = 0 as pstm_digit;
     /* execute loop */
-    iz = 0i32;
+    iz = 0;
     while iz < iy {
       let mut t: pstm_word = 0;
       let fresh0 = tmpx;
@@ -195,7 +195,7 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
       iz += 1
     }
     /* even columns have the square term in them */
-    if ix & 1i32 == 0i32 {
+    if ix & 1i32 == 0 {
       let mut t_0: pstm_word = 0;
       t_0 = (c0 as libc::c_ulong).wrapping_add(
         (*(*A).dp.offset((ix >> 1i32) as isize) as pstm_word)
@@ -216,9 +216,9 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
   */
   iz = (*B).used;
   (*B).used = pa;
-  let mut tmpc: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
   tmpc = (*B).dp;
-  ix = 0i32;
+  ix = 0;
   while ix < pa {
     let fresh2 = tmpc;
     tmpc = tmpc.offset(1);
@@ -229,14 +229,14 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
   while ix < iz {
     let fresh3 = tmpc;
     tmpc = tmpc.offset(1);
-    *fresh3 = 0i32 as pstm_digit;
+    *fresh3 = 0 as pstm_digit;
     ix += 1
   }
   pstm_clamp(B);
   if paD.is_null() || paDfail == 1i32 {
     free(dst as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }
 /*
  * Copyright (C) 2017 Denys Vlasenko

@@ -136,7 +136,7 @@ pub unsafe extern "C" fn lsof_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut proc_0: *mut procps_status_t = 0 as *mut procps_status_t;
+  let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   loop {
     proc_0 = procps_scan(
       proc_0,
@@ -147,9 +147,9 @@ pub unsafe extern "C" fn lsof_main(
     }
     let mut name: [libc::c_char; 35] = [0; 35];
     let mut baseofs: libc::c_uint = 0;
-    let mut d_fd: *mut DIR = 0 as *mut DIR;
+    let mut d_fd: *mut DIR = std::ptr::null_mut();
     let mut fdlink: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut entry: *mut dirent = 0 as *mut dirent;
+    let mut entry: *mut dirent = std::ptr::null_mut();
     if getpid() as libc::c_uint == (*proc_0).pid {
       continue;
     }
@@ -188,5 +188,5 @@ pub unsafe extern "C" fn lsof_main(
       closedir(d_fd);
     }
   }
-  return 0i32;
+  return 0;
 }

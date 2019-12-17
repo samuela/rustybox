@@ -251,18 +251,18 @@ unsafe extern "C" fn parse_propagation(mut prop_str: *const libc::c_char) -> lib
     b"private\x00unchanged\x00shared\x00slave\x00\x00" as *const u8 as *const libc::c_char,
     prop_str,
   ); /* for compiler */
-  if i < 0i32 {
+  if i < 0 {
     bb_error_msg_and_die(
       b"unrecognized: --%s=%s\x00" as *const u8 as *const libc::c_char,
       b"propagation\x00" as *const u8 as *const libc::c_char,
       prop_str,
     );
   }
-  if i == 0i32 {
+  if i == 0 {
     return (MS_REC as libc::c_int | MS_PRIVATE as libc::c_int) as libc::c_ulong;
   }
   if i == 1i32 {
-    return 0i32 as libc::c_ulong;
+    return 0 as libc::c_ulong;
   }
   if i == 2i32 {
     return (MS_REC as libc::c_int | MS_SHARED as libc::c_int) as libc::c_ulong;
@@ -270,10 +270,10 @@ unsafe extern "C" fn parse_propagation(mut prop_str: *const libc::c_char) -> lib
   return (MS_REC as libc::c_int | MS_SLAVE as libc::c_int) as libc::c_ulong;
 }
 unsafe extern "C" fn mount_namespaces(mut pid: pid_t, mut ns_ctx_list: *mut namespace_ctx) {
-  let mut ns: *const namespace_descr = 0 as *const namespace_descr;
-  let mut ns_ctx: *mut namespace_ctx = 0 as *mut namespace_ctx;
+  let mut ns: *const namespace_descr = std::ptr::null();
+  let mut ns_ctx: *mut namespace_ctx = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < NS_COUNT as libc::c_int {
     let mut nsf: [libc::c_char; 29] = [0; 29];
     ns = &*ns_list.as_ptr().offset(i as isize) as *const namespace_descr;
@@ -304,9 +304,9 @@ pub unsafe extern "C" fn unshare_main(
   let mut opts: libc::c_uint = 0;
   let mut unsflags: libc::c_int = 0;
   let mut need_mount: uintptr_t = 0;
-  let mut proc_mnt_target: *const libc::c_char = 0 as *const libc::c_char;
-  let mut prop_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut setgrp_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut proc_mnt_target: *const libc::c_char = std::ptr::null();
+  let mut prop_str: *const libc::c_char = std::ptr::null();
+  let mut setgrp_str: *const libc::c_char = std::ptr::null();
   let mut prop_flags: libc::c_ulong = 0;
   let mut reuid: uid_t = geteuid();
   let mut regid: gid_t = getegid();
@@ -318,12 +318,12 @@ pub unsafe extern "C" fn unshare_main(
   }; 6];
   memset(
     ns_ctx_list.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[namespace_ctx; 6]>() as libc::c_ulong,
   );
   proc_mnt_target = b"/proc\x00" as *const u8 as *const libc::c_char;
   prop_str = b"private\x00unchanged\x00shared\x00slave\x00\x00" as *const u8 as *const libc::c_char;
-  setgrp_str = 0 as *const libc::c_char;
+  setgrp_str = std::ptr::null();
   opts = getopt32long(
     argv,
     b"^+muinpUfr\xfd::\xfe:\xff:\x00\xf0m:\xf1u:\xf2i:\xf3n:\xf4p:\xf5U:rU:\xfdm\x00" as *const u8
@@ -365,14 +365,14 @@ pub unsafe extern "C" fn unshare_main(
   //bb_error_msg("setgrp_str:%s", setgrp_str);
   //exit(1);
   if !setgrp_str.is_null() {
-    if strcmp(setgrp_str, b"allow\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(setgrp_str, b"allow\x00" as *const u8 as *const libc::c_char) == 0 {
       if opts & OPT_map_root as libc::c_int as libc::c_uint != 0 {
         bb_simple_error_msg_and_die(
           b"--setgroups=allow and --map-root-user are mutually exclusive\x00" as *const u8
             as *const libc::c_char,
         );
       }
-    } else if strcmp(setgrp_str, b"deny\x00" as *const u8 as *const libc::c_char) != 0i32 {
+    } else if strcmp(setgrp_str, b"deny\x00" as *const u8 as *const libc::c_char) != 0 {
       bb_error_msg_and_die(
         b"unrecognized: --%s=%s\x00" as *const u8 as *const libc::c_char,
         b"setgroups\x00" as *const u8 as *const libc::c_char,
@@ -380,9 +380,9 @@ pub unsafe extern "C" fn unshare_main(
       );
     }
   }
-  unsflags = 0i32;
-  need_mount = 0i32 as uintptr_t;
-  i = 0i32;
+  unsflags = 0;
+  need_mount = 0 as uintptr_t;
+  i = 0;
   while i < NS_COUNT as libc::c_int {
     let mut ns: *const namespace_descr =
       &*ns_list.as_ptr().offset(i as isize) as *const namespace_descr;
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn unshare_main(
     let mut ppid: pid_t = getpid();
     xpipe(&mut fdp.rd);
     child = xfork();
-    if child == 0i32 {
+    if child == 0 {
       /* Child */
       close(fdp.wr);
       /* Wait until parent calls unshare() */
@@ -429,16 +429,16 @@ pub unsafe extern "C" fn unshare_main(
       /*close(fdp.rd);*/
       /* Mount parent's unshared namespaces. */
       mount_namespaces(ppid, ns_ctx_list.as_mut_ptr()); /* Release child */
-      return 0i32;
+      return 0;
     }
   }
-  if unshare(unsflags) != 0i32 {
+  if unshare(unsflags) != 0 {
     bb_perror_msg_and_die(
       b"unshare(0x%x)\x00" as *const u8 as *const libc::c_char,
       unsflags,
     );
   }
-  if fdp.wr >= 0i32 {
+  if fdp.wr >= 0 {
     close(fdp.wr);
     close(fdp.rd);
     /* should close fd, to not confuse exec'ed PROG */
@@ -447,7 +447,7 @@ pub unsafe extern "C" fn unshare_main(
     /* Wait for the child to finish mounting the namespaces. */
     if opts & OPT_mount as libc::c_int as libc::c_uint != 0 {
       let mut exit_status: libc::c_int = wait_for_exitstatus(child);
-      if exit_status & 0x7fi32 == 0i32 && (exit_status & 0xff00i32) >> 8i32 != 0i32 {
+      if exit_status & 0x7fi32 == 0 && (exit_status & 0xff00i32) >> 8i32 != 0 {
         return (exit_status & 0xff00i32) >> 8i32;
       }
     } else {

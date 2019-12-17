@@ -72,7 +72,7 @@ unsafe extern "C" fn tail_xprint_header(
   mut fmt: *const libc::c_char,
   mut filename: *const libc::c_char,
 ) {
-  if dprintf(1i32, fmt, filename) < 0i32 {
+  if dprintf(1i32, fmt, filename) < 0 {
     bb_perror_nomsg_and_die();
   };
 }
@@ -105,16 +105,16 @@ pub unsafe extern "C" fn tail_main(
 ) -> libc::c_int {
   let mut count: libc::c_uint = 10i32 as libc::c_uint;
   let mut sleep_period: libc::c_uint = 1i32 as libc::c_uint;
-  let mut str_c: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_n: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_c: *const libc::c_char = std::ptr::null();
+  let mut str_n: *const libc::c_char = std::ptr::null();
   let mut tailbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tailbufsize: size_t = 0;
   let mut header_threshhold: libc::c_uint = 1i32 as libc::c_uint;
   let mut nfiles: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
-  let mut fds: *mut libc::c_int = 0 as *mut libc::c_int;
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fds: *mut libc::c_int = std::ptr::null_mut();
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut prev_fd: libc::c_int = 0;
   /* Allow legacy syntax of an initial numeric option without -n. */
   if !(*argv.offset(1)).is_null()
@@ -150,7 +150,7 @@ pub unsafe extern "C" fn tail_main(
   } // -q
     //if (opt & 0x10) // -s
   if opt & 0x20i32 != 0 {
-    header_threshhold = 0i32 as libc::c_uint
+    header_threshhold = 0 as libc::c_uint
   } // -v
   argc -= optind;
   argv = argv.offset(optind as isize);
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn tail_main(
   ) as *mut libc::c_int;
   if (*argv.offset(0)).is_null() {
     let mut statbuf: stat = std::mem::zeroed();
-    if fstat(0i32, &mut statbuf) == 0i32
+    if fstat(0i32, &mut statbuf) == 0
       && statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o10000i32 as libc::c_uint
     {
       opt &= !1i32
@@ -170,11 +170,11 @@ pub unsafe extern "C" fn tail_main(
     let ref mut fresh0 = *argv.offset(0);
     *fresh0 = bb_msg_standard_input.as_ptr() as *mut libc::c_char
   }
-  i = 0i32;
+  i = 0;
   nfiles = i as libc::c_uint;
   loop {
     let mut fd: libc::c_int = open_or_warn_stdin(*argv.offset(i as isize));
-    if fd < 0i32 && opt & 0x40i32 == 0 {
+    if fd < 0 && opt & 0x40i32 == 0 {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 != 0
     } else {
       *fds.offset(nfiles as isize) = fd;
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn tail_main(
   tailbuf = std::ptr::null_mut::<libc::c_char>();
   /* tail the files */
   fmt = (b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char).offset(1); /* skip leading newline in the header on the first output */
-  i = 0i32; /* may happen with -F */
+  i = 0; /* may happen with -F */
   let mut current_block_118: u64;
   loop {
     let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -213,27 +213,27 @@ pub unsafe extern "C" fn tail_main(
     let mut seen: libc::c_uint = 0;
     let mut nread: libc::c_int = 0;
     let mut fd_0: libc::c_int = *fds.offset(i as isize);
-    if !(1i32 != 0 && fd_0 < 0i32) {
+    if !(1i32 != 0 && fd_0 < 0) {
       if nfiles > header_threshhold {
         tail_xprint_header(fmt, *argv.offset(i as isize));
         fmt = b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char
       }
       if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
-        let mut current: off_t = lseek(fd_0, 0i32 as off64_t, 2i32);
+        let mut current: off_t = lseek(fd_0, 0 as off64_t, 2i32);
         if current > 0 {
           let mut off: libc::c_uint = 0;
           if opt & 0x2i32 != 0 {
             /* Optimizing count-bytes case if the file is seekable.
              * Beware of backing up too far.
              * Also we exclude files with size 0 (because of /proc/xxx) */
-            if count == 0i32 as libc::c_uint {
+            if count == 0 as libc::c_uint {
               current_block_118 = 11763295167351361500; /* showing zero bytes is easy :) */
             } else {
               current -= count as libc::c_long;
               if current < 0 {
-                current = 0i32 as off_t
+                current = 0 as off_t
               }
-              xlseek(fd_0, current, 0i32);
+              xlseek(fd_0, current, 0);
               bb_copyfd_size(fd_0, 1i32, count as off_t);
               current_block_118 = 11763295167351361500;
             }
@@ -249,9 +249,9 @@ pub unsafe extern "C" fn tail_main(
             }
             current -= off.wrapping_mul((64i32 * 1024i32) as libc::c_uint) as libc::c_long;
             if current < 0 {
-              current = 0i32 as off_t
+              current = 0 as off_t
             }
-            xlseek(fd_0, current, 0i32);
+            xlseek(fd_0, current, 0);
             current_block_118 = 5873035170358615968;
           }
         } else {
@@ -267,18 +267,18 @@ pub unsafe extern "C" fn tail_main(
             tailbuf = xmalloc(tailbufsize) as *mut libc::c_char
           }
           buf = tailbuf;
-          taillen = 0i32;
+          taillen = 0;
           /* "We saw 1st line/byte".
            * Used only by +N code ("start from Nth", 1-based): */
           seen = 1i32 as libc::c_uint; /* while (tail_read() > 0) */
-          newlines_seen = 0i32;
+          newlines_seen = 0;
           loop {
             nread = tail_read(
               fd_0,
               buf,
               tailbufsize.wrapping_sub(taillen as libc::c_ulong),
             ) as libc::c_int;
-            if !(nread > 0i32) {
+            if !(nread > 0) {
               break;
             }
             if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
@@ -307,7 +307,7 @@ pub unsafe extern "C" fn tail_main(
                   }
                 }
               }
-              if nwrite > 0i32 {
+              if nwrite > 0 {
                 xwrite(
                   1i32,
                   buf.offset(nread as isize).offset(-(nwrite as isize)) as *const libc::c_void,
@@ -328,7 +328,7 @@ pub unsafe extern "C" fn tail_main(
                 }
               } else {
                 let mut k: libc::c_int = nread;
-                let mut newlines_in_buf: libc::c_int = 0i32;
+                let mut newlines_in_buf: libc::c_int = 0;
                 loop {
                   /* count '\n' in last read */
                   k -= 1; /* while (1) */
@@ -386,11 +386,11 @@ pub unsafe extern "C" fn tail_main(
   }
   prev_fd = *fds.offset((i - 1i32) as isize);
   tailbuf = xrealloc(tailbuf as *mut libc::c_void, 8192i32 as size_t) as *mut libc::c_char;
-  fmt = 0 as *const libc::c_char;
+  fmt = std::ptr::null();
   if opt & 0x1i32 != 0 {
     loop {
       sleep(sleep_period);
-      i = 0i32;
+      i = 0;
       loop {
         let mut nread_0: libc::c_int = 0;
         let mut filename: *const libc::c_char = *argv.offset(i as isize);
@@ -398,28 +398,28 @@ pub unsafe extern "C" fn tail_main(
         if opt & 0x40i32 != 0 {
           let mut sbuf: stat = std::mem::zeroed();
           let mut fsbuf: stat = std::mem::zeroed();
-          if fd_1 < 0i32
-            || fstat(fd_1, &mut fsbuf) < 0i32
-            || stat(filename, &mut sbuf) < 0i32
+          if fd_1 < 0
+            || fstat(fd_1, &mut fsbuf) < 0
+            || stat(filename, &mut sbuf) < 0
             || fsbuf.st_dev != sbuf.st_dev
             || fsbuf.st_ino != sbuf.st_ino
           {
             let mut new_fd: libc::c_int = 0;
-            if fd_1 >= 0i32 {
+            if fd_1 >= 0 {
               close(fd_1);
             }
-            new_fd = open(filename, 0i32);
-            if new_fd >= 0i32 {
+            new_fd = open(filename, 0);
+            if new_fd >= 0 {
               bb_error_msg(
                 b"%s has %s; following end of new file\x00" as *const u8 as *const libc::c_char,
                 filename,
-                if fd_1 < 0i32 {
+                if fd_1 < 0 {
                   b"appeared\x00" as *const u8 as *const libc::c_char
                 } else {
                   b"been replaced\x00" as *const u8 as *const libc::c_char
                 },
               );
-            } else if fd_1 >= 0i32 {
+            } else if fd_1 >= 0 {
               bb_perror_msg(
                 b"%s has become inaccessible\x00" as *const u8 as *const libc::c_char,
                 filename,
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn tail_main(
             *fds.offset(i as isize) = fd_1
           }
         }
-        if !(1i32 != 0 && fd_1 < 0i32) {
+        if !(1i32 != 0 && fd_1 < 0) {
           if nfiles > header_threshhold {
             fmt = b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char
           }
@@ -438,19 +438,19 @@ pub unsafe extern "C" fn tail_main(
           {
             let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
-            if fstat(fd_1, &mut sbuf_0) == 0i32 && sbuf_0.st_size > 0 {
-              let mut current_0: off_t = lseek(fd_1, 0i32 as off64_t, 1i32);
+            if fstat(fd_1, &mut sbuf_0) == 0 && sbuf_0.st_size > 0 {
+              let mut current_0: off_t = lseek(fd_1, 0 as off64_t, 1i32);
               if sbuf_0.st_size < current_0 {
-                xlseek(fd_1, 0i32 as off_t, 0i32);
+                xlseek(fd_1, 0 as off_t, 0);
               }
             }
             nread_0 = tail_read(fd_1, tailbuf, 8192i32 as size_t) as libc::c_int;
-            if nread_0 <= 0i32 {
+            if nread_0 <= 0 {
               break;
             }
             if !fmt.is_null() && fd_1 != prev_fd {
               tail_xprint_header(fmt, filename);
-              fmt = 0 as *const libc::c_char;
+              fmt = std::ptr::null();
               prev_fd = fd_1
             }
             xwrite(1i32, tailbuf as *const libc::c_void, nread_0 as size_t);

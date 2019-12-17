@@ -517,10 +517,10 @@ unsafe extern "C" fn wait_for_reply(
     events: 0,
     revents: 0,
   }; 1];
-  let mut read_len: libc::c_int = 0i32;
+  let mut read_len: libc::c_int = 0;
   pfd[0].fd = rcvsock as libc::c_int;
   pfd[0].events = 0x1i32 as libc::c_short;
-  if *left_ms >= 0i32 && safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, *left_ms) > 0i32 {
+  if *left_ms >= 0 && safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, *left_ms) > 0 {
     let mut t: libc::c_uint = 0;
     read_len = recv_from_to(
       rcvsock as libc::c_int,
@@ -543,7 +543,7 @@ unsafe extern "C" fn wait_for_reply(
 unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
   let mut len: libc::c_int = 0;
   let mut res: libc::c_int = 0;
-  let mut out: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut out: *mut libc::c_void = std::ptr::null_mut();
   /* Payload */
   if (*(*ptr_to_globals).dest_lsa).u.sa.sa_family as libc::c_int == 10i32 {
     let mut pkt: *mut outdata6_t = (*ptr_to_globals).outdata as *mut outdata6_t;
@@ -613,7 +613,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
         __v
       };
       /* Always calculate checksum for icmp packets */
-      (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = 0i32 as u16;
+      (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = 0 as u16;
       (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = inet_cksum(
         (*ptr_to_globals).outip.offset(1) as *mut icmp as *mut u16,
         ((*ptr_to_globals).outip as *mut libc::c_char)
@@ -621,7 +621,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
           .wrapping_offset_from((*ptr_to_globals).outip.offset(1) as *mut icmp as *mut libc::c_char)
           as libc::c_long as libc::c_int,
       );
-      if (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum as libc::c_int == 0i32 {
+      if (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum as libc::c_int == 0 {
         (*((*ptr_to_globals).outip.offset(1) as *mut icmp)).icmp_cksum = 0xffffi32 as u16
       }
     }
@@ -631,7 +631,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
   out = (*ptr_to_globals).outdata as *mut libc::c_void;
   if (*(*ptr_to_globals).dest_lsa).u.sa.sa_family as libc::c_int == 10i32 {
     res = setsockopt_int(sndsock as libc::c_int, 41i32, 16i32, ttl);
-    if res != 0i32 {
+    if res != 0 {
       bb_perror_msg_and_die(
         b"setsockopt(%s) %d\x00" as *const u8 as *const libc::c_char,
         b"UNICAST_HOPS\x00" as *const u8 as *const libc::c_char,
@@ -640,7 +640,7 @@ unsafe extern "C" fn send_probe(mut seq: libc::c_int, mut ttl: libc::c_int) {
     }
   } else {
     res = setsockopt_int(sndsock as libc::c_int, IPPROTO_IP as libc::c_int, 2i32, ttl);
-    if res != 0i32 {
+    if res != 0 {
       bb_perror_msg_and_die(
         b"setsockopt(%s) %d\x00" as *const u8 as *const libc::c_char,
         b"TTL\x00" as *const u8 as *const libc::c_char,
@@ -760,11 +760,11 @@ unsafe extern "C" fn packet4_ok(
   mut from: *const sockaddr_in,
   mut seq: libc::c_int,
 ) -> libc::c_int {
-  let mut icp: *const icmp = 0 as *const icmp;
+  let mut icp: *const icmp = std::ptr::null();
   let mut type_0: libc::c_uchar = 0;
   let mut code: libc::c_uchar = 0;
   let mut hlen: libc::c_int = 0;
-  let mut ip: *const ip = 0 as *const ip;
+  let mut ip: *const ip = std::ptr::null();
   ip = (*ptr_to_globals).recv_pkt.as_mut_ptr() as *mut ip;
   hlen = ((*ip).ip_hl() as libc::c_int) << 2i32;
   if read_len < hlen + 8i32 {
@@ -775,7 +775,7 @@ unsafe extern "C" fn packet4_ok(
         inet_ntoa((*from).sin_addr),
       );
     }
-    return 0i32;
+    return 0;
   }
   read_len -= hlen;
   icp = (*ptr_to_globals)
@@ -785,7 +785,7 @@ unsafe extern "C" fn packet4_ok(
   type_0 = (*icp).icmp_type;
   code = (*icp).icmp_code;
   /* Path MTU Discovery (RFC1191) */
-  (*ptr_to_globals).pmtu = 0i32;
+  (*ptr_to_globals).pmtu = 0;
   if code as libc::c_int == 4i32 {
     (*ptr_to_globals).pmtu = ({
       let mut __v: libc::c_ushort = 0;
@@ -805,18 +805,18 @@ unsafe extern "C" fn packet4_ok(
       __v
     }) as libc::c_int
   }
-  if type_0 as libc::c_int == 11i32 && code as libc::c_int == 0i32
+  if type_0 as libc::c_int == 11i32 && code as libc::c_int == 0
     || type_0 as libc::c_int == 3i32
-    || type_0 as libc::c_int == 0i32
+    || type_0 as libc::c_int == 0
   {
-    let mut hip: *const ip = 0 as *const ip;
-    let mut up: *const udphdr = 0 as *const udphdr;
+    let mut hip: *const ip = std::ptr::null();
+    let mut up: *const udphdr = std::ptr::null();
     hip = &(*icp).icmp_dun.id_ip.idi_ip;
     hlen = ((*hip).ip_hl() as libc::c_int) << 2i32;
     if option_mask32 & OPT_USE_ICMP as libc::c_int as libc::c_uint != 0 {
-      let mut hicmp: *mut icmp = 0 as *mut icmp;
+      let mut hicmp: *mut icmp = std::ptr::null_mut();
       /* XXX */
-      if type_0 as libc::c_int == 0i32
+      if type_0 as libc::c_int == 0
         && (*icp).icmp_hun.ih_idseq.icd_id as libc::c_int
           == ({
             let mut __v: libc::c_ushort = 0;
@@ -960,7 +960,7 @@ unsafe extern "C" fn packet4_ok(
         as libc::c_int as libc::c_int
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn packet_ok(
   mut read_len: libc::c_int,
@@ -968,7 +968,7 @@ unsafe extern "C" fn packet_ok(
   mut to: *mut sockaddr,
   mut seq: libc::c_int,
 ) -> libc::c_int {
-  let mut icp: *const icmp6_hdr = 0 as *const icmp6_hdr;
+  let mut icp: *const icmp6_hdr = std::ptr::null();
   let mut type_0: libc::c_uchar = 0;
   let mut code: libc::c_uchar = 0;
   if (*from_lsa).u.sa.sa_family as libc::c_int == 2i32 {
@@ -977,9 +977,9 @@ unsafe extern "C" fn packet_ok(
   icp = (*ptr_to_globals).recv_pkt.as_mut_ptr() as *mut icmp6_hdr;
   type_0 = (*icp).icmp6_type;
   code = (*icp).icmp6_code;
-  if type_0 as libc::c_int == 3i32 && code as libc::c_int == 0i32 || type_0 as libc::c_int == 1i32 {
-    let mut hip: *mut ip6_hdr = 0 as *mut ip6_hdr;
-    let mut up: *mut udphdr = 0 as *mut udphdr;
+  if type_0 as libc::c_int == 3i32 && code as libc::c_int == 0 || type_0 as libc::c_int == 1i32 {
+    let mut hip: *mut ip6_hdr = std::ptr::null_mut();
+    let mut up: *mut udphdr = std::ptr::null_mut();
     let mut nexthdr: libc::c_int = 0;
     hip = icp.offset(1) as *mut ip6_hdr;
     up = hip.offset(1) as *mut udphdr;
@@ -989,7 +989,7 @@ unsafe extern "C" fn packet_ok(
       up = up.offset(1)
     }
     if nexthdr == IPPROTO_UDP as libc::c_int {
-      let mut pkt: *mut outdata6_t = 0 as *mut outdata6_t;
+      let mut pkt: *mut outdata6_t = std::ptr::null_mut();
       pkt = up.offset(1) as *mut outdata6_t;
       if ({
         let mut __v: libc::c_uint = 0;
@@ -1039,7 +1039,7 @@ unsafe extern "C" fn packet_ok(
     }
   }
   if option_mask32 & OPT_VERBOSE as libc::c_int as libc::c_uint != 0 {
-    let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+    let mut p: *mut libc::c_uchar = std::ptr::null_mut();
     let mut pa1: [libc::c_char; 64] = [0; 64];
     let mut pa2: [libc::c_char; 64] = [0; 64];
     let mut i: libc::c_int = 0;
@@ -1067,12 +1067,12 @@ unsafe extern "C" fn packet_ok(
     read_len = (read_len as libc::c_ulong)
       .wrapping_sub(::std::mem::size_of::<icmp6_hdr>() as libc::c_ulong)
       as libc::c_int as libc::c_int;
-    i = 0i32;
+    i = 0;
     while i < read_len {
-      if i % 16i32 == 0i32 {
+      if i % 16i32 == 0 {
         printf(b"%04x:\x00" as *const u8 as *const libc::c_char, i);
       }
-      if i % 4i32 == 0i32 {
+      if i % 4i32 == 0 {
         bb_putchar(' ' as i32);
       }
       printf(
@@ -1086,7 +1086,7 @@ unsafe extern "C" fn packet_ok(
     }
     bb_putchar('\n' as i32);
   }
-  return 0i32;
+  return 0;
 }
 /* !ENABLE_TRACEROUTE6 */
 /*
@@ -1101,7 +1101,7 @@ unsafe extern "C" fn print_inetname(mut from: *const sockaddr) {
   } else {
     let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*from).sa_family as libc::c_int != 2i32
-      || (*(from as *mut sockaddr_in)).sin_addr.s_addr != 0i32 as in_addr_t
+      || (*(from as *mut sockaddr_in)).sin_addr.s_addr != 0 as in_addr_t
     {
       /* Try to reverse resolve if it is not 0.0.0.0 */
       n = xmalloc_sockaddr2host_noport(from as *mut sockaddr)
@@ -1157,11 +1157,11 @@ unsafe extern "C" fn common_traceroute_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut minpacket: libc::c_int = 0;
-  let mut tos: libc::c_int = 0i32;
+  let mut tos: libc::c_int = 0;
   let mut max_ttl: libc::c_int = 30i32;
   let mut nprobes: libc::c_int = 3i32;
   let mut first_ttl: libc::c_int = 1i32;
-  let mut pausemsecs: libc::c_uint = 0i32 as libc::c_uint;
+  let mut pausemsecs: libc::c_uint = 0 as libc::c_uint;
   let mut source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut device: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tos_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1175,9 +1175,9 @@ unsafe extern "C" fn common_traceroute_main(
   let mut af: sa_family_t = 0;
   let mut ttl: libc::c_int = 0;
   let mut seq: libc::c_int = 0;
-  let mut from_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut lastaddr: *mut sockaddr = 0 as *mut sockaddr;
-  let mut to: *mut sockaddr = 0 as *mut sockaddr;
+  let mut from_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut lastaddr: *mut sockaddr = std::ptr::null_mut();
+  let mut to: *mut sockaddr = std::ptr::null_mut();
   let ref mut fresh37 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
@@ -1202,7 +1202,7 @@ unsafe extern "C" fn common_traceroute_main(
   argv = argv.offset(optind as isize);
   /* IGNORED */
   if op & OPT_TOS as libc::c_int != 0 {
-    tos = xatou_range(tos_str, 0i32 as libc::c_uint, 255i32 as libc::c_uint) as libc::c_int
+    tos = xatou_range(tos_str, 0 as libc::c_uint, 255i32 as libc::c_uint) as libc::c_int
   }
   if op & OPT_MAX_TTL as libc::c_int != 0 {
     max_ttl = xatou_range(max_ttl_str, 1i32 as libc::c_uint, 255i32 as libc::c_uint) as libc::c_int
@@ -1222,7 +1222,7 @@ unsafe extern "C" fn common_traceroute_main(
      * set the ip source address of the outbound
      * probe (e.g., on a multi-homed host).
      */
-    if getuid() != 0i32 as libc::c_uint {
+    if getuid() != 0 as libc::c_uint {
       bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
     }
   }
@@ -1236,7 +1236,7 @@ unsafe extern "C" fn common_traceroute_main(
   if op & OPT_PAUSE_MS as libc::c_int != 0 {
     pausemsecs = xatou_range(
       pausemsecs_str,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       (60i32 * 60i32 * 1000i32) as libc::c_uint,
     )
   }
@@ -1254,7 +1254,7 @@ unsafe extern "C" fn common_traceroute_main(
       .wrapping_add(::std::mem::size_of::<outdata_t>() as libc::c_ulong)
       as libc::c_int
   }
-  af = 0i32 as sa_family_t;
+  af = 0 as sa_family_t;
   if op & OPT_IPV4 as libc::c_int != 0 {
     af = 2i32 as sa_family_t
   }
@@ -1300,14 +1300,14 @@ unsafe extern "C" fn common_traceroute_main(
     setsockopt_SOL_SOCKET_1(rcvsock as libc::c_int, 5i32);
   }
   if af as libc::c_int == 10i32 {
-    if setsockopt_int(rcvsock as libc::c_int, 255i32, 7i32, 2i32) != 0i32 {
+    if setsockopt_int(rcvsock as libc::c_int, 255i32, 7i32, 2i32) != 0 {
       bb_perror_msg_and_die(
         b"setsockopt(%s)\x00" as *const u8 as *const libc::c_char,
         b"IPV6_CHECKSUM\x00" as *const u8 as *const libc::c_char,
       );
     }
     xmove_fd(
-      xsocket(af as libc::c_int, SOCK_DGRAM as libc::c_int, 0i32),
+      xsocket(af as libc::c_int, SOCK_DGRAM as libc::c_int, 0),
       sndsock as libc::c_int,
     );
   } else if op & OPT_USE_ICMP as libc::c_int != 0 {
@@ -1317,18 +1317,18 @@ unsafe extern "C" fn common_traceroute_main(
     );
   } else {
     xmove_fd(
-      xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+      xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
       sndsock as libc::c_int,
     );
   }
-  if setsockopt_SOL_SOCKET_int(sndsock as libc::c_int, 7i32, (*ptr_to_globals).packlen) != 0i32 {
+  if setsockopt_SOL_SOCKET_int(sndsock as libc::c_int, 7i32, (*ptr_to_globals).packlen) != 0 {
     bb_perror_msg_and_die(
       b"setsockopt(%s)\x00" as *const u8 as *const libc::c_char,
       b"SO_SNDBUF\x00" as *const u8 as *const libc::c_char,
     );
   }
   if op & OPT_TOS as libc::c_int != 0
-    && setsockopt_int(sndsock as libc::c_int, IPPROTO_IP as libc::c_int, 1i32, tos) != 0i32
+    && setsockopt_int(sndsock as libc::c_int, IPPROTO_IP as libc::c_int, 1i32, tos) != 0
   {
     bb_perror_msg_and_die(
       b"setsockopt(%s) %d\x00" as *const u8 as *const libc::c_char,
@@ -1385,7 +1385,7 @@ unsafe extern "C" fn common_traceroute_main(
   }
   if op & OPT_SOURCE as libc::c_int != 0 {
     // TODO: need xdotted_and_af2sockaddr?
-    let mut source_lsa: *mut len_and_sockaddr = xhost_and_af2sockaddr(source, 0i32, af);
+    let mut source_lsa: *mut len_and_sockaddr = xhost_and_af2sockaddr(source, 0, af);
     /* Ping4 does this (why?) */
     if af as libc::c_int == 2i32 {
       if setsockopt(
@@ -1411,8 +1411,8 @@ unsafe extern "C" fn common_traceroute_main(
     free(source_lsa as *mut libc::c_void);
   } else if af as libc::c_int == 10i32 {
     //TODO: why we don't do it for IPv4?
-    let mut source_lsa_0: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-    let mut probe_fd: libc::c_int = xsocket(af as libc::c_int, SOCK_DGRAM as libc::c_int, 0i32);
+    let mut source_lsa_0: *mut len_and_sockaddr = std::ptr::null_mut();
+    let mut probe_fd: libc::c_int = xsocket(af as libc::c_int, SOCK_DGRAM as libc::c_int, 0);
     if op & OPT_DEVICE as libc::c_int != 0 {
       setsockopt_bindtodevice(probe_fd, device);
     }
@@ -1469,7 +1469,7 @@ unsafe extern "C" fn common_traceroute_main(
     }
     close(probe_fd);
     /* bind our sockets to this IP (but not port) */
-    set_nport(&mut (*source_lsa_0).u.sa, 0i32 as libc::c_uint);
+    set_nport(&mut (*source_lsa_0).u.sa, 0 as libc::c_uint);
     xbind(
       sndsock as libc::c_int,
       &mut (*source_lsa_0).u.sa,
@@ -1506,23 +1506,23 @@ unsafe extern "C" fn common_traceroute_main(
   ) as *mut len_and_sockaddr;
   lastaddr = xzalloc((*(*ptr_to_globals).dest_lsa).len as size_t) as *mut sockaddr;
   to = xzalloc((*(*ptr_to_globals).dest_lsa).len as size_t) as *mut sockaddr;
-  seq = 0i32;
+  seq = 0;
   ttl = first_ttl;
   while ttl <= max_ttl {
     let mut probe: libc::c_int = 0;
-    let mut unreachable: libc::c_int = 0i32;
-    let mut gotlastaddr: libc::c_int = 0i32;
-    let mut got_there: libc::c_int = 0i32;
+    let mut unreachable: libc::c_int = 0;
+    let mut gotlastaddr: libc::c_int = 0;
+    let mut got_there: libc::c_int = 0;
     printf(b"%2d\x00" as *const u8 as *const libc::c_char, ttl);
-    probe = 0i32;
+    probe = 0;
     while probe < nprobes {
       let mut read_len: libc::c_int = 0;
       let mut t1: libc::c_uint = 0;
       let mut t2: libc::c_uint = 0;
       let mut left_ms: libc::c_int = 0;
-      let mut ip: *mut ip = 0 as *mut ip;
+      let mut ip: *mut ip = std::ptr::null_mut();
       fflush_all();
-      if probe != 0i32 && pausemsecs > 0i32 as libc::c_uint {
+      if probe != 0 && pausemsecs > 0 as libc::c_uint {
         usleep(pausemsecs.wrapping_mul(1000i32 as libc::c_uint));
       }
       seq += 1;
@@ -1532,18 +1532,18 @@ unsafe extern "C" fn common_traceroute_main(
       left_ms = (*ptr_to_globals).waittime * 1000i32;
       loop {
         read_len = wait_for_reply(from_lsa, to, &mut t2, &mut left_ms);
-        if !(read_len != 0i32) {
+        if !(read_len != 0) {
           break;
         }
         let mut icmp_code: libc::c_int = 0;
         /* Recv'ed a packet, or read error */
         /* t2 = monotonic_us() - set by wait_for_reply */
-        if read_len < 0i32 {
+        if read_len < 0 {
           continue;
         }
         icmp_code = packet_ok(read_len, from_lsa, to, seq);
         /* Skip short packet */
-        if icmp_code == 0i32 {
+        if icmp_code == 0 {
           continue;
         }
         if gotlastaddr == 0
@@ -1551,7 +1551,7 @@ unsafe extern "C" fn common_traceroute_main(
             lastaddr as *const libc::c_void,
             &mut (*from_lsa).u.sa as *mut sockaddr as *const libc::c_void,
             (*from_lsa).len as libc::c_ulong,
-          ) != 0i32
+          ) != 0
         {
           print(read_len, &mut (*from_lsa).u.sa, to);
           memcpy(
@@ -1644,18 +1644,18 @@ unsafe extern "C" fn common_traceroute_main(
         break;
       }
       /* there was no packet at all? */
-      if read_len == 0i32 {
+      if read_len == 0 {
         printf(b"  *\x00" as *const u8 as *const libc::c_char);
       }
       probe += 1
     }
     bb_putchar('\n' as i32);
-    if got_there != 0 || unreachable > 0i32 && unreachable >= nprobes - 1i32 {
+    if got_there != 0 || unreachable > 0 && unreachable >= nprobes - 1i32 {
       break;
     }
     ttl += 1
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn traceroute_main(

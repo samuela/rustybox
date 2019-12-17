@@ -315,7 +315,7 @@ unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
     78, 79, 87, 78, 0,
   ];
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while (i as libc::c_uint)
     < (::std::mem::size_of::<[u32; 35]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<u32>() as libc::c_ulong) as libc::c_uint
@@ -414,8 +414,8 @@ unsafe extern "C" fn print_stat(
   mut data: *const libc::c_void,
 ) {
   let mut statbuf: *mut stat = data as *mut stat;
-  let mut pw_ent: *mut passwd = 0 as *mut passwd;
-  let mut gw_ent: *mut group = 0 as *mut group;
+  let mut pw_ent: *mut passwd = std::ptr::null_mut();
+  let mut gw_ent: *mut group = std::ptr::null_mut();
   if m as libc::c_int == 'n' as i32 {
     printfs(pformat, filename);
   } else if m as libc::c_int == 'N' as i32 {
@@ -655,12 +655,12 @@ unsafe extern "C" fn do_statfs(
   mut format: *const libc::c_char,
 ) -> bool {
   let mut statfsbuf: statfs = std::mem::zeroed();
-  if statfs(filename, &mut statfsbuf) != 0i32 {
+  if statfs(filename, &mut statfsbuf) != 0 {
     bb_perror_msg(
       b"can\'t read file system information for \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
-    return 0i32 != 0;
+    return 0 != 0;
   }
   if format.is_null() {
     format = if option_mask32 & OPT_TERSE as libc::c_int as libc::c_uint != 0 {
@@ -702,13 +702,13 @@ unsafe extern "C" fn do_stat(
     Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
   })
   .expect("non-null function pointer")(filename, &mut statbuf)
-    != 0i32
+    != 0
   {
     bb_perror_msg(
       b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
-    return 0i32 != 0;
+    return 0 != 0;
   }
   if format.is_null() {
     if option_mask32 & OPT_TERSE as libc::c_int as libc::c_uint != 0 {
@@ -768,11 +768,11 @@ pub unsafe extern "C" fn stat_main(
   }
   ok = 1i32;
   argv = argv.offset(optind as isize);
-  i = 0i32;
+  i = 0;
   while !(*argv.offset(i as isize)).is_null() {
     ok &=
       statfunc.expect("non-null function pointer")(*argv.offset(i as isize), format) as libc::c_int;
     i += 1
   }
-  return if ok != 0 { 0i32 } else { 1i32 };
+  return if ok != 0 { 0 } else { 1i32 };
 }

@@ -513,7 +513,7 @@ pub unsafe extern "C" fn setup_environment(
   /* Change the current working directory to be the home directory
    * of the user */
   if flags & 1i32 << 4i32 == 0 {
-    if chdir((*pw).pw_dir) != 0i32 {
+    if chdir((*pw).pw_dir) != 0 {
       bb_error_msg(
         b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_dir,
@@ -527,7 +527,7 @@ pub unsafe extern "C" fn setup_environment(
   }
   let mut current_block_16: u64;
   if flags & 1i32 << 1i32 != 0 {
-    let mut term: *const libc::c_char = 0 as *const libc::c_char;
+    let mut term: *const libc::c_char = std::ptr::null();
     // No, gcc (4.2.1) is not clever enougn to do it itself.
     //xsetenv("USER",    pw->pw_name);
     //xsetenv("LOGNAME", pw->pw_name);
@@ -553,7 +553,7 @@ pub unsafe extern "C" fn setup_environment(
       },
     );
     current_block_16 = 13588217478468868360;
-  } else if flags & 1i32 << 0i32 != 0 {
+  } else if flags & 1i32 << 0 != 0 {
     /* Set HOME, SHELL, and if not becoming a super-user,
      * USER and LOGNAME.  */
     if (*pw).pw_uid != 0 {

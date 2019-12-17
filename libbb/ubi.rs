@@ -591,7 +591,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
   mut vol_name: *const libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 128i32 as libc::c_uint {
     let mut buf: [libc::c_char; 128] = [0; 128];
     let mut fname: [libc::c_char; 53] = [0; 53];
@@ -609,7 +609,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
     {
       buf[127] = '\u{0}' as i32 as libc::c_char;
       *strchrnul(buf.as_mut_ptr(), '\n' as i32).offset(0) = '\u{0}' as i32 as libc::c_char;
-      if strcmp(vol_name, buf.as_mut_ptr()) == 0i32 {
+      if strcmp(vol_name, buf.as_mut_ptr()) == 0 {
         return i as libc::c_int;
       }
     }

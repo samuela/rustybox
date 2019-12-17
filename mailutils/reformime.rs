@@ -131,11 +131,11 @@ unsafe extern "C" fn find_token(
   mut key: *const libc::c_char,
   mut defvalue: *const libc::c_char,
 ) -> *const libc::c_char {
-  let mut r: *const libc::c_char = 0 as *const libc::c_char;
+  let mut r: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while !(*string_array.offset(i as isize)).is_null() {
-    if strcasecmp(*string_array.offset(i as isize), key) == 0i32 {
+    if strcasecmp(*string_array.offset(i as isize), key) == 0 {
       r = *string_array.offset((i + 1i32) as isize) as *mut libc::c_char;
       break;
     } else {
@@ -172,10 +172,10 @@ unsafe extern "C" fn parse(
   loop {
     let mut header: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* 32 is enough */
     let mut tokens: [*const libc::c_char; 32] = [0 as *const libc::c_char; 32];
-    let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+    let mut type_0: *const libc::c_char = std::ptr::null();
     /* Read the header (everything up to two \n) */
-    let mut header_idx: libc::c_uint = 0i32 as libc::c_uint;
-    let mut last_ch: libc::c_int = 0i32;
+    let mut header_idx: libc::c_uint = 0 as libc::c_uint;
+    let mut last_ch: libc::c_int = 0;
     header = std::ptr::null_mut::<libc::c_char>();
     loop
     /* Support both line endings */
@@ -224,12 +224,12 @@ unsafe extern "C" fn parse(
         b"Content-Type:\x00" as *const u8 as *const libc::c_char,
         (::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong)
           .wrapping_sub(1i32 as libc::c_ulong),
-      ) == 0i32
+      ) == 0
       {
         s = p
       }
     }
-    ntokens = 0i32 as libc::c_uint;
+    ntokens = 0 as libc::c_uint;
     s = strtok(s, delims);
     while !s.is_null() {
       tokens[ntokens as usize] = s;
@@ -243,8 +243,8 @@ unsafe extern "C" fn parse(
       }
       s = strtok(0 as *mut libc::c_char, delims)
     }
-    tokens[ntokens as usize] = 0 as *const libc::c_char;
-    if ntokens == 0i32 as libc::c_uint {
+    tokens[ntokens as usize] = std::ptr::null();
+    if ntokens == 0 as libc::c_uint {
       break;
     }
     /* Is it multipart? */
@@ -253,7 +253,7 @@ unsafe extern "C" fn parse(
       b"Content-Type:\x00" as *const u8 as *const libc::c_char,
       b"text/plain\x00" as *const u8 as *const libc::c_char,
     ); /* end of "handle one non-multipart block" */
-    if 0i32
+    if 0
       == strncasecmp(
         type_0,
         b"multipart/\x00" as *const u8 as *const libc::c_char,
@@ -264,7 +264,7 @@ unsafe extern "C" fn parse(
       if strcasecmp(
         type_0.offset(10),
         b"mixed\x00" as *const u8 as *const libc::c_char,
-      ) != 0i32
+      ) != 0
       {
         bb_error_msg_and_die(
           b"no support of content type \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -283,7 +283,7 @@ unsafe extern "C" fn parse(
       let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut pid: pid_t = 0;
       pid = pid;
-      let mut fp: *mut FILE = 0 as *mut FILE;
+      let mut fp: *mut FILE = std::ptr::null_mut();
       let mut charset: *const libc::c_char = find_token(
         tokens.as_mut_ptr() as *const *const libc::c_char,
         b"charset\x00" as *const u8 as *const libc::c_char,
@@ -310,10 +310,10 @@ unsafe extern "C" fn parse(
         /* start external helper */
         xpipe(fd.as_mut_ptr());
         pid = vfork();
-        if 0i32 == pid {
+        if 0 == pid {
           /* child reads from fd[0] */
           close(fd[1]);
-          xmove_fd(fd[0], 0i32);
+          xmove_fd(fd[0], 0);
           xsetenv(
             b"CONTENT_TYPE\x00" as *const u8 as *const libc::c_char,
             type_0,
@@ -349,10 +349,10 @@ unsafe extern "C" fn parse(
       free(filename as *mut libc::c_void);
       /* write to fp */
       end = std::ptr::null_mut::<libc::c_char>();
-      if 0i32 == strcasecmp(encoding, b"base64\x00" as *const u8 as *const libc::c_char) {
+      if 0 == strcasecmp(encoding, b"base64\x00" as *const u8 as *const libc::c_char) {
         read_base64(stdin, fp, '-' as i32);
-      } else if 0i32 != strcasecmp(encoding, b"7bit\x00" as *const u8 as *const libc::c_char)
-        && 0i32 != strcasecmp(encoding, b"8bit\x00" as *const u8 as *const libc::c_char)
+      } else if 0 != strcasecmp(encoding, b"7bit\x00" as *const u8 as *const libc::c_char)
+        && 0 != strcasecmp(encoding, b"8bit\x00" as *const u8 as *const libc::c_char)
       {
         /* quoted-printable, binary, user-defined are unsupported so far */
         bb_error_msg_and_die(
@@ -369,7 +369,7 @@ unsafe extern "C" fn parse(
           }
           if '-' as i32 == *end.offset(0) as libc::c_int
             && '-' as i32 == *end.offset(1) as libc::c_int
-            && strncmp(end.offset(2), boundary, boundary_len as libc::c_ulong) == 0i32
+            && strncmp(end.offset(2), boundary, boundary_len as libc::c_ulong) == 0
           {
             break;
           }
@@ -382,7 +382,7 @@ unsafe extern "C" fn parse(
         let mut rc: libc::c_int = 0;
         signal(13i32, None);
         rc = wait4pid(pid) & 0xffi32;
-        if rc != 0i32 {
+        if rc != 0 {
           return rc + 20i32;
         }
       }
@@ -397,7 +397,7 @@ unsafe extern "C" fn parse(
     }
     free(header as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }
 //usage:#define reformime_trivial_usage
 //usage:       "[OPTIONS]"

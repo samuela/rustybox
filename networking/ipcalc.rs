@@ -181,7 +181,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
       }
       __v
     }) as libc::c_ulong;
-  } else if ipaddr & 0x80000000u32 as libc::c_ulong == 0i32 as libc::c_ulong {
+  } else if ipaddr & 0x80000000u32 as libc::c_ulong == 0 as libc::c_ulong {
     return ({
       let mut __v: libc::c_uint = 0;
       let mut __x: libc::c_uint = 0xff000000u32;
@@ -202,12 +202,12 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
       __v
     }) as libc::c_ulong;
   } else {
-    return 0i32 as libc::c_ulong;
+    return 0 as libc::c_ulong;
   };
 }
 unsafe extern "C" fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
   let mut msk: libc::c_ulong = 0x80000000u32 as libc::c_ulong;
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   netmask = ({
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = netmask as libc::c_uint;
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn ipcalc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut have_netmask: bool = 0i32 != 0;
+  let mut have_netmask: bool = 0 != 0;
   let mut s_netmask: in_addr = in_addr { s_addr: 0 };
   let mut s_broadcast: in_addr = in_addr { s_addr: 0 };
   let mut s_network: in_addr = in_addr { s_addr: 0 };
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn ipcalc_main(
     }
   }
   ipstr = *argv.offset(0);
-  let mut netprefix: libc::c_ulong = 0i32 as libc::c_ulong;
+  let mut netprefix: libc::c_ulong = 0 as libc::c_ulong;
   let mut prefixstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   prefixstr = ipstr;
   while *prefixstr != 0 {
@@ -283,10 +283,10 @@ pub unsafe extern "C" fn ipcalc_main(
       *fresh15 = '\u{0}' as i32 as libc::c_char;
       if *prefixstr != 0 {
         let mut msk: libc::c_uint = 0;
-        netprefix = xatoul_range(prefixstr, 0i32 as libc::c_ulong, 32i32 as libc::c_ulong);
-        s_netmask.s_addr = 0i32 as in_addr_t;
+        netprefix = xatoul_range(prefixstr, 0 as libc::c_ulong, 32i32 as libc::c_ulong);
+        s_netmask.s_addr = 0 as in_addr_t;
         msk = 0x80000000u32;
-        while netprefix > 0i32 as libc::c_ulong {
+        while netprefix > 0 as libc::c_ulong {
           s_netmask.s_addr |= msk;
           msk >>= 1i32;
           netprefix = netprefix.wrapping_sub(1)
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn ipcalc_main(
       prefixstr = prefixstr.offset(1)
     }
   }
-  if inet_aton(ipstr, &mut s_ipaddr) == 0i32 {
+  if inet_aton(ipstr, &mut s_ipaddr) == 0 {
     bb_error_msg_and_die(
       b"bad IP address: %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
@@ -331,7 +331,7 @@ pub unsafe extern "C" fn ipcalc_main(
         b"use prefix or netmask, not both\x00" as *const u8 as *const libc::c_char,
       );
     }
-    if inet_aton(*argv.offset(1), &mut s_netmask) == 0i32 {
+    if inet_aton(*argv.offset(1), &mut s_netmask) == 0 {
       bb_error_msg_and_die(
         b"bad netmask: %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(1),
@@ -367,7 +367,7 @@ pub unsafe extern "C" fn ipcalc_main(
     );
   }
   if opt & 0x10i32 as libc::c_uint != 0 {
-    let mut hostinfo: *mut hostent = 0 as *mut hostent;
+    let mut hostinfo: *mut hostent = std::ptr::null_mut();
     hostinfo = gethostbyaddr(
       &mut s_ipaddr.s_addr as *mut in_addr_t as *mut libc::c_char as *const libc::c_void,
       ::std::mem::size_of::<in_addr_t>() as libc::c_ulong as __socklen_t,
@@ -385,6 +385,6 @@ pub unsafe extern "C" fn ipcalc_main(
       (*hostinfo).h_name,
     );
   }
-  return 0i32;
+  return 0;
 }
 /* JHC - If the netmask wasn't provided then calculate it */

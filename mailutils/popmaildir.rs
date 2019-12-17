@@ -250,9 +250,9 @@ pub unsafe extern "C" fn popmaildir_main(
   let mut nmsg: libc::c_uint = 0;
   let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;
-  let mut retr: *const libc::c_char = 0 as *const libc::c_char;
-  let mut delivery: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opt_nlines: libc::c_uint = 0i32 as libc::c_uint;
+  let mut retr: *const libc::c_char = std::ptr::null();
+  let mut delivery: *const libc::c_char = std::ptr::null();
+  let mut opt_nlines: libc::c_uint = 0 as libc::c_uint;
   // init global variables
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
@@ -373,7 +373,7 @@ pub unsafe extern "C" fn popmaildir_main(
     let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut answer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let mut rc: libc::c_int = 0;
     // generate unique filename
     filename = xasprintf(
@@ -462,5 +462,5 @@ pub unsafe extern "C" fn popmaildir_main(
     b"QUIT\x00" as *const u8 as *const libc::c_char,
     0 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

@@ -126,7 +126,7 @@ pub unsafe extern "C" fn dumpleases_main(
     dumpleases_longopts.as_ptr(),
     &mut file as *mut *const libc::c_char,
   );
-  fd = xopen(file, 0i32);
+  fd = xopen(file, 0);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
   
@@ -182,7 +182,7 @@ pub unsafe extern "C" fn dumpleases_main(
     let mut addr: in_addr = in_addr { s_addr: 0 };
     let mut expires_abs: int64_t = 0;
     let mut fmt: *const libc::c_char = (b":%02x\x00" as *const u8 as *const libc::c_char).offset(1);
-    i = 0i32;
+    i = 0;
     while i < 6i32 {
       printf(fmt, lease.lease_mac[i as usize] as libc::c_int);
       fmt = b":%02x\x00" as *const u8 as *const libc::c_char;
@@ -255,5 +255,5 @@ pub unsafe extern "C" fn dumpleases_main(
     }
   }
   /* close(fd); */
-  return 0i32;
+  return 0;
 }

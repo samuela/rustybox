@@ -240,7 +240,7 @@ pub unsafe extern "C" fn isrv_register_fd(
     }
   }
   *(*state).fd2peer.offset(fd as isize) = peer as libc::c_short;
-  return 0i32;
+  return 0;
 }
 /* callback */
 #[no_mangle]
@@ -254,7 +254,7 @@ pub unsafe extern "C" fn isrv_close_fd(mut state: *mut isrv_state_t, mut fd: lib
   if fd == (*state).fd_count - 1i32 {
     loop {
       fd -= 1;
-      if !(fd >= 0i32 && *(*state).fd2peer.offset(fd as isize) as libc::c_int == -1i32) {
+      if !(fd >= 0 && *(*state).fd2peer.offset(fd as isize) as libc::c_int == -1i32) {
         break;
       }
     }
@@ -300,7 +300,7 @@ unsafe extern "C" fn remove_peer(mut state: *mut isrv_state_t, mut peer: libc::c
   let mut movesize: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   fd = (*state).fd_count - 1i32;
-  while fd >= 0i32 {
+  while fd >= 0 {
     if *(*state).fd2peer.offset(fd as isize) as libc::c_int == peer {
       isrv_close_fd(state, fd);
       fd -= 1
@@ -316,7 +316,7 @@ unsafe extern "C" fn remove_peer(mut state: *mut isrv_state_t, mut peer: libc::c
   movesize = (((*state).peer_count - peer) as libc::c_ulong)
     .wrapping_mul(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
     as libc::c_int;
-  if movesize > 0i32 {
+  if movesize > 0 {
     memcpy(
       &mut *(*state).param_tbl.offset(peer as isize) as *mut *mut libc::c_void as *mut libc::c_void,
       &mut *(*state).param_tbl.offset((peer + 1i32) as isize) as *mut *mut libc::c_void
@@ -366,7 +366,7 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
     4i32,
     *(*state).param_tbl.offset(0) as ptrdiff_t as libc::c_int,
   );
-  if newfd < 0i32 {
+  if newfd < 0 {
     if *bb_errno == 11i32 {
       return;
     }
@@ -391,7 +391,7 @@ unsafe extern "C" fn handle_fd_set(
   let mut peer: libc::c_int = 0;
   /* need to know value at _the beginning_ of this routine */
   let mut fd_cnt: libc::c_int = (*state).fd_count;
-  fds_pos = 0i32;
+  fds_pos = 0;
   loop
   /* Find next nonzero bit */
   {
@@ -426,10 +426,10 @@ unsafe extern "C" fn handle_fd_set(
           break;
         }
         peer = *(*state).fd2peer.offset(fd as isize) as libc::c_int;
-        if peer < 0i32 {
+        if peer < 0 {
           continue;
         }
-        if peer == 0i32 {
+        if peer == 0 {
           handle_accept(state, fd);
         } else if h.expect("non-null function pointer")(
           fd,
@@ -455,7 +455,7 @@ unsafe extern "C" fn handle_timeout(
   let mut peer: libc::c_int = 0;
   peer = (*state).peer_count - 1i32;
   /* peer 0 is not checked */
-  while peer > 0i32 {
+  while peer > 0 {
     if (*state).curtime - *(*state).timeo_tbl.offset(peer as isize)
       >= (*state).timeout as libc::c_long
     {
@@ -486,7 +486,7 @@ pub unsafe extern "C" fn isrv_run(
   (*state).timeout = timeout;
   /* register "peer" #0 - it will accept new connections */
   isrv_register_peer(state, 0 as *mut libc::c_void);
-  isrv_register_fd(state, 0i32, listen_fd);
+  isrv_register_fd(state, 0, listen_fd);
   isrv_want_rd(state, listen_fd);
   /* remember flags to make blocking<->nonblocking switch faster */
   /* (suppress gcc warning "cast from ptr to int of different size") */
@@ -499,13 +499,13 @@ pub unsafe extern "C" fn isrv_run(
     };
     let mut rd: fd_set = fd_set { fds_bits: [0; 16] };
     let mut wr: fd_set = fd_set { fds_bits: [0; 16] };
-    let mut wrp: *mut fd_set = 0 as *mut fd_set;
+    let mut wrp: *mut fd_set = std::ptr::null_mut();
     let mut n: libc::c_int = 0;
     tv.tv_sec = timeout as time_t;
     if (*state).peer_count <= 1i32 {
       tv.tv_sec = linger_timeout as time_t
     }
-    tv.tv_usec = 0i32 as suseconds_t;
+    tv.tv_usec = 0 as suseconds_t;
     rd = (*state).rd;
     if (*state).wr_count != 0 {
       wr = (*state).wr;
@@ -522,12 +522,12 @@ pub unsafe extern "C" fn isrv_run(
         0 as *mut timeval
       },
     );
-    if n < 0i32 {
+    if n < 0 {
       if *bb_errno != 4i32 {
         bb_simple_perror_msg(b"select\x00" as *const u8 as *const libc::c_char);
       }
     } else {
-      if n == 0i32 && linger_timeout != 0 && (*state).peer_count <= 1i32 {
+      if n == 0 && linger_timeout != 0 && (*state).peer_count <= 1i32 {
         break;
       }
       if timeout != 0 {
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn isrv_run(
           handle_timeout(state, do_timeout);
         }
       }
-      if n > 0i32 {
+      if n > 0 {
         handle_fd_set(state, &mut rd, do_rd);
         if !wrp.is_null() {
           handle_fd_set(state, wrp, do_wr);

@@ -48,7 +48,7 @@ pub unsafe extern "C" fn partprobe_main(
   argv = argv.offset(optind as isize);
   /* "partprobe" with no arguments just does nothing */
   while !(*argv).is_null() {
-    let mut fd: libc::c_int = xopen(*argv, 0i32);
+    let mut fd: libc::c_int = xopen(*argv, 0);
     /*
      * Newer versions of parted scan partition tables themselves and
      * use BLKPG ioctl (BLKPG_DEL_PARTITION / BLKPG_ADD_PARTITION)
@@ -58,10 +58,10 @@ pub unsafe extern "C" fn partprobe_main(
      */
     ioctl_or_perror_and_die(
       fd,
-      0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (95i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+      0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (95i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
       0 as *mut libc::c_void,
       b"%s\x00" as *const u8 as *const libc::c_char,
       *argv,
@@ -69,5 +69,5 @@ pub unsafe extern "C" fn partprobe_main(
     close(fd);
     argv = argv.offset(1)
   }
-  return 0i32;
+  return 0;
 }

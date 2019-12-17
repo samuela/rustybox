@@ -210,10 +210,10 @@ pub unsafe extern "C" fn script_main(
     ws_xpixel: 0,
     ws_ypixel: 0,
   };
-  let mut timing_fp: *mut FILE = 0 as *mut FILE;
-  let mut str_t: *const libc::c_char = 0 as *const libc::c_char;
+  let mut timing_fp: *mut FILE = std::ptr::null_mut();
+  let mut str_t: *const libc::c_char = std::ptr::null();
   let mut fname: *const libc::c_char = b"typescript\x00" as *const u8 as *const libc::c_char;
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
+  let mut shell: *const libc::c_char = std::ptr::null();
   let mut shell_opt: [libc::c_char; 3] =
     *::std::mem::transmute::<&[u8; 3], &mut [libc::c_char; 3]>(b"-i\x00");
   let mut shell_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn script_main(
   /* get current stdin's tty params */
   attr_ok = tcgetattr(0i32, &mut tt);
   winsz_ok = ioctl(
-    0i32,
+    0,
     0x5413i32 as libc::c_ulong,
     &mut win as *mut winsize as *mut libc::c_char,
   );
@@ -279,7 +279,7 @@ pub unsafe extern "C" fn script_main(
   /* TODO: SIGWINCH? pass window size changes down to slave? */
   child_pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
@@ -300,7 +300,7 @@ pub unsafe extern "C" fn script_main(
     outfd = xopen(fname, mode);
     pfd[0].fd = pty;
     pfd[0].events = 0x1i32 as libc::c_short;
-    pfd[1].fd = 0i32;
+    pfd[1].fd = 0;
     pfd[1].events = 0x1i32 as libc::c_short;
     ndelay_on(pty);
     loop
@@ -314,22 +314,22 @@ pub unsafe extern "C" fn script_main(
         break;
       }
       /* not safe_poll! we want SIGCHLD to EINTR poll */
-      if poll(pfd.as_mut_ptr(), fd_count as nfds_t, -1i32) < 0i32 && *bb_errno != 4i32 {
+      if poll(pfd.as_mut_ptr(), fd_count as nfds_t, -1i32) < 0 && *bb_errno != 4i32 {
         current_block_67 = 7178192492338286402;
         break;
       }
       if pfd[0].revents != 0 {
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         count = safe_read(
           pty,
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
         ) as libc::c_int;
-        if count <= 0i32 && *bb_errno != 11i32 {
+        if count <= 0 && *bb_errno != 11i32 {
           current_block_67 = 916363241452857900;
           break;
         }
-        if count > 0i32 {
+        if count > 0 {
           if opt & OPT_t as libc::c_int != 0 {
             let mut tv: timeval = timeval {
               tv_sec: 0,
@@ -365,13 +365,13 @@ pub unsafe extern "C" fn script_main(
       }
       if pfd[1].revents != 0 {
         count = safe_read(
-          0i32,
+          0,
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
         ) as libc::c_int;
-        if count <= 0i32 {
+        if count <= 0 {
           /* err/eof from stdin: don't read stdin anymore */
-          pfd[1].revents = 0i32 as libc::c_short;
+          pfd[1].revents = 0 as libc::c_short;
           fd_count -= 1
         } else {
           full_write(
@@ -405,7 +405,7 @@ pub unsafe extern "C" fn script_main(
               bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
               COMMON_BUFSIZE as libc::c_int as size_t,
             ) as libc::c_int;
-            (count) > 0i32
+            (count) > 0
           }) {
             break;
           }
@@ -424,7 +424,7 @@ pub unsafe extern "C" fn script_main(
       _ => {}
     }
     /* err/eof from pty: exit */
-    if attr_ok == 0i32 {
+    if attr_ok == 0 {
       tcsetattr(0i32, 2i32, &mut tt);
     }
     if opt & OPT_q as libc::c_int == 0 {
@@ -433,7 +433,7 @@ pub unsafe extern "C" fn script_main(
         fname,
       );
     }
-    return 0i32;
+    return 0;
   }
   /* child: make pty slave to be input, output, error; run shell */
   close(pty); /* close pty master */
@@ -443,19 +443,19 @@ pub unsafe extern "C" fn script_main(
   xdup2(0i32, 1i32);
   xdup2(0i32, 2i32);
   /* copy our original stdin tty's parameters to pty */
-  if attr_ok == 0i32 {
+  if attr_ok == 0 {
     tcsetattr(0i32, 2i32, &mut tt);
   }
-  if winsz_ok == 0i32 {
+  if winsz_ok == 0 {
     ioctl(
-      0i32,
+      0,
       0x5414i32 as libc::c_ulong,
       &mut win as *mut winsize as *mut libc::c_char,
     );
   }
   /* set pty as a controlling tty */
   setsid();
-  ioctl(0i32, 0x540ei32 as libc::c_ulong, 0i32);
+  ioctl(0i32, 0x540ei32 as libc::c_ulong, 0);
   /* Non-ignored signals revert to SIG_DFL on exec anyway */
   /*signal(SIGCHLD, SIG_DFL);*/
   execl(

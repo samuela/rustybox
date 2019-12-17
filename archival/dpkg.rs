@@ -217,12 +217,12 @@ unsafe extern "C" fn search_name_hashtable(mut key: *const libc::c_char) -> libc
     if strcmp(
       (*ptr_to_globals).name_hashtable[probe_address as usize],
       key,
-    ) == 0i32
+    ) == 0
     {
       return probe_address as libc::c_int;
     }
     probe_address = probe_address.wrapping_sub(probe_decrement);
-    if (probe_address as libc::c_int) < 0i32 {
+    if (probe_address as libc::c_int) < 0 {
       probe_address = probe_address.wrapping_add(16381i32 as libc::c_uint)
     }
   }
@@ -243,12 +243,12 @@ unsafe extern "C" fn search_status_hashtable(mut key: *const libc::c_char) -> li
       (*ptr_to_globals).name_hashtable[(*(*ptr_to_globals).package_hashtable
         [(*(*ptr_to_globals).status_hashtable[probe_address as usize]).package() as usize])
         .name() as usize],
-    ) == 0i32
+    ) == 0
     {
       break;
     }
     probe_address = probe_address.wrapping_sub(probe_decrement);
-    if (probe_address as libc::c_int) < 0i32 {
+    if (probe_address as libc::c_int) < 0 {
       probe_address = probe_address.wrapping_add(8191i32 as libc::c_uint)
     }
   }
@@ -258,9 +258,9 @@ unsafe extern "C" fn order(mut x: libc::c_char) -> libc::c_int {
   return if x as libc::c_int == '~' as i32 {
     -1i32
   } else if x as libc::c_int == '\u{0}' as i32 {
-    0i32
+    0
   } else if (x as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-    0i32
+    0
   } else if ((x as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar as libc::c_int
     <= 'z' as i32 - 'a' as i32
   {
@@ -301,11 +301,11 @@ unsafe extern "C" fn version_compare_part(
     while *ref_0 as libc::c_int == '0' as i32 {
       ref_0 = ref_0.offset(1)
     }
-    first_diff = 0i32;
+    first_diff = 0;
     while (*val as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32
       && (*ref_0 as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32
     {
-      if first_diff == 0i32 {
+      if first_diff == 0 {
         first_diff = *val as libc::c_int - *ref_0 as libc::c_int
       }
       val = val.offset(1);
@@ -321,7 +321,7 @@ unsafe extern "C" fn version_compare_part(
       return first_diff;
     }
   }
-  return 0i32;
+  return 0;
 }
 /* if ver1 < ver2 return -1,
  * if ver1 = ver2 return 0,
@@ -330,8 +330,8 @@ unsafe extern "C" fn version_compare_part(
 unsafe extern "C" fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> libc::c_int {
   let mut ch_ver1: *mut libc::c_char = (*ptr_to_globals).name_hashtable[ver1 as usize];
   let mut ch_ver2: *mut libc::c_char = (*ptr_to_globals).name_hashtable[ver2 as usize];
-  let mut epoch1: libc::c_uint = 0i32 as libc::c_uint;
-  let mut epoch2: libc::c_uint = 0i32 as libc::c_uint;
+  let mut epoch1: libc::c_uint = 0 as libc::c_uint;
+  let mut epoch2: libc::c_uint = 0 as libc::c_uint;
   let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut deb_ver1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut deb_ver2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -372,7 +372,7 @@ unsafe extern "C" fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> 
     *fresh1 = '\u{0}' as i32 as libc::c_char
   }
   result = version_compare_part(upstream_ver1, upstream_ver2);
-  if result == 0i32 {
+  if result == 0 {
     /* Compare debian versions */
     result = version_compare_part(deb_ver1, deb_ver2)
   }
@@ -388,14 +388,14 @@ unsafe extern "C" fn test_version(
   let version_result: libc::c_int = version_compare(version1, version2);
   match operator {
     6 => return 1i32,
-    1 => return (version_result == 0i32) as libc::c_int,
-    2 => return (version_result < 0i32) as libc::c_int,
-    3 => return (version_result <= 0i32) as libc::c_int,
-    4 => return (version_result > 0i32) as libc::c_int,
-    5 => return (version_result >= 0i32) as libc::c_int,
+    1 => return (version_result == 0) as libc::c_int,
+    2 => return (version_result < 0) as libc::c_int,
+    3 => return (version_result <= 0) as libc::c_int,
+    4 => return (version_result > 0) as libc::c_int,
+    5 => return (version_result >= 0) as libc::c_int,
     _ => {}
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn search_package_hashtable(
   name: libc::c_uint,
@@ -425,7 +425,7 @@ unsafe extern "C" fn search_package_hashtable(
       }
     }
     probe_address = probe_address.wrapping_sub(probe_decrement);
-    if (probe_address as libc::c_int) < 0i32 {
+    if (probe_address as libc::c_int) < 0 {
       probe_address = probe_address.wrapping_add(10007i32 as libc::c_uint)
     }
   }
@@ -453,12 +453,12 @@ unsafe extern "C" fn search_for_provides(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
-  let mut p: *mut common_node_t = 0 as *mut common_node_t;
+  let mut p: *mut common_node_t = std::ptr::null_mut();
   i = start_at + 1i32;
   while i < 10007i32 {
     p = (*ptr_to_globals).package_hashtable[i as usize];
     if !p.is_null() {
-      j = 0i32;
+      j = 0;
       while j < (*p).num_of_edges() as libc::c_int {
         if (**(*p).edge.offset(j as isize)).type_0() as libc::c_int == EDGE_PROVIDES as libc::c_int
           && (**(*p).edge.offset(j as isize)).name() as libc::c_int == needle
@@ -510,8 +510,8 @@ unsafe extern "C" fn add_split_dependencies(
   let mut field: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut field2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut version: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut edge: *mut edge_t = 0 as *mut edge_t;
-  let mut or_edge: *mut edge_t = 0 as *mut edge_t;
+  let mut edge: *mut edge_t = std::ptr::null_mut();
+  let mut or_edge: *mut edge_t = std::ptr::null_mut();
   let mut offset_ch: libc::c_int = 0;
   field = strtok_r(
     line,
@@ -527,10 +527,10 @@ unsafe extern "C" fn add_split_dependencies(
       b"|\x00" as *const u8 as *const libc::c_char,
       &mut line_ptr2,
     );
-    or_edge = 0 as *mut edge_t;
+    or_edge = std::ptr::null_mut();
     if (edge_type == EDGE_DEPENDS as libc::c_int as libc::c_uint
       || edge_type == EDGE_PRE_DEPENDS as libc::c_int as libc::c_uint)
-      && strcmp(field, field2) != 0i32
+      && strcmp(field, field2) != 0
     {
       or_edge =
         crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<edge_t>() as libc::c_ulong)
@@ -560,40 +560,40 @@ unsafe extern "C" fn add_split_dependencies(
         /* Calculate length of any operator characters */
         offset_ch = strspn(version, b"<=>\x00" as *const u8 as *const libc::c_char) as libc::c_int;
         /* Determine operator */
-        if offset_ch > 0i32 {
+        if offset_ch > 0 {
           if strncmp(
             version,
             b"=\x00" as *const u8 as *const libc::c_char,
             offset_ch as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             (*edge).set_operator(VER_EQUAL as libc::c_int as libc::c_uint)
           } else if strncmp(
             version,
             b"<<\x00" as *const u8 as *const libc::c_char,
             offset_ch as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             (*edge).set_operator(VER_LESS as libc::c_int as libc::c_uint)
           } else if strncmp(
             version,
             b"<=\x00" as *const u8 as *const libc::c_char,
             offset_ch as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             (*edge).set_operator(VER_LESS_EQUAL as libc::c_int as libc::c_uint)
           } else if strncmp(
             version,
             b">>\x00" as *const u8 as *const libc::c_char,
             offset_ch as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             (*edge).set_operator(VER_MORE as libc::c_int as libc::c_uint)
           } else if strncmp(
             version,
             b">=\x00" as *const u8 as *const libc::c_char,
             offset_ch as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             (*edge).set_operator(VER_MORE_EQUAL as libc::c_int as libc::c_uint)
           } else {
@@ -644,7 +644,7 @@ unsafe extern "C" fn add_split_dependencies(
 unsafe extern "C" fn free_package(mut node: *mut common_node_t) {
   let mut i: libc::c_uint = 0;
   if !node.is_null() {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i < (*node).num_of_edges() {
       free(*(*node).edge.offset(i as isize) as *mut libc::c_void);
       i = i.wrapping_add(1)
@@ -662,15 +662,15 @@ unsafe extern "C" fn read_package_field(
   mut field_name: *mut *mut libc::c_char,
   mut field_value: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut offset_name_start: libc::c_int = 0i32;
-  let mut offset_name_end: libc::c_int = 0i32;
-  let mut offset_value_start: libc::c_int = 0i32;
-  let mut offset_value_end: libc::c_int = 0i32;
-  let mut offset: libc::c_int = 0i32;
+  let mut offset_name_start: libc::c_int = 0;
+  let mut offset_name_end: libc::c_int = 0;
+  let mut offset_value_start: libc::c_int = 0;
+  let mut offset_value_end: libc::c_int = 0;
+  let mut offset: libc::c_int = 0;
   let mut next_offset: libc::c_int = 0;
   let mut name_length: libc::c_int = 0;
   let mut value_length: libc::c_int = 0;
-  let mut exit_flag: libc::c_int = 0i32;
+  let mut exit_flag: libc::c_int = 0;
   if package_buffer.is_null() {
     *field_name = std::ptr::null_mut::<libc::c_char>();
     *field_value = std::ptr::null_mut::<libc::c_char>();
@@ -685,7 +685,7 @@ unsafe extern "C" fn read_package_field(
         current_block_17 = 15345278821338558188;
       }
       58 => {
-        if offset_name_end == 0i32 {
+        if offset_name_end == 0 {
           offset_name_end = offset;
           offset_value_start = next_offset
         }
@@ -724,16 +724,16 @@ unsafe extern "C" fn read_package_field(
       offset_value_end = offset;
       name_length = offset_name_end - offset_name_start;
       value_length = offset_value_end - offset_value_start;
-      if name_length == 0i32 {
+      if name_length == 0 {
         break;
       }
-      if name_length > 0i32 && value_length > 0i32 {
+      if name_length > 0 && value_length > 0 {
         break;
       }
       /* If not valid, start fresh with next field */
-      exit_flag = 0i32;
+      exit_flag = 0;
       offset_name_start = offset + 1i32;
-      offset_name_end = 0i32;
+      offset_name_end = 0;
       offset_value_start = offset + 1i32;
       offset_value_end = offset + 1i32;
       offset += 1
@@ -748,7 +748,7 @@ unsafe extern "C" fn read_package_field(
     )
   }
   *field_value = std::ptr::null_mut::<libc::c_char>();
-  if value_length > 0i32 {
+  if value_length > 0 {
     *field_value = crate::libbb::xfuncs_printf::xstrndup(
       &*package_buffer.offset(offset_value_start as isize),
       value_length,
@@ -769,7 +769,7 @@ unsafe extern "C" fn fill_package_struct(mut control_buffer: *mut libc::c_char) 
       as *mut common_node_t;
   let mut field_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut field_value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut field_start: libc::c_int = 0i32;
+  let mut field_start: libc::c_int = 0;
   let mut num: libc::c_int = -1i32;
   let mut buffer_length: libc::c_int = strlen(control_buffer) as libc::c_int;
   (*new_node).set_version(
@@ -942,7 +942,7 @@ unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc
   let mut status_want: libc::c_int = 0;
   let mut status_state: libc::c_int = 0;
   if (*ptr_to_globals).status_hashtable[status_num as usize].is_null()
-    || (*(*ptr_to_globals).status_hashtable[status_num as usize]).status() as libc::c_int == 0i32
+    || (*(*ptr_to_globals).status_hashtable[status_num as usize]).status() as libc::c_int == 0
   {
     return b"is not installed or flagged to be installed\x00" as *const u8 as *const libc::c_char;
   }
@@ -968,10 +968,10 @@ unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc
   return b"is not installed or flagged to be installed\x00" as *const u8 as *const libc::c_char;
 }
 unsafe extern "C" fn index_status_file(mut filename: *const libc::c_char) {
-  let mut status_file: *mut FILE = 0 as *mut FILE;
+  let mut status_file: *mut FILE = std::ptr::null_mut();
   let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
+  let mut status_node: *mut status_node_t = std::ptr::null_mut();
   let mut status_num: libc::c_uint = 0;
   status_file = crate::libbb::wfopen::xfopen_for_read(filename);
   loop {
@@ -1022,7 +1022,7 @@ unsafe extern "C" fn write_buffer_no_status(
 ) {
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut start: libc::c_int = 0i32;
+  let mut start: libc::c_int = 0;
   loop {
     start += read_package_field(
       &*control_buffer.offset(start as isize),
@@ -1032,7 +1032,7 @@ unsafe extern "C" fn write_buffer_no_status(
     if name.is_null() {
       break;
     }
-    if strcmp(name, b"Status\x00" as *const u8 as *const libc::c_char) != 0i32 {
+    if strcmp(name, b"Status\x00" as *const u8 as *const libc::c_char) != 0 {
       fprintf(
         new_status_file,
         b"%s: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -1055,9 +1055,9 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
   let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tmp_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_num: libc::c_int = 0;
-  let mut field_start: libc::c_int = 0i32;
+  let mut field_start: libc::c_int = 0;
   let mut write_flag: libc::c_int = 0;
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   loop
   /* Update previously known packages */
   {
@@ -1082,7 +1082,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
       tmp_string,
       strcspn(tmp_string, b"\n\x00" as *const u8 as *const libc::c_char) as libc::c_int,
     );
-    write_flag = 0i32;
+    write_flag = 0;
     tmp_string = strstr(
       control_buffer,
       b"Status:\x00" as *const u8 as *const libc::c_char,
@@ -1104,27 +1104,27 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
     if !(*ptr_to_globals).status_hashtable[status_num as usize].is_null() {
       let mut status_from_hashtable: *const libc::c_char = (*ptr_to_globals).name_hashtable
         [(*(*ptr_to_globals).status_hashtable[status_num as usize]).status() as usize];
-      if strcmp(status_from_file, status_from_hashtable) != 0i32 {
+      if strcmp(status_from_file, status_from_hashtable) != 0 {
         /* New status isn't exactly the same as old status */
         let state_status: libc::c_int = get_status(status_num as libc::c_uint, 3i32) as libc::c_int;
         if strcmp(
           b"installed\x00" as *const u8 as *const libc::c_char,
           (*ptr_to_globals).name_hashtable[state_status as usize],
-        ) == 0i32
+        ) == 0
           || strcmp(
             b"unpacked\x00" as *const u8 as *const libc::c_char,
             (*ptr_to_globals).name_hashtable[state_status as usize],
-          ) == 0i32
+          ) == 0
         {
           /* We need to add the control file from the package */
-          i = 0i32;
+          i = 0;
           while !(*deb_file.offset(i as isize)).is_null() {
             if strcmp(
               package_name,
               (*ptr_to_globals).name_hashtable[(*(*ptr_to_globals).package_hashtable
                 [(**deb_file.offset(i as isize)).package() as usize])
                 .name() as usize],
-            ) == 0i32
+            ) == 0
             {
               /* Write a status file entry with a modified status */
               /* remove trailing \n's */
@@ -1159,7 +1159,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
         } else if strcmp(
           b"not-installed\x00" as *const u8 as *const libc::c_char,
           (*ptr_to_globals).name_hashtable[state_status as usize],
-        ) == 0i32
+        ) == 0
         {
           /* Only write the Package, Status, Priority and Section lines */
           fprintf(
@@ -1186,11 +1186,11 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
             if strcmp(
               field_name,
               b"Priority\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
               || strcmp(
                 field_name,
                 b"Section\x00" as *const u8 as *const libc::c_char,
-              ) == 0i32
+              ) == 0
             {
               fprintf(
                 new_status_file,
@@ -1208,7 +1208,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
         } else if strcmp(
           b"config-files\x00" as *const u8 as *const libc::c_char,
           (*ptr_to_globals).name_hashtable[state_status as usize],
-        ) == 0i32
+        ) == 0
         {
           loop
           /* only change the status line */
@@ -1227,7 +1227,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
             if strcmp(
               field_name_0,
               b"Status\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
             {
               fprintf(
                 new_status_file,
@@ -1264,7 +1264,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
     free(control_buffer as *mut libc::c_void);
   }
   /* Write any new packages */
-  i = 0i32;
+  i = 0;
   while !(*deb_file.offset(i as isize)).is_null() {
     status_num = search_status_hashtable(
       (*ptr_to_globals).name_hashtable[(*(*ptr_to_globals).package_hashtable
@@ -1274,7 +1274,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
     if strcmp(
       b"reinstreq\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).name_hashtable[get_status(status_num as libc::c_uint, 2i32) as usize],
-    ) == 0i32
+    ) == 0
     {
       write_buffer_no_status(
         new_status_file,
@@ -1337,7 +1337,7 @@ unsafe extern "C" fn package_satisfies_dependency(
    * provides which cannot satisfy any dependency by itself.
    */
   if (*ptr_to_globals).status_hashtable[status_num as usize].is_null() {
-    return 0i32;
+    return 0;
   }
   match depend_type {
     1 => {
@@ -1352,15 +1352,15 @@ unsafe extern "C" fn package_satisfies_dependency(
     }
     _ => {}
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn check_deps(
   mut deb_file: *mut *mut deb_file_t,
   mut deb_start: libc::c_int,
 ) -> libc::c_int
 /*, int dep_max_count - ?? */ {
-  let mut conflicts: *mut libc::c_int = 0 as *mut libc::c_int;
-  let mut conflicts_num: libc::c_int = 0i32;
+  let mut conflicts: *mut libc::c_int = std::ptr::null_mut();
+  let mut conflicts_num: libc::c_int = 0;
   let mut i: libc::c_int = deb_start;
   let mut j: libc::c_int = 0;
   /* Check for conflicts
@@ -1382,7 +1382,7 @@ unsafe extern "C" fn check_deps(
     *conflicts.offset(conflicts_num as isize) = package_num as libc::c_int;
     conflicts_num += 1;
     /* add provides to conflicts list */
-    j = 0i32;
+    j = 0;
     while j
       < (*(*ptr_to_globals).package_hashtable[package_num as usize]).num_of_edges() as libc::c_int
     {
@@ -1439,11 +1439,11 @@ unsafe extern "C" fn check_deps(
     i += 1
   }
   /* Check conflicts */
-  i = 0i32;
+  i = 0;
   while !(*deb_file.offset(i as isize)).is_null() {
     let mut package_node: *const common_node_t =
       (*ptr_to_globals).package_hashtable[(**deb_file.offset(i as isize)).package() as usize];
-    let mut status_num: libc::c_int = 0i32;
+    let mut status_num: libc::c_int = 0;
     status_num =
       search_status_hashtable((*ptr_to_globals).name_hashtable[(*package_node).name() as usize])
         as libc::c_int;
@@ -1452,7 +1452,7 @@ unsafe extern "C" fn check_deps(
     {
       i += 1
     } else {
-      j = 0i32;
+      j = 0;
       while j < (*package_node).num_of_edges() as libc::c_int {
         let mut package_edge: *const edge_t = *(*package_node).edge.offset(j as isize);
         if (*package_edge).type_0() as libc::c_int == EDGE_CONFLICTS as libc::c_int {
@@ -1461,7 +1461,7 @@ unsafe extern "C" fn check_deps(
             (*package_edge).version(),
             (*package_edge).operator(),
           ) as libc::c_uint;
-          let mut result: libc::c_int = 0i32;
+          let mut result: libc::c_int = 0;
           if !(*ptr_to_globals).package_hashtable[package_num_0 as usize].is_null() {
             status_num = search_status_hashtable(
               (*ptr_to_globals).name_hashtable
@@ -1494,11 +1494,11 @@ unsafe extern "C" fn check_deps(
     }
   }
   /* Check dependentcies */
-  i = 0i32;
+  i = 0;
   while i < 10007i32 {
-    let mut status_num_0: libc::c_int = 0i32;
-    let mut number_of_alternatives: libc::c_int = 0i32;
-    let mut root_of_alternatives: *const edge_t = 0 as *const edge_t;
+    let mut status_num_0: libc::c_int = 0;
+    let mut number_of_alternatives: libc::c_int = 0;
+    let mut root_of_alternatives: *const edge_t = std::ptr::null();
     let mut package_node_0: *const common_node_t = (*ptr_to_globals).package_hashtable[i as usize];
     /* If the package node does not exist then this
      * package is a virtual one. In which case there are
@@ -1524,7 +1524,7 @@ unsafe extern "C" fn check_deps(
            * have no suitable pre-depends available. There is no
            * reason that it shouldn't work though :-)
            */
-          j = 0i32;
+          j = 0;
           while j < (*package_node_0).num_of_edges() as libc::c_int {
             let mut package_edge_0: *const edge_t = *(*package_node_0).edge.offset(j as isize);
             let mut package_num_1: libc::c_uint = 0;
@@ -1535,10 +1535,10 @@ unsafe extern "C" fn check_deps(
               number_of_alternatives = (*package_edge_0).version() as libc::c_int;
               root_of_alternatives = package_edge_0
             } else {
-              if number_of_alternatives == 0i32 {
+              if number_of_alternatives == 0 {
                 /* not in the middle of an EDGE_OR_ list */
                 number_of_alternatives = 1i32;
-                root_of_alternatives = 0 as *const edge_t
+                root_of_alternatives = std::ptr::null()
               }
               package_num_1 = search_package_hashtable(
                 (*package_edge_0).name(),
@@ -1549,7 +1549,7 @@ unsafe extern "C" fn check_deps(
                 || (*package_edge_0).type_0() as libc::c_int == EDGE_DEPENDS as libc::c_int
               {
                 let mut result_0: libc::c_int = 1i32;
-                status_num_0 = 0i32;
+                status_num_0 = 0;
                 /* If we are inside an alternative then check
                  * this edge is the right type.
                  *
@@ -1592,7 +1592,7 @@ unsafe extern "C" fn check_deps(
                         provider,
                         (*package_edge_0).type_0() as libc::c_int,
                       ) == 0) as libc::c_int;
-                      if result_0 == 0i32 {
+                      if result_0 == 0 {
                         break;
                       }
                     }
@@ -1600,7 +1600,7 @@ unsafe extern "C" fn check_deps(
                 }
                 /* It must be already installed, or to be installed */
                 number_of_alternatives -= 1;
-                if result_0 != 0 && number_of_alternatives == 0i32 {
+                if result_0 != 0 && number_of_alternatives == 0 {
                   if !root_of_alternatives.is_null() {
                     crate::libbb::verror_msg::bb_error_msg_and_die(
                       b"package %s %sdepends on %s, which %s\x00" as *const u8
@@ -1630,14 +1630,14 @@ unsafe extern "C" fn check_deps(
                     describe_status(status_num_0),
                   );
                 }
-                if result_0 == 0i32 && number_of_alternatives != 0 {
+                if result_0 == 0 && number_of_alternatives != 0 {
                   /* we've found a package which
                    * satisfies the dependency,
                    * so skip over the rest of
                    * the alternatives.
                    */
                   j += number_of_alternatives;
-                  number_of_alternatives = 0i32
+                  number_of_alternatives = 0
                 }
               }
             }
@@ -1652,8 +1652,8 @@ unsafe extern "C" fn check_deps(
   return 1i32;
 }
 unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut libc::c_char {
-  let mut list_stream: *mut FILE = 0 as *mut FILE;
-  let mut file_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut list_stream: *mut FILE = std::ptr::null_mut();
+  let mut file_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut count: libc::c_int = 0;
   /* don't use [xw]fopen here, handle error ourself */
@@ -1661,8 +1661,8 @@ unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut
   if list_stream.is_null() {
     return 0 as *mut *mut libc::c_char;
   }
-  file_list = 0 as *mut *mut libc::c_char;
-  count = 0i32;
+  file_list = std::ptr::null_mut();
+  count = 0;
   loop {
     line = crate::libbb::get_line_from_file::xmalloc_fgetline(list_stream);
     if line.is_null() {
@@ -1693,13 +1693,13 @@ unsafe extern "C" fn remove_file_array(
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   if remove_names.is_null() {
-    return 0i32;
+    return 0;
   }
   let mut current_block_9: u64;
-  i = 0i32;
+  i = 0;
   while !(*remove_names.offset(i as isize)).is_null() {
     if !exclude_names.is_null() {
-      j = 0i32;
+      j = 0;
       loop {
         if (*exclude_names.offset(j as isize)).is_null() {
           current_block_9 = 5399440093318478209;
@@ -1708,7 +1708,7 @@ unsafe extern "C" fn remove_file_array(
         if strcmp(
           *remove_names.offset(i as isize),
           *exclude_names.offset(j as isize),
-        ) == 0i32
+        ) == 0
         {
           current_block_9 = 820271813250567934;
           break;
@@ -1722,7 +1722,7 @@ unsafe extern "C" fn remove_file_array(
       5399440093318478209 =>
       /* TODO: why we are checking lstat? we can just try rm/rmdir */
       {
-        if !(lstat(*remove_names.offset(i as isize), &mut path_stat) < 0i32) {
+        if !(lstat(*remove_names.offset(i as isize), &mut path_stat) < 0) {
           if path_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
             remove_flag &= rmdir(*remove_names.offset(i as isize))
           /* 0 if no error */
@@ -1736,7 +1736,7 @@ unsafe extern "C" fn remove_file_array(
     }
     i += 1
   }
-  return (remove_flag == 0i32) as libc::c_int;
+  return (remove_flag == 0) as libc::c_int;
 }
 unsafe extern "C" fn run_package_script_or_die(
   mut package_name: *const libc::c_char,
@@ -1750,8 +1750,8 @@ unsafe extern "C" fn run_package_script_or_die(
     script_type,
   );
   /* If the file doesn't exist it isn't fatal */
-  result = if access(script_path, 0i32) != 0 {
-    0i32
+  result = if access(script_path, 0) != 0 {
+    0
   } else {
     system(script_path)
   };
@@ -1809,8 +1809,8 @@ static mut all_control_files: [*const libc::c_char; 10] = [
 unsafe extern "C" fn all_control_list(
   mut package_name: *const libc::c_char,
 ) -> *mut *mut libc::c_char {
-  let mut i: libc::c_uint = 0i32 as libc::c_uint;
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut i: libc::c_uint = 0 as libc::c_uint;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
   /* Create a list of all /var/lib/dpkg/info/<package> files */
   remove_files = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<[*const libc::c_char; 10]>() as libc::c_ulong)
@@ -1833,7 +1833,7 @@ unsafe extern "C" fn all_control_list(
 }
 unsafe extern "C" fn free_array(mut array: *mut *mut libc::c_char) {
   if !array.is_null() {
-    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i: libc::c_uint = 0 as libc::c_uint;
     while !(*array.offset(i as isize)).is_null() {
       free(*array.offset(i as isize) as *mut libc::c_void);
       i = i.wrapping_add(1)
@@ -1850,12 +1850,12 @@ unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
   puts(b"    Name           Version\x00" as *const u8 as *const libc::c_char);
   puts(b"+++-==============-==============\x00" as *const u8 as *const libc::c_char);
   /* go through status hash, dereference package hash and finally strings */
-  i = 0i32; /* status string */
+  i = 0; /* status string */
   while i < 8191i32 + 1i32 {
     if !(*ptr_to_globals).status_hashtable[i as usize].is_null() {
-      let mut stat_str: *const libc::c_char = 0 as *const libc::c_char; /* package name */
-      let mut name_str: *const libc::c_char = 0 as *const libc::c_char; /* version */
-      let mut vers_str: *const libc::c_char = 0 as *const libc::c_char; /* status abbreviations */
+      let mut stat_str: *const libc::c_char = std::ptr::null(); /* package name */
+      let mut name_str: *const libc::c_char = std::ptr::null(); /* version */
+      let mut vers_str: *const libc::c_char = std::ptr::null(); /* status abbreviations */
       let mut s1: libc::c_char = 0; /* space count */
       let mut s2: libc::c_char = 0;
       let mut spccnt: libc::c_int = 0;
@@ -1868,7 +1868,7 @@ unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
       vers_str = (*ptr_to_globals).name_hashtable[(*(*ptr_to_globals).package_hashtable
         [(*(*ptr_to_globals).status_hashtable[i as usize]).package() as usize])
         .version() as usize];
-      if !(!pattern.is_null() && fnmatch(pattern, name_str, 0i32) != 0i32) {
+      if !(!pattern.is_null() && fnmatch(pattern, name_str, 0) != 0) {
         /* get abbreviation for status field 1 */
         s1 = if *stat_str.offset(0) as libc::c_int == 'i' as i32 {
           'i' as i32
@@ -1876,8 +1876,8 @@ unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
           'r' as i32
         } as libc::c_char;
         /* get abbreviation for status field 2 */
-        j = 0i32;
-        spccnt = 0i32;
+        j = 0;
+        spccnt = 0;
         while *stat_str.offset(j as isize) as libc::c_int != 0 && spccnt < 2i32 {
           if *stat_str.offset(j as isize) as libc::c_int == ' ' as i32 {
             spccnt += 1
@@ -1905,8 +1905,8 @@ unsafe extern "C" fn remove_package(package_num: libc::c_uint, mut noisy: libc::
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).version() as usize];
   let status_num: libc::c_uint = search_status_hashtable(package_name);
   let package_name_length: libc::c_int = strlen(package_name) as libc::c_int;
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut exclude_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut exclude_files: *mut *mut libc::c_char = std::ptr::null_mut();
   let vla = (package_name_length + 25i32) as usize;
   let mut list_name: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   let vla_0 = (package_name_length + 30i32) as usize;
@@ -1977,8 +1977,8 @@ unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
   let mut package_version: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).version() as usize];
   let status_num: libc::c_uint = search_status_hashtable(package_name);
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut exclude_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut exclude_files: *mut *mut libc::c_char = std::ptr::null_mut();
   let vla = strlen(package_name).wrapping_add(25i32 as libc::c_ulong) as usize;
   let mut list_name: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   printf(
@@ -2034,18 +2034,18 @@ unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
 unsafe extern "C" fn init_archive_deb_ar(
   mut filename: *const libc::c_char,
 ) -> *mut archive_handle_t {
-  let mut ar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut ar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup an ar archive handle that refers to the gzip sub archive */
   ar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*ar_handle).filter = Some(
     crate::archival::libarchive::filter_accept_list_reassign::filter_accept_list_reassign
       as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
   );
-  (*ar_handle).src_fd = crate::libbb::xfuncs_printf::xopen(filename, 0i32);
+  (*ar_handle).src_fd = crate::libbb::xfuncs_printf::xopen(filename, 0);
   return ar_handle;
 }
 unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle_t) {
-  let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*tar_handle).src_fd = (*ar_handle).src_fd;
@@ -2074,7 +2074,7 @@ unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle
   (*ar_handle).dpkg__sub_archive = tar_handle;
 }
 unsafe extern "C" fn init_archive_deb_data(mut ar_handle: *mut archive_handle_t) {
-  let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*tar_handle).src_fd = (*ar_handle).src_fd;
@@ -2137,7 +2137,7 @@ unsafe extern "C" fn append_control_file_to_llist(
   mut control_name: *const libc::c_char,
   mut ll: *mut *mut llist_t,
 ) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   filename = crate::libbb::xfuncs_printf::xasprintf(
@@ -2170,10 +2170,10 @@ unsafe extern "C" fn filter_rename_config(
   )
   .is_null()
   {
-    return 0i32 as libc::c_char;
+    return 0 as libc::c_char;
   } /* no */
-  fd = open(name_ptr, 0i32);
-  if fd >= 0i32 {
+  fd = open(name_ptr, 0);
+  if fd >= 0 {
     let mut md5: md5_ctx_t = md5_ctx_t {
       wbuffer: [0; 64],
       process_block: None,
@@ -2189,7 +2189,7 @@ unsafe extern "C" fn filter_rename_config(
     loop {
       count = crate::libbb::read::safe_read(fd, buf as *mut libc::c_void, 4096i32 as size_t)
         as libc::c_int;
-      if !(count > 0i32) {
+      if !(count > 0) {
         break;
       }
       crate::libbb::hash_md5_sha::md5_hash(&mut md5, buf as *const libc::c_void, count as size_t);
@@ -2226,7 +2226,7 @@ unsafe extern "C" fn filter_rename_config(
     }
     free(md5line as *mut libc::c_void);
   }
-  return 0i32 as libc::c_char;
+  return 0 as libc::c_char;
 }
 unsafe extern "C" fn data_extract_all_prefix(mut archive_handle: *mut archive_handle_t) {
   let mut name_ptr: *mut libc::c_char = (*(*archive_handle).file_header).name;
@@ -2254,8 +2254,8 @@ unsafe extern "C" fn data_extract_all_prefix(mut archive_handle: *mut archive_ha
     if fnmatch(
       b"*.dpkg-new\x00" as *const u8 as *const libc::c_char,
       (*(*archive_handle).file_header).name,
-      0i32,
-    ) == 0i32
+      0,
+    ) == 0
     {
       /* remove .dpkg-new suffix */
       *(*(*archive_handle).file_header).name.offset(
@@ -2272,17 +2272,17 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
     (*(*ptr_to_globals).status_hashtable[status_num as usize]).package();
   let mut info_prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut out_stream: *mut FILE = 0 as *mut FILE;
-  let mut accept_list: *mut llist_t = 0 as *mut llist_t;
-  let mut conffile_list: *mut llist_t = 0 as *mut llist_t;
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
+  let mut out_stream: *mut FILE = std::ptr::null_mut();
+  let mut accept_list: *mut llist_t = std::ptr::null_mut();
+  let mut conffile_list: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   /* If existing version, remove it first */
-  conffile_list = 0 as *mut llist_t;
+  conffile_list = std::ptr::null_mut();
   if strcmp(
     (*ptr_to_globals).name_hashtable[get_status(status_num, 3i32) as usize],
     b"installed\x00" as *const u8 as *const libc::c_char,
-  ) == 0i32
+  ) == 0
   {
     /* Package is already installed, remove old version first */
     printf(
@@ -2300,7 +2300,7 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
         &mut conffile_list,
       );
     }
-    remove_package(status_package_num, 0i32);
+    remove_package(status_package_num, 0);
   } else {
     printf(
       b"Unpacking %s (from %s)...\n\x00" as *const u8 as *const libc::c_char,
@@ -2316,8 +2316,8 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
   );
   archive_handle = init_archive_deb_ar((*deb_file).filename);
   init_archive_deb_control(archive_handle);
-  accept_list = 0 as *mut llist_t;
-  i = 0i32;
+  accept_list = std::ptr::null_mut();
+  i = 0;
   while (i as libc::c_uint)
     < (::std::mem::size_of::<[*const libc::c_char; 10]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<*const libc::c_char>() as libc::c_ulong)
@@ -2439,12 +2439,12 @@ pub unsafe extern "C" fn dpkg_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut deb_file: *mut *mut deb_file_t = 0 as *mut *mut deb_file_t;
-  let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
+  let mut deb_file: *mut *mut deb_file_t = std::ptr::null_mut();
+  let mut status_node: *mut status_node_t = std::ptr::null_mut();
   let mut str_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut package_num: libc::c_int = 0;
-  let mut deb_count: libc::c_int = 0i32;
+  let mut deb_count: libc::c_int = 0;
   let mut state_status: libc::c_int = 0;
   let mut status_num: libc::c_int = 0;
   let mut i: libc::c_int = 0;
@@ -2472,11 +2472,11 @@ pub unsafe extern "C" fn dpkg_main(
   //if (opt & OPT_configure) ... // -C
   if opt & OPT_force as libc::c_int != 0 {
     // -F (--force in official dpkg)
-    if strcmp(str_f, b"depends\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(str_f, b"depends\x00" as *const u8 as *const libc::c_char) == 0 {
       opt |= OPT_force_ignore_depends as libc::c_int
-    } else if strcmp(str_f, b"confnew\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    } else if strcmp(str_f, b"confnew\x00" as *const u8 as *const libc::c_char) == 0 {
       opt |= OPT_force_confnew as libc::c_int
-    } else if strcmp(str_f, b"confold\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    } else if strcmp(str_f, b"confold\x00" as *const u8 as *const libc::c_char) == 0 {
       opt |= OPT_force_confold as libc::c_int
     } else {
       crate::libbb::appletlib::bb_show_usage();
@@ -2499,7 +2499,7 @@ pub unsafe extern "C" fn dpkg_main(
   /* if the list action was given print the installed packages and exit */
   if opt & OPT_list_installed as libc::c_int != 0 {
     list_packages(*argv.offset(0)); /* param can be NULL */
-    return 0i32;
+    return 0;
   }
   /* Read arguments and store relevant info in structs */
   while !(*argv).is_null() {
@@ -2516,8 +2516,8 @@ pub unsafe extern "C" fn dpkg_main(
         as *mut deb_file_t;
     if opt & (OPT_install as libc::c_int | OPT_unpack as libc::c_int) != 0 {
       /* -i/-u: require filename */
-      let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-      let mut control_list: *mut llist_t = 0 as *mut llist_t;
+      let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
+      let mut control_list: *mut llist_t = std::ptr::null_mut();
       /* Extract the control file */
       crate::libbb::llist::llist_add_to(
         &mut control_list,
@@ -2561,7 +2561,7 @@ pub unsafe extern "C" fn dpkg_main(
           /* If no previous entry was found initialise a new entry */
           if (*ptr_to_globals).status_hashtable[status_num as usize].is_null()
             || (*(*ptr_to_globals).status_hashtable[status_num as usize]).status() as libc::c_int
-              == 0i32
+              == 0
           {
             status_node = xmalloc(::std::mem::size_of::<status_node_t>() as libc::c_ulong)
               as *mut status_node_t;
@@ -2617,11 +2617,11 @@ pub unsafe extern "C" fn dpkg_main(
         if strcmp(
           (*ptr_to_globals).name_hashtable[state_status as usize],
           b"not-installed\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
           || strcmp(
             (*ptr_to_globals).name_hashtable[state_status as usize],
             b"config-files\x00" as *const u8 as *const libc::c_char,
-          ) == 0i32
+          ) == 0
         {
           crate::libbb::verror_msg::bb_error_msg_and_die(
             b"%s is already removed\x00" as *const u8 as *const libc::c_char,
@@ -2639,7 +2639,7 @@ pub unsafe extern "C" fn dpkg_main(
         if strcmp(
           (*ptr_to_globals).name_hashtable[state_status as usize],
           b"not-installed\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
         {
           crate::libbb::verror_msg::bb_error_msg_and_die(
             b"%s is already purged\x00" as *const u8 as *const libc::c_char,
@@ -2663,17 +2663,17 @@ pub unsafe extern "C" fn dpkg_main(
     );
   }
   let ref mut fresh17 = *deb_file.offset(deb_count as isize);
-  *fresh17 = 0 as *mut deb_file_t;
+  *fresh17 = std::ptr::null_mut();
   /* Check that the deb file arguments are installable */
   if opt & OPT_force_ignore_depends as libc::c_int == 0 {
-    if check_deps(deb_file, 0i32) == 0 {
+    if check_deps(deb_file, 0) == 0 {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"dependency check failed\x00" as *const u8 as *const libc::c_char,
       );
     }
   }
   /* TODO: install or remove packages in the correct dependency order */
-  i = 0i32;
+  i = 0;
   while i < deb_count {
     /* Remove or purge packages */
     if opt & OPT_remove as libc::c_int != 0 {
@@ -2692,12 +2692,12 @@ pub unsafe extern "C" fn dpkg_main(
   }
   /* configure installed packages */
   if opt & OPT_install as libc::c_int != 0 {
-    i = 0i32;
+    i = 0;
     while i < deb_count {
       configure_package(*deb_file.offset(i as isize));
       i += 1
     }
   }
   write_status_file(deb_file);
-  return 0i32;
+  return 0;
 }

@@ -200,26 +200,26 @@ unsafe extern "C" fn write_str_to_file(
   }
   fputs_unlocked(str, fp);
   fclose(fp);
-  return 0i32;
+  return 0;
 }
 /* Make it more readable */
 #[inline(never)]
 unsafe extern "C" fn clear_lines() {
   let mut i: libc::c_int = 0;
   if !(*ptr_to_globals).lines.is_null() {
-    i = 0i32;
+    i = 0;
     while i < (*ptr_to_globals).lines_cnt {
       free((*(*ptr_to_globals).lines.offset(i as isize)).string as *mut libc::c_void);
       i += 1
     }
     free((*ptr_to_globals).lines as *mut libc::c_void);
-    (*ptr_to_globals).lines_cnt = 0i32;
-    (*ptr_to_globals).lines = 0 as *mut line
+    (*ptr_to_globals).lines_cnt = 0;
+    (*ptr_to_globals).lines = std::ptr::null_mut()
   };
 }
 unsafe extern "C" fn update_lines_cumulative_count() {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < (*ptr_to_globals).lines_cnt {
     (*ptr_to_globals).lines_cumulative_count += (*(*ptr_to_globals).lines.offset(i as isize)).count;
     i += 1
@@ -246,8 +246,8 @@ unsafe extern "C" fn sort_lines() {
 }
 /* Save C-state usage and duration. Also update maxcstate. */
 unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *mut ullong) {
-  let mut dir: *mut DIR = 0 as *mut DIR; /* "CPUnn" */
-  let mut d: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut(); /* "CPUnn" */
+  let mut d: *mut dirent = std::ptr::null_mut();
   dir = opendir(b"/proc/acpi/processor\x00" as *const u8 as *const libc::c_char);
   if dir.is_null() {
     return;
@@ -257,7 +257,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
     if d.is_null() {
       break;
     }
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let mut buf: [libc::c_char; 192] = [0; 192];
     let mut level: libc::c_int = 0;
     let mut len: libc::c_int = 0;
@@ -283,7 +283,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
     //     C1:                  type[C1] promotion[--] demotion[--] latency[001] usage[00006173] duration[00000000000000000000]
     //     C2:                  type[C2] promotion[--] demotion[--] latency[001] usage[00085191] duration[00000000000083024907]
     //     C3:                  type[C3] promotion[--] demotion[--] latency[017] usage[01017622] duration[00000000017921327182]
-    level = 0i32;
+    level = 0;
     while !fgets_unlocked(
       buf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 192]>() as libc::c_ulong as libc::c_int,
@@ -333,9 +333,9 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
 /* Add line and/or update count */
 unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc::c_int) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < (*ptr_to_globals).lines_cnt {
-    if strcmp(string, (*(*ptr_to_globals).lines.offset(i as isize)).string) == 0i32 {
+    if strcmp(string, (*(*ptr_to_globals).lines.offset(i as isize)).string) == 0 {
       /* It's already there, only update count */
       (*(*ptr_to_globals).lines.offset(i as isize)).count += count;
       return;
@@ -366,11 +366,11 @@ unsafe extern "C" fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
   //TODO: optimize
   p = strstr(name, b"hpet\x00" as *const u8 as *const libc::c_char);
   if p.is_null() {
-    return 0i32;
+    return 0;
   }
   p = p.offset(4);
   if !((*p as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -378,7 +378,7 @@ unsafe extern "C" fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
 unsafe extern "C" fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> libc::c_int {
   let mut unused: libc::c_int = 40i32;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 40i32 {
     if (*ptr_to_globals).interrupts[i as usize].active as libc::c_int != 0
       && (*ptr_to_globals).interrupts[i as usize].number == irq
@@ -401,11 +401,11 @@ unsafe extern "C" fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> 
 }
 /* Read /proc/interrupts, save IRQ counts and IRQ description */
 unsafe extern "C" fn process_irq_counts() {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 128] = [0; 128];
   /* Reset values */
-  (*ptr_to_globals).interrupt_0 = 0i32;
-  (*ptr_to_globals).total_interrupt = 0i32;
+  (*ptr_to_globals).interrupt_0 = 0;
+  (*ptr_to_globals).total_interrupt = 0;
   fp = xfopen_for_read(b"/proc/interrupts\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
     buf.as_mut_ptr(),
@@ -416,7 +416,7 @@ unsafe extern "C" fn process_irq_counts() {
   {
     let mut irq_desc: [libc::c_char; 147] = [0; 147];
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut name: *const libc::c_char = 0 as *const libc::c_char;
+    let mut name: *const libc::c_char = std::ptr::null();
     let mut nr: libc::c_int = 0;
     let mut count: ullong = 0;
     let mut delta: ullong = 0;
@@ -433,11 +433,11 @@ unsafe extern "C" fn process_irq_counts() {
       b"NMI\x00RES\x00CAL\x00TLB\x00TRM\x00THR\x00SPU\x00\x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
     );
-    if nr >= 0i32 {
+    if nr >= 0 {
       nr += 20000i32
     } else {
       /* bb_strtou doesn't eat leading spaces, using strtoul */
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       nr = strtoul(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
       if *bb_errno != 0 {
         continue;
@@ -448,7 +448,7 @@ unsafe extern "C" fn process_irq_counts() {
      *    ^
      */
     /* Sum counts for this IRQ */
-    count = 0i32 as ullong;
+    count = 0 as ullong;
     loop {
       let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       p = skip_whitespace(p);
@@ -492,10 +492,10 @@ unsafe extern "C" fn process_irq_counts() {
     if is_hpet_irq(name) != 0 {
       continue;
     }
-    if nr != 0i32 && delta != 0i32 as libc::c_ulonglong {
+    if nr != 0 && delta != 0 as libc::c_ulonglong {
       save_line(irq_desc.as_mut_ptr(), delta as libc::c_int);
     }
-    if nr == 0i32 {
+    if nr == 0 {
       (*ptr_to_globals).interrupt_0 = delta as libc::c_int
     } else {
       (*ptr_to_globals).total_interrupt = ((*ptr_to_globals).total_interrupt as libc::c_ulonglong)
@@ -510,10 +510,10 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut line: [libc::c_char; 146] = [0; 146];
   let mut n: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   buf[0] = '\u{0}' as i32 as libc::c_char;
-  n = 0i32;
-  fp = 0 as *mut FILE;
+  n = 0;
+  fp = std::ptr::null_mut();
   if (*ptr_to_globals).cant_enable_timer_stats == 0 {
     fp = fopen_for_read(b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char)
   }
@@ -536,9 +536,9 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
     )
     .is_null()
     {
-      let mut count: *const libc::c_char = 0 as *const libc::c_char; /* deferred */
-      let mut process: *const libc::c_char = 0 as *const libc::c_char; /* points to pid now */
-      let mut func: *const libc::c_char = 0 as *const libc::c_char;
+      let mut count: *const libc::c_char = std::ptr::null(); /* deferred */
+      let mut process: *const libc::c_char = std::ptr::null(); /* points to pid now */
+      let mut func: *const libc::c_char = std::ptr::null();
       let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut idx: libc::c_int = 0;
       let mut cnt: libc::c_uint = 0;
@@ -554,10 +554,10 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
       if strcmp(
         skip_non_whitespace(count),
         b" total events\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         n = cnt.wrapping_div((*ptr_to_globals).total_cpus) as libc::c_int;
-        if n > 0i32 && n < (*ptr_to_globals).interrupt_0 {
+        if n > 0 && n < (*ptr_to_globals).interrupt_0 {
           sprintf(
             line.as_mut_ptr(),
             b"    <interrupt> : %s\x00" as *const u8 as *const libc::c_char,
@@ -571,7 +571,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
           continue;
         }
         p = skip_whitespace(p);
-        process = 0 as *const libc::c_char;
+        process = std::ptr::null();
         loop {
           p = strchr(p, ' ' as i32);
           if p.is_null() {
@@ -646,12 +646,12 @@ unsafe extern "C" fn show_timerstats() {
   lines = lines.wrapping_sub(12i32 as libc::c_uint);
   if (*ptr_to_globals).cant_enable_timer_stats == 0 {
     let mut i: libc::c_int = 0;
-    let mut n: libc::c_int = 0i32;
+    let mut n: libc::c_int = 0;
     let mut strbuf6: [libc::c_char; 6] = [0; 6];
     puts(b"\nTop causes for wakeups:\x00" as *const u8 as *const libc::c_char);
-    i = 0i32;
+    i = 0;
     while i < (*ptr_to_globals).lines_cnt {
-      if (*(*ptr_to_globals).lines.offset(i as isize)).count > 0i32 && {
+      if (*(*ptr_to_globals).lines.offset(i as isize)).count > 0 && {
         let fresh5 = n;
         n = n + 1;
         (fresh5 as libc::c_uint) < lines
@@ -720,14 +720,14 @@ pub unsafe extern "C" fn powertop_main(
     events: 0,
     revents: 0,
   }; 1];
-  pfd[0].fd = 0i32;
+  pfd[0].fd = 0;
   pfd[0].events = 0x1i32 as libc::c_short;
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh6 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* Print warning when we don't have superuser privileges */
-  if geteuid() != 0i32 as libc::c_uint {
+  if geteuid() != 0 as libc::c_uint {
     bb_simple_error_msg(
       b"run as root to collect enough information\x00" as *const u8 as *const libc::c_char,
     );
@@ -736,7 +736,7 @@ pub unsafe extern "C" fn powertop_main(
   (*ptr_to_globals).total_cpus = get_cpu_count();
   puts(b"Collecting data for 10 seconds\x00" as *const u8 as *const libc::c_char);
   /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
-  set_termios_to_raw(0i32, &mut (*ptr_to_globals).init_settings, 1i32 << 0i32);
+  set_termios_to_raw(0i32, &mut (*ptr_to_globals).init_settings, 1i32 << 0);
   bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
@@ -782,10 +782,10 @@ pub unsafe extern "C" fn powertop_main(
         b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char,
         b"1\n\x00" as *const u8 as *const libc::c_char,
       )) as smallint; /* 1 on error */
-    if safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0i32 {
+    if safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0 {
       let mut c: libc::c_uchar = 0;
       if safe_read(
-        0i32,
+        0,
         &mut c as *mut libc::c_uchar as *mut libc::c_void,
         1i32 as size_t,
       ) != 1
@@ -810,22 +810,22 @@ pub unsafe extern "C" fn powertop_main(
     /* Clear the stats */
     memset(
       cur_duration.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[ullong; 8]>() as libc::c_ulong,
     );
     memset(
       cur_usage.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[ullong; 8]>() as libc::c_ulong,
     );
     /* Read them */
     read_cstate_counts(cur_usage.as_mut_ptr(), cur_duration.as_mut_ptr());
     /* Count totalticks and totalevents */
-    totalevents = 0i32 as ullong;
+    totalevents = 0 as ullong;
     totalticks = totalevents;
-    i = 0i32;
+    i = 0;
     while i < 8i32 {
-      if cur_usage[i as usize] != 0i32 as libc::c_ulonglong {
+      if cur_usage[i as usize] != 0 as libc::c_ulonglong {
         totalticks = (totalticks as libc::c_ulonglong).wrapping_add(
           cur_duration[i as usize].wrapping_sub((*ptr_to_globals).last_duration[i as usize]),
         ) as ullong as ullong;
@@ -840,10 +840,10 @@ pub unsafe extern "C" fn powertop_main(
     /* Clear C-state lines */
     memset(
       &mut cstate_lines as *mut [[libc::c_char; 64]; 10] as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[[libc::c_char; 64]; 10]>() as libc::c_ulong,
     );
-    if totalevents == 0i32 as libc::c_ulonglong && (*ptr_to_globals).maxcstate <= 1i32 {
+    if totalevents == 0 as libc::c_ulonglong && (*ptr_to_globals).maxcstate <= 1i32 {
       /* This should not happen */
       strcpy(
         cstate_lines[0].as_mut_ptr(),
@@ -858,8 +858,8 @@ pub unsafe extern "C" fn powertop_main(
         .wrapping_mul(3579545i32 as libc::c_uint) as libc::c_ulonglong)
         .wrapping_sub(totalticks) as libc::c_uint;
       /* Handle rounding errors: do not display negative values */
-      if (newticks as libc::c_int) < 0i32 {
-        newticks = 0i32 as libc::c_uint
+      if (newticks as libc::c_int) < 0 {
+        newticks = 0 as libc::c_uint
       }
       sprintf(
         cstate_lines[0].as_mut_ptr(),
@@ -876,9 +876,9 @@ pub unsafe extern "C" fn powertop_main(
         percentage,
       );
       /* Compute values for individual C-states */
-      i = 0i32;
+      i = 0;
       while i < 8i32 {
-        if cur_usage[i as usize] != 0i32 as libc::c_ulonglong {
+        if cur_usage[i as usize] != 0 as libc::c_ulonglong {
           let mut slept: libc::c_double = 0.;
           slept = cur_duration[i as usize].wrapping_sub((*ptr_to_globals).last_duration[i as usize])
             as libc::c_double
@@ -908,7 +908,7 @@ pub unsafe extern "C" fn powertop_main(
         i += 1
       }
     }
-    i = 0i32;
+    i = 0;
     while i < 8i32 + 2i32 {
       if cstate_lines[i as usize][0] != 0 {
         fputs_unlocked(cstate_lines[i as usize].as_mut_ptr(), stdout);
@@ -916,13 +916,13 @@ pub unsafe extern "C" fn powertop_main(
       i += 1
     }
     i = process_timer_stats();
-    if totalevents == 0i32 as libc::c_ulonglong {
+    if totalevents == 0 as libc::c_ulonglong {
       /* No C-state info available, use timerstats */
       totalevents = (i as libc::c_uint)
         .wrapping_mul((*ptr_to_globals).total_cpus)
         .wrapping_add((*ptr_to_globals).total_interrupt as libc::c_uint)
         as ullong;
-      if i < 0i32 {
+      if i < 0 {
         totalevents = (totalevents as libc::c_ulonglong)
           .wrapping_add(((*ptr_to_globals).interrupt_0 - i) as libc::c_ulonglong)
           as ullong as ullong
@@ -944,12 +944,12 @@ pub unsafe extern "C" fn powertop_main(
     /* Clear the stats */
     memset(
       cur_duration.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[ullong; 8]>() as libc::c_ulong,
     );
     memset(
       cur_usage.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[ullong; 8]>() as libc::c_ulong,
     );
     /* Get new values */
@@ -968,5 +968,5 @@ pub unsafe extern "C" fn powertop_main(
   }
   bb_putchar('\n' as i32);
   reset_term();
-  return 0i32;
+  return 0;
 }

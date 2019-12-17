@@ -122,12 +122,12 @@ unsafe extern "C" fn fileAction(
   mut _userData: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
   let mut busnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut devnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut product_vid: libc::c_int = 0i32;
-  let mut product_did: libc::c_int = 0i32;
+  let mut product_vid: libc::c_int = 0;
+  let mut product_did: libc::c_int = 0;
   let mut uevent_filename: *mut libc::c_char =
     concat_path_file(fileName, b"/uevent\x00" as *const u8 as *const libc::c_char);
   parser = config_open2(
@@ -146,21 +146,21 @@ unsafe extern "C" fn fileAction(
       && strcmp(
         tokens[0],
         b"DEVTYPE\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
     {
       break;
     }
     if strcmp(
       tokens[0],
       b"PRODUCT\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       product_vid = xstrtou(tokens[1], 16i32) as libc::c_int;
       product_did = xstrtou(tokens[2], 16i32) as libc::c_int
-    } else if strcmp(tokens[0], b"BUSNUM\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    } else if strcmp(tokens[0], b"BUSNUM\x00" as *const u8 as *const libc::c_char) == 0 {
       busnum = xstrdup(tokens[1])
     } else {
-      if !(strcmp(tokens[0], b"DEVNUM\x00" as *const u8 as *const libc::c_char) == 0i32) {
+      if !(strcmp(tokens[0], b"DEVNUM\x00" as *const u8 as *const libc::c_char) == 0) {
         continue;
       }
       devnum = xstrdup(tokens[1])
@@ -201,7 +201,7 @@ pub unsafe extern "C" fn lsusb_main(
     ),
     None,
     0 as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
-  return 0i32;
+  return 0;
 }

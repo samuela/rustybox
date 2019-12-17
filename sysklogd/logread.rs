@@ -81,7 +81,7 @@ pub const KEY_ID: C2RustUnnamed_0 = 1095648583;
 static mut init_sem: [sembuf; 3] = [
   {
     let mut init = sembuf {
-      sem_num: 0i32 as libc::c_ushort,
+      sem_num: 0 as libc::c_ushort,
       sem_op: -1i32 as libc::c_short,
       sem_flg: (0o4000i32 | 0x1000i32) as libc::c_short,
     };
@@ -90,14 +90,14 @@ static mut init_sem: [sembuf; 3] = [
   {
     let mut init = sembuf {
       sem_num: 1i32 as libc::c_ushort,
-      sem_op: 0i32 as libc::c_short,
+      sem_op: 0 as libc::c_short,
       sem_flg: 0,
     };
     init
   },
   {
     let mut init = sembuf {
-      sem_num: 0i32 as libc::c_ushort,
+      sem_num: 0 as libc::c_ushort,
       sem_op: 1i32 as libc::c_short,
       sem_flg: 0x1000i32 as libc::c_short,
     };
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn logread_main(
     init_sem.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[sembuf; 3]>() as libc::c_ulong,
   );
-  log_shmid = shmget(KEY_ID as libc::c_int, 0i32 as size_t, 0i32);
+  log_shmid = shmget(KEY_ID as libc::c_int, 0 as size_t, 0);
   if log_shmid == -1i32 {
     bb_perror_msg_and_die(
       b"can\'t %s syslogd buffer\x00" as *const u8 as *const libc::c_char,
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn logread_main(
       b"access\x00" as *const u8 as *const libc::c_char,
     );
   }
-  log_semid = semget(KEY_ID as libc::c_int, 0i32, 0i32);
+  log_semid = semget(KEY_ID as libc::c_int, 0, 0);
   if log_semid == -1i32 {
     bb_simple_perror_msg_and_die(
       b"can\'t get access to semaphores for syslogd buffer\x00" as *const u8 as *const libc::c_char,
@@ -179,7 +179,7 @@ pub unsafe extern "C" fn logread_main(
   {
     let mut shbuf_size: libc::c_uint = 0; /* for gcc */
     let mut shbuf_tail: libc::c_uint = 0; /* for gcc */
-    let mut shbuf_data: *const libc::c_char = 0 as *const libc::c_char;
+    let mut shbuf_data: *const libc::c_char = std::ptr::null();
     let mut i: libc::c_int = 0;
     let mut len_first_part: libc::c_int = 0;
     let mut len_total: libc::c_int = 0;
@@ -231,7 +231,7 @@ pub unsafe extern "C" fn logread_main(
           cur = cur.wrapping_add(1);
           if cur >= shbuf_size {
             /* last byte in buffer? */
-            cur = 0i32 as libc::c_uint
+            cur = 0 as libc::c_uint
           } /* TODO: replace me with a sleep_on */
           current_block_49 = 6450597802325118133;
         }
@@ -249,7 +249,7 @@ pub unsafe extern "C" fn logread_main(
         /* Read from cur to tail */
         len_total = shbuf_tail.wrapping_sub(cur) as libc::c_int;
         len_first_part = len_total;
-        if len_total < 0i32 {
+        if len_total < 0 {
           /* message wraps: */
           /* [SECOND PART.........FIRST PART] */
           /*  ^data      ^tail    ^cur      ^size */
@@ -257,7 +257,7 @@ pub unsafe extern "C" fn logread_main(
             (len_total as libc::c_uint).wrapping_add(shbuf_size) as libc::c_int as libc::c_int
         }
         copy = xmalloc((len_total + 1i32) as size_t) as *mut libc::c_char;
-        if len_first_part < 0i32 {
+        if len_first_part < 0 {
           /* message wraps (see above) */
           len_first_part = shbuf_size.wrapping_sub(cur) as libc::c_int;
           memcpy(
@@ -281,7 +281,7 @@ pub unsafe extern "C" fn logread_main(
       15956509640765329438 => {
         /* release the lock on the log chain */
         sem_up(log_semid);
-        i = 0i32;
+        i = 0;
         while i < len_total {
           fputs_unlocked(copy.offset(i as isize), stdout);
           i = (i as libc::c_ulong)

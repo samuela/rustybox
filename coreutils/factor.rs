@@ -126,7 +126,7 @@ unsafe extern "C" fn factorize(mut N: wide_t) {
       /* The division is the most costly part of the loop.
        * On 64bit CPUs, takes at best 12 cycles, often ~20.
        */
-      while N.wrapping_rem(factor as libc::c_ulonglong) == 0i32 as libc::c_ulonglong {
+      while N.wrapping_rem(factor as libc::c_ulonglong) == 0 as libc::c_ulonglong {
         /* not likely */
         N = N.wrapping_div(factor as libc::c_ulonglong);
         printf(b" %u\x00" as *const u8 as *const libc::c_char, factor);
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn factor_main(
       let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       line = xmalloc_fgetline(stdin);
       if line.is_null() {
-        return 0i32;
+        return 0;
       }
       numstr = line;
       loop {
@@ -241,5 +241,5 @@ pub unsafe extern "C" fn factor_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

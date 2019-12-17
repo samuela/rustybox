@@ -133,7 +133,7 @@ unsafe extern "C" fn fail(mut m1: *const libc::c_char) {
   out(b"fail: \x00" as *const u8 as *const libc::c_char, m1);
 }
 unsafe extern "C" fn failx(mut m1: *const libc::c_char) {
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   fail(m1);
 }
 unsafe extern "C" fn warn(mut m1: *const libc::c_char) {
@@ -143,7 +143,7 @@ unsafe extern "C" fn warn(mut m1: *const libc::c_char) {
   out(b"warning: \x00" as *const u8 as *const libc::c_char, m1);
 }
 unsafe extern "C" fn ok(mut m1: *const libc::c_char) {
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   out(b"ok: \x00" as *const u8 as *const libc::c_char, m1);
 }
 unsafe extern "C" fn svstatus_get() -> libc::c_int {
@@ -160,7 +160,7 @@ unsafe extern "C" fn svstatus_get() -> libc::c_int {
       } else {
         failx(b"runsv not running\x00" as *const u8 as *const libc::c_char);
       };
-      return 0i32;
+      return 0;
     }
     warn(b"can\'t open supervise/ok\x00" as *const u8 as *const libc::c_char);
     return -1i32;
@@ -168,7 +168,7 @@ unsafe extern "C" fn svstatus_get() -> libc::c_int {
   close(fd);
   fd = open(
     b"supervise/status\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
+    0 | 0o4000i32,
   );
   if fd == -1i32 {
     warn(b"can\'t open supervise/status\x00" as *const u8 as *const libc::c_char);
@@ -188,7 +188,7 @@ unsafe extern "C" fn svstatus_get() -> libc::c_int {
       return -1i32;
     }
     _ => {
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       warn(b"can\'t read supervise/status: bad format\x00" as *const u8 as *const libc::c_char);
       return -1i32;
     }
@@ -198,7 +198,7 @@ unsafe extern "C" fn svstatus_get() -> libc::c_int {
 unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint {
   let mut diff: libc::c_int = 0;
   let mut pid: libc::c_int = 0;
-  let mut normallyup: libc::c_int = 0i32;
+  let mut normallyup: libc::c_int = 0;
   let mut s: stat = std::mem::zeroed();
   let mut timestamp: u64 = 0;
   if stat(b"down\x00" as *const u8 as *const libc::c_char, &mut s) == -1i32 {
@@ -207,7 +207,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
         b"warning: can\'t stat %s/down\x00" as *const u8 as *const libc::c_char,
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
       );
-      return 0i32 as libc::c_uint;
+      return 0 as libc::c_uint;
     }
     normallyup = 1i32
   }
@@ -266,7 +266,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
     .wrapping_sub(timestamp) as libc::c_int;
   printf(
     b"%us\x00" as *const u8 as *const libc::c_char,
-    if diff < 0i32 { 0i32 } else { diff },
+    if diff < 0 { 0 } else { diff },
   );
   if pid != 0 {
     if normallyup == 0 {
@@ -309,8 +309,8 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
 }
 unsafe extern "C" fn status(mut _unused: *const libc::c_char) -> libc::c_int {
   let mut r: libc::c_int = 0;
-  if svstatus_get() <= 0i32 {
-    return 0i32;
+  if svstatus_get() <= 0 {
+    return 0;
   }
   r = svstatus_print(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service) as libc::c_int;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).islog = 1i32 as smallint;
@@ -328,7 +328,7 @@ unsafe extern "C" fn status(mut _unused: *const libc::c_char) -> libc::c_int {
       bb_putchar('\n' as i32);
     }
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).islog = 0i32 as smallint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).islog = 0 as smallint;
   return r;
 }
 unsafe extern "C" fn checkscript() -> libc::c_int {
@@ -344,29 +344,29 @@ unsafe extern "C" fn checkscript() -> libc::c_int {
       b"warning: can\'t stat %s/check\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
     );
-    return 0i32;
+    return 0;
   }
   /* if (!(s.st_mode & S_IXUSR)) return 1; */
   prog[0] = b"./check\x00" as *const u8 as *const libc::c_char as *mut libc::c_char; /* will also flush the output */
   prog[1] = std::ptr::null_mut::<libc::c_char>();
   pid = spawn(prog.as_mut_ptr());
-  if pid <= 0i32 {
+  if pid <= 0 {
     bb_perror_msg(
       b"warning: can\'t %s child %s/check\x00" as *const u8 as *const libc::c_char,
       b"run\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
     );
-    return 0i32;
+    return 0;
   }
-  if safe_waitpid(pid, &mut w, 0i32) == -1i32 {
+  if safe_waitpid(pid, &mut w, 0) == -1i32 {
     bb_perror_msg(
       b"warning: can\'t %s child %s/check\x00" as *const u8 as *const libc::c_char,
       b"wait for\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
     );
-    return 0i32;
+    return 0;
   }
-  return ((w & 0xff00i32) >> 8i32 == 0i32) as libc::c_int;
+  return ((w & 0xff00i32) >> 8i32 == 0) as libc::c_int;
 }
 unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
   let mut r: libc::c_int = 0;
@@ -377,7 +377,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
     return -1i32;
   }
   while *a != 0 {
-    if r == 0i32 {
+    if r == 0 {
       if *a as libc::c_int == 'x' as i32 {
         return 1i32;
       }
@@ -387,7 +387,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
       .svstatus
       .pid_le32;
     match *a as libc::c_int {
-      120 => return 0i32,
+      120 => return 0,
       117 => {
         if pid_le32 == 0
           || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -395,10 +395,10 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             .run_or_finish as libc::c_int
             != 1i32
         {
-          return 0i32;
+          return 0;
         }
         if checkscript() == 0 {
-          return 0i32;
+          return 0;
         }
       }
       100 => {
@@ -406,14 +406,14 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
           || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .svstatus
             .run_or_finish as libc::c_int
-            != 0i32
+            != 0
         {
-          return 0i32;
+          return 0;
         }
       }
       67 => {
         if pid_le32 != 0 && checkscript() == 0 {
-          return 0i32;
+          return 0;
         }
       }
       116 | 107 => {
@@ -456,7 +456,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
               != 0
             || checkscript() == 0
           {
-            return 0i32;
+            return 0;
           }
         }
       }
@@ -493,7 +493,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
               .want as libc::c_int
               != 'd' as i32
         {
-          return 0i32;
+          return 0;
         }
       }
       112 => {
@@ -503,7 +503,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             .paused
             == 0
         {
-          return 0i32;
+          return 0;
         }
       }
       99 => {
@@ -513,7 +513,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             .paused as libc::c_int
             != 0
         {
-          return 0i32;
+          return 0;
         }
       }
       _ => {}
@@ -529,7 +529,7 @@ unsafe extern "C" fn control(mut a: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   let mut l: libc::c_int = 0;
-  if svstatus_get() <= 0i32 {
+  if svstatus_get() <= 0 {
     return -1i32;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -542,7 +542,7 @@ unsafe extern "C" fn control(mut a: *const libc::c_char) -> libc::c_int {
         .got_term as libc::c_int
         == 1i32)
   {
-    return 0i32;
+    return 0;
   }
   fd = open(
     b"supervise/control\x00" as *const u8 as *const libc::c_char,
@@ -590,14 +590,14 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut action: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut varservice: *const libc::c_char = b"/var/service\x00" as *const u8 as *const libc::c_char;
   let mut waitsec: libc::c_uint = 7i32 as libc::c_uint;
-  let mut kll: smallint = 0i32 as smallint;
-  let mut verbose: libc::c_int = 0i32;
+  let mut kll: smallint = 0 as smallint;
+  let mut verbose: libc::c_int = 0;
   let mut act: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_int> = None;
   let mut cbk: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_int> = None;
   let mut curdir: libc::c_int = 0;
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut globals as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
   xfunc_error_retval = 100i32 as u8;
@@ -626,10 +626,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tstart =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow;
-  curdir = open(
-    b".\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
-  );
+  curdir = open(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
   if curdir == -1i32 {
     fatal_cannot(b"open current directory\x00" as *const u8 as *const libc::c_char);
   }
@@ -669,7 +666,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       if strcmp(
         action,
         b"try-restart\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh17 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh17 = b"tc\x00" as *const u8 as *const libc::c_char;
@@ -685,13 +682,13 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       current_block_56 = 14309576813620330651;
     }
     115 => {
-      if strcmp(action, b"shutdown\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(action, b"shutdown\x00" as *const u8 as *const libc::c_char) == 0 {
         let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh20 = b"x\x00" as *const u8 as *const libc::c_char
-      } else if strcmp(action, b"start\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(action, b"start\x00" as *const u8 as *const libc::c_char) == 0 {
         let ref mut fresh21 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh21 = b"u\x00" as *const u8 as *const libc::c_char
-      } else if strcmp(action, b"stop\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(action, b"stop\x00" as *const u8 as *const libc::c_char) == 0 {
         let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh22 = b"d\x00" as *const u8 as *const libc::c_char
       } else {
@@ -702,10 +699,10 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       current_block_56 = 14294131666767243020;
     }
     114 => {
-      if strcmp(action, b"restart\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(action, b"restart\x00" as *const u8 as *const libc::c_char) == 0 {
         let ref mut fresh23 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh23 = b"tcu\x00" as *const u8 as *const libc::c_char
-      } else if strcmp(action, b"reload\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(action, b"reload\x00" as *const u8 as *const libc::c_char) == 0 {
         let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh24 = b"h\x00" as *const u8 as *const libc::c_char
       } else {
@@ -717,7 +714,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       if strcmp(
         action,
         b"force-reload\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh25 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh25 = b"tc\x00" as *const u8 as *const libc::c_char;
@@ -726,7 +723,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       } else if strcmp(
         action,
         b"force-restart\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh26 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh26 = b"tcu\x00" as *const u8 as *const libc::c_char;
@@ -735,7 +732,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       } else if strcmp(
         action,
         b"force-shutdown\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh27 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh27 = b"x\x00" as *const u8 as *const libc::c_char;
@@ -744,7 +741,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       } else if strcmp(
         action,
         b"force-stop\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh28 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh28 = b"d\x00" as *const u8 as *const libc::c_char;
@@ -760,7 +757,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   }
   match current_block_56 {
     9005509770874399122 => {
-      if strcmp(action, b"check\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(action, b"check\x00" as *const u8 as *const libc::c_char) == 0 {
         act = None;
         let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh18 = b"C\x00" as *const u8 as *const libc::c_char;
@@ -875,18 +872,18 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
                 current_block = 18133677720280896402;
               } else if cbk.expect("non-null function pointer")(
                 (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts,
-              ) != 0i32
+              ) != 0
               {
                 current_block = 17181890625510875756;
               } else {
-                want_exit = 0i32;
+                want_exit = 0;
                 if diff as libc::c_uint >= waitsec {
                   printf(if kll as libc::c_int != 0 {
                     b"kill: \x00" as *const u8 as *const libc::c_char
                   } else {
                     b"timeout: \x00" as *const u8 as *const libc::c_char
                   });
-                  if svstatus_get() > 0i32 {
+                  if svstatus_get() > 0 {
                     svstatus_print(x);
                     let ref mut fresh33 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rc;
                     *fresh33 = (*fresh33).wrapping_add(1)
@@ -963,7 +960,7 @@ pub unsafe extern "C" fn svc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut command: [libc::c_char; 2] = [0; 2];
-  let mut optstring: *const libc::c_char = 0 as *const libc::c_char;
+  let mut optstring: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;
   optstring = b"udopchaitkx\x00" as *const u8 as *const libc::c_char;
   opts = getopt32(argv, optstring);
@@ -989,7 +986,7 @@ pub unsafe extern "C" fn svc_main(
       /* getopt() was already called by getopt32():
        * reset the libc getopt() function's internal state.
        */
-      optind = 0i32;
+      optind = 0;
       r = sv(argv);
       if r != 0 {
         return 1i32;
@@ -1001,7 +998,7 @@ pub unsafe extern "C" fn svc_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }
 //usage:#define svok_trivial_usage
 //usage:       "SERVICE_DIR"
@@ -1033,7 +1030,7 @@ pub unsafe extern "C" fn svok_main(
   if open(
     b"supervise/ok\x00" as *const u8 as *const libc::c_char,
     0o1i32,
-  ) < 0i32
+  ) < 0
   {
     if *bb_errno == 2i32 || *bb_errno == 6i32 {
       return 100i32;
@@ -1043,5 +1040,5 @@ pub unsafe extern "C" fn svok_main(
       b"supervise/ok\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }

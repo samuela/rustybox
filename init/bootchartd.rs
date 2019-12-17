@@ -242,8 +242,8 @@ pub const CMD_STOP: C2RustUnnamed_2 = 0;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const CMD_INIT: C2RustUnnamed_2 = 2;
 unsafe extern "C" fn dump_file(mut fp: *mut FILE, mut filename: *const libc::c_char) {
-  let mut fd: libc::c_int = open(filename, 0i32);
-  if fd >= 0i32 {
+  let mut fd: libc::c_int = open(filename, 0);
+  if fd >= 0 {
     fputs_unlocked(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .jiffy_line
@@ -260,9 +260,9 @@ unsafe extern "C" fn dump_procs(
   mut fp: *mut FILE,
   mut look_for_login_process: libc::c_int,
 ) -> libc::c_int {
-  let mut entry: *mut dirent = 0 as *mut dirent;
+  let mut entry: *mut dirent = std::ptr::null_mut();
   let mut dir: *mut DIR = opendir(b"/proc\x00" as *const u8 as *const libc::c_char);
-  let mut found_login_process: libc::c_int = 0i32;
+  let mut found_login_process: libc::c_int = 0;
   fputs_unlocked(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .jiffy_line
@@ -292,8 +292,8 @@ unsafe extern "C" fn dump_procs(
       b"/proc/%u/stat\x00" as *const u8 as *const libc::c_char,
       pid,
     );
-    stat_fd = open(name.as_mut_ptr(), 0i32);
-    if !(stat_fd >= 0i32) {
+    stat_fd = open(name.as_mut_ptr(), 0);
+    if !(stat_fd >= 0) {
       continue;
     }
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -305,7 +305,7 @@ unsafe extern "C" fn dump_procs(
         .wrapping_sub(2i32 as libc::c_ulong),
     ) as libc::c_int;
     close(stat_fd);
-    if rd < 0i32 {
+    if rd < 0 {
       continue;
     }
     stat_line[rd as usize] = '\u{0}' as i32 as libc::c_char;
@@ -361,7 +361,7 @@ unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
       b"tmpfs\x00" as *const u8 as *const libc::c_char,
       MS_SILENT as libc::c_int as libc::c_ulong,
       b"size=16m\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-    ) != 0i32
+    ) != 0
     {
       try_dir = try_dir.offset(strlen(try_dir).wrapping_add(1i32 as libc::c_ulong) as isize);
       if *try_dir.offset(0) == 0 {
@@ -373,7 +373,7 @@ unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
     }
     //bb_error_msg("mounted tmpfs on %s", try_dir);
     xchdir(try_dir);
-    if umount2(try_dir, MNT_DETACH as libc::c_int) != 0i32 {
+    if umount2(try_dir, MNT_DETACH as libc::c_int) != 0 {
       bb_perror_msg_and_die(
         b"can\'t %smount tmpfs\x00" as *const u8 as *const libc::c_char,
         b"un\x00" as *const u8 as *const libc::c_char,
@@ -425,7 +425,7 @@ unsafe extern "C" fn do_logging(
       (::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong)
         .wrapping_sub(2i32 as libc::c_ulong),
     ) as libc::c_int;
-    if !(len < 0i32) {
+    if !(len < 0) {
       /* /proc/uptime has format "NNNNNN.MM NNNNNNN.MM" */
       /* we convert it to "NNNNNNMM\n" (using first value) */
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).jiffy_line[len as usize] =
@@ -596,19 +596,19 @@ pub unsafe extern "C" fn bootchartd_main(
       b"stop\x00start\x00init\x00\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
     ) as smallint;
-    if (cmd as libc::c_int) < 0i32 {
+    if (cmd as libc::c_int) < 0 {
       bb_show_usage();
     }
     if cmd as libc::c_int == CMD_STOP as libc::c_int {
       let mut pidList: *mut pid_t =
         find_pid_by_name(b"bootchartd\x00" as *const u8 as *const libc::c_char);
-      while *pidList != 0i32 {
+      while *pidList != 0 {
         if *pidList != parent_pid {
           kill(*pidList, 10i32);
         }
         pidList = pidList.offset(1)
       }
-      return 0i32;
+      return 0;
     }
   } else {
     if parent_pid != 1i32 {
@@ -619,7 +619,7 @@ pub unsafe extern "C" fn bootchartd_main(
   /* Here we are in START, INIT or CMD_PID1 state */
   /* Read config file: */
   sample_period_us = (200i32 * 1000i32) as libc::c_uint;
-  process_accounting = 0i32;
+  process_accounting = 0;
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut parser: *mut parser_t = config_open2(
     (b"/etc/bootchartd.conf\x00" as *const u8 as *const libc::c_char).offset(5),
@@ -643,7 +643,7 @@ pub unsafe extern "C" fn bootchartd_main(
     if strcmp(
       token[0],
       b"SAMPLE_PERIOD\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
       && !token[1].is_null()
     {
       sample_period_us = (atof(token[1]) * 1000000i32 as libc::c_double) as libc::c_uint
@@ -651,27 +651,26 @@ pub unsafe extern "C" fn bootchartd_main(
     if strcmp(
       token[0],
       b"PROCESS_ACCOUNTING\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
       && !token[1].is_null()
-      && (strcmp(token[1], b"on\x00" as *const u8 as *const libc::c_char) == 0i32
-        || strcmp(token[1], b"yes\x00" as *const u8 as *const libc::c_char) == 0i32)
+      && (strcmp(token[1], b"on\x00" as *const u8 as *const libc::c_char) == 0
+        || strcmp(token[1], b"yes\x00" as *const u8 as *const libc::c_char) == 0)
     {
       process_accounting = 1i32
     }
   }
   config_close(parser);
-  if sample_period_us as libc::c_int <= 0i32 {
+  if sample_period_us as libc::c_int <= 0 {
     sample_period_us = 1i32 as libc::c_uint
   }
   /* prevent division by 0 */
   /* Create logger child: */
   logger_pid = xfork();
-  if logger_pid == 0i32 {
+  if logger_pid == 0 {
     /* child */
     let mut tempdir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     bb_signals(
-      0i32
-        + (1i32 << 10i32)
+      0 + (1i32 << 10i32)
         + (1i32 << 12i32)
         + (1i32 << 15i32)
         + (1i32 << 3i32)
@@ -700,7 +699,7 @@ pub unsafe extern "C" fn bootchartd_main(
       },
       process_accounting,
     );
-    return 0i32;
+    return 0;
   }
   /* parent */
   /* undo fork_or_rexec() damage */
@@ -735,19 +734,19 @@ pub unsafe extern "C" fn bootchartd_main(
     /* "start PROG ARGS" */
     let mut pid: pid_t = {
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
       }
       bb__xvfork_pid
     };
-    if pid == 0i32 {
+    if pid == 0 {
       /* child */
       argv = argv.offset(2);
       BB_EXECVP_or_die(argv);
     }
     /* parent */
-    waitpid(pid, 0 as *mut libc::c_int, 0i32);
+    waitpid(pid, 0 as *mut libc::c_int, 0);
     kill(logger_pid, 10i32);
   }
-  return 0i32;
+  return 0;
 }

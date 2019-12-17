@@ -188,10 +188,10 @@ pub unsafe extern "C" fn xrtnl_open(mut rth: *mut rtnl_handle)
 {
   memset(
     rth as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<rtnl_handle>() as libc::c_ulong,
   );
-  (*rth).fd = xsocket(16i32, SOCK_RAW as libc::c_int, 0i32);
+  (*rth).fd = xsocket(16i32, SOCK_RAW as libc::c_int, 0);
   (*rth).local.nl_family = 16i32 as __kernel_sa_family_t;
   /*rth->local.nl_groups = subscriptions;*/
   xbind(
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn xrtnl_wilddump_request(
   req.nlh.nlmsg_len = ::std::mem::size_of::<C2RustUnnamed_0>() as libc::c_ulong as u32;
   req.nlh.nlmsg_type = type_0 as __u16;
   req.nlh.nlmsg_flags = (0x100i32 | 0x200i32 | 0x1i32) as __u16;
-  req.nlh.nlmsg_pid = 0i32 as u32;
+  req.nlh.nlmsg_pid = 0 as u32;
   (*rth).seq = (*rth).seq.wrapping_add(1);
   (*rth).dump = (*rth).seq;
   req.nlh.nlmsg_seq = (*rth).dump;
@@ -253,11 +253,11 @@ pub unsafe extern "C" fn rtnl_send_check(
   mut buf: *const libc::c_void,
   mut len: libc::c_int,
 ) -> libc::c_int {
-  let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+  let mut h: *mut nlmsghdr = std::ptr::null_mut();
   let mut status: libc::c_int = 0;
   let mut resp: [libc::c_char; 1024] = [0; 1024];
   status = write((*rth).fd, buf, len as size_t) as libc::c_int;
-  if status < 0i32 {
+  if status < 0 {
     return status;
   }
   /* Check for immediate errors */
@@ -267,10 +267,10 @@ pub unsafe extern "C" fn rtnl_send_check(
     ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
     MSG_DONTWAIT as libc::c_int | MSG_PEEK as libc::c_int,
   ) as libc::c_int;
-  if status < 0i32 {
+  if status < 0 {
     if *bb_errno == 11i32 {
       /* if no error, this happens */
-      return 0i32;
+      return 0;
     }
     return -1i32;
   }
@@ -318,7 +318,7 @@ pub unsafe extern "C" fn rtnl_send_check(
         & !4u32.wrapping_sub(1i32 as libc::c_uint)) as isize,
     ) as *mut nlmsghdr
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn rtnl_dump_request(
@@ -369,7 +369,7 @@ pub unsafe extern "C" fn rtnl_dump_request(
   ];
   memset(
     &mut s as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   s.msg.msg_name = &mut s.nladdr as *mut sockaddr_nl as *mut libc::c_void;
@@ -392,7 +392,7 @@ pub unsafe extern "C" fn rtnl_dump_request(
   (*rth).seq = (*rth).seq.wrapping_add(1);
   (*rth).dump = (*rth).seq;
   s.nlh.nlmsg_seq = (*rth).dump;
-  return sendmsg((*rth).fd, &mut s.msg, 0i32) as libc::c_int;
+  return sendmsg((*rth).fd, &mut s.msg, 0) as libc::c_int;
 }
 unsafe extern "C" fn rtnl_dump_filter(
   mut rth: *mut rtnl_handle,
@@ -426,7 +426,7 @@ unsafe extern "C" fn rtnl_dump_filter(
   };
   's_17: loop {
     let mut status: libc::c_int = 0;
-    let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut h: *mut nlmsghdr = std::ptr::null_mut();
     /* Use designated initializers, struct layout is non-portable */
     let mut msg: msghdr = {
       let mut init = msghdr {
@@ -435,18 +435,18 @@ unsafe extern "C" fn rtnl_dump_filter(
         msg_iov: &mut iov,
         msg_iovlen: 1i32 as size_t,
         msg_control: 0 as *mut libc::c_void,
-        msg_controllen: 0i32 as size_t,
-        msg_flags: 0i32,
+        msg_controllen: 0 as size_t,
+        msg_flags: 0,
       };
       init
     };
-    status = recvmsg((*rth).fd, &mut msg, 0i32) as libc::c_int;
-    if status < 0i32 {
+    status = recvmsg((*rth).fd, &mut msg, 0) as libc::c_int;
+    if status < 0 {
       if *bb_errno == 4i32 {
         continue;
       }
       bb_simple_perror_msg(b"OVERRUN\x00" as *const u8 as *const libc::c_char);
-    } else if status == 0i32 {
+    } else if status == 0 {
       bb_simple_error_msg(b"EOF on netlink\x00" as *const u8 as *const libc::c_char);
       current_block = 2982084649171948612;
       break;
@@ -463,7 +463,7 @@ unsafe extern "C" fn rtnl_dump_filter(
         && (*h).nlmsg_len <= status as libc::c_uint
       {
         let mut err: libc::c_int = 0;
-        if !(nladdr.nl_pid != 0i32 as libc::c_uint
+        if !(nladdr.nl_pid != 0 as libc::c_uint
           || (*h).nlmsg_pid != (*rth).local.nl_pid
           || (*h).nlmsg_seq != (*rth).dump)
         {
@@ -498,7 +498,7 @@ unsafe extern "C" fn rtnl_dump_filter(
             break 's_17;
           } else {
             err = filter.expect("non-null function pointer")(&mut nladdr, h, arg1);
-            if err < 0i32 {
+            if err < 0 {
               retval = err;
               current_block = 2982084649171948612;
               break 's_17;
@@ -557,7 +557,7 @@ pub unsafe extern "C" fn xrtnl_dump_filter(
   mut arg1: *mut libc::c_void,
 ) -> libc::c_int {
   let mut ret: libc::c_int = rtnl_dump_filter(rth, filter, arg1);
-  if ret < 0i32 {
+  if ret < 0 {
     bb_simple_error_msg_and_die(b"dump terminated\x00" as *const u8 as *const libc::c_char);
   }
   return ret;
@@ -573,7 +573,7 @@ pub unsafe extern "C" fn rtnl_talk(
   let mut retval: libc::c_int = -1i32; /* avoid big stack buffer */
   let mut status: libc::c_int = 0;
   let mut seq: libc::c_uint = 0;
-  let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+  let mut h: *mut nlmsghdr = std::ptr::null_mut();
   let mut nladdr: sockaddr_nl = sockaddr_nl {
     nl_family: 0,
     nl_pad: 0,
@@ -596,14 +596,14 @@ pub unsafe extern "C" fn rtnl_talk(
       msg_iov: &mut iov,
       msg_iovlen: 1i32 as size_t,
       msg_control: 0 as *mut libc::c_void,
-      msg_controllen: 0i32 as size_t,
-      msg_flags: 0i32,
+      msg_controllen: 0 as size_t,
+      msg_flags: 0,
     };
     init
   };
   memset(
     &mut nladdr as *mut sockaddr_nl as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong,
   );
   nladdr.nl_family = 16i32 as __kernel_sa_family_t;
@@ -615,20 +615,20 @@ pub unsafe extern "C" fn rtnl_talk(
   if answer.is_null() {
     (*n).nlmsg_flags = ((*n).nlmsg_flags as libc::c_int | 0x4i32) as __u16
   }
-  status = sendmsg((*rtnl).fd, &mut msg, 0i32) as libc::c_int;
-  if status < 0i32 {
+  status = sendmsg((*rtnl).fd, &mut msg, 0) as libc::c_int;
+  if status < 0 {
     bb_simple_perror_msg(b"can\'t talk to rtnetlink\x00" as *const u8 as *const libc::c_char);
   } else {
     iov.iov_base = buf as *mut libc::c_void;
     's_76: loop {
       iov.iov_len = (8i32 * 1024i32) as size_t;
-      status = recvmsg((*rtnl).fd, &mut msg, 0i32) as libc::c_int;
-      if status < 0i32 {
+      status = recvmsg((*rtnl).fd, &mut msg, 0) as libc::c_int;
+      if status < 0 {
         if *bb_errno == 4i32 {
           continue;
         }
         bb_simple_perror_msg(b"OVERRUN\x00" as *const u8 as *const libc::c_char);
-      } else if status == 0i32 {
+      } else if status == 0 {
         bb_simple_error_msg(b"EOF on netlink\x00" as *const u8 as *const libc::c_char);
         current_block = 14567512515169274304;
         break;
@@ -654,7 +654,7 @@ pub unsafe extern "C" fn rtnl_talk(
           let mut l: libc::c_int = (len as libc::c_ulong)
             .wrapping_sub(::std::mem::size_of::<nlmsghdr>() as libc::c_ulong)
             as libc::c_int;
-          if l < 0i32 || len > status {
+          if l < 0 || len > status {
             if msg.msg_flags & MSG_TRUNC as libc::c_int != 0 {
               bb_simple_error_msg(b"truncated message\x00" as *const u8 as *const libc::c_char);
               current_block = 14567512515169274304;
@@ -666,7 +666,7 @@ pub unsafe extern "C" fn rtnl_talk(
               );
             }
           } else {
-            if nladdr.nl_pid != 0i32 as libc::c_uint
+            if nladdr.nl_pid != 0 as libc::c_uint
               || (*h).nlmsg_pid != (*rtnl).local.nl_pid
               || (*h).nlmsg_seq != seq
             {
@@ -687,7 +687,7 @@ pub unsafe extern "C" fn rtnl_talk(
                 break 's_76;
               } else {
                 *bb_errno = -(*err).error;
-                if *bb_errno == 0i32 {
+                if *bb_errno == 0 {
                   if !answer.is_null() {
                     memcpy(
                       answer as *mut libc::c_void,
@@ -760,7 +760,7 @@ pub unsafe extern "C" fn addattr32(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(4i32 as libc::c_ulong) as libc::c_int;
-  let mut rta: *mut rtattr = 0 as *mut rtattr;
+  let mut rta: *mut rtattr = std::ptr::null_mut();
   if ((*n)
     .nlmsg_len
     .wrapping_add(len as libc::c_uint)
@@ -793,7 +793,7 @@ pub unsafe extern "C" fn addattr32(
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
     & !4u32.wrapping_sub(1i32 as libc::c_uint);
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn addattr_l(
@@ -808,7 +808,7 @@ pub unsafe extern "C" fn addattr_l(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(alen as libc::c_ulong) as libc::c_int;
-  let mut rta: *mut rtattr = 0 as *mut rtattr;
+  let mut rta: *mut rtattr = std::ptr::null_mut();
   if ((*n)
     .nlmsg_len
     .wrapping_add(len as libc::c_uint)
@@ -845,7 +845,7 @@ pub unsafe extern "C" fn addattr_l(
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
     & !4u32.wrapping_sub(1i32 as libc::c_uint);
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn rta_addattr32(
@@ -859,7 +859,7 @@ pub unsafe extern "C" fn rta_addattr32(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(4i32 as libc::c_ulong) as libc::c_int;
-  let mut subrta: *mut rtattr = 0 as *mut rtattr;
+  let mut subrta: *mut rtattr = std::ptr::null_mut();
   if (((*rta).rta_len as libc::c_int + len) as libc::c_uint)
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
@@ -887,7 +887,7 @@ pub unsafe extern "C" fn rta_addattr32(
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
     & !4u32.wrapping_sub(1i32 as libc::c_uint)) as libc::c_ushort;
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn rta_addattr_l(
@@ -897,7 +897,7 @@ pub unsafe extern "C" fn rta_addattr_l(
   mut data: *mut libc::c_void,
   mut alen: libc::c_int,
 ) -> libc::c_int {
-  let mut subrta: *mut rtattr = 0 as *mut rtattr;
+  let mut subrta: *mut rtattr = std::ptr::null_mut();
   let mut len: libc::c_int = ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
     .wrapping_add(4u32 as libc::c_ulong)
     .wrapping_sub(1i32 as libc::c_ulong)
@@ -934,7 +934,7 @@ pub unsafe extern "C" fn rta_addattr_l(
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
     & !4u32.wrapping_sub(1i32 as libc::c_uint)) as libc::c_ushort;
-  return 0i32;
+  return 0;
 }
 
 /* We need linux/types.h because older kernels use u32 etc
@@ -959,7 +959,7 @@ pub unsafe extern "C" fn parse_rtattr(
 ) {
   memset(
     tb as *mut libc::c_void,
-    0i32,
+    0,
     ((max + 1i32) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut rtattr>() as libc::c_ulong),
   );

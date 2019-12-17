@@ -148,7 +148,7 @@ pub unsafe extern "C" fn cttyhack_main(
     b"/dev/tty\x00" as *const u8 as *const libc::c_char,
   );
   fd = open(console.as_mut_ptr(), 0o2i32);
-  if fd < 0i32 {
+  if fd < 0 {
     /* We don't have ctty (or don't have "/dev/tty" node...) */
     /* Note that this method does not use _stdin_.
      * Thus, "cttyhack </dev/something" can't be used.
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn cttyhack_main(
       (::std::mem::size_of::<[libc::c_char; 28]>() as libc::c_ulong)
         .wrapping_sub(5i32 as libc::c_ulong),
     ) as libc::c_int;
-    if s > 0i32 {
+    if s > 0 {
       let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       /* Found active console via sysfs (Linux 2.6.38+).
        * It looks like "[tty0 ]ttyS0\n" so zap the newline:
@@ -178,10 +178,10 @@ pub unsafe extern "C" fn cttyhack_main(
         overlapping_strcpy(console.as_mut_ptr().offset(5), last.offset(1));
       }
     } else if ioctl(
-      0i32,
+      0,
       VT_GETSTATE as libc::c_int as libc::c_ulong,
       &mut u.vt as *mut vt_stat,
-    ) == 0i32
+    ) == 0
     {
       /* this is linux virtual tty */
       sprintf(
@@ -190,10 +190,10 @@ pub unsafe extern "C" fn cttyhack_main(
         u.vt.v_active as libc::c_int,
       );
     } else if ioctl(
-      0i32,
+      0,
       0x541ei32 as libc::c_ulong,
       &mut u.sr as *mut serial_struct,
-    ) == 0i32
+    ) == 0
     {
       /* this is a serial console; assuming it is named /dev/ttySn */
       sprintf(
@@ -212,11 +212,11 @@ pub unsafe extern "C" fn cttyhack_main(
       return 1i32;
     }
     puts(console.as_mut_ptr());
-    return 0i32;
+    return 0;
   }
-  if fd < 0i32 {
+  if fd < 0 {
     fd = open_or_warn(console.as_mut_ptr(), 0o2i32);
-    if fd < 0i32 {
+    if fd < 0 {
       current_block = 5769750084105306570;
     } else {
       current_block = 14359455889292382949;
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn cttyhack_main(
   match current_block {
     14359455889292382949 => {
       //bb_error_msg("switching to '%s'", console);
-      dup2(fd, 0i32);
+      dup2(fd, 0);
       dup2(fd, 1i32);
       dup2(fd, 2i32);
       while fd > 2i32 {

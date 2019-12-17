@@ -31,7 +31,7 @@ pub unsafe extern "C" fn ll_type_n2a(
   /* FEATURE_IP_RARE_PROTOCOLS */
   /* Keep these arrays in sync! */
   static mut arphrd_type: [u16; 19] = [
-    0i32 as u16,
+    0 as u16,
     772i32 as u16,
     1i32 as u16,
     32i32 as u16,
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn ll_type_n2a(
   ];
   let mut i: libc::c_uint = 0;
   let mut aname: *const libc::c_char = arphrd_name.as_ptr();
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[u16; 19]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint

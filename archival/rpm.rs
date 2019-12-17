@@ -172,7 +172,7 @@ pub const rpm_query_info: rpm_functions_e = 4;
 pub const rpm_install: rpm_functions_e = 2;
 pub const rpm_query: rpm_functions_e = 1;
 unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
-  let mut tags: *mut rpm_index = 0 as *mut rpm_index;
+  let mut tags: *mut rpm_index = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   let mut pass: libc::c_uint = 0;
   let mut idx: libc::c_uint = 0;
@@ -180,16 +180,16 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
   if filename.is_null() {
     /* rpm2cpio w/o filename? */
     filename = bb_msg_standard_output.as_ptr(); /* Seek past the unused lead */
-    fd = 0i32
+    fd = 0
   } else {
-    fd = crate::libbb::xfuncs_printf::xopen(filename, 0i32)
+    fd = crate::libbb::xfuncs_printf::xopen(filename, 0)
   }
   storepos = crate::libbb::xfuncs_printf::xlseek(fd, 96i32 as off_t, 1i32) as libc::c_uint;
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount = 0i32;
-  tags = 0 as *mut rpm_index;
-  idx = 0i32 as libc::c_uint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount = 0;
+  tags = std::ptr::null_mut();
+  idx = 0 as libc::c_uint;
   /* 1st pass is the signature headers, 2nd is the main stuff */
-  pass = 0i32 as libc::c_uint;
+  pass = 0 as libc::c_uint;
   while pass < 2i32 as libc::c_uint {
     let mut header: rpm_header = rpm_header {
       magic_and_ver: 0,
@@ -360,13 +360,13 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
         }
         __v
       });
-      if pass == 0i32 as libc::c_uint {
+      if pass == 0 as libc::c_uint {
         (*tag).tag = ((*tag).tag as libc::c_uint).wrapping_sub(743i32 as libc::c_uint) as u32 as u32
       }
       idx = idx.wrapping_add(1)
     }
     /* Skip padding to 8 byte boundary after reading signature headers */
-    if pass == 0i32 as libc::c_uint {
+    if pass == 0 as libc::c_uint {
       while header.size & 7i32 as libc::c_uint != 0 {
         header.size = header.size.wrapping_add(1)
       }
@@ -391,7 +391,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
     0x1i32,
     0x2i32,
     fd,
-    0i32 as off64_t,
+    0 as off64_t,
   );
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).map == -1i32 as *mut libc::c_void {
     crate::libbb::perror_msg::bb_perror_msg_and_die(
@@ -413,7 +413,7 @@ unsafe extern "C" fn rpm_getstr(
   mut tag: libc::c_int,
   mut itemindex: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
@@ -435,7 +435,7 @@ unsafe extern "C" fn rpm_getstr(
     let mut tmpstr: *mut libc::c_char = ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).map
       as *mut libc::c_char)
       .offset((*found).offset as isize);
-    n = 0i32;
+    n = 0;
     while n < itemindex {
       tmpstr = tmpstr.offset(strlen(tmpstr) as isize).offset(1);
       n += 1
@@ -445,10 +445,10 @@ unsafe extern "C" fn rpm_getstr(
   return std::ptr::null_mut::<libc::c_char>();
 }
 unsafe extern "C" fn rpm_getstr0(mut tag: libc::c_int) -> *mut libc::c_char {
-  return rpm_getstr(tag, 0i32);
+  return rpm_getstr(tag, 0);
 }
 unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::c_int {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   let mut tmpint: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* gcc throws warnings here when sizeof(void*)!=sizeof(int) ...
    * it's ok to ignore it because tag won't be used as a pointer */
@@ -514,7 +514,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
   return -1i32;
 }
 unsafe extern "C" fn rpm_getcount(mut tag: libc::c_int) -> libc::c_int {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
@@ -526,7 +526,7 @@ unsafe extern "C" fn rpm_getcount(mut tag: libc::c_int) -> libc::c_int {
     ),
   ) as *mut rpm_index;
   if found.is_null() {
-    return 0i32;
+    return 0;
   }
   return (*found).count as libc::c_int;
 }
@@ -537,11 +537,10 @@ unsafe extern "C" fn fileaction_dobackup(
   let mut oldfile: stat = std::mem::zeroed();
   let mut stat_res: libc::c_int = 0;
   let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  if rpm_getint(1037i32, fileref) & 1i32 << 0i32 != 0 {
+  if rpm_getint(1037i32, fileref) & 1i32 << 0 != 0 {
     /* Only need to backup config files */
     stat_res = lstat(filename, &mut oldfile);
-    if stat_res == 0i32
-      && oldfile.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
+    if stat_res == 0 && oldfile.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     {
       /* File already exists  - really should check MD5's etc to see if different */
       newname = crate::libbb::xfuncs_printf::xasprintf(
@@ -585,7 +584,7 @@ unsafe extern "C" fn loop_through_files(
   mut filetag: libc::c_int,
   mut fileaction: Option<unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> ()>,
 ) {
-  let mut count: libc::c_int = 0i32;
+  let mut count: libc::c_int = 0;
   while !rpm_getstr(filetag, count).is_null() {
     let mut filename: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
       b"%s%s\x00" as *const u8 as *const libc::c_char,
@@ -600,7 +599,7 @@ unsafe extern "C" fn loop_through_files(
 }
 //DEBUG
 unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const libc::c_char) {
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t; /* else: SRPM, install to current dir */
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut(); /* else: SRPM, install to current dir */
   if !source_rpm.is_null() {
     /* Binary rpm (it was built from some SRPM), install to root */
     crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
@@ -616,12 +615,12 @@ unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const li
       as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
   );
   /* For testing (rpm -i only lists the files in internal cpio): */
-  (*archive_handle).ah_flags = (1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 9i32) as libc::c_uint;
+  (*archive_handle).ah_flags = (1i32 << 0 | 1i32 << 1i32 | 1i32 << 9i32) as libc::c_uint;
   (*archive_handle).src_fd = fd;
   /*archive_handle->offset = 0; - init_handle() did it */
   crate::archival::libarchive::open_transformer::setup_unzip_on_fd((*archive_handle).src_fd, 1i32);
   while crate::archival::libarchive::get_header_cpio::get_header_cpio(archive_handle) as libc::c_int
-    == 0i32
+    == 0
   {}
 }
 //usage:#define rpm_trivial_usage
@@ -660,7 +659,7 @@ pub unsafe extern "C" fn rpm_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_int = 0;
-  let mut func: libc::c_int = 0i32;
+  let mut func: libc::c_int = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pagesize = getpagesize() as libc::c_uint;
   loop {
     opt = getopt(
@@ -717,7 +716,7 @@ pub unsafe extern "C" fn rpm_main(
   }
   loop {
     let mut rpm_fd: libc::c_int = 0;
-    let mut source_rpm: *const libc::c_char = 0 as *const libc::c_char;
+    let mut source_rpm: *const libc::c_char = std::ptr::null();
     rpm_fd = rpm_gettags(*argv);
     source_rpm = rpm_getstr0(1044i32);
     if func & rpm_install as libc::c_int != 0 {
@@ -754,9 +753,9 @@ pub unsafe extern "C" fn rpm_main(
       if func & rpm_query_info as libc::c_int != 0 {
         /* Do the nice printout */
         let mut bdate_time: time_t = 0;
-        let mut bdate_ptm: *mut tm = 0 as *mut tm;
+        let mut bdate_ptm: *mut tm = std::ptr::null_mut();
         let mut bdatestring: [libc::c_char; 50] = [0; 50];
-        let mut p: *const libc::c_char = 0 as *const libc::c_char;
+        let mut p: *const libc::c_char = std::ptr::null();
         printf(
           b"%-12s: %s\n\x00" as *const u8 as *const libc::c_char,
           b"Name\x00" as *const u8 as *const libc::c_char,
@@ -783,7 +782,7 @@ pub unsafe extern "C" fn rpm_main(
         printf(
           b"%-12s: %d\n\x00" as *const u8 as *const libc::c_char,
           b"Size\x00" as *const u8 as *const libc::c_char,
-          rpm_getint(1009i32, 0i32),
+          rpm_getint(1009i32, 0),
         );
         printf(
           b"%-12s: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -800,7 +799,7 @@ pub unsafe extern "C" fn rpm_main(
             b"(none)\x00" as *const u8 as *const libc::c_char
           },
         );
-        bdate_time = rpm_getint(1006i32, 0i32) as time_t;
+        bdate_time = rpm_getint(1006i32, 0) as time_t;
         bdate_ptm = localtime(&mut bdate_time);
         strftime(
           bdatestring.as_mut_ptr(),
@@ -863,7 +862,7 @@ pub unsafe extern "C" fn rpm_main(
         let mut flags: libc::c_int = 0;
         count = rpm_getcount(1117i32);
         let mut current_block_61: u64;
-        it = 0i32;
+        it = 0;
         while it < count {
           flags = rpm_getint(1037i32, it);
           match func & (rpm_query_list_doc as libc::c_int | rpm_query_list_config as libc::c_int) {
@@ -875,14 +874,14 @@ pub unsafe extern "C" fn rpm_main(
               }
             }
             64 => {
-              if flags & 1i32 << 0i32 == 0 {
+              if flags & 1i32 << 0 == 0 {
                 current_block_61 = 1134115459065347084;
               } else {
                 current_block_61 = 3229571381435211107;
               }
             }
             96 => {
-              if flags & (1i32 << 0i32 | 1i32 << 1i32) == 0 {
+              if flags & (1i32 << 0 | 1i32 << 1i32) == 0 {
                 current_block_61 = 1134115459065347084;
               } else {
                 current_block_61 = 3229571381435211107;
@@ -920,7 +919,7 @@ pub unsafe extern "C" fn rpm_main(
     free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *mut libc::c_void);
     close(rpm_fd);
   }
-  return 0i32;
+  return 0;
 }
 /* RPM */
 /*
@@ -947,7 +946,7 @@ pub unsafe extern "C" fn rpm2cpio_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str: *const libc::c_char = std::ptr::null();
   let mut rpm_fd: libc::c_int = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pagesize = getpagesize() as libc::c_uint;
   rpm_fd = rpm_gettags(*argv.offset(1));
@@ -959,7 +958,7 @@ pub unsafe extern "C" fn rpm2cpio_main(
       str = rpm_getstr0(1125i32);
       !str.is_null()
     }
-    && strcmp(str, b"lzma\x00" as *const u8 as *const libc::c_char) == 0i32
+    && strcmp(str, b"lzma\x00" as *const u8 as *const libc::c_char) == 0
   {
     // lzma compression can't be detected
     // set up decompressor without detection
@@ -972,10 +971,10 @@ pub unsafe extern "C" fn rpm2cpio_main(
       b"error unpacking\x00" as *const u8 as *const libc::c_char,
     );
   }
-  if false || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0i32 != 0 {
+  if false || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 0 != 0 {
     crate::archival::libarchive::open_transformer::check_errors_in_children(0i32);
     return bb_got_signal as libc::c_int;
   }
-  return 0i32;
+  return 0;
 }
 /* RPM2CPIO */

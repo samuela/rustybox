@@ -49,7 +49,7 @@ static mut ino_dev_hashtable: *mut *mut ino_dev_hashtable_bucket_t =
  */
 #[no_mangle]
 pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *mut libc::c_char {
-  let mut bucket: *mut ino_dev_hashtable_bucket_t = 0 as *mut ino_dev_hashtable_bucket_t;
+  let mut bucket: *mut ino_dev_hashtable_bucket_t = std::ptr::null_mut();
   if ino_dev_hashtable.is_null() {
     return std::ptr::null_mut::<libc::c_char>();
   }
@@ -543,7 +543,7 @@ pub unsafe extern "C" fn add_to_ino_dev_hashtable(
   mut name: *const libc::c_char,
 ) {
   let mut i: libc::c_int = 0;
-  let mut bucket: *mut ino_dev_hashtable_bucket_t = 0 as *mut ino_dev_hashtable_bucket_t;
+  let mut bucket: *mut ino_dev_hashtable_bucket_t = std::ptr::null_mut();
   if name.is_null() {
     name = b"\x00" as *const u8 as *const libc::c_char
   }

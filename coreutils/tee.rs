@@ -90,10 +90,10 @@ pub unsafe extern "C" fn tee_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: *const libc::c_char = b"w\x00a\x00" as *const u8 as *const libc::c_char;
-  let mut files: *mut *mut FILE = 0 as *mut *mut FILE;
-  let mut fp: *mut *mut FILE = 0 as *mut *mut FILE;
-  let mut names: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut np: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut files: *mut *mut FILE = std::ptr::null_mut();
+  let mut fp: *mut *mut FILE = std::ptr::null_mut();
+  let mut names: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut np: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut retval: libc::c_char = 0;
   //TODO: make unconditional
   let mut c: ssize_t = 0; /* 'a' must be 2nd */
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn tee_main(
       ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
     );
   }
-  retval = 0i32 as libc::c_char;
+  retval = 0 as libc::c_char;
   /* if (opt_p || opt_output_error)
    signal(SIGPIPE, SIG_IGN);
   */
@@ -150,7 +150,7 @@ pub unsafe extern "C" fn tee_main(
   /* names[0] will be filled later */
   {
     c = safe_read(
-      0i32,
+      0,
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
     );

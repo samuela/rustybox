@@ -246,7 +246,7 @@ unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::
   let mut dd: libc::c_double = 0.;
   let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   dd = strtod(time_str, &mut endptr);
-  if endptr == time_str as *mut libc::c_char || dd < 0i32 as libc::c_double {
+  if endptr == time_str as *mut libc::c_char || dd < 0 as libc::c_double {
     bb_error_msg_and_die(
       bb_msg_invalid_arg_to.as_ptr(),
       time_str,
@@ -268,11 +268,11 @@ unsafe extern "C" fn read_file(mut name: *const libc::c_char) -> libc::c_int {
     bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
     (COMMON_BUFSIZE as libc::c_int - 1i32) as size_t,
   ) as libc::c_int;
-  if n < 0i32 {
+  if n < 0 {
     *bb_common_bufsiz1.as_mut_ptr().offset(0) = '\u{0}' as i32 as libc::c_char
   } else {
     *bb_common_bufsiz1.as_mut_ptr().offset(n as isize) = '\u{0}' as i32 as libc::c_char;
-    if n != 0i32
+    if n != 0
       && *bb_common_bufsiz1.as_mut_ptr().offset((n - 1i32) as isize) as libc::c_int == '\n' as i32
     {
       n -= 1;
@@ -293,8 +293,8 @@ unsafe extern "C" fn show_bridge(
    */
   let mut pathbuf: [libc::c_char; 42] = [0; 42]; /* this iface is not a bridge */
   let mut tabs: libc::c_int = 0;
-  let mut ifaces: *mut DIR = 0 as *mut DIR;
-  let mut ent: *mut dirent = 0 as *mut dirent;
+  let mut ifaces: *mut DIR = std::ptr::null_mut();
+  let mut ent: *mut dirent = std::ptr::null_mut();
   let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
     pathbuf.as_mut_ptr(),
@@ -302,7 +302,7 @@ unsafe extern "C" fn show_bridge(
     name,
   ) as isize);
   strcpy(sfx, b"bridge_id\x00" as *const u8 as *const libc::c_char);
-  if read_file(pathbuf.as_mut_ptr()) < 0i32 {
+  if read_file(pathbuf.as_mut_ptr()) < 0 {
     return -1i32;
   }
   if need_hdr != 0 {
@@ -336,7 +336,7 @@ unsafe extern "C" fn show_bridge(
   /* sfx points past "BR/bridge/", turn it into "BR/brif": */
   *sfx.offset(-4i32 as isize) = 'f' as i32 as libc::c_char; /* . or .. */
   *sfx.offset(-3i32 as isize) = '\u{0}' as i32 as libc::c_char;
-  tabs = 0i32;
+  tabs = 0;
   ifaces = opendir(pathbuf.as_mut_ptr());
   if !ifaces.is_null() {
     loop {
@@ -366,7 +366,7 @@ unsafe extern "C" fn show_bridge(
     /* bridge has no interfaces */
     bb_putchar('\n' as i32);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn write_uint(
   mut name: *const libc::c_char,
@@ -414,7 +414,7 @@ unsafe extern "C" fn read_bridge_forward_db(
   mut _fdb: *mut *mut fdb_entry,
 ) -> size_t {
   let mut pathbuf: [libc::c_char; 35] = [0; 35];
-  let mut fdb: *mut fdb_entry = 0 as *mut fdb_entry;
+  let mut fdb: *mut fdb_entry = std::ptr::null_mut();
   let mut nentries: size_t = 0;
   let mut fd: libc::c_int = 0;
   let mut cc: ssize_t = 0;
@@ -423,15 +423,15 @@ unsafe extern "C" fn read_bridge_forward_db(
     b"%.16s/brforward\x00" as *const u8 as *const libc::c_char,
     name,
   );
-  fd = open(pathbuf.as_mut_ptr(), 0i32);
-  if fd < 0i32 {
+  fd = open(pathbuf.as_mut_ptr(), 0);
+  if fd < 0 {
     bb_error_msg_and_die(
       b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
       name,
     );
   }
-  fdb = 0 as *mut fdb_entry;
-  nentries = 0i32 as size_t;
+  fdb = std::ptr::null_mut();
+  nentries = 0 as size_t;
   loop {
     fdb = xrealloc_vector_helper(
       fdb as *mut libc::c_void,
@@ -468,12 +468,12 @@ unsafe extern "C" fn read_bridge_forward_db(
   return nentries;
 }
 unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
-  let mut fdb: *mut fdb_entry = 0 as *mut fdb_entry;
+  let mut fdb: *mut fdb_entry = std::ptr::null_mut();
   let mut nentries: size_t = 0;
   let mut i: size_t = 0;
   nentries = read_bridge_forward_db(name, &mut fdb);
   printf(b"port no\tmac addr\t\tis local?\tageing timer\n\x00" as *const u8 as *const libc::c_char);
-  i = 0i32 as size_t;
+  i = 0 as size_t;
   while i < nentries {
     let mut f: *const fdb_entry = &mut *fdb.offset(i as isize) as *mut fdb_entry;
     let mut tv_sec: libc::c_uint = (*f).ageing_timer_value.wrapping_div(100i32 as libc::c_uint);
@@ -500,7 +500,7 @@ unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
   }
 }
 unsafe extern "C" fn show_bridge_timer(mut msg: *const libc::c_char) {
-  let mut centisec: libc::c_ulonglong = xstrtoull(bb_common_bufsiz1.as_mut_ptr(), 0i32);
+  let mut centisec: libc::c_ulonglong = xstrtoull(bb_common_bufsiz1.as_mut_ptr(), 0);
   let mut tv_sec: libc::c_uint = centisec.wrapping_div(100i32 as libc::c_ulonglong) as libc::c_uint;
   let mut tv_csec: libc::c_uint =
     centisec.wrapping_rem(100i32 as libc::c_ulonglong) as libc::c_uint;
@@ -524,7 +524,7 @@ unsafe extern "C" fn show_bridge_state(mut state: libc::c_uint) -> *const libc::
   return utoa(state);
 }
 unsafe extern "C" fn printf_xstrtou(mut fmt: *const libc::c_char) {
-  printf(fmt, xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0i32));
+  printf(fmt, xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0));
 }
 unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 52] = [0; 52];
@@ -539,7 +539,7 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   printf(
     b"%s (%u)\n\x00" as *const u8 as *const libc::c_char,
     name,
-    xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0i32),
+    xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0),
   );
   //BR_STATE_BLOCKING   4
   strcpy(sfx.offset(5), b"id\x00" as *const u8 as *const libc::c_char); // "port_id"
@@ -549,7 +549,7 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   read_file(pathbuf.as_mut_ptr());
   printf(
     b"\t\t\tstate\t\t%15s\n\x00" as *const u8 as *const libc::c_char,
-    show_bridge_state(xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0i32)),
+    show_bridge_state(xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0)),
   );
   strcpy(
     sfx,
@@ -635,7 +635,7 @@ unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
     name,
   ) as isize);
   strcpy(sfx, b"bridge_id\x00" as *const u8 as *const libc::c_char);
-  if read_file(pathbuf.as_mut_ptr()) < 0i32 {
+  if read_file(pathbuf.as_mut_ptr()) < 0 {
     bb_error_msg_and_die(
       b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
       name,
@@ -720,13 +720,13 @@ unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
   }
   printf(b"\n\n\n\x00" as *const u8 as *const libc::c_char);
   /* Show bridge ports */
-  let mut ifaces: *mut DIR = 0 as *mut DIR;
+  let mut ifaces: *mut DIR = std::ptr::null_mut();
   /* sfx points past "BR/bridge/", turn it into "BR/brif": */
   *sfx.offset(-4i32 as isize) = 'f' as i32 as libc::c_char; /* . or .. */
   *sfx.offset(-3i32 as isize) = '\u{0}' as i32 as libc::c_char;
   ifaces = opendir(pathbuf.as_mut_ptr());
   if !ifaces.is_null() {
-    let mut ent: *mut dirent = 0 as *mut dirent;
+    let mut ent: *mut dirent = std::ptr::null_mut();
     loop {
       ent = readdir(ifaces);
       if ent.is_null() {
@@ -772,16 +772,16 @@ pub unsafe extern "C" fn brctl_main(
   argv = argv.offset(1);
   if key == ARG_show as libc::c_int {
     /* show [BR]... */
-    let mut net: *mut DIR = 0 as *mut DIR;
-    let mut ent: *mut dirent = 0 as *mut dirent;
+    let mut net: *mut DIR = std::ptr::null_mut();
+    let mut ent: *mut dirent = std::ptr::null_mut();
     let mut need_hdr: libc::c_int = 1i32;
-    let mut exitcode: libc::c_int = 0i32;
+    let mut exitcode: libc::c_int = 0;
     if !(*argv).is_null() {
       loop
       /* "show BR1 BR2 BR3" */
       {
-        if show_bridge(*argv, need_hdr) >= 0i32 {
-          need_hdr = 0i32
+        if show_bridge(*argv, need_hdr) >= 0 {
+          need_hdr = 0
         } else {
           bb_error_msg(
             b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
@@ -811,8 +811,8 @@ pub unsafe extern "C" fn brctl_main(
       {
         continue;
       }
-      if show_bridge((*ent).d_name.as_mut_ptr(), need_hdr) >= 0i32 {
-        need_hdr = 0i32
+      if show_bridge((*ent).d_name.as_mut_ptr(), need_hdr) >= 0 {
+        need_hdr = 0
       }
     }
     return exitcode;
@@ -828,7 +828,7 @@ pub unsafe extern "C" fn brctl_main(
     /* brctl from bridge-utils 1.6 still uses ioctl
      * for SIOCBRADDBR / SIOCBRDELBR, not /sys accesses
      */
-    let mut fd: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0i32);
+    let mut fd: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
     ioctl_or_perror_and_die(
       fd,
       if key == ARG_addbr as libc::c_int {
@@ -845,15 +845,15 @@ pub unsafe extern "C" fn brctl_main(
     /* bridge-utils 1.6 simply ignores trailing args:
      * "brctl addbr BR1 ARGS" ignores ARGS
      */
-    return 0i32;
+    return 0;
   }
   if key == ARG_showmacs as libc::c_int {
     show_bridge_macs(br);
-    return 0i32;
+    return 0;
   }
   if key == ARG_showstp as libc::c_int {
     show_bridge_stp(br);
-    return 0i32;
+    return 0;
   }
   if (*argv).is_null() {
     /* All of the below need at least two arguments */
@@ -864,7 +864,7 @@ pub unsafe extern "C" fn brctl_main(
       48, 0, 111, 102, 102, 0, 110, 0, 110, 111, 0, 49, 0, 111, 110, 0, 121, 0, 121, 101, 115, 0, 0,
     ];
     let mut onoff: libc::c_int = index_in_strings(no_yes.as_ptr(), *argv);
-    if onoff < 0i32 {
+    if onoff < 0 {
       bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), *argv, applet_name);
     }
     onoff = (onoff as libc::c_uint).wrapping_div(4i32 as libc::c_uint) as libc::c_int;
@@ -873,7 +873,7 @@ pub unsafe extern "C" fn brctl_main(
       b"bridge/stp_state\x00" as *const u8 as *const libc::c_char,
       onoff as libc::c_uint,
     );
-    return 0i32;
+    return 0;
   }
   if ((key - ARG_setageing as libc::c_int) as libc::c_uint) < 4i32 as libc::c_uint {
     /* time related ops */
@@ -891,7 +891,7 @@ pub unsafe extern "C" fn brctl_main(
       ),
       str_to_jiffies(*argv),
     );
-    return 0i32;
+    return 0;
   }
   if key == ARG_setbridgeprio as libc::c_int {
     write_uint(
@@ -899,7 +899,7 @@ pub unsafe extern "C" fn brctl_main(
       b"bridge/priority\x00" as *const u8 as *const libc::c_char,
       xatoi_positive(*argv) as libc::c_uint,
     );
-    return 0i32;
+    return 0;
   }
   if key == ARG_setpathcost as libc::c_int || key == ARG_setportprio as libc::c_int {
     if (*argv.offset(1)).is_null() {
@@ -919,7 +919,7 @@ pub unsafe extern "C" fn brctl_main(
       ),
       xatoi_positive(*argv.offset(1)) as libc::c_uint,
     );
-    return 0i32;
+    return 0;
   }
   /* always true: if (key == ARG_addif || key == ARG_delif) */
   let mut ifr: ifreq = ifreq {
@@ -931,10 +931,10 @@ pub unsafe extern "C" fn brctl_main(
       },
     },
   };
-  let mut fd_0: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0i32);
+  let mut fd_0: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), br);
   ifr.ifr_ifru.ifru_ivalue = if_nametoindex(*argv) as libc::c_int;
-  if ifr.ifr_ifru.ifru_ivalue == 0i32 {
+  if ifr.ifr_ifru.ifru_ivalue == 0 {
     bb_perror_msg_and_die(b"iface %s\x00" as *const u8 as *const libc::c_char, *argv);
   }
   ioctl_or_perror_and_die(
@@ -948,5 +948,5 @@ pub unsafe extern "C" fn brctl_main(
     b"bridge %s\x00" as *const u8 as *const libc::c_char,
     br,
   );
-  return 0i32;
+  return 0;
 }

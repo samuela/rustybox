@@ -79,8 +79,8 @@ pub unsafe extern "C" fn devmem_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut map_base: *mut libc::c_void = 0 as *mut libc::c_void; /* for compiler */
-  let mut virt_addr: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut map_base: *mut libc::c_void = std::ptr::null_mut(); /* for compiler */
+  let mut virt_addr: *mut libc::c_void = std::ptr::null_mut();
   let mut read_result: u64 = 0;
   let mut writeval: u64 = 0;
   writeval = writeval;
@@ -102,8 +102,8 @@ pub unsafe extern "C" fn devmem_main(
   if (*argv.offset(1)).is_null() {
     bb_show_usage(); /* allows hex, oct etc */
   }
-  *bb_errno = 0i32;
-  target = bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0i32) as off_t;
+  *bb_errno = 0;
+  target = bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0) as off_t;
   /* WIDTH */
   if !(*argv.offset(2)).is_null() {
     if (*(*argv.offset(2)).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn devmem_main(
     }
     /* VALUE */
     if !(*argv.offset(3)).is_null() {
-      writeval = bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0i32) as u64
+      writeval = bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0) as u64
     }
   } else {
     /* make argv[3] to be a valid thing to fetch */
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn devmem_main(
     //				(unsigned long long)writeval,
     //				(unsigned long long)read_result);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_static_initializers() {
   sizes = [
@@ -209,7 +209,7 @@ unsafe extern "C" fn run_static_initializers() {
       as u8,
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
       as u8,
-    0i32 as u8,
+    0 as u8,
   ]
 }
 #[used]

@@ -140,7 +140,7 @@ pub unsafe extern "C" fn sigprocmask2(mut how: libc::c_int, mut set: *mut sigset
   // Grr... gcc 8.1.1:
   // "passing argument 3 to restrict-qualified parameter aliases with argument 2"
   // dance around that...
-  let mut oset: *mut sigset_t = 0 as *mut sigset_t;
+  let mut oset: *mut sigset_t = std::ptr::null_mut();
   oset = set;
   return sigprocmask(how, set, oset);
 }
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn bb_signals(
   mut sigs: libc::c_int,
   mut f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
-  let mut sig_no: libc::c_int = 0i32;
+  let mut sig_no: libc::c_int = 0;
   let mut bit: libc::c_int = 1i32;
   while sigs != 0 {
     if sigs & bit != 0 {
@@ -165,12 +165,12 @@ pub unsafe extern "C" fn bb_signals_recursive_norestart(
   mut sigs: libc::c_int,
   mut f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
-  let mut sig_no: libc::c_int = 0i32;
+  let mut sig_no: libc::c_int = 0;
   let mut bit: libc::c_int = 1i32;
   let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sigaction>() as libc::c_ulong,
   );
   sa.__sigaction_handler.sa_handler = f;
@@ -223,7 +223,7 @@ pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
   let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sigaction>() as libc::c_ulong,
   );
   /*sigemptyset(&sa.sa_mask);*/
@@ -386,7 +386,7 @@ pub unsafe extern "C" fn signal_no_SA_RESTART_empty_mask(
   let mut sa: sigaction = std::mem::zeroed();
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sigaction>() as libc::c_ulong,
   );
   /*sigemptyset(&sa.sa_mask);*/

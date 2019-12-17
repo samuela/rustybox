@@ -171,7 +171,7 @@ pub struct ocfs2_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut os: *mut ocfs2_super_block = 0 as *mut ocfs2_super_block;
+  let mut os: *mut ocfs2_super_block = std::ptr::null_mut();
   os = volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),
@@ -184,7 +184,7 @@ pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::
     (*os).i_signature.as_mut_ptr() as *const libc::c_void,
     b"OCFSV2\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     6i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -198,5 +198,5 @@ pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::
   );
   volume_id_set_uuid(id, (*os).s_uuid.as_mut_ptr(), UUID_DCE);
   (*id).type_0 = b"ocfs2\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

@@ -18,7 +18,7 @@ pub unsafe extern "C" fn bb_getgroups(
   mut ngroups: *mut libc::c_int,
   mut group_array: *mut gid_t,
 ) -> *mut gid_t {
-  let mut n: libc::c_int = if !ngroups.is_null() { *ngroups } else { 0i32 };
+  let mut n: libc::c_int = if !ngroups.is_null() { *ngroups } else { 0 };
   /* getgroups may be a bit expensive, try to use it only once */
   if n < 32i32 {
     n = 32i32
@@ -35,7 +35,7 @@ pub unsafe extern "C" fn bb_getgroups(
      * If buffer is too small, kernel does not return new_n > n.
      * It returns -1 and EINVAL:
      */
-    if n >= 0i32 {
+    if n >= 0 {
       /* Terminator for bb_getgroups(NULL, NULL) usage */
       *group_array.offset(n as isize) = -1i32 as gid_t;
       break;

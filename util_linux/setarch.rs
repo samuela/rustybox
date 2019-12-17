@@ -87,7 +87,7 @@ pub unsafe extern "C" fn setarch_main(
     pers |= 0x40000i32 as libc::c_ulong
   }
   /* Try to set personality */
-  if personality(pers) < 0i32 {
+  if personality(pers) < 0 {
     bb_perror_msg_and_die(
       b"personality(0x%lx)\x00" as *const u8 as *const libc::c_char,
       pers,

@@ -89,20 +89,20 @@ pub unsafe extern "C" fn cmp_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut fp1: *mut FILE = 0 as *mut FILE; /* Hopefully won't overflow... */
-  let mut fp2: *mut FILE = 0 as *mut FILE; /* missing file results in exitcode 2 */
+  let mut fp1: *mut FILE = std::ptr::null_mut(); /* Hopefully won't overflow... */
+  let mut fp2: *mut FILE = std::ptr::null_mut(); /* missing file results in exitcode 2 */
   let mut outfile: *mut FILE = stdout; /* -s suppresses open error messages */
-  let mut filename1: *const libc::c_char = 0 as *const libc::c_char;
+  let mut filename1: *const libc::c_char = std::ptr::null();
   let mut filename2: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
-  let mut skip1: off_t = 0i32 as off_t;
-  let mut skip2: off_t = 0i32 as off_t;
-  let mut char_pos: off_t = 0i32 as off_t;
+  let mut skip1: off_t = 0 as off_t;
+  let mut skip2: off_t = 0 as off_t;
+  let mut char_pos: off_t = 0 as off_t;
   let mut line_pos: libc::c_int = 1i32;
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c1: libc::c_int = 0;
   let mut c2: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   opt = getopt32(
     argv,
     b"^sl\x00-1:?4:l--s:s--l\x00" as *const u8 as *const libc::c_char,
@@ -118,22 +118,22 @@ pub unsafe extern "C" fn cmp_main(
     } {
       skip1 = xatoul_range(
         *argv,
-        0i32 as libc::c_ulong,
+        0 as libc::c_ulong,
         9223372036854775807i64 as libc::c_ulong,
       ) as off_t;
       argv = argv.offset(1);
       if !(*argv).is_null() {
         skip2 = xatoul_range(
           *argv,
-          0i32 as libc::c_ulong,
+          0 as libc::c_ulong,
           9223372036854775807i64 as libc::c_ulong,
         ) as off_t
       }
     }
   }
   xfunc_error_retval = 2i32 as u8;
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
-    logmode = 0i32 as smallint
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
+    logmode = 0 as smallint
   }
   fp1 = xfopen_stdin(filename1);
   fp2 = xfopen_stdin(filename2);
@@ -143,7 +143,7 @@ pub unsafe extern "C" fn cmp_main(
      * But perhaps we should, so that other apps down the chain don't
      * get the input.  Consider 'echo hello | (cmp - - && cat -)'.
      */
-    return 0i32;
+    return 0;
   }
   logmode = LOGMODE_STDIO as libc::c_int as smallint;
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn cmp_main(
          * make sure we fflush before writing to stderr. */
         fflush_all();
       }
-      if !(opt & (1i32 << 0i32) as libc::c_uint == 0) {
+      if !(opt & (1i32 << 0) as libc::c_uint == 0) {
         break;
       }
       if opt & (1i32 << 1i32) as libc::c_uint != 0 {

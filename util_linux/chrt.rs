@@ -123,7 +123,7 @@ unsafe extern "C" fn show_min_max(mut pol: libc::c_int) {
   let mut min: libc::c_int = 0;
   max = sched_get_priority_max(pol);
   min = sched_get_priority_min(pol);
-  if max | min < 0i32 {
+  if max | min < 0 {
     fmt = b"SCHED_%s not supported\n\x00" as *const u8 as *const libc::c_char
   }
   printf(fmt, policy_name(pol), min, max);
@@ -135,19 +135,19 @@ pub unsafe extern "C" fn chrt_main(
 ) -> libc::c_int {
   let mut pol: libc::c_int = 0;
   let mut current_block: u64;
-  let mut pid: pid_t = 0i32;
+  let mut pid: pid_t = 0;
   let mut opt: libc::c_uint = 0;
   let mut sp: sched_param = sched_param { sched_priority: 0 };
   let mut pid_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut priority: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   priority = priority;
-  let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
+  let mut current_new: *const libc::c_char = std::ptr::null();
   let mut policy: libc::c_int = 2i32;
   opt = getopt32(
     argv,
     b"^+mprfobi\x00r--fobi:f--robi:o--rfbi:b--rfoi:i--rfob\x00" as *const u8 as *const libc::c_char,
   );
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
     /* print min/max and exit */
     show_min_max(0i32);
     show_min_max(1i32);
@@ -162,7 +162,7 @@ pub unsafe extern "C" fn chrt_main(
     policy = 1i32
   }
   if opt & (1i32 << 4i32) as libc::c_uint != 0 {
-    policy = 0i32
+    policy = 0
   }
   if opt & (1i32 << 5i32) as libc::c_uint != 0 {
     policy = 3i32
@@ -212,11 +212,11 @@ pub unsafe extern "C" fn chrt_main(
       14447253356787937536 => {
         sp.sched_priority = xstrtou_range(
           priority,
-          0i32,
+          0,
           sched_get_priority_min(policy) as libc::c_uint,
           sched_get_priority_max(policy) as libc::c_uint,
         ) as libc::c_int;
-        if sched_setscheduler(pid, policy, &mut sp) < 0i32 {
+        if sched_setscheduler(pid, policy, &mut sp) < 0 {
           bb_perror_msg_and_die(
             b"can\'t %cet pid %u\'s policy\x00" as *const u8 as *const libc::c_char,
             's' as i32,
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn chrt_main(
       /* "-p PRIO PID [...]" */
       {
         pol = sched_getscheduler(pid);
-        if pol < 0i32 {
+        if pol < 0 {
           bb_perror_msg_and_die(
             b"can\'t %cet pid %u\'s policy\x00" as *const u8 as *const libc::c_char,
             'g' as i32,
@@ -271,7 +271,7 @@ pub unsafe extern "C" fn chrt_main(
           /* Either it was just "-p PID",
            * or it was "-p PRIO PID" and we came here
            * for the second time (see goto below) */
-          return 0i32;
+          return 0;
         }
         *argv = std::ptr::null_mut::<libc::c_char>();
         current_new = current_new.offset(8);

@@ -422,15 +422,15 @@ pub type C2RustUnnamed_14 = libc::c_uint;
 /* Exits on error */
 unsafe extern "C" fn get_ctl_fd() -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  fd = socket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
-  if fd >= 0i32 {
+  fd = socket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  if fd >= 0 {
     return fd;
   }
-  fd = socket(17i32, SOCK_DGRAM as libc::c_int, 0i32);
-  if fd >= 0i32 {
+  fd = socket(17i32, SOCK_DGRAM as libc::c_int, 0);
+  if fd >= 0 {
     return fd;
   }
-  return xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
+  return xsocket(10i32, SOCK_DGRAM as libc::c_int, 0);
 }
 /* Exits on error */
 unsafe extern "C" fn do_chflags(mut dev: *mut libc::c_char, mut flags: u32, mut mask: u32) {
@@ -503,7 +503,7 @@ unsafe extern "C" fn set_qlen(mut dev: *mut libc::c_char, mut qlen: libc::c_int)
   s = get_ctl_fd();
   memset(
     &mut ifr as *mut ifreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
@@ -531,7 +531,7 @@ unsafe extern "C" fn set_mtu(mut dev: *mut libc::c_char, mut mtu: libc::c_int) {
   s = get_ctl_fd();
   memset(
     &mut ifr as *mut ifreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
@@ -583,7 +583,7 @@ unsafe extern "C" fn set_master(mut dev: *mut libc::c_char, mut master: libc::c_
   };
   memset(
     &mut req as *mut C2RustUnnamed_7 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong,
   );
   req.n.nlmsg_len = (::std::mem::size_of::<ifinfomsg>() as libc::c_ulong).wrapping_add(
@@ -606,7 +606,7 @@ unsafe extern "C" fn set_master(mut dev: *mut libc::c_char, mut master: libc::c_
     &mut master as *mut libc::c_int as *mut libc::c_void,
     4i32,
   );
-  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0i32 {
+  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0 {
     xfunc_die();
   };
 }
@@ -634,7 +634,7 @@ unsafe extern "C" fn get_address(
     sll_addr: [0; 8],
   };
   let mut s: libc::c_int = 0;
-  s = xsocket(17i32, SOCK_DGRAM as libc::c_int, 0i32);
+  s = xsocket(17i32, SOCK_DGRAM as libc::c_int, 0);
   /*memset(&ifr, 0, sizeof(ifr)); - SIOCGIFINDEX does not need to clear all */
   strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
   bb_xioctl(
@@ -645,7 +645,7 @@ unsafe extern "C" fn get_address(
   );
   memset(
     &mut me as *mut sockaddr_ll as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
   );
   me.sll_family = 17i32 as libc::c_ushort;
@@ -695,7 +695,7 @@ unsafe extern "C" fn parse_address(
   let mut alen: libc::c_int = 0; /*INFINIBAND_HLEN*/
   memset(
     ifr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
@@ -706,7 +706,7 @@ unsafe extern "C" fn parse_address(
     alen,
     lla,
   );
-  if alen < 0i32 {
+  if alen < 0 {
     exit(1i32);
   }
   if alen != halen {
@@ -747,8 +747,8 @@ unsafe extern "C" fn die_must_be_on_off(mut msg: *const libc::c_char) -> ! {
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut mask: u32 = 0i32 as u32;
-  let mut flags: u32 = 0i32 as u32;
+  let mut mask: u32 = 0 as u32;
+  let mut flags: u32 = 0 as u32;
   let mut qlen: libc::c_int = -1i32;
   let mut mtu: libc::c_int = -1i32;
   let mut master: libc::c_int = -1i32;
@@ -817,7 +817,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       argv = next_arg(argv);
       master = xll_name_to_index(*argv)
     } else if key as libc::c_int == ARG_nomaster as libc::c_int {
-      master = 0i32
+      master = 0
     } else if key as libc::c_int >= ARG_dev as libc::c_int {
       /* ^^^^^^ ">=" here results in "dev IFACE" treated as default */
       if key as libc::c_int == ARG_dev as libc::c_int {
@@ -836,7 +836,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
         *argv,
       );
       if key as libc::c_int == ARG_multicast as libc::c_int {
-        if param < 0i32 {
+        if param < 0 {
           die_must_be_on_off(b"multicast\x00" as *const u8 as *const libc::c_char);
         }
         mask |= IFF_MULTICAST as libc::c_int as libc::c_uint;
@@ -846,7 +846,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
           flags &= !(IFF_MULTICAST as libc::c_int) as libc::c_uint
         }
       } else if key as libc::c_int == ARG_arp as libc::c_int {
-        if param < 0i32 {
+        if param < 0 {
           die_must_be_on_off(b"arp\x00" as *const u8 as *const libc::c_char);
         }
         mask |= IFF_NOARP as libc::c_int as libc::c_uint;
@@ -856,7 +856,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
           flags |= IFF_NOARP as libc::c_int as libc::c_uint
         }
       } else if key as libc::c_int == ARG_promisc as libc::c_int {
-        if param < 0i32 {
+        if param < 0 {
           die_must_be_on_off(b"promisc\x00" as *const u8 as *const libc::c_char);
         }
         mask |= IFF_PROMISC as libc::c_int as libc::c_uint;
@@ -880,7 +880,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     halen = get_address(dev, &mut htype);
     if !newaddr.is_null() {
       parse_address(dev, htype, halen, newaddr, &mut ifr0);
-      set_address(&mut ifr0, 0i32);
+      set_address(&mut ifr0, 0);
     }
     if !newbrd.is_null() {
       parse_address(dev, htype, halen, newbrd, &mut ifr1);
@@ -903,11 +903,11 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   if mask != 0 {
     do_chflags(dev, flags, mask);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ipaddr_list_link(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   preferred_family = 17i32 as family_t;
-  return ipaddr_list_or_flush(argv, 0i32);
+  return ipaddr_list_or_flush(argv, 0);
 }
 unsafe extern "C" fn vlan_parse_opt(
   mut argv: *mut *mut libc::c_char,
@@ -931,7 +931,7 @@ unsafe extern "C" fn vlan_parse_opt(
   };
   while !(*argv).is_null() {
     arg = index_in_substrings(keywords.as_ptr(), *argv);
-    if arg < 0i32 {
+    if arg < 0 {
       invarg_1_to_2(*argv, b"type vlan\x00" as *const u8 as *const libc::c_char);
     }
     argv = next_arg(argv);
@@ -1000,7 +1000,7 @@ unsafe extern "C" fn vlan_parse_opt(
         b"on\x00off\x00\x00" as *const u8 as *const libc::c_char,
         *argv,
       );
-      if param < 0i32 {
+      if param < 0 {
         die_must_be_on_off(nth_string(keywords.as_ptr(), arg));
       }
       if arg == ARG_reorder_hdr as libc::c_int {
@@ -1050,7 +1050,7 @@ unsafe extern "C" fn vrf_parse_opt(
    * can't test "defined(IFLA_VRF_TABLE)".
    */
   let mut table: u32 = 0;
-  if strcmp(*argv, b"table\x00" as *const u8 as *const libc::c_char) != 0i32 {
+  if strcmp(*argv, b"table\x00" as *const u8 as *const libc::c_char) != 0 {
     invarg_1_to_2(*argv, b"type vrf\x00" as *const u8 as *const libc::c_char);
   }
   argv = next_arg(argv);
@@ -1115,7 +1115,7 @@ unsafe extern "C" fn do_add_or_delete(
   let mut address_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     &mut req as *mut C2RustUnnamed_10 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong,
   );
   req.n.nlmsg_len = (::std::mem::size_of::<ifinfomsg>() as libc::c_ulong).wrapping_add(
@@ -1178,7 +1178,7 @@ unsafe extern "C" fn do_add_or_delete(
       ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
       IFLA_LINKINFO as libc::c_int,
       0 as *mut libc::c_void,
-      0i32,
+      0,
     );
     addattr_l(
       &mut req.n,
@@ -1201,15 +1201,15 @@ unsafe extern "C" fn do_add_or_delete(
         ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
         IFLA_INFO_DATA as libc::c_int,
         0 as *mut libc::c_void,
-        0i32,
+        0,
       );
-      if strcmp(type_str, b"vlan\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(type_str, b"vlan\x00" as *const u8 as *const libc::c_char) == 0 {
         vlan_parse_opt(
           argv,
           &mut req.n,
           ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_uint,
         );
-      } else if strcmp(type_str, b"vrf\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(type_str, b"vrf\x00" as *const u8 as *const libc::c_char) == 0 {
         vrf_parse_opt(
           argv,
           &mut req.n,
@@ -1269,7 +1269,7 @@ unsafe extern "C" fn do_add_or_delete(
         ::std::mem::size_of::<[libc::c_uchar; 32]>() as libc::c_ulong as libc::c_int,
         address_str,
       );
-      if len < 0i32 {
+      if len < 0 {
         return -1i32;
       }
       addattr_l(
@@ -1294,10 +1294,10 @@ unsafe extern "C" fn do_add_or_delete(
       name_len as libc::c_int,
     );
   }
-  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0i32 {
+  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0 {
     return 2i32;
   }
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -1313,7 +1313,7 @@ pub unsafe extern "C" fn do_iplink(mut argv: *mut *mut libc::c_char) -> libc::c_
   xfunc_error_retval = 2i32 as u8;
   if !(*argv).is_null() {
     let mut key: libc::c_int = index_in_substrings(keywords.as_ptr(), *argv);
-    if key < 0i32 {
+    if key < 0 {
       /* invalid argument */
       invarg_1_to_2(*argv, applet_name);
     }

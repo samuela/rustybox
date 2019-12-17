@@ -281,11 +281,11 @@ pub union C2RustUnnamed_1 {
  *    MAC address string
  */
 unsafe extern "C" fn get_dest_addr(mut hostid: *const libc::c_char, mut eaddr: *mut ether_addr) {
-  let mut eap: *mut ether_addr = 0 as *mut ether_addr; /* 6 */
+  let mut eap: *mut ether_addr = std::ptr::null_mut(); /* 6 */
   eap = ether_aton_r(hostid, eaddr); /* 12 */
   /* Or 0x0806 for ARP, 0x8035 for RARP */
   if eap.is_null() {
-    if ether_hostton(hostid, eaddr) == 0i32 {
+    if ether_hostton(hostid, eaddr) == 0 {
     } else {
       bb_show_usage(); /* 13 */
     }
@@ -320,7 +320,7 @@ unsafe extern "C" fn fill_pkt_header(
   pkt = pkt.offset(1);
   *fresh1 = 0x42i32 as libc::c_uchar;
   memset(pkt as *mut libc::c_void, 0xffi32, 6i32 as libc::c_ulong);
-  i = 0i32;
+  i = 0;
   while i < 16i32 {
     pkt = pkt.offset(6);
     memcpy(
@@ -366,10 +366,10 @@ unsafe extern "C" fn get_wol_pw(
   }
   if byte_cnt < 4i32 {
     bb_simple_error_msg(b"can\'t read Wake-On-LAN pass\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
   }
   // TODO: check invalid numbers >255??
-  i = 0i32; /* Raw socket */
+  i = 0; /* Raw socket */
   while i < byte_cnt {
     *wol_passwd.offset(i as isize) = passwd[i as usize] as libc::c_uchar;
     i += 1
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn ether_wake_main(
   let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flags: libc::c_uint = 0;
   let mut wol_passwd: [libc::c_uchar; 6] = [0; 6];
-  let mut wol_passwd_sz: libc::c_int = 0i32;
+  let mut wol_passwd_sz: libc::c_int = 0;
   let mut s: libc::c_int = 0;
   let mut pktsize: libc::c_int = 0;
   let mut outpack: [libc::c_uchar; 138] = [0; 138];
@@ -416,7 +416,7 @@ pub unsafe extern "C" fn ether_wake_main(
   } /* we further interested only in -b [bcast] flag */
   flags &= 1i32 as libc::c_uint;
   /* create the raw socket */
-  s = xsocket(17i32, SOCK_RAW as libc::c_int, 0i32);
+  s = xsocket(17i32, SOCK_RAW as libc::c_int, 0);
   /* now that we have a raw socket we can drop root */
   /* xsetuid(getuid()); - but save on code size... */
   /* look up the dest mac address */
@@ -448,7 +448,7 @@ pub unsafe extern "C" fn ether_wake_main(
   );
   /* __linux__ */
   /* append the password if specified */
-  if wol_passwd_sz > 0i32 {
+  if wol_passwd_sz > 0 {
     memcpy(
       outpack.as_mut_ptr().offset(pktsize as isize) as *mut libc::c_void,
       wol_passwd.as_mut_ptr() as *const libc::c_void,
@@ -459,7 +459,7 @@ pub unsafe extern "C" fn ether_wake_main(
   /* This is necessary for broadcasts to work */
   if flags != 0 {
     /* & 1 OPT_BROADCAST */
-    if setsockopt_broadcast(s) != 0i32 {
+    if setsockopt_broadcast(s) != 0 {
       bb_simple_perror_msg(b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char);
     }
   }
@@ -481,7 +481,7 @@ pub unsafe extern "C" fn ether_wake_main(
   );
   memset(
     &mut whereto as *mut sockaddr_ll as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
   );
   whereto.sll_family = 17i32 as libc::c_ushort;
@@ -501,5 +501,5 @@ pub unsafe extern "C" fn ether_wake_main(
     &mut whereto as *mut sockaddr_ll as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
   );
-  return 0i32;
+  return 0;
 }

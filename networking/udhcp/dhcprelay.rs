@@ -200,7 +200,7 @@ unsafe extern "C" fn xid_add(
   mut ip: *mut sockaddr_in,
   mut client: libc::c_int,
 ) -> *mut xid_item {
-  let mut item: *mut xid_item = 0 as *mut xid_item;
+  let mut item: *mut xid_item = std::ptr::null_mut();
   /* create new xid entry */
   item = xmalloc(::std::mem::size_of::<xid_item>() as libc::c_ulong) as *mut xid_item;
   /* add xid entry */
@@ -258,7 +258,7 @@ unsafe extern "C" fn xid_del(mut xid: u32) {
  * returns the message type on success, -1 otherwise
  */
 unsafe extern "C" fn get_dhcp_packet_type(mut p: *mut dhcp_packet) -> libc::c_int {
-  let mut op: *mut u8 = 0 as *mut u8;
+  let mut op: *mut u8 = std::ptr::null_mut();
   /* it must be either a BOOTREQUEST or a BOOTREPLY */
   if (*p).op as libc::c_int != 1i32 && (*p).op as libc::c_int != 2i32 {
     return -1i32;
@@ -279,7 +279,7 @@ unsafe extern "C" fn make_iface_list(
   mut client_number: *mut libc::c_int,
 ) -> *mut *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut iface_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut iface_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut cn: libc::c_int = 0;
   /* get number of items */
@@ -329,8 +329,8 @@ unsafe extern "C" fn init_sockets(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut n: libc::c_int = 0;
-  n = 0i32;
-  i = 0i32;
+  n = 0;
+  i = 0;
   while i < num_clients {
     *fds.offset(i as isize) = udhcp_listen_socket(67i32, *iface_list.offset(i as isize));
     if n < *fds.offset(i as isize) {
@@ -347,12 +347,12 @@ unsafe extern "C" fn sendto_ip4(
   mut to: *mut sockaddr_in,
 ) -> libc::c_int {
   let mut err: libc::c_int = 0;
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   err = sendto(
     sock,
     msg,
     msg_len as size_t,
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: to as *mut sockaddr,
     },
@@ -407,7 +407,7 @@ unsafe extern "C" fn pass_to_client(
   mut fds: *mut libc::c_int,
 ) {
   let mut type_0: libc::c_int = 0;
-  let mut item: *mut xid_item = 0 as *mut xid_item;
+  let mut item: *mut xid_item = std::ptr::null_mut();
   /* check xid */
   item = xid_find((*p).xid);
   if item.is_null() {
@@ -422,7 +422,7 @@ unsafe extern "C" fn pass_to_client(
   if (*item).ip.sin_addr.s_addr
     == ({
       let mut __v: libc::c_uint = 0;
-      let mut __x: libc::c_uint = 0i32 as in_addr_t;
+      let mut __x: libc::c_uint = 0 as in_addr_t;
       if false {
         __v = (__x & 0xff000000u32) >> 24i32
           | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
@@ -465,7 +465,7 @@ unsafe extern "C" fn pass_to_client(
     p as *const libc::c_void,
     packet_len,
     &mut (*item).ip,
-  ) != 0i32
+  ) != 0
   {
     return;
     /* send error occurred */
@@ -484,8 +484,8 @@ pub unsafe extern "C" fn dhcprelay_main(
     sin_addr: in_addr { s_addr: 0 },
     sin_zero: [0; 8],
   };
-  let mut iface_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut fds: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut iface_list: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut fds: *mut libc::c_int = std::ptr::null_mut();
   let mut num_sockets: libc::c_int = 0;
   let mut max_socket: libc::c_int = 0;
   let mut our_nip: u32 = 0;
@@ -579,7 +579,7 @@ pub unsafe extern "C" fn dhcprelay_main(
              : "volatile");
     c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh21, fresh18);
     c2rust_asm_casts::AsmCast::cast_out(fresh19, fresh22, fresh20);
-    i = 0i32;
+    i = 0;
     while i < num_sockets {
       rfds.fds_bits[(*fds.offset(i as isize)
         / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
@@ -590,14 +590,14 @@ pub unsafe extern "C" fn dhcprelay_main(
       i += 1
     }
     tv.tv_sec = (2i32 * 60i32 / 8i32) as time_t;
-    tv.tv_usec = 0i32 as suseconds_t;
+    tv.tv_usec = 0 as suseconds_t;
     if select(
       max_socket + 1i32,
       &mut rfds,
       0 as *mut fd_set,
       0 as *mut fd_set,
       &mut tv,
-    ) > 0i32
+    ) > 0
     {
       let mut packlen: libc::c_int = 0;
       let mut dhcp_msg: dhcp_packet = dhcp_packet {
@@ -629,7 +629,7 @@ pub unsafe extern "C" fn dhcprelay_main(
         != 0
       {
         packlen = udhcp_recv_kernel_packet(&mut dhcp_msg, *fds.offset(0));
-        if packlen > 0i32 {
+        if packlen > 0 {
           pass_to_client(&mut dhcp_msg, packlen, fds);
         }
       }
@@ -657,13 +657,13 @@ pub unsafe extern "C" fn dhcprelay_main(
             *fds.offset(i as isize),
             &mut dhcp_msg as *mut dhcp_packet as *mut libc::c_void,
             ::std::mem::size_of::<dhcp_packet>() as libc::c_ulong,
-            0i32,
+            0,
             __SOCKADDR_ARG {
               __sockaddr__: &mut client_addr as *mut sockaddr_in as *mut sockaddr,
             },
             &mut addr_size,
           ) as libc::c_int;
-          if !(packlen <= 0i32) {
+          if !(packlen <= 0) {
             /* Get our IP on corresponding client_iface */
             // RFC 1542
             // 4.1 General BOOTP Processing for Relay Agents

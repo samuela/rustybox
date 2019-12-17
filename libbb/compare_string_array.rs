@@ -48,7 +48,7 @@ pub unsafe extern "C" fn is_suffixed_with(
   let mut len_diff: ssize_t = strlen(string).wrapping_sub(key_len) as ssize_t;
   if len_diff >= 0 {
     string = string.offset(len_diff as isize);
-    if strcmp(string, key) == 0i32 {
+    if strcmp(string, key) == 0 {
       return string as *mut libc::c_char;
     }
   }
@@ -62,9 +62,9 @@ pub unsafe extern "C" fn index_in_str_array(
   mut key: *const libc::c_char,
 ) -> libc::c_int {
   let mut i: libc::c_int = 0; /* skip NUL */
-  i = 0i32;
+  i = 0;
   while !(*string_array.offset(i as isize)).is_null() {
-    if strcmp(*string_array.offset(i as isize), key) == 0i32 {
+    if strcmp(*string_array.offset(i as isize), key) == 0 {
       return i;
     }
     i += 1
@@ -76,9 +76,9 @@ pub unsafe extern "C" fn index_in_strings(
   mut strings: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
-  let mut idx: libc::c_int = 0i32;
+  let mut idx: libc::c_int = 0;
   while *strings != 0 {
-    if strcmp(strings, key) == 0i32 {
+    if strcmp(strings, key) == 0 {
       return idx;
     }
     strings = strings.offset(strlen(strings).wrapping_add(1i32 as libc::c_ulong) as isize);
@@ -96,13 +96,13 @@ pub unsafe extern "C" fn index_in_substrings(
   let mut matched_idx: libc::c_int = -1i32; /* exact match */
   let len: libc::c_int = strlen(key) as libc::c_int; /* ambiguous match */
   if len != 0 {
-    let mut idx: libc::c_int = 0i32; /* skip NUL */
+    let mut idx: libc::c_int = 0; /* skip NUL */
     while *strings != 0 {
-      if strncmp(strings, key, len as libc::c_ulong) == 0i32 {
+      if strncmp(strings, key, len as libc::c_ulong) == 0 {
         if *strings.offset(len as isize) as libc::c_int == '\u{0}' as i32 {
           return idx;
         }
-        if matched_idx >= 0i32 {
+        if matched_idx >= 0 {
           return -1i32;
         }
         matched_idx = idx

@@ -432,12 +432,12 @@ unsafe extern "C" fn load_string(mut src: *const libc::c_char) -> size_t {
       ((*lineedit_ptr_to_statics).maxsize - 1i32) as size_t,
     ) as ssize_t;
     if len < 0 {
-      len = 0i32 as ssize_t
+      len = 0 as ssize_t
     }
-    *(*lineedit_ptr_to_statics).command_ps.offset(len as isize) = 0i32;
+    *(*lineedit_ptr_to_statics).command_ps.offset(len as isize) = 0;
     return len as size_t;
   } else {
-    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i: libc::c_uint = 0 as libc::c_uint;
     while *src.offset(i as isize) as libc::c_int != 0
       && i < ((*lineedit_ptr_to_statics).maxsize - 1i32) as libc::c_uint
     {
@@ -445,7 +445,7 @@ unsafe extern "C" fn load_string(mut src: *const libc::c_char) -> size_t {
         *src.offset(i as isize) as wchar_t;
       i = i.wrapping_add(1)
     }
-    *(*lineedit_ptr_to_statics).command_ps.offset(i as isize) = 0i32;
+    *(*lineedit_ptr_to_statics).command_ps.offset(i as isize) = 0;
     return i as size_t;
   };
 }
@@ -460,16 +460,16 @@ unsafe extern "C" fn save_string(
       maxsize.wrapping_sub(1i32 as libc::c_uint) as size_t,
     ) as ssize_t;
     if len < 0 {
-      len = 0i32 as ssize_t
+      len = 0 as ssize_t
     }
     *dst.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
     return len as libc::c_uint;
   } else {
-    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i: libc::c_uint = 0 as libc::c_uint;
     loop {
       let ref mut fresh0 = *dst.offset(i as isize);
       *fresh0 = *(*lineedit_ptr_to_statics).command_ps.offset(i as isize) as libc::c_char;
-      if !(*fresh0 as libc::c_int != 0i32) {
+      if !(*fresh0 as libc::c_int != 0) {
         break;
       }
       i = i.wrapping_add(1)
@@ -483,7 +483,7 @@ unsafe extern "C" fn BB_PUTCHAR(mut c: wchar_t) {
     let mut buf: [libc::c_char; 7] = [0; 7];
     let mut mbst: bb_mbstate_t = {
       let mut init = bb_mbstate_t {
-        bogus: 0i32 as libc::c_char,
+        bogus: 0 as libc::c_char,
       };
       init
     };
@@ -505,7 +505,7 @@ unsafe extern "C" fn adjust_width_and_validate_wc(mut wc: wchar_t) -> wchar_t {
       current_block_2 = 15232977139320167099;
     } else {
       w = bb_wcwidth(wc as libc::c_uint);
-      if false && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
+      if false && w < 0 || 0 == 0 && w <= 0 || 0 == 0 && w > 1i32 {
         current_block_2 = 15232977139320167099;
       } else {
         current_block_2 = 7815301370352969686;
@@ -531,9 +531,9 @@ unsafe extern "C" fn put_cur_glyph_and_inc_cursor() {
   let mut c: wchar_t = *(*lineedit_ptr_to_statics)
     .command_ps
     .offset((*lineedit_ptr_to_statics).cursor as isize);
-  let mut width: libc::c_uint = 0i32 as libc::c_uint;
+  let mut width: libc::c_uint = 0 as libc::c_uint;
   let mut ofs_to_right: libc::c_int = 0;
-  if c == 0i32 {
+  if c == 0 {
     /* erase character after end of input string */
     c = ' ' as i32
   } else {
@@ -549,11 +549,11 @@ unsafe extern "C" fn put_cur_glyph_and_inc_cursor() {
   ofs_to_right = (*lineedit_ptr_to_statics)
     .cmdedit_x
     .wrapping_sub((*lineedit_ptr_to_statics).cmdedit_termw) as libc::c_int;
-  if 0i32 == 0 || ofs_to_right <= 0i32 {
+  if 0 == 0 || ofs_to_right <= 0 {
     /* c fits on this line */
     BB_PUTCHAR(c);
   }
-  if ofs_to_right >= 0i32 {
+  if ofs_to_right >= 0 {
     /* we go to the next line */
     /* This works better if our idea of term width is wrong
      * and it is actually wider (often happens on serial lines).
@@ -564,8 +564,8 @@ unsafe extern "C" fn put_cur_glyph_and_inc_cursor() {
      * this will break things: there will be one extra empty line */
     puts(b"\r\x00" as *const u8 as *const libc::c_char); /* + implicit '\n' */
     (*lineedit_ptr_to_statics).cmdedit_y = (*lineedit_ptr_to_statics).cmdedit_y.wrapping_add(1); /* ofs_to_right > 0 */
-    if 0i32 == 0 || ofs_to_right == 0i32 {
-      width = 0i32 as libc::c_uint
+    if 0 == 0 || ofs_to_right == 0 {
+      width = 0 as libc::c_uint
     } else {
       /* wide char c didn't fit on prev line */
       BB_PUTCHAR(c);
@@ -583,8 +583,8 @@ unsafe extern "C" fn put_till_end_and_adv_cursor() {
 unsafe extern "C" fn goto_new_line() {
   put_till_end_and_adv_cursor();
   /* "cursor == 0" is only if prompt is "" and user input is empty */
-  if (*lineedit_ptr_to_statics).cursor == 0i32 as libc::c_uint
-    || (*lineedit_ptr_to_statics).cmdedit_x != 0i32 as libc::c_uint
+  if (*lineedit_ptr_to_statics).cursor == 0 as libc::c_uint
+    || (*lineedit_ptr_to_statics).cmdedit_x != 0 as libc::c_uint
   {
     bb_putchar('\n' as i32);
   };
@@ -604,7 +604,7 @@ unsafe extern "C" fn put_prompt_custom(mut is_full: bool) {
     },
     stdout,
   ); /* new quasireal y */
-  (*lineedit_ptr_to_statics).cursor = 0i32 as libc::c_uint;
+  (*lineedit_ptr_to_statics).cursor = 0 as libc::c_uint;
   (*lineedit_ptr_to_statics).cmdedit_y = (*lineedit_ptr_to_statics)
     .cmdedit_prmt_len
     .wrapping_div((*lineedit_ptr_to_statics).cmdedit_termw);
@@ -618,17 +618,17 @@ unsafe extern "C" fn input_backward(mut num: libc::c_uint) {
   if num > (*lineedit_ptr_to_statics).cursor {
     num = (*lineedit_ptr_to_statics).cursor
   }
-  if num == 0i32 as libc::c_uint {
+  if num == 0 as libc::c_uint {
     return;
   }
   (*lineedit_ptr_to_statics).cursor = (*lineedit_ptr_to_statics).cursor.wrapping_sub(num);
-  if (0i32 != 0 || 0i32 != 0) && UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
+  if (0i32 != 0 || 0 != 0) && UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
     /* correct NUM to be equal to _screen_ width */
     let mut n: libc::c_int = num as libc::c_int;
-    num = 0i32 as libc::c_uint;
+    num = 0 as libc::c_uint;
     loop {
       n -= 1;
-      if !(n >= 0i32) {
+      if !(n >= 0) {
         break;
       }
       num = num.wrapping_add(1);
@@ -640,7 +640,7 @@ unsafe extern "C" fn input_backward(mut num: libc::c_uint) {
         ),
       );
     }
-    if num == 0i32 as libc::c_uint {
+    if num == 0 as libc::c_uint {
       return;
     }
   }
@@ -705,7 +705,7 @@ unsafe extern "C" fn draw_custom(
   mut back_cursor: libc::c_int,
   mut is_full: bool,
 ) {
-  if y > 0i32 {
+  if y > 0 {
     /* up y lines */
     printf(b"\x1b[%uA\x00" as *const u8 as *const libc::c_char, y);
   }
@@ -749,7 +749,7 @@ unsafe extern "C" fn input_delete() {
 }
 /* Delete the char in back of the cursor */
 unsafe extern "C" fn input_backspace() {
-  if (*lineedit_ptr_to_statics).cursor > 0i32 as libc::c_uint {
+  if (*lineedit_ptr_to_statics).cursor > 0 as libc::c_uint {
     input_backward(1i32 as libc::c_uint);
     input_delete();
   };
@@ -777,7 +777,7 @@ unsafe extern "C" fn free_tab_completion_data() {
       );
     }
     free((*lineedit_ptr_to_statics).matches as *mut libc::c_void);
-    (*lineedit_ptr_to_statics).matches = 0 as *mut *mut libc::c_char
+    (*lineedit_ptr_to_statics).matches = std::ptr::null_mut()
   };
 }
 unsafe extern "C" fn add_match(mut matched: *mut libc::c_char) {
@@ -810,7 +810,7 @@ unsafe extern "C" fn add_match(mut matched: *mut libc::c_char) {
  * unchanged if no user is matched.
  */
 unsafe extern "C" fn username_path_completion(mut ud: *mut libc::c_char) -> *mut libc::c_char {
-  let mut entry: *mut passwd = 0 as *mut passwd; /* skip ~ */
+  let mut entry: *mut passwd = std::ptr::null_mut(); /* skip ~ */
   let mut tilde_name: *mut libc::c_char = ud;
   let mut home: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   ud = ud.offset(1);
@@ -839,7 +839,7 @@ unsafe extern "C" fn username_path_completion(mut ud: *mut libc::c_char) -> *mut
  */
 #[inline(never)]
 unsafe extern "C" fn complete_username(mut ud: *const libc::c_char) -> libc::c_uint {
-  let mut pw: *mut passwd = 0 as *mut passwd; /* skip ~ */
+  let mut pw: *mut passwd = std::ptr::null_mut(); /* skip ~ */
   let mut userlen: libc::c_uint = 0;
   ud = ud.offset(1);
   userlen = strlen(ud) as libc::c_uint;
@@ -862,9 +862,9 @@ unsafe extern "C" fn complete_username(mut ud: *const libc::c_char) -> libc::c_u
 }
 unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_int {
   let mut npth: libc::c_int = 0;
-  let mut pth: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pth: *const libc::c_char = std::ptr::null();
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut res: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut res: *mut *mut libc::c_char = std::ptr::null_mut();
   if (*(*lineedit_ptr_to_statics).state).flags & WITH_PATH_LOOKUP as libc::c_int != 0 {
     pth = (*(*lineedit_ptr_to_statics).state).path_lookup
   } else {
@@ -931,7 +931,7 @@ unsafe extern "C" fn complete_cmd_dir_file(
   let mut npaths: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut pf_len: libc::c_uint = 0;
-  let mut pfind: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pfind: *const libc::c_char = std::ptr::null();
   let mut dirbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   npaths = 1i32;
   path1[0] = b".\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -956,10 +956,10 @@ unsafe extern "C" fn complete_cmd_dir_file(
     path1[0] = dirbuf
   } /* don't print an error */
   pf_len = strlen(pfind) as libc::c_uint;
-  i = 0i32;
+  i = 0;
   while i < npaths {
-    let mut dir: *mut DIR = 0 as *mut DIR;
-    let mut next: *mut dirent = 0 as *mut dirent;
+    let mut dir: *mut DIR = std::ptr::null_mut();
+    let mut next: *mut dirent = std::ptr::null_mut();
     let mut st: stat = std::mem::zeroed();
     let mut found: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     dir = opendir(*paths.offset(i as isize));
@@ -1042,7 +1042,7 @@ unsafe extern "C" fn remove_chunk(
   loop {
     let ref mut fresh6 = *int_buf.offset(beg as isize);
     *fresh6 = *int_buf.offset(end as isize);
-    if !(*fresh6 as libc::c_int != 0i32) {
+    if !(*fresh6 as libc::c_int != 0) {
       break;
     }
     beg += 1;
@@ -1063,12 +1063,12 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
   loop {
     *int_buf.offset(i as isize) = *match_buf.offset(i as isize) as libc::c_uchar as i16;
     i -= 1;
-    if !(i >= 0i32) {
+    if !(i >= 0) {
       break;
     }
   }
   /* Mark every \c as "quoted c" */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     if *int_buf.offset(i as isize) as libc::c_int == '\\' as i32 {
       remove_chunk(int_buf, i, i + 1i32);
@@ -1078,8 +1078,8 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
     i += 1
   }
   /* Quote-mark "chars" and 'chars', drop delimiters */
-  let mut in_quote: libc::c_int = 0i32;
-  i = 0i32;
+  let mut in_quote: libc::c_int = 0;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     let mut cur: libc::c_int = *int_buf.offset(i as isize) as libc::c_int;
     if cur == 0 {
@@ -1101,20 +1101,20 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
    * ';' ';;' '&' '|' '&&' '||',
    * but careful with '>&' '<&' '>|'
    */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     let mut cur_0: libc::c_int = *int_buf.offset(i as isize) as libc::c_int;
     if cur_0 == ';' as i32 || cur_0 == '&' as i32 || cur_0 == '|' as i32 {
       let mut prev: libc::c_int = if i != 0 {
         *int_buf.offset((i - 1i32) as isize) as libc::c_int
       } else {
-        0i32
+        0
       };
       if !(cur_0 == '&' as i32 && (prev == '>' as i32 || prev == '<' as i32)) {
         if !(cur_0 == '|' as i32 && prev == '>' as i32) {
           remove_chunk(
             int_buf,
-            0i32,
+            0,
             i + 1i32
               + (cur_0 == *int_buf.offset((i + 1i32) as isize) as libc::c_int) as libc::c_int,
           );
@@ -1127,7 +1127,7 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
   }
   let mut current_block_30: u64;
   /* Remove all `cmd` */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     if *int_buf.offset(i as isize) as libc::c_int == '`' as i32 {
       j = i + 1i32;
@@ -1153,7 +1153,7 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
         3934796541983872331 => {}
         _ => {
           /* No closing ` - command mode, remove all up to ` */
-          remove_chunk(int_buf, 0i32, i + 1i32);
+          remove_chunk(int_buf, 0, i + 1i32);
           break;
         }
       }
@@ -1164,29 +1164,29 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
    * Example: "if { c<tab>"
    * In this example, c should be matched as command pfx.
    */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     if *int_buf.offset(i as isize) as libc::c_int == '(' as i32
       || *int_buf.offset(i as isize) as libc::c_int == '{' as i32
     {
-      remove_chunk(int_buf, 0i32, i + 1i32);
+      remove_chunk(int_buf, 0, i + 1i32);
       i = -1i32
       /* back to square 1 */
     }
     i += 1
   }
   /* Remove leading unquoted spaces */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     if *int_buf.offset(i as isize) as libc::c_int != ' ' as i32 {
       break;
     }
     i += 1
   }
-  remove_chunk(int_buf, 0i32, i);
+  remove_chunk(int_buf, 0, i);
   /* Determine completion mode */
   command_mode = FIND_EXE_ONLY as libc::c_int;
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     if *int_buf.offset(i as isize) as libc::c_int == ' ' as i32
       || *int_buf.offset(i as isize) as libc::c_int == '<' as i32
@@ -1208,13 +1208,13 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
     i += 1
   }
   /* Remove everything except last word */
-  i = 0i32;
+  i = 0;
   while *int_buf.offset(i as isize) != 0 {
     /* quasi-strlen(int_buf) */
     i += 1
   }
   i -= 1;
-  while i >= 0i32 {
+  while i >= 0 {
     let mut cur_1: libc::c_int = *int_buf.offset(i as isize) as libc::c_int;
     if cur_1 == ' ' as i32
       || cur_1 == '<' as i32
@@ -1222,14 +1222,14 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
       || cur_1 == '|' as i32
       || cur_1 == '&' as i32
     {
-      remove_chunk(int_buf, 0i32, i + 1i32);
+      remove_chunk(int_buf, 0, i + 1i32);
       break;
     } else {
       i -= 1
     }
   }
   /* Convert back to string of _chars_ */
-  i = 0i32;
+  i = 0;
   loop {
     let ref mut fresh8 = *match_buf.offset(i as isize);
     *fresh8 = *int_buf.offset(i as isize) as libc::c_char;
@@ -1247,12 +1247,12 @@ unsafe extern "C" fn build_match_prefix(mut match_buf: *mut libc::c_char) -> lib
 unsafe extern "C" fn showfiles() {
   let mut ncols: libc::c_int = 0;
   let mut row: libc::c_int = 0;
-  let mut column_width: libc::c_int = 0i32;
+  let mut column_width: libc::c_int = 0;
   let mut nfiles: libc::c_int = (*lineedit_ptr_to_statics).num_matches as libc::c_int;
   let mut nrows: libc::c_int = nfiles;
   let mut l: libc::c_int = 0;
   /* find the longest file name - use that as the column width */
-  row = 0i32; /* min space for columns */
+  row = 0; /* min space for columns */
   while row < nrows {
     l = unicode_strwidth(*(*lineedit_ptr_to_statics).matches.offset(row as isize)) as libc::c_int;
     if column_width < l {
@@ -1273,7 +1273,7 @@ unsafe extern "C" fn showfiles() {
   } else {
     ncols = 1i32
   }
-  row = 0i32;
+  row = 0;
   while row < nrows {
     let mut n: libc::c_int = row;
     let mut nc: libc::c_int = 0;
@@ -1303,7 +1303,7 @@ unsafe extern "C" fn is_special_char(mut c: libc::c_char) -> *const libc::c_char
   );
 }
 unsafe extern "C" fn quote_special_chars(mut found: *mut libc::c_char) -> *mut libc::c_char {
-  let mut l: libc::c_int = 0i32;
+  let mut l: libc::c_int = 0;
   let mut s: *mut libc::c_char = xzalloc(
     strlen(found)
       .wrapping_add(1i32 as libc::c_ulong)
@@ -1344,13 +1344,13 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
     /* The last char was a TAB too.
      * Print a list of all the available choices.
      */
-    if (*lineedit_ptr_to_statics).num_matches > 0i32 as libc::c_uint {
+    if (*lineedit_ptr_to_statics).num_matches > 0 as libc::c_uint {
       /* cursor will be changed by goto_new_line() */
       let mut sav_cursor: libc::c_int = (*lineedit_ptr_to_statics).cursor as libc::c_int;
       goto_new_line();
       showfiles();
       draw_custom(
-        0i32,
+        0,
         (*lineedit_ptr_to_statics).command_len - sav_cursor,
         1i32 != 0,
       );
@@ -1373,7 +1373,7 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
     .offset((*lineedit_ptr_to_statics).cursor as isize);
   *(*lineedit_ptr_to_statics)
     .command_ps
-    .offset((*lineedit_ptr_to_statics).cursor as isize) = 0i32;
+    .offset((*lineedit_ptr_to_statics).cursor as isize) = 0;
   save_string(match_buf, MAX_LINELEN as libc::c_int as libc::c_uint);
   *(*lineedit_ptr_to_statics)
     .command_ps
@@ -1409,12 +1409,12 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
   /* Remove duplicates */
   if !(*lineedit_ptr_to_statics).matches.is_null() {
     let mut i: libc::c_uint = 0;
-    let mut n: libc::c_uint = 0i32 as libc::c_uint;
+    let mut n: libc::c_uint = 0 as libc::c_uint;
     qsort_string_vector(
       (*lineedit_ptr_to_statics).matches,
       (*lineedit_ptr_to_statics).num_matches,
     );
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i
       < (*lineedit_ptr_to_statics)
         .num_matches
@@ -1426,7 +1426,7 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
         *(*lineedit_ptr_to_statics)
           .matches
           .offset(i.wrapping_add(1i32 as libc::c_uint) as isize),
-      ) == 0i32
+      ) == 0
       {
         free(*(*lineedit_ptr_to_statics).matches.offset(i as isize) as *mut libc::c_void);
       //matches[i] = NULL; /* paranoia */
@@ -1485,7 +1485,7 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
     }
   } else {
     /* Next <tab> is not a double-tab */
-    *lastWasTab = 0i32 as smallint;
+    *lastWasTab = 0 as smallint;
     chosen_match = quote_special_chars(*(*lineedit_ptr_to_statics).matches.offset(0));
     len_found = strlen(chosen_match);
     if *chosen_match.offset(len_found.wrapping_sub(1i32 as libc::c_ulong) as isize) as libc::c_int
@@ -1533,8 +1533,8 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
         pos = (*lineedit_ptr_to_statics).command_len - len;
         draw_custom(
           (*lineedit_ptr_to_statics).cmdedit_y as libc::c_int,
-          if pos >= 0i32 { pos } else { 0i32 },
-          0i32 != 0,
+          if pos >= 0 { pos } else { 0 },
+          0 != 0,
         );
       }
     }
@@ -1551,25 +1551,25 @@ pub unsafe extern "C" fn new_line_input_t(mut flags: libc::c_int) -> *mut line_i
     xzalloc(::std::mem::size_of::<line_input_t>() as libc::c_ulong) as *mut line_input_t;
   (*n).flags = flags;
   (*n).timeout = -1i32;
-  (*n).max_history = 255i32 + 0i32;
+  (*n).max_history = 255i32 + 0;
   return n;
 }
 #[no_mangle]
 pub unsafe extern "C" fn size_from_HISTFILESIZE(mut hp: *const libc::c_char) -> libc::c_uint {
-  let mut size: libc::c_int = 255i32 + 0i32;
+  let mut size: libc::c_int = 255i32 + 0;
   if !hp.is_null() {
     size = atoi(hp);
-    if size <= 0i32 {
+    if size <= 0 {
       return 1i32 as libc::c_uint;
     }
-    if size > 255i32 + 0i32 {
-      return (255i32 + 0i32) as libc::c_uint;
+    if size > 255i32 + 0 {
+      return (255i32 + 0) as libc::c_uint;
     }
   }
   return size as libc::c_uint;
 }
 unsafe extern "C" fn save_command_ps_at_cur_history() {
-  if *(*lineedit_ptr_to_statics).command_ps.offset(0) != 0i32 {
+  if *(*lineedit_ptr_to_statics).command_ps.offset(0) != 0 {
     let mut cur: libc::c_int = (*(*lineedit_ptr_to_statics).state).cur_history;
     free((*(*lineedit_ptr_to_statics).state).history[cur as usize] as *mut libc::c_void);
     let mut tbuf: [libc::c_char; 1024] = [0; 1024];
@@ -1590,7 +1590,7 @@ unsafe extern "C" fn get_previous_history() -> libc::c_int {
     return 1i32;
   }
   beep();
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn get_next_history() -> libc::c_int {
   if (*(*lineedit_ptr_to_statics).state).flags & DO_HISTORY as libc::c_int != 0 {
@@ -1603,7 +1603,7 @@ unsafe extern "C" fn get_next_history() -> libc::c_int {
     }
   }
   beep();
-  return 0i32;
+  return 0;
 }
 /* Lists command history. Used by shell 'history' builtins */
 #[no_mangle]
@@ -1612,7 +1612,7 @@ pub unsafe extern "C" fn show_history(mut st: *const line_input_t) {
   if st.is_null() {
     return;
   }
-  i = 0i32;
+  i = 0;
   while i < (*st).cnt_history {
     printf(
       b"%4d %s\n\x00" as *const u8 as *const libc::c_char,
@@ -1625,7 +1625,7 @@ pub unsafe extern "C" fn show_history(mut st: *const line_input_t) {
 #[no_mangle]
 pub unsafe extern "C" fn free_line_input_t(mut n: *mut line_input_t) {
   let mut i: libc::c_int = (*n).cnt_history;
-  while i > 0i32 {
+  while i > 0 {
     i -= 1;
     free((*n).history[i as usize] as *mut libc::c_void);
   }
@@ -1642,7 +1642,7 @@ pub unsafe extern "C" fn free_line_input_t(mut n: *mut line_input_t) {
 unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
   let mut temp_h: [*mut libc::c_char; 255] = [0 as *mut libc::c_char; 255];
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut idx: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   let mut line_len: libc::c_uint = 0;
@@ -1651,7 +1651,7 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
   if !fp.is_null() {
     /* clean up old history */
     idx = (*st_parm).cnt_history as libc::c_uint;
-    while idx > 0i32 as libc::c_uint {
+    while idx > 0 as libc::c_uint {
       idx = idx.wrapping_sub(1);
       free((*st_parm).history[idx as usize] as *mut libc::c_void);
       (*st_parm).history[idx as usize] = std::ptr::null_mut::<libc::c_char>()
@@ -1659,11 +1659,11 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
     /* fill temp_h[], retaining only last MAX_HISTORY lines */
     memset(
       temp_h.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[*mut libc::c_char; 255]>() as libc::c_ulong,
     );
-    idx = 0i32 as libc::c_uint;
-    (*st_parm).cnt_history_in_file = 0i32 as libc::c_uint;
+    idx = 0 as libc::c_uint;
+    (*st_parm).cnt_history_in_file = 0 as libc::c_uint;
     loop {
       line = xmalloc_fgetline(fp);
       if line.is_null() {
@@ -1677,7 +1677,7 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
         (*st_parm).cnt_history_in_file = (*st_parm).cnt_history_in_file.wrapping_add(1);
         idx = idx.wrapping_add(1);
         if idx == (*st_parm).max_history as libc::c_uint {
-          idx = 0i32 as libc::c_uint
+          idx = 0 as libc::c_uint
         }
       }
     }
@@ -1687,12 +1687,12 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
       while temp_h[idx as usize].is_null() {
         idx = idx.wrapping_add(1);
         if idx == (*st_parm).max_history as libc::c_uint {
-          idx = 0i32 as libc::c_uint
+          idx = 0 as libc::c_uint
         }
       }
     }
     /* copy temp_h[] to st_parm->history[] */
-    i = 0i32 as libc::c_uint; /* paranoia */
+    i = 0 as libc::c_uint; /* paranoia */
     while i < (*st_parm).max_history as libc::c_uint {
       line = temp_h[idx as usize]; /* we (try to) do atomic write */
       if line.is_null() {
@@ -1700,7 +1700,7 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
       }
       idx = idx.wrapping_add(1);
       if idx == (*st_parm).max_history as libc::c_uint {
-        idx = 0i32 as libc::c_uint
+        idx = 0 as libc::c_uint
       }
       line_len = strlen(line) as libc::c_uint;
       if line_len >= MAX_LINELEN as libc::c_int as libc::c_uint {
@@ -1725,10 +1725,10 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     0o1i32 | 0o100i32 | 0o2000i32,
     0o600i32,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     return;
   }
-  xlseek(fd, 0i32 as off_t, 2i32);
+  xlseek(fd, 0 as off_t, 2i32);
   len = strlen(str) as libc::c_int;
   *str.offset(len as isize) = '\n' as i32 as libc::c_char;
   len2 = full_write(fd, str as *const libc::c_void, (len + 1i32) as size_t) as libc::c_int;
@@ -1745,7 +1745,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     > ((*(*lineedit_ptr_to_statics).state).max_history * 4i32) as libc::c_uint
   {
     let mut new_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut st_temp: *mut line_input_t = 0 as *mut line_input_t;
+    let mut st_temp: *mut line_input_t = std::ptr::null_mut();
     /* we may have concurrently written entries from others.
      * load them */
     st_temp = new_line_input_t((*(*lineedit_ptr_to_statics).state).flags);
@@ -1759,11 +1759,11 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
       getpid(),
     );
     fd = open(new_name, 0o1i32 | 0o100i32 | 0o1000i32, 0o600i32);
-    if fd >= 0i32 {
-      let mut fp: *mut FILE = 0 as *mut FILE;
+    if fd >= 0 {
+      let mut fp: *mut FILE = std::ptr::null_mut();
       let mut i: libc::c_int = 0;
       fp = xfdopen_for_write(fd);
-      i = 0i32;
+      i = 0;
       while i < (*st_temp).cnt_history {
         fprintf(
           fp,
@@ -1773,7 +1773,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
         i += 1
       }
       fclose(fp);
-      if rename(new_name, (*(*lineedit_ptr_to_statics).state).hist_file) == 0i32 {
+      if rename(new_name, (*(*lineedit_ptr_to_statics).state).hist_file) == 0 {
         (*(*lineedit_ptr_to_statics).state).cnt_history_in_file =
           (*st_temp).cnt_history as libc::c_uint
       }
@@ -1797,7 +1797,7 @@ unsafe extern "C" fn remember_in_history(mut str: *mut libc::c_char) {
     && strcmp(
       (*(*lineedit_ptr_to_statics).state).history[(i - 1i32) as usize],
       str,
-    ) == 0i32
+    ) == 0
   {
     return;
   } /* redundant, paranoia */
@@ -1812,7 +1812,7 @@ unsafe extern "C" fn remember_in_history(mut str: *mut libc::c_char) {
   /* we need to keep history[state->max_history] empty, hence >=, not > */
   if i >= (*(*lineedit_ptr_to_statics).state).max_history {
     free((*(*lineedit_ptr_to_statics).state).history[0] as *mut libc::c_void);
-    i = 0i32;
+    i = 0;
     while i < (*(*lineedit_ptr_to_statics).state).max_history - 1i32 {
       (*(*lineedit_ptr_to_statics).state).history[i as usize] =
         (*(*lineedit_ptr_to_statics).state).history[(i + 1i32) as usize];
@@ -1837,7 +1837,7 @@ unsafe extern "C" fn ctrl_left() {
   loop {
     let mut c: wchar_t = 0;
     input_backward(1i32 as libc::c_uint);
-    if (*lineedit_ptr_to_statics).cursor == 0i32 as libc::c_uint {
+    if (*lineedit_ptr_to_statics).cursor == 0 as libc::c_uint {
       break;
     }
     c = *command.offset((*lineedit_ptr_to_statics).cursor as isize);
@@ -1857,7 +1857,7 @@ unsafe extern "C" fn ctrl_left() {
         break;
       }
       input_backward(1i32 as libc::c_uint);
-      if (*lineedit_ptr_to_statics).cursor == 0i32 as libc::c_uint {
+      if (*lineedit_ptr_to_statics).cursor == 0 as libc::c_uint {
         break;
       }
     }
@@ -1869,7 +1869,7 @@ unsafe extern "C" fn ctrl_right() {
   loop {
     let mut c: wchar_t = 0;
     c = *command.offset((*lineedit_ptr_to_statics).cursor as isize);
-    if c == 0i32 {
+    if c == 0 {
       break;
     }
     if c != ' ' as i32 && !BB_ispunct(c) {
@@ -1879,7 +1879,7 @@ unsafe extern "C" fn ctrl_right() {
       {
         input_forward();
         c = *command.offset((*lineedit_ptr_to_statics).cursor as isize);
-        if c == 0i32 || c == ' ' as i32 || BB_ispunct(c) as libc::c_int != 0 {
+        if c == 0 || c == ' ' as i32 || BB_ispunct(c) as libc::c_int != 0 {
           break;
         }
       }
@@ -1914,7 +1914,7 @@ unsafe extern "C" fn ctrl_right() {
  */
 /* Called just once at read_line_input() init time */
 unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
-  let mut prmt_size: libc::c_int = 0i32;
+  let mut prmt_size: libc::c_int = 0;
   let mut prmt_mem_ptr: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;
   let mut cwd_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flg_not_length: libc::c_char = '[' as i32 as libc::c_char;
@@ -1932,7 +1932,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
     prmt_ptr = prmt_ptr.offset(1);
     c = *fresh19;
     if c as libc::c_int == '\\' as i32 {
-      let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+      let mut cp: *const libc::c_char = std::ptr::null();
       let mut l: libc::c_int = 0;
       /* if */
       /*
@@ -2040,7 +2040,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               //					break;
               {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2060,7 +2060,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2084,7 +2084,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2163,7 +2163,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2183,7 +2183,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2206,7 +2206,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2278,7 +2278,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2298,7 +2298,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2321,7 +2321,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2393,7 +2393,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2413,7 +2413,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2436,7 +2436,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2508,7 +2508,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2528,7 +2528,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2551,7 +2551,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2623,7 +2623,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2643,7 +2643,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2666,7 +2666,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2738,7 +2738,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2758,7 +2758,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2781,7 +2781,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2853,7 +2853,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2873,7 +2873,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -2896,7 +2896,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -2968,7 +2968,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               12381812505308290051 => {
                 let mut buf2: [libc::c_char; 4] = [0; 4];
-                l = 0i32;
+                l = 0;
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
@@ -2988,7 +2988,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   }
                 }
                 c = strtoul(buf2.as_mut_ptr(), 0 as *mut *mut libc::c_char, 16i32) as libc::c_char;
-                if c as libc::c_int == 0i32 {
+                if c as libc::c_int == 0 {
                   c = '?' as i32 as libc::c_char
                 }
                 pbuf = cbuf.as_mut_ptr();
@@ -3011,7 +3011,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 current_block_52 = 8869332144787829186;
               }
               14477407255285059806 => {
-                c = if geteuid() == 0i32 as libc::c_uint {
+                c = if geteuid() == 0 as libc::c_uint {
                   '#' as i32
                 } else {
                   '$' as i32
@@ -3048,7 +3048,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
     let mut n: libc::c_int = strlen(pbuf) as libc::c_int;
     prmt_size += n;
     if c as libc::c_int == '\n' as i32 {
-      (*lineedit_ptr_to_statics).cmdedit_prmt_len = 0i32 as libc::c_uint
+      (*lineedit_ptr_to_statics).cmdedit_prmt_len = 0 as libc::c_uint
     } else if flg_not_length as libc::c_int != ']' as i32 {
       /*ENABLE_UNICODE_SUPPORT*/
       (*lineedit_ptr_to_statics).cmdedit_prmt_len = (*lineedit_ptr_to_statics)
@@ -3093,7 +3093,7 @@ unsafe extern "C" fn cmdedit_setwidth() {
     } as libc::c_int,
     ((*lineedit_ptr_to_statics).command_len as libc::c_uint)
       .wrapping_sub((*lineedit_ptr_to_statics).cursor) as libc::c_int,
-    0i32 != 0,
+    0 != 0,
   );
 }
 unsafe extern "C" fn win_changed(mut _nsig: libc::c_int) {
@@ -3120,7 +3120,7 @@ unsafe extern "C" fn lineedit_read_key(
 ) -> libc::c_int {
   let mut ic: int64_t = 0;
   let mut unicode_buf: [libc::c_char; 7] = [0; 7];
-  let mut unicode_idx: libc::c_int = 0i32;
+  let mut unicode_idx: libc::c_int = 0;
   fflush_all();
   let mut wc: wchar_t = 0;
   loop {
@@ -3138,10 +3138,10 @@ unsafe extern "C" fn lineedit_read_key(
     ic = read_key(0i32, read_key_buffer, timeout);
     ::std::ptr::write_volatile(
       &mut (*lineedit_ptr_to_statics).ok_to_redraw as *mut smallint,
-      0i32 as smallint,
+      0 as smallint,
     );
     if *bb_errno != 0 {
-      if !(*bb_errno == 11i32 && unicode_idx != 0i32) {
+      if !(*bb_errno == 11i32 && unicode_idx != 0) {
         break;
       }
     } else {
@@ -3149,7 +3149,7 @@ unsafe extern "C" fn lineedit_read_key(
         break;
       }
       wc = 0;
-      if (ic as i32) < 0i32 {
+      if (ic as i32) < 0 {
         break;
       }
       // TODO: imagine sequence like: 0xff,<left-arrow>: we are currently losing 0xff...
@@ -3196,12 +3196,12 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
   let mut match_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_buf: [libc::c_char; 128] = [0; 128];
   let mut read_key_buffer: [libc::c_char; 16] = [0; 16];
-  let mut matched_history_line: *const libc::c_char = 0 as *const libc::c_char;
-  let mut saved_prompt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut matched_history_line: *const libc::c_char = std::ptr::null();
+  let mut saved_prompt: *const libc::c_char = std::ptr::null();
   let mut saved_prmt_len: libc::c_uint = 0;
   let mut ic: i32 = 0;
-  matched_history_line = 0 as *const libc::c_char;
-  read_key_buffer[0] = 0i32 as libc::c_char;
+  matched_history_line = std::ptr::null();
+  read_key_buffer[0] = 0 as libc::c_char;
   match_buf[0] = '\u{0}' as i32 as libc::c_char;
   /* Save and replace the prompt */
   saved_prompt = (*lineedit_ptr_to_statics).prompt_last_line; /* while (1) */
@@ -3217,7 +3217,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
       (*lineedit_ptr_to_statics).cmdedit_y as libc::c_int,
       ((*lineedit_ptr_to_statics).command_len as libc::c_uint)
         .wrapping_sub((*lineedit_ptr_to_statics).cursor) as libc::c_int,
-      0i32 != 0,
+      0 != 0,
     );
     's_45: loop {
       h = 0;
@@ -3229,7 +3229,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
         8 | 127 => {
           /* Backspace */
           if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
-            while match_buf_len != 0i32 as libc::c_uint {
+            while match_buf_len != 0 as libc::c_uint {
               match_buf_len = match_buf_len.wrapping_sub(1);
               let mut c: u8 = match_buf[match_buf_len as usize] as u8;
               if c as libc::c_int & 0xc0i32 != 0x80i32 {
@@ -3237,7 +3237,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
               }
               /* yes */
             }
-          } else if match_buf_len != 0i32 as libc::c_uint {
+          } else if match_buf_len != 0 as libc::c_uint {
             match_buf_len = match_buf_len.wrapping_sub(1)
           }
           match_buf[match_buf_len as usize] = '\u{0}' as i32 as libc::c_char
@@ -3253,14 +3253,14 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
           if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
             let mut mbstate: bb_mbstate_t = {
               let mut init = bb_mbstate_t {
-                bogus: 0i32 as libc::c_char,
+                bogus: 0 as libc::c_char,
               };
               init
             };
             let mut buf: [libc::c_char; 7] = [0; 7];
             let mut len: libc::c_int =
               bb_wcrtomb(buf.as_mut_ptr(), ic, &mut mbstate) as libc::c_int;
-            if len > 0i32 {
+            if len > 0 {
               buf[len as usize] = '\u{0}' as i32 as libc::c_char;
               if (match_buf_len.wrapping_add(len as libc::c_uint) as libc::c_ulong)
                 < ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong
@@ -3287,7 +3287,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
       if ic == 'R' as i32 & !0x40i32 {
         h -= 1
       }
-      while h >= 0i32 {
+      while h >= 0 {
         if !(*(*lineedit_ptr_to_statics).state).history[h as usize].is_null() {
           match_0 = strstr(
             (*(*lineedit_ptr_to_statics).state).history[h as usize],
@@ -3321,7 +3321,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
     (*lineedit_ptr_to_statics).cmdedit_y as libc::c_int,
     ((*lineedit_ptr_to_statics).command_len as libc::c_uint)
       .wrapping_sub((*lineedit_ptr_to_statics).cursor) as libc::c_int,
-    0i32 != 0,
+    0 != 0,
   );
   return ic;
 }
@@ -3329,7 +3329,7 @@ unsafe extern "C" fn sigaction2(mut sig: libc::c_int, mut act: *mut sigaction) {
   // Grr... gcc 8.1.1:
   // "passing argument 3 to restrict-qualified parameter aliases with argument 2"
   // dance around that...
-  let mut oact: *mut sigaction = 0 as *mut sigaction;
+  let mut oact: *mut sigaction = std::ptr::null_mut();
   oact = act;
   sigaction(sig, act, oact);
 }
@@ -3867,8 +3867,8 @@ pub unsafe extern "C" fn read_line_input(
   let mut len: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
-  let mut lastWasTab: smallint = 0i32 as smallint;
-  let mut break_out: smallint = 0i32 as smallint;
+  let mut lastWasTab: smallint = 0 as smallint;
+  let mut break_out: smallint = 0 as smallint;
   let mut initial_settings: termios = termios {
     c_iflag: 0,
     c_oflag: 0,
@@ -3898,13 +3898,8 @@ pub unsafe extern "C" fn read_line_input(
   asm!("" : : : "memory" : "volatile");
   (*lineedit_ptr_to_statics).cmdedit_termw = 80i32 as libc::c_uint;
   (*lineedit_ptr_to_statics).home_pwd_buf = null_str.as_ptr() as *mut libc::c_char;
-  n = get_termios_and_make_raw(
-    0i32,
-    &mut new_settings,
-    &mut initial_settings,
-    0i32 | 1i32 << 0i32,
-  );
-  if n != 0i32
+  n = get_termios_and_make_raw(0, &mut new_settings, &mut initial_settings, 0 | 1i32 << 0);
+  if n != 0
     || initial_settings.c_lflag & (0o10i32 | 0o2i32) as libc::c_uint == 0o2i32 as libc::c_uint
   {
     /* Happens when e.g. stty -echo was run before.
@@ -3938,7 +3933,7 @@ pub unsafe extern "C" fn read_line_input(
   }
   if (*(*lineedit_ptr_to_statics).state).flags & DO_HISTORY as libc::c_int != 0 {
     if !(*(*lineedit_ptr_to_statics).state).hist_file.is_null() {
-      if (*(*lineedit_ptr_to_statics).state).cnt_history == 0i32 {
+      if (*(*lineedit_ptr_to_statics).state).cnt_history == 0 {
         load_history((*lineedit_ptr_to_statics).state);
       }
     }
@@ -3946,13 +3941,13 @@ pub unsafe extern "C" fn read_line_input(
       (*(*lineedit_ptr_to_statics).state).cnt_history
   }
   /* prepare before init handlers */
-  (*lineedit_ptr_to_statics).cmdedit_y = 0i32 as libc::c_uint; /* quasireal y, not true if line > xt*yt */
-  (*lineedit_ptr_to_statics).command_len = 0i32;
+  (*lineedit_ptr_to_statics).cmdedit_y = 0 as libc::c_uint; /* quasireal y, not true if line > xt*yt */
+  (*lineedit_ptr_to_statics).command_len = 0;
   (*lineedit_ptr_to_statics).command_ps = xzalloc(
     (maxsize as libc::c_ulong).wrapping_mul(::std::mem::size_of::<wchar_t>() as libc::c_ulong),
   ) as *mut wchar_t;
   tcsetattr_stdin_TCSANOW(&mut new_settings);
-  let mut entry: *mut passwd = 0 as *mut passwd;
+  let mut entry: *mut passwd = std::ptr::null_mut();
   entry = bb_internal_getpwuid(geteuid());
   if !entry.is_null() {
     (*lineedit_ptr_to_statics).user_buf = xstrdup((*entry).pw_name);
@@ -3969,7 +3964,7 @@ pub unsafe extern "C" fn read_line_input(
     .sa_handler = Some(win_changed as unsafe extern "C" fn(_: libc::c_int) -> ()); /* while (1) */
   (*lineedit_ptr_to_statics).SIGWINCH_handler.sa_flags = 0x10000000i32;
   sigaction2(28i32, &mut (*lineedit_ptr_to_statics).SIGWINCH_handler);
-  read_key_buffer[0] = 0i32 as libc::c_char;
+  read_key_buffer[0] = 0 as libc::c_char;
   loop
   /*
    * The emacs and vi modes share much of the code in the big
@@ -4026,7 +4021,7 @@ pub unsafe extern "C" fn read_line_input(
         8 | 127 => {
           /* ^H */
           /* DEL */
-          if 0i32 == 0 {
+          if 0 == 0 {
             input_backspace();
           } else {
             input_delete();
@@ -4035,7 +4030,7 @@ pub unsafe extern "C" fn read_line_input(
           break;
         }
         -9 => {
-          if 0i32 == 0 {
+          if 0 == 0 {
             input_delete();
           } else {
             input_backspace();
@@ -4052,7 +4047,7 @@ pub unsafe extern "C" fn read_line_input(
           /* Control-k -- clear to end of line */
           *(*lineedit_ptr_to_statics)
             .command_ps
-            .offset((*lineedit_ptr_to_statics).cursor as isize) = 0i32;
+            .offset((*lineedit_ptr_to_statics).cursor as isize) = 0;
           (*lineedit_ptr_to_statics).command_len = (*lineedit_ptr_to_statics).cursor as libc::c_int;
           printf(b"\x1b[J\x00" as *const u8 as *const libc::c_char);
           current_block = 14184516523743666873;
@@ -4063,7 +4058,7 @@ pub unsafe extern "C" fn read_line_input(
           /* cursor to top,left; clear to the end of screen */
           printf(b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char);
           draw_custom(
-            0i32,
+            0,
             ((*lineedit_ptr_to_statics).command_len as libc::c_uint)
               .wrapping_sub((*lineedit_ptr_to_statics).cursor) as libc::c_int,
             1i32 != 0,
@@ -4110,7 +4105,7 @@ pub unsafe extern "C" fn read_line_input(
             draw_custom(
               (*lineedit_ptr_to_statics).cmdedit_y as libc::c_int,
               (*lineedit_ptr_to_statics).command_len,
-              0i32 != 0,
+              0 != 0,
             );
           }
           current_block = 14184516523743666873;
@@ -4118,7 +4113,7 @@ pub unsafe extern "C" fn read_line_input(
         }
         23 => {
           /* Control-W -- Remove the last word */
-          while (*lineedit_ptr_to_statics).cursor > 0i32 as libc::c_uint
+          while (*lineedit_ptr_to_statics).cursor > 0 as libc::c_uint
             && BB_isspace(
               *(*lineedit_ptr_to_statics).command_ps.offset(
                 (*lineedit_ptr_to_statics)
@@ -4130,7 +4125,7 @@ pub unsafe extern "C" fn read_line_input(
           {
             input_backspace();
           }
-          while (*lineedit_ptr_to_statics).cursor > 0i32 as libc::c_uint
+          while (*lineedit_ptr_to_statics).cursor > 0 as libc::c_uint
             && !BB_isspace(
               *(*lineedit_ptr_to_statics).command_ps.offset(
                 (*lineedit_ptr_to_statics)
@@ -4155,7 +4150,7 @@ pub unsafe extern "C" fn read_line_input(
           input_backward(nc as libc::c_uint);
           loop {
             nc -= 1;
-            if !(nc >= 0i32) {
+            if !(nc >= 0) {
               break;
             }
             input_delete();
@@ -4238,7 +4233,7 @@ pub unsafe extern "C" fn read_line_input(
           break;
         }
         _ => {
-          if initial_settings.c_cc[0] as libc::c_int != 0i32
+          if initial_settings.c_cc[0] as libc::c_int != 0
             && ic_raw == initial_settings.c_cc[0] as libc::c_int
           {
             current_block = 15417752026496523887;
@@ -4271,26 +4266,26 @@ pub unsafe extern "C" fn read_line_input(
           if (*(*lineedit_ptr_to_statics).state).flags & VI_MODE as libc::c_int != 0 {
             9999i32
           } else {
-            0i32
+            0
           },
-          0i32 != 0,
+          0 != 0,
         );
         current_block = 14184516523743666873;
       }
       15417752026496523887 => {
         /* Ctrl-C (usually) - stop gathering input */
-        (*lineedit_ptr_to_statics).command_len = 0i32; /* "do not append '\n'" */
+        (*lineedit_ptr_to_statics).command_len = 0; /* "do not append '\n'" */
         break_out = -1i32 as smallint;
         current_block = 14184516523743666873;
       }
       9430418855388998878 => {
-        if initial_settings.c_cc[4] as libc::c_int != 0i32
+        if initial_settings.c_cc[4] as libc::c_int != 0
           && ic_raw == initial_settings.c_cc[4] as libc::c_int
         {
           /* Ctrl-D (usually) - delete one character,
            * or exit if len=0 and no chars to delete */
-          if (*lineedit_ptr_to_statics).command_len == 0i32 {
-            *bb_errno = 0i32;
+          if (*lineedit_ptr_to_statics).command_len == 0 {
+            *bb_errno = 0;
             current_block = 6027889462055013191;
           } else {
             input_delete();
@@ -4323,7 +4318,7 @@ pub unsafe extern "C" fn read_line_input(
                   (*lineedit_ptr_to_statics)
                     .cursor
                     .wrapping_add(1i32 as libc::c_uint) as isize,
-                ) = 0i32;
+                ) = 0;
                 put_cur_glyph_and_inc_cursor();
               } else {
                 /* In the middle, insert */
@@ -4340,7 +4335,7 @@ pub unsafe extern "C" fn read_line_input(
                 );
                 *(*lineedit_ptr_to_statics).command_ps.offset(sc_1 as isize) = ic;
                 /* is right-to-left char, or neutral one (e.g. comma) was just added to rtl text? */
-                if 0i32 == 0 {
+                if 0 == 0 {
                   sc_1 += 1
                 } /* no */
                 put_till_end_and_adv_cursor();
@@ -4375,20 +4370,20 @@ pub unsafe extern "C" fn read_line_input(
       break;
     }
     if ic_raw != '\t' as i32 {
-      lastWasTab = 0i32 as smallint
+      lastWasTab = 0 as smallint
     }
   }
   /* End of bug-catching "command_must_not_be_used" trick */
   *command.offset(0) = '\u{0}' as i32 as libc::c_char;
-  if (*lineedit_ptr_to_statics).command_len > 0i32 {
+  if (*lineedit_ptr_to_statics).command_len > 0 {
     (*lineedit_ptr_to_statics).command_len =
       save_string(command, (maxsize - 1i32) as libc::c_uint) as libc::c_int
   }
   free((*lineedit_ptr_to_statics).command_ps as *mut libc::c_void);
-  if (*lineedit_ptr_to_statics).command_len > 0i32 {
+  if (*lineedit_ptr_to_statics).command_len > 0 {
     remember_in_history(command);
   }
-  if break_out as libc::c_int > 0i32 {
+  if break_out as libc::c_int > 0 {
     let fresh25 = (*lineedit_ptr_to_statics).command_len;
     (*lineedit_ptr_to_statics).command_len = (*lineedit_ptr_to_statics).command_len + 1;
     *command.offset(fresh25 as isize) = '\n' as i32 as libc::c_char;

@@ -36,17 +36,17 @@ unsafe extern "C" fn bb_full_fd_action(
   mut size: off_t,
 ) -> off_t {
   let mut status: libc::c_int = -1i32;
-  let mut total: off_t = 0i32 as off_t;
-  let mut continue_on_write_error: bool = 0i32 != 0;
+  let mut total: off_t = 0 as off_t;
+  let mut continue_on_write_error: bool = 0 != 0;
   let mut sendfile_sz: ssize_t = 0;
   let mut buffer: [libc::c_char; 4096] = [0; 4096];
   if size < 0 {
     size = -size;
     continue_on_write_error = 1i32 != 0
   }
-  if !(src_fd < 0i32) {
+  if !(src_fd < 0) {
     sendfile_sz = if 1i32 == 0 {
-      0i32
+      0
     } else {
       (16i32 * 1024i32) * 1024i32
     } as ssize_t;
@@ -60,7 +60,7 @@ unsafe extern "C" fn bb_full_fd_action(
       let mut rd: ssize_t = 0;
       if sendfile_sz != 0 {
         /* dst_fd == -1 is a fake, else... */
-        if dst_fd >= 0i32 {
+        if dst_fd >= 0 {
           rd = sendfile(
             dst_fd,
             src_fd,
@@ -82,7 +82,7 @@ unsafe extern "C" fn bb_full_fd_action(
         match current_block_18 {
           1688160156426625504 => {}
           _ => {
-            sendfile_sz = 0i32 as ssize_t;
+            sendfile_sz = 0 as ssize_t;
             current_block_18 = 4808432441040389987;
           }
         }
@@ -110,11 +110,11 @@ unsafe extern "C" fn bb_full_fd_action(
       }
       if rd == 0 {
         /* eof - all done */
-        status = 0i32;
+        status = 0;
         break;
       } else {
         /* dst_fd == -1 is a fake, else... */
-        if dst_fd >= 0i32 && sendfile_sz == 0 {
+        if dst_fd >= 0 && sendfile_sz == 0 {
           let mut wr: ssize_t = full_write(
             dst_fd,
             buffer.as_mut_ptr() as *const libc::c_void,
@@ -130,7 +130,7 @@ unsafe extern "C" fn bb_full_fd_action(
           }
         }
         total += rd as i64;
-        if !(status < 0i32) {
+        if !(status < 0) {
           continue;
         }
         /* if we aren't copying till EOF... */
@@ -139,7 +139,7 @@ unsafe extern "C" fn bb_full_fd_action(
           continue;
         }
         /* 'size' bytes copied - all done */
-        status = 0i32;
+        status = 0;
         break;
       }
     }
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn bb_copyfd_size(
   if size != 0 {
     return bb_full_fd_action(fd1, fd2, size);
   }
-  return 0i32 as off_t;
+  return 0 as off_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_copyfd_exact_size(
@@ -289,5 +289,5 @@ pub unsafe extern "C" fn bb_copyfd_exact_size(
 /* bb_copyfd_XX print read/write errors and return -1 if they occur */
 #[no_mangle]
 pub unsafe extern "C" fn bb_copyfd_eof(mut fd1: libc::c_int, mut fd2: libc::c_int) -> off_t {
-  return bb_full_fd_action(fd1, fd2, 0i32 as off_t);
+  return bb_full_fd_action(fd1, fd2, 0 as off_t);
 }

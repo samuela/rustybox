@@ -130,9 +130,9 @@ pub struct iso_volume_descriptor {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut buf: *mut u8 = 0 as *mut u8;
-  let mut is: *mut iso_volume_descriptor = 0 as *mut iso_volume_descriptor;
-  let mut hs: *mut high_sierra_volume_descriptor = 0 as *mut high_sierra_volume_descriptor;
+  let mut buf: *mut u8 = std::ptr::null_mut();
+  let mut is: *mut iso_volume_descriptor = std::ptr::null_mut();
+  let mut hs: *mut high_sierra_volume_descriptor = std::ptr::null_mut();
   buf = volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
@@ -146,14 +146,14 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
     (*is).vd_id.as_mut_ptr() as *const libc::c_void,
     b"CD001\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     5i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     let mut vd_offset: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     //		volume_id_set_label_raw(id, is->volume_id, 32);
     volume_id_set_label_string(id, (*is).volume_id.as_mut_ptr(), 32i32 as size_t);
     vd_offset = 0x8000i32 + 0x800i32;
-    i = 0i32;
+    i = 0;
     while i < 16i32 {
       let mut svd_label: [u8; 64] = [0; 64];
       is = volume_id_get_buffer(
@@ -169,17 +169,17 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
           (*is).escape_sequences.as_mut_ptr() as *const libc::c_void,
           b"%/@\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           3i32 as libc::c_ulong,
-        ) == 0i32
+        ) == 0
           || memcmp(
             (*is).escape_sequences.as_mut_ptr() as *const libc::c_void,
             b"%/C\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             3i32 as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           || memcmp(
             (*is).escape_sequences.as_mut_ptr() as *const libc::c_void,
             b"%/E\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             3i32 as libc::c_ulong,
-          ) == 0i32
+          ) == 0
         {
           volume_id_set_unicode16(
             svd_label.as_mut_ptr() as *mut libc::c_char,
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
             (*id).label.as_mut_ptr() as *const libc::c_void,
             svd_label.as_mut_ptr() as *const libc::c_void,
             16i32 as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             break;
           }
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
       (*hs).id.as_mut_ptr() as *const libc::c_void,
       b"CDROM\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       5i32 as libc::c_ulong,
-    ) == 0i32)
+    ) == 0)
     {
       return -1i32;
     }
@@ -220,5 +220,5 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
   //		strcpy(id->type_version, "High Sierra");
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"iso9660\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

@@ -174,7 +174,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 /* convert speed string to speed code; return <= 0 on failure */
 unsafe extern "C" fn bcode(mut s: *const libc::c_char) -> libc::c_int {
   let mut value: libc::c_int = bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int; /* yes, int is intended! */
-  if value < 0i32 {
+  if value < 0 {
     /* bad terminating char, overflow, etc */
     return value;
   }
@@ -190,7 +190,7 @@ unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
       break;
     }
     (*ptr_to_globals).speeds[(*ptr_to_globals).numspeed as usize] = bcode(cp);
-    if (*ptr_to_globals).speeds[(*ptr_to_globals).numspeed as usize] < 0i32 {
+    if (*ptr_to_globals).speeds[(*ptr_to_globals).numspeed as usize] < 0 {
       bb_error_msg_and_die(b"bad speed: %s\x00" as *const u8 as *const libc::c_char, cp);
     }
     /* note: arg "0" turns into speed B0 */
@@ -215,7 +215,7 @@ unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
     &mut (*ptr_to_globals).login as *mut *const libc::c_char,
     &mut (*ptr_to_globals).timeout as *mut libc::c_uint,
   ) as libc::c_int;
-  if flags & 1i32 << 0i32 != 0 {
+  if flags & 1i32 << 0 != 0 {
     (*ptr_to_globals).initstring = xstrdup((*ptr_to_globals).initstring);
     /* decode \ddd octal codes into chars */
     strcpy_and_process_escape_sequences((*ptr_to_globals).initstring, (*ptr_to_globals).initstring);
@@ -255,7 +255,7 @@ unsafe extern "C" fn open_tty() {
     /* crw--w---- */
     close(0i32);
     xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
-    fchown(0i32, 0i32 as uid_t, 0i32 as gid_t);
+    fchown(0i32, 0 as uid_t, 0 as gid_t);
     fchmod(0i32, 0o620i32 as mode_t);
   } else {
     let mut n: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -267,7 +267,7 @@ unsafe extern "C" fn open_tty() {
      * Standard input should already be connected to an open port.
      * Make sure it is open for read/write.
      */
-    if fcntl(0i32, 3i32) & (0o2i32 | 0i32 | 0o1i32) != 0o2i32 {
+    if fcntl(0i32, 3i32) & (0o2i32 | 0 | 0o1i32) != 0o2i32 {
       bb_simple_error_msg_and_die(
         b"stdin is not open for read/write\x00" as *const u8 as *const libc::c_char,
       );
@@ -284,7 +284,7 @@ unsafe extern "C" fn open_tty() {
   );
 }
 unsafe extern "C" fn set_tty_attrs() {
-  if tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).tty_attrs) < 0i32 {
+  if tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).tty_attrs) < 0 {
     bb_simple_perror_msg_and_die(b"tcsetattr\x00" as *const u8 as *const libc::c_char);
   };
 }
@@ -312,7 +312,7 @@ unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
   /* Flush input and output queues, important for modems! */
   tcflush(0i32, 2i32);
   /* Set speed if it wasn't specified as "0" on command line */
-  if speed != 0i32 {
+  if speed != 0 {
     cfsetspeed(&mut (*ptr_to_globals).tty_attrs, speed as speed_t);
   }
   /* Initial settings: 8-bit characters, raw mode, blocking i/o.
@@ -340,15 +340,15 @@ unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
   if option_mask32 & (1i32 << 4i32) as libc::c_uint != 0 {
     (*ptr_to_globals).tty_attrs.c_cflag |= 0o20000000000u32
   }
-  (*ptr_to_globals).tty_attrs.c_iflag = 0i32 as tcflag_t;
-  (*ptr_to_globals).tty_attrs.c_lflag = 0i32 as tcflag_t;
+  (*ptr_to_globals).tty_attrs.c_iflag = 0 as tcflag_t;
+  (*ptr_to_globals).tty_attrs.c_lflag = 0 as tcflag_t;
   /* non-raw output; add CR to each NL */
   (*ptr_to_globals).tty_attrs.c_oflag = (0o1i32 | 0o4i32) as tcflag_t;
   /* reads will block only if < 1 char is available */
   (*ptr_to_globals).tty_attrs.c_cc[6] = 1i32 as cc_t;
   /* no timeout (reads block forever) */
-  (*ptr_to_globals).tty_attrs.c_cc[5] = 0i32 as cc_t;
-  (*ptr_to_globals).tty_attrs.c_line = 0i32 as cc_t;
+  (*ptr_to_globals).tty_attrs.c_cc[5] = 0 as cc_t;
+  (*ptr_to_globals).tty_attrs.c_line = 0 as cc_t;
   set_tty_attrs();
 }
 unsafe extern "C" fn finalize_tty_attrs() {
@@ -407,7 +407,7 @@ unsafe extern "C" fn finalize_tty_attrs() {
   (*ptr_to_globals).tty_attrs.c_cc[1] = ('\\' as i32 ^ 0o100i32) as cc_t;
   (*ptr_to_globals).tty_attrs.c_cc[4] = ('D' as i32 ^ 0o100i32) as cc_t;
   (*ptr_to_globals).tty_attrs.c_cc[11] = '\n' as i32 as cc_t;
-  (*ptr_to_globals).tty_attrs.c_cc[7] = 0i32 as cc_t;
+  (*ptr_to_globals).tty_attrs.c_cc[7] = 0 as cc_t;
   (*ptr_to_globals).tty_attrs.c_cc[3] = ('U' as i32 ^ 0o100i32) as cc_t;
   /* Other control chars:
    * VEOL2
@@ -442,7 +442,7 @@ unsafe extern "C" fn auto_baud() {
    * processing (comma-separated list of baud rates) if the processing of
    * modem status messages is enabled.
    */
-  (*ptr_to_globals).tty_attrs.c_cc[6] = 0i32 as cc_t; /* don't block reads (min read is 0 chars) */
+  (*ptr_to_globals).tty_attrs.c_cc[6] = 0 as cc_t; /* don't block reads (min read is 0 chars) */
   set_tty_attrs();
   /*
    * Wait for a while, then read everything the modem has said so far and
@@ -450,12 +450,12 @@ unsafe extern "C" fn auto_baud() {
    */
   sleep(1i32 as libc::c_uint);
   nread = safe_read(
-    0i32,
+    0,
     (*ptr_to_globals).line_buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
-  if nread > 0i32 {
+  if nread > 0 {
     let mut speed: libc::c_int = 0;
     let mut bp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     (*ptr_to_globals).line_buf[nread as usize] = '\u{0}' as i32 as libc::c_char;
@@ -468,7 +468,7 @@ unsafe extern "C" fn auto_baud() {
     {
       if (*bp as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
         speed = bcode(bp);
-        if speed > 0i32 {
+        if speed > 0 {
           cfsetspeed(&mut (*ptr_to_globals).tty_attrs, speed as speed_t);
         }
         break;
@@ -489,7 +489,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
   let mut c: libc::c_char = 0;
   /* Flush pending input (esp. after parsing or switching the baud rate) */
   usleep((100i32 * 1000i32) as useconds_t); /* 0.1 sec */
-  tcflush(0i32, 0i32);
+  tcflush(0i32, 0);
   loop
   /* Prompt for and read a login name */
   {
@@ -505,7 +505,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
     {
       *bb_errno = 4i32; /* make read of 0 bytes be silent too */
       if read(
-        0i32,
+        0,
         &mut c as *mut libc::c_char as *mut libc::c_void,
         1i32 as size_t,
       ) < 1
@@ -610,7 +610,7 @@ pub unsafe extern "C" fn getty_main(
   parse_args(argv);
   /* Create new session and pgrp, lose controlling tty */
   pid = setsid(); /* this also gives us our pid :) */
-  if pid < 0i32 {
+  if pid < 0 {
     let mut fd: libc::c_int = 0;
     /* :(
      * docs/ctty.htm says:
@@ -652,7 +652,7 @@ pub unsafe extern "C" fn getty_main(
       b"/dev/tty\x00" as *const u8 as *const libc::c_char,
       0o2i32 | 0o4000i32,
     );
-    if fd >= 0i32 {
+    if fd >= 0 {
       /* TIOCNOTTY sends SIGHUP to the foreground
        * process group - which may include us!
        * Make sure to not die on it:
@@ -689,13 +689,13 @@ pub unsafe extern "C" fn getty_main(
   xdup2(0i32, 2i32);
   /* Steal ctty if we don't have it yet */
   tsid = tcgetsid(0i32);
-  if tsid < 0i32 || pid != tsid {
-    if ioctl(0i32, 0x540ei32 as libc::c_ulong, 1) < 0i32 {
+  if tsid < 0 || pid != tsid {
+    if ioctl(0i32, 0x540ei32 as libc::c_ulong, 1) < 0 {
       bb_simple_perror_msg_and_die(b"TIOCSCTTY\x00" as *const u8 as *const libc::c_char);
     }
   }
   /* Make ourself a foreground process group within our session */
-  if tcsetpgrp(0i32, pid) < 0i32 {
+  if tcsetpgrp(0i32, pid) < 0 {
     bb_simple_perror_msg_and_die(b"tcsetpgrp\x00" as *const u8 as *const libc::c_char);
   }
   /*
@@ -706,7 +706,7 @@ pub unsafe extern "C" fn getty_main(
    * by patching the SunOS kernel variable "zsadtrlow" to a larger value;
    * 5 seconds seems to be a good value.
    */
-  if tcgetattr(0i32, &mut (*ptr_to_globals).tty_attrs) < 0i32 {
+  if tcgetattr(0i32, &mut (*ptr_to_globals).tty_attrs) < 0 {
     bb_simple_perror_msg_and_die(b"tcgetattr\x00" as *const u8 as *const libc::c_char);
   }
   /* Update the utmp file. This tty is ours now! */
@@ -720,7 +720,7 @@ pub unsafe extern "C" fn getty_main(
   /* Initialize tty attrs (raw mode, eight-bit, blocking i/o) */
   init_tty_attrs((*ptr_to_globals).speeds[0]);
   /* Write the modem init string and DON'T flush the buffers */
-  if option_mask32 & (1i32 << 0i32) as libc::c_uint != 0 {
+  if option_mask32 & (1i32 << 0) as libc::c_uint != 0 {
     full_write1_str((*ptr_to_globals).initstring);
   }
   /* Optionally detect the baud rate from the modem status message */
@@ -737,7 +737,7 @@ pub unsafe extern "C" fn getty_main(
   if option_mask32 & (1i32 << 9i32) as libc::c_uint != 0 {
     let mut ch: libc::c_char = 0;
     while safe_read(
-      0i32,
+      0,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
     ) == 1
@@ -751,7 +751,7 @@ pub unsafe extern "C" fn getty_main(
   if option_mask32 & (1i32 << 10i32) as libc::c_uint == 0 {
     /* NB: init_tty_attrs already set line speed
      * to G.speeds[0] */
-    let mut baud_index: libc::c_int = 0i32;
+    let mut baud_index: libc::c_int = 0;
     loop
     /* Read the login name */
     {

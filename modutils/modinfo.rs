@@ -214,13 +214,13 @@ unsafe extern "C" fn modinfo(
     1856101646708284338 => {
       j = 1i32;
       while 1i32 << j & (OPT_TAGS as libc::c_int | OPT_F as libc::c_int) != 0 {
-        let mut pattern: *const libc::c_char = 0 as *const libc::c_char;
+        let mut pattern: *const libc::c_char = std::ptr::null();
         if !(1i32 << j & tags == 0) {
           pattern = field;
           if 1i32 << j & OPT_TAGS as libc::c_int != 0 {
             pattern = shortcuts[(j - 2i32) as usize]
           }
-          if strcmp(pattern, shortcuts[0]) == 0i32 {
+          if strcmp(pattern, shortcuts[0]) == 0 {
             /* "-n" or "-F filename" */
             display(path, shortcuts[0]);
           } else {
@@ -240,7 +240,7 @@ unsafe extern "C" fn modinfo(
               after_pattern = is_prefixed_with(ptr, pattern);
               if !after_pattern.is_null() && *after_pattern as libc::c_int == '=' as i32 {
                 /* field prefixes are 0x80 or 0x00 */
-                if *ptr.offset(-1i32 as isize) as libc::c_int & 0x7fi32 == 0i32 {
+                if *ptr.offset(-1i32 as isize) as libc::c_int & 0x7fi32 == 0 {
                   ptr = after_pattern.offset(1);
                   display(ptr, pattern);
                   ptr = ptr.offset(strlen(ptr) as isize)
@@ -275,7 +275,7 @@ pub unsafe extern "C" fn modinfo_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut field: *const libc::c_char = 0 as *const libc::c_char;
+  let mut field: *const libc::c_char = std::ptr::null();
   let mut name: [libc::c_char; 256] = [0; 256];
   let mut uts: utsname = utsname {
     sysname: [0; 65],
@@ -285,12 +285,12 @@ pub unsafe extern "C" fn modinfo_main(
     machine: [0; 65],
     domainname: [0; 65],
   };
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut opts: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
-  field = 0 as *const libc::c_char;
+  field = std::ptr::null();
   opts = getopt32(
     argv,
     b"^0F:nadlp\x00-1\x00" as *const u8 as *const libc::c_char,
@@ -324,9 +324,9 @@ pub unsafe extern "C" fn modinfo_main(
     }
     *colon = '\u{0}' as i32 as libc::c_char;
     filename2modname(bb_basename(tokens[0]), name.as_mut_ptr());
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while !(*argv.offset(i as isize)).is_null() {
-      if fnmatch(*argv.offset(i as isize), name.as_mut_ptr(), 0i32) == 0i32 {
+      if fnmatch(*argv.offset(i as isize), name.as_mut_ptr(), 0) == 0 {
         modinfo(tokens[0], uts.release.as_mut_ptr(), field);
         let ref mut fresh1 = *argv.offset(i as isize);
         *fresh1 = b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
@@ -334,12 +334,12 @@ pub unsafe extern "C" fn modinfo_main(
       i = i.wrapping_add(1)
     }
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while !(*argv.offset(i as isize)).is_null() {
     if *(*argv.offset(i as isize)).offset(0) != 0 {
       modinfo(*argv.offset(i as isize), uts.release.as_mut_ptr(), field);
     }
     i = i.wrapping_add(1)
   }
-  return 0i32;
+  return 0;
 }

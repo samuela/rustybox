@@ -48,7 +48,7 @@ pub unsafe extern "C" fn scriptreplay_main(
   let mut factor: libc::c_double = 1000000.0f64;
   let mut fd: libc::c_int = 0;
   let mut count: libc::c_ulong = 0;
-  let mut tfp: *mut FILE = 0 as *mut FILE;
+  let mut tfp: *mut FILE = std::ptr::null_mut();
   if (*argv.offset(1)).is_null() {
     bb_show_usage();
   }
@@ -59,7 +59,7 @@ pub unsafe extern "C" fn scriptreplay_main(
     }
   }
   tfp = xfopen_for_read(*argv.offset(1));
-  fd = xopen(script, 0i32);
+  fd = xopen(script, 0);
   while fscanf(
     tfp,
     b"%lf %lu\n\x00" as *const u8 as *const libc::c_char,
@@ -70,5 +70,5 @@ pub unsafe extern "C" fn scriptreplay_main(
     usleep((delay * factor) as useconds_t);
     bb_copyfd_exact_size(fd, 1i32, count as off_t);
   }
-  return 0i32;
+  return 0;
 }

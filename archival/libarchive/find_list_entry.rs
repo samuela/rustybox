@@ -20,7 +20,7 @@ pub unsafe extern "C" fn find_list_entry(
   mut filename: *const libc::c_char,
 ) -> *const llist_t {
   while !list.is_null() {
-    if fnmatch((*list).data, filename, 0i32) == 0i32 {
+    if fnmatch((*list).data, filename, 0) == 0 {
       return list;
     }
     list = (*list).link
@@ -38,11 +38,11 @@ pub unsafe extern "C" fn find_list_entry2(
 ) -> *const llist_t {
   let mut buf: [libc::c_char; 4096] = [0; 4096];
   let mut pattern_slash_cnt: libc::c_int = 0;
-  let mut c: *const libc::c_char = 0 as *const libc::c_char;
+  let mut c: *const libc::c_char = std::ptr::null();
   let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   while !list.is_null() {
     c = (*list).data;
-    pattern_slash_cnt = 0i32;
+    pattern_slash_cnt = 0;
     while *c != 0 {
       let fresh0 = c;
       c = c.offset(1);
@@ -62,7 +62,7 @@ pub unsafe extern "C" fn find_list_entry2(
     {
       if *c as libc::c_int == '/' as i32 && {
         pattern_slash_cnt -= 1;
-        (pattern_slash_cnt) < 0i32
+        (pattern_slash_cnt) < 0
       } {
         break;
       }
@@ -73,7 +73,7 @@ pub unsafe extern "C" fn find_list_entry2(
       *fresh2 = *fresh1
     }
     *d = '\u{0}' as i32 as libc::c_char;
-    if fnmatch((*list).data, buf.as_mut_ptr(), 0i32) == 0i32 {
+    if fnmatch((*list).data, buf.as_mut_ptr(), 0) == 0 {
       return list;
     }
     list = (*list).link

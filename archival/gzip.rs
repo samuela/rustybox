@@ -151,7 +151,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
  * (used for the compressed data only)
  */
 unsafe extern "C" fn flush_outbuf() {
-  if (*ptr_to_globals.offset(-1)).outcnt == 0i32 as libc::c_uint {
+  if (*ptr_to_globals.offset(-1)).outcnt == 0 as libc::c_uint {
     return;
   }
   crate::libbb::xfuncs_printf::xwrite(
@@ -159,7 +159,7 @@ unsafe extern "C" fn flush_outbuf() {
     (*ptr_to_globals.offset(-1)).outbuf as *mut libc::c_char as *const libc::c_void,
     (*ptr_to_globals.offset(-1)).outcnt as size_t,
   );
-  (*ptr_to_globals.offset(-1)).outcnt = 0i32 as libc::c_uint;
+  (*ptr_to_globals.offset(-1)).outcnt = 0 as libc::c_uint;
 }
 /* ===========================================================================
  */
@@ -198,7 +198,7 @@ unsafe extern "C" fn put_16bit(mut w: ush) {
   /* or here */
 }
 unsafe extern "C" fn put_32bit(mut n: ulg) {
-  if 0i32 > 0i32 && 1i32 != 0 && 1i32 != 0 {
+  if 0 > 0 && 1i32 != 0 && 1i32 != 0 {
     let mut outcnt: libc::c_uint = (*ptr_to_globals.offset(-1)).outcnt;
     if outcnt < (8192i32 - 4i32) as libc::c_uint {
       /* Common case */
@@ -216,7 +216,7 @@ unsafe extern "C" fn put_32bit(mut n: ulg) {
 #[inline(always)]
 unsafe extern "C" fn flush_outbuf_if_32bit_optimized() {
   /* If put_32bit() performs 32bit stores && it is used in send_bits() */
-  if 0i32 > 0i32
+  if 0 > 0
     && 1i32 != 0
     && 1i32 != 0
     && (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
@@ -247,7 +247,7 @@ unsafe extern "C" fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
 unsafe extern "C" fn file_read(mut buf: *mut libc::c_void, mut size: libc::c_uint) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
   len = crate::libbb::read::safe_read(0i32, buf, size as size_t) as libc::c_uint;
-  if len == -1i32 as libc::c_uint || len == 0i32 as libc::c_uint {
+  if len == -1i32 as libc::c_uint || len == 0 as libc::c_uint {
     return len;
   }
   updcrc(buf as *mut uch, len);
@@ -301,11 +301,11 @@ unsafe extern "C" fn send_bits(mut value: libc::c_uint, mut length: libc::c_uint
  * IN assertion: 1 <= len <= 15
  */
 unsafe extern "C" fn bi_reverse(mut code: libc::c_uint, mut len: libc::c_int) -> libc::c_uint {
-  let mut res: libc::c_uint = 0i32 as libc::c_uint;
+  let mut res: libc::c_uint = 0 as libc::c_uint;
   loop {
     res |= code & 1i32 as libc::c_uint;
     len -= 1;
-    if len <= 0i32 {
+    if len <= 0 {
       return res;
     }
     code >>= 1i32;
@@ -318,7 +318,7 @@ unsafe extern "C" fn bi_reverse(mut code: libc::c_uint, mut len: libc::c_int) ->
 unsafe extern "C" fn bi_windup() {
   let mut bits: libc::c_uint = (*ptr_to_globals.offset(-1)).bi_buf;
   let mut cnt: libc::c_int = (*ptr_to_globals.offset(-1)).bi_valid as libc::c_int;
-  while cnt > 0i32 {
+  while cnt > 0 {
     let ref mut fresh3 = (*ptr_to_globals.offset(-1)).outcnt;
     let fresh4 = *fresh3;
     *fresh3 = (*fresh3).wrapping_add(1);
@@ -329,8 +329,8 @@ unsafe extern "C" fn bi_windup() {
     bits >>= 8i32;
     cnt -= 8i32
   }
-  (*ptr_to_globals.offset(-1)).bi_buf = 0i32 as libc::c_uint;
-  (*ptr_to_globals.offset(-1)).bi_valid = 0i32 as libc::c_uint;
+  (*ptr_to_globals.offset(-1)).bi_buf = 0 as libc::c_uint;
+  (*ptr_to_globals.offset(-1)).bi_valid = 0 as libc::c_uint;
 }
 /* ===========================================================================
  * Copy a stored block to the zip file, storing first the length and its
@@ -410,7 +410,7 @@ unsafe extern "C" fn fill_window() {
     *fresh10 = (*fresh10).wrapping_sub(0x8000i32 as libc::c_uint);
     let ref mut fresh11 = (*ptr_to_globals.offset(-1)).block_start;
     *fresh11 -= 0x8000i32;
-    n = 0i32 as libc::c_uint;
+    n = 0 as libc::c_uint;
     while n < (1i32 << 13i32) as libc::c_uint {
       m = *(*ptr_to_globals.offset(-1))
         .prev
@@ -422,17 +422,17 @@ unsafe extern "C" fn fill_window() {
         .offset(n as isize) = if m >= 0x8000i32 as libc::c_uint {
         m.wrapping_sub(0x8000i32 as libc::c_uint)
       } else {
-        0i32 as libc::c_uint
+        0 as libc::c_uint
       } as Pos;
       n = n.wrapping_add(1)
     }
-    n = 0i32 as libc::c_uint;
+    n = 0 as libc::c_uint;
     while n < 0x8000i32 as libc::c_uint {
       m = *(*ptr_to_globals.offset(-1)).prev.offset(n as isize) as libc::c_uint;
       *(*ptr_to_globals.offset(-1)).prev.offset(n as isize) = if m >= 0x8000i32 as libc::c_uint {
         m.wrapping_sub(0x8000i32 as libc::c_uint)
       } else {
-        0i32 as libc::c_uint
+        0 as libc::c_uint
       } as Pos;
       n = n.wrapping_add(1)
       /* If n is not on any hash chain, prev[n] is garbage but
@@ -450,7 +450,7 @@ unsafe extern "C" fn fill_window() {
         .offset((*ptr_to_globals.offset(-1)).lookahead as isize) as *mut libc::c_void,
       more,
     );
-    if n == 0i32 as libc::c_uint || n == -1i32 as libc::c_uint {
+    if n == 0 as libc::c_uint || n == -1i32 as libc::c_uint {
       (*ptr_to_globals.offset(-1)).eofile = 1i32 as smallint
     } else {
       let ref mut fresh12 = (*ptr_to_globals.offset(-1)).lookahead;
@@ -483,7 +483,7 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
   let mut scan: *mut uch = (*ptr_to_globals.offset(-1))
     .window
     .offset((*ptr_to_globals.offset(-1)).strstart as isize); /* current string */
-  let mut match_0: *mut uch = 0 as *mut uch; /* matched string */
+  let mut match_0: *mut uch = std::ptr::null_mut(); /* matched string */
   let mut len: libc::c_int = 0; /* length of current match */
   let mut best_len: libc::c_int = (*ptr_to_globals.offset(-1)).prev_length as libc::c_int; /* best match length so far */
   let mut limit: IPos =
@@ -492,7 +492,7 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
         .strstart
         .wrapping_sub((0x8000i32 - (258i32 + 3i32 + 1i32)) as IPos)
     } else {
-      0i32 as libc::c_uint
+      0 as libc::c_uint
     };
   /* Stop when cur_match becomes <= limit. To simplify the code,
    * we prevent matches with the string of window index 0.
@@ -598,7 +598,7 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
       .offset((cur_match & (0x8000i32 - 1i32) as libc::c_uint) as isize) as IPos;
     if !(cur_match > limit && {
       chain_length = chain_length.wrapping_sub(1);
-      (chain_length) != 0i32 as libc::c_uint
+      (chain_length) != 0 as libc::c_uint
     }) {
       break;
     }
@@ -608,17 +608,17 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
 /* number of codes used to transfer the bit lengths */
 /* extra bits for each length code */
 static mut extra_lbits: [u8; 29] = [
-  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
-  1i32 as u8, 1i32 as u8, 1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8,
-  3i32 as u8, 3i32 as u8, 3i32 as u8, 3i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8,
-  5i32 as u8, 5i32 as u8, 5i32 as u8, 5i32 as u8, 0i32 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 1i32 as u8, 1i32 as u8,
+  1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 3i32 as u8, 3i32 as u8,
+  3i32 as u8, 3i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 5i32 as u8, 5i32 as u8,
+  5i32 as u8, 5i32 as u8, 0 as u8,
 ];
 /* extra bits for each distance code */
 static mut extra_dbits: [u8; 30] = [
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
-  0i32 as u8,
+  0 as u8,
+  0 as u8,
+  0 as u8,
+  0 as u8,
   1i32 as u8,
   1i32 as u8,
   2i32 as u8,
@@ -648,16 +648,15 @@ static mut extra_dbits: [u8; 30] = [
 ];
 /* extra bits for each bit length code */
 static mut extra_blbits: [u8; 19] = [
-  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
-  0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8, 0i32 as u8,
-  2i32 as u8, 3i32 as u8, 7i32 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 2i32 as u8, 3i32 as u8, 7i32 as u8,
 ];
 /* number of codes at each bit length for an optimal tree */
 static mut bl_order: [u8; 19] = [
   16i32 as u8,
   17i32 as u8,
   18i32 as u8,
-  0i32 as u8,
+  0 as u8,
   8i32 as u8,
   7i32 as u8,
   9i32 as u8,
@@ -688,37 +687,37 @@ static mut bl_order: [u8; 19] = [
 unsafe extern "C" fn init_block() {
   let mut n: libc::c_int = 0; /* iterates over tree elements */
   /* Initialize the trees. */
-  n = 0i32;
+  n = 0;
   while n < 256i32 + 1i32 + 29i32 {
     (*(ptr_to_globals as *mut globals2)).dyn_ltree[n as usize]
       .fc
-      .freq = 0i32 as ush;
+      .freq = 0 as ush;
     n += 1
   }
-  n = 0i32;
+  n = 0;
   while n < 30i32 {
     (*(ptr_to_globals as *mut globals2)).dyn_dtree[n as usize]
       .fc
-      .freq = 0i32 as ush;
+      .freq = 0 as ush;
     n += 1
   }
-  n = 0i32;
+  n = 0;
   while n < 19i32 {
     (*(ptr_to_globals as *mut globals2)).bl_tree[n as usize]
       .fc
-      .freq = 0i32 as ush;
+      .freq = 0 as ush;
     n += 1
   }
   (*(ptr_to_globals as *mut globals2)).dyn_ltree[256].fc.freq = 1i32 as ush;
   let ref mut fresh13 = (*(ptr_to_globals as *mut globals2)).static_len;
-  *fresh13 = 0i32 as ulg;
+  *fresh13 = 0 as ulg;
   (*(ptr_to_globals as *mut globals2)).opt_len = *fresh13;
   let ref mut fresh14 = (*(ptr_to_globals as *mut globals2)).last_flags;
-  *fresh14 = 0i32 as libc::c_uint;
+  *fresh14 = 0 as libc::c_uint;
   let ref mut fresh15 = (*(ptr_to_globals as *mut globals2)).last_dist;
   *fresh15 = *fresh14;
   (*(ptr_to_globals as *mut globals2)).last_lit = *fresh15;
-  (*(ptr_to_globals as *mut globals2)).flags = 0i32 as uch;
+  (*(ptr_to_globals as *mut globals2)).flags = 0 as uch;
   (*(ptr_to_globals as *mut globals2)).flag_bit = 1i32 as uch;
 }
 /* ===========================================================================
@@ -797,12 +796,12 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
   let mut m: libc::c_int = 0; /* bit length */
   let mut bits: libc::c_int = 0; /* number of elements with bit length too large */
   let mut overflow: libc::c_int = 0;
-  bits = 0i32;
+  bits = 0;
   while (bits as libc::c_uint)
     < (::std::mem::size_of::<[libc::c_uint; 16]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong) as libc::c_uint
   {
-    (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize] = 0i32 as libc::c_uint;
+    (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize] = 0 as libc::c_uint;
     bits += 1
   }
   /* In a first pass, compute the optimal bit lengths (which may
@@ -813,8 +812,8 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
       [(*(ptr_to_globals as *mut globals2)).heap_max as usize] as isize,
   ))
   .dl
-  .len = 0i32 as ush; /* root of the heap */
-  overflow = 0i32; /* frequency */
+  .len = 0 as ush; /* root of the heap */
+  overflow = 0; /* frequency */
   h = (*(ptr_to_globals as *mut globals2)).heap_max + 1i32; /* extra bits */
   while h < 2i32 * (256i32 + 1i32 + 29i32) + 1i32 {
     let mut f: ulg = 0;
@@ -835,7 +834,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
     if !(n > (*desc).max_code) {
       let ref mut fresh16 = (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize]; /* not a leaf node */
       *fresh16 = (*fresh16).wrapping_add(1);
-      xbits = 0i32;
+      xbits = 0;
       if n >= (*desc).extra_base {
         xbits = *(*desc).extra_bits.offset((n - (*desc).extra_base) as isize) as libc::c_int
       }
@@ -853,7 +852,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
     }
     h += 1
   }
-  if overflow == 0i32 {
+  if overflow == 0 {
     return;
   }
   loop
@@ -861,7 +860,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
   /* Find the first bit length which could increase: */
   {
     bits = (*desc).max_length - 1i32; /* move one leaf down the tree */
-    while (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize] == 0i32 as libc::c_uint {
+    while (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize] == 0 as libc::c_uint {
       bits -= 1
     } /* move one overflow item as its brother */
     let ref mut fresh19 = (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize];
@@ -875,7 +874,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
      * but this does not affect bl_count[desc->max_length]
      */
     overflow -= 2i32;
-    if !(overflow > 0i32) {
+    if !(overflow > 0) {
       break;
     }
   }
@@ -885,9 +884,9 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
    * from 'ar' written by Haruhiko Okumura.)
    */
   bits = (*desc).max_length;
-  while bits != 0i32 {
+  while bits != 0 {
     n = (*(ptr_to_globals as *mut globals2)).bl_count[bits as usize] as libc::c_int;
-    while n != 0i32 {
+    while n != 0 {
       h -= 1;
       m = (*(ptr_to_globals as *mut globals2)).heap[h as usize] as libc::c_int;
       if m > (*desc).max_code {
@@ -918,7 +917,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
 unsafe extern "C" fn gen_codes(mut tree: *mut ct_data, mut max_code: libc::c_int) {
   /* next_code[] and code used to be "ush", but "unsigned" results in smaller code */
   let mut next_code: [libc::c_uint; 16] = [0; 16]; /* next code value for each bit length */
-  let mut code: libc::c_uint = 0i32 as libc::c_uint; /* running code value */
+  let mut code: libc::c_uint = 0 as libc::c_uint; /* running code value */
   let mut bits: libc::c_int = 0; /* bit index */
   let mut n: libc::c_int = 0; /* code index */
   /* The distribution counts are first used to generate the code values
@@ -934,10 +933,10 @@ unsafe extern "C" fn gen_codes(mut tree: *mut ct_data, mut max_code: libc::c_int
   /* Check that the bit counts in bl_count are consistent. The last code
    * must be all ones.
    */
-  n = 0i32;
+  n = 0;
   while n <= max_code {
     let mut len: libc::c_int = (*tree.offset(n as isize)).dl.len as libc::c_int;
-    if !(len == 0i32) {
+    if !(len == 0) {
       /* Now reverse the bits */
       let fresh23 = next_code[len as usize];
       next_code[len as usize] = next_code[len as usize].wrapping_add(1);
@@ -959,18 +958,18 @@ unsafe extern "C" fn build_tree(mut desc: *mut tree_desc) {
    * heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n+1].
    * heap[0] is not used.
    */
-  (*(ptr_to_globals as *mut globals2)).heap_len = 0i32;
+  (*(ptr_to_globals as *mut globals2)).heap_len = 0;
   (*(ptr_to_globals as *mut globals2)).heap_max = 2i32 * (256i32 + 1i32 + 29i32) + 1i32;
-  n = 0i32;
+  n = 0;
   while n < elems {
-    if (*tree.offset(n as isize)).fc.freq as libc::c_int != 0i32 {
+    if (*tree.offset(n as isize)).fc.freq as libc::c_int != 0 {
       max_code = n;
       let ref mut fresh24 = (*(ptr_to_globals as *mut globals2)).heap_len;
       *fresh24 += 1;
       (*(ptr_to_globals as *mut globals2)).heap[*fresh24 as usize] = max_code as ush;
-      (*(ptr_to_globals as *mut globals2)).depth[n as usize] = 0i32 as uch
+      (*(ptr_to_globals as *mut globals2)).depth[n as usize] = 0 as uch
     } else {
-      (*tree.offset(n as isize)).dl.len = 0i32 as ush
+      (*tree.offset(n as isize)).dl.len = 0 as ush
     }
     n += 1
   }
@@ -987,11 +986,11 @@ unsafe extern "C" fn build_tree(mut desc: *mut tree_desc) {
       max_code += 1;
       max_code
     } else {
-      0i32
+      0
     } as ush;
     let mut new: libc::c_int = *fresh26 as libc::c_int;
     (*tree.offset(new as isize)).fc.freq = 1i32 as ush;
-    (*(ptr_to_globals as *mut globals2)).depth[new as usize] = 0i32 as uch;
+    (*(ptr_to_globals as *mut globals2)).depth[new as usize] = 0 as uch;
     let ref mut fresh27 = (*(ptr_to_globals as *mut globals2)).opt_len;
     *fresh27 = (*fresh27).wrapping_sub(1);
     if !stree.is_null() {
@@ -1076,15 +1075,15 @@ unsafe extern "C" fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int
   let mut prevlen: libc::c_int = -1i32; /* last emitted length */
   let mut curlen: libc::c_int = 0; /* length of current code */
   let mut nextlen: libc::c_int = (*tree.offset(0)).dl.len as libc::c_int; /* length of next code */
-  let mut count: libc::c_int = 0i32; /* repeat count of the current code */
+  let mut count: libc::c_int = 0; /* repeat count of the current code */
   let mut max_count: libc::c_int = 7i32; /* max repeat count */
   let mut min_count: libc::c_int = 4i32; /* min repeat count */
-  if nextlen == 0i32 {
+  if nextlen == 0 {
     max_count = 138i32; /* guard */
     min_count = 3i32
   }
   (*tree.offset((max_code + 1i32) as isize)).dl.len = 0xffffi32 as ush;
-  n = 0i32;
+  n = 0;
   while n <= max_code {
     curlen = nextlen;
     nextlen = (*tree.offset((n + 1i32) as isize)).dl.len as libc::c_int;
@@ -1095,7 +1094,7 @@ unsafe extern "C" fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int
           .fc
           .freq;
         *fresh36 = (*fresh36 as libc::c_int + count) as ush
-      } else if curlen != 0i32 {
+      } else if curlen != 0 {
         if curlen != prevlen {
           let ref mut fresh37 = (*(ptr_to_globals as *mut globals2)).bl_tree[curlen as usize]
             .fc
@@ -1111,11 +1110,11 @@ unsafe extern "C" fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int
         let ref mut fresh40 = (*(ptr_to_globals as *mut globals2)).bl_tree[18].fc.freq;
         *fresh40 = (*fresh40).wrapping_add(1)
       }
-      count = 0i32;
+      count = 0;
       prevlen = curlen;
       max_count = 7i32;
       min_count = 4i32;
-      if nextlen == 0i32 {
+      if nextlen == 0 {
         max_count = 138i32;
         min_count = 3i32
       } else if curlen == nextlen {
@@ -1135,16 +1134,16 @@ unsafe extern "C" fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_i
   let mut prevlen: libc::c_int = -1i32; /* last emitted length */
   let mut curlen: libc::c_int = 0; /* length of current code */
   let mut nextlen: libc::c_int = (*tree.offset(0)).dl.len as libc::c_int; /* length of next code */
-  let mut count: libc::c_int = 0i32; /* repeat count of the current code */
+  let mut count: libc::c_int = 0; /* repeat count of the current code */
   let mut max_count: libc::c_int = 7i32; /* max repeat count */
   let mut min_count: libc::c_int = 4i32; /* min repeat count */
   /* tree[max_code+1].Len = -1; */
   /* guard already set */
-  if nextlen == 0i32 {
+  if nextlen == 0 {
     max_count = 138i32;
     min_count = 3i32
   }
-  n = 0i32;
+  n = 0;
   while n <= max_code {
     curlen = nextlen;
     nextlen = (*tree.offset((n + 1i32) as isize)).dl.len as libc::c_int;
@@ -1165,7 +1164,7 @@ unsafe extern "C" fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_i
             break;
           }
         }
-      } else if curlen != 0i32 {
+      } else if curlen != 0 {
         if curlen != prevlen {
           send_bits(
             (*(ptr_to_globals as *mut globals2)).bl_tree[curlen as usize]
@@ -1195,9 +1194,9 @@ unsafe extern "C" fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_i
         );
         send_bits((count - 11i32) as libc::c_uint, 7i32 as libc::c_uint);
       }
-      count = 0i32;
+      count = 0;
       prevlen = curlen;
-      if nextlen == 0i32 {
+      if nextlen == 0 {
         max_count = 138i32;
         min_count = 3i32
       } else if curlen == nextlen {
@@ -1240,7 +1239,7 @@ unsafe extern "C" fn build_bl_tree() -> libc::c_int {
     if (*(ptr_to_globals as *mut globals2)).bl_tree[bl_order[max_blindex as usize] as usize]
       .dl
       .len as libc::c_int
-      != 0i32
+      != 0
     {
       break;
     }
@@ -1267,7 +1266,7 @@ unsafe extern "C" fn send_all_trees(
   send_bits((lcodes - 257i32) as libc::c_uint, 5i32 as libc::c_uint); /* not +255 as stated in appnote.txt */
   send_bits((dcodes - 1i32) as libc::c_uint, 5i32 as libc::c_uint); /* not -3 as stated in appnote.txt */
   send_bits((blcodes - 4i32) as libc::c_uint, 4i32 as libc::c_uint); /* send the literal tree */
-  rank = 0i32; /* send the distance tree */
+  rank = 0; /* send the distance tree */
   while rank < blcodes {
     send_bits(
       (*(ptr_to_globals as *mut globals2)).bl_tree[bl_order[rank as usize] as usize]
@@ -1295,7 +1294,7 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
   let fresh43 = *fresh42;
   *fresh42 = (*fresh42).wrapping_add(1);
   *(*ptr_to_globals.offset(-1)).l_buf.offset(fresh43 as isize) = lc as uch;
-  if dist == 0i32 {
+  if dist == 0 {
     /* lc is the unmatched char */
     let ref mut fresh44 = (*(ptr_to_globals as *mut globals2)).dyn_ltree[lc as usize]
       .fc
@@ -1333,19 +1332,17 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
   let ref mut fresh50 = (*(ptr_to_globals as *mut globals2)).flag_bit;
   *fresh50 = ((*fresh50 as libc::c_int) << 1i32) as uch;
   /* Output the flags if they fill a byte: */
-  if (*(ptr_to_globals as *mut globals2)).last_lit & 7i32 as libc::c_uint == 0i32 as libc::c_uint {
+  if (*(ptr_to_globals as *mut globals2)).last_lit & 7i32 as libc::c_uint == 0 as libc::c_uint {
     let ref mut fresh51 = (*(ptr_to_globals as *mut globals2)).last_flags;
     let fresh52 = *fresh51;
     *fresh51 = (*fresh51).wrapping_add(1);
     (*(ptr_to_globals as *mut globals2)).flag_buf[fresh52 as usize] =
       (*(ptr_to_globals as *mut globals2)).flags;
-    (*(ptr_to_globals as *mut globals2)).flags = 0i32 as uch;
+    (*(ptr_to_globals as *mut globals2)).flags = 0 as uch;
     (*(ptr_to_globals as *mut globals2)).flag_bit = 1i32 as uch
   }
   /* Try to guess if it is profitable to stop the current block here */
-  if (*(ptr_to_globals as *mut globals2)).last_lit & 0xfffi32 as libc::c_uint
-    == 0i32 as libc::c_uint
-  {
+  if (*(ptr_to_globals as *mut globals2)).last_lit & 0xfffi32 as libc::c_uint == 0 as libc::c_uint {
     /* Compute an upper bound for the compressed length */
     let mut out_length: ulg =
       ((*(ptr_to_globals as *mut globals2)).last_lit as libc::c_long * 8i64) as ulg;
@@ -1353,7 +1350,7 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
       .strstart
       .wrapping_sub((*ptr_to_globals.offset(-1)).block_start as libc::c_uint);
     let mut dcode: libc::c_int = 0;
-    dcode = 0i32;
+    dcode = 0;
     while dcode < 30i32 {
       out_length = (out_length as libc::c_long
         + (*(ptr_to_globals as *mut globals2)).dyn_dtree[dcode as usize]
@@ -1386,15 +1383,15 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
 unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const ct_data) {
   let mut dist: libc::c_uint = 0; /* distance of matched string */
   let mut lc: libc::c_int = 0; /* match length or unmatched char (if dist == 0) */
-  let mut lx: libc::c_uint = 0i32 as libc::c_uint; /* running index in l_buf */
-  let mut dx: libc::c_uint = 0i32 as libc::c_uint; /* running index in d_buf */
-  let mut fx: libc::c_uint = 0i32 as libc::c_uint; /* running index in flag_buf */
-  let mut flag: uch = 0i32 as uch; /* current flags */
+  let mut lx: libc::c_uint = 0 as libc::c_uint; /* running index in l_buf */
+  let mut dx: libc::c_uint = 0 as libc::c_uint; /* running index in d_buf */
+  let mut fx: libc::c_uint = 0 as libc::c_uint; /* running index in flag_buf */
+  let mut flag: uch = 0 as uch; /* current flags */
   let mut code: libc::c_uint = 0; /* the code to send */
   let mut extra: libc::c_int = 0; /* number of extra bits to send */
-  if (*(ptr_to_globals as *mut globals2)).last_lit != 0i32 as libc::c_uint {
+  if (*(ptr_to_globals as *mut globals2)).last_lit != 0 as libc::c_uint {
     loop {
-      if lx & 7i32 as libc::c_uint == 0i32 as libc::c_uint {
+      if lx & 7i32 as libc::c_uint == 0 as libc::c_uint {
         let fresh53 = fx; /* literal or match pair ? */
         fx = fx.wrapping_add(1); /* send a literal byte */
         flag = (*(ptr_to_globals as *mut globals2)).flag_buf[fresh53 as usize]
@@ -1402,7 +1399,7 @@ unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const
       let fresh54 = lx;
       lx = lx.wrapping_add(1);
       lc = *(*ptr_to_globals.offset(-1)).l_buf.offset(fresh54 as isize) as libc::c_int;
-      if flag as libc::c_int & 1i32 == 0i32 {
+      if flag as libc::c_int & 1i32 == 0 {
         send_bits(
           (*ltree.offset(lc as isize)).fc.code as libc::c_uint,
           (*ltree.offset(lc as isize)).dl.len as libc::c_uint,
@@ -1427,7 +1424,7 @@ unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const
           .len as libc::c_uint,
         );
         extra = extra_lbits[code as usize] as libc::c_int;
-        if extra != 0i32 {
+        if extra != 0 {
           lc -= (*(ptr_to_globals as *mut globals2)).base_length[code as usize];
           send_bits(lc as libc::c_uint, extra as libc::c_uint);
           /* send the extra length bits */
@@ -1447,7 +1444,7 @@ unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const
           (*dtree.offset(code as isize)).dl.len as libc::c_uint,
         );
         extra = extra_dbits[code as usize] as libc::c_int;
-        if extra != 0i32 {
+        if extra != 0 {
           dist = dist.wrapping_sub(
             (*(ptr_to_globals as *mut globals2)).base_dist[code as usize] as libc::c_uint,
           );
@@ -1593,10 +1590,10 @@ unsafe extern "C" fn deflate() {
   let mut hash_head: IPos = 0; /* head of hash chain */
   let mut prev_match: IPos = 0; /* previous match */
   let mut flush: libc::c_int = 0; /* set if current block must be flushed */
-  let mut match_available: libc::c_int = 0i32; /* set if previous match exists */
+  let mut match_available: libc::c_int = 0; /* set if previous match exists */
   let mut match_length: libc::c_uint = (3i32 - 1i32) as libc::c_uint; /* length of best match */
   /* Process the input block. */
-  while (*ptr_to_globals.offset(-1)).lookahead != 0i32 as libc::c_uint {
+  while (*ptr_to_globals.offset(-1)).lookahead != 0 as libc::c_uint {
     /* Insert the string window[strstart .. strstart+2] in the
      * dictionary, and set hash_head to the head of the hash chain:
      */
@@ -1626,7 +1623,7 @@ unsafe extern "C" fn deflate() {
     (*ptr_to_globals.offset(-1)).prev_length = match_length;
     prev_match = (*ptr_to_globals.offset(-1)).match_start;
     match_length = (3i32 - 1i32) as libc::c_uint;
-    if hash_head != 0i32 as libc::c_uint
+    if hash_head != 0 as libc::c_uint
       && (*ptr_to_globals.offset(-1)).prev_length < max_lazy_match as libc::c_int as libc::c_uint
       && (*ptr_to_globals.offset(-1))
         .strstart
@@ -1707,7 +1704,7 @@ unsafe extern "C" fn deflate() {
           (*ptr_to_globals.offset(-1)).strstart as ush;
         let ref mut fresh59 = (*ptr_to_globals.offset(-1)).prev_length;
         *fresh59 = (*fresh59).wrapping_sub(1);
-        if !(*fresh59 != 0i32 as libc::c_uint) {
+        if !(*fresh59 != 0 as libc::c_uint) {
           break;
         }
         /* strstart never exceeds WSIZE-MAX_MATCH, so there are
@@ -1716,7 +1713,7 @@ unsafe extern "C" fn deflate() {
          * next lookahead bytes will always be emitted as literals.
          */
       }
-      match_available = 0i32;
+      match_available = 0;
       match_length = (3i32 - 1i32) as libc::c_uint;
       let ref mut fresh60 = (*ptr_to_globals.offset(-1)).strstart;
       *fresh60 = (*fresh60).wrapping_add(1);
@@ -1733,7 +1730,7 @@ unsafe extern "C" fn deflate() {
           (*ptr_to_globals.offset(-1))
             .strstart
             .wrapping_sub((*ptr_to_globals.offset(-1)).block_start as libc::c_uint),
-          0i32,
+          0,
         );
         (*ptr_to_globals.offset(-1)).block_start = (*ptr_to_globals.offset(-1)).strstart as lng
       }
@@ -1743,7 +1740,7 @@ unsafe extern "C" fn deflate() {
        * is longer, truncate the previous match to a single literal.
        */
       if ct_tally(
-        0i32,
+        0,
         *(*ptr_to_globals.offset(-1)).window.offset(
           (*ptr_to_globals.offset(-1))
             .strstart
@@ -1763,7 +1760,7 @@ unsafe extern "C" fn deflate() {
           (*ptr_to_globals.offset(-1))
             .strstart
             .wrapping_sub((*ptr_to_globals.offset(-1)).block_start as libc::c_uint),
-          0i32,
+          0,
         );
         (*ptr_to_globals.offset(-1)).block_start = (*ptr_to_globals.offset(-1)).strstart as lng
       }
@@ -1790,7 +1787,7 @@ unsafe extern "C" fn deflate() {
   }
   if match_available != 0 {
     ct_tally(
-      0i32,
+      0,
       *(*ptr_to_globals.offset(-1)).window.offset(
         (*ptr_to_globals.offset(-1))
           .strstart
@@ -1830,7 +1827,7 @@ unsafe extern "C" fn lm_init() {
   /* Initialize the hash table. */
   memset(
     (*ptr_to_globals.offset(-1)).prev.offset(0x8000i32 as isize) as *mut libc::c_void,
-    0i32,
+    0,
     ((1i32 << 13i32) as libc::c_uint as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<ush>() as libc::c_ulong),
   );
@@ -1846,11 +1843,11 @@ unsafe extern "C" fn lm_init() {
       (2i32 * 0x8000i32) as libc::c_uint
     },
   );
-  if (*ptr_to_globals.offset(-1)).lookahead == 0i32 as libc::c_uint
+  if (*ptr_to_globals.offset(-1)).lookahead == 0 as libc::c_uint
     || (*ptr_to_globals.offset(-1)).lookahead == -1i32 as libc::c_uint
   {
     (*ptr_to_globals.offset(-1)).eofile = 1i32 as smallint;
-    (*ptr_to_globals.offset(-1)).lookahead = 0i32 as libc::c_uint;
+    (*ptr_to_globals.offset(-1)).lookahead = 0 as libc::c_uint;
     return;
   }
   //G1.eofile = 0; // globals are zeroed in pack_gzip()
@@ -1859,7 +1856,7 @@ unsafe extern "C" fn lm_init() {
    */
   fill_window_if_needed();
   //G1.ins_h = 0; // globals are zeroed in pack_gzip()
-  j = 0i32 as libc::c_uint;
+  j = 0 as libc::c_uint;
   while j < (3i32 - 1i32) as libc::c_uint {
     (*ptr_to_globals.offset(-1)).ins_h = ((*ptr_to_globals.offset(-1)).ins_h
       << (13i32 + 3i32 - 1i32) / 3i32
@@ -1884,11 +1881,11 @@ unsafe extern "C" fn ct_init() {
   let mut dist: libc::c_int = 0; /* distance index */
   //	//G2.compressed_len = 0L; // globals are zeroed in pack_gzip()
   /* Initialize the mapping length (0..255) -> length code (0..28) */
-  length = 0i32;
-  code = 0i32;
+  length = 0;
+  code = 0;
   while code < 29i32 - 1i32 {
     (*(ptr_to_globals as *mut globals2)).base_length[code as usize] = length;
-    n = 0i32;
+    n = 0;
     while n < 1i32 << extra_lbits[code as usize] as libc::c_int {
       let fresh65 = length;
       length = length + 1;
@@ -1903,11 +1900,11 @@ unsafe extern "C" fn ct_init() {
    */
   (*(ptr_to_globals as *mut globals2)).length_code[(length - 1i32) as usize] = code as uch;
   /* Initialize the mapping dist (0..32K) -> dist code (0..29) */
-  dist = 0i32; /* from now on, all distances are divided by 128 */
-  code = 0i32;
+  dist = 0; /* from now on, all distances are divided by 128 */
+  code = 0;
   while code < 16i32 {
     (*(ptr_to_globals as *mut globals2)).base_dist[code as usize] = dist;
-    n = 0i32;
+    n = 0;
     while n < 1i32 << extra_dbits[code as usize] as libc::c_int {
       let fresh66 = dist;
       dist = dist + 1;
@@ -1919,7 +1916,7 @@ unsafe extern "C" fn ct_init() {
   dist >>= 7i32;
   while code < 30i32 {
     (*(ptr_to_globals as *mut globals2)).base_dist[code as usize] = dist << 7i32;
-    n = 0i32;
+    n = 0;
     while n < 1i32 << extra_dbits[code as usize] as libc::c_int - 7i32 {
       let fresh67 = dist;
       dist = dist + 1;
@@ -1931,7 +1928,7 @@ unsafe extern "C" fn ct_init() {
   /* Construct the codes of the static literal tree */
   //for (n = 0; n <= MAX_BITS; n++) // globals are zeroed in pack_gzip()
   //	G2.bl_count[n] = 0;
-  n = 0i32;
+  n = 0;
   while n <= 143i32 {
     let fresh68 = n;
     n = n + 1;
@@ -1983,7 +1980,7 @@ unsafe extern "C" fn ct_init() {
     256i32 + 1i32 + 29i32 + 1i32,
   );
   /* The static distance tree is trivial: */
-  n = 0i32;
+  n = 0;
   while n < 30i32 {
     (*(ptr_to_globals as *mut globals2)).static_dtree[n as usize]
       .dl
@@ -2029,7 +2026,7 @@ unsafe extern "C" fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c
   /* Reinit G1.xxx except pointers to allocated buffers, and entire G2 */
   memset(
     &mut (*ptr_to_globals.offset(-1)).crc as *mut u32 as *mut libc::c_void,
-    0i32,
+    0,
     (::std::mem::size_of::<globals>() as libc::c_ulong)
       .wrapping_sub(40u64)
       .wrapping_add(::std::mem::size_of::<globals2>() as libc::c_ulong),
@@ -2071,7 +2068,7 @@ unsafe extern "C" fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c
   (*(ptr_to_globals as *mut globals2)).bl_desc.max_length = 7i32;
   //G2.bl_desc.max_code    = 0;
   zip();
-  return 0i32 as libc::c_longlong;
+  return 0 as libc::c_longlong;
 }
 static mut gzip_longopts: [libc::c_char; 105] = [
   115, 116, 100, 111, 117, 116, 0, 0, 99, 116, 111, 45, 115, 116, 100, 111, 117, 116, 0, 0, 99,

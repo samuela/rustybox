@@ -37,7 +37,7 @@ extern "C" {
 }
 
 unsafe extern "C" fn onintr(mut _sig: libc::c_int) {
-  tcsetattr(2i32, 0i32, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
+  tcsetattr(2i32, 0, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
   _exit(1i32);
 }
 
@@ -58,10 +58,10 @@ pub unsafe extern "C" fn resize_main(
   };
   let mut w: winsize = {
     let mut init = winsize {
-      ws_row: 0i32 as libc::c_ushort,
-      ws_col: 0i32 as libc::c_ushort,
-      ws_xpixel: 0i32 as libc::c_ushort,
-      ws_ypixel: 0i32 as libc::c_ushort,
+      ws_row: 0 as libc::c_ushort,
+      ws_col: 0 as libc::c_ushort,
+      ws_xpixel: 0 as libc::c_ushort,
+      ws_ypixel: 0 as libc::c_ushort,
     };
     init
   };
@@ -81,10 +81,10 @@ pub unsafe extern "C" fn resize_main(
   new.c_cflag |= (0o4000i32 | 0o200i32) as libc::c_uint;
   new.c_lflag &= !(0o2i32 | 0o10i32 | 0o20i32 | 0o1i32) as libc::c_uint;
   bb_signals(
-    0i32 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32) + (1i32 << 14i32),
+    0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32) + (1i32 << 14i32),
     Some(onintr as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  tcsetattr(2i32, 0i32, &mut new);
+  tcsetattr(2i32, 0, &mut new);
   /* save_cursor_pos 7
    * scroll_whole_screen [r
    * put_cursor_waaaay_off [$x;$yH
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn resize_main(
    * by calculating character cell HxW from old values
    * (gotten via TIOCGWINSZ) and recomputing *pixel values */
   ret = ioctl(2i32, 0x5414i32 as libc::c_ulong, &mut w as *mut winsize);
-  tcsetattr(2i32, 0i32, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
+  tcsetattr(2i32, 0, bb_common_bufsiz1.as_mut_ptr() as *mut termios);
   printf(
     b"COLUMNS=%d;LINES=%d;export COLUMNS LINES;\n\x00" as *const u8 as *const libc::c_char,
     w.ws_col as libc::c_int,

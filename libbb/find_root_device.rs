@@ -44,14 +44,14 @@ pub const DEVNAME_MAX: C2RustUnnamed = 256;
 /* Do not reallocate all this stuff on each recursion */
 pub type C2RustUnnamed = libc::c_uint;
 unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::c_char {
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut entry: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut entry: *mut dirent = std::ptr::null_mut();
   let mut retpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   let mut rem: libc::c_int = 0;
   len = strlen((*ap).devpath.as_mut_ptr()) as libc::c_int;
   rem = DEVNAME_MAX as libc::c_int - 2i32 - len;
-  if rem <= 0i32 {
+  if rem <= 0 {
     return std::ptr::null_mut::<libc::c_char>();
   }
   dir = opendir((*ap).devpath.as_mut_ptr());
@@ -72,7 +72,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
       rem as size_t,
     );
     /* lstat: do not follow links */
-    if lstat((*ap).devpath.as_mut_ptr(), &mut (*ap).st) != 0i32 {
+    if lstat((*ap).devpath.as_mut_ptr(), &mut (*ap).st) != 0 {
       continue;
     }
     if (*ap).st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint
@@ -215,7 +215,7 @@ pub unsafe extern "C" fn find_block_device(mut path: *const libc::c_char) -> *mu
     dev: 0,
     devpath: [0; 256],
   };
-  if stat(path, &mut a.st) != 0i32 {
+  if stat(path, &mut a.st) != 0 {
     return std::ptr::null_mut::<libc::c_char>();
   }
   a.dev = if a.st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint {

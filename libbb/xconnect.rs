@@ -606,9 +606,9 @@ unsafe extern "C" fn get_lsa(
       },
     },
   };
-  let mut lsa_ptr: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa_ptr: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
-  if get_name.expect("non-null function pointer")(fd, &mut lsa.u.sa, &mut lsa.len) != 0i32 {
+  if get_name.expect("non-null function pointer")(fd, &mut lsa.u.sa, &mut lsa.len) != 0 {
     return 0 as *mut len_and_sockaddr;
   }
   lsa_ptr = xzalloc((LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add(lsa.len) as size_t)
@@ -680,7 +680,7 @@ pub unsafe extern "C" fn xconnect(
       __sockaddr__: s_addr,
     },
     addrlen,
-  ) < 0i32
+  ) < 0
   {
     if (*s_addr).sa_family as libc::c_int == 2i32 {
       bb_perror_msg_and_die(
@@ -776,11 +776,11 @@ unsafe extern "C" fn str2sockaddr(
 ) -> *mut len_and_sockaddr {
   let mut current_block: u64; /* only for error msg */
   let mut rc: libc::c_int = 0;
-  let mut r: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut result: *mut addrinfo = 0 as *mut addrinfo;
-  let mut used_res: *mut addrinfo = 0 as *mut addrinfo;
+  let mut r: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut result: *mut addrinfo = std::ptr::null_mut();
+  let mut used_res: *mut addrinfo = std::ptr::null_mut();
   let mut org_host: *const libc::c_char = host;
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
   let mut hint: addrinfo = addrinfo {
     ai_flags: 0,
     ai_family: 0,
@@ -791,10 +791,9 @@ unsafe extern "C" fn str2sockaddr(
     ai_canonname: std::ptr::null_mut::<libc::c_char>(),
     ai_next: 0 as *mut addrinfo,
   };
-  if 0i32 != 0
-    && !is_prefixed_with(host, b"local:\x00" as *const u8 as *const libc::c_char).is_null()
+  if 0 != 0 && !is_prefixed_with(host, b"local:\x00" as *const u8 as *const libc::c_char).is_null()
   {
-    let mut sun: *mut sockaddr_un = 0 as *mut sockaddr_un;
+    let mut sun: *mut sockaddr_un = std::ptr::null_mut();
     r = xzalloc(
       (LSA_LEN_SIZE as libc::c_int as libc::c_ulong)
         .wrapping_add(::std::mem::size_of::<sockaddr_un>() as libc::c_ulong),
@@ -809,7 +808,7 @@ unsafe extern "C" fn str2sockaddr(
     );
     return r;
   }
-  r = 0 as *mut len_and_sockaddr;
+  r = std::ptr::null_mut();
   /* Ugly parsing of host:addr */
   if 1i32 != 0 && *host.offset(0) as libc::c_int == '[' as i32 {
     /* Even uglier parsing of [xx]:nn */
@@ -833,7 +832,7 @@ unsafe extern "C" fn str2sockaddr(
     cp = strrchr(host, ':' as i32);
     if 1i32 != 0 && !cp.is_null() && strchr(host, ':' as i32) != cp as *mut libc::c_char {
       /* There is more than one ':' (e.g. "::1") */
-      cp = 0 as *const libc::c_char
+      cp = std::ptr::null()
       /* it's not a port spec */
     }
   }
@@ -880,7 +879,7 @@ unsafe extern "C" fn str2sockaddr(
    * check whether this is a numeric IPv4 */
   if af as libc::c_int != 10i32 {
     let mut in4: in_addr = in_addr { s_addr: 0 };
-    if inet_aton(host, &mut in4) != 0i32 {
+    if inet_aton(host, &mut in4) != 0 {
       r = xzalloc(
         (LSA_LEN_SIZE as libc::c_int as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<sockaddr_in>() as libc::c_ulong),
@@ -906,7 +905,7 @@ unsafe extern "C" fn str2sockaddr(
             __u6_addr8: [0; 16],
           },
         };
-        if inet_pton(10i32, host, &mut in6 as *mut in6_addr as *mut libc::c_void) > 0i32 {
+        if inet_pton(10i32, host, &mut in6 as *mut in6_addr as *mut libc::c_void) > 0 {
           r = xzalloc(
             (LSA_LEN_SIZE as libc::c_int as libc::c_ulong)
               .wrapping_add(::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong),
@@ -926,7 +925,7 @@ unsafe extern "C" fn str2sockaddr(
         _ => {
           memset(
             &mut hint as *mut addrinfo as *mut libc::c_void,
-            0i32,
+            0,
             ::std::mem::size_of::<addrinfo>() as libc::c_ulong,
           );
           hint.ai_family = af as libc::c_int;
@@ -1007,7 +1006,7 @@ pub unsafe extern "C" fn host_and_af2sockaddr(
   mut port: libc::c_int,
   mut af: sa_family_t,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, af, 0i32);
+  return str2sockaddr(host, port, af, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xhost_and_af2sockaddr(
@@ -1022,21 +1021,21 @@ pub unsafe extern "C" fn host2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xhost2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0x2i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0x2i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xdotted2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0x4i32 | 0x2i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0x4i32 | 0x2i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xsocket_type(
@@ -1045,12 +1044,12 @@ pub unsafe extern "C" fn xsocket_type(
   mut sock_type: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   let mut len: libc::c_int = 0;
-  if family == 0i32 {
-    fd = socket(10i32, sock_type, 0i32);
-    if fd >= 0i32 {
+  if family == 0 {
+    fd = socket(10i32, sock_type, 0);
+    if fd >= 0 {
       family = 10i32;
       current_block = 17911962374867333381;
     } else {
@@ -1062,7 +1061,7 @@ pub unsafe extern "C" fn xsocket_type(
   }
   match current_block {
     7351195479953500246 => {
-      fd = xsocket(family, sock_type, 0i32);
+      fd = xsocket(family, sock_type, 0);
       len = ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as libc::c_int;
       if family == 1i32 {
         len = ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as libc::c_int
@@ -1089,7 +1088,7 @@ pub unsafe extern "C" fn xsocket_type(
 }
 #[no_mangle]
 pub unsafe extern "C" fn xsocket_stream(mut lsap: *mut *mut len_and_sockaddr) -> libc::c_int {
-  return xsocket_type(lsap, 0i32, SOCK_STREAM as libc::c_int);
+  return xsocket_type(lsap, 0, SOCK_STREAM as libc::c_int);
 }
 unsafe extern "C" fn create_and_bind_or_die(
   mut bindaddr: *const libc::c_char,
@@ -1097,13 +1096,13 @@ unsafe extern "C" fn create_and_bind_or_die(
   mut sock_type: libc::c_int,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   if !bindaddr.is_null() && *bindaddr.offset(0) as libc::c_int != 0 {
     lsa = xdotted2sockaddr(bindaddr, port);
     /* user specified bind addr dictates family */
-    fd = xsocket((*lsa).u.sa.sa_family as libc::c_int, sock_type, 0i32)
+    fd = xsocket((*lsa).u.sa.sa_family as libc::c_int, sock_type, 0)
   } else {
-    fd = xsocket_type(&mut lsa, 0i32, sock_type);
+    fd = xsocket_type(&mut lsa, 0, sock_type);
     set_nport(
       &mut (*lsa).u.sa,
       ({
@@ -1159,7 +1158,7 @@ pub unsafe extern "C" fn create_and_bind_to_netlink(
   let mut fd: libc::c_int = 0;
   memset(
     &mut sa as *mut sockaddr_nl as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong,
   );
   sa.nl_family = 16i32 as __kernel_sa_family_t;
@@ -1172,7 +1171,7 @@ pub unsafe extern "C" fn create_and_bind_to_netlink(
     ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong as socklen_t,
   );
   close_on_exec_on(fd);
-  if rcvbuf != 0i32 as libc::c_uint {
+  if rcvbuf != 0 as libc::c_uint {
     // SO_RCVBUFFORCE (root only) can go above net.core.rmem_max sysctl
     setsockopt_SOL_SOCKET_int(fd, 8i32, rcvbuf as libc::c_int);
     setsockopt_SOL_SOCKET_int(fd, 33i32, rcvbuf as libc::c_int);
@@ -1185,12 +1184,12 @@ pub unsafe extern "C" fn create_and_connect_stream_or_die(
   mut port: libc::c_int,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa = xhost2sockaddr(peer, port);
   fd = xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     SOCK_STREAM as libc::c_int,
-    0i32,
+    0,
   );
   setsockopt_reuseaddr(fd);
   xconnect(fd, &mut (*lsa).u.sa, (*lsa).len);
@@ -1202,7 +1201,7 @@ pub unsafe extern "C" fn xconnect_stream(mut lsa: *const len_and_sockaddr) -> li
   let mut fd: libc::c_int = xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     SOCK_STREAM as libc::c_int,
-    0i32,
+    0,
   );
   xconnect(fd, &(*lsa).u.sa, (*lsa).len);
   return fd;
@@ -1268,7 +1267,7 @@ unsafe extern "C" fn sockaddr2str(
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2host(mut sa: *const sockaddr) -> *mut libc::c_char {
-  return sockaddr2str(sa, 0i32);
+  return sockaddr2str(sa, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2host_noport(
@@ -1284,7 +1283,7 @@ pub unsafe extern "C" fn xmalloc_sockaddr2hostonly_noport(
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2dotted(mut sa: *const sockaddr) -> *mut libc::c_char {
-  return sockaddr2str(sa, 1i32 | 0i32);
+  return sockaddr2str(sa, 1i32 | 0);
 }
 
 /*
@@ -1488,5 +1487,5 @@ pub unsafe extern "C" fn xmalloc_sockaddr2dotted(mut sa: *const sockaddr) -> *mu
 pub unsafe extern "C" fn xmalloc_sockaddr2dotted_noport(
   mut sa: *const sockaddr,
 ) -> *mut libc::c_char {
-  return sockaddr2str(sa, 1i32 | 0i32 | 2i32);
+  return sockaddr2str(sa, 1i32 | 0 | 2i32);
 }

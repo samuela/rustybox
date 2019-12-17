@@ -74,9 +74,9 @@ pub unsafe extern "C" fn sulogin_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut timeout: libc::c_int = 0i32;
-  let mut pwd: *mut passwd = 0 as *mut passwd;
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
+  let mut timeout: libc::c_int = 0;
+  let mut pwd: *mut passwd = std::ptr::null_mut();
+  let mut shell: *const libc::c_char = std::ptr::null();
   /* Note: sulogin is not a suid app. It is meant to be run by init
    * for single user / emergency mode. init starts it as root.
    * Normal users (potentially malicious ones) can only run it under
@@ -85,7 +85,7 @@ pub unsafe extern "C" fn sulogin_main(
    * are no more dangerous here than in e.g. cp applet.
    */
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
-  openlog(applet_name, 0i32, 4i32 << 3i32);
+  openlog(applet_name, 0, 4i32 << 3i32);
   getopt32(
     argv,
     b"t:+\x00" as *const u8 as *const libc::c_char,
@@ -113,12 +113,12 @@ pub unsafe extern "C" fn sulogin_main(
       b"Give root password for system maintenance\n(or type Control-D for normal startup):\x00"
         as *const u8 as *const libc::c_char,
     );
-    if r < 0i32 {
+    if r < 0 {
       /* ^D, ^C, timeout, or read error */
       bb_simple_info_msg(b"normal startup\x00" as *const u8 as *const libc::c_char);
-      return 0i32;
+      return 0;
     }
-    if r > 0i32 {
+    if r > 0 {
       break;
     }
     bb_do_delay(3i32);

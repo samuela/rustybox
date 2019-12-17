@@ -139,18 +139,18 @@ pub unsafe extern "C" fn INET_resolve(
   mut s_in: *mut sockaddr_in,
   mut hostfirst: libc::c_int,
 ) -> libc::c_int {
-  let mut hp: *mut hostent = 0 as *mut hostent;
+  let mut hp: *mut hostent = std::ptr::null_mut();
   /* Grmpf. -FvK */
   (*s_in).sin_family = 2i32 as sa_family_t;
-  (*s_in).sin_port = 0i32 as in_port_t;
+  (*s_in).sin_port = 0 as in_port_t;
   /* Default is special, meaning 0.0.0.0. */
-  if strcmp(name, b"default\x00" as *const u8 as *const libc::c_char) == 0i32 {
-    (*s_in).sin_addr.s_addr = 0i32 as in_addr_t;
+  if strcmp(name, b"default\x00" as *const u8 as *const libc::c_char) == 0 {
+    (*s_in).sin_addr.s_addr = 0 as in_addr_t;
     return 1i32;
   }
   /* Look to see if it's a dotted quad. */
   if inet_aton(name, &mut (*s_in).sin_addr) != 0 {
-    return 0i32;
+    return 0;
   }
   /* If we expect this to be a hostname, try hostname database first */
   if hostfirst != 0 {
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn INET_resolve(
         *(*hp).h_addr_list.offset(0) as *const libc::c_void,
         ::std::mem::size_of::<in_addr>() as libc::c_ulong,
       );
-      return 0i32;
+      return 0;
     }
   }
   if hostfirst != 0 {
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn INET_resolve(
     *(*hp).h_addr_list.offset(0) as *const libc::c_void,
     ::std::mem::size_of::<in_addr>() as libc::c_ulong,
   );
-  return 0i32;
+  return 0;
 }
 /* These return malloced string */
 /* numeric: & 0x8000: "default" instead of "*",
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn INET_rresolve(
 ) -> *mut libc::c_char {
   /* addr-to-name cache */
   static mut cache: *mut addr = 0 as *const addr as *mut addr; /* no '+ 1', it's already accounted for */
-  let mut pn: *mut addr = 0 as *mut addr;
+  let mut pn: *mut addr = std::ptr::null_mut();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nip: u32 = 0;
   let mut is_host: smallint = 0;
@@ -204,14 +204,14 @@ pub unsafe extern "C" fn INET_rresolve(
   if numeric & 0xfffi32 != 0 {
     return xmalloc_sockaddr2dotted_noport(s_in as *mut libc::c_void as *const sockaddr);
   }
-  if nip == 0i32 as in_addr_t {
+  if nip == 0 as in_addr_t {
     if numeric & 0x8000i32 != 0 {
       return xstrdup(b"default\x00" as *const u8 as *const libc::c_char);
     }
     return xstrdup(b"*\x00" as *const u8 as *const libc::c_char);
   }
   is_host =
-    (nip & !netmask != 0i32 as libc::c_uint || numeric & 0x4000i32 != 0) as libc::c_int as smallint;
+    (nip & !netmask != 0 as libc::c_uint || numeric & 0x4000i32 != 0) as libc::c_int as smallint;
   pn = cache;
   while !pn.is_null() {
     if (*pn).nip == nip && (*pn).is_host as libc::c_int == is_host as libc::c_int {
@@ -254,16 +254,16 @@ pub unsafe extern "C" fn INET6_resolve(
     ai_canonname: std::ptr::null_mut::<libc::c_char>(),
     ai_next: 0 as *mut addrinfo,
   };
-  let mut ai: *mut addrinfo = 0 as *mut addrinfo;
+  let mut ai: *mut addrinfo = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   memset(
     &mut req as *mut addrinfo as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<addrinfo>() as libc::c_ulong,
   );
   req.ai_family = 10i32;
   s = getaddrinfo(name, 0 as *const libc::c_char, &mut req, &mut ai);
-  if s != 0i32 {
+  if s != 0 {
     bb_error_msg(
       b"getaddrinfo: %s: %d\x00" as *const u8 as *const libc::c_char,
       name,
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn INET6_resolve(
     ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
   );
   freeaddrinfo(ai);
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn INET6_rresolve(
@@ -293,10 +293,10 @@ pub unsafe extern "C" fn INET6_rresolve(
   }
   if ({
     let mut __a: *const in6_addr = &mut (*sin6).sin6_addr as *mut in6_addr as *const in6_addr;
-    ((*__a).__in6_u.__u6_addr32[0] == 0i32 as libc::c_uint
-      && (*__a).__in6_u.__u6_addr32[1] == 0i32 as libc::c_uint
-      && (*__a).__in6_u.__u6_addr32[2] == 0i32 as libc::c_uint
-      && (*__a).__in6_u.__u6_addr32[3] == 0i32 as libc::c_uint) as libc::c_int
+    ((*__a).__in6_u.__u6_addr32[0] == 0 as libc::c_uint
+      && (*__a).__in6_u.__u6_addr32[1] == 0 as libc::c_uint
+      && (*__a).__in6_u.__u6_addr32[2] == 0 as libc::c_uint
+      && (*__a).__in6_u.__u6_addr32[3] == 0 as libc::c_uint) as libc::c_int
   }) != 0
   {
     if numeric & 0x8000i32 != 0 {

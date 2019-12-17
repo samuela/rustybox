@@ -59,5 +59,5 @@ pub unsafe extern "C" fn nuke_main(
     );
   }
   // klibc-utils do not indicate errors
-  return 0i32;
+  return 0;
 }

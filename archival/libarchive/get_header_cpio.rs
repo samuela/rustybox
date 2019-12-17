@@ -46,7 +46,7 @@ pub unsafe extern "C" fn get_header_cpio(
     cpio_header.as_mut_ptr() as *mut libc::c_void,
     110i32 as size_t,
   ) as libc::c_uint;
-  if !(size == 0i32 as libc::c_uint) {
+  if !(size == 0 as libc::c_uint) {
     if size != 110i32 as libc::c_uint {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"short read\x00" as *const u8 as *const libc::c_char,
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn get_header_cpio(
     (*archive_handle).offset += namesize as libc::c_long;
     /* Update offset amount and skip padding before file contents */
     crate::archival::libarchive::data_align::data_align(archive_handle, 4i32 as libc::c_uint);
-    if strcmp((*file_header).name, cpio_TRAILER.as_ptr()) == 0i32 {
+    if strcmp((*file_header).name, cpio_TRAILER.as_ptr()) == 0 {
       /* Always round up. ">> 9" divides by 512 */
       (*archive_handle).cpio__blocks =
         ((*archive_handle).offset + 511i32 as libc::c_long) as uoff_t >> 9i32
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn get_header_cpio(
           (*file_header).size as size_t,
         );
         (*archive_handle).offset += (*file_header).size;
-        (*file_header).size = 0i32 as off_t
+        (*file_header).size = 0 as off_t
         /* Stop possible seeks in future */
       }
       // TODO: data_extract_all can't deal with hardlinks to non-files...
@@ -157,10 +157,10 @@ pub unsafe extern "C" fn get_header_cpio(
         (*new).gid = gid as libc::c_int;
         strcpy((*new).name.as_mut_ptr(), (*file_header).name);
         /* Put file on a linked list for later */
-        if size == 0i32 as libc::c_uint {
+        if size == 0 as libc::c_uint {
           (*new).next = (*archive_handle).cpio__hardlinks_to_create;
           (*archive_handle).cpio__hardlinks_to_create = new;
-          return 0i32 as libc::c_char;
+          return 0 as libc::c_char;
           /* Skip this one */
           /* TODO: this breaks cpio -t (it does not show hardlinks) */
         }
@@ -171,7 +171,7 @@ pub unsafe extern "C" fn get_header_cpio(
         crate::libbb::makedev::bb_makedev(major as libc::c_uint, minor as libc::c_uint)
           as libc::dev_t;
       if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
-        == 0i32
+        == 0
       {
         (*archive_handle)
           .action_data
@@ -191,19 +191,19 @@ pub unsafe extern "C" fn get_header_cpio(
       free((*file_header).name as *mut libc::c_void);
       (*file_header).link_target = std::ptr::null_mut::<libc::c_char>();
       (*file_header).name = std::ptr::null_mut::<libc::c_char>();
-      return 0i32 as libc::c_char;
+      return 0 as libc::c_char;
     }
   }
   free((*file_header).link_target as *mut libc::c_void);
   free((*file_header).name as *mut libc::c_void);
   while !(*archive_handle).cpio__hardlinks_to_create.is_null() {
     let mut current_block_86: u64;
-    let mut cur: *mut hardlinks_t = 0 as *mut hardlinks_t;
+    let mut cur: *mut hardlinks_t = std::ptr::null_mut();
     let mut make_me: *mut hardlinks_t = (*archive_handle).cpio__hardlinks_to_create;
     (*archive_handle).cpio__hardlinks_to_create = (*make_me).next;
     memset(
       file_header as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<file_header_t>() as libc::c_ulong,
     );
     (*file_header).mtime = (*make_me).mtime as time_t;
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn get_header_cpio(
         /* link_target != NULL, size = 0: "I am a hardlink" */
         if (*archive_handle).filter.expect("non-null function pointer")(archive_handle)
           as libc::c_int
-          == 0i32
+          == 0
         {
           (*archive_handle)
             .action_data
@@ -245,7 +245,7 @@ pub unsafe extern "C" fn get_header_cpio(
          * (happens when hardlinked files are empty (zero length)) */
         if (*archive_handle).filter.expect("non-null function pointer")(archive_handle)
           as libc::c_int
-          == 0i32
+          == 0
         {
           (*archive_handle)
             .action_data

@@ -41,7 +41,7 @@ pub unsafe extern "C" fn rdev_main(
       b"%s /\n\x00" as *const u8 as *const libc::c_char,
       root_device,
     );
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }

@@ -41,7 +41,7 @@ pub unsafe extern "C" fn bb_make_directory(
   let mut current_block: u64;
   let mut cur_mask: mode_t = 0;
   let mut org_mask: mode_t = 0;
-  let mut fail_msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fail_msg: *const libc::c_char = std::ptr::null();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
   let mut st: stat = std::mem::zeroed();
@@ -52,11 +52,11 @@ pub unsafe extern "C" fn bb_make_directory(
    * nothing needs to be created anyway.
    */
   if *path.offset(0) as libc::c_int == '/' as i32 && *path.offset(1) == 0 {
-    return 0i32;
+    return 0;
   }
   if *path.offset(0) as libc::c_int == '.' as i32 {
     if *path.offset(1) as libc::c_int == '\u{0}' as i32 {
-      return 0i32;
+      return 0;
     }
     /* "." */
     //		if (path[1] == '.' && path[2] == '\0')
@@ -92,7 +92,7 @@ pub unsafe extern "C" fn bb_make_directory(
         /* wasn't done yet? */
         let mut new_mask: mode_t = 0;
         org_mask = umask(0i32 as mode_t);
-        cur_mask = 0i32 as mode_t;
+        cur_mask = 0 as mode_t;
         /* Clear u=wx in umask - this ensures
          * they won't be cleared on mkdir */
         new_mask = org_mask & !(0o300i32 as mode_t);
@@ -109,12 +109,12 @@ pub unsafe extern "C" fn bb_make_directory(
     /* Last component: uses original umask */
     //bb_error_msg("1 org_mask:%o", org_mask);
     //bb_error_msg("mkdir '%s'", path);
-    if mkdir(path, 0o777i32 as mode_t) < 0i32 {
+    if mkdir(path, 0o777i32 as mode_t) < 0 {
       /* If we failed for any other reason than the directory
        * already exists, output a diagnostic and return -1 */
       if *bb_errno != 17i32 && *bb_errno != 21i32
         || flags & FILEUTILS_RECUR as libc::c_int == 0
-        || (stat(path, &mut st) < 0i32
+        || (stat(path, &mut st) < 0
           || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint))
       {
         fail_msg = b"create\x00" as *const u8 as *const libc::c_char;
@@ -143,7 +143,7 @@ pub unsafe extern "C" fn bb_make_directory(
         break;
       }
       //bb_error_msg("chmod 0%03lo mkdir '%s'", mode, path);
-      if !(chmod(path, mode as mode_t) < 0i32) {
+      if !(chmod(path, mode as mode_t) < 0) {
         current_block = 7995648291273452906;
         break;
       }
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn bb_make_directory(
         current_block = 6560072651652764009;
         break;
       }
-      flags = 0i32;
+      flags = 0;
       current_block = 14469951070566118589;
       break;
     } else {
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn bb_make_directory(
       current_block = 14469951070566118589;
     }
     7995648291273452906 => {
-      flags = 0i32;
+      flags = 0;
       current_block = 3427267834250323188;
     }
     _ => {}

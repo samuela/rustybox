@@ -102,9 +102,9 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut generation: libc::c_ulong = 0;
-  if !(fgetsetflags(name, &mut fsflags, 0i32 as libc::c_ulong) != 0i32) {
+  if !(fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0) {
     if option_mask32 & OPT_GENERATION as libc::c_int as libc::c_uint != 0 {
-      if fgetsetversion(name, &mut generation, 0i32 as libc::c_ulong) != 0i32 {
+      if fgetsetversion(name, &mut generation, 0 as libc::c_ulong) != 0 {
         current_block = 3114758340063453716;
       } else {
         printf(b"%5lu \x00" as *const u8 as *const libc::c_char, generation);
@@ -121,7 +121,7 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
           print_e2flags(stdout, fsflags, 1i32 as libc::c_uint);
           bb_putchar('\n' as i32);
         } else {
-          print_e2flags(stdout, fsflags, 0i32 as libc::c_uint);
+          print_e2flags(stdout, fsflags, 0 as libc::c_uint);
           printf(b" %s\n\x00" as *const u8 as *const libc::c_char, name);
         }
         return;
@@ -138,7 +138,7 @@ unsafe extern "C" fn lsattr_dir_proc(
   let mut st: stat = std::mem::zeroed();
   let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   path = concat_path_file(dir_name, (*de).d_name.as_mut_ptr());
-  if lstat(path, &mut st) != 0i32 {
+  if lstat(path, &mut st) != 0 {
     bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, path);
   } else if (*de).d_name[0] as libc::c_int != '.' as i32
     || option_mask32 & OPT_ALL as libc::c_int as libc::c_uint != 0
@@ -167,7 +167,7 @@ unsafe extern "C" fn lsattr_dir_proc(
     }
   }
   free(path as *mut libc::c_void);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
   let mut st: stat = std::mem::zeroed();
@@ -211,5 +211,5 @@ pub unsafe extern "C" fn lsattr_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

@@ -148,7 +148,7 @@ unsafe extern "C" fn fileAction(
   if (*(vparam as *mut param_t))
     .chown_func
     .expect("non-null function pointer")(fileName, u, g)
-    == 0i32
+    == 0
   {
     if option_mask32 & 0x4i32 as libc::c_uint != 0
       || option_mask32 & 0x8i32 as libc::c_uint != 0
@@ -166,7 +166,7 @@ unsafe extern "C" fn fileAction(
   if option_mask32 & 0x10i32 as libc::c_uint == 0 {
     bb_simple_perror_msg(fileName);
   }
-  return 0i32;
+  return 0;
 }
 
 /*
@@ -560,7 +560,7 @@ pub unsafe extern "C" fn chown_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut param: param_t = param_t {
@@ -621,7 +621,7 @@ pub unsafe extern "C" fn chown_main(
           ) -> libc::c_int,
       ),
       &mut param as *mut param_t as *mut libc::c_void,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     ) == 0
     {
       /* depth */

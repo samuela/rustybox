@@ -216,7 +216,7 @@ pub unsafe extern "C" fn utoa_to_buf(
   let mut out: libc::c_uint = 0;
   let mut res: libc::c_uint = 0;
   if buflen != 0 {
-    out = 0i32 as libc::c_uint;
+    out = 0 as libc::c_uint;
     if ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong == 4i32 as libc::c_ulong {
       // 2^32-1 = 4294967295
       i = 1000000000i32 as libc::c_uint
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn utoa_to_buf(
       n = n.wrapping_rem(i);
       if res != 0 || out != 0 || i == 1i32 as libc::c_uint {
         buflen = buflen.wrapping_sub(1);
-        if buflen == 0i32 as libc::c_uint {
+        if buflen == 0 as libc::c_uint {
           break;
         }
         out = out.wrapping_add(1);
@@ -250,7 +250,7 @@ pub unsafe extern "C" fn itoa_to_buf(
   if buflen == 0 {
     return buf;
   }
-  if n < 0i32 {
+  if n < 0 {
     n = -n;
     let fresh1 = buf;
     buf = buf.offset(1);
@@ -362,11 +362,7 @@ pub unsafe extern "C" fn hex2bin(
     }
     count -= 1
   }
-  *bb_errno = if *str as libc::c_int != 0 {
-    34i32
-  } else {
-    0i32
-  };
+  *bb_errno = if *str as libc::c_int != 0 { 34i32 } else { 0 };
   return dst;
 }
 
@@ -414,7 +410,7 @@ unsafe extern "C" fn wh_helper(
     /* If LINES/COLUMNS are set, pretend that there is
      * no error getting w/h, this prevents some ugly
      * cursor tricks by our callers */
-    *err = 0i32
+    *err = 0
   }
   if value <= 1i32 || value >= 30000i32 {
     value = def_val
@@ -443,18 +439,18 @@ pub unsafe extern "C" fn get_terminal_width_height(
     } else if isatty(2i32) != 0 {
       fd = 2i32
     } else if isatty(0i32) != 0 {
-      fd = 0i32
+      fd = 0
     } else {
-      fd = open(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0i32);
+      fd = open(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0);
       close_me = fd
     }
   }
-  win.ws_row = 0i32 as libc::c_ushort;
-  win.ws_col = 0i32 as libc::c_ushort;
+  win.ws_row = 0 as libc::c_ushort;
+  win.ws_col = 0 as libc::c_ushort;
   /* I've seen ioctl returning 0, but row/col is (still?) 0.
    * We treat that as an error too.  */
-  err = (ioctl(fd, 0x5413i32 as libc::c_ulong, &mut win as *mut winsize) != 0i32
-    || win.ws_row as libc::c_int == 0i32) as libc::c_int;
+  err = (ioctl(fd, 0x5413i32 as libc::c_ulong, &mut win as *mut winsize) != 0
+    || win.ws_row as libc::c_int == 0) as libc::c_int;
   if !height.is_null() {
     *height = wh_helper(
       win.ws_row as libc::c_int,
@@ -471,7 +467,7 @@ pub unsafe extern "C" fn get_terminal_width_height(
       &mut err,
     ) as libc::c_uint
   }
-  if close_me >= 0i32 {
+  if close_me >= 0 {
     close(close_me);
   }
   return err;
@@ -484,7 +480,7 @@ pub unsafe extern "C" fn get_terminal_width(mut fd: libc::c_int) -> libc::c_int 
 }
 #[no_mangle]
 pub unsafe extern "C" fn tcsetattr_stdin_TCSANOW(mut tp: *const termios) -> libc::c_int {
-  return tcsetattr(0i32, 0i32, tp);
+  return tcsetattr(0i32, 0, tp);
 }
 #[no_mangle]
 pub unsafe extern "C" fn get_termios_and_make_raw(
@@ -497,7 +493,7 @@ pub unsafe extern "C" fn get_termios_and_make_raw(
   let mut r: libc::c_int = 0; /* paranoia */
   memset(
     oldterm as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<termios>() as libc::c_ulong,
   );
   r = tcgetattr(fd, oldterm);
@@ -507,14 +503,14 @@ pub unsafe extern "C" fn get_termios_and_make_raw(
    * and separate echoing of newline (ECHONL, normally off anyway)
    */
   (*newterm).c_lflag &= !(0o2i32 | 0o10i32 | 0o100i32) as libc::c_uint;
-  if flags & 1i32 << 0i32 != 0 {
+  if flags & 1i32 << 0 != 0 {
     /* dont recognize INT/QUIT/SUSP chars */
     (*newterm).c_lflag &= !0o1i32 as libc::c_uint
   }
   /* reads will block only if < 1 char is available */
   (*newterm).c_cc[6] = 1i32 as cc_t;
   /* no timeout (reads block forever) */
-  (*newterm).c_cc[5] = 0i32 as cc_t;
+  (*newterm).c_cc[5] = 0 as cc_t;
   /* IXON, IXOFF, and IXANY:
    * IXOFF=1: sw flow control is enabled on input queue:
    * tty transmits a STOP char when input queue is close to full
@@ -719,7 +715,7 @@ pub unsafe extern "C" fn set_termios_to_raw(
     c_ospeed: 0,
   };
   get_termios_and_make_raw(fd, &mut newterm, oldterm, flags);
-  return tcsetattr(fd, 0i32, &mut newterm);
+  return tcsetattr(fd, 0, &mut newterm);
 }
 #[no_mangle]
 pub unsafe extern "C" fn safe_waitpid(
@@ -744,21 +740,21 @@ pub unsafe extern "C" fn wait_any_nohang(mut wstat: *mut libc::c_int) -> pid_t {
 #[no_mangle]
 pub unsafe extern "C" fn wait4pid(mut pid: pid_t) -> libc::c_int {
   let mut status: libc::c_int = 0;
-  if pid <= 0i32 {
+  if pid <= 0 {
     /*errno = ECHILD; -- wrong. */
     /* we expect errno to be already set from failed [v]fork/exec */
     return -1i32;
   }
-  if safe_waitpid(pid, &mut status, 0i32) == -1i32 {
+  if safe_waitpid(pid, &mut status, 0) == -1i32 {
     return -1i32;
   }
-  if status & 0x7fi32 == 0i32 {
+  if status & 0x7fi32 == 0 {
     return (status & 0xff00i32) >> 8i32;
   }
-  if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+  if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
     return (status & 0x7fi32) + 0x180i32;
   }
-  return 0i32;
+  return 0;
 }
 /* !RETURNS_MALLOC: it's a realloc-like function */
 /* bb_signals(BB_FATAL_SIGS, handler) catches all signals which
@@ -964,8 +960,8 @@ pub unsafe extern "C" fn wait4pid(mut pid: pid_t) -> libc::c_int {
 pub unsafe extern "C" fn wait_for_exitstatus(mut pid: pid_t) -> libc::c_int {
   let mut exit_status: libc::c_int = 0;
   let mut n: libc::c_int = 0;
-  n = safe_waitpid(pid, &mut exit_status, 0i32);
-  if n < 0i32 {
+  n = safe_waitpid(pid, &mut exit_status, 0);
+  if n < 0 {
     bb_simple_perror_msg_and_die(b"waitpid\x00" as *const u8 as *const libc::c_char);
   }
   return exit_status;

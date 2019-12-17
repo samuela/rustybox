@@ -64,7 +64,7 @@ pub unsafe extern "C" fn mountpoint_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut st: stat = std::mem::zeroed(); /* make perror_msg work as error_msg */
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rc: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
@@ -76,7 +76,7 @@ pub unsafe extern "C" fn mountpoint_main(
   } else {
     lstat(arg, &mut st)
   };
-  if !(rc != 0i32) {
+  if !(rc != 0) {
     if opt & 4i32 != 0 {
       if st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint {
         printf(
@@ -84,9 +84,9 @@ pub unsafe extern "C" fn mountpoint_main(
           gnu_dev_major(st.st_rdev),
           gnu_dev_minor(st.st_rdev),
         );
-        return 0i32;
+        return 0;
       }
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       msg = b"%s: not a block device\x00" as *const u8 as *const libc::c_char
     } else {
       *bb_errno = 20i32;
@@ -95,7 +95,7 @@ pub unsafe extern "C" fn mountpoint_main(
         let mut st_ino: ino_t = st.st_ino;
         let mut p: *mut libc::c_char =
           xasprintf(b"%s/..\x00" as *const u8 as *const libc::c_char, arg);
-        if stat(p, &mut st) == 0i32 {
+        if stat(p, &mut st) == 0 {
           /* else: stat had set errno, just fall through */
           //int is_mnt = (st_dev != st.st_dev) || (st_dev == st.st_dev && st_ino == st.st_ino);
           let mut is_not_mnt: libc::c_int =

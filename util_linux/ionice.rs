@@ -83,9 +83,9 @@ pub unsafe extern "C" fn ionice_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Defaults */
-  let mut ioclass: libc::c_int = 0i32; /* affect own porcess */
-  let mut pri: libc::c_int = 0i32;
-  let mut pid: libc::c_int = 0i32;
+  let mut ioclass: libc::c_int = 0; /* affect own porcess */
+  let mut pri: libc::c_int = 0;
+  let mut pid: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   /* Numeric params */
   /* '+': stop at first non-option */
@@ -149,5 +149,5 @@ pub unsafe extern "C" fn ionice_main(
       BB_EXECVP_or_die(argv);
     }
   }
-  return 0i32;
+  return 0;
 }

@@ -27,7 +27,7 @@ pub unsafe extern "C" fn starts_with_cpu(mut str: *const libc::c_char) -> libc::
   return (*str.offset(0) as libc::c_int - 'c' as i32
     | *str.offset(1) as libc::c_int - 'p' as i32
     | *str.offset(2) as libc::c_int - 'u' as i32
-    == 0i32) as libc::c_int;
+    == 0) as libc::c_int;
 }
 
 /*
@@ -573,7 +573,7 @@ pub unsafe extern "C" fn starts_with_cpu(mut str: *const libc::c_char) -> libc::
  */
 #[no_mangle]
 pub unsafe extern "C" fn get_cpu_count() -> libc::c_uint {
-  let mut fp: *mut FILE = 0 as *mut FILE; /* we are past "cpuN..." lines */
+  let mut fp: *mut FILE = std::ptr::null_mut(); /* we are past "cpuN..." lines */
   let mut line: [libc::c_char; 256] = [0; 256];
   let mut proc_nr: libc::c_int = -1i32;
   fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
@@ -585,7 +585,7 @@ pub unsafe extern "C" fn get_cpu_count() -> libc::c_uint {
   .is_null()
   {
     if starts_with_cpu(line.as_mut_ptr()) == 0 {
-      if proc_nr >= 0i32 {
+      if proc_nr >= 0 {
         break;
       }
     } else if line[3] as libc::c_int != ' ' as i32 {

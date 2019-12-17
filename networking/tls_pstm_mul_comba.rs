@@ -92,20 +92,20 @@ unsafe extern "C" fn pstm_mul_comba_gen(
   let mut c0: pstm_digit = 0;
   let mut c1: pstm_digit = 0;
   let mut c2: pstm_digit = 0;
-  let mut tmpx: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpy: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut dst: *mut pstm_digit = 0 as *mut pstm_digit;
-  c2 = 0i32 as pstm_digit;
+  let mut tmpx: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpy: *mut pstm_digit = std::ptr::null_mut();
+  let mut dst: *mut pstm_digit = std::ptr::null_mut();
+  c2 = 0 as pstm_digit;
   c1 = c2;
   c0 = c1;
-  paDfail = 0i32;
+  paDfail = 0;
   /* get size of output and trim */
   pa = (*A).used + (*B).used;
   /*
     If c is not large enough grow it and continue
   */
   if (*C).alloc < pa {
-    if pstm_grow(C, pa) != 0i32 {
+    if pstm_grow(C, pa) != 0 {
       return -8i32;
     }
   } /* have a paD but it's not large enough */
@@ -120,7 +120,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
     //bbox
     } else {
       dst = paD;
-      memset(dst as *mut libc::c_void, 0i32, paDlen as libc::c_ulong);
+      memset(dst as *mut libc::c_void, 0, paDlen as libc::c_ulong);
     }
   } else {
     dst = xzalloc(
@@ -128,7 +128,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
     ) as *mut pstm_digit
     //bbox
   }
-  ix = 0i32;
+  ix = 0;
   while ix < pa {
     /* get offsets into the two bignums */
     ty = if ix < (*B).used - 1i32 {
@@ -152,8 +152,8 @@ unsafe extern "C" fn pstm_mul_comba_gen(
     /* execute loop */
     c0 = c1;
     c1 = c2;
-    c2 = 0i32 as pstm_digit;
-    iz = 0i32;
+    c2 = 0 as pstm_digit;
+    iz = 0;
     while iz < iy {
       let mut t: pstm_word = 0;
       let fresh0 = tmpx;
@@ -178,9 +178,9 @@ unsafe extern "C" fn pstm_mul_comba_gen(
   iy = (*C).used;
   (*C).used = pa;
   (*C).sign = (*A).sign ^ (*B).sign;
-  let mut tmpc: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
   tmpc = (*C).dp;
-  ix = 0i32;
+  ix = 0;
   while ix < pa {
     let fresh2 = tmpc;
     tmpc = tmpc.offset(1);
@@ -193,14 +193,14 @@ unsafe extern "C" fn pstm_mul_comba_gen(
   while ix < iy {
     let fresh3 = tmpc;
     tmpc = tmpc.offset(1);
-    *fresh3 = 0i32 as pstm_digit;
+    *fresh3 = 0 as pstm_digit;
     ix += 1
   }
   pstm_clamp(C);
   if paD.is_null() || paDfail == 1i32 {
     free(dst as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }
 /*
  * Copyright (C) 2017 Denys Vlasenko

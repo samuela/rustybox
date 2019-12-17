@@ -151,7 +151,7 @@ pub const N_MAX: C2RustUnnamed_6 = 288;
 /* Use global data segment */
 /* Use malloc space */
 static mut mask_bits: [u16; 17] = [
-  0i32 as u16,
+  0 as u16,
   0x1i32 as u16,
   0x3i32 as u16,
   0x7i32 as u16,
@@ -203,18 +203,18 @@ static mut lit: cp_ext = {
       195i32 as u16,
       227i32 as u16,
       258i32 as u16,
-      0i32 as u16,
-      0i32 as u16,
+      0 as u16,
+      0 as u16,
     ],
     ext: [
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
       1i32 as u8,
       1i32 as u8,
       1i32 as u8,
@@ -235,7 +235,7 @@ static mut lit: cp_ext = {
       5i32 as u8,
       5i32 as u8,
       5i32 as u8,
-      0i32 as u8,
+      0 as u8,
       99i32 as u8,
       99i32 as u8,
     ],
@@ -279,10 +279,10 @@ static mut dist: cp_ext = {
       0,
     ],
     ext: [
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
-      0i32 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
+      0 as u8,
       1i32 as u8,
       1i32 as u8,
       2i32 as u8,
@@ -320,7 +320,7 @@ static mut border: [u8; 19] = [
   16i32 as u8,
   17i32 as u8,
   18i32 as u8,
-  0i32 as u8,
+  0 as u8,
   8i32 as u8,
   7i32 as u8,
   9i32 as u8,
@@ -344,7 +344,7 @@ static mut border: [u8; 19] = [
  * t: table to free
  */
 unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
-  let mut q: *mut huft_t = 0 as *mut huft_t;
+  let mut q: *mut huft_t = std::ptr::null_mut();
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
   while !p.is_null() {
     p = p.offset(-1);
@@ -356,8 +356,8 @@ unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
 unsafe extern "C" fn huft_free_all(mut state: *mut state_t) {
   huft_free((*state).inflate_codes_tl);
   huft_free((*state).inflate_codes_td);
-  (*state).inflate_codes_tl = 0 as *mut huft_t;
-  (*state).inflate_codes_td = 0 as *mut huft_t;
+  (*state).inflate_codes_tl = std::ptr::null_mut();
+  (*state).inflate_codes_td = std::ptr::null_mut();
 }
 unsafe extern "C" fn abort_unzip(mut state: *mut state_t) -> ! {
   huft_free_all(state);
@@ -419,8 +419,8 @@ unsafe extern "C" fn huft_build(
   let mut i: libc::c_uint = 0; /* values in order of bit length. last v[] is never used */
   let mut j: libc::c_uint = 0; /* bits decoded stack */
   let mut k: libc::c_int = 0; /* bits decoded */
-  let mut p: *const libc::c_uint = 0 as *const libc::c_uint; /* bit offsets, then code stack */
-  let mut q: *mut huft_t = 0 as *mut huft_t; /* pointer into x */
+  let mut p: *const libc::c_uint = std::ptr::null(); /* bit offsets, then code stack */
+  let mut q: *mut huft_t = std::ptr::null_mut(); /* pointer into x */
   let mut r: huft_t = huft_t {
     e: 0,
     b: 0,
@@ -431,11 +431,11 @@ unsafe extern "C" fn huft_build(
   let mut ws: [libc::c_int; 17] = [0; 17];
   let mut w: libc::c_int = 0;
   let mut x: [libc::c_uint; 17] = [0; 17];
-  let mut xp: *mut libc::c_uint = 0 as *mut libc::c_uint;
+  let mut xp: *mut libc::c_uint = std::ptr::null_mut();
   let mut y: libc::c_int = 0;
   let mut z: libc::c_uint = 0;
-  let mut result: *mut huft_t = 0 as *mut huft_t;
-  let mut t: *mut *mut huft_t = 0 as *mut *mut huft_t;
+  let mut result: *mut huft_t = std::ptr::null_mut();
+  let mut t: *mut *mut huft_t = std::ptr::null_mut();
   /* Length of EOB code, if any */
   eob_len = if n > 256i32 as libc::c_uint {
     *b.offset(256)
@@ -445,7 +445,7 @@ unsafe extern "C" fn huft_build(
   /* Generate counts for each bit length */
   memset(
     c.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_uint; 17]>() as libc::c_ulong,
   ); /* assume all entries <= BMAX */
   p = b;
@@ -474,12 +474,12 @@ unsafe extern "C" fn huft_build(
   }
   /* Find minimum and maximum length, bound *m by those */
   j = 1i32 as libc::c_uint; /* minimum code length */
-  while j <= BMAX as libc::c_int as libc::c_uint && c[j as usize] == 0i32 as libc::c_uint {
+  while j <= BMAX as libc::c_int as libc::c_uint && c[j as usize] == 0 as libc::c_uint {
     j = j.wrapping_add(1)
   } /* maximum code length */
   k = j as libc::c_int;
   i = BMAX as libc::c_int as libc::c_uint;
-  while c[i as usize] == 0i32 as libc::c_uint && i != 0 {
+  while c[i as usize] == 0 as libc::c_uint && i != 0 {
     i = i.wrapping_sub(1)
   }
   g = i as libc::c_int;
@@ -494,7 +494,7 @@ unsafe extern "C" fn huft_build(
   y = 1i32 << j;
   while j < i {
     y = (y as libc::c_uint).wrapping_sub(c[j as usize]) as libc::c_int as libc::c_int;
-    if y < 0i32 {
+    if y < 0 {
       return 1i32 as uintptr_t as *mut huft_t;
     }
     j = j.wrapping_add(1);
@@ -502,12 +502,12 @@ unsafe extern "C" fn huft_build(
     /* bad input: more codes than bits */
   }
   y = (y as libc::c_uint).wrapping_sub(c[i as usize]) as libc::c_int as libc::c_int;
-  if y < 0i32 {
+  if y < 0 {
     return 1i32 as uintptr_t as *mut huft_t;
   }
   c[i as usize] = c[i as usize].wrapping_add(y as libc::c_uint);
   /* Generate starting offsets into the value table for each length */
-  j = 0i32 as libc::c_uint;
+  j = 0 as libc::c_uint;
   x[1] = j;
   p = c.as_mut_ptr().offset(1);
   xp = x.as_mut_ptr().offset(2);
@@ -534,12 +534,12 @@ unsafe extern "C" fn huft_build(
     ::std::mem::size_of::<[libc::c_uint; 289]>() as libc::c_ulong,
   );
   p = b;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     let fresh2 = p;
     p = p.offset(1);
     j = *fresh2;
-    if j != 0i32 as libc::c_uint {
+    if j != 0 as libc::c_uint {
       let fresh3 = x[j as usize];
       x[j as usize] = x[j as usize].wrapping_add(1);
       v[fresh3 as usize] = i
@@ -552,15 +552,15 @@ unsafe extern "C" fn huft_build(
   /* Generate the Huffman codes and for each, make the table entries */
   result = 1i32 as uintptr_t as *mut huft_t; /* first Huffman code is zero */
   t = &mut result; /* grab values in bit order */
-  i = 0i32 as libc::c_uint; /* no tables yet--level -1 */
+  i = 0 as libc::c_uint; /* no tables yet--level -1 */
   x[0] = i; /* bits decoded */
   p = v.as_mut_ptr(); /* just to keep compilers happy */
   htl = -1i32; /* ditto */
-  ws[0] = 0i32; /* ditto */
+  ws[0] = 0; /* ditto */
   w = ws[0];
-  u[0] = 0 as *mut huft_t;
-  q = 0 as *mut huft_t;
-  z = 0i32 as libc::c_uint;
+  u[0] = std::ptr::null_mut();
+  q = std::ptr::null_mut();
+  z = 0 as libc::c_uint;
   /* go through the bit lengths (k already is bits in shortest code) */
   while k <= g {
     a = c[k as usize];
@@ -677,7 +677,7 @@ unsafe extern "C" fn huft_build(
   }
   /* return actual size of base table */
   *m = ws[1] as libc::c_uint;
-  if y != 0i32 && g != 1i32 {
+  if y != 0 && g != 1i32 {
     /* we were given an incomplete table */
     /* return "result" ORed with 1 */
     return (result as uintptr_t | 1i32 as libc::c_ulong) as *mut libc::c_void as *mut huft_t;
@@ -713,7 +713,7 @@ unsafe extern "C" fn inflate_codes_setup(
 unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
   let mut current_block: u64; /* table entry flag/number of extra bits */
   let mut e: libc::c_uint = 0; /* pointer to table entry */
-  let mut t: *mut huft_t = 0 as *mut huft_t;
+  let mut t: *mut huft_t = std::ptr::null_mut();
   if (*state).resume_copy != 0 {
     current_block = 2877038400800049082;
   } else {
@@ -771,7 +771,7 @@ unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
           if (*state).inflate_codes_w == GUNZIP_WSIZE as libc::c_int as libc::c_uint {
             (*state).gunzip_outbuf_count = (*state).inflate_codes_w;
             // We have a block to read
-            (*state).inflate_codes_w = 0i32 as libc::c_uint;
+            (*state).inflate_codes_w = 0 as libc::c_uint;
             return 1i32;
           }
           current_block = 12675440807659640239;
@@ -910,16 +910,16 @@ unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
           if (*state).inflate_codes_w == GUNZIP_WSIZE as libc::c_int as libc::c_uint {
             (*state).gunzip_outbuf_count = (*state).inflate_codes_w;
             (*state).resume_copy =
-              ((*state).inflate_codes_nn != 0i32 as libc::c_uint) as libc::c_int as smallint;
+              ((*state).inflate_codes_nn != 0 as libc::c_uint) as libc::c_int as smallint;
             //flush_gunzip_window();
-            (*state).inflate_codes_w = 0i32 as libc::c_uint;
+            (*state).inflate_codes_w = 0 as libc::c_uint;
             return 1i32;
           }
           if !((*state).inflate_codes_nn != 0) {
             break;
           }
         }
-        (*state).resume_copy = 0i32 as smallint;
+        (*state).resume_copy = 0 as smallint;
         current_block = 12675440807659640239;
       }
     }
@@ -932,7 +932,7 @@ unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
   /* free the decoding tables (tl and td), return */
   huft_free_all(state);
   /* done */
-  return 0i32;
+  return 0;
 }
 /* called once from inflate_block */
 unsafe extern "C" fn inflate_stored_setup(
@@ -969,7 +969,7 @@ unsafe extern "C" fn inflate_stored(mut state: *mut state_t) -> libc::c_int {
     if (*state).inflate_stored_w == GUNZIP_WSIZE as libc::c_int as libc::c_uint {
       (*state).gunzip_outbuf_count = (*state).inflate_stored_w;
       /* We have a block */
-      (*state).inflate_stored_w = 0i32 as libc::c_uint;
+      (*state).inflate_stored_w = 0 as libc::c_uint;
       (*state).inflate_stored_b >>= 8i32;
       (*state).inflate_stored_k = (*state).inflate_stored_k.wrapping_sub(8i32 as libc::c_uint);
       return 1i32;
@@ -982,7 +982,7 @@ unsafe extern "C" fn inflate_stored(mut state: *mut state_t) -> libc::c_int {
   (*state).gunzip_outbuf_count = (*state).inflate_stored_w; /* restore global gunzip_window pointer */
   (*state).gunzip_bb = (*state).inflate_stored_b; /* restore global bit buffer */
   (*state).gunzip_bk = (*state).inflate_stored_k as libc::c_uchar;
-  return 0i32;
+  return 0;
   /* Finished */
 }
 /*
@@ -1060,7 +1060,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       let mut i: libc::c_int = 0; /* temporary variable */
       let mut bl: libc::c_uint = 0; /* lookup bits for tl */
       let mut bd: libc::c_uint = 0; /* lookup bits for td */
-      i = 0i32;
+      i = 0;
       while i < 144i32 {
         ll[i as usize] = 8i32 as libc::c_uint;
         i += 1
@@ -1089,7 +1089,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
         &lit,
         &mut bl,
       );
-      i = 0i32;
+      i = 0;
       while i < 30i32 {
         /* ^^^ never returns error here - we use known data */
         /* set up distance table */
@@ -1101,7 +1101,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       (*state).inflate_codes_td = huft_build(
         ll.as_mut_ptr(),
         30i32 as libc::c_uint,
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         &dist,
         &mut bd,
       );
@@ -1116,7 +1116,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       /* set up data for inflate_codes() */
       /* huft_free code moved into inflate_codes */
       /* Inflate dynamic */
-      let mut td: *mut huft_t = 0 as *mut huft_t; /* bits in base distance lookup table */
+      let mut td: *mut huft_t = std::ptr::null_mut(); /* bits in base distance lookup table */
       let mut i_0: libc::c_uint = 0;
       let mut j: libc::c_uint = 0; /* bits in base literal/length lookup table */
       let mut l: libc::c_uint = 0;
@@ -1155,7 +1155,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
         /* number of bit length codes */
         /* bad lengths */
       }
-      j = 0i32 as libc::c_uint;
+      j = 0 as libc::c_uint;
       while j < nb {
         b_dynamic = fill_bitbuffer(state, b_dynamic, &mut k_dynamic, 3i32 as libc::c_uint);
         ll[border[j as usize] as usize] = b_dynamic & 7i32 as libc::c_uint;
@@ -1164,7 +1164,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
         j = j.wrapping_add(1)
       }
       while j < 19i32 as libc::c_uint {
-        ll[border[j as usize] as usize] = 0i32 as libc::c_uint;
+        ll[border[j as usize] as usize] = 0 as libc::c_uint;
         j = j.wrapping_add(1)
       }
       bl_0 = 7i32 as libc::c_uint;
@@ -1183,7 +1183,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       }
       n_0 = nl.wrapping_add(nd);
       m = mask_bits[bl_0 as usize] as libc::c_uint;
-      l = 0i32 as libc::c_uint;
+      l = 0 as libc::c_uint;
       i_0 = l;
       while i_0 < n_0 {
         b_dynamic = fill_bitbuffer(state, b_dynamic, &mut k_dynamic, bl_0);
@@ -1238,9 +1238,9 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
             }
             let fresh16 = i_0;
             i_0 = i_0.wrapping_add(1);
-            ll[fresh16 as usize] = 0i32 as libc::c_uint
+            ll[fresh16 as usize] = 0 as libc::c_uint
           }
-          l = 0i32 as libc::c_uint
+          l = 0 as libc::c_uint
         } else {
           b_dynamic = fill_bitbuffer(state, b_dynamic, &mut k_dynamic, 7i32 as libc::c_uint);
           j = (11i32 as libc::c_uint).wrapping_add(b_dynamic & 0x7fi32 as libc::c_uint);
@@ -1258,9 +1258,9 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
             }
             let fresh18 = i_0;
             i_0 = i_0.wrapping_add(1);
-            ll[fresh18 as usize] = 0i32 as libc::c_uint
+            ll[fresh18 as usize] = 0 as libc::c_uint
           }
-          l = 0i32 as libc::c_uint
+          l = 0 as libc::c_uint
         }
       }
       huft_free((*state).inflate_codes_tl);
@@ -1276,7 +1276,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
       (*state).inflate_codes_td = huft_build(
         ll.as_mut_ptr().offset(nl as isize),
         nd,
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         &dist,
         &mut bd_0,
       );
@@ -1308,19 +1308,19 @@ unsafe extern "C" fn calculate_gunzip_crc(mut state: *mut state_t) {
 }
 /* One callsite in inflate_unzip_internal */
 unsafe extern "C" fn inflate_get_next_window(mut state: *mut state_t) -> libc::c_int {
-  (*state).gunzip_outbuf_count = 0i32 as libc::c_uint;
+  (*state).gunzip_outbuf_count = 0 as libc::c_uint;
   loop {
     let mut ret: libc::c_int = 0;
     if (*state).need_another_block != 0 {
       if (*state).end_reached != 0 {
         calculate_gunzip_crc(state);
-        (*state).end_reached = 0i32 as smallint;
+        (*state).end_reached = 0 as smallint;
         /* end of that block */
         /* Last block */
-        return 0i32;
+        return 0;
       }
       (*state).method = inflate_block(state, &mut (*state).end_reached) as smallint;
-      (*state).need_another_block = 0i32 as smallint
+      (*state).need_another_block = 0 as smallint
     }
     match (*state).method as libc::c_int {
       -1 => ret = inflate_stored(state),
@@ -1346,19 +1346,19 @@ unsafe extern "C" fn inflate_unzip_internal(
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
   let mut current_block: u64;
-  let mut n: libc::c_longlong = 0i32 as libc::c_longlong;
+  let mut n: libc::c_longlong = 0 as libc::c_longlong;
   let mut nwrote: ssize_t = 0;
   /* Allocate all global buffers (for DYN_ALLOC option) */
   (*state).gunzip_window = xmalloc(GUNZIP_WSIZE as libc::c_int as size_t) as *mut libc::c_uchar;
-  (*state).gunzip_outbuf_count = 0i32 as libc::c_uint;
-  (*state).gunzip_bytes_out = 0i32 as off_t;
+  (*state).gunzip_outbuf_count = 0 as libc::c_uint;
+  (*state).gunzip_bytes_out = 0 as off_t;
   (*state).gunzip_src_fd = (*xstate).src_fd;
   /* (re) initialize state */
   (*state).method = -1i32 as smallint;
   (*state).need_another_block = 1i32 as smallint;
-  (*state).resume_copy = 0i32 as smallint;
-  (*state).gunzip_bk = 0i32 as libc::c_uchar;
-  (*state).gunzip_bb = 0i32 as libc::c_uint;
+  (*state).resume_copy = 0 as smallint;
+  (*state).gunzip_bk = 0 as libc::c_uchar;
+  (*state).gunzip_bb = 0 as libc::c_uint;
   /* Create the crc table */
   (*state).gunzip_crc_table = crate::libbb::crc32::crc32_new_table_le();
   (*state).gunzip_crc = !0i32 as u32;
@@ -1381,7 +1381,7 @@ unsafe extern "C" fn inflate_unzip_internal(
         break;
       } else {
         n += nwrote as libc::c_longlong;
-        if r == 0i32 {
+        if r == 0 {
           current_block = 5783071609795492627;
           break;
         }
@@ -1415,7 +1415,7 @@ unsafe extern "C" fn inflate_unzip_internal(
 #[no_mangle]
 pub unsafe extern "C" fn inflate_unzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut n: libc::c_longlong = 0;
-  let mut state: *mut state_t = 0 as *mut state_t;
+  let mut state: *mut state_t = std::ptr::null_mut();
   state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
     as *mut state_t;
   (*state).to_read = (*xstate).bytes_in;
@@ -1445,21 +1445,21 @@ unsafe extern "C" fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> lib
         as *const libc::c_void,
       count as libc::c_ulong,
     );
-    (*state).bytebuffer_offset = 0i32 as libc::c_uint;
+    (*state).bytebuffer_offset = 0 as libc::c_uint;
     (*state).bytebuffer_size = crate::libbb::read::full_read(
       (*state).gunzip_src_fd,
       &mut *(*state).bytebuffer.offset(count as isize) as *mut libc::c_uchar as *mut libc::c_void,
       (0x4000i32 - count) as size_t,
     ) as libc::c_uint;
-    if ((*state).bytebuffer_size as libc::c_int) < 0i32 {
+    if ((*state).bytebuffer_size as libc::c_int) < 0 {
       crate::libbb::verror_msg::bb_simple_error_msg(
         b"read error\x00" as *const u8 as *const libc::c_char,
       );
-      return 0i32;
+      return 0;
     }
     (*state).bytebuffer_size = (*state).bytebuffer_size.wrapping_add(count as libc::c_uint);
     if (*state).bytebuffer_size < n {
-      return 0i32;
+      return 0;
     }
   }
   return 1i32;
@@ -1505,9 +1505,9 @@ unsafe extern "C" fn check_header_gzip(
       .offset((*state).bytebuffer_offset as isize) as *mut libc::c_uchar as *const libc::c_void,
     (*state).bytebuffer_size as libc::c_ulong,
   );
-  (*state).bytebuffer_offset = 0i32 as libc::c_uint;
+  (*state).bytebuffer_offset = 0 as libc::c_uint;
   if top_up(state, 8i32 as libc::c_uint) == 0 {
-    return 0i32;
+    return 0;
   }
   memcpy(
     header.raw.as_mut_ptr() as *mut libc::c_void,
@@ -1521,17 +1521,17 @@ unsafe extern "C" fn check_header_gzip(
     .wrapping_add(8i32 as libc::c_uint);
   /* Check the compression method */
   if header.formatted.gz_method as libc::c_int != 8i32 {
-    return 0i32;
+    return 0;
   }
   if header.formatted.flags as libc::c_int & 0x4i32 != 0 {
     /* bit 2 set: extra field present */
     let mut extra_short: libc::c_uint = 0;
     if top_up(state, 2i32 as libc::c_uint) == 0 {
-      return 0i32;
+      return 0;
     }
     extra_short = buffer_read_le_u16(state) as libc::c_uint;
     if top_up(state, extra_short) == 0 {
-      return 0i32;
+      return 0;
     }
     /* Ignore extra field */
     (*state).bytebuffer_offset = (*state).bytebuffer_offset.wrapping_add(extra_short)
@@ -1543,11 +1543,11 @@ unsafe extern "C" fn check_header_gzip(
     loop {
       loop {
         if top_up(state, 1i32 as libc::c_uint) == 0 {
-          return 0i32;
+          return 0;
         }
         let fresh19 = (*state).bytebuffer_offset;
         (*state).bytebuffer_offset = (*state).bytebuffer_offset.wrapping_add(1);
-        if !(*(*state).bytebuffer.offset(fresh19 as isize) as libc::c_int != 0i32) {
+        if !(*(*state).bytebuffer.offset(fresh19 as isize) as libc::c_int != 0) {
           break;
         }
       }
@@ -1561,7 +1561,7 @@ unsafe extern "C" fn check_header_gzip(
   /* Read the header checksum */
   if header.formatted.flags as libc::c_int & 0x2i32 != 0 {
     if top_up(state, 2i32 as libc::c_uint) == 0 {
-      return 0i32;
+      return 0;
     }
     (*state).bytebuffer_offset = (*state)
       .bytebuffer_offset
@@ -1576,7 +1576,7 @@ pub unsafe extern "C" fn unpack_gz_stream(
   let mut v32: u32 = 0;
   let mut total: libc::c_longlong = 0;
   let mut n: libc::c_longlong = 0;
-  let mut state: *mut state_t = 0 as *mut state_t;
+  let mut state: *mut state_t = std::ptr::null_mut();
   if crate::archival::libarchive::open_transformer::check_signature16(
     xstate,
     GZIP_MAGIC as libc::c_int as libc::c_uint,
@@ -1584,7 +1584,7 @@ pub unsafe extern "C" fn unpack_gz_stream(
   {
     return -1i32 as libc::c_longlong;
   }
-  total = 0i32 as libc::c_longlong;
+  total = 0 as libc::c_longlong;
   state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
     as *mut state_t;
   (*state).to_read = -1i32 as off_t;
@@ -1600,7 +1600,7 @@ pub unsafe extern "C" fn unpack_gz_stream(
       break;
     } else {
       n = inflate_unzip_internal(state, xstate);
-      if n < 0i32 as libc::c_longlong {
+      if n < 0 as libc::c_longlong {
         total = -1i32 as libc::c_longlong;
         break;
       } else {

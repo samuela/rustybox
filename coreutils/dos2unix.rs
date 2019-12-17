@@ -99,8 +99,8 @@ pub const CT_DOS2UNIX: C2RustUnnamed = 2;
 pub const CT_UNIX2DOS: C2RustUnnamed = 1;
 /* if fn is NULL then input is stdin and output is stdout */
 unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c_int) {
-  let mut in_0: *mut FILE = 0 as *mut FILE; /* for compiler */
-  let mut out: *mut FILE = 0 as *mut FILE;
+  let mut in_0: *mut FILE = std::ptr::null_mut(); /* for compiler */
+  let mut out: *mut FILE = std::ptr::null_mut();
   let mut ch: libc::c_int = 0;
   let mut temp_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   temp_fn = temp_fn;
@@ -144,7 +144,7 @@ unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c
     putc_unlocked(ch, out);
   }
   if !fn_0.is_null() {
-    if fclose(in_0) < 0i32 || fclose(out) < 0i32 {
+    if fclose(in_0) < 0 || fclose(out) < 0 {
       unlink(temp_fn);
       bb_perror_nomsg_and_die();
     }
@@ -187,5 +187,5 @@ pub unsafe extern "C" fn dos2unix_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

@@ -142,8 +142,8 @@ pub struct swap_header_v1_2 {
 pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut sw: *mut swap_header_v1_2 = 0 as *mut swap_header_v1_2;
-  let mut buf: *const u8 = 0 as *const u8;
+  let mut sw: *mut swap_header_v1_2 = std::ptr::null_mut();
+  let mut buf: *const u8 = std::ptr::null();
   let mut page: libc::c_uint = 0;
   /* the swap signature is at the end of the PAGE_SIZE */
   page = 0x1000i32 as libc::c_uint;
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
       buf as *const libc::c_void,
       b"SWAP-SPACE\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       10i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       current_block = 13807130624542804568;
       break;
@@ -175,26 +175,26 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
       buf as *const libc::c_void,
       b"SWAPSPACE2\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       10i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
       || memcmp(
         buf as *const libc::c_void,
         b"S1SUSPEND\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         9i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       || memcmp(
         buf as *const libc::c_void,
         b"S2SUSPEND\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         9i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
       || memcmp(
         buf as *const libc::c_void,
         b"ULSUSPEND\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         9i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
     {
       sw = volume_id_get_buffer(
         id,
-        0i32 as u64,
+        0 as u64,
         ::std::mem::size_of::<swap_header_v1_2>() as libc::c_ulong,
       ) as *mut swap_header_v1_2;
       if sw.is_null() {
@@ -219,7 +219,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
     //	volume_id_set_usage(id, VOLUME_ID_OTHER);
     {
       (*id).type_0 = b"swap\x00" as *const u8 as *const libc::c_char;
-      return 0i32;
+      return 0;
     }
   };
 }

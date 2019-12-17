@@ -217,7 +217,7 @@ unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
     make_human_readable_str(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).total_bytes,
       1i32 as libc::c_ulong,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
     ),
   );
   /* Corner cases:
@@ -235,7 +235,7 @@ unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
     stderr,
     b"%f seconds, %sB/s\n\x00" as *const u8 as *const libc::c_char,
     seconds,
-    make_human_readable_str(bytes_sec, 1i32 as libc::c_ulong, 0i32 as libc::c_ulong),
+    make_human_readable_str(bytes_sec, 1i32 as libc::c_ulong, 0 as libc::c_ulong),
   );
 }
 unsafe extern "C" fn write_and_stats(
@@ -253,12 +253,12 @@ unsafe extern "C" fn write_and_stats(
   if n as size_t == obs {
     let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out_full;
     *fresh1 += 1;
-    return 0i32 != 0;
+    return 0 != 0;
   }
   if n as size_t == len {
     let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out_part;
     *fresh2 += 1;
-    return 0i32 != 0;
+    return 0 != 0;
   }
   /* n is < len (and possibly is -1).
    * Even if n >= 0, errno is usually set correctly.
@@ -278,7 +278,7 @@ unsafe extern "C" fn parse_comma_flags(
   mut words: *const libc::c_char,
   mut error_in: *const libc::c_char,
 ) -> libc::c_int {
-  let mut flags: libc::c_int = 0i32;
+  let mut flags: libc::c_int = 0;
   loop {
     let mut n: libc::c_int = 0;
     let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -292,7 +292,7 @@ unsafe extern "C" fn parse_comma_flags(
       *arg = '\u{0}' as i32 as libc::c_char
     }
     n = index_in_strings(words, val);
-    if n < 0i32 {
+    if n < 0 {
       bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), val, error_in);
     }
     flags |= 1i32 << n;
@@ -346,12 +346,12 @@ pub unsafe extern "C" fn dd_main(
   };
   memset(
     &mut Z as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut globals as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
   //fflush_all(); - is this needed because of NOEXEC?
@@ -372,7 +372,7 @@ pub unsafe extern "C" fn dd_main(
       }
       *val = '\u{0}' as i32 as libc::c_char;
       what = index_in_strings(keywords.as_ptr(), arg);
-      if what < 0i32 {
+      if what < 0 {
         bb_show_usage();
       }
       /* *val = '='; - to preserve ps listing? */
@@ -457,7 +457,7 @@ pub unsafe extern "C" fn dd_main(
       if what == OP_status as libc::c_int {
         let mut n: libc::c_int = 0;
         n = index_in_strings(status_words.as_ptr(), val);
-        if n < 0i32 {
+        if n < 0 {
           bb_error_msg_and_die(
             bb_msg_invalid_arg_to.as_ptr(),
             val,
@@ -484,7 +484,7 @@ pub unsafe extern "C" fn dd_main(
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).begin_time_us = monotonic_us();
   if !Z.infile.is_null() {
-    xmove_fd(xopen(Z.infile, 0i32), ifd as libc::c_int);
+    xmove_fd(xopen(Z.infile, 0), ifd as libc::c_int);
   } else {
     Z.infile = bb_msg_standard_input.as_ptr()
   }
@@ -515,10 +515,10 @@ pub unsafe extern "C" fn dd_main(
       if ftruncate(
         ofd as libc::c_int,
         (Z.seek as libc::c_ulong).wrapping_mul(blocksz) as off64_t,
-      ) < 0i32
+      ) < 0
       {
         let mut st: stat = std::mem::zeroed();
-        if fstat(ofd as libc::c_int, &mut st) < 0i32
+        if fstat(ofd as libc::c_int, &mut st) < 0
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
           || st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
         {
@@ -648,13 +648,13 @@ pub unsafe extern "C" fn dd_main(
                   xlseek(ifd as libc::c_int, ibs as off_t, 1i32);
                   /* conv=noerror,sync writes NULs,
                    * conv=noerror just ignores input bad blocks */
-                  n_1 = 0i32 as ssize_t
+                  n_1 = 0 as ssize_t
                 }
                 if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags
                   & FLAG_SWAB as libc::c_int
                   != 0
                 {
-                  let mut p16: *mut u16 = 0 as *mut u16;
+                  let mut p16: *mut u16 = std::ptr::null_mut();
                   let mut n2: ssize_t = 0;
                   /* Our code allows only last read to be odd-sized */
                   if Z.prev_read_size & 1 != 0 {
@@ -710,7 +710,7 @@ pub unsafe extern "C" fn dd_main(
                   {
                     memset(
                       ibuf.offset(n_1 as isize) as *mut libc::c_void,
-                      0i32,
+                      0,
                       ibs.wrapping_sub(n_1 as libc::c_ulong),
                     );
                     n_1 = ibs as ssize_t
@@ -741,7 +741,7 @@ pub unsafe extern "C" fn dd_main(
                       current_block = 14463043422689283256;
                       break 's_520;
                     }
-                    Z.ocount = 0i32 as size_t
+                    Z.ocount = 0 as size_t
                   }
                 } else if write_and_stats(
                   ibuf as *const libc::c_void,
@@ -762,7 +762,7 @@ pub unsafe extern "C" fn dd_main(
                         & FLAG_FSYNC as libc::c_int
                         != 0
                       {
-                        if fsync(ofd as libc::c_int) < 0i32 {
+                        if fsync(ofd as libc::c_int) < 0 {
                           current_block = 17215991467164075883;
                         } else {
                           current_block = 14358540534591340610;
@@ -773,7 +773,7 @@ pub unsafe extern "C" fn dd_main(
                       match current_block {
                         17215991467164075883 => {}
                         _ => {
-                          if Z.ocount != 0i32 as libc::c_ulong {
+                          if Z.ocount != 0 as libc::c_ulong {
                             if write_and_stats(
                               obuf as *const libc::c_void,
                               Z.ocount,
@@ -790,12 +790,12 @@ pub unsafe extern "C" fn dd_main(
                           match current_block {
                             14463043422689283256 => {}
                             _ => {
-                              if close(ifd as libc::c_int) < 0i32 {
+                              if close(ifd as libc::c_int) < 0 {
                                 current_block = 5737263145267917659;
-                              } else if close(ofd as libc::c_int) < 0i32 {
+                              } else if close(ofd as libc::c_int) < 0 {
                                 current_block = 17215991467164075883;
                               } else {
-                                exitcode = 0i32 as smallint;
+                                exitcode = 0 as smallint;
                                 current_block = 14463043422689283256;
                               }
                             }

@@ -150,8 +150,8 @@ pub struct minix_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::c_int
 /*, u64 off*/ {
-  let mut ms: *mut minix_super_block = 0 as *mut minix_super_block;
-  let mut ms3: *mut minix3_super_block = 0 as *mut minix3_super_block;
+  let mut ms: *mut minix_super_block = std::ptr::null_mut();
+  let mut ms3: *mut minix3_super_block = std::ptr::null_mut();
   ms = volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x400i32 as libc::c_ulong),
@@ -175,5 +175,5 @@ pub unsafe extern "C" fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::
   /* minix V3 fs, 60 char names */
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"minix\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

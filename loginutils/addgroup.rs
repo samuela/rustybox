@@ -67,7 +67,7 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   /* if a specific gid is requested, the --system switch and */
   /* min and max values are overridden, and the range of valid */
   /* gid values is set to [0, INT_MAX] */
-  if option_mask32 & (1i32 << 0i32) as libc::c_uint == 0 {
+  if option_mask32 & (1i32 << 0) as libc::c_uint == 0 {
     if option_mask32 & (1i32 << 1i32) as libc::c_uint != 0 {
       (*g).gr_gid = 100i32 as gid_t;
       max = 999i32 as libc::c_uint
@@ -83,7 +83,7 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
       return;
       /* found free group: return */
     }
-    if option_mask32 & (1i32 << 0i32) as libc::c_uint != 0 {
+    if option_mask32 & (1i32 << 0) as libc::c_uint != 0 {
       /* -g N, cannot pick gid other than N: error */
       bb_error_msg_and_die(
         b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
@@ -123,7 +123,7 @@ unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
     group,
     p,
     0 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     exit(1i32);
   }
@@ -187,8 +187,8 @@ pub unsafe extern "C" fn addgroup_main(
   argv = argv.offset(optind as isize);
   //argc -= optind;
   if !(*argv.offset(1)).is_null() {
-    let mut gr: *mut group = 0 as *mut group;
-    if opts & (1i32 << 0i32) as libc::c_uint != 0 {
+    let mut gr: *mut group = std::ptr::null_mut();
+    if opts & (1i32 << 0) as libc::c_uint != 0 {
       /* -g was there, but "addgroup -g num user group"
        * is a no-no */
       bb_show_usage();
@@ -198,9 +198,9 @@ pub unsafe extern "C" fn addgroup_main(
     gr = xgetgrnam(*argv.offset(1)); /* unknown group: exit */
     /* check if user is already in this group */
     while !(*(*gr).gr_mem).is_null() {
-      if strcmp(*argv.offset(0), *(*gr).gr_mem) == 0i32 {
+      if strcmp(*argv.offset(0), *(*gr).gr_mem) == 0 {
         /* user is already in group: do nothing */
-        return 0i32;
+        return 0;
       }
       (*gr).gr_mem = (*gr).gr_mem.offset(1)
     }
@@ -209,7 +209,7 @@ pub unsafe extern "C" fn addgroup_main(
       *argv.offset(1),
       0 as *const libc::c_char,
       *argv.offset(0),
-    ) < 0i32
+    ) < 0
     {
       return 1i32;
     }
@@ -223,9 +223,9 @@ pub unsafe extern "C" fn addgroup_main(
     /* ENABLE_FEATURE_ADDUSER_TO_GROUP */
     new_group(
       *argv.offset(0),
-      xatou_range(gid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint),
+      xatou_range(gid, 0 as libc::c_uint, 60000i32 as libc::c_uint),
     );
   }
   /* Reached only on success */
-  return 0i32;
+  return 0;
 }

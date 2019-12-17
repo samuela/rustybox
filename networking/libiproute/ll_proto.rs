@@ -121,7 +121,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
     }
     __v
   };
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[u16; 43]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
   let mut current_block: u64;
   let mut i: libc::c_uint = 0;
   let mut name: *const libc::c_char = llproto_names.as_ptr();
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     if !(i
       < (::std::mem::size_of::<[u16; 43]>() as libc::c_ulong)
@@ -156,7 +156,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
       current_block = 11006700562992250127;
       break;
     }
-    if strcasecmp(name, buf) == 0i32 {
+    if strcasecmp(name, buf) == 0 {
       i = llproto_ids[i as usize] as libc::c_uint;
       current_block = 5363633542473747200;
       break;
@@ -167,8 +167,8 @@ pub unsafe extern "C" fn ll_proto_a2n(
   }
   match current_block {
     11006700562992250127 => {
-      *bb_errno = 0i32;
-      i = bb_strtou(buf, 0 as *mut *mut libc::c_char, 0i32);
+      *bb_errno = 0;
+      i = bb_strtou(buf, 0 as *mut *mut libc::c_char, 0);
       if *bb_errno != 0 || i > 0xffffi32 as libc::c_uint {
         return -1i32;
       }
@@ -192,5 +192,5 @@ pub unsafe extern "C" fn ll_proto_a2n(
     }
     __v
   };
-  return 0i32;
+  return 0;
 }

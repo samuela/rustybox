@@ -190,14 +190,14 @@ unsafe extern "C" fn new_password(
   let mut newp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* returns malloced str */
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  if myuid != 0i32 as libc::c_uint && *(*pw).pw_passwd.offset(0) as libc::c_int != 0 {
+  if myuid != 0 as libc::c_uint && *(*pw).pw_passwd.offset(0) as libc::c_int != 0 {
     let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     orig = bb_ask_noecho_stdin(b"Old password: \x00" as *const u8 as *const libc::c_char);
     if orig.is_null() {
       current_block = 8393339141576953219;
     } else {
       encrypted = pw_encrypt(orig, (*pw).pw_passwd, 1i32);
-      if strcmp(encrypted, (*pw).pw_passwd) != 0i32 {
+      if strcmp(encrypted, (*pw).pw_passwd) != 0 {
         syslog(
           4i32,
           b"incorrect password for %s\x00" as *const u8 as *const libc::c_char,
@@ -217,10 +217,10 @@ unsafe extern "C" fn new_password(
     4166486009154926805 => {
       newp = bb_ask_noecho_stdin(b"New password: \x00" as *const u8 as *const libc::c_char);
       if !newp.is_null() {
-        if !(1i32 != 0 && obscure(orig, newp, pw) != 0 && myuid != 0i32 as libc::c_uint) {
+        if !(1i32 != 0 && obscure(orig, newp, pw) != 0 && myuid != 0 as libc::c_uint) {
           cp = bb_ask_noecho_stdin(b"Retype password: \x00" as *const u8 as *const libc::c_char);
           if !cp.is_null() {
-            if strcmp(cp, newp) != 0i32 {
+            if strcmp(cp, newp) != 0 {
               puts(b"Passwords don\'t match\x00" as *const u8 as *const libc::c_char);
             } else {
               crypt_make_pw_salt(salt.as_mut_ptr(), algo);
@@ -248,11 +248,11 @@ pub unsafe extern "C" fn passwd_main(
   let mut opt: libc::c_uint = 0;
   let mut rc: libc::c_int = 0;
   let mut opt_a: *const libc::c_char = b"des\x00" as *const u8 as *const libc::c_char;
-  let mut filename: *const libc::c_char = 0 as *const libc::c_char;
+  let mut filename: *const libc::c_char = std::ptr::null();
   let mut myname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut myuid: uid_t = 0;
   let mut rlimit_fsize: rlimit = rlimit {
     rlim_cur: 0,
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn passwd_main(
   };
   let mut buffer: [libc::c_char; 256] = [0; 256];
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
-  openlog(applet_name, 0i32, 4i32 << 3i32);
+  openlog(applet_name, 0, 4i32 << 3i32);
   opt = getopt32(
     argv,
     b"a:lud\x00" as *const u8 as *const libc::c_char,
@@ -284,7 +284,7 @@ pub unsafe extern "C" fn passwd_main(
   myuid = getuid();
   /* -l, -u, -d require root priv and username argument */
   if opt & OPT_lud as libc::c_int as libc::c_uint != 0
-    && (myuid != 0i32 as libc::c_uint || (*argv.offset(0)).is_null())
+    && (myuid != 0 as libc::c_uint || (*argv.offset(0)).is_null())
   {
     bb_show_usage();
   }
@@ -296,7 +296,7 @@ pub unsafe extern "C" fn passwd_main(
     myname
   };
   pw = xgetpwnam(name);
-  if myuid != 0i32 as libc::c_uint && (*pw).pw_uid != myuid {
+  if myuid != 0 as libc::c_uint && (*pw).pw_uid != myuid {
     /* LOGMODE_BOTH */
     bb_error_msg_and_die(
       b"%s can\'t change password for %s\x00" as *const u8 as *const libc::c_char,
@@ -306,17 +306,17 @@ pub unsafe extern "C" fn passwd_main(
   }
   /* getspnam_r may return 0 yet set result to NULL.
    * At least glibc 2.4 does this. Be extra paranoid here. */
-  let mut result: *mut spwd = 0 as *mut spwd;
-  *bb_errno = 0i32;
+  let mut result: *mut spwd = std::ptr::null_mut();
+  *bb_errno = 0;
   if bb_internal_getspnam_r(
     (*pw).pw_name,
     &mut spw,
     buffer.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
     &mut result,
-  ) != 0i32
+  ) != 0
     || result.is_null()
-    || strcmp((*result).sp_namp, (*pw).pw_name) != 0i32
+    || strcmp((*result).sp_namp, (*pw).pw_name) != 0
   {
     /* paranoia */
     if *bb_errno != 2i32 {
@@ -338,7 +338,7 @@ pub unsafe extern "C" fn passwd_main(
   newp = std::ptr::null_mut::<libc::c_char>();
   c = (*(*pw).pw_passwd.offset(0) as libc::c_int - '!' as i32) as libc::c_char;
   if opt & OPT_lud as libc::c_int as libc::c_uint == 0 {
-    if myuid != 0i32 as libc::c_uint && c == 0 {
+    if myuid != 0 as libc::c_uint && c == 0 {
       /* passwd starts with '!' */
       /* LOGMODE_BOTH */
       bb_error_msg_and_die(
@@ -390,7 +390,7 @@ pub unsafe extern "C" fn passwd_main(
       rlimit_fsize.rlim_cur = rlimit_fsize.rlim_max;
       setrlimit(RLIMIT_FSIZE, &mut rlimit_fsize);
       bb_signals(
-        0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32),
+        0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32),
         ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
       );
       umask(0o77i32 as mode_t);
@@ -402,11 +402,11 @@ pub unsafe extern "C" fn passwd_main(
         newp,
         0 as *const libc::c_char,
       );
-      if rc > 0i32 {
+      if rc > 0 {
         /* password in /etc/shadow was updated */
         newp = b"x\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
       }
-      if rc >= 0i32 {
+      if rc >= 0 {
         /* 0 = /etc/shadow missing (not an error), >0 = passwd changed in /etc/shadow */
         filename = b"/etc/passwd\x00" as *const u8 as *const libc::c_char;
         rc = update_passwd(
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn passwd_main(
         )
       }
       /* LOGMODE_BOTH */
-      if rc < 0i32 {
+      if rc < 0 {
         bb_error_msg_and_die(
           b"can\'t update password file %s\x00" as *const u8 as *const libc::c_char,
           filename,
@@ -443,5 +443,5 @@ pub unsafe extern "C" fn passwd_main(
       },
     );
   }
-  return 0i32;
+  return 0;
 }

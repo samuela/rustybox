@@ -109,7 +109,7 @@ pub struct lfs_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_lfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut sb: *mut lfs_super_block = 0 as *mut lfs_super_block;
+  let mut sb: *mut lfs_super_block = std::ptr::null_mut();
   // Go for primary super block (ignore second sb)
   sb = volume_id_get_buffer(
     id,
@@ -123,10 +123,10 @@ pub unsafe extern "C" fn volume_id_probe_lfs(mut id: *mut volume_id) -> libc::c_
     (*sb).magic.as_mut_ptr() as *const libc::c_void,
     b"littlefs\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     8i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
   (*id).type_0 = b"littlefs\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

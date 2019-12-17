@@ -222,13 +222,13 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
   };
   let mut uuid: [u8; 16] = [0; 16];
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     if !(i < 8i32 as libc::c_uint) {
       current_block = 7502529970979898288;
       break;
     }
-    if *hfs_id.offset(i as isize) as libc::c_int != 0i32 {
+    if *hfs_id.offset(i as isize) as libc::c_int != 0 {
       current_block = 10177439978398584590;
       break;
     }
@@ -321,7 +321,7 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
 pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut off: u64 = 0i32 as u64;
+  let mut off: u64 = 0 as u64;
   let mut blocksize: libc::c_uint = 0;
   let mut cat_block: libc::c_uint = 0;
   let mut ext_block_start: libc::c_uint = 0;
@@ -336,17 +336,17 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
   let mut alloc_first_block: libc::c_uint = 0;
   let mut embed_first_block: libc::c_uint = 0;
   let mut record_count: libc::c_uint = 0;
-  let mut hfsplus: *mut hfsplus_vol_header = 0 as *mut hfsplus_vol_header;
-  let mut descr: *mut hfsplus_bnode_descriptor = 0 as *mut hfsplus_bnode_descriptor;
-  let mut bnode: *mut hfsplus_bheader_record = 0 as *mut hfsplus_bheader_record;
-  let mut key: *mut hfsplus_catalog_key = 0 as *mut hfsplus_catalog_key;
+  let mut hfsplus: *mut hfsplus_vol_header = std::ptr::null_mut();
+  let mut descr: *mut hfsplus_bnode_descriptor = std::ptr::null_mut();
+  let mut bnode: *mut hfsplus_bheader_record = std::ptr::null_mut();
+  let mut key: *mut hfsplus_catalog_key = std::ptr::null_mut();
   let mut label_len: libc::c_uint = 0;
   let mut extents: [hfsplus_extent; 8] = [hfsplus_extent {
     start_block: 0,
     block_count: 0,
   }; 8];
-  let mut hfs: *mut hfs_mdb = 0 as *mut hfs_mdb;
-  let mut buf: *const u8 = 0 as *const u8;
+  let mut hfs: *mut hfs_mdb = std::ptr::null_mut();
+  let mut buf: *const u8 = std::ptr::null();
   buf = volume_id_get_buffer(
     id,
     off.wrapping_add(0x400i32 as libc::c_ulong),
@@ -430,14 +430,14 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
         return -1i32;
       }
     } else {
-      if (*hfs).label_len as libc::c_int > 0i32 && ((*hfs).label_len as libc::c_int) < 28i32 {
+      if (*hfs).label_len as libc::c_int > 0 && ((*hfs).label_len as libc::c_int) < 28i32 {
         //		volume_id_set_label_raw(id, hfs->label, hfs->label_len);
         volume_id_set_label_string(id, (*hfs).label.as_mut_ptr(), (*hfs).label_len as size_t);
       }
       hfs_set_uuid(id, (*hfs).finder_info.id.as_mut_ptr());
       //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
       (*id).type_0 = b"hfs\x00" as *const u8 as *const libc::c_char;
-      return 0i32;
+      return 0;
     }
   }
   hfsplus = buf as *mut hfsplus_vol_header;
@@ -553,12 +553,12 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           }
           __v
         };
-        if !(leaf_node_count == 0i32 as libc::c_uint) {
+        if !(leaf_node_count == 0 as libc::c_uint) {
           leaf_block = leaf_node_head
             .wrapping_mul(leaf_node_size)
             .wrapping_div(blocksize);
           /* get physical location */
-          ext = 0i32;
+          ext = 0;
           loop {
             if !(ext < 8i32) {
               current_block = 16203797167131938757;
@@ -602,7 +602,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
               }
               __v
             };
-            if ext_block_count == 0i32 as libc::c_uint {
+            if ext_block_count == 0 as libc::c_uint {
               current_block = 7082531977902607404;
               break;
             }
@@ -644,7 +644,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                     }
                     __v
                   }) as libc::c_uint;
-                  if !(record_count == 0i32 as libc::c_uint) {
+                  if !(record_count == 0 as libc::c_uint) {
                     if !((*descr).type_0 as libc::c_int != 0xffi32) {
                       key =
                         &*buf.offset(::std::mem::size_of::<hfsplus_bnode_descriptor>()
@@ -714,7 +714,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
       }
       //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
       (*id).type_0 = b"hfsplus\x00" as *const u8 as *const libc::c_char;
-      return 0i32;
+      return 0;
     }
   }
   return -1i32;

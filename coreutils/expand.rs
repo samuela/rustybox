@@ -144,7 +144,7 @@ unsafe extern "C" fn expand(
         break; //
       } else {
         if c as libc::c_int == '\t' as i32 {
-          let mut len: libc::c_uint = 0i32 as libc::c_uint;
+          let mut len: libc::c_uint = 0 as libc::c_uint;
           *ptr = '\u{0}' as i32 as libc::c_char;
           len = (len as libc::c_ulong).wrapping_add(unicode_strwidth(ptr_strbeg)) as libc::c_uint
             as libc::c_uint;
@@ -178,10 +178,10 @@ unsafe extern "C" fn unexpand(
       break;
     }
     let mut ptr: *mut libc::c_char = line;
-    let mut column: libc::c_uint = 0i32 as libc::c_uint;
+    let mut column: libc::c_uint = 0 as libc::c_uint;
     while *ptr != 0 {
       let mut n: libc::c_uint = 0;
-      let mut len: libc::c_uint = 0i32 as libc::c_uint;
+      let mut len: libc::c_uint = 0 as libc::c_uint;
       while *ptr as libc::c_int == ' ' as i32 {
         ptr = ptr.offset(1);
         len = len.wrapping_add(1)
@@ -240,10 +240,10 @@ pub unsafe extern "C" fn expand_main(
 ) -> libc::c_int {
   /* Default 8 spaces for 1 tab */
   let mut opt_t: *const libc::c_char = b"8\x00" as *const u8 as *const libc::c_char;
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut tab_size: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
-  let mut exit_status: libc::c_int = 0i32;
+  let mut exit_status: libc::c_int = 0;
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'e' as i32) {
     opt = getopt32long(
       argv,

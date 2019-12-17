@@ -219,7 +219,7 @@ unsafe extern "C" fn resuse_end(mut pid: pid_t, mut resp: *mut resource_t) {
   /* Ignore signals, but don't ignore the children.  When wait3
    * returns the child process, set the time the command finished. */
   {
-    caught = wait3(&mut (*resp).waitstatus, 0i32, &mut (*resp).ru);
+    caught = wait3(&mut (*resp).waitstatus, 0, &mut (*resp).ru);
     if !(caught != pid) {
       break;
     }
@@ -276,12 +276,12 @@ unsafe extern "C" fn summarize(
     printf("Command stopped by signal %u\n",
         WSTOPSIG(resp->waitstatus));
   else */
-  if (((*resp).waitstatus & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+  if (((*resp).waitstatus & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
     printf(
       b"Command terminated by signal %u\n\x00" as *const u8 as *const libc::c_char,
       (*resp).waitstatus & 0x7fi32,
     );
-  } else if (*resp).waitstatus & 0x7fi32 == 0i32 && ((*resp).waitstatus & 0xff00i32) >> 8i32 != 0 {
+  } else if (*resp).waitstatus & 0x7fi32 == 0 && ((*resp).waitstatus & 0xff00i32) >> 8i32 != 0 {
     printf(
       b"Command exited with non-zero status %u\n\x00" as *const u8 as *const libc::c_char,
       ((*resp).waitstatus & 0xff00i32) >> 8i32,
@@ -405,7 +405,7 @@ unsafe extern "C" fn summarize(
             80 => {
               /* Percent of CPU this job got.  */
               /* % cpu is (total cpu time)/(elapsed time).  */
-              if (*resp).elapsed_ms > 0i32 as libc::c_uint {
+              if (*resp).elapsed_ms > 0 as libc::c_uint {
                 printf(
                   b"%u%%\x00" as *const u8 as *const libc::c_char,
                   vv_ms
@@ -596,12 +596,12 @@ unsafe extern "C" fn run_command(mut cmd: *const *mut libc::c_char, mut resp: *m
   (*resp).elapsed_ms = monotonic_ms() as libc::c_uint;
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
     }
     bb__xvfork_pid
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* Child */
     BB_EXECVP_or_die(cmd as *mut *mut libc::c_char);
   }
@@ -701,7 +701,7 @@ pub unsafe extern "C" fn time_main(
   if (WIFSTOPPED(res.waitstatus))
     ex = WSTOPSIG(res.waitstatus);
   */
-  if ((res.waitstatus & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+  if ((res.waitstatus & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
     ex = res.waitstatus & 0x7fi32
   }
   fflush_stdout_and_exit(ex);

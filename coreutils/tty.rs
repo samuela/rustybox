@@ -49,7 +49,7 @@ pub unsafe extern "C" fn tty_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut s: *const libc::c_char = 0 as *const libc::c_char; /* Note: No longer relevant in SUSv3. */
+  let mut s: *const libc::c_char = std::ptr::null(); /* Note: No longer relevant in SUSv3. */
   let mut silent: libc::c_int = 0; /* SUSv3 requires > 1 for error. */
   let mut retval: libc::c_int = 0;
   xfunc_error_retval = 2i32 as u8;
@@ -57,7 +57,7 @@ pub unsafe extern "C" fn tty_main(
   argv = argv.offset(optind as isize);
   /* gnu tty outputs a warning that it is ignoring all args. */
   bb_warn_ignoring_args(*argv.offset(0));
-  retval = 0i32;
+  retval = 0;
   s = xmalloc_ttyname(0i32);
   if s.is_null() {
     /* According to SUSv3, ttyname can fail with EBADF or ENOTTY.

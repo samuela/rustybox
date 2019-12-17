@@ -72,7 +72,7 @@ unsafe extern "C" fn get_passwd(
   mut pw: *const passwd,
   mut buffer: *mut libc::c_char,
 ) -> *const libc::c_char {
-  let mut pass: *const libc::c_char = 0 as *const libc::c_char; /* "aa" will never match */
+  let mut pass: *const libc::c_char = std::ptr::null(); /* "aa" will never match */
   if pw.is_null() {
     return b"aa\x00" as *const u8 as *const libc::c_char;
   }
@@ -95,7 +95,7 @@ unsafe extern "C" fn get_passwd(
     let mut r: libc::c_int = 0;
     /* getspnam_r may return 0 yet set result to NULL.
      * At least glibc 2.4 does this. Be extra paranoid here. */
-    let mut result: *mut spwd = 0 as *mut spwd;
+    let mut result: *mut spwd = std::ptr::null_mut();
     r = bb_internal_getspnam_r(
       (*pw).pw_name,
       &mut spw,
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn check_password(
 ) -> libc::c_int {
   let mut buffer: [libc::c_char; 256] = [0; 256];
   let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pw_pass: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pw_pass: *const libc::c_char = std::ptr::null();
   let mut r: libc::c_int = 0;
   pw_pass = get_passwd(pw, buffer.as_mut_ptr());
   if *pw_pass.offset(0) == 0 {
@@ -132,7 +132,7 @@ pub unsafe extern "C" fn check_password(
     return 2i32;
   }
   encrypted = pw_encrypt(plaintext, pw_pass, 1i32);
-  r = (strcmp(encrypted, pw_pass) == 0i32) as libc::c_int;
+  r = (strcmp(encrypted, pw_pass) == 0) as libc::c_int;
   free(encrypted as *mut libc::c_void);
   return r;
 }
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
 ) -> libc::c_int {
   let mut buffer: [libc::c_char; 256] = [0; 256];
   let mut plaintext: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pw_pass: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pw_pass: *const libc::c_char = std::ptr::null();
   let mut r: libc::c_int = 0;
   pw_pass = get_passwd(pw, buffer.as_mut_ptr());
   if *pw_pass.offset(0) == 0 {
@@ -626,7 +626,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
 pub unsafe extern "C" fn ask_and_check_password(mut pw: *const passwd) -> libc::c_int {
   return ask_and_check_password_extended(
     pw,
-    0i32,
+    0,
     b"Password: \x00" as *const u8 as *const libc::c_char,
   );
 }

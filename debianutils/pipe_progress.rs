@@ -28,12 +28,8 @@ pub unsafe extern "C" fn pipe_progress_main(
   let mut t: time_t = time(0 as *mut time_t);
   let mut len: libc::c_int = 0;
   loop {
-    len = safe_read(
-      0i32,
-      buf.as_mut_ptr() as *mut libc::c_void,
-      4096i32 as size_t,
-    ) as libc::c_int;
-    if !(len > 0i32) {
+    len = safe_read(0, buf.as_mut_ptr() as *mut libc::c_void, 4096i32 as size_t) as libc::c_int;
+    if !(len > 0) {
       break;
     }
     let mut new_time: time_t = time(0 as *mut time_t);
@@ -44,5 +40,5 @@ pub unsafe extern "C" fn pipe_progress_main(
     full_write(1i32, buf.as_mut_ptr() as *const libc::c_void, len as size_t);
   }
   bb_putchar_stderr('\n' as i32 as libc::c_char);
-  return 0i32;
+  return 0;
 }

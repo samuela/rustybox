@@ -76,7 +76,7 @@ unsafe extern "C" fn query(
   mut domain: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut fd: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut success: bool = false;
   let mut redir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pfx: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
@@ -85,7 +85,7 @@ unsafe extern "C" fn query(
    */
   let mut linebuf: [libc::c_char; 2048] = [0; 2048]; /* closes fd too */
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut bufpos: libc::c_uint = 0i32 as libc::c_uint;
+  let mut bufpos: libc::c_uint = 0 as libc::c_uint;
   loop {
     printf(
       b"[Querying %s:%d \'%s%s\']\n\x00" as *const u8 as *const libc::c_char,
@@ -102,7 +102,7 @@ unsafe extern "C" fn query(
       domain,
     );
     fp = xfdopen_for_read(fd);
-    success = 0i32 != 0;
+    success = 0 != 0;
     while !fgets_unlocked(
       linebuf.as_mut_ptr(),
       (::std::mem::size_of::<[libc::c_char; 2048]>() as libc::c_ulong)
@@ -175,10 +175,10 @@ unsafe extern "C" fn query(
      * We are trying only "domain DOMAIN", the typical one.
      */
     pfx = b"domain \x00" as *const u8 as *const libc::c_char;
-    bufpos = 0i32 as libc::c_uint
+    bufpos = 0 as libc::c_uint
   }
   /* Success */
-  if !redir.is_null() && strcmp(redir, host) == 0i32 {
+  if !redir.is_null() && strcmp(redir, host) == 0 {
     /* Redirect to self does not count */
     free(redir as *mut libc::c_void);
     redir = std::ptr::null_mut::<libc::c_char>()
@@ -281,5 +281,5 @@ pub unsafe extern "C" fn whois_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

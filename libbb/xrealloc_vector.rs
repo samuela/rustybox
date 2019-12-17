@@ -63,7 +63,7 @@ pub unsafe extern "C" fn xrealloc_vector_helper(
       (vector as *mut libc::c_char)
         .offset(sizeof_and_shift.wrapping_mul(idx as libc::c_uint) as isize)
         as *mut libc::c_void,
-      0i32,
+      0,
       sizeof_and_shift.wrapping_mul((mask + 1i32) as libc::c_uint) as libc::c_ulong,
     );
   }

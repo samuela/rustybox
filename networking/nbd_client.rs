@@ -155,10 +155,10 @@ pub unsafe extern "C" fn nbdclient_main(
   let mut nofork: bool = false;
   let mut opt_d: bool = false;
   let mut opt_p: bool = false;
-  let mut host: *const libc::c_char = 0 as *const libc::c_char;
-  let mut port: *const libc::c_char = 0 as *const libc::c_char;
-  let mut device: *const libc::c_char = 0 as *const libc::c_char;
-  let mut name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut host: *const libc::c_char = std::ptr::null();
+  let mut port: *const libc::c_char = std::ptr::null();
+  let mut device: *const libc::c_char = std::ptr::null();
+  let mut name: *const libc::c_char = std::ptr::null();
   let mut blksize: libc::c_uint = 0;
   let mut size_blocks: libc::c_uint = 0;
   let mut timeout: libc::c_uint = 0;
@@ -213,7 +213,7 @@ pub unsafe extern "C" fn nbdclient_main(
     {
       let mut init = option {
         name: b"persist\x00" as *const u8 as *const libc::c_char,
-        has_arg: 0i32,
+        has_arg: 0,
         flag: 0 as *const libc::c_int as *mut libc::c_int,
         val: 'p' as i32,
       };
@@ -234,9 +234,9 @@ pub unsafe extern "C" fn nbdclient_main(
   // older manpages only contained long forms, which probably resulted
   // in many scripts using them.
   blksize = 4096i32 as libc::c_uint; // use of "" instead of NULL simplifies strlen() later
-  timeout = 0i32 as libc::c_uint;
+  timeout = 0 as libc::c_uint;
   name = b"\x00" as *const u8 as *const libc::c_char;
-  opt_p = 0i32 != 0;
+  opt_p = 0 != 0;
   opt_d = opt_p;
   loop {
     ch = getopt_long_only(
@@ -283,19 +283,19 @@ pub unsafe extern "C" fn nbdclient_main(
       let mut nbd: libc::c_int = xopen(*argv.offset(0), 0o2i32);
       ioctl(
         nbd,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (8i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (8i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
       ioctl(
         nbd,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (4i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (4i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
-      return 0i32;
+      return 0;
     }
     bb_show_usage();
   }
@@ -318,7 +318,7 @@ pub unsafe extern "C" fn nbdclient_main(
     *argv.offset(1)
   };
   // Repeat until spanked if -persist
-  nofork = 0i32 != 0; // 0 for old, 1 for new
+  nofork = 0 != 0; // 0 for old, 1 for new
   loop {
     let mut sock: libc::c_int = 0;
     let mut nbd_0: libc::c_int = 0;
@@ -340,7 +340,7 @@ pub unsafe extern "C" fn nbdclient_main(
       &mut nbd_header.magic1 as *mut u64 as *const libc::c_void,
       b"NBDMAGIC\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       ::std::mem::size_of::<u64>() as libc::c_ulong,
-    ) != 0i32
+    ) != 0
     {
       bb_simple_error_msg_and_die(b"login failed\x00" as *const u8 as *const libc::c_char);
       // NBD_OPT_EXPORT_NAME
@@ -349,14 +349,14 @@ pub unsafe extern "C" fn nbdclient_main(
       &mut nbd_header.magic2 as *mut u64 as *const libc::c_void,
       b"\x00\x00B\x02\x81\x86\x12S\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       ::std::mem::size_of::<u64>() as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
-      proto_new = 0i32
+      proto_new = 0
     } else if memcmp(
       &mut nbd_header.magic2 as *mut u64 as *const libc::c_void,
       b"IHAVEOPT\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       8i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       proto_new = 1i32
     } else {
@@ -396,26 +396,26 @@ pub unsafe extern "C" fn nbdclient_main(
       .wrapping_div(blksize as libc::c_ulong) as libc::c_uint;
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         blksize as libc::c_ulong,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (7i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (7i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         size_blocks,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (4i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (4i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
       ro = (old_nbd_header.flags
         & ({
@@ -535,33 +535,33 @@ pub unsafe extern "C" fn nbdclient_main(
       .wrapping_div(blksize as libc::c_ulong) as libc::c_uint;
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         blksize as libc::c_ulong,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (7i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (7i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         size_blocks,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (4i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (4i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (10i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (10i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         ({
           let mut __v: libc::c_ushort = 0;
           let mut __x: libc::c_ushort = new_nbd_header.transmission_flags;
@@ -603,22 +603,22 @@ pub unsafe extern "C" fn nbdclient_main(
     }
     if ioctl(
       nbd_0,
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0x12i32 << 0i32 + 8i32) as libc::c_uint
-        | (93i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0x12i32 << 0 + 8i32) as libc::c_uint
+        | (93i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       &mut ro as *mut libc::c_int,
-    ) < 0i32
+    ) < 0
     {
       bb_simple_perror_msg_and_die(b"BLKROSET\x00" as *const u8 as *const libc::c_char);
     }
     if timeout != 0 {
       if ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (9i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (9i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
         timeout as libc::c_ulong,
       ) != 0
       {
@@ -627,10 +627,10 @@ pub unsafe extern "C" fn nbdclient_main(
     }
     if ioctl(
       nbd_0,
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-        | (0i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0xabi32 << 0 + 8i32) as libc::c_uint
+        | (0i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       sock,
     ) != 0
     {
@@ -640,7 +640,7 @@ pub unsafe extern "C" fn nbdclient_main(
     // Open the device to force reread of the partition table.
     // Need to do it in a separate process, since open(device)
     // needs some other process to sit in ioctl(nbd, NBD_DO_IT).
-    if fork() == 0i32 {
+    if fork() == 0 {
       /* child */
       let mut s: *mut libc::c_char = strrchr(device, '/' as i32);
       sprintf(
@@ -651,18 +651,18 @@ pub unsafe extern "C" fn nbdclient_main(
       loop
       // Is it up yet?
       {
-        let mut fd: libc::c_int = open(data, 0i32);
-        if fd >= 0i32 {
+        let mut fd: libc::c_int = open(data, 0);
+        if fd >= 0 {
           break;
         }
         sleep(1i32 as libc::c_uint);
       }
-      open(device, 0i32);
-      return 0i32;
+      open(device, 0);
+      return 0;
     }
     // Daemonize here
     if !nofork {
-      daemon(0i32, 0i32);
+      daemon(0i32, 0);
       nofork = 1i32 != 0
     }
     // This turns us (the process that calls this ioctl)
@@ -672,27 +672,27 @@ pub unsafe extern "C" fn nbdclient_main(
     // or if someone does ioctl(NBD_DISCONNECT) [nbd-client -d].
     if ioctl(
       nbd_0,
-      (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-        | (3i32 << 0i32) as libc::c_uint
-        | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
-    ) >= 0i32
+      (0u32 << 0 + 8i32 + 8i32 + 14i32
+        | (0xabi32 << 0 + 8i32) as libc::c_uint
+        | (3i32 << 0) as libc::c_uint
+        | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+    ) >= 0
       || *bb_errno == 53i32
     {
       // Flush queue and exit
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (5i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (5i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
       ioctl(
         nbd_0,
-        (0u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (0xabi32 << 0i32 + 8i32) as libc::c_uint
-          | (4i32 << 0i32) as libc::c_uint
-          | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
+        (0u32 << 0 + 8i32 + 8i32 + 14i32
+          | (0xabi32 << 0 + 8i32) as libc::c_uint
+          | (4i32 << 0) as libc::c_uint
+          | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
       );
       break;
     } else {
@@ -703,5 +703,5 @@ pub unsafe extern "C" fn nbdclient_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

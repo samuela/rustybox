@@ -59,10 +59,10 @@ unsafe extern "C" fn scale(mut g: *mut globals, mut d: libc::c_ulong) -> libc::c
 #[inline(never)]
 unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
   let mut buf: [libc::c_char; 60] = [0; 60]; /* actual lines we expect are ~30 chars or less */
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut seen_cached_and_available_and_reclaimable: libc::c_int = 0;
   fp = xfopen_for_read(b"/proc/meminfo\x00" as *const u8 as *const libc::c_char);
-  (*g).reclaimable_kb = 0i32 as libc::c_ulong;
+  (*g).reclaimable_kb = 0 as libc::c_ulong;
   (*g).available_kb = (*g).reclaimable_kb;
   (*g).cached_kb = (*g).available_kb;
   seen_cached_and_available_and_reclaimable = 3i32;
@@ -80,7 +80,7 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
     ) == 1i32
     {
       seen_cached_and_available_and_reclaimable -= 1;
-      if seen_cached_and_available_and_reclaimable == 0i32 {
+      if seen_cached_and_available_and_reclaimable == 0 {
         break;
       }
     }
@@ -91,7 +91,7 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
     ) == 1i32
     {
       seen_cached_and_available_and_reclaimable -= 1;
-      if seen_cached_and_available_and_reclaimable == 0i32 {
+      if seen_cached_and_available_and_reclaimable == 0 {
         break;
       }
     }
@@ -104,13 +104,13 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
       continue;
     }
     seen_cached_and_available_and_reclaimable -= 1;
-    if seen_cached_and_available_and_reclaimable == 0i32 {
+    if seen_cached_and_available_and_reclaimable == 0 {
       break;
     }
   }
   /* Have to close because of NOFORK */
   fclose(fp);
-  return (seen_cached_and_available_and_reclaimable == 0i32) as libc::c_int as libc::c_uint;
+  return (seen_cached_and_available_and_reclaimable == 0) as libc::c_int as libc::c_uint;
 }
 #[no_mangle]
 pub unsafe extern "C" fn free_main(
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn free_main(
   G.unit_steps = 10i32 as u8;
   if !(*argv.offset(1)).is_null() && *(*argv.offset(1)).offset(0) as libc::c_int == '-' as i32 {
     match *(*argv.offset(1)).offset(1) as libc::c_int {
-      98 => G.unit_steps = 0i32 as u8,
+      98 => G.unit_steps = 0 as u8,
       107 => {}
       109 => {
         /* 2^(2*10) */
@@ -233,5 +233,5 @@ pub unsafe extern "C" fn free_main(
     scale(&mut G, info.totalswap.wrapping_sub(info.freeswap)),
     scale(&mut G, info.freeswap),
   );
-  return 0i32;
+  return 0;
 }

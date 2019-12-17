@@ -60,13 +60,13 @@ pub type wchar_t = libc::c_int;
 /* In-place invert */
 unsafe extern "C" fn strrev(mut s: *mut wchar_t, mut len: libc::c_int) {
   let mut i: libc::c_int = 0;
-  if len != 0i32 {
+  if len != 0 {
     len -= 1;
-    if len != 0i32 && *s.offset(len as isize) == '\n' as i32 {
+    if len != 0 && *s.offset(len as isize) == '\n' as i32 {
       len -= 1
     }
   }
-  i = 0i32;
+  i = 0;
   while i < len {
     let mut c: wchar_t = *s.offset(i as isize);
     *s.offset(i as isize) = *s.offset(len as isize);
@@ -88,19 +88,19 @@ pub unsafe extern "C" fn rev_main(
   if (*argv.offset(0)).is_null() {
     argv = &bb_argv_dash as *const [*const libc::c_char; 0] as *mut *mut libc::c_char
   }
-  retval = 0i32;
+  retval = 0;
   bufsize = 256i32 as size_t;
   buf = xmalloc(bufsize) as *mut libc::c_char;
   loop {
     let mut pos: size_t = 0;
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let fresh0 = argv;
     argv = argv.offset(1);
     fp = fopen_or_warn_stdin(*fresh0);
     if fp.is_null() {
       retval = 1i32
     } else {
-      pos = 0i32 as size_t;
+      pos = 0 as size_t;
       loop {
         /* Read one line */
         *buf.offset(bufsize.wrapping_sub(1i32 as libc::c_ulong) as isize) = 1i32 as libc::c_char; /* not 0 */
@@ -132,7 +132,7 @@ pub unsafe extern "C" fn rev_main(
               as *mut wchar_t;
           /* Convert to wchar_t (might error out!) */
           let mut len: libc::c_int = bb_mbstowcs(tmp, buf, bufsize) as libc::c_int;
-          if len >= 0i32 {
+          if len >= 0 {
             strrev(tmp, len);
             /* Convert back to char */
             bb_wcstombs(buf, tmp, bufsize);

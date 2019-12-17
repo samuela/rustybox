@@ -314,7 +314,7 @@ unsafe extern "C" fn send_arp_request(
   };
   memset(
     &mut p as *mut arp_packet as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<arp_packet>() as libc::c_ulong,
   );
   // ether header
@@ -446,7 +446,7 @@ unsafe extern "C" fn run(
   mut nip: u32,
 ) -> libc::c_int {
   let mut status: libc::c_int = 0; /* for gcc */
-  let mut addr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut addr: *const libc::c_char = std::ptr::null();
   addr = addr;
   let mut fmt: *const libc::c_char =
     (b"%s %s %s\x00" as *const u8 as *const libc::c_char).offset(3);
@@ -454,7 +454,7 @@ unsafe extern "C" fn run(
   env_ip = env_ip;
   let ref mut fresh15 = *argv.offset(2);
   *fresh15 = param as *mut libc::c_char;
-  if nip != 0i32 as libc::c_uint {
+  if nip != 0 as libc::c_uint {
     addr = nip_to_a(nip);
     /* Must not use setenv() repeatedly, it leaks memory. Use putenv() */
     env_ip = xasprintf(b"ip=%s\x00" as *const u8 as *const libc::c_char, addr);
@@ -463,10 +463,10 @@ unsafe extern "C" fn run(
   }
   bb_info_msg(fmt, *argv.offset(2), *argv.offset(0), addr);
   status = spawn_and_wait(argv.offset(1));
-  if nip != 0i32 as libc::c_uint {
+  if nip != 0 as libc::c_uint {
     bb_unsetenv_and_free(env_ip);
   }
-  if status < 0i32 {
+  if status < 0 {
     bb_perror_msg(
       (b"%s %s %s\x00" as *const u8 as *const libc::c_char).offset(3),
       *argv.offset(2),
@@ -474,7 +474,7 @@ unsafe extern "C" fn run(
     );
     return -*bb_errno;
   }
-  if status != 0i32 {
+  if status != 0 {
     bb_error_msg(
       b"script %s %s failed, exitcode=%d\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
@@ -526,7 +526,7 @@ pub unsafe extern "C" fn zcip_main(
   };
   memset(
     &mut L as *mut C2RustUnnamed_6 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_6>() as libc::c_ulong,
   );
   // Parse commandline: prog [options] ifname script
@@ -567,13 +567,13 @@ pub unsafe extern "C" fn zcip_main(
   );
   if opts & 1i32 as libc::c_uint == 0 {
     // do it before all bb_xx_msg calls
-    openlog(applet_name, 0i32, 3i32 << 3i32);
+    openlog(applet_name, 0, 3i32 << 3i32);
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
   }
   bb_logenv_override();
   // -l n.n.n.n
   let mut net: in_addr = in_addr { s_addr: 0 };
-  if inet_aton(l_opt, &mut net) == 0i32
+  if inet_aton(l_opt, &mut net) == 0
     || net.s_addr
       & ({
         let mut __v: libc::c_uint = 0;
@@ -620,7 +620,7 @@ pub unsafe extern "C" fn zcip_main(
   if opts & 4i32 as libc::c_uint != 0 {
     // -r n.n.n.n
     let mut ip: in_addr = in_addr { s_addr: 0 };
-    if inet_aton(r_opt, &mut ip) == 0i32
+    if inet_aton(r_opt, &mut ip) == 0
       || ({
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = ip.s_addr;
@@ -662,7 +662,7 @@ pub unsafe extern "C" fn zcip_main(
   if run(
     argv,
     b"init\x00" as *const u8 as *const libc::c_char,
-    0i32 as u32,
+    0 as u32,
   ) != 0
   {
     return 1i32;
@@ -739,7 +739,7 @@ pub unsafe extern "C" fn zcip_main(
   // - read error (when does this happen?)
   // - sendto error (in send_arp_request()) (when does this happen?)
   // - revents & POLLERR (link down). run "<script> deconfig" first
-  if L.chosen_nip == 0i32 as libc::c_uint {
+  if L.chosen_nip == 0 as libc::c_uint {
     current_block = 11627159856682951070;
   } else {
     current_block = 5330834795799507926;
@@ -751,7 +751,7 @@ pub unsafe extern "C" fn zcip_main(
         current_block = 5330834795799507926;
       }
       _ => {
-        nsent = 0i32;
+        nsent = 0;
         state = PROBE as libc::c_int;
         loop {
           let mut fds: [pollfd; 1] = [pollfd {
@@ -785,7 +785,7 @@ pub unsafe extern "C" fn zcip_main(
           let mut n: libc::c_int = 0;
           fds[0].fd = sock_fd as libc::c_int;
           fds[0].events = 0x1i32 as libc::c_short;
-          fds[0].revents = 0i32 as libc::c_short;
+          fds[0].revents = 0 as libc::c_short;
           // Note: if we only have a target IP conflict here (ip_conflict & 2),
           // IOW: if we just saw this sort of ARP packet:
           //  aa:bb:cc:dd:ee:ff > xx:xx:xx:xx:xx:xx arp who-has <chosen_nip> tell 0.0.0.0
@@ -798,17 +798,17 @@ pub unsafe extern "C" fn zcip_main(
             // make the kernel filter out all packets except
             // ones we'd care about.
           }
-          if L.timeout_ms >= 0i32 {
+          if L.timeout_ms >= 0 {
             // Set deadline_us to the point in time when we timeout
             deadline_us = (monotonic_us() as libc::c_uint)
               .wrapping_add((L.timeout_ms * 1000i32) as libc::c_uint)
           }
           n = safe_poll(fds.as_mut_ptr(), 1i32 as nfds_t, L.timeout_ms);
-          if n < 0i32 {
+          if n < 0 {
             //bb_perror_msg("poll"); - done in safe_poll
             return 1i32;
           }
-          if n == 0i32 {
+          if n == 0 {
             // timed out?
             match state {
               0 => {
@@ -824,7 +824,7 @@ pub unsafe extern "C" fn zcip_main(
                   continue;
                 } else {
                   // Switch to announce state
-                  nsent = 0i32;
+                  nsent = 0;
                   state = ANNOUNCE as libc::c_int
                 }
                 current_block = 7214547043153522063;
@@ -844,7 +844,7 @@ pub unsafe extern "C" fn zcip_main(
                   );
                   // NOTE: all other exit paths should deconfig...
                   if opts & 2i32 as libc::c_uint != 0 {
-                    return 0i32;
+                    return 0;
                   }
                   current_block = 14823871904523042870;
                 }
@@ -877,17 +877,17 @@ pub unsafe extern "C" fn zcip_main(
             // Packet arrived, or link went down.
             // We need to adjust the timeout in case we didn't receive
             // a conflicting packet.
-            if L.timeout_ms > 0i32 {
+            if L.timeout_ms > 0 {
               let mut diff: libc::c_uint = deadline_us.wrapping_sub(monotonic_us() as libc::c_uint);
-              if (diff as libc::c_int) < 0i32 {
+              if (diff as libc::c_int) < 0 {
                 // never 0
                 // Current time is greater than the expected timeout time.
-                diff = 0i32 as libc::c_uint
+                diff = 0 as libc::c_uint
               }
               L.timeout_ms =
                 (diff.wrapping_div(1000i32 as libc::c_uint) | 1i32 as libc::c_uint) as libc::c_int
             }
-            if fds[0].revents as libc::c_int & 0x1i32 == 0i32 {
+            if fds[0].revents as libc::c_int & 0x1i32 == 0 {
               if fds[0].revents as libc::c_int & 0x8i32 != 0 {
                 // FIXME: links routinely go down;
                 // this shouldn't necessarily exit.
@@ -981,19 +981,19 @@ pub unsafe extern "C" fn zcip_main(
               {
                 continue;
               }
-              ip_conflict = 0i32;
+              ip_conflict = 0;
               if memcmp(
                 &mut p.arp.arp_sha as *mut [u8; 6] as *const libc::c_void,
                 &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).our_ethaddr
                   as *mut ether_addr as *const libc::c_void,
                 6i32 as libc::c_ulong,
-              ) != 0i32
+              ) != 0
               {
                 if memcmp(
                   p.arp.arp_spa.as_mut_ptr() as *const libc::c_void,
                   &mut L.chosen_nip as *mut u32 as *const libc::c_void,
                   4i32 as libc::c_ulong,
-                ) == 0i32
+                ) == 0
                 {
                   // A probe or reply with source_ip == chosen ip
                   ip_conflict = 1i32
@@ -1022,12 +1022,12 @@ pub unsafe extern "C" fn zcip_main(
                     p.arp.arp_spa.as_mut_ptr() as *const libc::c_void,
                     &const_int_0 as *const libc::c_int as *const libc::c_void,
                     4i32 as libc::c_ulong,
-                  ) == 0i32
+                  ) == 0
                   && memcmp(
                     p.arp.arp_tpa.as_mut_ptr() as *const libc::c_void,
                     &mut L.chosen_nip as *mut u32 as *const libc::c_void,
                     4i32 as libc::c_ulong,
-                  ) == 0i32
+                  ) == 0
                 {
                   // A probe with source_ip == 0.0.0.0, target_ip == chosen ip:
                   // another host trying to claim this ip!
@@ -1069,8 +1069,8 @@ pub unsafe extern "C" fn zcip_main(
                     b"deconfig\x00" as *const u8 as *const libc::c_char,
                     L.chosen_nip,
                   );
-                  L.conflicts = 0i32;
-                  L.timeout_ms = 0i32;
+                  L.conflicts = 0;
+                  L.timeout_ms = 0;
                   current_block = 11627159856682951070;
                   break;
                 }

@@ -140,8 +140,8 @@ pub struct romfs_super {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut rfs: *mut romfs_super = 0 as *mut romfs_super;
-  rfs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut romfs_super;
+  let mut rfs: *mut romfs_super = std::ptr::null_mut();
+  rfs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut romfs_super;
   if rfs.is_null() {
     return -1i32;
   }
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::
     (*rfs).magic.as_mut_ptr() as *const libc::c_void,
     b"-rom1fs-\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     4i32 as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     let mut len: size_t = strlen((*rfs).name.as_mut_ptr() as *mut libc::c_char);
     if len != 0 {
@@ -158,7 +158,7 @@ pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::
     }
     //		volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
     (*id).type_0 = b"romfs\x00" as *const u8 as *const libc::c_char;
-    return 0i32;
+    return 0;
   }
   return -1i32;
 }

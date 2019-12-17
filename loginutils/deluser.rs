@@ -113,14 +113,14 @@ pub unsafe extern "C" fn deluser_main(
   /* Username (non-NULL only in "delgroup USER GROUP" case) */
   let mut member: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Name of passwd or group file */
-  let mut pfile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pfile: *const libc::c_char = std::ptr::null();
   /* Name of shadow or gshadow file */
-  let mut sfile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sfile: *const libc::c_char = std::ptr::null();
   /* Are we deluser or delgroup? */
   let mut do_deluser: libc::c_int = (1i32 != 0
     && (1i32 == 0 || *applet_name.offset(3) as libc::c_int == 'u' as i32))
     as libc::c_int;
-  let mut opt_delhome: libc::c_int = 0i32;
+  let mut opt_delhome: libc::c_int = 0;
   if do_deluser != 0 {
     opt_delhome = getopt32long(
       argv,
@@ -130,12 +130,12 @@ pub unsafe extern "C" fn deluser_main(
     argv = argv.offset(opt_delhome as isize);
     argc -= opt_delhome
   }
-  if geteuid() != 0i32 as libc::c_uint {
+  if geteuid() != 0 as libc::c_uint {
     bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   name = *argv.offset(1);
   member = std::ptr::null_mut::<libc::c_char>();
-  let mut gr: *mut group = 0 as *mut group;
+  let mut gr: *mut group = std::ptr::null_mut();
   let mut current_block_45: u64;
   match argc {
     3 => {
@@ -162,7 +162,7 @@ pub unsafe extern "C" fn deluser_main(
     {
       if do_deluser != 0 {
         /* "deluser USER" */
-        let mut pw: *mut passwd = 0 as *mut passwd; /* bail out if USER is wrong */
+        let mut pw: *mut passwd = std::ptr::null_mut(); /* bail out if USER is wrong */
         pw = xgetpwnam(name);
         pfile = b"/etc/passwd\x00" as *const u8 as *const libc::c_char;
         sfile = b"/etc/shadow\x00" as *const u8 as *const libc::c_char;
@@ -171,18 +171,18 @@ pub unsafe extern "C" fn deluser_main(
         }
         current_block_45 = 15090052786889560393;
       } else {
-        gr = 0 as *mut group;
+        gr = std::ptr::null_mut();
         current_block_45 = 16500901810917105941;
       }
       loop {
         match current_block_45 {
           16500901810917105941 => {
             /* "delgroup GROUP" or "delgroup USER GROUP" */
-            if do_deluser < 0i32 {
+            if do_deluser < 0 {
               /* delgroup after deluser? */
               gr = bb_internal_getgrnam(name);
               if gr.is_null() {
-                return 0i32;
+                return 0;
               }
             } else {
               gr = xgetgrnam(name)
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn deluser_main(
             }
             if member.is_null() {
               /* "delgroup GROUP" */
-              let mut pw_0: *mut passwd = 0 as *mut passwd;
+              let mut pw_0: *mut passwd = std::ptr::null_mut();
               loop
               /* Check if the group is in use */
               {
@@ -220,12 +220,12 @@ pub unsafe extern "C" fn deluser_main(
                 return 1i32;
               }
               pfile = sfile;
-              sfile = 0 as *const libc::c_char;
+              sfile = std::ptr::null();
               if !(1i32 != 0 && !pfile.is_null()) {
                 break;
               }
             }
-            if !(do_deluser > 0i32) {
+            if !(do_deluser > 0) {
               break;
             }
             /* Delete user from all groups */
@@ -250,7 +250,7 @@ pub unsafe extern "C" fn deluser_main(
           }
         }
       }
-      return 0i32;
+      return 0;
     }
   }
   /* Reached only if number of command line args is wrong */

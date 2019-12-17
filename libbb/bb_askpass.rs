@@ -85,7 +85,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     c_ispeed: 0,
     c_ospeed: 0,
   };
-  tcflush(fd, 0i32);
+  tcflush(fd, 0);
   /* Was buggy: was printing prompt *before* flushing input,
    * which was upsetting "expect" based scripts of some users.
    */
@@ -105,10 +105,10 @@ pub unsafe extern "C" fn bb_ask_noecho(
    *         [qwe<BS><BS><BS> input looks like "qwe\ewq/" on screen]
    */
   tio.c_lflag &= !(0o10i32 | 0o20i32 | 0o40i32 | 0o100i32) as libc::c_uint;
-  tcsetattr(fd, 0i32, &mut tio);
+  tcsetattr(fd, 0, &mut tio);
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sigaction>() as libc::c_ulong,
   );
   /* sa.sa_flags = 0; - no SA_RESTART! */
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     alarm(timeout as libc::c_uint);
   }
   ret = std::ptr::null_mut::<libc::c_char>();
-  i = 0i32;
+  i = 0;
   loop {
     let mut r: libc::c_int = 0;
     /* User input is uber-slow, no need to optimize reallocs.
@@ -133,7 +133,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
       &mut *ret.offset(i as isize) as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
     ) as libc::c_int;
-    if i == 0i32 && r == 0i32 || r < 0i32 {
+    if i == 0 && r == 0 || r < 0 {
       /* read is interrupted by timeout or ^C */
       *ret.offset(i as isize) = '\u{0}' as i32 as libc::c_char; /* paranoia */
       nuke_str(ret); /* paranoia */
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
       ret = std::ptr::null_mut::<libc::c_char>();
       break;
     } else {
-      if !(r == 0i32
+      if !(r == 0
         || *ret.offset(i as isize) as libc::c_int == '\r' as i32
         || *ret.offset(i as isize) as libc::c_int == '\n' as i32
         || {
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     alarm(0i32 as libc::c_uint);
   }
   sigaction_set(2i32, &mut oldsa);
-  tcsetattr(fd, 0i32, &mut oldtio);
+  tcsetattr(fd, 0, &mut oldtio);
   bb_putchar('\n' as i32);
   fflush_all();
   return ret;
@@ -169,5 +169,5 @@ pub unsafe extern "C" fn bb_ask_noecho(
 /* Like bb_ask_noecho, but asks on stdin with no timeout.  */
 #[no_mangle]
 pub unsafe extern "C" fn bb_ask_noecho_stdin(mut prompt: *const libc::c_char) -> *mut libc::c_char {
-  return bb_ask_noecho(0i32, 0i32, prompt);
+  return bb_ask_noecho(0i32, 0, prompt);
 }

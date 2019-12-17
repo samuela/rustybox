@@ -32,7 +32,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
    * (given by algorithm author)
    */
   let mut t: u32 = 0;
-  if (*rnd).galois_LFSR == 0i32 {
+  if (*rnd).galois_LFSR == 0 {
     /* Can use monotonic_ns() for better randomness but for now
      * it is not used anywhere else in busybox... so avoid bloat
      */
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
    * and possibly xored with a sparse constant.
    */
   t = ((*rnd).galois_LFSR << 1i32) as u32;
-  if (*rnd).galois_LFSR < 0i32 {
+  if (*rnd).galois_LFSR < 0 {
     /* if we just shifted 1 out of msb... */
     t ^= MASK as libc::c_uint
   }
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
      * By skipping two possible states (0x1 and 0x2) we reduce period to
      * 2^64-3 = 13 * 3889 * 364870227143809 which has no common divisors:
      */
-    if !((*rnd).xs64_y == 0i32 as libc::c_uint && (*rnd).xs64_x <= 2i32 as libc::c_uint) {
+    if !((*rnd).xs64_y == 0 as libc::c_uint && (*rnd).xs64_x <= 2i32 as libc::c_uint) {
       break;
     }
   }
