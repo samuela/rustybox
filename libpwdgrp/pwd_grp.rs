@@ -710,7 +710,7 @@ unsafe extern "C" fn getgrouplist_internal(
         gr_name: std::ptr::null_mut::<libc::c_char>(),
         gr_passwd: std::ptr::null_mut::<libc::c_char>(),
         gr_gid: 0,
-        gr_mem: 0 as *mut *mut libc::c_char,
+        gr_mem: std::ptr::null_mut(),
       };
       if !convert_to_struct(db, buf, &mut group as *mut group as *mut libc::c_void).is_null() {
         if !(group.gr_gid == gid) {

@@ -1538,13 +1538,13 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
     info: 0,
     lineno: 0,
     l: C2RustUnnamed_3 {
-      n: 0 as *mut node_s,
+      n: std::ptr::null_mut(),
     },
     r: C2RustUnnamed_2 {
-      n: 0 as *mut node_s,
+      n: std::ptr::null_mut(),
     },
     a: C2RustUnnamed_1 {
-      n: 0 as *mut node_s,
+      n: std::ptr::null_mut(),
     },
   };
   let mut cn: *mut node = &mut sn;
@@ -2927,12 +2927,12 @@ unsafe extern "C" fn awk_sub(
   let mut regexec_flags: libc::c_int = 0;
   let mut pmatch: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
   let mut sreg: regex_t = regex_t {
-    buffer: 0 as *mut libc::c_uchar,
+    buffer: std::ptr::null_mut(),
     allocated: 0,
     used: 0,
     syntax: 0,
     fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: 0 as *mut libc::c_uchar,
+    translate: std::ptr::null_mut(),
     re_nsub: 0,
     can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
     c2rust_padding: [0; 7],
@@ -3107,12 +3107,12 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
   let mut as_0: [*const libc::c_char; 4] = [0 as *const libc::c_char; 4];
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   let mut sreg: regex_t = regex_t {
-    buffer: 0 as *mut libc::c_uchar,
+    buffer: std::ptr::null_mut(),
     allocated: 0,
     used: 0,
     syntax: 0,
     fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: 0 as *mut libc::c_uchar,
+    translate: std::ptr::null_mut(),
     re_nsub: 0,
     can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
     c2rust_padding: [0; 7],
@@ -3380,12 +3380,12 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
   v1 = nvalloc(2i32);
   while !op.is_null() {
     let mut L: C2RustUnnamed_10 = C2RustUnnamed_10 {
-      v: 0 as *mut var,
+      v: std::ptr::null_mut(),
       s: 0 as *const libc::c_char,
     };
     L = L;
     let mut R: C2RustUnnamed_9 = C2RustUnnamed_9 {
-      v: 0 as *mut var,
+      v: std::ptr::null_mut(),
       s: 0 as *const libc::c_char,
     };
     R = R;

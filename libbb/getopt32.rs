@@ -390,8 +390,8 @@ unsafe extern "C" fn vgetopt32(
     switch_off: 0,
     incongruously: 0,
     requires: 0,
-    optarg: 0 as *mut *mut libc::c_void,
-    counter: 0 as *mut libc::c_int,
+    optarg: std::ptr::null_mut(),
+    counter: std::ptr::null_mut(),
   }; 33];
   let mut dont_die_flag: libc::c_char = 0;
   let mut c: libc::c_int = 0;

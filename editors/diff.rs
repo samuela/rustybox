@@ -802,7 +802,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
   let mut nlen: [libc::c_int; 2] = [0; 2];
   let mut ix: [*mut off_t; 2] = [0 as *mut off_t; 2];
   let mut ft: [FILE_and_pos_t; 2] = [FILE_and_pos_t {
-    ft_fp: 0 as *mut FILE,
+    ft_fp: std::ptr::null_mut(),
     ft_pos: 0,
   }; 2];
   let mut vec: *mut vec_t = std::ptr::null_mut();
@@ -1181,7 +1181,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     len: 0,
     s: 0,
     e: 0,
-    dl: 0 as *mut *mut libc::c_char,
+    dl: std::ptr::null_mut(),
   }; 2];
   let mut i: libc::c_int = 0;
   memset(

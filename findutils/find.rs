@@ -1111,7 +1111,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
     0,
   ];
   let mut ppl: pp_locals = pp_locals {
-    appp: 0 as *mut *mut *mut action,
+    appp: std::ptr::null_mut(),
     cur_group: 0,
     cur_action: 0,
     invert_flag: false,

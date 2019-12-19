@@ -608,8 +608,8 @@ pub unsafe extern "C" fn iostat_main(
   /* Main loop */
   {
     let mut stats: stats_cpu_pair_t = stats_cpu_pair_t {
-      prev: 0 as *mut stats_cpu_t,
-      curr: 0 as *mut stats_cpu_t,
+      prev: std::ptr::null_mut(),
+      curr: std::ptr::null_mut(),
       itv: 0,
     };
     stats.prev = &mut *stats_data

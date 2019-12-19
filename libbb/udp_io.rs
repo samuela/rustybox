@@ -197,15 +197,15 @@ pub unsafe extern "C" fn send_to_from(
   mut tolen: socklen_t,
 ) -> ssize_t {
   let mut iov: [iovec; 1] = [iovec {
-    iov_base: 0 as *mut libc::c_void,
+    iov_base: std::ptr::null_mut(),
     iov_len: 0,
   }; 1];
   let mut msg: msghdr = msghdr {
-    msg_name: 0 as *mut libc::c_void,
+    msg_name: std::ptr::null_mut(),
     msg_namelen: 0,
-    msg_iov: 0 as *mut iovec,
+    msg_iov: std::ptr::null_mut(),
     msg_iovlen: 0,
-    msg_control: 0 as *mut libc::c_void,
+    msg_control: std::ptr::null_mut(),
     msg_controllen: 0,
     msg_flags: 0,
   };
@@ -516,17 +516,17 @@ pub unsafe extern "C" fn recv_from_to(
 ) -> ssize_t {
   /* man recvmsg and man cmsg is needed to make sense of code below */
   let mut iov: [iovec; 1] = [iovec {
-    iov_base: 0 as *mut libc::c_void,
+    iov_base: std::ptr::null_mut(),
     iov_len: 0,
   }; 1];
   let mut u: C2RustUnnamed_2 = C2RustUnnamed_2 { cmsg: [0; 32] };
   let mut cmsgptr: *mut cmsghdr = std::ptr::null_mut();
   let mut msg: msghdr = msghdr {
-    msg_name: 0 as *mut libc::c_void,
+    msg_name: std::ptr::null_mut(),
     msg_namelen: 0,
-    msg_iov: 0 as *mut iovec,
+    msg_iov: std::ptr::null_mut(),
     msg_iovlen: 0,
-    msg_control: 0 as *mut libc::c_void,
+    msg_control: std::ptr::null_mut(),
     msg_controllen: 0,
     msg_flags: 0,
   };

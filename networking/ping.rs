@@ -1120,11 +1120,11 @@ unsafe extern "C" fn ping4(mut lsa: *mut len_and_sockaddr) {
 unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
   let mut sockopt: libc::c_int = 0;
   let mut msg: msghdr = msghdr {
-    msg_name: 0 as *mut libc::c_void,
+    msg_name: std::ptr::null_mut(),
     msg_namelen: 0,
-    msg_iov: 0 as *mut iovec,
+    msg_iov: std::ptr::null_mut(),
     msg_iovlen: 0,
-    msg_control: 0 as *mut libc::c_void,
+    msg_control: std::ptr::null_mut(),
     msg_controllen: 0,
     msg_flags: 0,
   };
@@ -1140,7 +1140,7 @@ unsafe extern "C" fn ping6(mut lsa: *mut len_and_sockaddr) {
     sin6_scope_id: 0,
   };
   let mut iov: iovec = iovec {
-    iov_base: 0 as *mut libc::c_void,
+    iov_base: std::ptr::null_mut(),
     iov_len: 0,
   };
   let mut control_buf: [libc::c_char; 56] = [0; 56];

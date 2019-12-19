@@ -193,7 +193,7 @@ unsafe extern "C" fn i2c_smbus_access(
     read_write: 0,
     command: 0,
     size: 0,
-    data: 0 as *mut i2c_smbus_data,
+    data: std::ptr::null_mut(),
   };
   args.read_write = read_write as __u8;
   args.command = cmd;
@@ -1810,10 +1810,10 @@ pub unsafe extern "C" fn i2ctransfer_main(
     addr: 0,
     flags: 0,
     len: 0,
-    buf: 0 as *mut __u8,
+    buf: std::ptr::null_mut(),
   }; 42];
   let mut rdwr: i2c_rdwr_ioctl_data = i2c_rdwr_ioctl_data {
-    msgs: 0 as *mut i2c_msg,
+    msgs: std::ptr::null_mut(),
     nmsgs: 0,
   };
   memset(

@@ -2315,7 +2315,7 @@ unsafe extern "C" fn putprompt(mut s: *const libc::c_char) {
 unsafe extern "C" fn setprompt_if(mut do_set: smallint, mut whichprompt: libc::c_int) {
   let mut prompt: *const libc::c_char = 0 as *const libc::c_char;
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -5206,7 +5206,7 @@ unsafe extern "C" fn ash_arith(mut s: *const libc::c_char) -> arith_t {
     errmsg: 0 as *const libc::c_char,
     lookupvar: None,
     setvar: None,
-    list_of_recursed_names: 0 as *mut libc::c_void,
+    list_of_recursed_names: std::ptr::null_mut(),
   };
   let mut result: arith_t = 0;
   math_state.lookupvar =
@@ -5833,7 +5833,7 @@ unsafe extern "C" fn expbackq(mut cmd: *mut node, mut flag: libc::c_int) {
     fd: 0,
     nleft: 0,
     buf: std::ptr::null_mut::<libc::c_char>(),
-    jp: 0 as *mut job,
+    jp: std::ptr::null_mut(),
   };
   let mut i: libc::c_int = 0;
   let mut buf: [libc::c_char; 128] = [0; 128];
@@ -5842,7 +5842,7 @@ unsafe extern "C" fn expbackq(mut cmd: *mut node, mut flag: libc::c_int) {
   let mut startloc: libc::c_int = 0;
   let mut syntax: libc::c_int = if flag & 0x100i32 != 0 { 1i32 } else { 0 };
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -7516,7 +7516,7 @@ unsafe extern "C" fn patmatch(
  */
 unsafe extern "C" fn casematch(mut pattern: *mut node, mut val: *mut libc::c_char) -> libc::c_int {
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -8510,7 +8510,7 @@ unsafe extern "C" fn evaltree(mut n: *mut node, mut flags: libc::c_int) -> libc:
   let mut checkexit: libc::c_int = 0;
   let mut evalfn: Option<unsafe extern "C" fn(_: *mut node, _: libc::c_int) -> libc::c_int> = None;
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -9067,7 +9067,7 @@ unsafe extern "C" fn evalfun(
     optind: 0,
     optoff: 0,
     malloced: 0,
-    p: 0 as *mut *mut libc::c_char,
+    p: std::ptr::null_mut(),
   };
   let mut savehandler: *mut jmploc = std::ptr::null_mut();
   let mut jmploc: jmploc = jmploc {
@@ -10768,7 +10768,7 @@ unsafe extern "C" fn chkmail() {
   let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut new_hash: libc::c_uint = 0;
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -12251,8 +12251,8 @@ unsafe extern "C" fn readtoken1(
       varnest: 0,
       dqvarnest: 0,
       parenlevel: 0,
-      prev: 0 as *mut synstack_t,
-      next: 0 as *mut synstack_t,
+      prev: std::ptr::null_mut(),
+      next: std::ptr::null_mut(),
     };
     init.set_innerdq(0);
     init.set_varpushed(0);
@@ -12557,8 +12557,8 @@ unsafe extern "C" fn readtoken1(
                 varnest: 0,
                 dqvarnest: 0,
                 parenlevel: 0,
-                prev: 0 as *mut synstack_t,
-                next: 0 as *mut synstack_t,
+                prev: std::ptr::null_mut(),
+                next: std::ptr::null_mut(),
               };
               poopstack.set_innerdq(0);
               poopstack.set_varpushed(0);
@@ -12780,8 +12780,8 @@ unsafe extern "C" fn readtoken1(
                   varnest: 0,
                   dqvarnest: 0,
                   parenlevel: 0,
-                  prev: 0 as *mut synstack_t,
-                  next: 0 as *mut synstack_t,
+                  prev: std::ptr::null_mut(),
+                  next: std::ptr::null_mut(),
                 };
                 init.set_innerdq(0);
                 init.set_varpushed(0);
@@ -13476,7 +13476,7 @@ unsafe extern "C" fn evalstring(mut s: *mut libc::c_char, mut flags: libc::c_int
   let mut ex: libc::c_int = 0;
   let mut n: *mut node = std::ptr::null_mut();
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -13571,7 +13571,7 @@ unsafe extern "C" fn evalcmd(
 unsafe extern "C" fn cmdloop(mut top: libc::c_int) -> libc::c_int {
   let mut n: *mut node = std::ptr::null_mut();
   let mut smark: stackmark = stackmark {
-    stackp: 0 as *mut stack_block,
+    stackp: std::ptr::null_mut(),
     stacknxt: std::ptr::null_mut::<libc::c_char>(),
     stacknleft: 0,
   };
@@ -13676,7 +13676,7 @@ unsafe extern "C" fn dotcmd(
     optind: 0,
     optoff: 0,
     malloced: 0,
-    p: 0 as *mut *mut libc::c_char,
+    p: std::ptr::null_mut(),
   };
   //???
   //	struct strlist *sp;
@@ -14331,7 +14331,7 @@ unsafe extern "C" fn readcmd(
   let mut params: builtin_read_params = builtin_read_params {
     read_flags: 0,
     setvar: None,
-    argv: 0 as *mut *mut libc::c_char,
+    argv: std::ptr::null_mut(),
     ifs: 0 as *const libc::c_char,
     opt_n: 0 as *const libc::c_char,
     opt_p: 0 as *const libc::c_char,

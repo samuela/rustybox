@@ -247,7 +247,7 @@ unsafe extern "C" fn arith_lookup_val(
     if !p.is_null() {
       let mut cur: *mut remembered_name = std::ptr::null_mut();
       let mut cur_save: remembered_name = remembered_name {
-        next: 0 as *mut remembered_name,
+        next: std::ptr::null_mut(),
         var: 0 as *const libc::c_char,
       };
       /* did we already see this name?

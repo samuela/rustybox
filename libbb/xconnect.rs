@@ -787,9 +787,9 @@ unsafe extern "C" fn str2sockaddr(
     ai_socktype: 0,
     ai_protocol: 0,
     ai_addrlen: 0,
-    ai_addr: 0 as *mut sockaddr,
+    ai_addr: std::ptr::null_mut(),
     ai_canonname: std::ptr::null_mut::<libc::c_char>(),
-    ai_next: 0 as *mut addrinfo,
+    ai_next: std::ptr::null_mut(),
   };
   if 0 != 0 && !is_prefixed_with(host, b"local:\x00" as *const u8 as *const libc::c_char).is_null()
   {

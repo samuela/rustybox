@@ -357,7 +357,7 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
   newfd = accept(
     fd,
     __SOCKADDR_ARG {
-      __sockaddr__: 0 as *mut libc::c_void as *mut sockaddr,
+      __sockaddr__: std::ptr::null_mut(),
     },
     0 as *mut socklen_t,
   );

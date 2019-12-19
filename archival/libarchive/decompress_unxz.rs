@@ -2399,7 +2399,7 @@ pub unsafe extern "C" fn unpack_xz_stream(
     in_0: 0 as *const u8,
     in_pos: 0,
     in_size: 0,
-    out: 0 as *mut u8,
+    out: std::ptr::null_mut(),
     out_pos: 0,
     out_size: 0,
   };

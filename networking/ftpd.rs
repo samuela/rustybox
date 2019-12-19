@@ -673,7 +673,7 @@ unsafe extern "C" fn ftpdataio_get_pasv_fd() -> libc::c_int {
   remote_fd = accept(
     (*ptr_to_globals).pasv_listen_fd,
     __SOCKADDR_ARG {
-      __sockaddr__: 0 as *mut libc::c_void as *mut sockaddr,
+      __sockaddr__: std::ptr::null_mut(),
     },
     0 as *mut socklen_t,
   );
