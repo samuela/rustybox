@@ -25,7 +25,7 @@ pub unsafe extern "C" fn find_list_entry(
     }
     list = (*list).link
   }
-  return 0 as *const llist_t;
+  return std::ptr::null();
 }
 
 /* Same, but compares only path components present in pattern
@@ -78,5 +78,5 @@ pub unsafe extern "C" fn find_list_entry2(
     }
     list = (*list).link
   }
-  return 0 as *const llist_t;
+  return std::ptr::null();
 }

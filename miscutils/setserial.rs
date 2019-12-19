@@ -180,7 +180,7 @@ unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *c
     48 => idx = CMD_SPD_CUST as libc::c_int,
     _ => {
       if (mode as libc::c_uint) < PRINT_FEDBACK as libc::c_int as libc::c_uint {
-        return 0 as *const libc::c_char;
+        return std::ptr::null();
       }
       idx = CMD_SPD_NORMAL as libc::c_int
     }

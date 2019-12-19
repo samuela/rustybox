@@ -276,7 +276,7 @@ unsafe extern "C" fn arith_lookup_val(
     /* treat undefined var as 0 */
     (*t).val = 0 as arith_t
   }
-  return 0 as *const libc::c_char;
+  return std::ptr::null();
 }
 /* "Applying" a token means performing it on the top elements on the integer
  * stack. For an unary operator it will only change the top element, but a
@@ -493,7 +493,7 @@ unsafe extern "C" fn arith_apply(
             (*top_of_stack).val = rez;
             /* Erase var name, it is just a number now */
             (*top_of_stack).var = std::ptr::null_mut::<libc::c_char>();
-            return 0 as *const libc::c_char;
+            return std::ptr::null();
           }
         }
       }

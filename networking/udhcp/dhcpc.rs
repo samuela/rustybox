@@ -684,7 +684,7 @@ unsafe extern "C" fn valid_domain_label(mut label: *const libc::c_char) -> *cons
   let mut ch: libc::c_uchar = 0;
   //unsigned pos = 0;
   if *label.offset(0) as libc::c_int == '-' as i32 {
-    return 0 as *const libc::c_char;
+    return std::ptr::null();
   }
   loop {
     ch = *label as libc::c_uchar;
@@ -699,7 +699,7 @@ unsafe extern "C" fn valid_domain_label(mut label: *const libc::c_char) -> *cons
         //	return NULL;
         /* DNS allows only '-', but we are more permissive */
         if ch as libc::c_int != '-' as i32 && ch as libc::c_int != '_' as i32 {
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
       }
     }

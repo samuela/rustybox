@@ -196,7 +196,7 @@ unsafe extern "C" fn obscure_msg(
       return b"similar to old password\x00" as *const u8 as *const libc::c_char;
     }
   }
-  return 0 as *const libc::c_char;
+  return std::ptr::null();
 }
 
 /*

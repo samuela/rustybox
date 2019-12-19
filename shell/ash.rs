@@ -2037,7 +2037,7 @@ unsafe extern "C" fn lookupvar(mut name: *const libc::c_char) -> *const libc::c_
       return var_end((*v).var_text);
     }
   }
-  return 0 as *const libc::c_char;
+  return std::ptr::null();
 }
 unsafe extern "C" fn reinit_unicode_for_ash() {
   if false || 0 != 0 {
@@ -2366,7 +2366,7 @@ unsafe extern "C" fn updatepwd(mut dir: *const libc::c_char) -> *const libc::c_c
   new = (*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void as *mut libc::c_char;
   if *dir as libc::c_int != '/' as i32 {
     if (*ash_ptr_to_globals_misc).curdir == (*ash_ptr_to_globals_misc).nullstr.as_mut_ptr() {
-      return 0 as *const libc::c_char;
+      return std::ptr::null();
     }
     new = stack_putstr((*ash_ptr_to_globals_misc).curdir, new)
   }
@@ -6520,7 +6520,7 @@ unsafe extern "C" fn subevalvar(
       //bb_error_msg("str:'%s' repl:'%s'", str, repl);
       /* If there's no pattern to match, return the expansion unmolested */
       if *str.offset(0) as libc::c_int == '\u{0}' as i32 {
-        return 0 as *const libc::c_char;
+        return std::ptr::null();
       }
       len_0 = 0;
       idx = startp;
