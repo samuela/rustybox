@@ -908,7 +908,7 @@ unsafe extern "C" fn find_lease_by_mac(mut mac: *const u8) -> *mut dyn_lease {
     }
     i = i.wrapping_add(1)
   }
-  return 0 as *mut dyn_lease;
+  return std::ptr::null_mut();
 }
 /* Find the first lease that matches IP, NULL is no match */
 unsafe extern "C" fn find_lease_by_nip(mut nip: u32) -> *mut dyn_lease {
@@ -920,7 +920,7 @@ unsafe extern "C" fn find_lease_by_nip(mut nip: u32) -> *mut dyn_lease {
     }
     i = i.wrapping_add(1)
   }
-  return 0 as *mut dyn_lease;
+  return std::ptr::null_mut();
 }
 /* Check if the IP is taken; if it is, add it to the lease table */
 unsafe extern "C" fn nobody_responds_to_arp(

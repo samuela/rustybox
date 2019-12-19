@@ -523,7 +523,7 @@ unsafe extern "C" fn init_literal() -> *mut s_stat {
 }
 unsafe extern "C" fn init_cr(mut _param: *const libc::c_char) -> *mut s_stat {
   (*ptr_to_globals).final_char = '\r' as i32 as libc::c_char;
-  return 0 as *mut s_stat;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
   let mut data: [ullong; 7] = [

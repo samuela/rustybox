@@ -704,7 +704,7 @@ unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
       a = (*a).next
     }
   }
-  return 0 as *mut init_action;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn waitfor(mut pid: pid_t) {
   /* waitfor(run(x)): protect against failed fork inside run() */

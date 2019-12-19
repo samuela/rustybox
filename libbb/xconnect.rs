@@ -609,7 +609,7 @@ unsafe extern "C" fn get_lsa(
   let mut lsa_ptr: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
   if get_name.expect("non-null function pointer")(fd, &mut lsa.u.sa, &mut lsa.len) != 0 {
-    return 0 as *mut len_and_sockaddr;
+    return std::ptr::null_mut();
   }
   lsa_ptr = xzalloc((LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add(lsa.len) as size_t)
     as *mut len_and_sockaddr;
@@ -826,7 +826,7 @@ unsafe extern "C" fn str2sockaddr(
       if ai_flags & 0x2i32 != 0 {
         xfunc_die();
       }
-      return 0 as *mut len_and_sockaddr;
+      return std::ptr::null_mut();
     }
   } else {
     cp = strrchr(host, ':' as i32);
@@ -864,7 +864,7 @@ unsafe extern "C" fn str2sockaddr(
           if ai_flags & 0x2i32 != 0 {
             xfunc_die();
           }
-          return 0 as *mut len_and_sockaddr;
+          return std::ptr::null_mut();
         }
       }
       _ => {}

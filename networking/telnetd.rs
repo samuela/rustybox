@@ -615,7 +615,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
     close(fd);
     /* sock will be closed by caller */
     bb_simple_perror_msg(b"vfork\x00" as *const u8 as *const libc::c_char);
-    return 0 as *mut tsession;
+    return std::ptr::null_mut();
   }
   if pid > 0 {
     /* Parent */

@@ -94,7 +94,7 @@ pub unsafe extern "C" fn config_open2(
   let mut parser: *mut parser_t = std::ptr::null_mut();
   fp = fopen_func.expect("non-null function pointer")(filename);
   if fp.is_null() {
-    return 0 as *mut parser_t;
+    return std::ptr::null_mut();
   }
   parser = xzalloc(::std::mem::size_of::<parser_t>() as libc::c_ulong) as *mut parser_t;
   (*parser).fp = fp;

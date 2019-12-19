@@ -1659,7 +1659,7 @@ unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut
   /* don't use [xw]fopen here, handle error ourself */
   list_stream = crate::libbb::wfopen::fopen_for_read(filename);
   if list_stream.is_null() {
-    return 0 as *mut *mut libc::c_char;
+    return std::ptr::null_mut();
   }
   file_list = std::ptr::null_mut();
   count = 0;

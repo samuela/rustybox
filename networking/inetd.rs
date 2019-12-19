@@ -1022,7 +1022,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
       );
       if argc == 0 {
         free(sep as *mut libc::c_void);
-        return 0 as *mut servtab_t;
+        return std::ptr::null_mut();
       }
       /* [host:]service socktype proto wait user[:group] prog [args] */
       /* Check for "host:...." line */

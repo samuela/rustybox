@@ -297,7 +297,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
     }
   } else {
     if len > 0x10000i32 as libc::c_ulong {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     dst = (*id).seekbuf;
     /* check if we need to read */
@@ -342,7 +342,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
           }
           /* id->seekbuf_len or id->sbbuf_len is wrong now! Fixing. */
           volume_id_free_buffer(id);
-          return 0 as *mut libc::c_void;
+          return std::ptr::null_mut();
         }
       }
     }

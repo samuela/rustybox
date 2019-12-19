@@ -1660,7 +1660,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
         b", no peer selected\x00" as *const u8 as *const libc::c_char,
       );
     }
-    return 0 as *mut peer_t;
+    return std::ptr::null_mut();
   }
   //TODO: sorting does not seem to be done in reference code
   qsort(
@@ -1740,7 +1740,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
           b", no peer selected\x00" as *const u8 as *const libc::c_char,
         );
       }
-      return 0 as *mut peer_t;
+      return std::ptr::null_mut();
     }
   }
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
@@ -1797,7 +1797,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
         b", no peer selected\x00" as *const u8 as *const libc::c_char,
       );
     }
-    return 0 as *mut peer_t;
+    return std::ptr::null_mut();
   }
   //looks like this is ONLY used by the fact that later we pick survivor[0].
   //we can avoid sorting then, just find the minimum once!

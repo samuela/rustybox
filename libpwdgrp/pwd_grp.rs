@@ -459,7 +459,7 @@ unsafe extern "C" fn massage_data_for_non_r_func(
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_void {
   if buf.is_null() {
-    return 0 as *mut libc::c_void;
+    return std::ptr::null_mut();
   }
   free((*db).malloced as *mut libc::c_void);
   /* We enlarge buf and move string data up, freeing space
@@ -581,7 +581,7 @@ unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
   if (*db).fp.is_null() {
     (*db).fp = fopen_for_read((*db).filename);
     if (*db).fp.is_null() {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     close_on_exec_on(fileno_unlocked((*db).fp));
   }

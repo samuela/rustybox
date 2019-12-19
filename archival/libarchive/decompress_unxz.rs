@@ -1467,7 +1467,7 @@ unsafe extern "C" fn xz_dec_lzma2_create(
   let mut s: *mut xz_dec_lzma2 =
     malloc(::std::mem::size_of::<xz_dec_lzma2>() as libc::c_ulong) as *mut xz_dec_lzma2;
   if s.is_null() {
-    return 0 as *mut xz_dec_lzma2;
+    return std::ptr::null_mut();
   }
   (*s).dict.mode = mode;
   (*s).dict.size_max = dict_max;
@@ -2334,13 +2334,13 @@ unsafe extern "C" fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool 
 unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: u32) -> *mut xz_dec {
   let mut s: *mut xz_dec = malloc(::std::mem::size_of::<xz_dec>() as libc::c_ulong) as *mut xz_dec;
   if s.is_null() {
-    return 0 as *mut xz_dec;
+    return std::ptr::null_mut();
   }
   (*s).mode = mode;
   (*s).lzma2 = xz_dec_lzma2_create(mode, dict_max);
   if (*s).lzma2.is_null() {
     free(s as *mut libc::c_void);
-    return 0 as *mut xz_dec;
+    return std::ptr::null_mut();
   } else {
     xz_dec_reset(s);
     return s;

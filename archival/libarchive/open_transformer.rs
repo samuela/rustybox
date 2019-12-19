@@ -379,7 +379,7 @@ unsafe extern "C" fn open_transformer(
   let mut fd: libc::c_int = 0;
   fd = open(fname, 0);
   if fd < 0 {
-    return 0 as *mut transformer_state_t;
+    return std::ptr::null_mut();
   }
   /* .lzma has no header/signature, can only detect it by extension */
   if !is_suffixed_with(fname, b".lzma\x00" as *const u8 as *const libc::c_char).is_null() {
@@ -671,7 +671,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
   xstate = open_transformer(fname, 0);
   if xstate.is_null() {
     /* file open error */
-    return 0 as *mut libc::c_void;
+    return std::ptr::null_mut();
   }
   image = std::ptr::null_mut::<libc::c_char>();
   if (*xstate).xformer.is_some() {

@@ -235,7 +235,7 @@ unsafe extern "C" fn get_ptr_to_tcflag(
     return (mode as *mut libc::c_char)
       .offset(tcflag_offsets[type_0 as usize] as libc::c_int as isize) as *mut tcflag_t;
   }
-  return 0 as *mut tcflag_t;
+  return std::ptr::null_mut();
 }
 static mut mode_name: [libc::c_char; 524] = [
   101, 118, 101, 110, 112, 0, 112, 97, 114, 105, 116, 121, 0, 111, 100, 100, 112, 0, 110, 108, 0,

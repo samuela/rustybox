@@ -1845,7 +1845,7 @@ unsafe extern "C" fn find_iface_state(
     }
     search = (*search).link
   }
-  return 0 as *mut llist_t;
+  return std::ptr::null_mut();
 }
 /* read the previous state from the state file */
 unsafe extern "C" fn read_iface_state() -> *mut llist_t {

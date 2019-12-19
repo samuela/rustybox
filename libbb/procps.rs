@@ -576,7 +576,7 @@ pub unsafe extern "C" fn procps_scan(
         entry = readdir((*sp).dir);
         if entry.is_null() {
           free_procps_scan(sp);
-          return 0 as *mut procps_status_t;
+          return std::ptr::null_mut();
         }
       }
       _ => {}

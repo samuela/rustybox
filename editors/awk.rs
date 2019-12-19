@@ -801,7 +801,7 @@ unsafe extern "C" fn hash_search(
     }
     hi = (*hi).next
   }
-  return 0 as *mut libc::c_void;
+  return std::ptr::null_mut();
 }
 /* grow hash if it becomes too big */
 unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
@@ -21275,7 +21275,7 @@ unsafe extern "C" fn next_input_file() -> *mut rstream {
       >= getvar_i((*(ptr_to_globals as *mut globals2)).intvar[ARGC as libc::c_int as usize])
     {
       if (*(ptr_to_globals as *mut globals2)).next_input_file__files_happen != 0 {
-        return 0 as *mut rstream;
+        return std::ptr::null_mut();
       }
       fname = b"-\x00" as *const u8 as *const libc::c_char;
       F = stdin;

@@ -236,7 +236,7 @@ unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
       im = (*im).next
     }
   }
-  return 0 as *mut idxmap;
+  return std::ptr::null_mut();
 }
 
 #[no_mangle]

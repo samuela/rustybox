@@ -2721,7 +2721,7 @@ unsafe extern "C" fn lookupalias(
 ) -> *mut alias {
   let mut ap: *mut alias = *__lookupalias(name);
   if check != 0 && !ap.is_null() && (*ap).flag & 1i32 != 0 {
-    return 0 as *mut alias;
+    return std::ptr::null_mut();
   }
   return ap;
 }
@@ -8120,7 +8120,7 @@ unsafe extern "C" fn parse_command_args(
     argv = argv.offset(1);
     cp = *argv;
     if cp.is_null() {
-      return 0 as *mut *mut libc::c_char;
+      return std::ptr::null_mut();
     }
     let fresh62 = cp;
     cp = cp.offset(1);
@@ -8136,7 +8136,7 @@ unsafe extern "C" fn parse_command_args(
     if c as libc::c_int == '-' as i32 && *cp == 0 {
       argv = argv.offset(1);
       if (*argv).is_null() {
-        return 0 as *mut *mut libc::c_char;
+        return std::ptr::null_mut();
       }
       break;
     } else {
@@ -8149,7 +8149,7 @@ unsafe extern "C" fn parse_command_args(
           }
           _ => {
             /* run 'typecmd' for other options */
-            return 0 as *mut *mut libc::c_char;
+            return std::ptr::null_mut();
           }
         }
         let fresh64 = cp;
@@ -8330,7 +8330,7 @@ unsafe extern "C" fn copynodelist(mut lp: *mut nodelist) -> *mut nodelist {
 unsafe extern "C" fn copynode(mut n: *mut node) -> *mut node {
   let mut new: *mut node = std::ptr::null_mut();
   if n.is_null() {
-    return 0 as *mut node;
+    return std::ptr::null_mut();
   }
   new = funcblock as *mut node;
   funcblock = (funcblock as *mut libc::c_char)
