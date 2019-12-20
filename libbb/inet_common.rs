@@ -191,7 +191,7 @@ pub unsafe extern "C" fn INET_rresolve(
   mut netmask: u32,
 ) -> *mut libc::c_char {
   /* addr-to-name cache */
-  static mut cache: *mut addr = 0 as *const addr as *mut addr; /* no '+ 1', it's already accounted for */
+  static mut cache: *mut addr = 0 as *mut addr; /* no '+ 1', it's already accounted for */
   let mut pn: *mut addr = std::ptr::null_mut();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nip: u32 = 0;

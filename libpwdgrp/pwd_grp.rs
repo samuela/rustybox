@@ -201,7 +201,7 @@ static mut const_sp_db: const_passdb = const_passdb {
   numfields: 0,
   size_of: 0,
 };
-static mut ptr_to_statics: *mut statics = 0 as *const statics as *mut statics;
+static mut ptr_to_statics: *mut statics = 0 as *mut statics;
 unsafe extern "C" fn get_S() -> *mut statics {
   if ptr_to_statics.is_null() {
     ptr_to_statics = xzalloc(::std::mem::size_of::<statics>() as libc::c_ulong) as *mut statics;
