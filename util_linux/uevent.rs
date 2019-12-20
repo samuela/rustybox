@@ -109,7 +109,7 @@ pub unsafe extern "C" fn uevent_main(
       }
       if !strchr(s, '=' as i32).is_null() && idx < MAX_ENV as libc::c_int {
         let fresh0 = idx;
-        idx = idx + 1;
+        idx += 1;
         let ref mut fresh1 =
           *(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh0 as isize);
         *fresh1 = s
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn uevent_main(
         .is_null()
       {
         let fresh3 = idx;
-        idx = idx + 1;
+        idx += 1;
         putenv(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh3 as isize));
       }
       spawn_and_wait(argv);
@@ -134,7 +134,7 @@ pub unsafe extern "C" fn uevent_main(
         .is_null()
       {
         let fresh4 = idx;
-        idx = idx + 1;
+        idx += 1;
         bb_unsetenv(
           *(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh4 as isize),
         );

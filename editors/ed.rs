@@ -467,7 +467,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
       return;
     }
     let fresh2 = num;
-    num = num + 1;
+    num += 1;
     if insertLine(fresh2, buf.as_mut_ptr(), len) == 0 {
       return;
     }
@@ -610,7 +610,7 @@ unsafe extern "C" fn writeLines(
   }
   loop {
     let fresh3 = num1;
-    num1 = num1 + 1;
+    num1 += 1;
     if !(fresh3 <= num2) {
       break;
     }
@@ -669,7 +669,7 @@ unsafe extern "C" fn printLines(
         (*lp).len as size_t,
       );
       let fresh4 = num1;
-      num1 = num1 + 1;
+      num1 += 1;
       setCurNum(fresh4);
       lp = (*lp).next
     } else {
@@ -695,7 +695,7 @@ unsafe extern "C" fn printLines(
       }
       fputs_unlocked(b"$\n\x00" as *const u8 as *const libc::c_char, stdout);
       let fresh7 = num1;
-      num1 = num1 + 1;
+      num1 += 1;
       setCurNum(fresh7);
       lp = (*lp).next
     }

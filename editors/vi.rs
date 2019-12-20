@@ -723,12 +723,12 @@ unsafe extern "C" fn format_line(mut src: *mut libc::c_char) -> *mut libc::c_cha
           //      co %    8     !=     7
           while co % (*ptr_to_globals).tabstop != (*ptr_to_globals).tabstop - 1i32 {
             let fresh1 = co;
-            co = co + 1;
+            co += 1;
             *dest.offset(fresh1 as isize) = c as libc::c_char
           }
         } else {
           let fresh2 = co;
-          co = co + 1;
+          co += 1;
           *dest.offset(fresh2 as isize) = '^' as i32 as libc::c_char;
           if c as libc::c_int == 0x7fi32 {
             c = '?' as i32 as libc::c_uchar
@@ -740,7 +740,7 @@ unsafe extern "C" fn format_line(mut src: *mut libc::c_char) -> *mut libc::c_cha
       }
     }
     let fresh3 = co;
-    co = co + 1;
+    co += 1;
     *dest.offset(fresh3 as isize) = c as libc::c_char;
     // discard scrolled-off-to-the-left portion,
     // in tabstop-sized pieces

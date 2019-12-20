@@ -822,7 +822,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
       }
       cpu = strtoul(cp.offset(3), &mut next, 10i32) as libc::c_uint;
       let fresh0 = iindex;
-      iindex = iindex + 1;
+      iindex += 1;
       *cpu_index.as_mut_ptr().offset(fresh0 as isize) = cpu as libc::c_int
     }
     if iindex != 0 {

@@ -8100,7 +8100,7 @@ unsafe extern "C" fn typecmd(
   }
   while !(*argv.offset(i as isize)).is_null() {
     let fresh61 = i;
-    i = i + 1;
+    i += 1;
     err |= describe_command(
       *argv.offset(fresh61 as isize),
       0 as *const libc::c_char,

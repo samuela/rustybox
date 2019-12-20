@@ -740,7 +740,7 @@ unsafe extern "C" fn do_exec(
   i = 0;
   while !(*argv.as_mut_ptr().offset(i as isize)).is_null() {
     let fresh4 = i;
-    i = i + 1;
+    i += 1;
     free(*argv.as_mut_ptr().offset(fresh4 as isize) as *mut libc::c_void);
   }
   return (rc == 0) as libc::c_int;

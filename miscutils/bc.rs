@@ -3096,7 +3096,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
       match current_block {
         12039483399334584727 => {
           let fresh9 = i;
-          i = i + 1;
+          i += 1;
           let mut c: libc::c_char = *bb_common_bufsiz1.as_mut_ptr().offset(fresh9 as isize);
           if c as libc::c_int == '\u{0}' as i32 {
             bc_vec_string(vec, n as size_t, bb_common_bufsiz1.as_mut_ptr());

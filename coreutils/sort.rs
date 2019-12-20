@@ -398,7 +398,7 @@ unsafe extern "C" fn get_key(
         || bb_ascii_isalnum(*str.offset(end as isize) as libc::c_uchar) != 0
       {
         let fresh0 = start;
-        start = start + 1;
+        start += 1;
         *str.offset(fresh0 as isize) = *str.offset(end as isize)
       }
       end += 1
@@ -414,7 +414,7 @@ unsafe extern "C" fn get_key(
         <= (0x7ei32 - 0x20i32) as libc::c_uint
       {
         let fresh1 = start;
-        start = start + 1;
+        start += 1;
         *str.offset(fresh1 as isize) = *str.offset(end as isize)
       }
       end += 1
@@ -680,7 +680,7 @@ pub unsafe extern "C" fn sort_main(
         let mut idx: *const libc::c_char = std::ptr::null();
         if *str_k as libc::c_int == ',' as i32 && {
           let fresh2 = i;
-          i = i + 1;
+          i += 1;
           (fresh2) == 0
         } {
           str_k = str_k.offset(1);
@@ -738,7 +738,7 @@ pub unsafe extern "C" fn sort_main(
         linecount,
       ) as *mut *mut libc::c_char;
       let fresh3 = linecount;
-      linecount = linecount + 1;
+      linecount += 1;
       let ref mut fresh4 = *lines.offset(fresh3 as isize);
       *fresh4 = line
     }

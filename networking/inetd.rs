@@ -1212,7 +1212,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                       !arg.is_null()
                     } {
                       let fresh9 = argc;
-                      argc = argc + 1;
+                      argc += 1;
                       (*sep).se_argv[fresh9 as usize] = xstrdup(arg)
                     }
                     /* Some inetd.conf files have no argv's, not even argv[0].

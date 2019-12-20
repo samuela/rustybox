@@ -927,7 +927,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
       && *(*argv.offset(optind as isize)).offset(0) as libc::c_int != '-' as i32
     {
       let fresh0 = optind;
-      optind = optind + 1;
+      optind += 1;
       val_str = *argv.offset(fresh0 as isize)
     }
     getrlimit(

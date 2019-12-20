@@ -507,7 +507,7 @@ unsafe extern "C" fn cmdio_write(mut status_str: u32, mut str: *const libc::c_ch
     '\u{0}' as i32 as libc::c_char,
   ) as libc::c_int; /* tack on trailing '\n' */
   let fresh1 = len;
-  len = len + 1;
+  len += 1;
   *response.offset(fresh1 as isize) = '\n' as i32 as libc::c_char;
   xwrite(1i32, response as *const libc::c_void, len as size_t);
   if (*ptr_to_globals).verbose > 1i32 as libc::c_uint {
@@ -573,7 +573,7 @@ unsafe extern "C" fn handle_pwd() {
     cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
-  
+
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,
@@ -1447,7 +1447,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
         1109700713171191020 => {
           /* NUL => '\n' */
           let fresh8 = dst;
-          dst = dst + 1;
+          dst += 1;
           *cmd.offset(fresh8 as isize) = if *cmd.offset(src as isize) as libc::c_int != 0 {
             *cmd.offset(src as isize) as libc::c_int
           } else {

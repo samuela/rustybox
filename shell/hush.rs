@@ -8175,7 +8175,7 @@ unsafe extern "C" fn expand_vars_to_list(
             while !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null() {
               n = expand_on_ifs(output, n, *(*ptr_to_globals).global_argv.offset(i as isize));
               let fresh31 = i;
-              i = i + 1;
+              i += 1;
               if *(*(*ptr_to_globals).global_argv.offset(fresh31 as isize)).offset(0) as libc::c_int
                 != 0
                 && !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null()
@@ -12228,7 +12228,7 @@ unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_
       let mut m: libc::c_int = 1i32;
       while m <= n {
         let fresh50 = m;
-        m = m + 1;
+        m += 1;
         free(*(*ptr_to_globals).global_argv.offset(fresh50 as isize) as *mut libc::c_void);
       }
     }

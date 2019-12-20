@@ -903,7 +903,7 @@ pub unsafe extern "C" fn read_base64(
           break;
         }
         let fresh7 = in_count;
-        in_count = in_count + 1;
+        in_count += 1;
         in_buf[fresh7 as usize] = ch as libc::c_char
       }
     }

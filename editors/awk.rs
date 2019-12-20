@@ -930,7 +930,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -2981,7 +2981,7 @@ unsafe extern "C" fn awk_sub(
       s = repl;
       while *s != 0 {
         let fresh55 = residx;
-        residx = residx + 1;
+        residx += 1;
         let ref mut fresh56 = *resbuf.offset(fresh55 as isize);
         *fresh56 = *s;
         let mut c: libc::c_char = *fresh56;
@@ -3000,7 +3000,7 @@ unsafe extern "C" fn awk_sub(
             }
             if nbs % 2i32 != 0 {
               let fresh57 = residx;
-              residx = residx + 1;
+              residx += 1;
               *resbuf.offset(fresh57 as isize) = c
             } else {
               let mut n: libc::c_int = pmatch[j as usize].rm_eo - pmatch[j as usize].rm_so;

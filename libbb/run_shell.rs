@@ -512,7 +512,7 @@ pub unsafe extern "C" fn run_shell(
       let fresh3 = additional_args;
       additional_args = additional_args.offset(1);
       let fresh4 = cnt;
-      cnt = cnt + 1;
+      cnt += 1;
       let ref mut fresh5 = *args.offset(fresh4 as isize);
       *fresh5 = *fresh3;
       if (*fresh5).is_null() {

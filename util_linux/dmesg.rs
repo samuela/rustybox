@@ -131,14 +131,14 @@ pub unsafe extern "C" fn dmesg_main(
       if last == '\n' as i32 && *buf.offset(in_0 as isize) as libc::c_int == '<' as i32 {
         loop {
           let fresh0 = in_0;
-          in_0 = in_0 + 1;
+          in_0 += 1;
           if !(*buf.offset(fresh0 as isize) as libc::c_int != '>' as i32 && in_0 < len) {
             break;
           }
         }
       } else {
         let fresh1 = in_0;
-        in_0 = in_0 + 1;
+        in_0 += 1;
         last = *buf.offset(fresh1 as isize) as libc::c_int;
         putchar_unlocked(last);
       }

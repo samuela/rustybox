@@ -726,7 +726,7 @@ unsafe extern "C" fn getgrouplist_internal(
                 ngroups,
               ) as *mut gid_t;
               let fresh5 = ngroups;
-              ngroups = ngroups + 1;
+              ngroups += 1;
               *group_list.offset(fresh5 as isize) = group.gr_gid;
               break;
             }

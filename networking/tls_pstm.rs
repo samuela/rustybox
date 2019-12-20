@@ -2230,7 +2230,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
   x = 0;
   while (if t.used == 0 { 1i32 } else { 0 }) == 0 {
     let fresh17 = x;
-    x = x + 1;
+    x += 1;
     *b.offset(fresh17 as isize) = (*t.dp.offset(0) & 255i32 as libc::c_uint) as libc::c_uchar;
     pstm_div_2d(&mut t, 8i32, &mut t, 0 as *mut pstm_int);
     res = 0;

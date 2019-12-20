@@ -592,7 +592,7 @@ unsafe extern "C" fn loop_through_files(
       rpm_getstr(1117i32, count),
     );
     let fresh31 = count;
-    count = count + 1;
+    count += 1;
     fileaction.expect("non-null function pointer")(filename, fresh31);
     free(filename as *mut libc::c_void);
   }

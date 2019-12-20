@@ -416,10 +416,10 @@ pub unsafe extern "C" fn date_main(
       /* TODO: if (ifmt==4) i += sprintf(&fmt_dt2str[i], ",%09u", nanoseconds); */
       {
         let fresh0 = i;
-        i = i + 1;
+        i += 1;
         *fmt_dt2str.offset(fresh0 as isize) = '%' as i32 as libc::c_char;
         let fresh1 = i;
-        i = i + 1;
+        i += 1;
         *fmt_dt2str.offset(fresh1 as isize) = if opt & OPT_UTC as libc::c_int as libc::c_uint != 0 {
           'Z' as i32
         } else {

@@ -207,7 +207,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
         i,
       ) as *mut pid_t;
       let fresh0 = i;
-      i = i + 1;
+      i += 1;
       *pidList.offset(fresh0 as isize) = (*p).pid as pid_t
     }
   }

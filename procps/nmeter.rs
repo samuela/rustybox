@@ -1057,7 +1057,7 @@ unsafe extern "C" fn init_time(mut param: *const libc::c_char) -> *mut s_stat {
   (*s).scale = 1i32 as libc::c_uint;
   loop {
     let fresh7 = prec;
-    prec = prec + 1;
+    prec += 1;
     if !(fresh7 < 6i32) {
       break;
     }

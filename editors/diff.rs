@@ -397,7 +397,7 @@ unsafe extern "C" fn stone(
             *clist.offset(clen as isize) = cand;
             tc = *klist.offset(l as isize);
             let fresh0 = clen;
-            clen = clen + 1;
+            clen += 1;
             *klist.offset(l as isize) = fresh0;
             if l <= k {
               cand.pred = tc;
@@ -439,11 +439,11 @@ unsafe extern "C" fn equiv(
   while i <= n && j <= m {
     if (*a.offset(i as isize)).value < (*b.offset(j as isize)).value {
       let fresh1 = i;
-      i = i + 1;
+      i += 1;
       (*a.offset(fresh1 as isize)).value = 0 as libc::c_uint
     } else if (*a.offset(i as isize)).value == (*b.offset(j as isize)).value {
       let fresh2 = i;
-      i = i + 1;
+      i += 1;
       (*a.offset(fresh2 as isize)).value = j as libc::c_uint
     } else {
       j += 1
@@ -451,7 +451,7 @@ unsafe extern "C" fn equiv(
   }
   while i <= n {
     let fresh3 = i;
-    i = i + 1;
+    i += 1;
     (*a.offset(fresh3 as isize)).value = 0 as libc::c_uint
   }
   (*b.offset((m + 1i32) as isize)).value = 0 as libc::c_uint;

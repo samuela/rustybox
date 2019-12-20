@@ -652,7 +652,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         /* only one conversion character if byte count */
         if (*pr).flags & 0x1i32 as libc::c_uint == 0 && (*fu).bcnt != 0 && {
           let fresh2 = nconv;
-          nconv = nconv + 1;
+          nconv += 1;
           (fresh2) != 0
         } {
           bb_simple_error_msg_and_die(

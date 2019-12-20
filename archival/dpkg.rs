@@ -1675,7 +1675,7 @@ unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut
       count,
     ) as *mut *mut libc::c_char;
     let fresh5 = count;
-    count = count + 1;
+    count += 1;
     let ref mut fresh6 = *file_list.offset(fresh5 as isize);
     *fresh6 = line
     /*file_list[count] = NULL; - xrealloc_vector did it */

@@ -936,7 +936,7 @@ unsafe extern "C" fn list_types(mut sys: *const *const libc::c_char) {
       (*sys.offset(next as isize)).offset(1),
     );
     let fresh1 = i;
-    i = i + 1;
+    i += 1;
     next = last[fresh1 as usize].wrapping_add(done);
     if i >= COLS as libc::c_int || next >= last[i as usize] {
       i = 0;

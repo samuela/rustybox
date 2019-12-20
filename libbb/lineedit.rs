@@ -911,7 +911,7 @@ unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_i
       break;
     }
     let fresh4 = npth;
-    npth = npth + 1;
+    npth += 1;
     let ref mut fresh5 = *res.offset(fresh4 as isize);
     *fresh5 = tmp
   }
@@ -1312,13 +1312,13 @@ unsafe extern "C" fn quote_special_chars(mut found: *mut libc::c_char) -> *mut l
   while *found != 0 {
     if !is_special_char(*found).is_null() {
       let fresh9 = l;
-      l = l + 1;
+      l += 1;
       *s.offset(fresh9 as isize) = '\\' as i32 as libc::c_char
     }
     let fresh10 = found;
     found = found.offset(1);
     let fresh11 = l;
-    l = l + 1;
+    l += 1;
     *s.offset(fresh11 as isize) = *fresh10
   }
   /* s[l] = '\0'; - already is */
@@ -1822,7 +1822,7 @@ unsafe extern "C" fn remember_in_history(mut str: *mut libc::c_char) {
   }
   /* i <= state->max_history-1 */
   let fresh18 = i;
-  i = i + 1;
+  i += 1;
   (*(*lineedit_ptr_to_statics).state).history[fresh18 as usize] = xstrdup(str);
   /* i <= state->max_history */
   (*(*lineedit_ptr_to_statics).state).cur_history = i;
@@ -2044,7 +2044,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2167,7 +2167,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2282,7 +2282,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2397,7 +2397,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2512,7 +2512,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2627,7 +2627,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2742,7 +2742,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2857,7 +2857,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -2972,7 +2972,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 while l < 3i32 {
                   let mut h: libc::c_uint = 0;
                   let fresh21 = l;
-                  l = l + 1;
+                  l += 1;
                   buf2[fresh21 as usize] = *prmt_ptr;
                   buf2[l as usize] = '\u{0}' as i32 as libc::c_char;
                   h = strtoul(buf2.as_mut_ptr(), &mut pbuf, 16i32) as libc::c_uint;
@@ -3154,7 +3154,7 @@ unsafe extern "C" fn lineedit_read_key(
       }
       // TODO: imagine sequence like: 0xff,<left-arrow>: we are currently losing 0xff...
       let fresh22 = unicode_idx;
-      unicode_idx = unicode_idx + 1;
+      unicode_idx += 1;
       unicode_buf[fresh22 as usize] = ic as libc::c_char;
       unicode_buf[unicode_idx as usize] = '\u{0}' as i32 as libc::c_char;
       if bb_mbstowcs(&mut wc, unicode_buf.as_mut_ptr(), 1i32 as size_t) != 1i32 as libc::c_ulong {

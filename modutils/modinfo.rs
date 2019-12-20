@@ -146,7 +146,7 @@ unsafe extern "C" fn display(mut data: *const libc::c_char, mut pattern: *const 
     let mut n: libc::c_int = printf(b"%s:\x00" as *const u8 as *const libc::c_char, pattern);
     loop {
       let fresh0 = n;
-      n = n + 1;
+      n += 1;
       if !(fresh0 < 16i32) {
         break;
       }

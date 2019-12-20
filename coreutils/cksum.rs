@@ -94,7 +94,7 @@ pub unsafe extern "C" fn cksum_main(
           bytes_read = 0;
           while t != 0 as libc::c_ulong {
             let fresh0 = bytes_read;
-            bytes_read = bytes_read + 1;
+            bytes_read += 1;
             *bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) = t as u8 as libc::c_char;
             t >>= 8i32
           }
