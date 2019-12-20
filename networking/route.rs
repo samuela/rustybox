@@ -939,11 +939,11 @@ unsafe extern "C" fn INET6_displayroutes() {
           let fresh8 = p; /* Skip and continue. */
           p = p.offset(1); /* 2nd pass */
           let fresh9 = i;
-          i = i + 1;
+          i += 1;
           addr6x[fresh9 as usize] = *fresh8;
           if (i + 1i32) % 5i32 == 0 {
             let fresh10 = i;
-            i = i + 1;
+            i += 1;
             addr6x[fresh10 as usize] = ':' as i32 as libc::c_char
           }
         }

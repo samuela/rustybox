@@ -141,7 +141,7 @@ pub unsafe extern "C" fn losetup_main(
         );
       }
       let fresh0 = n_0;
-      n_0 = n_0 + 1;
+      n_0 += 1;
       sprintf(
         dev.as_mut_ptr(),
         b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,

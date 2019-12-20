@@ -441,7 +441,7 @@ pub unsafe extern "C" fn find_mount_point(
   let mut devno_of_name: libc::dev_t = 0;
   let mut block_dev: bool = false;
   if stat(name, &mut s) != 0 {
-    return 0 as *mut mntent;
+    return std::ptr::null_mut();
   }
   devno_of_name = s.st_dev;
   block_dev = 0 != 0;
@@ -457,7 +457,7 @@ pub unsafe extern "C" fn find_mount_point(
     b"r\x00" as *const u8 as *const libc::c_char,
   );
   if mtab_fp.is_null() {
-    return 0 as *mut mntent;
+    return std::ptr::null_mut();
   }
   loop {
     mountEntry = getmntent(mtab_fp);

@@ -191,7 +191,7 @@ pub unsafe extern "C" fn INET_rresolve(
   mut netmask: u32,
 ) -> *mut libc::c_char {
   /* addr-to-name cache */
-  static mut cache: *mut addr = 0 as *const addr as *mut addr; /* no '+ 1', it's already accounted for */
+  static mut cache: *mut addr = 0 as *mut addr; /* no '+ 1', it's already accounted for */
   let mut pn: *mut addr = std::ptr::null_mut();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nip: u32 = 0;
@@ -250,9 +250,9 @@ pub unsafe extern "C" fn INET6_resolve(
     ai_socktype: 0,
     ai_protocol: 0,
     ai_addrlen: 0,
-    ai_addr: 0 as *mut sockaddr,
+    ai_addr: std::ptr::null_mut(),
     ai_canonname: std::ptr::null_mut::<libc::c_char>(),
-    ai_next: 0 as *mut addrinfo,
+    ai_next: std::ptr::null_mut(),
   };
   let mut ai: *mut addrinfo = std::ptr::null_mut();
   let mut s: libc::c_int = 0;

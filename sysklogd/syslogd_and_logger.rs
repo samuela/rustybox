@@ -930,7 +930,7 @@ unsafe extern "C" fn find_by_name(
     }
     c_set = c_set.offset(1)
   }
-  return 0 as *const CODE;
+  return std::ptr::null();
 }
 unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -> *const CODE {
   while !(*c_set).c_name.is_null() {
@@ -939,7 +939,7 @@ unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -
     }
     c_set = c_set.offset(1)
   }
-  return 0 as *const CODE;
+  return std::ptr::null();
 }
 unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   let mut current_block: u64;

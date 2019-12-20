@@ -179,7 +179,7 @@ pub unsafe extern "C" fn nandwrite_main(
   let mut oob: mtd_oob_buf = mtd_oob_buf {
     start: 0,
     length: 0,
-    ptr: 0 as *mut libc::c_uchar,
+    ptr: std::ptr::null_mut(),
   };
   let mut filebuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut opt_s: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;

@@ -740,7 +740,7 @@ unsafe extern "C" fn do_exec(
   i = 0;
   while !(*argv.as_mut_ptr().offset(i as isize)).is_null() {
     let fresh4 = i;
-    i = i + 1;
+    i += 1;
     free(*argv.as_mut_ptr().offset(fresh4 as isize) as *mut libc::c_void);
   }
   return (rc == 0) as libc::c_int;
@@ -1111,7 +1111,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
     0,
   ];
   let mut ppl: pp_locals = pp_locals {
-    appp: 0 as *mut *mut *mut action,
+    appp: std::ptr::null_mut(),
     cur_group: 0,
     cur_action: 0,
     invert_flag: false,

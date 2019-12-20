@@ -942,7 +942,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
     }
     comma = strchrnul(s, ',' as i32);
     let fresh11 = num;
-    num = num + 1;
+    num += 1;
     let ref mut fresh12 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .fs_type_list
       .offset(fresh11 as isize);
@@ -1028,7 +1028,7 @@ pub unsafe extern "C" fn fsck_main(
         num_devices,
       ) as *mut *mut libc::c_char;
       let fresh16 = num_devices;
-      num_devices = num_devices + 1;
+      num_devices += 1;
       let ref mut fresh17 = *devices.offset(fresh16 as isize);
       *fresh17 = arg
     } else if *arg.offset(0) as libc::c_int != '-' as i32 || opts_for_fsck as libc::c_int != 0 {

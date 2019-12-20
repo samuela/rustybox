@@ -652,7 +652,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         /* only one conversion character if byte count */
         if (*pr).flags & 0x1i32 as libc::c_uint == 0 && (*fu).bcnt != 0 && {
           let fresh2 = nconv;
-          nconv = nconv + 1;
+          nconv += 1;
           (fresh2) != 0
         } {
           bb_simple_error_msg_and_die(
@@ -804,7 +804,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
       || (*dumper).get__ateof as libc::c_int != 0 && next(dumper) == 0
     {
       if need == blocksize {
-        return 0 as *mut libc::c_uchar;
+        return std::ptr::null_mut();
       }
       if (*dumper).pub_0.dump_vflag as libc::c_int != ALL as libc::c_int
         && (*dumper).pub_0.dump_vflag as libc::c_int != FIRST as libc::c_int
@@ -818,7 +818,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
         if (*dumper).pub_0.dump_vflag as libc::c_int != DUP as libc::c_int {
           puts(b"*\x00" as *const u8 as *const libc::c_char);
         }
-        return 0 as *mut libc::c_uchar;
+        return std::ptr::null_mut();
       }
       memset(
         (*dumper).get__curp.offset(nread as isize) as *mut libc::c_void,

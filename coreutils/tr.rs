@@ -451,7 +451,7 @@ unsafe extern "C" fn complement(
     .is_null()
     {
       let fresh20 = len;
-      len = len + 1;
+      len += 1;
       conv[fresh20 as usize] = ch as libc::c_char
     }
     ch = ch.wrapping_add(1);

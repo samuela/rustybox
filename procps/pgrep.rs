@@ -260,12 +260,12 @@ pub unsafe extern "C" fn pgrep_main(
   /* These are initialized to 0 */
   let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
     re_buffer: regex_t {
-      buffer: 0 as *mut libc::c_uchar,
+      buffer: std::ptr::null_mut(),
       allocated: 0,
       used: 0,
       syntax: 0,
       fastmap: std::ptr::null_mut::<libc::c_char>(),
-      translate: 0 as *mut libc::c_uchar,
+      translate: std::ptr::null_mut(),
       re_nsub: 0,
       can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
       c2rust_padding: [0; 7],

@@ -1022,7 +1022,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
       );
       if argc == 0 {
         free(sep as *mut libc::c_void);
-        return 0 as *mut servtab_t;
+        return std::ptr::null_mut();
       }
       /* [host:]service socktype proto wait user[:group] prog [args] */
       /* Check for "host:...." line */
@@ -1212,7 +1212,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                       !arg.is_null()
                     } {
                       let fresh9 = argc;
-                      argc = argc + 1;
+                      argc += 1;
                       (*sep).se_argv[fresh9 as usize] = xstrdup(arg)
                     }
                     /* Some inetd.conf files have no argv's, not even argv[0].
@@ -1804,7 +1804,7 @@ pub unsafe extern "C" fn inetd_main(
               accepted_fd = accept(
                 (*sep).se_fd,
                 __SOCKADDR_ARG {
-                  __sockaddr__: 0 as *mut libc::c_void as *mut sockaddr,
+                  __sockaddr__: std::ptr::null_mut(),
                 },
                 0 as *mut socklen_t,
               );

@@ -92,7 +92,7 @@ unsafe extern "C" fn helper_get_module(
     e = (*e).next
   }
   if create == 0 {
-    return 0 as *mut module_entry;
+    return std::ptr::null_mut();
   }
   e = xzalloc(::std::mem::size_of::<module_entry>() as libc::c_ulong) as *mut module_entry;
   (*e).modname = xstrdup(modname.as_mut_ptr());

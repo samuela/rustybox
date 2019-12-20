@@ -397,7 +397,7 @@ unsafe extern "C" fn stone(
             *clist.offset(clen as isize) = cand;
             tc = *klist.offset(l as isize);
             let fresh0 = clen;
-            clen = clen + 1;
+            clen += 1;
             *klist.offset(l as isize) = fresh0;
             if l <= k {
               cand.pred = tc;
@@ -439,11 +439,11 @@ unsafe extern "C" fn equiv(
   while i <= n && j <= m {
     if (*a.offset(i as isize)).value < (*b.offset(j as isize)).value {
       let fresh1 = i;
-      i = i + 1;
+      i += 1;
       (*a.offset(fresh1 as isize)).value = 0 as libc::c_uint
     } else if (*a.offset(i as isize)).value == (*b.offset(j as isize)).value {
       let fresh2 = i;
-      i = i + 1;
+      i += 1;
       (*a.offset(fresh2 as isize)).value = j as libc::c_uint
     } else {
       j += 1
@@ -451,7 +451,7 @@ unsafe extern "C" fn equiv(
   }
   while i <= n {
     let fresh3 = i;
-    i = i + 1;
+    i += 1;
     (*a.offset(fresh3 as isize)).value = 0 as libc::c_uint
   }
   (*b.offset((m + 1i32) as isize)).value = 0 as libc::c_uint;
@@ -802,7 +802,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
   let mut nlen: [libc::c_int; 2] = [0; 2];
   let mut ix: [*mut off_t; 2] = [0 as *mut off_t; 2];
   let mut ft: [FILE_and_pos_t; 2] = [FILE_and_pos_t {
-    ft_fp: 0 as *mut FILE,
+    ft_fp: std::ptr::null_mut(),
     ft_pos: 0,
   }; 2];
   let mut vec: *mut vec_t = std::ptr::null_mut();
@@ -1181,7 +1181,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
     len: 0,
     s: 0,
     e: 0,
-    dl: 0 as *mut *mut libc::c_char,
+    dl: std::ptr::null_mut(),
   }; 2];
   let mut i: libc::c_int = 0;
   memset(

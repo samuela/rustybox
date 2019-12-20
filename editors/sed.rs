@@ -366,7 +366,7 @@ unsafe extern "C" fn parse_escapes(
       /* fall through: copy next char verbatim */
     }
     let fresh1 = i;
-    i = i + 1;
+    i += 1;
     *d = *string.offset(fresh1 as isize);
     if *d as libc::c_int == '\u{0}' as i32 {
       return d.wrapping_offset_from(dest) as libc::c_long as libc::c_uint;
@@ -990,7 +990,7 @@ unsafe extern "C" fn do_subst_w_backrefs(
             < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[backref as usize].rm_eo
           {
             let fresh14 = j;
-            j = j + 1;
+            j += 1;
             pipe_putc(*line.offset(fresh14 as isize));
           }
         }
@@ -1005,7 +1005,7 @@ unsafe extern "C" fn do_subst_w_backrefs(
       j = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_so;
       while j < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regmatch[0].rm_eo {
         let fresh15 = j;
-        j = j + 1;
+        j += 1;
         pipe_putc(*line.offset(fresh15 as isize));
       }
     } else {

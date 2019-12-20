@@ -111,7 +111,7 @@ pub unsafe extern "C" fn tac_main(
             ) as *mut lstring
           }
           let fresh0 = i;
-          i = i + 1;
+          i += 1;
           *(*line).buf.as_mut_ptr().offset(fresh0 as isize) = ch as libc::c_char
         }
         if ch == '\n' as i32 || ch == -1i32 && i != 0 {

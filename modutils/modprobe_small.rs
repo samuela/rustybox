@@ -869,7 +869,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
           infoidx,
         ) as *mut *mut module_info;
         let fresh9 = infoidx;
-        infoidx = infoidx + 1;
+        infoidx += 1;
         let ref mut fresh10 = *infovec.offset(fresh9 as isize);
         *fresh10 = &mut *(*ptr_to_globals).modinfo.offset(i as isize) as *mut module_info;
         break;
@@ -1095,7 +1095,7 @@ unsafe extern "C" fn process_module(
       infoidx = 0;
       loop {
         let fresh12 = infoidx;
-        infoidx = infoidx + 1;
+        infoidx += 1;
         info = *infovec.offset(fresh12 as isize);
         if info.is_null() {
           current_block = 2989495919056355252;
@@ -1122,7 +1122,7 @@ unsafe extern "C" fn process_module(
         infoidx = 0;
         loop {
           let fresh13 = infoidx;
-          infoidx = infoidx + 1;
+          infoidx += 1;
           info = *infovec.offset(fresh13 as isize);
           if info.is_null() {
             break;

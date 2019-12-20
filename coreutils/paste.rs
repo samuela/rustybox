@@ -88,7 +88,7 @@ unsafe extern "C" fn paste_files(
           delim = '\n' as i32 as libc::c_char;
           if i != file_cnt - 1i32 {
             let fresh1 = del_idx;
-            del_idx = del_idx + 1;
+            del_idx += 1;
             delim = *delims.offset(fresh1 as isize);
             if del_idx == del_cnt {
               del_idx = 0
@@ -125,7 +125,7 @@ unsafe extern "C" fn paste_files_separate(
         fputs_unlocked(line, stdout);
         free(line as *mut libc::c_void);
         let fresh2 = del_idx;
-        del_idx = del_idx + 1;
+        del_idx += 1;
         delim = *delims.offset(fresh2 as isize);
         if del_idx == del_cnt {
           del_idx = 0

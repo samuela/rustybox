@@ -180,7 +180,7 @@ unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *c
     48 => idx = CMD_SPD_CUST as libc::c_int,
     _ => {
       if (mode as libc::c_uint) < PRINT_FEDBACK as libc::c_int as libc::c_uint {
-        return 0 as *const libc::c_char;
+        return std::ptr::null();
       }
       idx = CMD_SPD_NORMAL as libc::c_int
     }
@@ -359,7 +359,7 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
     hub6: 0,
     closing_wait: 0,
     closing_wait2: 0,
-    iomem_base: 0 as *mut libc::c_uchar,
+    iomem_base: std::ptr::null_mut(),
     iomem_reg_shift: 0,
     port_high: 0,
     iomap_base: 0,
@@ -464,7 +464,7 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
     hub6: 0,
     closing_wait: 0,
     closing_wait2: 0,
-    iomem_base: 0 as *mut libc::c_uchar,
+    iomem_base: std::ptr::null_mut(),
     iomem_reg_shift: 0,
     port_high: 0,
     iomap_base: 0,

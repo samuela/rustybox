@@ -242,7 +242,7 @@ unsafe extern "C" fn do_loadfont(
     width: 0,
     height: 0,
     charcount: 0,
-    data: 0 as *mut libc::c_uchar,
+    data: std::ptr::null_mut(),
   };
   cfo.op = 0 as libc::c_uint;
   cfo.flags = 0 as libc::c_uint;
@@ -296,7 +296,7 @@ unsafe extern "C" fn do_loadtable(
   }; /* more than enough */
   let mut ud: unimapdesc = unimapdesc {
     entry_ct: 0,
-    entries: 0 as *mut unipair,
+    entries: std::ptr::null_mut(),
   }; /* PSF2 */
   let mut up: *mut unipair = std::ptr::null_mut();
   let mut ct: libc::c_int = 0;

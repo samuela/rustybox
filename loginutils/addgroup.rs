@@ -109,7 +109,7 @@ unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
     gr_name: std::ptr::null_mut::<libc::c_char>(),
     gr_passwd: std::ptr::null_mut::<libc::c_char>(),
     gr_gid: 0,
-    gr_mem: 0 as *mut *mut libc::c_char,
+    gr_mem: std::ptr::null_mut(),
   };
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* make sure gid and group haven't already been allocated */

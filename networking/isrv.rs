@@ -235,7 +235,7 @@ pub unsafe extern "C" fn isrv_register_fd(
     ) as *mut libc::c_short;
     while n < fd {
       let fresh0 = n;
-      n = n + 1;
+      n += 1;
       *(*state).fd2peer.offset(fresh0 as isize) = -1i32 as libc::c_short
     }
   }
@@ -357,7 +357,7 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
   newfd = accept(
     fd,
     __SOCKADDR_ARG {
-      __sockaddr__: 0 as *mut libc::c_void as *mut sockaddr,
+      __sockaddr__: std::ptr::null_mut(),
     },
     0 as *mut socklen_t,
   );

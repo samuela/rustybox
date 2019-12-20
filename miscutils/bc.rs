@@ -1571,7 +1571,7 @@ unsafe extern "C" fn zbc_num_binary(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut num2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -1766,7 +1766,7 @@ unsafe extern "C" fn zbc_num_inv(
   mut scale: size_t,
 ) -> BcStatus {
   let mut one: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -1964,70 +1964,70 @@ unsafe extern "C" fn zbc_num_k(
     .wrapping_add(1i32 as libc::c_ulong)
     .wrapping_div(2i32 as libc::c_ulong);
   let mut l1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut h1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut l2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut h2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut m2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut m1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut z0: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut z1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut z2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut temp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2172,14 +2172,14 @@ unsafe extern "C" fn zbc_num_m(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut cpa: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut cpb: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2243,7 +2243,7 @@ unsafe extern "C" fn zbc_num_d(
   let mut end: size_t = 0;
   let mut i: size_t = 0;
   let mut cp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2343,7 +2343,7 @@ unsafe extern "C" fn zbc_num_r(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut temp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2387,7 +2387,7 @@ unsafe extern "C" fn zbc_num_rem(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut c1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2413,7 +2413,7 @@ unsafe extern "C" fn zbc_num_p(
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut copy: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2573,35 +2573,35 @@ unsafe extern "C" fn zbc_num_sqrt(
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut num1: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut num2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut half: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut f: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut fprime: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2748,7 +2748,7 @@ unsafe extern "C" fn zbc_num_divmod(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut num2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2789,28 +2789,28 @@ unsafe extern "C" fn zdc_num_modexp(
 ) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut base: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut exp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut two: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut temp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -2929,7 +2929,7 @@ unsafe extern "C" fn bc_array_expand(mut a: *mut BcVec, mut len: size_t) {
   if (*a).dtor == Some(bc_num_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()) {
     // && a->size == sizeof(BcNum) - always true
     let mut n: BcNum = BcNum {
-      num: 0 as *mut BcDig,
+      num: std::ptr::null_mut(),
       rdx: 0,
       len: 0,
       cap: 0,
@@ -3096,7 +3096,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
       match current_block {
         12039483399334584727 => {
           let fresh9 = i;
-          i = i + 1;
+          i += 1;
           let mut c: libc::c_char = *bb_common_bufsiz1.as_mut_ptr().offset(fresh9 as isize);
           if c as libc::c_int == '\u{0}' as i32 {
             bc_vec_string(vec, n as size_t, bb_common_bufsiz1.as_mut_ptr());
@@ -3259,28 +3259,28 @@ unsafe extern "C" fn bc_num_parseBase(
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut mult: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut result: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut temp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut base: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -6185,7 +6185,7 @@ unsafe extern "C" fn zxc_program_op(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -6220,7 +6220,7 @@ unsafe extern "C" fn zxc_program_read() -> BcStatus {
     lex_inbuf: 0 as *const libc::c_char,
     lex_next_at: 0 as *const libc::c_char,
     lex_filename: 0 as *const libc::c_char,
-    lex_input_fp: 0 as *mut FILE,
+    lex_input_fp: std::ptr::null_mut(),
     lex_strnumbuf: BcVec {
       v: std::ptr::null_mut::<libc::c_char>(),
       len: 0,
@@ -6228,7 +6228,7 @@ unsafe extern "C" fn zxc_program_read() -> BcStatus {
       size: 0,
       dtor: None,
     },
-    func: 0 as *mut BcFunc,
+    func: std::ptr::null_mut(),
     fidx: 0,
     in_funcdef: 0,
     exits: BcVec {
@@ -6434,7 +6434,7 @@ unsafe extern "C" fn zxc_num_printNum(
     dtor: None,
   };
   let mut base: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -6442,28 +6442,28 @@ unsafe extern "C" fn zxc_num_printNum(
   };
   let mut base_digs: [BcDig; 20] = [0; 20];
   let mut intp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut fracp: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut digit: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
     neg: false,
   };
   let mut frac_len: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -6686,7 +6686,7 @@ unsafe extern "C" fn zxc_program_negate() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -6716,7 +6716,7 @@ unsafe extern "C" fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -6762,7 +6762,7 @@ unsafe extern "C" fn zdc_program_assignStr(
   mut push: bool,
 ) -> BcStatus {
   let mut n2: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -6772,7 +6772,7 @@ unsafe extern "C" fn zdc_program_assignStr(
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -6810,7 +6810,7 @@ unsafe extern "C" fn zxc_program_popResultAndCopyToVar(
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -6909,7 +6909,7 @@ unsafe extern "C" fn zxc_program_assign(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7011,7 +7011,7 @@ unsafe extern "C" fn xc_program_pushVar(
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7058,7 +7058,7 @@ unsafe extern "C" fn zbc_program_pushArray(
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7104,7 +7104,7 @@ unsafe extern "C" fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7116,7 +7116,7 @@ unsafe extern "C" fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7217,7 +7217,7 @@ unsafe extern "C" fn zbc_program_call(
     v = xc_program_search((*a).name, (*a).idx as BcType);
     if (*a).idx == BC_TYPE_VAR as libc::c_int as libc::c_ulong {
       let mut n2: BcNum = BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7251,7 +7251,7 @@ unsafe extern "C" fn zbc_program_return(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7329,7 +7329,7 @@ unsafe extern "C" fn zxc_program_builtin(mut inst: libc::c_char) -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7395,7 +7395,7 @@ unsafe extern "C" fn zdc_program_divmod() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7407,7 +7407,7 @@ unsafe extern "C" fn zdc_program_divmod() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7453,7 +7453,7 @@ unsafe extern "C" fn zdc_program_modexp() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7515,7 +7515,7 @@ unsafe extern "C" fn dc_program_stackLen() {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7540,7 +7540,7 @@ unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7550,7 +7550,7 @@ unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
   };
   let mut num: *mut BcNum = std::ptr::null_mut();
   let mut n: BcNum = BcNum {
-    num: 0 as *mut BcDig,
+    num: std::ptr::null_mut(),
     rdx: 0,
     len: 0,
     cap: 0,
@@ -7574,7 +7574,7 @@ unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
   {
     let mut val: libc::c_ulong = 0;
     let mut strmb: BcNum = BcNum {
-      num: 0 as *mut BcDig,
+      num: std::ptr::null_mut(),
       rdx: 0,
       len: 0,
       cap: 0,
@@ -7793,7 +7793,7 @@ unsafe extern "C" fn zdc_program_execStr(
           lex_inbuf: 0 as *const libc::c_char,
           lex_next_at: 0 as *const libc::c_char,
           lex_filename: 0 as *const libc::c_char,
-          lex_input_fp: 0 as *mut FILE,
+          lex_input_fp: std::ptr::null_mut(),
           lex_strnumbuf: BcVec {
             v: std::ptr::null_mut::<libc::c_char>(),
             len: 0,
@@ -7801,7 +7801,7 @@ unsafe extern "C" fn zdc_program_execStr(
             size: 0,
             dtor: None,
           },
-          func: 0 as *mut BcFunc,
+          func: std::ptr::null_mut(),
           fidx: 0,
           in_funcdef: 0,
           exits: BcVec {
@@ -7891,7 +7891,7 @@ unsafe extern "C" fn xc_program_pushGlobal(mut inst: libc::c_char) {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,
@@ -7922,7 +7922,7 @@ unsafe extern "C" fn zxc_program_exec() -> BcStatus {
     t: XC_RESULT_TEMP,
     d: BcResultData {
       n: BcNum {
-        num: 0 as *mut BcDig,
+        num: std::ptr::null_mut(),
         rdx: 0,
         len: 0,
         cap: 0,

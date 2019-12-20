@@ -353,7 +353,7 @@ unsafe extern "C" fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglo
 unsafe extern "C" fn strcatc(mut str: *mut libc::c_char, mut c: libc::c_char) {
   let mut len: libc::c_int = strlen(str) as libc::c_int;
   let fresh1 = len;
-  len = len + 1;
+  len += 1;
   *str.offset(fresh1 as isize) = c;
   *str.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
 }

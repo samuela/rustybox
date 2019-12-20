@@ -218,10 +218,10 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
   let mut cmap: fb_cmap = fb_cmap {
     start: 0,
     len: 0,
-    red: 0 as *mut __u16,
-    green: 0 as *mut __u16,
-    blue: 0 as *mut __u16,
-    transp: 0 as *mut __u16,
+    red: std::ptr::null_mut(),
+    green: std::ptr::null_mut(),
+    blue: std::ptr::null_mut(),
+    transp: std::ptr::null_mut(),
   };
   /* fb colors are 16 bit */
   let mut red: [libc::c_ushort; 256] = [0; 256];

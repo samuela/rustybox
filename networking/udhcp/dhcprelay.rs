@@ -302,7 +302,7 @@ unsafe extern "C" fn make_iface_list(
   s = xstrdup(*client_and_server_ifaces.offset(0));
   'c_9337: loop {
     let fresh3 = i;
-    i = i + 1;
+    i += 1;
     let ref mut fresh4 = *iface_list.offset(fresh3 as isize);
     *fresh4 = s;
     loop {

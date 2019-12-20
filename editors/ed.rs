@@ -154,7 +154,7 @@ unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
       b"line number %d does not exist\x00" as *const u8 as *const libc::c_char,
       num,
     );
-    return 0 as *mut LINE;
+    return std::ptr::null_mut();
   }
   if (*ptr_to_globals).curNum <= 0 {
     (*ptr_to_globals).curNum = 1i32;
@@ -311,7 +311,7 @@ unsafe extern "C" fn getNum(
         cp = cp.offset(1);
         if (*cp as libc::c_int - 'a' as i32) as libc::c_uint >= 26i32 as libc::c_uint {
           bb_simple_error_msg(b"bad mark name\x00" as *const u8 as *const libc::c_char);
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
         haveNum = 1i32 as smallint;
         num = (*ptr_to_globals).marks[(*cp as libc::c_int - 'a' as i32) as libc::c_uint as usize];
@@ -335,7 +335,7 @@ unsafe extern "C" fn getNum(
           (*ptr_to_globals).lastNum,
         );
         if num == 0 {
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
         haveNum = 1i32 as smallint
       }
@@ -467,7 +467,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
       return;
     }
     let fresh2 = num;
-    num = num + 1;
+    num += 1;
     if insertLine(fresh2, buf.as_mut_ptr(), len) == 0 {
       return;
     }
@@ -610,7 +610,7 @@ unsafe extern "C" fn writeLines(
   }
   loop {
     let fresh3 = num1;
-    num1 = num1 + 1;
+    num1 += 1;
     if !(fresh3 <= num2) {
       break;
     }
@@ -669,7 +669,7 @@ unsafe extern "C" fn printLines(
         (*lp).len as size_t,
       );
       let fresh4 = num1;
-      num1 = num1 + 1;
+      num1 += 1;
       setCurNum(fresh4);
       lp = (*lp).next
     } else {
@@ -695,7 +695,7 @@ unsafe extern "C" fn printLines(
       }
       fputs_unlocked(b"$\n\x00" as *const u8 as *const libc::c_char, stdout);
       let fresh7 = num1;
-      num1 = num1 + 1;
+      num1 += 1;
       setCurNum(fresh7);
       lp = (*lp).next
     }

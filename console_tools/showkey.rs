@@ -181,7 +181,7 @@ pub unsafe extern "C" fn showkey_main(
         if option_mask32 & OPT_s as libc::c_int as libc::c_uint != 0 {
           // show raw scancodes
           let fresh1 = i;
-          i = i + 1;
+          i += 1;
           printf(
             b"0x%02x \x00" as *const u8 as *const libc::c_char,
             buf[fresh1 as usize] as libc::c_int,

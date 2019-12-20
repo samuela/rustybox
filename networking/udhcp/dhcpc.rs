@@ -684,7 +684,7 @@ unsafe extern "C" fn valid_domain_label(mut label: *const libc::c_char) -> *cons
   let mut ch: libc::c_uchar = 0;
   //unsigned pos = 0;
   if *label.offset(0) as libc::c_int == '-' as i32 {
-    return 0 as *const libc::c_char;
+    return std::ptr::null();
   }
   loop {
     ch = *label as libc::c_uchar;
@@ -699,7 +699,7 @@ unsafe extern "C" fn valid_domain_label(mut label: *const libc::c_char) -> *cons
         //	return NULL;
         /* DNS allows only '-', but we are more permissive */
         if ch as libc::c_int != '-' as i32 && ch as libc::c_int != '_' as i32 {
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
       }
     }
@@ -1900,15 +1900,15 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
   let mut check: u16 = 0;
   let mut cmsgbuf: [libc::c_uchar; 36] = [0; 36];
   let mut iov: iovec = iovec {
-    iov_base: 0 as *mut libc::c_void,
+    iov_base: std::ptr::null_mut(),
     iov_len: 0,
   };
   let mut msg: msghdr = msghdr {
-    msg_name: 0 as *mut libc::c_void,
+    msg_name: std::ptr::null_mut(),
     msg_namelen: 0,
-    msg_iov: 0 as *mut iovec,
+    msg_iov: std::ptr::null_mut(),
     msg_iovlen: 0,
-    msg_control: 0 as *mut libc::c_void,
+    msg_control: std::ptr::null_mut(),
     msg_controllen: 0,
     msg_flags: 0,
   };

@@ -1159,7 +1159,7 @@ unsafe extern "C" fn get_address_family(
 ) -> *const address_family_t {
   let mut i: libc::c_int = 0;
   if name.is_null() {
-    return 0 as *const address_family_t;
+    return std::ptr::null();
   }
   i = 0;
   while !(*af.offset(i as isize)).is_null() {
@@ -1168,7 +1168,7 @@ unsafe extern "C" fn get_address_family(
     }
     i += 1
   }
-  return 0 as *const address_family_t;
+  return std::ptr::null();
 }
 unsafe extern "C" fn get_method(
   mut af: *const address_family_t,
@@ -1176,7 +1176,7 @@ unsafe extern "C" fn get_method(
 ) -> *const method_t {
   let mut i: libc::c_int = 0;
   if name.is_null() {
-    return 0 as *const method_t;
+    return std::ptr::null();
   }
   /* TODO: use index_in_str_array() */
   i = 0;
@@ -1186,7 +1186,7 @@ unsafe extern "C" fn get_method(
     }
     i += 1
   }
-  return 0 as *const method_t;
+  return std::ptr::null();
 }
 unsafe extern "C" fn read_interfaces(
   mut filename: *const libc::c_char,
@@ -1845,7 +1845,7 @@ unsafe extern "C" fn find_iface_state(
     }
     search = (*search).link
   }
-  return 0 as *mut llist_t;
+  return std::ptr::null_mut();
 }
 /* read the previous state from the state file */
 unsafe extern "C" fn read_iface_state() -> *mut llist_t {

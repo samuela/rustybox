@@ -1076,7 +1076,7 @@ unsafe extern "C" fn pstm_div_2d(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   /* if the shift count is <= 0 then we do no work */
   if b <= 0 {
@@ -1228,31 +1228,31 @@ unsafe extern "C" fn pstm_div(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut x: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut y: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut t1: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut t2: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut res: int32 = 0;
   let mut n: libc::c_int = 0;
@@ -1541,7 +1541,7 @@ unsafe extern "C" fn pstm_exch(mut a: *mut pstm_int, mut b: *mut pstm_int) {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   t = *a;
   *a = *b;
@@ -1560,7 +1560,7 @@ unsafe extern "C" fn pstm_mod(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut err: int32 = 0;
   /*
@@ -1601,7 +1601,7 @@ pub unsafe extern "C" fn pstm_mulmod(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   /*
     Smart-size pstm_inits.  d is an output that is influenced by this local 't'
@@ -1643,13 +1643,13 @@ pub unsafe extern "C" fn pstm_exptmod(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   }; 32]; //bbox: was int16
   let mut res: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut buf: pstm_digit = 0;
   let mut mp: pstm_digit = 0;
@@ -2218,7 +2218,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
       used: 0,
       alloc: 0,
       sign: 0,
-      dp: 0 as *mut pstm_digit,
+      dp: std::ptr::null_mut(),
     };
     init
   };
@@ -2230,7 +2230,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
   x = 0;
   while (if t.used == 0 { 1i32 } else { 0 }) == 0 {
     let fresh17 = x;
-    x = x + 1;
+    x += 1;
     *b.offset(fresh17 as isize) = (*t.dp.offset(0) & 255i32 as libc::c_uint) as libc::c_uchar;
     pstm_div_2d(&mut t, 8i32, &mut t, 0 as *mut pstm_int);
     res = 0;

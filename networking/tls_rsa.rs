@@ -152,19 +152,19 @@ unsafe extern "C" fn psRsaCrypt(
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut tmpa: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut tmpb: pstm_int = pstm_int {
     used: 0,
     alloc: 0,
     sign: 0,
-    dp: 0 as *mut pstm_digit,
+    dp: std::ptr::null_mut(),
   };
   let mut res: int32 = 0;
   let mut x: uint32 = 0;

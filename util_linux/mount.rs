@@ -619,27 +619,27 @@ unsafe extern "C" fn mount_it_now(
         rc = 1i32;
         if option_mask32 & OPT_f as libc::c_int as libc::c_uint != 0 {
           let fresh1 = rc;
-          rc = rc + 1;
+          rc += 1;
           args[fresh1 as usize] = b"-f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
         }
         if false && 0 == 0 {
           let fresh2 = rc;
-          rc = rc + 1;
+          rc += 1;
           args[fresh2 as usize] = b"-n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
         }
         let fresh3 = rc;
-        rc = rc + 1;
+        rc += 1;
         args[fresh3 as usize] = (*mp).mnt_fsname;
         let fresh4 = rc;
-        rc = rc + 1;
+        rc += 1;
         args[fresh4 as usize] = (*mp).mnt_dir;
         if !filteropts.is_null() {
           let fresh5 = rc;
-          rc = rc + 1;
+          rc += 1;
           args[fresh5 as usize] =
             b"-o\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
           let fresh6 = rc;
-          rc = rc + 1;
+          rc += 1;
           args[fresh6 as usize] = filteropts
         }
         args[rc as usize] = std::ptr::null_mut::<libc::c_char>();
@@ -801,7 +801,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     s = (*mp).mnt_fsname;
     n = 0;
     let fresh8 = n;
-    n = n + 1;
+    n += 1;
     args[fresh8 as usize] = s;
     while *s as libc::c_int != 0 && n < 35i32 - 2i32 {
       let fresh9 = s;
@@ -809,12 +809,12 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       if *fresh9 as libc::c_int == '#' as i32 && *s as libc::c_int != '#' as i32 {
         *s.offset(-1i32 as isize) = '\u{0}' as i32 as libc::c_char;
         let fresh10 = n;
-        n = n + 1;
+        n += 1;
         args[fresh10 as usize] = s
       }
     }
     let fresh11 = n;
-    n = n + 1;
+    n += 1;
     args[fresh11 as usize] = (*mp).mnt_dir;
     args[n as usize] = std::ptr::null_mut::<libc::c_char>();
     rc = spawn_and_wait(args.as_mut_ptr())
@@ -1144,7 +1144,7 @@ pub unsafe extern "C" fn mount_main(
       append_mount_options(&mut cmdopts, (*argv.offset(i as isize)).offset(2));
     } else {
       let fresh13 = j;
-      j = j + 1;
+      j += 1;
       let ref mut fresh14 = *argv.offset(fresh13 as isize);
       *fresh14 = *argv.offset(i as isize)
     }

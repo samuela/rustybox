@@ -336,11 +336,11 @@ pub unsafe extern "C" fn rtnl_dump_request(
       nlmsg_pid: 0,
     },
     msg: msghdr {
-      msg_name: 0 as *mut libc::c_void,
+      msg_name: std::ptr::null_mut(),
       msg_namelen: 0,
-      msg_iov: 0 as *mut iovec,
+      msg_iov: std::ptr::null_mut(),
       msg_iovlen: 0,
-      msg_control: 0 as *mut libc::c_void,
+      msg_control: std::ptr::null_mut(),
       msg_controllen: 0,
       msg_flags: 0,
     },
@@ -434,7 +434,7 @@ unsafe extern "C" fn rtnl_dump_filter(
         msg_namelen: ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong as socklen_t,
         msg_iov: &mut iov,
         msg_iovlen: 1i32 as size_t,
-        msg_control: 0 as *mut libc::c_void,
+        msg_control: std::ptr::null_mut(),
         msg_controllen: 0 as size_t,
         msg_flags: 0,
       };
@@ -595,7 +595,7 @@ pub unsafe extern "C" fn rtnl_talk(
       msg_namelen: ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong as socklen_t,
       msg_iov: &mut iov,
       msg_iovlen: 1i32 as size_t,
-      msg_control: 0 as *mut libc::c_void,
+      msg_control: std::ptr::null_mut(),
       msg_controllen: 0 as size_t,
       msg_flags: 0,
     };

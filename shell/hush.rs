@@ -1682,7 +1682,7 @@ unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
   if !name.is_null() {
     fd = open(name, 0 | 0o2000000i32);
     if fd < 0 {
-      return 0 as *mut HFILE;
+      return std::ptr::null_mut();
     }
     if 0o2000000i32 == 0 {
       /* ancient libc */
@@ -2044,7 +2044,7 @@ unsafe extern "C" fn get_ptr_to_local_var(
     }
     pp = &mut (*cur).next
   }
-  return 0 as *mut *mut variable;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *const libc::c_char {
   let mut vpp: *mut *mut variable = std::ptr::null_mut();
@@ -2103,7 +2103,7 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
     );
     return (*ptr_to_globals).epoch_buf.as_mut_ptr();
   }
-  return 0 as *const libc::c_char;
+  return std::ptr::null();
 }
 unsafe extern "C" fn handle_changed_special_names(
   mut name: *const libc::c_char,
@@ -3142,7 +3142,7 @@ unsafe extern "C" fn glob_brace(
   let mut gr: libc::c_int = 0;
   let mut globdata: glob_t = glob_t {
     gl_pathc: 0,
-    gl_pathv: 0 as *mut *mut libc::c_char,
+    gl_pathv: std::ptr::null_mut(),
     gl_offs: 0,
     gl_flags: 0,
     gl_closedir: None,
@@ -3621,7 +3621,7 @@ unsafe extern "C" fn match_reserved_word(mut word: *mut o_string) -> *const rese
     }
     r = r.offset(1)
   }
-  return 0 as *const reserved_combo;
+  return std::ptr::null();
 }
 /* Return NULL: not a keyword, else: keyword
  */
@@ -3637,7 +3637,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
   };
   let mut r: *const reserved_combo = std::ptr::null();
   if (*ctx).word.has_quoted_part != 0 {
-    return 0 as *const reserved_combo;
+    return std::ptr::null();
   }
   r = match_reserved_word(&mut (*ctx).word);
   if r.is_null() {
@@ -6248,10 +6248,10 @@ unsafe extern "C" fn parse_stream(
 ) -> *mut pipe {
   let mut current_block: u64;
   let mut ctx: parse_context = parse_context {
-    list_head: 0 as *mut pipe,
-    pipe: 0 as *mut pipe,
-    command: 0 as *mut command,
-    pending_redirect: 0 as *mut redir_struct,
+    list_head: std::ptr::null_mut(),
+    pipe: std::ptr::null_mut(),
+    command: std::ptr::null_mut(),
+    pending_redirect: std::ptr::null_mut(),
     word: o_string {
       data: std::ptr::null_mut::<libc::c_char>(),
       length: 0,
@@ -6266,7 +6266,7 @@ unsafe extern "C" fn parse_stream(
     ctx_inverted: 0,
     ctx_dsemicolon: 0,
     old_flag: 0,
-    stack: 0 as *mut parse_context,
+    stack: std::ptr::null_mut(),
   };
   let mut heredoc_cnt: libc::c_int = 0;
   /* Single-quote triggers a bypass of the main loop until its mate is
@@ -7149,7 +7149,7 @@ unsafe extern "C" fn encode_then_expand_string(mut str: *const libc::c_char) -> 
     p: 0 as *const libc::c_char,
     peek_buf: [0; 2],
     last_char: 0,
-    file: 0 as *mut HFILE,
+    file: std::ptr::null_mut(),
   };
   let mut dest: o_string = {
     let mut init = o_string {
@@ -7197,7 +7197,7 @@ unsafe extern "C" fn first_special_char_in_vararg(
 ) -> *const libc::c_char {
   loop {
     if *cp == 0 {
-      return 0 as *const libc::c_char;
+      return std::ptr::null();
     }
     if *cp as libc::c_int == '$' as i32 {
       return cp;
@@ -7246,7 +7246,7 @@ unsafe extern "C" fn encode_then_expand_vararg(
     p: 0 as *const libc::c_char,
     peek_buf: [0; 2],
     last_char: 0,
-    file: 0 as *mut HFILE,
+    file: std::ptr::null_mut(),
   };
   let mut dest: o_string = {
     let mut init = o_string {
@@ -7351,7 +7351,7 @@ unsafe extern "C" fn encode_then_append_var_plusminus(
     p: 0 as *const libc::c_char,
     peek_buf: [0; 2],
     last_char: 0,
-    file: 0 as *mut HFILE,
+    file: std::ptr::null_mut(),
   };
   let mut dest: o_string = {
     let mut init = o_string {
@@ -7511,7 +7511,7 @@ unsafe extern "C" fn expand_and_evaluate_arith(
     errmsg: 0 as *const libc::c_char,
     lookupvar: None,
     setvar: None,
-    list_of_recursed_names: 0 as *mut libc::c_void,
+    list_of_recursed_names: std::ptr::null_mut(),
   };
   let mut res: arith_t = 0;
   let mut exp_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -8175,7 +8175,7 @@ unsafe extern "C" fn expand_vars_to_list(
             while !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null() {
               n = expand_on_ifs(output, n, *(*ptr_to_globals).global_argv.offset(i as isize));
               let fresh31 = i;
-              i = i + 1;
+              i += 1;
               if *(*(*ptr_to_globals).global_argv.offset(fresh31 as isize)).offset(0) as libc::c_int
                 != 0
                 && !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null()
@@ -8549,7 +8549,7 @@ unsafe extern "C" fn parse_and_run_string(mut s: *const libc::c_char) {
     p: 0 as *const libc::c_char,
     peek_buf: [0; 2],
     last_char: 0,
-    file: 0 as *mut HFILE,
+    file: std::ptr::null_mut(),
   };
   //IF_HUSH_LINENO_VAR(unsigned sv = G.parse_lineno;)
   setup_string_in_str(&mut input, s);
@@ -8561,7 +8561,7 @@ unsafe extern "C" fn parse_and_run_file(mut fp: *mut HFILE) {
     p: 0 as *const libc::c_char,
     peek_buf: [0; 2],
     last_char: 0,
-    file: 0 as *mut HFILE,
+    file: std::ptr::null_mut(),
   };
   let mut sv: libc::c_uint = (*ptr_to_globals).parse_lineno;
   (*ptr_to_globals).parse_lineno = 1i32 as libc::c_uint;
@@ -9138,7 +9138,7 @@ unsafe extern "C" fn find_builtin_helper(
       return x;
     }
   }
-  return 0 as *const built_in_command;
+  return std::ptr::null();
 }
 unsafe extern "C" fn find_builtin1(mut name: *const libc::c_char) -> *const built_in_command {
   return find_builtin_helper(
@@ -9316,7 +9316,7 @@ unsafe extern "C" fn run_function(
   let mut rc: libc::c_int = 0;
   let mut sv: save_arg_t = save_arg_t {
     sv_argv0: std::ptr::null_mut::<libc::c_char>(),
-    sv_g_argv: 0 as *mut *mut libc::c_char,
+    sv_g_argv: std::ptr::null_mut(),
     sv_g_argc: 0,
     sv_g_malloced: 0,
   };
@@ -11704,7 +11704,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
   let mut params: builtin_read_params = builtin_read_params {
     read_flags: 0,
     setvar: None,
-    argv: 0 as *mut *mut libc::c_char,
+    argv: std::ptr::null_mut(),
     ifs: 0 as *const libc::c_char,
     opt_n: 0 as *const libc::c_char,
     opt_p: 0 as *const libc::c_char,
@@ -12228,7 +12228,7 @@ unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_
       let mut m: libc::c_int = 1i32;
       while m <= n {
         let fresh50 = m;
-        m = m + 1;
+        m += 1;
         free(*(*ptr_to_globals).global_argv.offset(fresh50 as isize) as *mut libc::c_void);
       }
     }
@@ -12393,7 +12393,7 @@ unsafe extern "C" fn builtin_source(mut argv: *mut *mut libc::c_char) -> libc::c
   let mut input: *mut HFILE = std::ptr::null_mut();
   let mut sv: save_arg_t = save_arg_t {
     sv_argv0: std::ptr::null_mut::<libc::c_char>(),
-    sv_g_argv: 0 as *mut *mut libc::c_char,
+    sv_g_argv: std::ptr::null_mut(),
     sv_g_argc: 0,
     sv_g_malloced: 0,
   };
@@ -12571,13 +12571,13 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
         b"bad argument \'%s\'\x00" as *const u8 as *const libc::c_char,
         str,
       );
-      return 0 as *mut pipe;
+      return std::ptr::null_mut();
     }
     /* It is "%%", "%+" or "%" - current job */
     jobnum = (*ptr_to_globals).last_jobid;
     if jobnum == 0 as libc::c_uint {
       bb_simple_error_msg(b"no current job\x00" as *const u8 as *const libc::c_char);
-      return 0 as *mut pipe;
+      return std::ptr::null_mut();
     }
   }
   pi = (*ptr_to_globals).job_list;
@@ -12591,7 +12591,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
     b"%u: no such job\x00" as *const u8 as *const libc::c_char,
     jobnum,
   );
-  return 0 as *mut pipe;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut job: *mut pipe = std::ptr::null_mut();

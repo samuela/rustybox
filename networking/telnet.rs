@@ -309,7 +309,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
           255 => {
             /* IAC IAC -> one IAC */
             let fresh2 = cstart;
-            cstart = cstart + 1;
+            cstart += 1;
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buf[fresh2 as usize] =
               c as libc::c_char;
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telstate =
@@ -360,7 +360,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
             TS_IAC as libc::c_int as byte
         } else {
           let fresh1 = cstart;
-          cstart = cstart + 1;
+          cstart += 1;
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buf[fresh1 as usize] =
             c as libc::c_char;
           if c as libc::c_int == '\r' as i32 {

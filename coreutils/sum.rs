@@ -99,7 +99,7 @@ unsafe extern "C" fn sum_file(
         loop {
           s = (s >> 1i32).wrapping_add((s & 1i32 as libc::c_uint) << 15i32);
           let fresh0 = r;
-          r = r + 1;
+          r += 1;
           s =
             s.wrapping_add(*bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) as libc::c_uint);
           s &= 0xffffi32 as libc::c_uint;

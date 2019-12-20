@@ -523,7 +523,7 @@ unsafe extern "C" fn init_literal() -> *mut s_stat {
 }
 unsafe extern "C" fn init_cr(mut _param: *const libc::c_char) -> *mut s_stat {
   (*ptr_to_globals).final_char = '\r' as i32 as libc::c_char;
-  return 0 as *mut s_stat;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn collect_cpu(mut s: *mut cpu_stat) {
   let mut data: [ullong; 7] = [
@@ -1057,7 +1057,7 @@ unsafe extern "C" fn init_time(mut param: *const libc::c_char) -> *mut s_stat {
   (*s).scale = 1i32 as libc::c_uint;
   loop {
     let fresh7 = prec;
-    prec = prec + 1;
+    prec += 1;
     if !(fresh7 < 6i32) {
       break;
     }

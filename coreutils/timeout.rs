@@ -106,7 +106,7 @@ pub unsafe extern "C" fn timeout_main(
     bb_show_usage();
   }
   let fresh0 = optind;
-  optind = optind + 1;
+  optind += 1;
   timeout = parse_duration_str(*argv.offset(fresh0 as isize)) as libc::c_int;
   if (*argv.offset(optind as isize)).is_null() {
     /* no PROG? */

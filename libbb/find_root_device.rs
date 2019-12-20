@@ -59,7 +59,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
     return std::ptr::null_mut::<libc::c_char>();
   }
   let fresh0 = len;
-  len = len + 1;
+  len += 1;
   (*ap).devpath[fresh0 as usize] = '/' as i32 as libc::c_char;
   loop {
     entry = readdir(dir);

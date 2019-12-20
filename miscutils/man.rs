@@ -517,7 +517,7 @@ pub unsafe extern "C" fn man_main(
       cur_mp = 0;
       's_267: loop {
         let fresh11 = cur_mp;
-        cur_mp = cur_mp + 1;
+        cur_mp += 1;
         cur_path = *man_path_list.offset(fresh11 as isize);
         if cur_path.is_null() {
           current_block_61 = 13839692391726842101;

@@ -1857,7 +1857,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
     while s < end && idx < 32i32 {
       if *endofname(s).offset(0) as libc::c_int == '=' as i32 {
         let fresh18 = idx;
-        idx = idx + 1;
+        idx += 1;
         env[fresh18 as usize] = s;
         putenv(s);
       }

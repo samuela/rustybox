@@ -142,7 +142,7 @@ pub unsafe extern "C" fn bb_verror_msg(
       ) as *mut libc::c_char; /* overwrites NUL */
       if msg1.is_null() {
         let fresh0 = used;
-        used = used + 1;
+        used += 1;
         *msg.offset(fresh0 as isize) = '\n' as i32 as libc::c_char;
         applet_len = 0;
         current_block = 10692455896603418738;
@@ -169,10 +169,10 @@ pub unsafe extern "C" fn bb_verror_msg(
         if *s.offset(0) != 0 {
           /* not perror_nomsg? */
           let fresh1 = used;
-          used = used + 1;
+          used += 1;
           *msg.offset(fresh1 as isize) = ':' as i32 as libc::c_char;
           let fresh2 = used;
-          used = used + 1;
+          used += 1;
           *msg.offset(fresh2 as isize) = ' ' as i32 as libc::c_char
         }
         strcpy(&mut *msg.offset(used as isize), strerr);

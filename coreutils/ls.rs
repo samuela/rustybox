@@ -647,7 +647,7 @@ unsafe extern "C" fn my_stat(
       bb_simple_perror_msg(fullname);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
       free(cur as *mut libc::c_void);
-      return 0 as *mut dnode;
+      return std::ptr::null_mut();
     }
     (*cur).dn_mode_stat = statbuf.st_mode
   } else {
@@ -655,7 +655,7 @@ unsafe extern "C" fn my_stat(
       bb_simple_perror_msg(fullname);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
       free(cur as *mut libc::c_void);
-      return 0 as *mut dnode;
+      return std::ptr::null_mut();
     }
     (*cur).dn_mode_lstat = statbuf.st_mode
   }
@@ -710,7 +710,7 @@ unsafe extern "C" fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int)
 /* get memory to hold an array of pointers */
 unsafe extern "C" fn dnalloc(mut num: libc::c_uint) -> *mut *mut dnode {
   if num < 1i32 as libc::c_uint {
-    return 0 as *mut *mut dnode;
+    return std::ptr::null_mut();
   } /* so that we have terminating NULL */
   num = num.wrapping_add(1);
   return xzalloc(
@@ -742,7 +742,7 @@ unsafe extern "C" fn splitdnarray(
   let mut d: libc::c_uint = 0;
   let mut dnp: *mut *mut dnode = std::ptr::null_mut();
   if dn.is_null() {
-    return 0 as *mut *mut dnode;
+    return std::ptr::null_mut();
   }
   /* count how many dirs or files there are */
   dncnt = count_dirs(dn, which);
@@ -870,7 +870,7 @@ unsafe extern "C" fn scan_one_dir(
   dir = warn_opendir(path);
   if dir.is_null() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
-    return 0 as *mut *mut dnode;
+    return std::ptr::null_mut();
     /* could not open the dir */
   }
   dn = std::ptr::null_mut();
@@ -907,7 +907,7 @@ unsafe extern "C" fn scan_one_dir(
   }
   closedir(dir);
   if dn.is_null() {
-    return 0 as *mut *mut dnode;
+    return std::ptr::null_mut();
   }
   /* now that we know how many files there are
    * allocate memory for an array to hold dnode pointers

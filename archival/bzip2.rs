@@ -2759,7 +2759,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
   let mut level: libc::c_uint = 0;
   let mut count: ssize_t = 0;
   let mut bzs: bz_stream = bz_stream {
-    state: 0 as *mut libc::c_void,
+    state: std::ptr::null_mut(),
     next_in: std::ptr::null_mut::<libc::c_char>(),
     next_out: std::ptr::null_mut::<libc::c_char>(),
     avail_in: 0,

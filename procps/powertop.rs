@@ -653,7 +653,7 @@ unsafe extern "C" fn show_timerstats() {
     while i < (*ptr_to_globals).lines_cnt {
       if (*(*ptr_to_globals).lines.offset(i as isize)).count > 0 && {
         let fresh5 = n;
-        n = n + 1;
+        n += 1;
         (fresh5 as libc::c_uint) < lines
       } {
         /* NB: upstream powertop prints "(wakeups/sec)",

@@ -201,7 +201,7 @@ static mut const_sp_db: const_passdb = const_passdb {
   numfields: 0,
   size_of: 0,
 };
-static mut ptr_to_statics: *mut statics = 0 as *const statics as *mut statics;
+static mut ptr_to_statics: *mut statics = 0 as *mut statics;
 unsafe extern "C" fn get_S() -> *mut statics {
   if ptr_to_statics.is_null() {
     ptr_to_statics = xzalloc(::std::mem::size_of::<statics>() as libc::c_ulong) as *mut statics;
@@ -459,7 +459,7 @@ unsafe extern "C" fn massage_data_for_non_r_func(
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_void {
   if buf.is_null() {
-    return 0 as *mut libc::c_void;
+    return std::ptr::null_mut();
   }
   free((*db).malloced as *mut libc::c_void);
   /* We enlarge buf and move string data up, freeing space
@@ -581,7 +581,7 @@ unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
   if (*db).fp.is_null() {
     (*db).fp = fopen_for_read((*db).filename);
     if (*db).fp.is_null() {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     close_on_exec_on(fileno_unlocked((*db).fp));
   }
@@ -710,7 +710,7 @@ unsafe extern "C" fn getgrouplist_internal(
         gr_name: std::ptr::null_mut::<libc::c_char>(),
         gr_passwd: std::ptr::null_mut::<libc::c_char>(),
         gr_gid: 0,
-        gr_mem: 0 as *mut *mut libc::c_char,
+        gr_mem: std::ptr::null_mut(),
       };
       if !convert_to_struct(db, buf, &mut group as *mut group as *mut libc::c_void).is_null() {
         if !(group.gr_gid == gid) {
@@ -726,7 +726,7 @@ unsafe extern "C" fn getgrouplist_internal(
                 ngroups,
               ) as *mut gid_t;
               let fresh5 = ngroups;
-              ngroups = ngroups + 1;
+              ngroups += 1;
               *group_list.offset(fresh5 as isize) = group.gr_gid;
               break;
             }
